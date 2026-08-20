@@ -1,0 +1,1017 @@
+<title>Gamma-Regime Conditioning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:      #F6F7F9;
+    --surface:    #FFFFFF;
+    --surface-2:  #EDF0F4;
+    --ink:        #16202B;
+    --ink-soft:   #3B4956;
+    --muted:      #6B7785;
+    --rule:       #D3DAE2;
+    --rule-soft:  #E4E9EF;
+    --accent:     #1F4E6D;
+    --pos:        #0E7C7B;
+    --pos-bg:     #E4F1F0;
+    --neg:        #C2571A;
+    --neg-bg:     #FAEBE0;
+    --warn:       #8A6D1F;
+
+    --f-body: "Spectral", Georgia, "Times New Roman", serif;
+    --f-ui:   "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --measure: 68ch;
+    --s1: 0.5rem;  --s2: 0.85rem; --s3: 1.4rem;
+    --s4: 2.2rem;  --s5: 3.4rem;  --s6: 5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #0F151B;
+      --surface:   #161E26;
+      --surface-2: #1C262F;
+      --ink:       #E4EAF0;
+      --ink-soft:  #B4C0CC;
+      --muted:     #8695A3;
+      --rule:      #2C3945;
+      --rule-soft: #222D37;
+      --accent:    #6FA8CC;
+      --pos:       #4FBDB2;
+      --pos-bg:    #14302F;
+      --neg:       #E08A4C;
+      --neg-bg:    #33210F;
+      --warn:      #C6A94F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:     #0F151B;
+    --surface:   #161E26;
+    --surface-2: #1C262F;
+    --ink:       #E4EAF0;
+    --ink-soft:  #B4C0CC;
+    --muted:     #8695A3;
+    --rule:      #2C3945;
+    --rule-soft: #222D37;
+    --accent:    #6FA8CC;
+    --pos:       #4FBDB2;
+    --pos-bg:    #14302F;
+    --neg:       #E08A4C;
+    --neg-bg:    #33210F;
+    --warn:      #C6A94F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-weight: 300;
+    font-size: 1.0625rem;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: var(--s5) var(--s3) var(--s6);
+  }
+
+  .col { max-width: var(--measure); }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    border-top: 3px solid var(--ink);
+    padding-top: var(--s3);
+    margin-bottom: var(--s5);
+  }
+
+  .eyebrow {
+    font-family: var(--f-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2) var(--s3);
+    margin-bottom: var(--s3);
+  }
+
+  h1 {
+    font-family: var(--f-ui);
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.022em;
+    margin: 0 0 var(--s2);
+    text-wrap: balance;
+    max-width: 20ch;
+  }
+
+  .subtitle {
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-weight: 300;
+    margin: 0 0 var(--s3);
+    max-width: 52ch;
+    text-wrap: balance;
+  }
+
+  .byline {
+    font-family: var(--f-ui);
+    font-size: 0.86rem;
+    color: var(--muted);
+    border-top: 1px solid var(--rule);
+    padding-top: var(--s2);
+  }
+
+  /* ---------- abstract ---------- */
+
+  .abstract {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: var(--s3) var(--s4);
+    margin-bottom: var(--s5);
+    max-width: 74ch;
+  }
+
+  .abstract h2 {
+    font-family: var(--f-ui);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 var(--s2);
+  }
+
+  .abstract p { margin: 0 0 var(--s2); }
+  .abstract p:last-child { margin-bottom: 0; }
+
+  .keywords {
+    font-family: var(--f-ui);
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: var(--s3);
+    padding-top: var(--s2);
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  /* ---------- sections ---------- */
+
+  section { margin-bottom: var(--s5); }
+
+  h2.sec {
+    font-family: var(--f-ui);
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    margin: 0 0 var(--s3);
+    padding-bottom: var(--s2);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: var(--s3);
+    align-items: baseline;
+    text-wrap: balance;
+  }
+
+  h2.sec .num {
+    font-family: var(--f-mono);
+    font-size: 0.95rem;
+    color: var(--accent);
+    font-weight: 500;
+    flex: none;
+    padding-top: 0.15em;
+  }
+
+  h3 {
+    font-family: var(--f-ui);
+    font-weight: 600;
+    font-size: 1.06rem;
+    letter-spacing: -0.005em;
+    margin: var(--s4) 0 var(--s2);
+    color: var(--ink);
+  }
+
+  h4 {
+    font-family: var(--f-ui);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: var(--s3) 0 var(--s1);
+  }
+
+  p { margin: 0 0 var(--s2); max-width: var(--measure); }
+
+  ul, ol { max-width: var(--measure); padding-left: 1.3em; margin: 0 0 var(--s2); }
+  li { margin-bottom: var(--s1); }
+
+  a { color: var(--accent); text-underline-offset: 0.18em; }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  strong { font-weight: 600; color: var(--ink); }
+  em.term { font-style: italic; color: var(--ink); }
+
+  /* ---------- math + code ---------- */
+
+  .math {
+    font-family: var(--f-mono);
+    font-size: 0.94rem;
+    background: var(--surface);
+    border: 1px solid var(--rule-soft);
+    border-radius: 3px;
+    padding: var(--s3);
+    margin: var(--s3) 0;
+    overflow-x: auto;
+    line-height: 1.9;
+    max-width: var(--measure);
+    color: var(--ink);
+  }
+
+  .math .lbl {
+    display: block;
+    font-family: var(--f-ui);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--s1);
+  }
+
+  code {
+    font-family: var(--f-mono);
+    font-size: 0.88em;
+    background: var(--surface-2);
+    padding: 0.1em 0.36em;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  pre {
+    font-family: var(--f-mono);
+    font-size: 0.83rem;
+    line-height: 1.65;
+    background: var(--surface);
+    border: 1px solid var(--rule-soft);
+    border-radius: 3px;
+    padding: var(--s3);
+    overflow-x: auto;
+    margin: var(--s3) 0;
+    max-width: var(--measure);
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  /* ---------- proposition callouts ---------- */
+
+  .prop {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--pos);
+    padding: var(--s3);
+    margin: var(--s3) 0;
+    max-width: var(--measure);
+  }
+  .prop.crit { border-left-color: var(--neg); }
+  .prop.warn { border-left-color: var(--warn); }
+
+  .prop .tag {
+    font-family: var(--f-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pos);
+    display: block;
+    margin-bottom: var(--s1);
+  }
+  .prop.crit .tag { color: var(--neg); }
+  .prop.warn .tag { color: var(--warn); }
+  .prop p:last-child { margin-bottom: 0; }
+
+  /* ---------- tables ---------- */
+
+  .tablewrap {
+    overflow-x: auto;
+    margin: var(--s3) 0;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+  }
+
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-family: var(--f-ui);
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: var(--s2) var(--s2) var(--s2);
+    border-bottom: 1px solid var(--rule-soft);
+    background: var(--surface-2);
+  }
+  caption b { color: var(--ink); font-weight: 600; }
+
+  th {
+    font-family: var(--f-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: right;
+    color: var(--muted);
+    padding: var(--s2) var(--s2);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+  th:first-child { text-align: left; }
+
+  td {
+    padding: 0.5rem var(--s2);
+    text-align: right;
+    border-bottom: 1px solid var(--rule-soft);
+    white-space: nowrap;
+    color: var(--ink-soft);
+  }
+  td:first-child {
+    text-align: left;
+    font-family: var(--f-ui);
+    color: var(--ink);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  tr.flag td { background: var(--neg-bg); color: var(--ink); }
+  tr.ok td { background: var(--pos-bg); color: var(--ink); }
+
+  .n-bad { color: var(--neg); font-weight: 500; }
+  .n-good { color: var(--pos); font-weight: 500; }
+
+  /* ---------- regime split: the centrepiece ---------- */
+
+  .regimes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: var(--s4) 0;
+  }
+
+  .regime { padding: var(--s3); background: var(--surface); }
+  .regime.pos { background: var(--pos-bg); }
+  .regime.neg { background: var(--neg-bg); }
+
+  .regime .sign {
+    font-family: var(--f-mono);
+    font-size: 1.9rem;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: var(--s1);
+  }
+  .regime.pos .sign { color: var(--pos); }
+  .regime.neg .sign { color: var(--neg); }
+  .regime.neu .sign { color: var(--muted); }
+
+  .regime h3 {
+    margin: 0 0 var(--s1);
+    font-size: 0.95rem;
+  }
+
+  .regime .mech {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin-bottom: var(--s2);
+  }
+
+  .regime ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--f-ui);
+    font-size: 0.82rem;
+  }
+  .regime li {
+    display: flex;
+    gap: var(--s1);
+    padding: 0.28rem 0;
+    border-top: 1px solid var(--rule-soft);
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .regime li .mark { flex: none; font-family: var(--f-mono); font-weight: 500; }
+  .regime li.on .mark { color: var(--pos); }
+  .regime li.off .mark { color: var(--neg); }
+  .regime.neg li.on .mark { color: var(--neg); }
+
+  /* ---------- pipeline ---------- */
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: var(--s3) 0;
+  }
+  .stage { background: var(--surface); padding: var(--s2) var(--s3) var(--s3); }
+  .stage .idx {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    display: block;
+    margin-bottom: var(--s1);
+  }
+  .stage .nm {
+    font-family: var(--f-ui);
+    font-weight: 600;
+    font-size: 0.86rem;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .stage .ds { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* ---------- scorecard ---------- */
+
+  .grade {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-weight: 500;
+    font-size: 0.78rem;
+    padding: 0.12em 0.5em;
+    border-radius: 3px;
+    border: 1px solid currentColor;
+  }
+  .g-a { color: var(--pos); }
+  .g-b { color: var(--accent); }
+  .g-c { color: var(--warn); }
+  .g-d { color: var(--neg); }
+
+  /* ---------- references ---------- */
+
+  .refs { font-size: 0.92rem; max-width: var(--measure); }
+  .refs li { margin-bottom: var(--s2); color: var(--ink-soft); }
+
+  .disclaimer {
+    border-top: 1px solid var(--rule);
+    margin-top: var(--s5);
+    padding-top: var(--s3);
+    font-size: 0.86rem;
+    color: var(--muted);
+    max-width: var(--measure);
+    font-family: var(--f-ui);
+  }
+
+  @media (max-width: 40rem) {
+    .wrap { padding: var(--s4) var(--s2) var(--s5); }
+    h2.sec { flex-direction: column; gap: var(--s1); }
+    body { font-size: 1rem; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>Working Paper · ALP-1</span>
+      <span>Microstructure &amp; Intraday Futures</span>
+      <span>v0.1 — Août 2026</span>
+    </div>
+    <h1>Gamma-Regime Conditioning</h1>
+    <p class="subtitle">Arbitrer entre continuation et réversion dans une pile de signaux discrétionnaires sur futures indiciels, et pourquoi le dimensionnement du stop décide de tout le reste.</p>
+    <div class="byline">Cartographie formelle, diagnostic quantitatif et protocole de falsification d'une stratégie intraday retail à sept couches.</div>
+  </header>
+
+  <div class="abstract">
+    <h2>Résumé</h2>
+    <p>Ce papier formalise ALP-1, une stratégie discrétionnaire intraday sur futures indiciels combinant sept couches d'analyse : théorie de Dow en journalier, supports/résistances, profil de volume, bandes VWAP en écarts-types, exposition gamma 0DTE, lecture du carnet d'ordres, et une grille de retracement de Fibonacci tracée sur la mèche de confirmation.</p>
+    <p>Nous établissons d'abord un résultat de référence : sous un mouvement brownien sans drift, l'espérance par trade vaut exactement <span class="math" style="display:inline;border:none;padding:0;background:none">−c/L</span>, la friction rapportée au risque nominal, <em class="term">indépendamment du ratio gain/risque retenu</em>. Aucun placement de barrières ne crée d'espérance ; seul un drift à l'entrée le peut. Ce résultat déplace la question centrale de « quel R:R viser ? » vers « quel drift mes couches produisent-elles, et la friction en laisse-t-elle quelque chose ? »</p>
+    <p>Appliqué au dimensionnement du stop spécifié dans la stack d'origine — 0,005 % à 0,010 % du niveau d'indice, soit 1 à 2 ticks sur ES — le diagnostic est net : la friction atteint 55 % à 110 % du risque nominal, et la probabilité d'être stoppé par le seul bruit dépasse 81 % en une minute. La stratégie est solide dans son architecture et fragile dans son paramétrage de risque.</p>
+    <p>Nous proposons ensuite un edge : le <strong>Gamma-Regime Conditioning</strong> (GRC), qui utilise le signe du gamma dealer net comme variable d'état arbitrant entre les moteurs de continuation et de réversion — deux moteurs qui, dans la stack d'origine, votent simultanément et se contredisent. Le GRC rétrodit une anomalie déjà observée empiriquement par l'opérateur, ce qui en constitue le premier test hors échantillon.</p>
+    <p class="keywords"><strong>Mots-clés</strong> — microstructure de marché ; gamma dealer ; 0DTE ; profil de volume ; VWAP ; coûts de transaction ; first-passage ; surajustement.</p>
+  </div>
+
+  <!-- ============ 1 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">1</span><span>Introduction et contribution</span></h2>
+
+    <p>ALP-1 est une stratégie discrétionnaire construite par accumulation : sept outils publics, empilés en confluence, avec une règle d'entrée fine et un stop très serré. C'est une architecture répandue chez les opérateurs retail sur futures, et elle est rarement formalisée — ce qui la rend impossible à valider ou à invalider.</p>
+
+    <p>Ce papier poursuit trois objectifs distincts, dans cet ordre :</p>
+
+    <ol>
+      <li><strong>Cartographier</strong> la stratégie : traduire chaque couche en un prédicat explicite sur des observables, de sorte qu'elle devienne backtestable.</li>
+      <li><strong>Diagnostiquer</strong> : identifier, chiffres à l'appui, quelle couche porte l'edge potentiel et quelle couche le détruit.</li>
+      <li><strong>Proposer</strong> un edge nouveau, dérivé des composants déjà présents, avec son protocole de falsification.</li>
+    </ol>
+
+    <p>La contribution principale n'est pas un signal supplémentaire. C'est l'identification d'une <em class="term">contradiction structurelle</em> dans la pile — deux moteurs incompatibles y tournent en permanence sans arbitre — et la proposition d'une variable d'état qui les départage sur une base mécanique plutôt que discrétionnaire.</p>
+
+    <p>Toutes les tables de ce papier sont produites par le module <code>alp1.report</code>, sous les hypothèses : contrat ES, niveau d'indice 6 000, écart-type une minute σ = 1,25 point, friction de référence 16,50 $ par aller-retour et par contrat (4,00 $ de commission plus un tick de slippage à la sortie).</p>
+  </section>
+
+  <!-- ============ 2 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">2</span><span>Formalisation de la pile</span></h2>
+
+    <p>La stack telle que décrite s'exécute en cascade, du filtre le plus lent au plus rapide. Chaque étage est ici réduit à un prédicat.</p>
+
+    <div class="pipeline">
+      <div class="stage">
+        <span class="idx">D1</span>
+        <span class="nm">Dow</span>
+        <span class="ds">Clôture au-delà du corps de la veille → biais de continuation. Mèche dominante contre zone majeure → chercher le sens opposé.</span>
+      </div>
+      <div class="stage">
+        <span class="idx">D1→M1</span>
+        <span class="nm">S/R + Profil</span>
+        <span class="ds">Profil de volume sur la dernière accumulation. Entrée en LVN adossée à une HVN, du bon côté du POC.</span>
+      </div>
+      <div class="stage">
+        <span class="idx">M1</span>
+        <span class="nm">VWAP ± k·SD</span>
+        <span class="ds">Réversion aux bandes 1,5 / 2,0 / 2,5. La bande 3,0 est exclue par règle empirique.</span>
+      </div>
+      <div class="stage">
+        <span class="idx">M1</span>
+        <span class="nm">Carnet</span>
+        <span class="ds">Confirmation par durcissement de la liquidité longue à l'approche ; détection du retrait de taille.</span>
+      </div>
+      <div class="stage">
+        <span class="idx">0DTE</span>
+        <span class="nm">GEX</span>
+        <span class="ds">Confirmation des zones et placement du take-profit sur les murs gamma.</span>
+      </div>
+      <div class="stage">
+        <span class="idx">Exéc.</span>
+        <span class="nm">Fib sur mèche</span>
+        <span class="ds">Retracement tracé sur la mèche de confirmation ; ordre limite en zone OTE, stop très serré.</span>
+      </div>
+    </div>
+
+    <h3>2.1 Ce que la formalisation révèle immédiatement</h3>
+
+    <p>Une fois les couches écrites côte à côte, deux problèmes apparaissent qui n'étaient pas visibles dans la formulation narrative.</p>
+
+    <div class="prop crit">
+      <span class="tag">Problème 1 — Contradiction de moteurs</span>
+      <p>La couche Dow est un moteur de <strong>continuation</strong> : elle affirme que le prix persiste au-delà d'un niveau. La couche VWAP ± k·SD est un moteur de <strong>réversion</strong> : elle affirme que le prix revient vers sa moyenne pondérée. Les deux tournent en permanence et votent sur le même trade. Quand ils s'accordent, c'est une coïncidence de configuration, pas une confirmation — leurs modèles sous-jacents du monde sont incompatibles. Sans variable qui décide lequel est actif, le score de confluence agrège des signaux qui se neutralisent.</p>
+    </div>
+
+    <div class="prop warn">
+      <span class="tag">Problème 2 — Une couche non falsifiable</span>
+      <p>La lecture du carnet via un flux vidéo gratuit sur YouTube ne peut être ni horodatée, ni enregistrée, ni rejouée. Cette couche est donc structurellement exclue de tout backtest : son apport à l'espérance est indécidable, dans un sens comme dans l'autre. Ce n'est pas un jugement sur la valeur informationnelle du carnet — celle-ci est bien documentée — mais sur l'impossibilité de la mesurer dans cette infrastructure.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">3</span><span>Résultat de référence : l'identité d'espérance nulle</span></h2>
+
+    <p>Avant d'évaluer une quelconque couche, il faut établir ce que le placement des barrières peut et ne peut pas accomplir. Soit un stop à distance <code>a</code>, un take-profit à distance <code>b</code>, et <code>R = b/a</code>. Sous un mouvement brownien sans drift, la probabilité d'atteindre le target avant le stop est donnée par la ruine du joueur :</p>
+
+    <div class="math">
+      <span class="lbl">Probabilité d'atteinte, drift nul</span>
+      P(TP avant SL) = a / (a + b) = 1 / (R + 1)
+    </div>
+
+    <p>Ce nombre est exactement le hit rate d'équilibre sans friction pour ce même R. Autrement dit, sur un marché sans drift, viser 2R ou 20R conduit rigoureusement à la même espérance. Le choix du R:R déplace le curseur fréquence/amplitude le long d'une courbe d'espérance constante, il ne la déplace pas vers le haut.</p>
+
+    <p>En introduisant la friction <code>c</code> (aller-retour, en points), avec <code>f = c/a</code> la friction rapportée au risque nominal, l'espérance par trade s'écrit :</p>
+
+    <div class="math">
+      <span class="lbl">Espérance par trade, en multiples de risque</span>
+      E[R] = p·(R − f) − (1 − p)·(1 + f)
+    </div>
+
+    <p>En y substituant <code>p = 1/(R+1)</code>, le résultat se simplifie de manière remarquable :</p>
+
+    <div class="math">
+      <span class="lbl">Substitution</span>
+      E[R] = [R − f − R·(1 + f)] / (R + 1)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= −f·(1 + R) / (R + 1)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>−f</strong>
+    </div>
+
+    <div class="prop crit">
+      <span class="tag">Proposition 1</span>
+      <p>Sous un mouvement brownien sans drift, l'espérance par trade vaut exactement <strong>−c/L</strong>, la friction rapportée au risque nominal, <strong>quel que soit le ratio gain/risque retenu</strong>. Chercher un R:R plus élevé ne dilue pas le coût de transaction. La friction est un prélèvement forfaitaire par trade, invariant au réglage des barrières.</p>
+      <p>Corollaire opérationnel : la seule variable qui peut rendre la stratégie profitable est le <strong>drift à l'entrée</strong>. Toute la valeur des sept couches se réduit à une question mesurable — produisent-elles, à l'instant de l'entrée, un µ ≠ 0 suffisant pour dépasser <code>c/L</code> ?</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 1</b> — Vérification numérique de la Proposition 1. Stop 0,010 %, friction de référence. La dernière colonne est constante.</caption>
+        <thead>
+          <tr><th>R:R</th><th>P(TP avant SL), µ=0</th><th>p* sans friction</th><th>p* avec friction</th><th>E[R] observée</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2</td><td>33,33 %</td><td>33,33 %</td><td>51,67 %</td><td class="n-bad">−0,550 R</td></tr>
+          <tr><td>3</td><td>25,00 %</td><td>25,00 %</td><td>38,75 %</td><td class="n-bad">−0,550 R</td></tr>
+          <tr><td>5</td><td>16,67 %</td><td>16,67 %</td><td>25,83 %</td><td class="n-bad">−0,550 R</td></tr>
+          <tr><td>10</td><td>9,09 %</td><td>9,09 %</td><td>14,09 %</td><td class="n-bad">−0,550 R</td></tr>
+          <tr><td>20</td><td>4,76 %</td><td>4,76 %</td><td>7,38 %</td><td class="n-bad">−0,550 R</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>La stratégie « brutal forcing » — accepter un taux d'échec élevé en chassant un multiple de R exceptionnel — n'échappe donc pas à la friction par sa structure. Elle n'y échappe que si le drift est réel au moment précis de l'entrée.</p>
+  </section>
+
+  <!-- ============ 4 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">4</span><span>Diagnostic : le stop est le point de rupture</span></h2>
+
+    <p>La spécification d'origine place le stop entre 0,005 % et 0,010 % du niveau d'indice. Sur ES à 6 000, cela produit des distances qu'il faut regarder en ticks pour saisir l'ordre de grandeur.</p>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 2</b> — Traduction du stop en points, ticks et dollars. Le tick ES vaut 0,25 point / 12,50 $. Les deux premières lignes correspondent à la spécification d'origine.</caption>
+        <thead>
+          <tr><th>Stop (% indice)</th><th>Points</th><th>Ticks</th><th>Risque nominal $</th></tr>
+        </thead>
+        <tbody>
+          <tr class="flag"><td>0,005 %</td><td>0,30</td><td class="n-bad">1,2</td><td>15,00</td></tr>
+          <tr class="flag"><td>0,010 %</td><td>0,60</td><td class="n-bad">2,4</td><td>30,00</td></tr>
+          <tr><td>0,050 %</td><td>3,00</td><td>12,0</td><td>150,00</td></tr>
+          <tr><td>0,100 %</td><td>6,00</td><td>24,0</td><td>300,00</td></tr>
+          <tr><td>0,250 %</td><td>15,00</td><td>60,0</td><td>750,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Un stop de 1,2 tick est <em class="term">inférieur à la largeur du spread bid/ask</em>, qui vaut un tick sur ES en séance. Le stop est donc placé à l'intérieur du bruit de cotation lui-même. Deux conséquences se cumulent.</p>
+
+    <h3>4.1 La friction dépasse le risque</h3>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 3</b> — Friction rapportée au risque nominal <code>c/L</code>. Optimiste : 2,00 $ + 0,5 tick. Référence : 4,00 $ + 1 tick. Réaliste : 4,00 $ + 2 ticks.</caption>
+        <thead>
+          <tr><th>Stop</th><th>Risque $</th><th>c/L optimiste</th><th>c/L référence</th><th>c/L réaliste</th></tr>
+        </thead>
+        <tbody>
+          <tr class="flag"><td>0,005 %</td><td>15,00</td><td>0,55</td><td class="n-bad">1,10</td><td class="n-bad">1,93</td></tr>
+          <tr class="flag"><td>0,010 %</td><td>30,00</td><td>0,28</td><td class="n-bad">0,55</td><td class="n-bad">0,97</td></tr>
+          <tr><td>0,050 %</td><td>150,00</td><td>0,06</td><td>0,11</td><td>0,19</td></tr>
+          <tr class="ok"><td>0,100 %</td><td>300,00</td><td>0,03</td><td class="n-good">0,06</td><td>0,10</td></tr>
+          <tr class="ok"><td>0,250 %</td><td>750,00</td><td>0,01</td><td class="n-good">0,02</td><td>0,04</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>À 0,005 %, la friction de référence représente <strong>110 % du risque nominal</strong> : chaque perdant coûte plus du double du stop affiché, et chaque gagnant en restitue l'équivalent. Sous l'hypothèse réaliste, elle atteint 193 %. Par la Proposition 1, cela signifie une espérance de −1,10 R par trade en l'absence de drift.</p>
+
+    <h3>4.2 Le bruit seul déclenche le stop</h3>
+
+    <p>Indépendamment de toute direction, la probabilité qu'un brownien touche une barrière à distance <code>a</code> sur un horizon <code>T</code> suit le principe de réflexion : <code>P ≈ 2·(1 − Φ(a/σ√T))</code>.</p>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 4</b> — Probabilité d'être stoppé par le seul bruit, sans drift adverse, σ(1 min) = 1,25 pt.</caption>
+        <thead>
+          <tr><th>Stop</th><th>Points</th><th>1 min</th><th>5 min</th><th>15 min</th><th>30 min</th></tr>
+        </thead>
+        <tbody>
+          <tr class="flag"><td>0,005 %</td><td>0,30</td><td class="n-bad">81,0 %</td><td class="n-bad">91,5 %</td><td>95,1 %</td><td>96,5 %</td></tr>
+          <tr class="flag"><td>0,010 %</td><td>0,60</td><td class="n-bad">63,1 %</td><td class="n-bad">83,0 %</td><td>90,1 %</td><td>93,0 %</td></tr>
+          <tr><td>0,050 %</td><td>3,00</td><td>1,6 %</td><td>28,3 %</td><td>53,5 %</td><td>66,1 %</td></tr>
+          <tr class="ok"><td>0,100 %</td><td>6,00</td><td class="n-good">0,0 %</td><td class="n-good">3,2 %</td><td>21,5 %</td><td>38,1 %</td></tr>
+          <tr class="ok"><td>0,250 %</td><td>15,00</td><td class="n-good">0,0 %</td><td class="n-good">0,0 %</td><td>0,2 %</td><td>2,8 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prop crit">
+      <span class="tag">Résultat 2 — Le diagnostic central</span>
+      <p>À 0,005 %, le trade a <strong>81 % de chances d'être stoppé dans la première minute par le bruit pur</strong>, avant même qu'une thèse directionnelle ait eu le temps de se réaliser. La qualité des sept couches d'analyse en amont devient largement sans objet : le résultat est décidé par la microstructure sur une échelle de temps où le signal n'a pas encore d'effet.</p>
+    </div>
+
+    <h3>4.3 Le drift requis, et pourquoi il est hors d'atteinte</h3>
+
+    <p>On peut inverser la question : quel drift µ faut-il, à l'instant de l'entrée, pour que le trade soit à l'équilibre malgré la friction ? Le tableau suivant résout numériquement cette équation à R:R = 3.</p>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 5</b> — Drift requis pour une espérance nulle, R:R = 3, friction de référence. L'IR est un ordre de grandeur : le nombre d'écarts-types de déplacement que le signal doit prévoir sur l'horizon du trade.</caption>
+        <thead>
+          <tr><th>Stop</th><th>Stop pts</th><th>TP pts</th><th>µ requis (pts/min)</th><th>Horizon (min)</th><th>IR requis</th></tr>
+        </thead>
+        <tbody>
+          <tr class="flag"><td>0,005 %</td><td>0,30</td><td>0,90</td><td class="n-bad">1,7498</td><td>0,2</td><td class="n-bad">0,70</td></tr>
+          <tr class="flag"><td>0,010 %</td><td>0,60</td><td>1,80</td><td class="n-bad">0,4419</td><td>1,4</td><td class="n-bad">0,41</td></tr>
+          <tr><td>0,050 %</td><td>3,00</td><td>9,00</td><td>0,0187</td><td>60,0</td><td>0,12</td></tr>
+          <tr class="ok"><td>0,100 %</td><td>6,00</td><td>18,00</td><td class="n-good">0,0047</td><td>60,0</td><td class="n-good">0,03</td></tr>
+          <tr class="ok"><td>0,250 %</td><td>15,00</td><td>45,00</td><td class="n-good">0,0008</td><td>60,0</td><td class="n-good">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>À 0,005 %, il faut un drift de 1,75 point par minute — soit un ratio d'information de l'ordre de 0,70 sur l'horizon du trade. Aucun signal construit sur des données publiques et exécuté avec une latence retail n'atteint ce niveau de façon reproductible. À 0,050 %, l'exigence tombe à 0,12, ce qui entre dans le domaine du plausible pour un filtre de confluence bien construit.</p>
+
+    <div class="prop">
+      <span class="tag">Recommandation 1 — Normalisation du stop à la volatilité</span>
+      <p>Remplacer le stop en pourcentage fixe par un stop proportionnel à la volatilité réalisée : <code>a = k · σ(1 min)</code>, avec k entre 1,5 et 3. Un pourcentage fixe est aveugle au régime : la même distance représente un stop confortable à VIX 12 et un stop instantané à VIX 40. Cette seule modification fait passer <code>c/L</code> de 0,55 à 0,09 et l'IR requis de 0,41 à environ 0,12.</p>
+      <p>Contrepartie assumée : à budget de risque constant, la taille de position baisse. C'est précisément l'attrait du stop serré — il autorise un levier élevé. Mais ce levier s'achète en déplaçant la stratégie vers un domaine (qualité de fill, position dans la file d'attente, latence) où un opérateur retail est structurellement désavantagé.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 6</b> — Budget de risque constant de 300 $. Le stop serré multiplie la taille, donc la friction totale, sans réduire l'exigence de hit rate.</caption>
+        <thead>
+          <tr><th>Configuration</th><th>Stop pts</th><th>Contrats</th><th>Friction totale $</th><th>c/L</th><th>p* @ R=3</th></tr>
+        </thead>
+        <tbody>
+          <tr class="flag"><td>Serré 0,010 %</td><td>0,60</td><td>10</td><td class="n-bad">165,00</td><td>0,55</td><td class="n-bad">38,8 %</td></tr>
+          <tr><td>Serré 0,050 %</td><td>3,00</td><td>2</td><td>33,00</td><td>0,11</td><td>27,8 %</td></tr>
+          <tr><td>Vol-normalisé 1,5σ</td><td>1,88</td><td>3</td><td>49,50</td><td>0,18</td><td>29,4 %</td></tr>
+          <tr class="ok"><td>Vol-normalisé 3σ</td><td>3,75</td><td>1</td><td class="n-good">16,50</td><td>0,09</td><td class="n-good">27,2 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>À budget de risque identique, la configuration serrée paie <strong>dix fois</strong> la friction de la configuration normalisée, pour un hit rate d'équilibre supérieur de 11,6 points. Il n'existe aucun arbitrage favorable dans ce sens.</p>
+  </section>
+
+  <!-- ============ 5 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">5</span><span>L'edge proposé : Gamma-Regime Conditioning</span></h2>
+
+    <p>Revenons au Problème 1. Deux moteurs contradictoires tournent en permanence, et rien ne dit lequel est actif. Le gamma dealer net fournit cet arbitre — et il n'est pas choisi arbitrairement : il correspond à un flux de couverture mécanique et contraint.</p>
+
+    <p>Les teneurs de marché en options couvrent leur exposition en delta de façon continue. Le sens de cette couverture dépend du signe de leur gamma net, et ce sens détermine si leur activité <em class="term">amortit</em> ou <em class="term">amplifie</em> le mouvement du sous-jacent.</p>
+
+    <div class="regimes">
+      <div class="regime pos">
+        <div class="sign">Γ &gt; 0</div>
+        <h3>Régime de réversion</h3>
+        <p class="mech">Les dealers sont longs gamma. Ils couvrent à contre-tendance : ils vendent dans la hausse et achètent dans la baisse. La volatilité réalisée est comprimée et le prix est épinglé autour des gros strikes.</p>
+        <ul>
+          <li class="on"><span class="mark">✓</span><span>Fade des bandes VWAP ± k·SD</span></li>
+          <li class="on"><span class="mark">✓</span><span>Réversion LVN vers le POC</span></li>
+          <li class="off"><span class="mark">✕</span><span>Continuation Dow</span></li>
+          <li class="off"><span class="mark">✕</span><span>Cassure de range</span></li>
+          <li class="on"><span class="mark">→</span><span>TP : POC / VWAP</span></li>
+        </ul>
+      </div>
+
+      <div class="regime neg">
+        <div class="sign">Γ &lt; 0</div>
+        <h3>Régime de momentum</h3>
+        <p class="mech">Les dealers sont courts gamma. Ils couvrent dans le sens du mouvement : ils achètent la hausse et vendent la baisse. La volatilité est amplifiée et les mouvements s'auto-entretiennent.</p>
+        <ul>
+          <li class="on"><span class="mark">✓</span><span>Continuation Dow</span></li>
+          <li class="on"><span class="mark">✓</span><span>Cassure de range</span></li>
+          <li class="off"><span class="mark">✕</span><span>Fade des bandes VWAP</span></li>
+          <li class="off"><span class="mark">✕</span><span>Réversion LVN</span></li>
+          <li class="on"><span class="mark">→</span><span>TP : mur gamma opposé</span></li>
+        </ul>
+      </div>
+
+      <div class="regime neu">
+        <div class="sign">Γ ≈ 0</div>
+        <h3>Zone de transition</h3>
+        <p class="mech">Le spot est au voisinage du flip level. Le signe du gamma est instable, la volatilité réalisée s'étend et les deux playbooks échouent simultanément.</p>
+        <ul>
+          <li class="off"><span class="mark">✕</span><span>Toutes couches désactivées</span></li>
+          <li class="off"><span class="mark">✕</span><span>Aucune entrée</span></li>
+          <li><span class="mark">→</span><span>L'absence de position est une position</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>5.1 Le GRC rétrodit une anomalie déjà observée</h3>
+
+    <p>L'argument le plus fort en faveur de cette hypothèse n'est pas théorique. La spécification d'origine contient cette note empirique, formulée avant toute considération de gamma :</p>
+
+    <blockquote style="margin:var(--s3) 0;padding-left:var(--s3);border-left:2px solid var(--rule);color:var(--ink-soft);font-style:italic;max-width:var(--measure)">
+      « chercher acheter / vendre en SD 1.5 / 2 / 2.5 / 3 — à éviter car très gros swipe and close »
+    </blockquote>
+
+    <p>Un balayage de la bande SD3 suivi d'une clôture au-delà est exactement le comportement canonique du gamma dealer négatif : le mouvement qui atteint un extrême statistique déclenche une couverture qui le prolonge au lieu de le contrer. L'opérateur avait donc identifié empiriquement un cas particulier — <em class="term">ne pas fader SD3</em> — d'une règle plus générale : <strong>ne pas fader en gamma négatif, quelle que soit la bande</strong>.</p>
+
+    <div class="prop">
+      <span class="tag">Hypothèse H1 — testable</span>
+      <p>Le taux de réussite des entrées de type réversion sur bande VWAP est significativement plus élevé les jours où le gamma dealer net est positif que les jours où il est négatif. Symétriquement, le taux de réussite des entrées de continuation Dow est plus élevé en gamma négatif.</p>
+      <p>Falsification : si la différence de taux de réussite entre les deux régimes n'est pas significative sur un échantillon suffisant (§7), le GRC n'apporte rien et doit être abandonné.</p>
+    </div>
+
+    <p>Cette structure — une règle empirique isolée qui se révèle être le cas particulier d'un mécanisme plus large — est le motif habituel d'un edge réel. Elle fournit aussi un premier test hors échantillon gratuit : l'observation SD3 a été faite indépendamment de la théorie qui l'explique.</p>
+
+    <h3>5.2 Ce que le GRC change dans la pile</h3>
+
+    <p>Le GRC n'ajoute pas une huitième couche qui voterait avec les autres. Il agit <em class="term">en amont</em>, comme portail : une couche désactivée par le régime ne peut pas contribuer au score de confluence, même si son signal brut est présent. La différence est essentielle — elle supprime les configurations où Dow et VWAP « se confirment » alors qu'ils modélisent des mondes incompatibles.</p>
+
+    <p>Le gamma passe ainsi d'un usage périphérique (placement du take-profit) à la variable d'état la plus structurante de la pile. C'est, dans la stack d'origine, la ressource la plus sous-exploitée par rapport à sa qualité théorique.</p>
+  </section>
+
+  <!-- ============ 6 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">6</span><span>Deux reformulations secondaires</span></h2>
+
+    <h3>6.1 Du carnet au Liquidity Persistence Ratio</h3>
+
+    <p>L'intuition d'origine sur le carnet est correcte et bien fondée : la taille affichée n'est pas de l'information fiable, car une partie est retirée avant d'être touchée. Il manque une mesure. On propose :</p>
+
+    <div class="math">
+      <span class="lbl">Liquidity Persistence Ratio</span>
+      LPR = taille restante au contact / taille affichée 30 s avant le contact
+    </div>
+
+    <ul>
+      <li><strong>LPR ≳ 0,7</strong> — la liquidité tient à l'approche : absorption réelle, le niveau peut contenir le prix.</li>
+      <li><strong>LPR ≲ 0,3</strong> — la taille est retirée à l'approche : leurre. Le niveau cède probablement, et le signal est <em class="term">inverse</em> de son apparence.</li>
+    </ul>
+
+    <p>Cela transforme une lecture visuelle en variable scalaire, donc backtestable. Mais cela ne résout pas le Problème 2 : le calcul exige un flux L2 horodaté et enregistrable. C'est la principale dépense d'infrastructure à envisager si cette couche doit être conservée autrement que comme confort psychologique.</p>
+
+    <h3>6.2 Fibonacci sur mèche : un optimiseur d'exécution, pas un signal</h3>
+
+    <p>C'est la couche que l'opérateur identifie comme sa contribution propre, et l'évaluation mérite d'être précise plutôt que expéditive.</p>
+
+    <p>En tant que <em class="term">signal directionnel</em>, les niveaux de Fibonacci ne disposent d'aucun fondement documenté : les tests publiés n'établissent pas de pouvoir prédictif au-delà de ce que produit n'importe quelle grille de retracement, effet de niveaux ronds inclus. Sur ce terrain, la couche ne tient pas.</p>
+
+    <p>Mais ce n'est pas ainsi qu'elle est utilisée. Dans ALP-1, la grille n'est tracée qu'<em class="term">après</em> que la confluence a validé le setup, et elle sert uniquement à placer un ordre limite. C'est une question d'exécution, et elle s'évalue comme telle :</p>
+
+    <div class="math">
+      <span class="lbl">Gain d'exécution de l'entrée OTE</span>
+      Δ = taux_de_remplissage × R_OTE − R_entrée_marché
+    </div>
+
+    <div class="prop">
+      <span class="tag">Hypothèse H2 — testable</span>
+      <p>L'entrée limite en zone OTE produit un Δ &gt; 0 face à une entrée au marché au moment du signal. L'amélioration du prix d'entrée compense le coût des signaux jamais remplis.</p>
+      <p>C'est une hypothèse propre, mesurable, et indépendante de toute propriété mystique prêtée au nombre 0,618. Elle peut être vraie même si Fibonacci n'a aucun pouvoir prédictif — il suffit que la zone soit un bon compromis entre prix d'entrée et probabilité de remplissage. C'est, à notre sens, la partie la plus prometteuse de la contribution originale, à condition d'être testée sous cette forme.</p>
+    </div>
+  </section>
+
+  <!-- ============ 7 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">7</span><span>Notation de la stratégie</span></h2>
+
+    <p>Chaque couche est notée sur trois axes : fondement théorique, falsifiabilité dans l'infrastructure actuelle, et apport marginal estimé à l'espérance.</p>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 7</b> — Scorecard par couche. La note globale reflète le maillon le plus faible des trois axes, la couche n'étant utilisable qu'à hauteur de celui-ci.</caption>
+        <thead>
+          <tr><th>Couche</th><th>Fondement</th><th>Falsifiable</th><th>Apport</th><th>Note</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GEX 0DTE</td><td>Fort</td><td>Oui</td><td>Élevé (sous-exploité)</td>
+            <td><span class="grade g-a">A−</span></td>
+          </tr>
+          <tr>
+            <td>Profil de volume</td><td>Solide</td><td>Oui, si nœuds calculés</td><td>Moyen</td>
+            <td><span class="grade g-b">B+</span></td>
+          </tr>
+          <tr>
+            <td>VWAP ± k·SD</td><td>Solide</td><td>Oui</td><td>Moyen, conditionnel au régime</td>
+            <td><span class="grade g-b">B</span></td>
+          </tr>
+          <tr>
+            <td>Théorie de Dow (D1)</td><td>Moyen</td><td>Oui</td><td>Faible seul, utile en filtre</td>
+            <td><span class="grade g-b">B−</span></td>
+          </tr>
+          <tr>
+            <td>Fib wick (exécution)</td><td>Nul comme signal</td><td>Oui, si reformulé</td><td>Indéterminé, prometteur</td>
+            <td><span class="grade g-c">C+</span></td>
+          </tr>
+          <tr>
+            <td>Carnet / Bookmap</td><td>Fort</td><td class="n-bad">Non (flux vidéo)</td><td>Indécidable</td>
+            <td><span class="grade g-c">C</span></td>
+          </tr>
+          <tr class="flag">
+            <td>Dimensionnement du stop</td><td class="n-bad">Aveugle à la vol.</td><td>Oui</td><td class="n-bad">Négatif</td>
+            <td><span class="grade g-d">D</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prop warn">
+      <span class="tag">Synthèse de la notation</span>
+      <p><strong>L'architecture est meilleure que le paramétrage.</strong> La logique de confluence est saine, la hiérarchie des échelles de temps est cohérente, et le choix des outils dénote une compréhension réelle de la microstructure — le GEX et le profil de volume sont les deux meilleures briques disponibles à ce niveau d'accès aux données.</p>
+      <p>Le point de rupture est unique et localisé : <strong>la couche de risque</strong>. Un stop de 1 à 2 ticks place le résultat sous la domination du bruit et de la friction, quelle que soit la qualité de l'analyse en amont. C'est une bonne nouvelle sur le fond : le correctif est un paramètre, pas une refonte.</p>
+    </div>
+  </section>
+
+  <!-- ============ 8 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">8</span><span>Protocole de validation</span></h2>
+
+    <h3>8.1 Taille d'échantillon</h3>
+
+    <p>Avant d'affirmer qu'un edge existe, il faut pouvoir le distinguer du bruit. Pour un test unilatéral à 5 %, puissance 80 % : <code>N = (z_α + z_β)²·σ²/µ²</code>.</p>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 8</b> — Nombre de trades requis pour distinguer l'espérance de zéro. Le profil « convexe » correspond à l'approche brutal forcing : forte asymétrie, donc variance élevée, donc échantillon très long.</caption>
+        <thead>
+          <tr><th>Profil</th><th>E[R] / trade</th><th>σ(R)</th><th>N requis</th></tr>
+        </thead>
+        <tbody>
+          <tr class="ok"><td>Optimiste</td><td>0,30</td><td>1,50</td><td class="n-good">155</td></tr>
+          <tr><td>Modéré</td><td>0,20</td><td>1,50</td><td>348</td></tr>
+          <tr class="flag"><td>Marginal</td><td>0,10</td><td>1,80</td><td class="n-bad">2 004</td></tr>
+          <tr class="flag"><td>Convexe (lottery)</td><td>0,15</td><td>4,00</td><td class="n-bad">4 397</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Conséquence directement opérationnelle : une stratégie à forte convexité exige de l'ordre de <strong>4 400 trades</strong> avant que son P&amp;L cesse d'être indiscernable du hasard. En dessous, une série gagnante comme une série perdante n'apportent aucune information. C'est un argument supplémentaire, purement statistique, contre le profil brutal forcing : il est presque impossible à valider dans un délai raisonnable.</p>
+
+    <h3>8.2 Test multiple et surajustement</h3>
+
+    <p>Sept couches, chacune avec ses paramètres, engendrent un espace de configurations très vaste. En testant <code>n</code> variantes sans aucun edge réel, le meilleur Sharpe observé vaut approximativement <code>√(2·ln n / N)</code> par la seule sélection.</p>
+
+    <div class="tablewrap">
+      <table>
+        <caption><b>Table 9</b> — Seuil de Sharpe attendu sous H0 du seul fait de la sélection. Tout backtest en dessous de ce seuil est un artefact.</caption>
+        <thead>
+          <tr><th>Configurations testées</th><th>N = 200</th><th>N = 500</th><th>N = 1 000</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>10</td><td>0,152</td><td>0,096</td><td>0,068</td></tr>
+          <tr><td>100</td><td>0,215</td><td>0,136</td><td>0,096</td></tr>
+          <tr><td>1 000</td><td>0,263</td><td>0,166</td><td>0,118</td></tr>
+          <tr><td>10 000</td><td>0,303</td><td>0,192</td><td>0,136</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Règle pratique : consigner le nombre de configurations essayées <em class="term">avant</em> de regarder les résultats, et déflater le Sharpe en conséquence. Un backtest non déclaré comme n-ième essai n'a pas de valeur probante.</p>
+
+    <h3>8.3 Ordre des tests recommandé</h3>
+
+    <ol>
+      <li><strong>Corriger le stop d'abord.</strong> Passer à <code>k·σ</code> et re-mesurer. Toute autre optimisation menée sous le stop actuel mesure du bruit, pas des couches.</li>
+      <li><strong>Tester H1 (GRC)</strong> en isolation : partitionner les trades historiques par signe du gamma et comparer les taux de réussite par type de moteur.</li>
+      <li><strong>Tester H2 (OTE)</strong> comme question d'exécution pure : rejouer chaque signal en entrée marché et en entrée limite, comparer.</li>
+      <li><strong>Puis seulement</strong> mesurer l'apport marginal de chaque couche, une à la fois, en walk-forward — jamais en optimisation in-sample.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 9 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">9</span><span>Limites</span></h2>
+
+    <p>Ce papier est une analyse théorique et un protocole. Il ne comporte <strong>aucune validation empirique</strong> : aucune des hypothèses avancées n'a été testée sur données historiques, y compris le GRC.</p>
+
+    <ul>
+      <li>Le modèle brownien sous-jacent aux §3 et §4 sous-estime les queues de distribution et ignore le clustering de volatilité. Il tend donc à <em class="term">sous-estimer</em> la probabilité de stop-out sur stop serré — le diagnostic est conservateur, pas alarmiste.</li>
+      <li>Les chiffres de friction sont paramétriques. Un courtier moins cher ou une exécution passive systématique déplacent les seuils, sans changer les ordres de grandeur ni les conclusions.</li>
+      <li>Le GRC suppose que le gamma dealer net est estimable avec une précision suffisante. Les estimations publiques reposent sur des hypothèses d'attribution du sens des flux qui sont elles-mêmes contestables.</li>
+      <li>σ(1 min) = 1,25 pt est une valeur de séance typique ; elle varie fortement selon l'heure et le régime, ce qui est précisément l'argument en faveur d'un stop normalisé.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 10 ============ -->
+  <section>
+    <h2 class="sec"><span class="num">10</span><span>Références indicatives</span></h2>
+
+    <ol class="refs">
+      <li>Bailey, D. &amp; López de Prado, M. — <em>The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting and Non-Normality</em>. Sur la déflation du Sharpe en présence de tests multiples (§8.2).</li>
+      <li>Kyle, A. — <em>Continuous Auctions and Insider Trading</em>. Modèle de référence sur l'impact de marché et l'information dans le carnet.</li>
+      <li>Cont, R., Kukanov, A. &amp; Stoikov, S. — <em>The Price Impact of Order Book Events</em>. Fondement du pouvoir prédictif du déséquilibre de carnet à horizon court (§6.1).</li>
+      <li>Easley, D. &amp; O'Hara, M. — <em>Price, Trade Size, and Information in Securities Markets</em>. Sur le contenu informationnel du flux d'ordres.</li>
+      <li>Moskowitz, T., Ooi, Y. &amp; Pedersen, L. — <em>Time Series Momentum</em>. Fondement empirique des stratégies de continuation (§2, couche Dow).</li>
+      <li>Barbon, A. &amp; Buraschi, A. — <em>Gamma Fragility</em>. Sur l'effet du gamma des teneurs de marché sur la volatilité réalisée du sous-jacent (§5).</li>
+      <li>Steidlmayer, J. P. — <em>Markets and Market Logic</em>. Origine conceptuelle du profil de volume, du POC et de la notion d'acceptation (§2).</li>
+      <li>Bouchaud, J.-P., Farmer, J. D. &amp; Lillo, F. — <em>How Markets Slowly Digest Changes in Supply and Demand</em>. Sur l'impact permanent et la formation des prix.</li>
+    </ol>
+
+    <p style="font-size:0.88rem;color:var(--muted);font-family:var(--f-ui)">Ces références situent les mécanismes invoqués dans la littérature existante. Elles n'ont pas été re-vérifiées ligne à ligne pour ce document et doivent être consultées directement avant toute citation formelle.</p>
+  </section>
+
+  <div class="disclaimer">
+    <p><strong>Avertissement.</strong> Ce document est un travail de recherche méthodologique. Il ne constitue ni un conseil en investissement, ni une recommandation d'opérer, et ne comporte aucune promesse de performance. Les stratégies décrites n'ont fait l'objet d'aucune validation empirique. Le trading de futures avec effet de levier expose à un risque de perte supérieure au capital engagé ; la majorité des comptes retail actifs sur ces produits enregistre des pertes.</p>
+    <p style="margin-bottom:0">Toutes les tables sont reproductibles via <code>python -m alp1.report</code>. Le noyau de calcul est couvert par 29 tests unitaires, incluant la vérification analytique de la Proposition 1.</p>
+  </div>
+
+</div>
