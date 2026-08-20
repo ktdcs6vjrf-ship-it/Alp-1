@@ -1,4 +1,9 @@
-"""Génère les tables chiffrées du paper ALP-1.
+"""Tables chiffrées du paper ALP-1.
+
+Chaque table est décrite une seule fois, sous forme de données, puis rendue
+soit en texte (console), soit en HTML (document). Les chiffres du texte, des
+tables et des figures proviennent donc tous des mêmes fonctions du noyau : ils
+ne peuvent pas diverger.
 
 Usage :
     python -m alp1.report
@@ -7,23 +12,12 @@ Usage :
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass, field
 
 from .barriers import (
-    drift_to_information_ratio,
     prob_target_before_stop,
     prob_touch_single_barrier,
     required_drift,
-)
-from .stops import (
-    TradeGeometry,
-    be_expectancy_cost_r,
-    expectancy_r as managed_expectancy_r,
-    outcome_probabilities,
-    outcome_probabilities_fixed_stop,
-    required_conditional_lift,
-    sd_r,
-    sharpe_per_trade,
-    trades_for_t_stat,
 )
 from .costs import (
     COST_BASE,
@@ -31,385 +25,385 @@ from .costs import (
     COST_REALISTIC,
     ES,
     breakeven_hit_rate,
-    expectancy_r,
     deflated_threshold_sharpe,
-    required_reward_risk,
     stop_points,
-    trades_for_significance,
+)
+from .horizon import hurst_from_dispersions, outcome, outcome_scaled
+from .stops import (
+    TradeGeometry,
+    be_expectancy_cost_r,
+    expectancy_r as managed_expectancy_r,
+    outcome_probabilities,
+    required_conditional_lift,
+    sd_r,
+    sharpe_per_trade,
 )
 
-# Hypothèses de marché. ES vers 6000, volatilité 1-min typique en RTH.
+# --- Hypothèses de marché --------------------------------------------------
+
 INDEX_LEVEL = 6000.0
-SIGMA_1MIN = 1.25  # points; ~ATR(1m) 2.5 pts => sigma ~1.25
-STOP_GRID_PCT = (0.005, 0.010, 0.050, 0.100, 0.250)
+SIGMA_1MIN = 1.25            # points par racine de minute
+SESSION_DISPERSION = 60.0    # points sur une séance complète, soit 1,00 % de l'indice
+SESSION_MIN = 390.0
+HURST = hurst_from_dispersions(SIGMA_1MIN, SESSION_DISPERSION, SESSION_MIN)
 
-# Paramétrage courant : stop plancher 0,050 %, R:R 3, mise à BE au premier R.
-STOP_CURRENT_PCT = 0.050
-RR_CURRENT = 3.0
-BE_TRIGGER_R = 1.0
+STOP_PCT = 0.050
+RR_GRID = (20.0, 30.0)
+RESIDUAL_PCT = 0.005         # risque résiduel après remontée du stop
+FRICTION = COST_BASE.friction_points(ES)
+TRADES_PER_DAY = 2.0
+
+STOP_PTS = stop_points(INDEX_LEVEL, STOP_PCT)
+RESIDUAL_PTS = stop_points(INDEX_LEVEL, RESIDUAL_PCT)
 
 
-def _fmt(x: float, nd: int = 2) -> str:
-    if x is math.inf or x == math.inf:
-        return "∞"
-    return f"{x:,.{nd}f}"
+# --- Rendu -----------------------------------------------------------------
+
+def num(value: float, nd: int = 2, unit: str = "", signed: bool = False) -> str:
+    """Nombre à la française : virgule décimale, espace fine, vrai signe moins."""
+    if value == math.inf:
+        return "\u221e"
+    fmt = "{:+,.%df}" % nd if signed else "{:,.%df}" % nd
+    txt = (fmt.format(value).replace(",", "\u202f").replace(".", ",")
+           .replace("-", "\u2212"))
+    return txt + ("\u202f" + unit if unit else "")
 
 
-def table_stop_sizes() -> str:
-    rows = [
-        "| Stop (% indice) | Points | Ticks | Risque nominal $/contrat |",
-        "|---|---|---|---|",
-    ]
-    for pct in STOP_GRID_PCT:
-        pts = stop_points(INDEX_LEVEL, pct)
-        rows.append(
-            f"| {pct:.3f} % | {pts:.2f} | {ES.ticks(pts):.1f} | "
-            f"{pts * ES.point_value:,.2f} |"
+@dataclass
+class Table:
+    """Une table du paper : en-têtes, lignes déjà formatées, lecture."""
+
+    key: str
+    caption: str
+    headers: list[str]
+    rows: list[list[str]]
+    note: str = ""
+    wrap_last: bool = False
+    rules_after: list[int] = field(default_factory=list)
+
+    def to_text(self) -> str:
+        out = ["| " + " | ".join(self.headers) + " |",
+               "|" + "---|" * len(self.headers)]
+        out += ["| " + " | ".join(r) + " |" for r in self.rows]
+        if self.note:
+            out += ["", self.note]
+        return "\n".join(out).replace(" ", " ")
+
+    def to_html(self, number: int) -> str:
+        wrap = ' class="wrap"'
+        head = "".join(
+            "<th" + (wrap if self.wrap_last and i == len(self.headers) - 1 else "") +
+            f">{h}</th>" for i, h in enumerate(self.headers))
+        body = []
+        for i, r in enumerate(self.rows):
+            cls = ' class="sep"' if i in self.rules_after else ""
+            cells = "".join(f"<td>{c}</td>" for c in r)
+            body.append(f"<tr{cls}>{cells}</tr>")
+        note = (f'\n      <p class="note"><span class="lab">Lecture.</span> {self.note}</p>'
+                if self.note else "")
+        return (
+            '    <figure>\n'
+            f'      <figcaption><span class="lab">Table {number}</span> — {self.caption}</figcaption>\n'
+            '      <div class="scroll">\n'
+            '      <table>\n'
+            f'        <thead><tr>{head}</tr></thead>\n'
+            '        <tbody>\n'
+            + "\n".join(f'          {b}' for b in body) + '\n'
+            '        </tbody>\n'
+            '      </table>\n'
+            '      </div>'
+            f'{note}\n'
+            '    </figure>'
         )
-    return "\n".join(rows)
 
 
-def table_friction_ratio() -> str:
-    models = [
-        ("Optimiste", COST_OPTIMISTIC),
-        ("Base", COST_BASE),
-        ("Réaliste", COST_REALISTIC),
-    ]
+# --- Tables ----------------------------------------------------------------
+
+def table_assumptions() -> Table:
     rows = [
-        "| Stop (%) | Risque $ | " + " | ".join(f"c/L {n}" for n, _ in models) + " |",
-        "|---|---|" + "---|" * len(models),
+        ["Contrat", "ES",
+         f"{num(ES.point_value, 0)} $ le point, tick de {num(ES.tick_size, 2)} pt"],
+        ["Niveau d'indice", num(INDEX_LEVEL, 0), "référence de conversion des pourcentages"],
+        ["Volatilité à 1 min", num(SIGMA_1MIN, 2, "pt"), "écart-type du déplacement sur une minute"],
+        ["Dispersion de séance", num(SESSION_DISPERSION, 0, "pt"),
+         f"{num(100 * SESSION_DISPERSION / INDEX_LEVEL, 2)} % de l'indice, sur {num(SESSION_MIN, 0)} min"],
+        ["Exposant d'échelle H", num(HURST, 3), "impliqué par les deux dispersions ci-dessus"],
+        ["Stop", f"{num(STOP_PCT, 3)} %",
+         f"{num(STOP_PTS, 2)} pt, {num(ES.ticks(STOP_PTS), 0)} ticks, "
+         f"{num(STOP_PTS * ES.point_value, 0)} $ par contrat"],
+        ["Ratios visés", "1:20 à 1:30",
+         f"target {num(20 * STOP_PTS, 0)} à {num(30 * STOP_PTS, 0)} pt, soit "
+         f"{num(100 * 20 * STOP_PTS / INDEX_LEVEL, 2)} à "
+         f"{num(100 * 30 * STOP_PTS / INDEX_LEVEL, 2)} % de l'indice"],
+        ["Risque résiduel", f"{num(RESIDUAL_PCT, 3)} % ou 0 %",
+         f"{num(RESIDUAL_PTS, 2)} pt après remontée du stop ; ratio affiché jusqu'à 1:300"],
+        ["Friction de référence", num(FRICTION, 2, "pt"),
+         f"{num(COST_BASE.friction_usd(ES), 2)} $ par aller-retour et par contrat"],
     ]
-    for pct in STOP_GRID_PCT:
-        pts = stop_points(INDEX_LEVEL, pct)
-        risk = pts * ES.point_value
-        cells = []
-        for _, m in models:
-            cells.append(f"{m.friction_usd(ES) / risk:.2f}")
-        rows.append(f"| {pct:.3f} % | {risk:,.2f} | " + " | ".join(cells) + " |")
-    return "\n".join(rows)
+    return Table(
+        "assumptions", "Hypothèses de calcul. Toutes les tables et figures du document "
+        "en découlent, sans autre paramètre libre.",
+        ["Grandeur", "Valeur", "Détail"], rows, wrap_last=True,
+        note="L'exposant d'échelle n'est pas choisi : il est déterminé par la volatilité "
+             "à une minute et par la dispersion de la séance, deux quantités mesurables. "
+             "H = 0,5 correspondrait à une dispersion en racine du temps.")
 
 
-def table_breakeven() -> str:
-    rr_grid = (2.0, 3.0, 5.0, 10.0, 20.0)
-    rows = [
-        "| Stop (%) | c/L | " + " | ".join(f"p* @ R={r:g}" for r in rr_grid) + " |",
-        "|---|---|" + "---|" * len(rr_grid),
-    ]
-    for pct in STOP_GRID_PCT:
-        pts = stop_points(INDEX_LEVEL, pct)
-        risk = pts * ES.point_value
-        ratio = COST_BASE.friction_usd(ES) / risk
-        cells = [f"{100 * breakeven_hit_rate(r, ratio):.1f} %" for r in rr_grid]
-        rows.append(f"| {pct:.3f} % | {ratio:.2f} | " + " | ".join(cells) + " |")
-    rows.append("")
-    rows.append("Référence sans friction : p* = 1/(R+1) = " + ", ".join(
-        f"{100 / (r + 1):.1f} % (R={r:g})" for r in rr_grid
-    ))
-    return "\n".join(rows)
+def table_geometry() -> Table:
+    rows = []
+    for rr in (5.0, 10.0, 20.0, 30.0):
+        b = rr * STOP_PTS
+        o = outcome_scaled(STOP_PTS, b, SESSION_MIN, SIGMA_1MIN, HURST)
+        geom = TradeGeometry(STOP_PTS, b, FRICTION)
+        p0 = 1.0 / (rr + 1.0)
+        mu_star = FRICTION / o.expected_time
+        rows.append([
+            f"1:{rr:g}", num(b, 1), num(100 * p0, 2, "%"),
+            num(100 * breakeven_hit_rate(rr, geom.friction_ratio), 2, "%"),
+            num(100 * required_conditional_lift(geom), 2, "pt"),
+            num(100 * geom.friction_ratio, 1, "%"),
+            num(o.expected_time, 1),
+            num(mu_star * 60, 3),
+            num(FRICTION / (SIGMA_1MIN * math.sqrt(o.expected_time)), 3),
+        ])
+    return Table(
+        "geometry",
+        f"Exigence de signal par ratio gain/risque, stop {num(STOP_PCT, 3)} %. "
+        "Exposition et dérive requise sous contrainte de séance.",
+        ["R:R", "Target (pt)", "p₀", "p*", "Δp", "Δp / p₀", "E[τ∧T] (min)",
+         "µ* (pt/h)", "IR requis"],
+        rows,
+        note="p₀ est la fréquence de touche sous martingale, p* le seuil de rentabilité, "
+             "Δp l'écart entre les deux. La colonne Δp/p₀ est constante et vaut c/L : "
+             "l'amélioration <em>relative</em> exigée du signal ne dépend pas du ratio "
+             "retenu. Seule l'exigence absolue baisse, parce que la position reste "
+             "exposée plus longtemps pour une même friction.")
 
 
-def table_noise_stopout() -> str:
-    horizons = (1.0, 5.0, 15.0, 30.0)
-    rows = [
-        "| Stop (%) | Points | " + " | ".join(f"P(stop) {h:g} min" for h in horizons) + " |",
-        "|---|---|" + "---|" * len(horizons),
-    ]
-    for pct in STOP_GRID_PCT:
-        pts = stop_points(INDEX_LEVEL, pct)
-        cells = [
-            f"{100 * prob_touch_single_barrier(pts, SIGMA_1MIN, h):.1f} %"
-            for h in horizons
-        ]
-        rows.append(f"| {pct:.3f} % | {pts:.2f} | " + " | ".join(cells) + " |")
-    return "\n".join(rows)
+def table_friction() -> Table:
+    rows = []
+    models = [("Optimiste", COST_OPTIMISTIC), ("Référence", COST_BASE),
+              ("Réaliste", COST_REALISTIC)]
+    for name, m in models:
+        c = m.friction_points(ES)
+        geom = TradeGeometry(STOP_PTS, 20.0 * STOP_PTS, c)
+        o = outcome_scaled(STOP_PTS, 20.0 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, HURST)
+        rows.append([
+            name, num(m.friction_usd(ES), 2), num(c, 2),
+            num(c / STOP_PTS, 3),
+            num(100 * required_conditional_lift(geom), 2, "pt"),
+            num(c / o.expected_time * 60, 3),
+            num(c / (SIGMA_1MIN * math.sqrt(o.expected_time)), 3),
+        ])
+    return Table(
+        "friction",
+        "Sensibilité à l'exécution, au ratio 1:20. La friction est le seul poste "
+        "qui grève l'espérance de façon certaine.",
+        ["Scénario", "Friction ($)", "c (pt)", "c/L", "Δp", "µ* (pt/h)", "IR requis"],
+        rows,
+        note="Le scénario optimiste suppose une entrée passive — un ordre limite "
+             "qui est touché — et une sortie à un demi-tick. Il ne décrit donc que "
+             "les trades entrés sur repli, jamais ceux entrés au marché sur "
+             "cassure. Un même signal exécuté des deux façons ne relève pas de la "
+             "même ligne de cette table, et l'écart entre les deux extrêmes vaut un "
+             "facteur trois et demi sur l'exigence de signal.")
 
 
-def table_required_drift() -> str:
-    """Drift requis pour l'équilibre, à R:R = 3 fixe."""
-    rr = 3.0
-    fric_pts = COST_BASE.friction_points(ES)
-    rows = [
-        "| Stop (%) | Stop pts | TP pts | µ requis (pts/min) | Horizon méd. (min) | IR requis |",
-        "|---|---|---|---|---|---|",
-    ]
-    for pct in STOP_GRID_PCT:
-        a = stop_points(INDEX_LEVEL, pct)
-        b = rr * a
-        mu = required_drift(a, b, SIGMA_1MIN, fric_pts)
-        if mu is math.inf or mu == math.inf:
-            rows.append(f"| {pct:.3f} % | {a:.2f} | {b:.2f} | ∞ | — | ∞ |")
-            continue
-        # Horizon caractéristique : temps pour parcourir le stop au drift requis,
-        # borné par la diffusion.
-        horizon = max(0.25, (a / mu) if mu > 0 else 1.0)
-        horizon = min(horizon, 60.0)
-        ir = drift_to_information_ratio(mu, SIGMA_1MIN, horizon)
-        rows.append(
-            f"| {pct:.3f} % | {a:.2f} | {b:.2f} | {mu:.4f} | {horizon:.1f} | {ir:.2f} |"
-        )
-    return "\n".join(rows)
+def table_session_constraint() -> Table:
+    rows = []
+    for rr in (5.0, 10.0, 20.0, 30.0, 50.0):
+        b = rr * STOP_PTS
+        d = outcome(STOP_PTS, b, SESSION_MIN, SIGMA_1MIN)
+        s = outcome_scaled(STOP_PTS, b, SESSION_MIN, SIGMA_1MIN, HURST)
+        rows.append([
+            f"1:{rr:g}",
+            num(100 / (rr + 1.0), 2, "%"),
+            num(100 * d.p_target, 3, "%"), num(100 * d.p_open, 1, "%"), num(d.expected_time, 1),
+            num(100 * s.p_target, 3, "%"), num(100 * s.p_open, 1, "%"), num(s.expected_time, 1),
+        ])
+    return Table(
+        "session",
+        "Effet de la clôture de séance sur les issues, sous les deux lois "
+        "d'échelle. Colonnes « clôt. » : part des trades encore ouverts à la "
+        "clôture ; « E[τ] » : exposition moyenne en minutes.",
+        ["R:R", "p₀ sans limite", "P(TP) H=0,50", "clôt.", "E[τ]",
+         "P(TP) H=0,65", "clôt.", "E[τ]"],
+        rows,
+        note="Sous dispersion en racine du temps, un target à 1:30 est pratiquement "
+             "hors de portée d'une séance. Sous la loi d'échelle calibrée sur la "
+             "dispersion réellement observée, il reste atteignable dans les trois "
+             "quarts des cas où il le serait sans limite de durée. C'est cette "
+             "propriété du prix — et non le ratio lui-même — qui décide de la "
+             "faisabilité d'un 1:20 ou d'un 1:30.")
 
 
-def table_zero_drift_identity() -> str:
-    """Montre que sans drift, tout couple (stop, TP) a la même espérance nulle."""
-    rr_grid = (2.0, 3.0, 5.0, 10.0, 20.0)
-    a = stop_points(INDEX_LEVEL, 0.010)
-    rows = [
-        "| R:R | P(TP avant SL), µ=0 | p* sans friction | p* avec friction | E[R] à p=P(µ=0) |",
-        "|---|---|---|---|---|",
-    ]
-    risk = a * ES.point_value
-    ratio = COST_BASE.friction_usd(ES) / risk
-    for r in rr_grid:
-        p0 = prob_target_before_stop(a, r * a, 0.0, SIGMA_1MIN)
-        rows.append(
-            f"| {r:g} | {100 * p0:.2f} % | {100 / (r + 1):.2f} % | "
-            f"{100 * breakeven_hit_rate(r, ratio):.2f} % | "
-            f"{expectancy_r(p0, r, ratio):+.3f} R |"
-        )
-    return "\n".join(rows)
-
-
-def table_sizing_comparison() -> str:
-    """Compare stop serré à forte taille et stop normalisé à la volatilité."""
-    fric = COST_BASE.friction_usd(ES)
-    budget = 300.0  # risque $ par trade, constant
-
-    scenarios = [
-        ("Serré 0.010 %", stop_points(INDEX_LEVEL, 0.010)),
-        ("Serré 0.050 %", stop_points(INDEX_LEVEL, 0.050)),
-        ("Vol-normalisé 1.5σ(1m)", 1.5 * SIGMA_1MIN),
-        ("Vol-normalisé 3σ(1m)", 3.0 * SIGMA_1MIN),
-    ]
-    rows = [
-        "| Configuration | Stop pts | Contrats @300$ | Friction totale $ | c/L | p* @ R=3 |",
-        "|---|---|---|---|---|---|",
-    ]
-    for name, pts in scenarios:
-        risk_per_ct = pts * ES.point_value
-        n = max(1, int(budget / risk_per_ct))
-        total_fric = n * fric
-        ratio = fric / risk_per_ct
-        rows.append(
-            f"| {name} | {pts:.2f} | {n} | {total_fric:,.2f} | {ratio:.2f} | "
-            f"{100 * breakeven_hit_rate(3.0, ratio):.1f} % |"
-        )
-    return "\n".join(rows)
-
-
-def table_sample_size() -> str:
-    configs = [
-        ("Optimiste", 0.30, 1.50),
-        ("Modéré", 0.20, 1.50),
-        ("Marginal", 0.10, 1.80),
-        ("Convexe (lottery)", 0.15, 4.00),
-    ]
-    rows = [
-        "| Profil | E[R]/trade | σ(R) | N trades (80 % puissance) |",
-        "|---|---|---|---|",
-    ]
-    for name, mu, sd in configs:
-        rows.append(f"| {name} | {mu:.2f} | {sd:.2f} | {trades_for_significance(mu, sd):,} |")
-    return "\n".join(rows)
-
-
-def table_multiple_testing() -> str:
-    rows = [
-        "| Configurations testées | N=200 obs | N=500 obs | N=1000 obs |",
-        "|---|---|---|---|",
-    ]
-    for trials in (10, 100, 1000, 10000):
-        cells = [f"{deflated_threshold_sharpe(trials, n):.3f}" for n in (200, 500, 1000)]
-        rows.append(f"| {trials:,} | " + " | ".join(cells) + " |")
-    return "\n".join(rows)
-
-
-
-def _current_geometry(be: bool = True) -> TradeGeometry:
-    """Géométrie du paramétrage courant : stop 0,050 %, R:R 3, BE au premier R."""
-    a = stop_points(INDEX_LEVEL, STOP_CURRENT_PCT)
-    return TradeGeometry(
-        stop=a,
-        target=RR_CURRENT * a,
-        friction=COST_BASE.friction_points(ES),
-        be_trigger=(BE_TRIGGER_R * a) if be else None,
-    )
-
-
-def table_stop_migration() -> str:
-    """Ce que le passage de 0,010 % à 0,050 % change, poste par poste."""
-    c = COST_BASE.friction_points(ES)
-    rows = [
-        "| Grandeur | Stop 0,010 % | Stop 0,050 % | Facteur |",
-        "|---|---|---|---|",
-    ]
-    a_old = stop_points(INDEX_LEVEL, 0.010)
-    a_new = stop_points(INDEX_LEVEL, STOP_CURRENT_PCT)
-    g_old = TradeGeometry(a_old, RR_CURRENT * a_old, c)
-    g_new = TradeGeometry(a_new, RR_CURRENT * a_new, c)
-    mu_old = required_drift(a_old, RR_CURRENT * a_old, SIGMA_1MIN, c)
-    mu_new = required_drift(a_new, RR_CURRENT * a_new, SIGMA_1MIN, c)
-
-    def row(label, old, new, fmt="{:.3f}", ratio=True):
-        r = f"{old / new:.1f}×" if ratio and new else "—"
-        rows.append(f"| {label} | {fmt.format(old)} | {fmt.format(new)} | {r} |")
-
-    row("Stop (points)", a_old, a_new, "{:.2f}", ratio=False)
-    row("Stop (ticks ES)", ES.ticks(a_old), ES.ticks(a_new), "{:.1f}", ratio=False)
-    row("Friction / risque c/L", g_old.friction_ratio, g_new.friction_ratio)
-    row("Hit rate d'équilibre p*",
-        100 * breakeven_hit_rate(RR_CURRENT, g_old.friction_ratio),
-        100 * breakeven_hit_rate(RR_CURRENT, g_new.friction_ratio), "{:.1f} %", False)
-    row("Lift conditionnel requis Δp",
-        100 * required_conditional_lift(g_old),
-        100 * required_conditional_lift(g_new), "{:.2f} pt")
-    row("P(stop par le bruit, 5 min)",
-        100 * prob_touch_single_barrier(a_old, SIGMA_1MIN, 5.0),
-        100 * prob_touch_single_barrier(a_new, SIGMA_1MIN, 5.0), "{:.1f} %", False)
-    row("Ratio d'information requis (15 min)",
-        drift_to_information_ratio(mu_old, SIGMA_1MIN, 15.0),
-        drift_to_information_ratio(mu_new, SIGMA_1MIN, 15.0))
-    return "\n".join(rows)
-
-
-def table_be_distribution() -> str:
-    """Distribution des issues sous martingale, selon le niveau de mise à BE."""
-    geom = _current_geometry(be=False)
-    a = geom.stop
-    rows = [
-        "| Gestion | P(TP) | P(BE) | P(SL) | Hit rate affiché | E[R] | σ(R) | SR/trade |",
-        "|---|---|---|---|---|---|---|---|",
-    ]
-    variants = [("Stop fixe", None)] + [
-        (f"BE à +{k:g} R", k * a) for k in (0.5, 1.0, 1.5, 2.0)
-    ]
+def table_be_distribution() -> Table:
+    rows = []
+    b = 20.0 * STOP_PTS
+    variants = [("Stop fixe", None)] + [(f"BE à +{k:g} R", k * STOP_PTS)
+                                        for k in (1.0, 2.0, 4.0, 8.0)]
     for label, trig in variants:
-        g = TradeGeometry(geom.stop, geom.target, geom.friction, trig)
+        g = TradeGeometry(STOP_PTS, b, FRICTION, trig)
         o = outcome_probabilities(g, 0.0, SIGMA_1MIN)
-        rows.append(
-            f"| {label} | {100 * o.p_target:.1f} % | {100 * o.p_breakeven:.1f} % | "
-            f"{100 * o.p_stop:.1f} % | {100 * o.apparent_hit_rate:.1f} % | "
-            f"{managed_expectancy_r(g, 0.0, SIGMA_1MIN):+.3f} | "
-            f"{sd_r(g, 0.0, SIGMA_1MIN):.3f} | "
-            f"{sharpe_per_trade(g, 0.0, SIGMA_1MIN):+.4f} |"
-        )
-    rows.append("")
-    rows.append(
-        "E[R] et hit rate affiché sont invariants : la règle ne déplace que la "
-        "dispersion — et, l'espérance restant négative, elle dégrade le ratio."
-    )
-    return "\n".join(rows)
+        rows.append([
+            label,
+            num(100 * o.p_target, 2, "%"), num(100 * o.p_breakeven, 1, "%"),
+            num(100 * o.p_stop, 1, "%"), num(100 * o.apparent_hit_rate, 2, "%"),
+            num(managed_expectancy_r(g, 0.0, SIGMA_1MIN), 3, signed=True),
+            num(sd_r(g, 0.0, SIGMA_1MIN), 2),
+            num(sharpe_per_trade(g, 0.0, SIGMA_1MIN), 4, signed=True),
+        ])
+    return Table(
+        "be_dist",
+        "Distribution des issues selon le niveau de remontée du stop. "
+        "Ratio 1:20, aucune dérive, déclencheur non informatif.",
+        ["Gestion", "P(TP)", "P(BE)", "P(SL)", "Hit affiché", "E[R]", "σ(R)", "SR"],
+        rows,
+        note="Le taux de change de la règle se lit ligne à ligne : remonter le stop "
+             "au premier R ramène le taux de perte pleine de 95,2 % à 50,0 %, et "
+             "coûte pour cela près de la moitié des gagnants — de 4,76 % à 2,50 %. "
+             "Les deux mouvements se compensent exactement, dans toutes les lignes "
+             "et à toutes les décimales.")
 
 
-def table_be_cost_vs_drift() -> str:
-    """Coût de la mise à BE selon le drift conditionnel à la confirmation."""
-    geom = _current_geometry(be=True)
-    mu_be = required_drift(geom.stop, geom.target, SIGMA_1MIN, geom.friction)
-    rows = [
-        "| µ₂ / µ_eq | E[R] stop fixe | E[R] mise à BE | Coût de la règle | Verdict |",
-        "|---|---|---|---|---|",
+def table_displayed_rr() -> Table:
+    """Le ratio affiché après remontée du stop, à instant et target identiques."""
+    b = 30.0 * STOP_PTS
+    advance = STOP_PTS                     # le prix a progressé d'un R
+    d = b - advance                        # distance restante jusqu'au target
+    rows = []
+    variants = [
+        ("Stop initial", advance + STOP_PTS),
+        ("Point d'entrée", advance),
+        (f"{num(RESIDUAL_PCT, 3)} % sous le prix", RESIDUAL_PTS),
     ]
+    for label, r in variants:
+        displayed = d / r
+        effective = (d - FRICTION) / (r + FRICTION)
+        p = r / (r + d)
+        rows.append([
+            label, num(r, 2),
+            f"1:{num(displayed, 0)}", f"1:{num(effective, 0)}",
+            num(100 * p, 3, "%"), num(p * displayed, 3),
+            num(100 * prob_touch_single_barrier(r, SIGMA_1MIN, 5.0), 1, "%"),
+        ])
+    return Table(
+        "displayed",
+        "Le ratio affiché après remontée du stop. Même trade, même instant — le "
+        "prix a progressé d'un R —, même target à 1:30 depuis l'entrée ; seule la "
+        "position du stop change.",
+        ["Position", "Risque (pt)", "R:R affiché", "Après friction",
+         "P(TP)", "P × R:R", "Bruit 5′"],
+        rows,
+        note="La colonne P × R:R est le gain espéré de la branche gagnante, en "
+             "multiples du risque résiduel : elle vaut environ 1 dans les trois cas. "
+             "L'espérance du trade, fixée à l'entrée par la proposition 2, ne bouge "
+             "pas d'une ligne à l'autre. Les deux dernières colonnes chiffrent les "
+             "effets de second ordre, qui ne sont pas neutres.")
+
+
+def table_be_cost() -> Table:
+    b = 20.0 * STOP_PTS
+    geom = TradeGeometry(STOP_PTS, b, FRICTION, STOP_PTS)
+    mu_eq = required_drift(STOP_PTS, b, SIGMA_1MIN, FRICTION)
+    rows = []
     for k in (-1.0, -0.5, 0.0, 0.5, 1.0, 2.0, 3.0):
-        mu2 = k * mu_be
-        o_fix = outcome_probabilities_fixed_stop(geom, mu_be, SIGMA_1MIN, mu2)
-        a, b, c = geom.stop, geom.target, geom.friction
-        e_fix = (o_fix.p_target * (b - c) - o_fix.p_stop * (a + c)) / a
-        e_be = managed_expectancy_r(geom, mu_be, SIGMA_1MIN, mu2)
-        cost = be_expectancy_cost_r(geom, mu_be, SIGMA_1MIN, mu2)
-        verdict = "règle payante" if cost < -1e-9 else (
-            "neutre" if abs(cost) <= 1e-9 else "règle coûteuse")
-        rows.append(
-            f"| {k:+.1f} | {e_fix:+.4f} | {e_be:+.4f} | {cost:+.4f} | {verdict} |"
-        )
-    rows.append("")
-    rows.append(
-        "µ_eq est le drift d'équilibre du paramétrage courant. Le drift d'entrée "
-        "est maintenu à µ_eq ; seul le drift postérieur à la confirmation varie. "
-        "Le seuil de neutralité est exactement µ₂ = 0."
-    )
-    return "\n".join(rows)
+        mu2 = k * mu_eq
+        cost = be_expectancy_cost_r(geom, mu_eq, SIGMA_1MIN, mu2)
+        e_be = managed_expectancy_r(geom, mu_eq, SIGMA_1MIN, mu2)
+        verdict = ("règle payante" if cost < -1e-9
+                   else ("neutre" if abs(cost) <= 1e-9 else "règle coûteuse"))
+        rows.append([num(k, 1, signed=True), num(e_be + cost, 3, signed=True),
+                     num(e_be, 3, signed=True), num(cost, 3, signed=True), verdict])
+    return Table(
+        "be_cost",
+        "Coût en R de la remontée du stop selon la dérive postérieure à la "
+        "confirmation, en multiples de la dérive d'équilibre. Ratio 1:20, stop "
+        "remonté au premier R.",
+        ["µ₂ / µ*", "E[R] stop fixe", "E[R] avec BE", "Coût", "Verdict"],
+        rows,
+        note="La dérive d'entrée est maintenue à sa valeur d'équilibre ; seule la "
+             "dérive postérieure à la confirmation varie, de sorte que l'écart mesure "
+             "la règle et non le contenu informatif du déclencheur. Le seuil de "
+             "neutralité est exactement µ₂ = 0, et le coût croît sans borne avec la "
+             "qualité de la confirmation.")
 
 
-def table_required_lift() -> str:
-    """Lift conditionnel requis, Δp = p* − a/(a+b), par stop et par R:R."""
-    c = COST_BASE.friction_points(ES)
-    rr_grid = (2.0, 3.0, 5.0)
-    rows = [
-        "| Stop (%) | c/L | " + " | ".join(f"Δp @ R={r:g}" for r in rr_grid) + " |",
-        "|---|---|" + "---|" * len(rr_grid),
-    ]
-    for pct in (0.010, 0.050, 0.100, 0.250):
-        a = stop_points(INDEX_LEVEL, pct)
-        cells = [
-            f"{100 * required_conditional_lift(TradeGeometry(a, r * a, c)):.2f} pt"
-            for r in rr_grid
-        ]
-        ratio = c / a
-        rows.append(f"| {pct:.3f} % | {ratio:.3f} | " + " | ".join(cells) + " |")
-    rows.append("")
-    rows.append(
-        "Δp est le nombre de points de pourcentage que le signal doit ajouter à "
-        "la fréquence martingale a/(a+b) pour seulement rembourser la friction. "
-        "Forme fermée : Δp = (c/L)/(R+1)."
-    )
-    return "\n".join(rows)
+def table_validation() -> Table:
+    rows = []
+    o20 = outcome_scaled(STOP_PTS, 20.0 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, HURST)
+    mu_ref = FRICTION / o20.expected_time
+    for k in (1.5, 2.0, 3.0, 4.0):
+        mu = k * mu_ref
+        cells = [num(k, 1), num(mu * 60, 2)]
+        for rr in (10.0, 20.0, 30.0):
+            o = outcome_scaled(STOP_PTS, rr * STOP_PTS, SESSION_MIN, SIGMA_1MIN, HURST)
+            e = (mu * o.expected_time - FRICTION) / STOP_PTS
+            sr = e / (o.sd_gross / STOP_PTS)
+            if sr <= 0:
+                cells += ["—", "—"]
+                continue
+            n = (2.0 / sr) ** 2
+            cells += [num(e, 3, signed=True), num(n, 0)]
+        rows.append(cells)
+    return Table(
+        "validation",
+        "Trades requis pour atteindre un t-statistique de 2, selon la dérive "
+        "réellement captée à l'entrée et le ratio retenu.",
+        ["µ / µ*", "pt/h", "E[R] 1:10", "N", "E[R] 1:20", "N", "E[R] 1:30", "N"],
+        rows,
+        note=f"À {num(TRADES_PER_DAY, 0)} trades par séance, mille trades représentent "
+             "deux ans. Une dérive captée de deux points d'indice par heure — soit "
+             "trois centièmes de pour cent — suffit à rendre la géométrie rentable ; "
+             "la démontrer statistiquement demande davantage. Écart-type évalué sous "
+             "martingale, ce qui est l'approximation correcte au voisinage du seuil.")
 
 
-def table_validation_horizon() -> str:
-    """Trades et jours requis pour rendre un edge démontrable (t = 2)."""
-    geom_fix = _current_geometry(be=False)
-    geom_be = _current_geometry(be=True)
-    mu_be = required_drift(geom_fix.stop, geom_fix.target, SIGMA_1MIN, geom_fix.friction)
-    rows = [
-        "| Edge réel (µ/µ_eq) | E[R] fixe | N fixe | E[R] BE | N avec BE | Jours @ 2/j |",
-        "|---|---|---|---|---|---|",
-    ]
-    for k in (1.5, 2.0, 2.5, 3.0):
-        mu = k * mu_be
-        n_fix = trades_for_t_stat(geom_fix, mu, SIGMA_1MIN)
-        n_be = trades_for_t_stat(geom_be, mu, SIGMA_1MIN, mu)
-        fmt = lambda n: "∞" if n == math.inf else f"{n:,.0f}"
-        days = "—" if n_be == math.inf else f"{n_fix / 2:,.0f} / {n_be / 2:,.0f}"
-        rows.append(
-            f"| {k:.1f} | {managed_expectancy_r(geom_fix, mu, SIGMA_1MIN):+.4f} | "
-            f"{fmt(n_fix)} | {managed_expectancy_r(geom_be, mu, SIGMA_1MIN, mu):+.4f} | "
-            f"{fmt(n_be)} | {days} |"
-        )
-    rows.append("")
-    rows.append(
-        "Jours = stop fixe / avec mise à BE, à deux trades par séance. La règle "
-        "de BE n'allonge pas seulement la validation : elle peut la rendre "
-        "inatteignable dans le régime marginal."
-    )
-    return "\n".join(rows)
+def table_deflation() -> Table:
+    rows = []
+    for trials in (10, 50, 200, 1000):
+        rows.append([num(trials, 0)] +
+                    [num(deflated_threshold_sharpe(trials, n), 3)
+                     for n in (500, 1000, 2000)])
+    return Table(
+        "deflation",
+        "Sharpe par trade attendu du meilleur essai sous l'hypothèse nulle, "
+        "par nombre de configurations testées.",
+        ["Configurations testées", "N = 500", "N = 1 000", "N = 2 000"],
+        rows,
+        note="Un edge réel mais modeste produit un Sharpe par trade de l'ordre de "
+             "0,02 à 0,05 : il est indiscernable d'un artefact de sélection dès "
+             "quelques dizaines de configurations explorées. Le nombre de "
+             "configurations testées doit donc être fixé et consigné avant "
+             "l'analyse, et non compté après coup — un budget non consigné rend "
+             "cette table inutilisable, faute de connaître K.")
 
 
-SECTIONS = [
-    ("Taille du stop selon l'interprétation du pourcentage", table_stop_sizes),
-    ("Friction rapportée au risque nominal (c/L)", table_friction_ratio),
-    ("Hit rate d'équilibre p*", table_breakeven),
-    ("Probabilité de stop-out par le seul bruit", table_noise_stopout),
-    ("Identité d'espérance nulle sans drift", table_zero_drift_identity),
-    ("Drift requis pour l'équilibre (R:R = 3)", table_required_drift),
-    ("Stop serré à forte taille vs stop normalisé", table_sizing_comparison),
-    ("Migration du stop : 0,010 % vers 0,050 %", table_stop_migration),
-    ("Lift conditionnel requis", table_required_lift),
-    ("Mise à BE : distribution des issues sous martingale", table_be_distribution),
-    ("Mise à BE : coût selon le drift post-confirmation", table_be_cost_vs_drift),
-    ("Horizon de validation", table_validation_horizon),
-    ("Taille d'échantillon requise", table_sample_size),
-    ("Seuil de Sharpe sous test multiple", table_multiple_testing),
+TABLES = [
+    table_assumptions,
+    table_geometry,
+    table_friction,
+    table_session_constraint,
+    table_be_distribution,
+    table_displayed_rr,
+    table_be_cost,
+    table_validation,
+    table_deflation,
 ]
 
 
+def all_tables() -> dict[str, Table]:
+    return {t.key: t for t in (fn() for fn in TABLES)}
+
+
 def main() -> None:
-    print(f"ALP-1 — tables quantitatives")
-    print(f"Contrat {ES.symbol} | indice {INDEX_LEVEL:,.0f} | "
-          f"σ(1 min) = {SIGMA_1MIN} pts | friction base = "
-          f"{COST_BASE.friction_usd(ES):,.2f} $/AR\n")
-    for title, fn in SECTIONS:
-        print(f"\n### {title}\n")
-        print(fn())
+    print("ALP-1 — tables quantitatives")
+    print(f"ES · indice {num(INDEX_LEVEL, 0)} · σ(1 min) = {num(SIGMA_1MIN, 2)} pt · "
+          f"H = {num(HURST, 3)} · friction = {num(COST_BASE.friction_usd(ES), 2)} $/AR\n")
+    for i, fn in enumerate(TABLES, start=1):
+        t = fn()
+        print(f"\n### Table {i} — {t.caption}\n")
+        print(t.to_text())
 
 
 if __name__ == "__main__":

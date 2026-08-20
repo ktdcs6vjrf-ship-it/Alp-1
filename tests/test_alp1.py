@@ -24,6 +24,7 @@ from alp1.costs import (
     _norm_ppf,
     norm_cdf,
 )
+from alp1 import figures, horizon, paper, report
 from alp1.regime import GammaState, Regime, classify, playbook_for
 from alp1.stops import (
     TradeGeometry,
@@ -325,11 +326,10 @@ class TestStopManagement(unittest.TestCase):
         self.assertAlmostEqual(required_conditional_lift(g), expected, places=12)
 
     def test_required_lift_scales_inversely_with_stop_width(self):
-        """L'argument central du changement de paramétrage du stop.
+        """À R:R constant, Δp est proportionnel à c/a.
 
-        À R:R constant, Δp ∝ c/a : élargir le stop d'un facteur k divise le
-        lift conditionnel requis par ce même facteur k. Passer de 0,010 % à
-        0,050 % divise donc l'exigence par exactement cinq.
+        Élargir le stop d'un facteur k divise donc le lift conditionnel requis
+        par ce même facteur k, quel que soit le ratio gain/risque retenu.
         """
         tight = TradeGeometry(0.6, 1.8, self.C)   # 0,010 % d'un indice à 6000
         wide = TradeGeometry(3.0, 9.0, self.C)    # 0,050 %
@@ -358,3 +358,156 @@ class TestStopManagement(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestHorizon(unittest.TestCase):
+    """Premier passage sous contrainte de durée."""
+
+    SIGMA = 1.25
+    A, B = 3.0, 60.0
+
+    def test_optional_stopping_holds_under_time_cap(self):
+        # τ ∧ T est borné : E[X] doit être nul à la précision machine, quelle
+        # que soit la géométrie — c'est la Proposition 2 du paper.
+        for a, b, t in ((3.0, 60.0, 15.0), (3.0, 90.0, 390.0), (0.3, 90.0, 60.0),
+                        (6.0, 12.0, 5.0)):
+            with self.subTest(a=a, b=b, t=t):
+                o = horizon.outcome(a, b, t, self.SIGMA)
+                self.assertAlmostEqual(o.mean_gross, 0.0, places=9)
+
+    def test_probabilities_sum_to_one(self):
+        o = horizon.outcome(self.A, self.B, 90.0, self.SIGMA)
+        self.assertAlmostEqual(o.p_target + o.p_stop + o.p_open, 1.0, places=12)
+
+    def test_long_horizon_recovers_gamblers_ruin(self):
+        p_up, p_down, p_open = horizon.absorption_probabilities(
+            self.A, self.B, 1e7, 0.0, self.SIGMA)
+        self.assertAlmostEqual(p_up, self.A / (self.A + self.B), places=10)
+        self.assertAlmostEqual(p_open, 0.0, places=12)
+
+    def test_long_horizon_with_drift_matches_closed_form(self):
+        for mu in (-0.01, -0.002, 0.002, 0.01):
+            with self.subTest(mu=mu):
+                p_up, _, _ = horizon.absorption_probabilities(
+                    self.A, self.B, 1e7, mu, self.SIGMA)
+                self.assertAlmostEqual(
+                    p_up, prob_target_before_stop(self.A, self.B, mu, self.SIGMA),
+                    places=9)
+
+    def test_expected_time_converges_to_ab_over_variance(self):
+        for a, b in ((3.0, 60.0), (3.0, 9.0), (0.3, 90.0)):
+            with self.subTest(a=a, b=b):
+                self.assertAlmostEqual(
+                    horizon.expected_exit_time(a, b, 1e7, self.SIGMA),
+                    a * b / self.SIGMA**2, places=6)
+
+    def test_time_cap_reduces_target_probability(self):
+        short = horizon.outcome(self.A, self.B, 30.0, self.SIGMA)
+        long = horizon.outcome(self.A, self.B, 390.0, self.SIGMA)
+        self.assertLess(short.p_target, long.p_target)
+        self.assertGreater(short.p_open, long.p_open)
+
+    def test_exposure_saturates_with_distant_targets(self):
+        # Au-delà d'un certain éloignement, la séance décide de la sortie et
+        # l'exposition cesse de croître : c'est le coude de la Figure 4.
+        taus = [horizon.expected_exit_time(self.A, r * self.A, 390.0, self.SIGMA)
+                for r in (10, 20, 30, 50, 80)]
+        self.assertTrue(all(x <= y + 1e-9 for x, y in zip(taus, taus[1:])))
+        self.assertLess(taus[-1] - taus[-2], 0.05 * taus[-1])
+
+    def test_hurst_is_pinned_by_two_dispersions(self):
+        h = horizon.hurst_from_dispersions(1.25, 60.0, 390.0)
+        self.assertAlmostEqual(1.25 * 390.0**h, 60.0, places=9)
+        self.assertGreater(h, 0.5)
+
+    def test_scaled_reduces_to_diffusive_case(self):
+        ref = horizon.outcome(self.A, self.B, 390.0, self.SIGMA)
+        got = horizon.outcome_scaled(self.A, self.B, 390.0, self.SIGMA, 0.5)
+        self.assertAlmostEqual(got.p_target, ref.p_target, places=12)
+        self.assertAlmostEqual(got.expected_time, ref.expected_time, places=9)
+
+    def test_superdiffusive_scaling_makes_distant_targets_reachable(self):
+        h = horizon.hurst_from_dispersions(1.25, 60.0, 390.0)
+        diff = horizon.outcome(self.A, 90.0, 390.0, self.SIGMA)
+        scaled = horizon.outcome_scaled(self.A, 90.0, 390.0, self.SIGMA, h)
+        self.assertGreater(scaled.p_target, 50 * diff.p_target)
+        self.assertLess(scaled.expected_time, diff.expected_time)
+
+
+class TestMasterCriterion(unittest.TestCase):
+    """Dérive × exposition − friction : le critère de la Proposition 4."""
+
+    SIGMA = 1.25
+
+    def test_required_drift_matches_friction_over_exposure(self):
+        # µ* = c/E[τ] au premier ordre : on compare la racine exacte de
+        # l'équation d'espérance à la forme fermée cσ²/(ab).
+        for a, b in ((3.0, 60.0), (3.0, 90.0), (1.5, 30.0)):
+            with self.subTest(a=a, b=b):
+                c = 0.05                      # friction faible : régime local
+                exact = required_drift(a, b, self.SIGMA, c)
+                closed = c * self.SIGMA**2 / (a * b)
+                self.assertLess(abs(exact - closed) / closed, 0.05)
+
+    def test_information_ratio_closed_form(self):
+        a, b, c = 3.0, 60.0, 0.33
+        tau = a * b / self.SIGMA**2
+        self.assertAlmostEqual(c / (self.SIGMA * math.sqrt(tau)),
+                               c / math.sqrt(a * b), places=12)
+
+    def test_relative_lift_is_invariant_in_reward_risk(self):
+        a, c = 3.0, 0.33
+        for rr in (2.0, 5.0, 20.0, 30.0, 100.0):
+            with self.subTest(rr=rr):
+                geom = TradeGeometry(a, rr * a, c)
+                p0 = 1.0 / (rr + 1.0)
+                self.assertAlmostEqual(
+                    required_conditional_lift(geom) / p0, c / a, places=12)
+
+    def test_displayed_ratio_times_probability_is_bounded(self):
+        # Proposition 6 : le produit vaut d/(r+d) et tend vers 1.
+        d = 87.0
+        for r in (6.0, 3.0, 0.3, 0.05):
+            with self.subTest(r=r):
+                p = r / (r + d)
+                self.assertAlmostEqual(p * (d / r), d / (r + d), places=12)
+                self.assertLess(p * (d / r), 1.0)
+
+
+class TestReportAndPaper(unittest.TestCase):
+    """Cohérence des tables, des figures et du document produit."""
+
+    def test_all_tables_are_well_formed(self):
+        for key, table in report.all_tables().items():
+            with self.subTest(table=key):
+                self.assertTrue(table.rows)
+                for row in table.rows:
+                    self.assertEqual(len(row), len(table.headers))
+                    for cell in row:
+                        self.assertNotIn("nan", cell.lower())
+                        self.assertNotIn("None", cell)
+
+    def test_figures_are_well_formed_svg(self):
+        import xml.etree.ElementTree as ET
+
+        for key, svg in figures.render_all().items():
+            with self.subTest(figure=key):
+                root = ET.fromstring(svg)
+                self.assertIn("viewBox", root.attrib)
+                self.assertIn("aria-label", root.attrib)
+                # Aucune couleur en dur : les marques passent par les jetons CSS.
+                self.assertNotIn("#", svg.split(">", 1)[1])
+
+    def test_paper_builds_without_leftover_placeholders(self):
+        html = paper.build()
+        self.assertNotIn("{{", html)
+        self.assertEqual(html.count('<span class="lab">Table '), len(report.TABLES))
+        self.assertEqual(html.count('<span class="lab">Figure '), len(figures.ALL_FIGURES))
+
+    def test_paper_values_are_consistent_with_tables(self):
+        v = paper.values()
+        # Le lift relatif cité dans le texte est bien c/L.
+        self.assertEqual(v["lift_rel"], report.num(100 * report.FRICTION / report.STOP_PTS, 1))
+        # Le ratio affiché cité dans le texte est celui de la Table 6.
+        table = report.all_tables()["displayed"]
+        self.assertIn("1:" + v["displayed_ratio"], [row[2] for row in table.rows])

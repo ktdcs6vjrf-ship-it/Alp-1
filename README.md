@@ -1,75 +1,100 @@
 # Alp-1
 
 Formalisation, diagnostic quantitatif et protocole de falsification d'une
-stratégie discrétionnaire intraday sur futures indiciels à sept couches.
+stratégie intraday sur futures indiciels à sept couches.
 
 Le paper complet : [`docs/alp1-paper.html`](docs/alp1-paper.html).
 
-## Verdict sur l'edge
+## Ce que contient ce dépôt
 
-**Le dossier ne démontre pas d'edge, et ne peut pas en démontrer un : il ne
-contient aucune mesure empirique.** Il contient autre chose — un théorème qui
-élimine une classe entière de fausses pistes, l'identification du paramètre
-réellement décisif, une hypothèse d'edge rendue falsifiable, et un protocole
-capable de la tuer en quelques jours de travail sur données publiques.
+Une analyse **analytique**, sans donnée de marché. Elle délimite l'espace dans
+lequel un edge peut exister pour cette stratégie et chiffre ce qu'il devrait
+valoir ; elle n'établit pas qu'il existe. Aucun test empirique n'a été conduit.
 
-## Le résultat central, et son extension
+## Le résultat structurant
 
-Sous un mouvement brownien sans drift, l'espérance par trade vaut exactement
-`−c/L` — la friction rapportée au risque nominal — **quel que soit le ratio
-gain/risque retenu**. Par le théorème d'arrêt optionnel, cette valeur est
-**préservée par toute règle d'arrêt** : mise à breakeven, stop suiveur, prises
-partielles. Le taux de réussite affiché est lui aussi invariant.
+Sous un prix sans dérive, l'espérance nette par trade vaut exactement `−c/L` —
+la friction rapportée au risque nominal — quels que soient le placement des
+barrières et la règle de gestion du stop. C'est le théorème d'arrêt optionnel :
+toute règle d'arrêt laisse `−c` par aller-retour. Le taux de réussite affiché
+est lui aussi invariant, et le ratio affiché sur le risque résiduel après
+remontée du stop est compensé exactement par sa probabilité de réalisation.
 
-Aucun schéma de gestion du stop ne crée d'espérance. Seul un drift conditionnel
-à l'entrée le peut.
+## Le critère maître
 
-## Ce que change le stop à 0,050 %
+Par l'identité de Wald, l'espérance nette d'un trade sous dérive `µ` vaut
 
-| Grandeur | Stop 0,010 % | Stop 0,050 % | Facteur |
+```
+E[résultat net] = µ · E[τ] − c
+```
+
+la dérive captée multipliée par la durée d'exposition, moins la friction. Toute
+décision de géométrie — largeur du stop, éloignement du target, remontée du
+stop, sortie à l'heure — n'agit que par l'exposition qu'elle produit. Il en
+découle trois seuils :
+
+| Grandeur | Forme fermée | Valeur au stop 0,050 % et R:R 1:20 |
+|---|---|---|
+| Dérive minimale rentable | `µ* = c/E[τ]` | 0,685 point d'indice par heure |
+| Ratio d'information requis | `IR* = c/√(ab)` | 0,049 (0,086 en friction réaliste) |
+| Lift relatif requis | `Δp/p₀ = c/L` | 11,0 %, **quel que soit le ratio visé** |
+
+Un ratio gain/risque élevé n'assouplit pas l'exigence de qualité du signal : il
+la déplace vers un événement plus rare. Ce qui baisse réellement, c'est
+l'exigence en ratio d'information, parce que la position reste exposée plus
+longtemps pour une même friction.
+
+## Ce que la séance change à un 1:20 – 1:30
+
+Un target à 1:20 sur un stop de 3 points est un déplacement de 60 points, soit
+1,00 % de l'indice. Son atteignabilité dépend d'une propriété mesurable du
+prix : la vitesse à laquelle sa dispersion croît avec l'horizon, `σ(T) = σ₁·T^H`.
+
+| Ratio | P(target) si `H = 0,50` | P(target) si `H = 0,65` | Exposition |
 |---|---|---|---|
-| Friction / risque `c/L` | 0,550 | 0,110 | 5,0× |
-| Lift conditionnel requis Δp | 13,75 pt | 2,75 pt | 5,0× |
-| P(stop par le bruit, 5 min) | 83,0 % | 28,3 % | — |
-| Ratio d'information requis (15 min) | 1,369 | 0,058 | 23,7× |
+| 1:20 | 0,76 % | 4,65 % | 28,9 min |
+| 1:30 | 0,02 % | 2,40 % | 35,0 min |
+| 1:50 | 0,00 % | 0,31 % | 38,2 min |
 
-L'ancien paramétrage exigeait du signal une capacité prédictive hors d'atteinte,
-indépendamment de la qualité des couches d'analyse. Le nouveau ramène l'exigence
-à un niveau modeste. **C'est la modification la plus productive apportée à la
-stratégie, et elle vaut davantage que l'ajout de n'importe quelle couche.**
+L'exposant `H = 0,65` n'est pas choisi : il est impliqué par la volatilité à une
+minute et par la dispersion d'une séance. Sous cette calibration, **1:20 est à
+l'intérieur de la portée d'une séance, 1:30 à sa limite**, et l'exposition
+sature au-delà — éloigner encore le target n'achète plus de temps de marché mais
+continue de diviser la probabilité d'y parvenir.
 
-## La mise à breakeven, et pourquoi elle est spécifiée à l'envers
+## La remontée du stop
 
-La règle est neutre en espérance **si et seulement si** le drift postérieur à la
-confirmation est exactement nul. Elle coûte dès qu'il est positif — c'est-à-dire
-précisément quand le signal fonctionne.
+Elle est neutre en espérance **si et seulement si** la dérive postérieure à la
+confirmation est exactement nulle, et coûte dès qu'elle est positive — c'est-à-
+dire précisément quand le signal fonctionne. Or le déclencheur retenu (mur de
+liquidité protecteur, prise de liquidité favorable en L2) est, par la logique
+qui le motive, un signal favorable.
 
-Or le déclencheur retenu (mur de liquidité protecteur, prise de liquidité
-favorable en L2) est, par la logique qui le motive, un signal favorable : il
-annonce un drift positif. La règle resserre donc le risque au moment où les
-probabilités viennent de s'améliorer, et multiplie par 5,5 la taille
-d'échantillon nécessaire à la validation.
-
-**Correctif proposé :** déclencher la mise à BE sur l'*invalidation* de la
+**Reformulation proposée :** déclencher la remontée sur l'*invalidation* de la
 confirmation — mur retiré avant d'être touché, absorption qui échoue, liquidité
-prise du côté opposé — et non sur la confirmation elle-même. Même information,
-même endroit du carnet, signe inversé. Le `Liquidity Persistence Ratio` du
-module `alp1.signals` fournit déjà la mesure.
+prise du côté opposé. Même information, même endroit du carnet, signe inversé.
+Le `Liquidity Persistence Ratio` du module `alp1.signals` fournit la mesure.
 
-## L'hypothèse d'edge — Gamma-Regime Conditioning
+Quant au ratio affiché après remontée, il est arithmétiquement exact et sans
+effet sur l'espérance : un 1:290 se paie d'une probabilité de réalisation de
+0,34 %, vaut 1:138 une fois la friction prise en compte, et laisse un risque
+résiduel que le seul bruit balaie dans 91 % des cas en cinq minutes.
 
-Le signe du gamma dealer net arbitre les deux moteurs contradictoires de la pile
-(Dow en continuation, VWAP ± k·SD en réversion). Objection principale, ajoutée
-en v0.2 : **un régime n'est pas un drift.** Le gamma prédit une propriété de la
-variance et de l'autocorrélation, pas une direction. Le GRC doit donc être testé
-comme variable de conditionnement — un différentiel de lift — contre un seuil
-explicite de 2,75 points (4,83 sous friction réaliste).
+## Le régime de gamma
+
+Le signe du gamma net prédit une propriété de la variance et de
+l'autocorrélation, non une direction : ce n'est pas un signal directionnel mais
+une variable de conditionnement. Son rôle testable est de conditionner la
+**géométrie** — l'exposant d'échelle `H`, donc l'atteignabilité des targets
+éloignés — et la prédiction se teste sans aucun signal d'entrée : `H(Γ < 0)`
+doit excéder `H(Γ > 0)`.
 
 ## Utilisation
 
 ```bash
-python main.py            # génère les tables quantitatives du paper
-python main.py --tests    # 46 tests unitaires du noyau
+python main.py            # tables quantitatives du paper
+python main.py --paper    # reconstruit docs/alp1-paper.html depuis le gabarit
+python main.py --tests    # 64 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -79,15 +104,21 @@ Aucune dépendance : stdlib uniquement, Python 3.11+.
 | Module | Rôle |
 |---|---|
 | `alp1/costs.py` | Friction, hit rate d'équilibre, taille d'échantillon, déflation du Sharpe |
-| `alp1/barriers.py` | First-passage brownien : survie du stop, P(TP avant SL), drift requis |
-| `alp1/stops.py` | Mise à breakeven : distribution des issues, coût, seuil de neutralité |
-| `alp1/regime.py` | Classification GRC et playbooks par régime |
+| `alp1/barriers.py` | Premier passage brownien sans limite de durée |
+| `alp1/horizon.py` | Premier passage sous contrainte de séance, loi d'échelle `σ₁·T^H` |
+| `alp1/stops.py` | Remontée du stop : distribution des issues, coût, seuil de neutralité |
+| `alp1/regime.py` | Classification par gamma dealer et playbooks par régime |
 | `alp1/signals.py` | Les 7 couches formalisées en prédicats testables |
-| `alp1/report.py` | Génération des tables du paper |
+| `alp1/report.py` | Tables chiffrées du paper |
+| `alp1/figures.py` | Figures SVG du paper |
+| `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
+
+Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
+injectés par le code de l'autre. Un chiffre du texte et le point correspondant
+d'une figure ne peuvent pas diverger.
 
 ## Statut
 
-Analyse théorique et protocole. **Aucune validation empirique** — le GRC comme
-les autres hypothèses restent à tester sur données historiques, dans l'ordre
-indiqué au §7.5 du paper. Ce dépôt ne constitue pas un conseil en investissement
-et ne comporte aucune affirmation de performance.
+Analyse théorique et protocole. **Aucune validation empirique.** Ce dépôt ne
+constitue pas un conseil en investissement et ne comporte aucune affirmation de
+performance.

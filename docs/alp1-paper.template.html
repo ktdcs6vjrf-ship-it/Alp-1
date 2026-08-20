@@ -1,0 +1,733 @@
+<title>Invariance des barrières ALP-1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:  #FFFFFF;
+    --ink:    #101010;
+    --soft:   #3A3A3A;
+    --muted:  #6A6A6A;
+    --rule:   #101010;
+    --hair:   #C9C9C9;
+    --wash:   #F4F4F2;
+
+    --serif: "Source Serif 4", "Times New Roman", Times, serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --measure: 40rem;
+{{TOKENS_LIGHT}}  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12120F;
+      --ink:   #ECEAE4;
+      --soft:  #C4C1B9;
+      --muted: #8E8B84;
+      --rule:  #ECEAE4;
+      --hair:  #45433E;
+      --wash:  #1B1B17;
+{{TOKENS_DARK}}    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12120F; --ink: #ECEAE4; --soft: #C4C1B9;
+    --muted: #8E8B84; --rule: #ECEAE4; --hair: #45433E; --wash: #1B1B17;
+{{TOKENS_DARK}}  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    line-height: 1.62;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    -webkit-font-smoothing: antialiased;
+    counter-reset: section;
+  }
+
+  .sheet {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 6rem;
+  }
+
+  /* ---------- bloc de titre ---------- */
+
+  .titleblock { text-align: center; margin-bottom: 2.6rem; }
+
+  .venue {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.8rem;
+    font-variant-numeric: lining-nums;
+  }
+
+  h1 {
+    font-size: 1.72rem;
+    font-weight: 600;
+    line-height: 1.22;
+    letter-spacing: -0.008em;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+  }
+
+  .byline { font-size: 1rem; margin: 0 0 0.25rem; }
+  .affil  { font-size: 0.86rem; color: var(--muted); font-style: italic; margin: 0 0 0.2rem; }
+  .dateline { font-size: 0.86rem; color: var(--muted); font-variant-numeric: lining-nums; }
+
+  /* ---------- résumé ---------- */
+
+  .abstract {
+    margin: 2.4rem auto 2.8rem;
+    max-width: 34rem;
+    font-size: 0.95rem;
+    line-height: 1.58;
+    text-align: justify;
+    hyphens: auto;
+  }
+  .abstract h2 {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 0 0.9rem;
+    color: var(--soft);
+  }
+  .abstract h2::before { content: none; }
+  .abstract p { margin: 0 0 0.75rem; text-indent: 0; }
+  .keywords { font-size: 0.88rem; color: var(--soft); margin-top: 1.1rem; }
+  .keywords span { font-style: italic; }
+
+  hr.rule {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 2.2rem 0;
+  }
+
+  /* ---------- titres numérotés ---------- */
+
+  h2 {
+    counter-increment: section;
+    counter-reset: subsection;
+    font-size: 1.06rem;
+    font-weight: 600;
+    margin: 2.6rem 0 0.8rem;
+    line-height: 1.3;
+  }
+  h2::before {
+    content: counter(section) ".";
+    margin-right: 0.55em;
+    font-variant-numeric: lining-nums;
+  }
+
+  h3 {
+    counter-increment: subsection;
+    font-size: 0.98rem;
+    font-weight: 600;
+    font-style: italic;
+    margin: 1.9rem 0 0.55rem;
+    line-height: 1.35;
+  }
+  h3::before {
+    content: counter(section) "." counter(subsection);
+    margin-right: 0.55em;
+    font-style: normal;
+    font-variant-numeric: lining-nums;
+  }
+
+  .unnumbered { counter-increment: none; }
+  .unnumbered::before { content: none; }
+
+  p {
+    margin: 0 0 0.35rem;
+    text-align: justify;
+    hyphens: auto;
+  }
+  p + p { text-indent: 1.4em; }
+  h2 + p, h3 + p, .eq + p, table + p, .prop + p, ul + p, ol + p, figure + p {
+    text-indent: 0;
+    margin-top: 0.35rem;
+  }
+
+  em { font-style: italic; }
+  strong { font-weight: 600; }
+
+  ul, ol { margin: 0.6rem 0 0.9rem; padding-left: 1.5rem; }
+  li { margin-bottom: 0.42rem; text-align: justify; hyphens: auto; }
+  li::marker { color: var(--soft); }
+
+  /* ---------- équations centrées et numérotées ---------- */
+
+  .eq {
+    display: grid;
+    grid-template-columns: 3rem 1fr 3rem;
+    align-items: center;
+    margin: 1.25rem 0;
+    gap: 0.5rem;
+  }
+  .eq > .body {
+    grid-column: 2;
+    text-align: center;
+    font-size: 1.02rem;
+    line-height: 1.7;
+  }
+  .eq > .no {
+    grid-column: 3;
+    text-align: right;
+    color: var(--soft);
+    font-size: 0.92rem;
+    font-variant-numeric: lining-nums;
+  }
+
+  .v { font-style: italic; }
+  .op { margin: 0 0.28em; }
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: -0.55em;
+    text-align: center;
+    margin: 0 0.22em;
+    line-height: 1.18;
+    font-size: 0.94em;
+  }
+  .frac > span:first-child { border-bottom: 1px solid currentColor; padding: 0 0.3em 0.06em; }
+  .frac > span:last-child { padding: 0.06em 0.3em 0; }
+
+  /* ---------- propositions ---------- */
+
+  .prop {
+    margin: 1.3rem 0;
+    padding: 0.85rem 0 0.85rem 1rem;
+    border-left: 2px solid var(--rule);
+    font-size: 0.98rem;
+  }
+  .prop .lab {
+    font-weight: 600;
+    font-style: normal;
+    margin-right: 0.45em;
+  }
+  .prop p { font-style: italic; text-align: left; text-indent: 0; }
+  .prop p + p { margin-top: 0.5rem; }
+  .prop .proof {
+    font-style: normal;
+    font-size: 0.92rem;
+    color: var(--soft);
+    margin-top: 0.6rem;
+  }
+  .prop .proof .lab { font-style: italic; font-weight: 400; }
+
+  /* ---------- tableaux : filets noirs fins, sans réglure verticale ---------- */
+
+  figure { margin: 1.8rem 0; }
+
+  figcaption {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    text-align: center;
+    margin-bottom: 0.55rem;
+    color: var(--ink);
+  }
+  figcaption .lab {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+  }
+
+  .scroll { overflow-x: auto; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.86rem;
+    font-variant-numeric: lining-nums tabular-nums;
+    line-height: 1.4;
+  }
+  thead th {
+    font-weight: 600;
+    text-align: right;
+    padding: 0.42rem 0.5rem;
+    border-top: 1.1px solid var(--rule);
+    border-bottom: 0.6px solid var(--rule);
+    white-space: nowrap;
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  tbody td {
+    padding: 0.34rem 0.5rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 1.1px solid var(--rule); }
+  tbody tr.sep td { border-top: 0.6px solid var(--hair); }
+  td.wrap, th.wrap { white-space: normal; min-width: 11rem; }
+
+  .note {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--soft);
+    margin-top: 0.55rem;
+    text-align: justify;
+    hyphens: auto;
+  }
+  .note .lab { font-style: italic; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    font-variant-numeric: lining-nums;
+  }
+
+  /* ---------- références ---------- */
+
+  .refs { font-size: 0.88rem; line-height: 1.5; }
+  .refs ol { padding-left: 1.6rem; }
+  .refs li { margin-bottom: 0.5rem; text-align: left; }
+
+  .colophon {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 0.6px solid var(--hair);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--muted);
+    text-align: left;
+  }
+  .colophon p { text-align: left; text-indent: 0; }
+
+  /* ---------- impression ---------- */
+
+  @page { margin: 22mm 20mm; }
+
+  @media print {
+    :root { --paper: #FFF; --ink: #000; --rule: #000; --hair: #999; --soft: #333; --muted: #555; }
+    body { font-size: 10.5pt; }
+    .sheet { max-width: none; padding: 0; }
+    h2, h3 { break-after: avoid; }
+    figure, .prop, .eq { break-inside: avoid; }
+    .fig .band, .fig .hm, .fig .area, .fig .mesh { -webkit-print-color-adjust: exact;
+      print-color-adjust: exact; }
+  }
+
+{{FIGURE_CSS}}
+  @media (max-width: 34rem) {
+    .sheet { padding: 2.5rem 1.1rem 4rem; }
+    .eq { grid-template-columns: 0 1fr 2.2rem; }
+    p, li { text-align: left; }
+  }
+</style>
+
+
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="venue">Document de travail ALP-1 &nbsp;·&nbsp; Microstructure et futures indiciels</div>
+    <h1>Invariance des barrières, exposition au marché et seuil d'edge&nbsp;: analyse quantitative de la stratégie ALP-1</h1>
+    <p class="byline">Recherche ALP-1</p>
+    <p class="affil">Document de travail</p>
+    <p class="dateline">Août 2026</p>
+  </div>
+
+  <div class="abstract">
+    <h2 class="unnumbered">Résumé</h2>
+    <p>ALP-1 est une stratégie intraday sur futures indiciels combinant sept couches d'analyse. Son paramétrage de risque associe un stop de {{stop_pct}}&nbsp;% du niveau d'indice, des ratios gain/risque visés de 1:20 à 1:30, et une remontée conditionnelle du stop qui porte le ratio affiché jusqu'à 1:300. Ce papier en établit les propriétés analytiques et énonce le protocole capable de les confronter aux données.</p>
+    <p>Le résultat structurant est un théorème d'invariance. Sous un prix sans dérive, l'espérance nette d'un trade vaut exactement <span class="v">−c/L</span> — la friction rapportée au risque nominal — quels que soient le placement des barrières et la règle de gestion du stop. Le taux de réussite affiché est lui aussi invariant, ainsi que le produit du ratio affiché par sa probabilité de réalisation.</p>
+    <p>De ce théorème découle un critère unique, obtenu par l'identité de Wald&nbsp;: l'espérance nette vaut <span class="v">µ</span>·E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>, le produit de la dérive captée par la durée d'exposition, diminué de la friction. La géométrie du trade n'agit que par l'exposition qu'elle procure. Il en résulte trois conséquences chiffrées. L'amélioration <em>relative</em> exigée du signal est constante et vaut <span class="v">c/L</span>, soit {{lift_rel}}&nbsp;% quel que soit le ratio retenu. Le ratio d'information requis vaut <span class="v">c</span>/√(<span class="v">ab</span>) et tombe à {{ir20}} au ratio 1:20. Enfin, l'exposition sature&nbsp;: au-delà de 1:30, éloigner le target n'ajoute plus de temps de marché, tandis que la probabilité d'y parvenir continue de décroître.</p>
+    <p>La faisabilité d'un ratio élevé ne dépend donc pas du ratio lui-même mais d'une propriété mesurable du prix, la vitesse à laquelle sa dispersion croît avec l'horizon. Sous dispersion en racine du temps, un target à 1:30 est hors de portée d'une séance&nbsp;; sous la loi d'échelle calibrée sur la dispersion réellement observée, il est atteint dans {{ptp30}}&nbsp;% des cas. Quant à la remontée du stop, elle est neutre en espérance si et seulement si la dérive postérieure à la confirmation est nulle, et coûteuse dès qu'elle est positive.</p>
+    <p>Aucune mesure empirique n'est présentée ici. Les résultats sont analytiques et vérifiés numériquement&nbsp;; ils délimitent l'espace dans lequel un edge peut exister et chiffrent ce qu'il devrait valoir, sans établir qu'il existe.</p>
+    <p class="keywords"><span>Mots-clés —</span> microstructure de marché&nbsp;; théorème d'arrêt optionnel&nbsp;; premier passage&nbsp;; identité de Wald&nbsp;; coûts de transaction&nbsp;; loi d'échelle&nbsp;; gamma dealer&nbsp;; surajustement.</p>
+  </div>
+
+  <hr class="rule">
+
+  <h2>Introduction</h2>
+
+  <p>ALP-1 empile sept outils publics en confluence&nbsp;: théorie de Dow en journalier, supports et résistances, profil de volume, bandes VWAP en écarts-types, exposition gamma des teneurs de marché, lecture du carnet d'ordres, grille de Fibonacci sur mèche de confirmation. C'est une architecture répandue et rarement formalisée, ce qui la rend en pratique difficile à valider comme à invalider.</p>
+
+  <p>Ce papier ne propose pas une couche supplémentaire. Il délimite l'espace dans lequel un edge peut exister pour cette stratégie, mesure ce qu'il faudrait démontrer pour établir qu'il existe, et en déduit un protocole de test.</p>
+
+  <h3>Le paramétrage étudié</h3>
+
+  <p>Trois éléments définissent la gestion du risque, et il importe de ne pas les confondre&nbsp;:</p>
+
+  <ul>
+    <li><strong>Un stop de {{stop_pct}}&nbsp;%</strong> du niveau d'indice, soit {{stop_pts}} points ou {{stop_ticks}} ticks sur ES à {{index}}.</li>
+    <li><strong>Un ratio gain/risque visé de 1:20 à 1:30</strong>, soit un target à {{tgt20}} ou {{tgt30}} points — {{tgt20_pct}}&nbsp;% à {{tgt30_pct}}&nbsp;% du niveau d'indice.</li>
+    <li><strong>Une remontée conditionnelle du stop</strong>, déclenchée par une confirmation lue dans le flux d'ordres&nbsp;: apparition d'un mur de liquidité protecteur, ou prise de liquidité identifiée en L2. Le stop est porté au point d'entrée ou à {{residual_pct}}&nbsp;% sous le prix, ce qui porte le ratio affiché à 1:300 ou au-delà.</li>
+  </ul>
+
+  <p>Ces trois éléments relèvent de logiques distinctes. Le premier fixe la friction relative. Le deuxième fixe la durée d'exposition, et c'est par elle seule, nous le montrons, qu'une géométrie agit sur l'espérance. Le troisième appartient à la classe des règles d'arrêt, que le théorème d'invariance place hors du domaine où une espérance peut naître.</p>
+
+  <h3>Plan</h3>
+
+  <p>La section 2 pose le cadre formel. La section 3 démontre le théorème d'invariance et ses corollaires. La section 4 en tire le critère maître — dérive multipliée par exposition — et les seuils qui en découlent. La section 5 examine ce que la clôture de séance change pour un ratio de 1:20 à 1:30. La section 6 traite de la remontée du stop et du ratio affiché. La section 7 chiffre l'horizon de validation. La section 8 réexamine le conditionnement par le régime de gamma. La section 9 énonce le protocole de falsification, la section 10 les limites.</p>
+
+  <p>Toutes les tables et figures sont produites par le module <code>alp1.report</code> sous les hypothèses de la Table&nbsp;1, sans autre paramètre libre.</p>
+
+{{TABLE:assumptions}}
+
+  <h2>Cadre formel</h2>
+
+  <h3>Notation</h3>
+
+  <p>On note <span class="v">X<sub>t</sub></span> le déplacement du prix depuis le prix d'entrée, modélisé comme une diffusion arithmétique</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">X<sub>t</sub></span><span class="op">=</span><span class="v">µt</span><span class="op">+</span><span class="v">σW<sub>t</sub></span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">X</span><sub>0</sub><span class="op">=</span>0,</div>
+    <div class="no">(1)</div>
+  </div>
+
+  <p>où <span class="v">µ</span> est la dérive en points par minute, <span class="v">σ</span> la volatilité en points par racine de minute, et <span class="v">W</span> un mouvement brownien standard. Le trade est défini par trois distances en points&nbsp;: le stop <span class="v">a</span>&nbsp;&gt;&nbsp;0 sous l'entrée, le target <span class="v">b</span>&nbsp;&gt;&nbsp;0 au-dessus, et la friction aller-retour <span class="v">c</span>&nbsp;≥&nbsp;0. On pose <span class="v">R</span>&nbsp;=&nbsp;<span class="v">b</span>/<span class="v">a</span> le ratio gain/risque et <span class="v">L</span>&nbsp;=&nbsp;<span class="v">a</span> le risque nominal, de sorte que <span class="v">c/L</span> désigne la friction rapportée au risque.</p>
+
+  <p>Le résultat d'un trade est exprimé en multiples de <span class="v">L</span>, unité notée&nbsp;R. Un gagnant rapporte (<span class="v">b</span>&nbsp;−&nbsp;<span class="v">c</span>)/<span class="v">a</span>, un perdant coûte (<span class="v">a</span>&nbsp;+&nbsp;<span class="v">c</span>)/<span class="v">a</span>. L'espérance par trade s'écrit</p>
+
+  <div class="eq">
+    <div class="body">E[R]<span class="op">=</span><span class="v">p</span>&thinsp;(<span class="v">R</span><span class="op">−</span><span class="v">c/L</span>)<span class="op">−</span>(1<span class="op">−</span><span class="v">p</span>)&thinsp;(1<span class="op">+</span><span class="v">c/L</span>),</div>
+    <div class="no">(2)</div>
+  </div>
+
+  <p>et le taux de réussite d'équilibre, obtenu en annulant (2), vaut</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">p</span>*<span class="op">=</span><span class="frac"><span>1<span class="op">+</span><span class="v">c/L</span></span><span><span class="v">R</span><span class="op">+</span>1</span></span>.</div>
+    <div class="no">(3)</div>
+  </div>
+
+  <h3>Le trade comme problème de premier passage</h3>
+
+  <p>Pour un trade à barrières fixes et sans limite de durée, la probabilité d'atteindre le target avant le stop est donnée par la solution classique du problème de la ruine du joueur en temps continu&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">P</span><span class="op">=</span><span class="frac"><span>1<span class="op">−</span><span class="v">e</span><sup>−2<span class="v">µa</span>/<span class="v">σ</span>²</sup></span><span>1<span class="op">−</span><span class="v">e</span><sup>−2<span class="v">µ</span>(<span class="v">a</span>+<span class="v">b</span>)/<span class="v">σ</span>²</sup></span></span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">µ</span><span class="op">≠</span>0.</div>
+    <div class="no">(4)</div>
+  </div>
+
+  <p>Le passage à la limite <span class="v">µ</span>&nbsp;→&nbsp;0 donne <span class="v">p</span><sub>0</sub>&nbsp;=&nbsp;<span class="v">a</span>/(<span class="v">a</span>&nbsp;+&nbsp;<span class="v">b</span>), soit exactement 1/(<span class="v">R</span>&nbsp;+&nbsp;1)&nbsp;: le taux de réussite d'équilibre en l'absence de friction. Nous appellerons <em>fréquence martingale</em> cette valeur de référence.</p>
+
+  <h3>La clôture de séance</h3>
+
+  <p>Une stratégie intraday liquide ses positions avant la clôture. Le trade comporte donc une troisième issue&nbsp;: aucune barrière atteinte à l'horizon <span class="v">T</span>, et sortie au marché au prix courant. Le temps de sortie effectif est <span class="v">τ</span>&nbsp;∧&nbsp;<span class="v">T</span>. Cette issue est négligeable lorsque le target est proche&nbsp;; elle ne l'est plus aux ratios que nous étudions, et la section 5 lui est consacrée.</p>
+
+  <h3>La remontée du stop</h3>
+
+  <p>La confirmation d'orderflow est modélisée par un niveau déclencheur <span class="v">g</span>, avec 0&nbsp;&lt;&nbsp;<span class="v">g</span>&nbsp;&lt;&nbsp;<span class="v">b</span>&nbsp;: dès que le prix atteint <span class="v">g</span>, le stop est remonté. La propriété de Markov forte scinde le trade en deux phases&nbsp;: de l'entrée jusqu'à <span class="v">g</span> ou <span class="v">−a</span>, puis de <span class="v">g</span> jusqu'au target ou au stop déplacé. On note <span class="v">P</span><sub>1</sub> et <span class="v">P</span><sub>2</sub> les probabilités de succès de chaque phase, évaluées respectivement à la dérive d'entrée <span class="v">µ</span><sub>1</sub> et à la dérive <em>conditionnelle à la confirmation</em> <span class="v">µ</span><sub>2</sub>. Les trois issues ont pour probabilités</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">p</span><sub>TP</sub><span class="op">=</span><span class="v">P</span><sub>1</sub><span class="v">P</span><sub>2</sub>,<span class="op"></span>&nbsp;&nbsp;<span class="v">p</span><sub>BE</sub><span class="op">=</span><span class="v">P</span><sub>1</sub>(1<span class="op">−</span><span class="v">P</span><sub>2</sub>),<span class="op"></span>&nbsp;&nbsp;<span class="v">p</span><sub>SL</sub><span class="op">=</span>1<span class="op">−</span><span class="v">P</span><sub>1</sub>.</div>
+    <div class="no">(5)</div>
+  </div>
+
+  <p>La distinction entre <span class="v">µ</span><sub>1</sub> et <span class="v">µ</span><sub>2</sub> est le point méthodologique central de la section 6. Une confirmation d'orderflow ne se réduit pas à un progrès de prix&nbsp;: elle prétend apporter de l'information. Confondre les deux dérives reviendrait à juger la règle sur une modélisation qui lui refuse d'avance ce qu'elle revendique.</p>
+
+  <h2>Le théorème d'invariance</h2>
+
+  <h3>Barrières fixes</h3>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 1.</span> Sous <span class="v">µ</span>&nbsp;=&nbsp;0, l'espérance nette d'un trade à barrières fixes vaut exactement −<span class="v">c/L</span>, quels que soient <span class="v">a</span> et <span class="v">b</span>.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> En reportant <span class="v">p</span>&nbsp;=&nbsp;<span class="v">a</span>/(<span class="v">a</span>&nbsp;+&nbsp;<span class="v">b</span>) dans (2), les termes en <span class="v">R</span> s'annulent et il reste −<span class="v">c/L</span>. ∎</p>
+  </div>
+
+  <p>Le placement des barrières ne crée donc aucune espérance. Il déplace le compromis fréquence/amplitude le long d'une même courbe d'espérance nulle, dont la friction est un abaissement forfaitaire. La question «&nbsp;quel ratio viser&nbsp;?&nbsp;» n'a pas de réponse tant que la question «&nbsp;quelle dérive mon signal produit-il&nbsp;?&nbsp;» n'en a pas.</p>
+
+  <h3>Extension à toute règle de gestion</h3>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 2.</span> Soit <span class="v">τ</span> une règle d'arrêt quelconque, finie presque sûrement, appliquée à un prix sans dérive. L'espérance nette du trade vaut exactement −<span class="v">c</span>, indépendamment de la règle.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> Sous <span class="v">µ</span>&nbsp;=&nbsp;0, <span class="v">X</span> est une martingale. Toute règle opérant à l'intérieur d'une bande bornée par le stop initial et le target définit un temps d'arrêt borné en valeur&nbsp;; le théorème d'arrêt optionnel donne E[<span class="v">X<sub>τ</sub></span>]&nbsp;=&nbsp;<span class="v">X</span><sub>0</sub>&nbsp;=&nbsp;0. Le résultat brut est donc d'espérance nulle, et le résultat net s'en déduit en retranchant la friction, prélevée dans toutes les issues. ∎</p>
+  </div>
+
+  <p>La remontée du stop est une règle d'arrêt. Il en va de même du stop suiveur, des prises de bénéfice partielles, du renforcement en cours de position, de la sortie à l'heure et de toute combinaison de ces schémas. Aucun ne crée d'espérance&nbsp;; tous laissent −<span class="v">c</span> par aller-retour. Ils redistribuent la masse de probabilité entre les issues, rien de plus.</p>
+
+  <p>La Figure&nbsp;1 donne à voir cette propriété. À gauche, la surface d'espérance sur le plan (ratio, niveau de remontée du stop) est un plan horizontal situé à −<span class="v">c/L</span>&nbsp;: aucun réglage ne la déforme. À droite, la même surface sous une dérive positive s'incline dans les deux directions — c'est la dérive, et elle seule, qui rend les réglages significatifs.</p>
+
+{{FIGURE:plan|Surface d'espérance par trade sur le plan (ratio gain/risque, niveau de remontée du stop), stop {{stop_pct}} %. Sans dérive, la surface est un plan horizontal à −c/L. Sous une dérive supérieure au seuil d'équilibre, elle s'incline&nbsp;: l'espérance croît avec le ratio et avec la tardiveté de la remontée du stop.}}
+
+  <h3>Invariance du taux de réussite affiché</h3>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 3.</span> Sous <span class="v">µ</span>&nbsp;=&nbsp;0 et déclencheur non informatif, le taux de réussite affiché — gagnants rapportés aux seuls trades tranchés, les sorties à breakeven étant exclues du dénominateur — vaut <span class="v">a</span>/(<span class="v">a</span>&nbsp;+&nbsp;<span class="v">b</span>) quel que soit <span class="v">g</span>.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> Avec <span class="v">P</span><sub>1</sub>&nbsp;=&nbsp;<span class="v">a</span>/(<span class="v">a</span>&nbsp;+&nbsp;<span class="v">g</span>) et <span class="v">P</span><sub>2</sub>&nbsp;=&nbsp;<span class="v">g</span>/<span class="v">b</span>, le rapport <span class="v">p</span><sub>TP</sub>/(<span class="v">p</span><sub>TP</sub>&nbsp;+&nbsp;<span class="v">p</span><sub>SL</sub>) se simplifie en <span class="v">a</span>/(<span class="v">a</span>&nbsp;+&nbsp;<span class="v">b</span>). ∎</p>
+  </div>
+
+  <p>Conséquence pratique&nbsp;: la remontée du stop est invisible dans les deux statistiques qu'un opérateur consulte spontanément. Elle ne modifie ni l'espérance ni le taux de réussite affiché. Un journal de trading ne peut donc pas, en principe, révéler qu'elle aide ou qu'elle nuit.</p>
+
+  <h3>Ce que le théorème n'interdit pas</h3>
+
+  <p>Trois choses échappent à la Proposition 2, et il est essentiel de ne pas les confondre avec un edge&nbsp;:</p>
+
+  <ul>
+    <li><strong>La dispersion.</strong> La gestion du stop modifie réellement la variance du résultat, et donc le profil de drawdown. C'est un effet certain, mesurable, et sans rapport avec l'espérance.</li>
+    <li><strong>La dérive conditionnelle.</strong> Si l'entrée est conditionnée à une information qui rend <span class="v">µ</span>&nbsp;≠&nbsp;0, la Proposition 2 ne s'applique plus. C'est le seul espace où un edge peut vivre.</li>
+    <li><strong>Le dimensionnement.</strong> La taille de position ne change pas le signe de l'espérance, mais elle gouverne le taux de croissance géométrique du capital, et donc la survie.</li>
+  </ul>
+
+  <h2>Le critère maître&nbsp;: dérive et exposition</h2>
+
+  <h3>Une seule inégalité</h3>
+
+  <p>La Proposition 2 laisse la dérive comme unique source d'espérance. Reste à savoir comment la géométrie du trade convertit une dérive en résultat. La réponse tient en une ligne, et c'est le résultat le plus utile de ce papier.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 4.</span> Pour toute règle de sortie <span class="v">τ</span> intégrable, l'espérance nette d'un trade sous dérive constante <span class="v">µ</span> vaut</p>
+    <div class="eq">
+      <div class="body">E[résultat net]<span class="op">=</span><span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]<span class="op">−</span><span class="v">c</span>.</div>
+      <div class="no">(6)</div>
+    </div>
+    <p>Un trade a une espérance positive si et seulement si <span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;&gt;&nbsp;<span class="v">c</span>.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> <span class="v">X<sub>t</sub></span>&nbsp;−&nbsp;<span class="v">µt</span> est une martingale&nbsp;; l'identité de Wald appliquée à <span class="v">τ</span> donne E[<span class="v">X<sub>τ</sub></span>]&nbsp;=&nbsp;<span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]. La friction étant prélevée dans toutes les issues, le résultat net s'en déduit. ∎</p>
+  </div>
+
+  <p>Tout le reste du papier est une lecture de cette inégalité. Le placement du stop, le choix du target, la remontée du stop, la sortie à l'heure&nbsp;: aucune de ces décisions n'apparaît dans (6) autrement que par la durée moyenne d'exposition qu'elle produit. <strong>Une géométrie ne vaut que par le temps de marché qu'elle achète pour une friction donnée.</strong></p>
+
+  <p>Deux corollaires immédiats en fixent les seuils. La dérive minimale rentable est</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">µ</span>*<span class="op">=</span><span class="frac"><span><span class="v">c</span></span><span>E[<span class="v">τ</span>]</span></span><span class="op"></span>&nbsp;&nbsp;et, sans limite de durée,&nbsp;&nbsp;E[<span class="v">τ</span>]<span class="op">=</span><span class="frac"><span><span class="v">ab</span></span><span><span class="v">σ</span>²</span></span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">µ</span>*<span class="op">=</span><span class="frac"><span><span class="v">cσ</span>²</span><span><span class="v">ab</span></span></span>.</div>
+    <div class="no">(7)</div>
+  </div>
+
+  <p>Rapportée à la dispersion du prix sur la durée du trade, cette exigence s'exprime en ratio d'information — le nombre d'écarts-types de déplacement que le signal doit prévoir&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body">IR*<span class="op">=</span><span class="frac"><span><span class="v">µ</span>*&thinsp;E[<span class="v">τ</span>]</span><span><span class="v">σ</span>√E[<span class="v">τ</span>]</span></span><span class="op">=</span><span class="frac"><span><span class="v">c</span></span><span><span class="v">σ</span>√E[<span class="v">τ</span>]</span></span><span class="op">=</span><span class="frac"><span><span class="v">c</span></span><span>√(<span class="v">ab</span>)</span></span>.</div>
+    <div class="no">(8)</div>
+  </div>
+
+  <p>La forme fermée est instructive&nbsp;: l'exigence dépend du produit <span class="v">ab</span>, donc symétriquement du stop et du target, et décroît comme sa racine. Élargir le stop d'un facteur cinq et éloigner le target d'un facteur cinq ont exactement le même effet. La Figure&nbsp;2 en donne la carte complète, l'exposition y étant calculée sous contrainte de séance plutôt que par la forme fermée.</p>
+
+{{FIGURE:ir|Ratio d'information requis IR* = c/(σ√E[τ∧T]), par largeur de stop et ratio gain/risque, friction de référence. Chaque cellule indique le nombre d'écarts-types de déplacement que le signal doit prévoir sur la durée du trade. L'exigence décroît vers la droite jusqu'à saturer&nbsp;: la clôture de séance borne l'exposition.}}
+
+  <h3>L'invariance du lift relatif</h3>
+
+  <p>Une seconde lecture, plus directement mesurable, part du taux de réussite. On définit le <em>lift conditionnel</em> comme l'écart entre le seuil de rentabilité et la fréquence martingale&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">Δp</span><span class="op">=</span><span class="v">p</span>*<span class="op">−</span><span class="v">p</span><sub>0</sub><span class="op">=</span><span class="frac"><span><span class="v">c/L</span></span><span><span class="v">R</span><span class="op">+</span>1</span></span>,<span class="op"></span>&nbsp;&nbsp;d'où&nbsp;&nbsp;<span class="frac"><span><span class="v">Δp</span></span><span><span class="v">p</span><sub>0</sub></span></span><span class="op">=</span><span class="v">c/L</span>.</div>
+    <div class="no">(9)</div>
+  </div>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 5.</span> L'amélioration <em>relative</em> du taux de touche exigée du signal est égale à <span class="v">c/L</span> et ne dépend pas du ratio gain/risque retenu.</p>
+  </div>
+
+  <p>Le point mérite d'être souligné parce qu'il corrige une lecture naturelle mais fausse de la Table&nbsp;2. En points de pourcentage, l'exigence s'effondre avec le ratio&nbsp;: {{dp5}} point au ratio 1:5, {{dp20}} point au ratio 1:20. En proportion de la fréquence de référence, elle est rigoureusement constante&nbsp;: le signal doit relever le taux de touche de {{lift_rel}}&nbsp;% de sa valeur, qu'il s'agisse de passer de {{p0_20}}&nbsp;% à {{pstar_20}}&nbsp;% ou de {{p0_5}}&nbsp;% à {{pstar_5}}&nbsp;%. Un ratio élevé n'assouplit pas l'exigence de qualité du signal&nbsp;; il la déplace vers un événement plus rare, plus long à observer, et plus coûteux à estimer.</p>
+
+  <p>Ce qui baisse réellement avec le ratio, c'est l'exigence exprimée en ratio d'information — de {{ir5}} au ratio 1:5 à {{ir20}} au ratio 1:20. La raison est entièrement contenue dans (6)&nbsp;: la position reste exposée plus longtemps pour une même friction, et la dérive dispose de plus de temps pour la couvrir.</p>
+
+{{TABLE:geometry}}
+
+  <h3>La friction, seul poste certain</h3>
+
+  <p>La friction est le seul terme de (6) qui ne dépend d'aucune hypothèse de marché. La Table&nbsp;3 en donne la sensibilité. Le scénario réaliste — commission de {{comm}}&nbsp;$, un demi-tick de slippage à l'entrée et un tick et demi à la sortie — porte <span class="v">c/L</span> à {{cl_real}} et le ratio d'information requis à {{ir20_real}}. C'est ce chiffre qu'il faut retenir comme seuil de travail&nbsp;: un stop est un ordre au marché, exécuté dans le mouvement même qui le déclenche.</p>
+
+{{TABLE:friction}}
+
+  <h2>Ce que la séance change à un ratio de 1:20 à 1:30</h2>
+
+  <h3>La dispersion, pas le ratio</h3>
+
+  <p>Un target à 1:20 sur un stop de {{stop_pts}} points est un déplacement de {{tgt20}} points, soit {{tgt20_pct}}&nbsp;% de l'indice&nbsp;; à 1:30, de {{tgt30}} points. La question n'est pas de savoir si ce ratio est «&nbsp;réaliste&nbsp;» dans l'abstrait, mais s'il est atteignable dans le temps dont la position dispose. Cela dépend d'une seule propriété du prix&nbsp;: la vitesse à laquelle sa dispersion croît avec l'horizon.</p>
+
+  <p>Deux observables suffisent à la fixer. La volatilité à une minute vaut {{sigma1}} point&nbsp;; la dispersion d'une séance complète vaut de l'ordre de {{sigma_sess}} points, soit {{sigma_sess_pct}}&nbsp;% de l'indice. Une dispersion en racine du temps prédirait {{sigma_sqrt}} points seulement. L'écart n'est pas anecdotique&nbsp;: il vaut un facteur {{sigma_gap}}. On le représente par une loi d'échelle</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">σ</span>(<span class="v">T</span>)<span class="op">=</span><span class="v">σ</span><sub>1</sub><span class="v">T</span><sup><span class="v">H</span></sup>,<span class="op"></span>&nbsp;&nbsp;<span class="v">H</span><span class="op">=</span>{{hurst}}.</div>
+    <div class="no">(10)</div>
+  </div>
+
+  <p>Le processus <span class="v">X<sub>t</sub></span>&nbsp;=&nbsp;<span class="v">σ</span><sub>1</sub><span class="v">W</span>(<span class="v">t</span><sup>&thinsp;2H</sup>) reproduit exactement cette loi tout en restant une martingale&nbsp;: le changement de temps étant déterministe, toutes les formules de premier passage s'appliquent en remplaçant l'horizon réel par le temps effectif <span class="v">T</span><sup>2H</sup>, et les propositions 2 et 4 sont préservées. <span class="v">H</span> n'est pas un paramètre libre&nbsp;: il se mesure, et sa mesure est le premier test du protocole de la section 9.</p>
+
+  <h3>Composition des issues</h3>
+
+  <p>La Table&nbsp;4 et la Figure&nbsp;3 donnent les issues sous les deux lois d'échelle. L'écart est considérable. En racine du temps, un target à 1:30 est atteint dans {{ptp30_diff}}&nbsp;% des cas — autant dire jamais&nbsp;: à cette échelle, {{tgt30}} points représentent {{z30_diff}} écarts-types de la séance. Sous la loi calibrée, le même target est atteint dans {{ptp30}}&nbsp;% des cas, contre {{p0_30}}&nbsp;% sans limite de durée&nbsp;: la clôture n'en retire qu'un quart.</p>
+
+  <p>La conclusion est directe et se formule sans référence au ratio&nbsp;: <strong>un target n'est atteignable que s'il est de l'ordre de la dispersion restante de la séance.</strong> Rapporté à la dispersion d'une séance complète, le target à 1:20 en vaut {{z20}} et celui à 1:30 en vaut {{z30}}&nbsp;: le premier se situe juste à l'intérieur de la portée, le second juste à sa limite. Le paramétrage retenu est donc cohérent avec la dispersion observée, et il le serait beaucoup moins si l'entrée avait lieu tard dans la séance, la dispersion restante décroissant avec le temps disponible.</p>
+
+{{TABLE:session}}
+
+{{FIGURE:issues|Composition des issues selon le ratio gain/risque, stop {{stop_pct}} %, séance de {{session}} minutes. La loi d'échelle décide de tout&nbsp;: à gauche la dispersion en racine du temps rend les targets éloignés inatteignables, à droite la loi calibrée sur la dispersion observée les laisse à portée jusqu'à 1:30 environ.}}
+
+  <h3>La saturation de l'exposition</h3>
+
+  <p>La Figure&nbsp;4 trace la durée moyenne d'exposition en fonction du ratio. La courbe croît puis sature&nbsp;: passé un certain éloignement, le target cesse d'être le facteur limitant, la séance prend le relais, et la position ne reste pas exposée plus longtemps. Sous la loi calibrée, l'exposition passe de {{tau20}} minutes au ratio 1:20 à {{tau30}} au ratio 1:30, puis {{tau50}} au ratio 1:50.</p>
+
+  <p>Ce constat borne l'intérêt d'éloigner le target. Entre 1:20 et 1:30, l'exposition gagne {{tau_gain_2030}}&nbsp;% — la dérive requise baisse d'autant — tandis que la probabilité d'atteindre le target est divisée par {{ptp_ratio_2030}}. Entre 1:30 et 1:50, l'exposition ne gagne plus que {{tau_gain_3050}}&nbsp;% quand la probabilité est encore divisée par {{ptp_ratio_3050}}. <strong>La plage 1:20–1:30 se situe au coude de la courbe&nbsp;;</strong> au-delà, on paie en fréquence et en variance un supplément d'exposition qui n'existe plus.</p>
+
+{{FIGURE:exposition|Durée moyenne d'exposition E[τ∧T] selon le ratio gain/risque, stop {{stop_pct}} %. C'est la seule grandeur par laquelle la géométrie agit sur l'espérance, par l'équation (6). La courbe sature parce que la clôture de séance, et non le target, finit par déterminer la sortie.}}
+
+  <h2>La remontée du stop et le ratio affiché</h2>
+
+  <h3>Distribution des issues</h3>
+
+  <p>La Table&nbsp;5 donne les issues d'un trade à 1:20 selon le niveau auquel le stop est remonté, sous martingale et déclencheur non informatif. Les colonnes d'espérance et de taux de réussite affiché sont constantes, conformément aux propositions 2 et 3&nbsp;: la règle échange des pertes pleines contre des trades nuls, à raison stricte. La seule colonne qui bouge est la dispersion, et elle bouge dans le sens attendu — plus le stop remonte tôt, plus <span class="v">σ</span>(R) est faible. L'espérance restant négative sous martingale, cette compression dégrade le ratio de Sharpe par trade au lieu de l'améliorer&nbsp;: réduire la dispersion autour d'une moyenne négative rend la perte plus régulière, non plus faible.</p>
+
+{{TABLE:be_dist}}
+
+  <h3>Le ratio affiché sur le risque résiduel</h3>
+
+  <p>Une fois le stop remonté, le ratio calculé sur le risque restant devient très grand&nbsp;: un target encore éloigné de {{d_remain}} points au-dessus d'un stop situé {{residual_pts}} point sous le prix s'affiche 1:{{displayed_ratio}}. Ce chiffre est arithmétiquement exact et n'apporte aucune information sur l'espérance, qui est fixée à l'entrée par la Proposition 2. La Table&nbsp;6 le montre en gardant tout constant sauf la position du stop.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 6.</span> Pour une position de risque résiduel <span class="v">r</span> et de distance restante <span class="v">d</span> au target, le produit du ratio affiché par sa probabilité de réalisation vaut <span class="v">d</span>/(<span class="v">r</span>&nbsp;+&nbsp;<span class="v">d</span>) sous martingale, quantité qui tend vers 1 lorsque <span class="v">r</span> devient petit.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> La probabilité vaut <span class="v">r</span>/(<span class="v">r</span>&nbsp;+&nbsp;<span class="v">d</span>) et le ratio affiché <span class="v">d</span>/<span class="v">r</span>&nbsp;; leur produit se simplifie. ∎</p>
+  </div>
+
+  <p>Autrement dit, le ratio affiché monte exactement dans la proportion où la probabilité de l'atteindre descend, et le gain espéré de la branche gagnante reste d'un risque résiduel, quel que soit le ratio annoncé. Deux effets de second ordre, en revanche, ne sont pas neutres et jouent tous deux contre le resserrement&nbsp;:</p>
+
+  <ul>
+    <li><strong>La friction ne se resserre pas.</strong> Un stop porté à {{residual_pts}} point laisse une perte réelle de {{residual_plus_c}} point une fois la friction payée&nbsp;: le ratio affiché 1:{{displayed_ratio}} vaut 1:{{effective_ratio}} après friction. À la limite, une sortie «&nbsp;au point d'entrée&nbsp;» n'est pas nulle, elle coûte {{friction_pts}} point.</li>
+    <li><strong>Le bruit devient le premier risque.</strong> Un risque résiduel de {{residual_pts}} point est balayé par la seule diffusion avec une probabilité de {{noise5}}&nbsp;% en cinq minutes. La position ne survit alors que si le prix ne revient pas d'un cinquième de point, ce qui n'a plus grand-chose à voir avec la thèse du trade.</li>
+  </ul>
+
+{{TABLE:displayed}}
+
+  <h3>Le sens du déclencheur</h3>
+
+  <p>La question qui décide véritablement du sort de la règle est celle de la dérive postérieure à la confirmation. La Table&nbsp;7 et la Figure&nbsp;5 comparent, sous une trajectoire de dérive identique, le trade dont le stop est remonté et le même trade dont le stop est laissé en place.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 7.</span> La remontée du stop est neutre en espérance si et seulement si la dérive post-confirmation est exactement nulle. Elle coûte de l'espérance pour tout <span class="v">µ</span><sub>2</sub>&nbsp;&gt;&nbsp;0 et n'en rapporte que pour <span class="v">µ</span><sub>2</sub>&nbsp;&lt;&nbsp;0.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> Conditionnellement à l'atteinte de <span class="v">g</span>, la position restante est un trade dont le stop est resserré. Par la Proposition 2, sous <span class="v">µ</span><sub>2</sub>&nbsp;=&nbsp;0 ce resserrement laisse l'espérance conditionnelle inchangée. Pour <span class="v">µ</span><sub>2</sub>&nbsp;&gt;&nbsp;0, la position résiduelle a une espérance de continuation strictement positive que le stop resserré tronque plus souvent&nbsp;; la perte est donc strictement croissante en <span class="v">µ</span><sub>2</sub>. Le raisonnement symétrique vaut pour <span class="v">µ</span><sub>2</sub>&nbsp;&lt;&nbsp;0. La résolution numérique confirme la racine unique <span class="v">µ</span><sub>2</sub>*&nbsp;=&nbsp;0. ∎</p>
+  </div>
+
+  <p>Le déclencheur retenu — un mur de liquidité qui apparaît pour protéger la position, une prise de liquidité favorable en L2 — est, par la logique même qui le motive, un signal favorable. S'il informe réellement, il annonce <span class="v">µ</span><sub>2</sub>&nbsp;&gt;&nbsp;0, c'est-à-dire exactement le domaine dans lequel remonter le stop coûte de l'espérance. Il n'y a que deux issues logiques&nbsp;:</p>
+
+  <ul>
+    <li>Ou bien la confirmation est informative, auquel cas la règle resserre le risque au moment précis où les probabilités viennent de s'améliorer, et détruit une part de l'espérance qu'elle vient d'identifier.</li>
+    <li>Ou bien elle ne l'est pas, auquel cas la règle est exactement neutre en espérance, et son seul effet est de réduire la dispersion — un choix défendable, à condition d'être présenté comme tel.</li>
+  </ul>
+
+  <p>Une reformulation lève la contradiction sans rien abandonner de la lecture d'orderflow qui la motive&nbsp;: <strong>déclencher la remontée du stop sur l'<em>invalidation</em> de la confirmation, et non sur la confirmation elle-même.</strong> Le mur de liquidité retiré avant d'avoir été touché, l'absorption qui échoue, la liquidité prise du côté opposé à la position — ce sont les événements qui annoncent <span class="v">µ</span><sub>2</sub>&nbsp;&lt;&nbsp;0, seul régime dans lequel la Proposition 7 rend la règle profitable. Le module <code>alp1.signals</code> fournit déjà la mesure adaptée, le <em>Liquidity Persistence Ratio</em>&nbsp;: un ratio effondré au contact est le marqueur d'une confirmation invalidée. Le déplacement du déclencheur ne coûte rien à mettre en œuvre&nbsp;: même information, même endroit du carnet, signe inversé.</p>
+
+{{TABLE:be_cost}}
+
+{{FIGURE:be|Coût en R de la remontée du stop selon la dérive postérieure à la confirmation, ratio 1:20, friction de référence. Le coût est nul en <span class="v">µ</span>₂ = 0, négatif — la règle devient profitable — pour une dérive post-confirmation négative, positif dès qu'elle est favorable. Une remontée plus tardive réduit le coût sans en changer le signe.}}
+
+  <h2>Horizon de validation</h2>
+
+  <p>Une géométrie rentable et une géométrie <em>démontrablement</em> rentable sont deux choses distinctes. Le nombre de trades requis pour atteindre un <span class="v">t</span>-statistique de 2 vaut <span class="v">N</span>&nbsp;=&nbsp;(2/SR)², où SR est le ratio de Sharpe par trade — l'espérance rapportée à l'écart-type du résultat.</p>
+
+  <p>Les ratios élevés jouent ici dans les deux sens. Ils augmentent l'espérance par trade, par l'exposition&nbsp;; ils augmentent aussi la dispersion, car le résultat est dominé par une queue rare et grande. La Table&nbsp;8 et la Figure&nbsp;6 tranchent&nbsp;: <strong>à dérive captée égale, le ratio élevé l'emporte</strong> — {{n20_k2}} trades au ratio 1:20 contre {{n10_k2}} au ratio 1:10 pour une dérive de {{mu_k2}} point par heure — mais les ordres de grandeur restent exigeants. Une dérive de deux fois le seuil d'équilibre demande plusieurs milliers de trades, soit plusieurs années à deux trades par séance. Une dérive de trois fois le seuil ramène l'exigence à {{n20_k3}} trades.</p>
+
+  <p>Ce constat ne condamne pas la stratégie&nbsp;; il fixe l'ordre dans lequel les tests doivent être conduits. Les mesures de la section 9 portent sur des propriétés du prix conditionnées au signal, estimables sur historique en quelques jours de travail, et non sur un P&amp;L simulé qui demanderait des années de données pour trancher.</p>
+
+{{TABLE:validation}}
+
+{{FIGURE:echantillon|Nombre de trades requis pour atteindre un t-statistique de 2, selon la dérive captée à l'entrée, stop {{stop_pct}} %. Les traits verticaux marquent les seuils d'équilibre de chaque géométrie&nbsp;: à leur gauche, l'espérance est négative et aucun échantillon ne rend le résultat significatif.}}
+
+  <h3>Test multiple et déflation</h3>
+
+  <p>Sous l'hypothèse nulle, le meilleur de <span class="v">K</span> essais indépendants affiche en espérance un Sharpe par observation d'environ √(2&thinsp;ln&thinsp;<span class="v">K</span>&thinsp;/&thinsp;<span class="v">N</span>). Ce seuil, donné par la Table&nbsp;9, doit être comparé au Sharpe par trade effectivement obtenu — et non au Sharpe brut du meilleur essai.</p>
+
+{{TABLE:deflation}}
+
+  <h2>Le régime de gamma comme variable de conditionnement</h2>
+
+  <h3>Le mécanisme</h3>
+
+  <p>La pile fait tourner en permanence deux moteurs contradictoires&nbsp;: la théorie de Dow, moteur de continuation, et les bandes VWAP&nbsp;±&nbsp;<span class="v">k</span>·SD, moteur de réversion. Utilisés en parallèle sans arbitre, chaque signal de l'un est un contre-signal de l'autre. Le signe du gamma net des teneurs de marché fournit un arbitre sur une base mécanique&nbsp;: gamma positif, la couverture est contra-tendancielle et comprime la volatilité réalisée&nbsp;; gamma négatif, elle est pro-cyclique et amplifie le mouvement&nbsp;; au voisinage du niveau de bascule, le régime est instable.</p>
+
+  <h3>Un régime n'est pas une dérive</h3>
+
+  <p>Le signe du gamma prédit une propriété de la variance et de l'autocorrélation des rendements, non une direction. Or seule une dérive crée de l'espérance&nbsp;: la Proposition 4 est explicite sur ce point. Le conditionnement par le régime ne peut donc pas être testé comme un signal directionnel. Sa valeur, si elle existe, se mesure comme un différentiel — le lift conditionnel du couple (signal, régime) excède-t-il celui du signal seul&nbsp;? Formellement, il faut établir</p>
+
+  <div class="eq">
+    <div class="body">P(TP avant SL | signal, <span class="v">Γ</span>)<span class="op">−</span>P(TP avant SL | signal)<span class="op">&gt;</span>0,</div>
+    <div class="no">(11)</div>
+  </div>
+
+  <p>et que le total franchisse le seuil <span class="v">Δp</span> de l'équation (9).</p>
+
+  <h3>Le régime conditionne la géométrie</h3>
+
+  <p>Il existe cependant un rôle pour lequel le signe du gamma est, mécaniquement, le bon prédicteur — et c'est celui que la section 5 rend décisif. L'autocorrélation des rendements est exactement ce qui gouverne l'exposant d'échelle <span class="v">H</span> de l'équation (10)&nbsp;: une couverture pro-cyclique produit une dispersion qui croît plus vite que la racine du temps, une couverture contra-tendancielle une dispersion qui croît moins vite. Or <span class="v">H</span> décide de l'atteignabilité des targets éloignés, donc de la viabilité même d'un ratio de 1:20 à 1:30.</p>
+
+  <p>La prédiction est nette et se teste sans aucun signal d'entrée&nbsp;: <strong><span class="v">H</span> mesuré sous gamma négatif doit excéder <span class="v">H</span> mesuré sous gamma positif.</strong> Si l'écart est nul, le mécanisme invoqué n'existe pas et l'hypothèse tombe. S'il est net, le conditionnement acquiert un rôle opérationnel précis — non pas choisir la direction, mais choisir la géométrie&nbsp;: viser loin lorsque la dispersion s'étend, viser près, ou s'abstenir, lorsqu'elle se comprime. C'est une prédiction plus faible qu'un edge directionnel, mais elle est falsifiable sur données publiques et elle porte sur le paramètre que la section 5 a identifié comme critique.</p>
+
+  <h3>Cohérence avec l'anomalie de bande</h3>
+
+  <p>Une observation de terrain — les extrêmes de bande à trois écarts-types donnent lieu à des balayages suivis de clôtures au-delà — est cohérente avec un régime de gamma négatif à ces niveaux. Cette cohérence est un point en faveur du mécanisme&nbsp;: elle aurait pu manquer. Sa force probante reste faible pour trois raisons&nbsp;: elle porte sur un phénomène unique, elle était disponible au moment où l'hypothèse a été formée, et elle admet au moins une explication concurrente sans contenu gamma — les extrêmes de bande sont par construction les zones où les ordres stop s'accumulent, et un balayage suivi d'une clôture au-delà est le comportement attendu d'une simple chasse aux stops. Elle ne dispense d'aucun des tests de la section 9.</p>
+
+  <h2>Protocole de falsification</h2>
+
+  <p>Les tests sont ordonnés du moins coûteux au plus coûteux, et du plus décisif au plus accessoire. Chacun peut interrompre la séquence.</p>
+
+  <h3>Test 1 — Loi d'échelle</h3>
+
+  <p>Estimer <span class="v">H</span> par ratio de variance sur les rendements de une à trente minutes, sur l'ensemble de l'historique disponible, puis séparément par signe du gamma net. Ce test ne requiert que des données à la minute et une série de gamma&nbsp;; il ne comporte aucun paramètre libre et aucun signal d'entrée. Il décide de deux choses à la fois&nbsp;: l'atteignabilité des targets éloignés — donc la viabilité du paramétrage — et l'existence du mécanisme invoqué par le conditionnement de régime. <em>Critère de passage&nbsp;:</em> <span class="v">H</span> inconditionnel significativement supérieur à 0,5 sur l'horizon du trade, et <span class="v">H</span>(<span class="v">Γ</span>&nbsp;&lt;&nbsp;0)&nbsp;&gt;&nbsp;<span class="v">H</span>(<span class="v">Γ</span>&nbsp;&gt;&nbsp;0).</p>
+
+  <h3>Test 2 — Dérive captée</h3>
+
+  <p>C'est la mesure directe du critère maître. Sur l'ensemble des signaux d'entrée de la pile, recenser le déplacement de prix à la sortie effective — barrière atteinte ou clôture de séance —, en moyenner la valeur et la comparer à la friction. <em>Critère de passage&nbsp;:</em> E[<span class="v">X<sub>τ∧T</sub></span>]&nbsp;&gt;&nbsp;{{c_real}} points sous friction réaliste, avec un intervalle de confiance à 95&nbsp;% excluant ce seuil. Ce test consomme l'intégralité du déplacement observé, et non le seul signe de la barrière touchée&nbsp;; il est donc au moins aussi efficace que le comptage de taux de touche, et il porte exactement sur la quantité de l'équation (6).</p>
+
+  <h3>Test 3 — Lift conditionnel et structure en croix</h3>
+
+  <p>Mesurer la fréquence empirique de «&nbsp;<span class="v">+b</span> touché avant <span class="v">−a</span> et avant la clôture&nbsp;», la comparer à la fréquence martingale, puis partitionner l'échantillon par signe du gamma net et vérifier l'inégalité (11) séparément pour les signaux de continuation et de réversion. Le conditionnement prédit un lift positif pour la réversion sous <span class="v">Γ</span>&nbsp;&gt;&nbsp;0 et pour la continuation sous <span class="v">Γ</span>&nbsp;&lt;&nbsp;0, et un lift nul ou négatif dans les deux cases croisées. C'est cette structure en croix qui constitue la prédiction falsifiable, non le niveau moyen.</p>
+
+  <h3>Test 4 — Dérive post-confirmation</h3>
+
+  <p>Mesurer <span class="v">µ</span><sub>2</sub> conditionnellement à chacun des deux déclencheurs — confirmation prise, et confirmation invalidée. La Proposition 7 fait de ce signe la décision entière&nbsp;: si <span class="v">µ</span><sub>2</sub> est positif après confirmation, la règle actuelle doit être abandonnée ou inversée. Ce test exige un flux L2 horodaté et enregistrable, ce qui constitue à ce jour la principale limite d'infrastructure du projet.</p>
+
+  <h3>Ordre et critères d'arrêt</h3>
+
+  <ol>
+    <li><strong>Loi d'échelle.</strong> <span class="v">H</span> proche de 0,5 sur l'horizon du trade &rarr; les targets à 1:20–1:30 sont hors de portée d'une séance&nbsp;; rapprocher le target ou allonger l'horizon avant toute autre chose. Absence d'écart entre régimes de gamma &rarr; abandonner le conditionnement.</li>
+    <li><strong>Dérive captée.</strong> Échec &rarr; la pile ne produit pas de dérive à l'entrée&nbsp;; inutile de conditionner ou d'optimiser la gestion.</li>
+    <li><strong>Structure en croix.</strong> Échec &rarr; le conditionnement n'apporte rien&nbsp;; conserver la pile seule si le Test 2 a réussi.</li>
+    <li><strong>Dérive post-confirmation</strong>, sur données L2 enregistrées. Décide de la règle de remontée du stop et de son sens.</li>
+    <li><strong>Validation avant engagement de capital&nbsp;:</strong> le nombre de trades de la Table&nbsp;8, à budget de configurations fixé d'avance.</li>
+  </ol>
+
+  <h2>Portée et limites</h2>
+
+  <h3>Ce qui est établi</h3>
+
+  <p>Quatre résultats de ce papier sont démontrés analytiquement et vérifiés numériquement. Ils ne dépendent d'aucune donnée de marché et ne peuvent être infirmés par un backtest&nbsp;:</p>
+
+  <ul>
+    <li>Aucun placement de barrières et aucune règle de gestion du stop ne crée d'espérance sur un prix sans dérive&nbsp;; toutes laissent −<span class="v">c</span> par aller-retour (Propositions 1 et 2).</li>
+    <li>Ni l'espérance ni le taux de réussite affiché ne renseignent sur l'utilité d'une remontée du stop (Proposition 3), et le ratio affiché sur le risque résiduel est compensé exactement par sa probabilité (Proposition 6).</li>
+    <li>L'espérance nette vaut <span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>&nbsp;: une géométrie ne vaut que par l'exposition qu'elle procure, l'exigence relative de taux de touche est invariante et vaut <span class="v">c/L</span>, et le ratio d'information requis vaut <span class="v">c</span>/√(<span class="v">ab</span>) (Propositions 4 et 5).</li>
+    <li>La remontée du stop n'est profitable que si la dérive post-confirmation est négative (Proposition 7).</li>
+  </ul>
+
+  <h3>Ce qui ne l'est pas</h3>
+
+  <p>Aucune des propositions ci-dessus n'établit que la stratégie possède un edge. Elles délimitent l'espace dans lequel un edge pourrait vivre et mesurent ce qu'il devrait valoir&nbsp;; elles ne mesurent pas ce qu'il vaut. Le candidat unique reste la dérive conditionnelle produite par les sept couches à l'instant de l'entrée. Cette dérive n'a pas été mesurée. Le conditionnement par le régime de gamma n'a fait l'objet d'aucun test empirique. Le <em>Liquidity Persistence Ratio</em>, qui porte l'essentiel de la lecture d'orderflow, reste non falsifiable en l'état faute de flux L2 enregistrable.</p>
+
+  <h3>Limites du modèle</h3>
+
+  <ul>
+    <li><strong>La diffusion.</strong> Le brownien arithmétique ignore les sauts et l'hétéroscédasticité intra-séance. Le changement de temps de l'équation (10) rend compte de la croissance de la dispersion avec l'horizon, mais reste déterministe&nbsp;: il ne représente pas la forme intra-séance de la volatilité, ni son caractère aléatoire. Les probabilités de premier passage sont donc approximatives&nbsp;; les propositions d'invariance, elles, ne dépendent que de la propriété de martingale et survivent à ces généralisations.</li>
+    <li><strong>La friction.</strong> Le slippage à la sortie est traité comme une constante alors qu'il dépend de l'état du carnet, et il est le plus élevé dans les mouvements mêmes qui déclenchent les stops. Le scénario réaliste reste vraisemblablement optimiste.</li>
+    <li><strong>La dérive constante.</strong> L'équation (6) suppose une dérive constante sur la durée d'exposition. Une dérive issue d'un signal de microstructure décroît vraisemblablement avec le temps, ce qui borne le gain à éloigner le target bien avant la saturation géométrique de la Figure&nbsp;4. La forme de cette décroissance est mesurable&nbsp;: c'est la courbe de dérive cumulée conditionnelle au signal, et elle indique directement où placer le target.</li>
+    <li><strong>Le déclencheur de confirmation.</strong> Sa modélisation par un niveau de prix est une simplification&nbsp;; une confirmation survenant sans progrès de prix laisserait le stop initial actif plus longtemps et dégraderait davantage les résultats de la section 6.</li>
+    <li><strong>La discrétion résiduelle.</strong> Plusieurs couches restent des appréciations visuelles. Tant qu'elles le demeurent, leur contribution à l'espérance est indécidable et le dispositif de validation ne peut porter que sur la partie formalisée.</li>
+    <li><strong>Absence de données.</strong> Aucun chiffre de ce papier ne provient d'un historique de marché. Tous sont des conséquences du modèle sous les hypothèses de la Table&nbsp;1.</li>
+  </ul>
+
+  <h2 class="unnumbered">Références indicatives</h2>
+
+  <div class="refs">
+    <ol>
+      <li>Bailey, D. et López de Prado, M. «&nbsp;The Deflated Sharpe Ratio&nbsp;», <em>Journal of Portfolio Management</em>, 2014.</li>
+      <li>Baltussen, G., Da, Z., Lammers, S. et Martens, M. «&nbsp;Hedging Demand and Market Intraday Momentum&nbsp;», <em>Journal of Financial Economics</em>, 2021.</li>
+      <li>Barbon, A. et Buraschi, A. «&nbsp;Gamma Fragility&nbsp;», document de travail, 2021.</li>
+      <li>Harvey, C., Liu, Y. et Zhu, H. «&nbsp;… and the Cross-Section of Expected Returns&nbsp;», <em>Review of Financial Studies</em>, 2016.</li>
+      <li>Karatzas, I. et Shreve, S. <em>Brownian Motion and Stochastic Calculus</em>, Springer, 1991 — théorème d'arrêt optionnel, identité de Wald et premier passage.</li>
+      <li>Lo, A. et MacKinlay, A. «&nbsp;Stock Market Prices Do Not Follow Random Walks&nbsp;: Evidence from a Simple Specification Test&nbsp;», <em>Review of Financial Studies</em>, 1988 — test de ratio de variance.</li>
+    </ol>
+  </div>
+
+  <div class="colophon">
+    <p>Document de travail. Toutes les tables et figures sont reproductibles par <code>python main.py</code>&nbsp;; les propositions sont vérifiées numériquement par <code>python main.py --tests</code>. Ce document ne constitue pas un conseil en investissement et ne comporte aucune affirmation de performance passée ou future.</p>
+  </div>
+
+</div>

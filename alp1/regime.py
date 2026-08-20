@@ -1,7 +1,8 @@
 """GRC — Gamma-Regime Conditioning.
 
-Edge proposé par ALP-1. Le constat de départ est une contradiction interne
-dans la stack d'origine : deux moteurs incompatibles y tournent en permanence.
+Variable de conditionnement d'ALP-1. Le constat de départ est une
+contradiction interne de la pile : deux moteurs incompatibles y tournent en
+permanence.
 
   - Théorie de Dow  -> moteur de *continuation* (le prix persiste)
   - VWAP ±k·SD      -> moteur de *réversion*  (le prix revient)
@@ -18,11 +19,17 @@ n'est pas ad hoc — c'est un flux de couverture mécanique et documenté :
       (achètent la hausse, vendent la baisse). La volatilité est amplifiée,
       les mouvements s'auto-entretiennent. -> régime de MOMENTUM.
 
-Argument de validation le plus fort : cette hypothèse *rétrodit* une anomalie
-déjà observée empiriquement par l'opérateur — « SD 3 à éviter, très gros swipe
-and close ». Un balayage de la bande SD3 suivi d'une clôture au-delà est le
-comportement canonique du gamma négatif. La règle « éviter SD3 » est donc un
-cas particulier d'une règle plus générale : ne pas fader en gamma négatif.
+Statut de l'hypothèse. Le signe du gamma prédit une propriété de la variance
+et de l'autocorrélation des rendements, non une direction : ce module fournit
+une variable de *conditionnement*, jamais un signal directionnel. Sa valeur se
+mesure comme un différentiel de lift, et son mécanisme se teste directement par
+l'exposant d'échelle des rendements — voir `alp1.horizon`.
+
+Une observation de terrain va dans le sens du mécanisme : les extrêmes de bande
+à trois écarts-types donnent lieu à des balayages suivis de clôtures au-delà,
+comportement attendu en gamma négatif. Sa force probante reste faible — un
+phénomène unique, et une explication concurrente sans contenu gamma, la simple
+accumulation d'ordres stop à ces niveaux.
 """
 
 from __future__ import annotations

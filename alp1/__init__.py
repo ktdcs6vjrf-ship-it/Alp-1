@@ -2,14 +2,20 @@
 
 Modules
 -------
-costs    : modèle de friction, hit rate d'équilibre, drift requis
-barriers : first-passage brownien (survie du stop, P(TP avant SL))
-stops    : gestion dynamique du stop, coût exact de la mise à breakeven
-regime   : classification de régime par gamma dealer (GRC)
-signals  : formalisation des 7 couches en filtres booléens/scores
-report   : génération des tables chiffrées du paper
+costs    : modèle de friction, hit rate d'équilibre, déflation du Sharpe
+barriers : premier passage brownien sans limite de durée
+horizon  : premier passage sous contrainte de séance et loi d'échelle
+stops    : gestion dynamique du stop, coût exact de la remontée
+regime   : classification de régime par gamma dealer
+signals  : formalisation des 7 couches en prédicats testables
+report   : tables chiffrées du paper
+figures  : figures SVG du paper
+paper    : construction du document à partir du gabarit
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
-__all__ = ["costs", "barriers", "stops", "regime", "signals", "report"]
+__all__ = [
+    "costs", "barriers", "horizon", "stops", "regime", "signals",
+    "report", "figures", "figcss", "paper",
+]

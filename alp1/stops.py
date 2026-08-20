@@ -1,6 +1,6 @@
 """Gestion dynamique du stop : mise à breakeven, et son coût exact.
 
-Ce module traite la règle de gestion ajoutée à ALP-1 :
+Ce module traite la règle de gestion du stop d'ALP-1 :
 
     stop initial à `a` points, puis déplacement du stop au point d'entrée
     (« mise à BE ») dès qu'une confirmation d'orderflow est prise — apparition
