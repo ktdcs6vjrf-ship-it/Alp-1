@@ -25,6 +25,18 @@ from alp1.costs import (
     norm_cdf,
 )
 from alp1.regime import GammaState, Regime, classify, playbook_for
+from alp1.stops import (
+    TradeGeometry,
+    be_expectancy_cost_r,
+    expectancy_r as expectancy_r_managed,
+    neutral_post_trigger_drift,
+    outcome_probabilities,
+    outcome_probabilities_fixed_stop,
+    required_conditional_lift,
+    sd_r,
+    sharpe_per_trade,
+    trades_for_t_stat,
+)
 from alp1.signals import (
     DailyBar,
     Direction,
@@ -218,6 +230,130 @@ class TestSignals(unittest.TestCase):
         pre = BookSnapshot(level=6000, resting_size=2000, timestamp_s=0.0)
         at = BookSnapshot(level=6000, resting_size=200, timestamp_s=30.0)
         self.assertAlmostEqual(liquidity_persistence_ratio(pre, at), 0.1)
+
+
+class TestStopManagement(unittest.TestCase):
+    """La mise à breakeven, et le théorème d'invariance qui la gouverne."""
+
+    A = 3.0        # stop 0.050 % d'un indice à 6000
+    B = 9.0        # R:R = 3
+    C = 0.33       # friction de référence, en points
+    SIGMA = 1.25
+
+    def geom(self, trigger=None):
+        return TradeGeometry(self.A, self.B, self.C, trigger)
+
+    def test_expectancy_is_minus_friction_ratio_for_any_trigger(self):
+        """Le résultat central : sous martingale, E[R] = −c/L quel que soit g."""
+        for trigger in (0.5, 1.0, 2.0, 4.0, 8.0):
+            with self.subTest(trigger=trigger):
+                e = expectancy_r_managed(self.geom(trigger), 0.0, self.SIGMA)
+                self.assertAlmostEqual(e, -self.C / self.A, places=12)
+
+    def test_apparent_hit_rate_is_also_invariant(self):
+        """Le hit rate affiché ne bouge pas non plus : a/(a+b) dans tous les cas."""
+        expected = self.A / (self.A + self.B)
+        for trigger in (0.5, 1.0, 2.0, 4.0):
+            with self.subTest(trigger=trigger):
+                o = outcome_probabilities(self.geom(trigger), 0.0, self.SIGMA)
+                self.assertAlmostEqual(o.apparent_hit_rate, expected, places=12)
+
+    def test_probabilities_sum_to_one(self):
+        o = outcome_probabilities(self.geom(3.0), 0.02, self.SIGMA)
+        self.assertAlmostEqual(o.p_target + o.p_breakeven + o.p_stop, 1.0, places=12)
+
+    def test_be_shifts_mass_from_loss_to_scratch(self):
+        """Elle réduit les pertes pleines et les gagnants dans la même proportion."""
+        fixed = outcome_probabilities(self.geom(None), 0.0, self.SIGMA)
+        managed = outcome_probabilities(self.geom(3.0), 0.0, self.SIGMA)
+        self.assertLess(managed.p_stop, fixed.p_stop)
+        self.assertLess(managed.p_target, fixed.p_target)
+        self.assertGreater(managed.p_breakeven, 0.0)
+
+    def test_be_compresses_dispersion(self):
+        self.assertLess(
+            sd_r(self.geom(3.0), 0.0, self.SIGMA),
+            sd_r(self.geom(None), 0.0, self.SIGMA),
+        )
+
+    def test_be_worsens_sharpe_under_martingale(self):
+        """Espérance inchangée et dispersion réduite : le ratio empire."""
+        self.assertLess(
+            sharpe_per_trade(self.geom(3.0), 0.0, self.SIGMA),
+            sharpe_per_trade(self.geom(None), 0.0, self.SIGMA),
+        )
+
+    def test_cost_is_zero_under_martingale(self):
+        self.assertAlmostEqual(
+            be_expectancy_cost_r(self.geom(3.0), 0.0, self.SIGMA), 0.0, places=12
+        )
+
+    def test_cost_is_positive_under_positive_post_trigger_drift(self):
+        """La règle coûte précisément quand la confirmation annonce du drift."""
+        cost = be_expectancy_cost_r(self.geom(3.0), 0.02, self.SIGMA, 0.02)
+        self.assertGreater(cost, 0.0)
+
+    def test_cost_is_negative_under_negative_post_trigger_drift(self):
+        """Elle ne paie que si la confirmation annonce un retournement."""
+        cost = be_expectancy_cost_r(self.geom(3.0), 0.02, self.SIGMA, -0.02)
+        self.assertLess(cost, 0.0)
+
+    def test_neutral_post_trigger_drift_is_zero(self):
+        """Le seuil de neutralité de la règle est exactement µ₂ = 0."""
+        mu2 = neutral_post_trigger_drift(self.geom(3.0), 0.02, self.SIGMA)
+        self.assertAlmostEqual(mu2, 0.0, places=6)
+
+    def test_earlier_trigger_destroys_more_edge(self):
+        """Plus le stop remonte tôt, plus la part d'edge détruite est grande."""
+        mu = 0.04
+        costs = [
+            be_expectancy_cost_r(self.geom(g), mu, self.SIGMA, mu)
+            for g in (1.5, 3.0, 6.0)
+        ]
+        self.assertGreater(costs[0], costs[1])
+        self.assertGreater(costs[1], costs[2])
+
+    def test_fixed_stop_counterfactual_matches_gamblers_ruin(self):
+        o = outcome_probabilities_fixed_stop(self.geom(3.0), 0.0, self.SIGMA)
+        self.assertAlmostEqual(o.p_target, self.A / (self.A + self.B), places=12)
+        self.assertEqual(o.p_breakeven, 0.0)
+
+    def test_required_lift_matches_closed_form(self):
+        """Δp = (c/a)/(R+1), la forme fermée du lift conditionnel."""
+        g = self.geom()
+        expected = (self.C / self.A) / (g.reward_risk + 1.0)
+        self.assertAlmostEqual(required_conditional_lift(g), expected, places=12)
+
+    def test_required_lift_scales_inversely_with_stop_width(self):
+        """L'argument central du changement de paramétrage du stop.
+
+        À R:R constant, Δp ∝ c/a : élargir le stop d'un facteur k divise le
+        lift conditionnel requis par ce même facteur k. Passer de 0,010 % à
+        0,050 % divise donc l'exigence par exactement cinq.
+        """
+        tight = TradeGeometry(0.6, 1.8, self.C)   # 0,010 % d'un indice à 6000
+        wide = TradeGeometry(3.0, 9.0, self.C)    # 0,050 %
+        self.assertAlmostEqual(
+            required_conditional_lift(tight) / required_conditional_lift(wide),
+            5.0,
+            places=10,
+        )
+
+    def test_sample_size_infinite_without_edge(self):
+        self.assertEqual(trades_for_t_stat(self.geom(3.0), 0.0, self.SIGMA), math.inf)
+
+    def test_be_inflates_required_sample_size(self):
+        mu = 0.04
+        self.assertGreater(
+            trades_for_t_stat(self.geom(3.0), mu, self.SIGMA, mu),
+            trades_for_t_stat(self.geom(None), mu, self.SIGMA),
+        )
+
+    def test_invalid_trigger_rejected(self):
+        with self.assertRaises(ValueError):
+            TradeGeometry(self.A, self.B, self.C, self.B + 1.0)
+        with self.assertRaises(ValueError):
+            TradeGeometry(self.A, self.B, self.C, 0.0)
 
 
 if __name__ == "__main__":
