@@ -79,6 +79,8 @@ class Table:
     rows: list[list[str]]
     note: str = ""
     wrap_last: bool = False
+    wrap_cols: list[int] = field(default_factory=list)
+    wide: bool = False
     rules_after: list[int] = field(default_factory=list)
 
     def to_text(self) -> str:
@@ -89,20 +91,35 @@ class Table:
             out += ["", self.note]
         return "\n".join(out).replace(" ", " ")
 
+    def wrapping(self) -> set[int]:
+        """Indices des colonnes autorisées à revenir à la ligne.
+
+        Sans cette indication, une colonne de prose force la table à déborder
+        de la largeur de lecture. C'est le seul réglage de mise en page que la
+        description d'une table porte.
+        """
+        cols = set(self.wrap_cols)
+        if self.wrap_last:
+            cols.add(len(self.headers) - 1)
+        return cols
+
     def to_html(self, number: int) -> str:
-        wrap = ' class="wrap"'
+        cols = self.wrapping()
         head = "".join(
-            "<th" + (wrap if self.wrap_last and i == len(self.headers) - 1 else "") +
-            f">{h}</th>" for i, h in enumerate(self.headers))
+            "<th" + (' class="wrap"' if i in cols else "") + f">{h}</th>"
+            for i, h in enumerate(self.headers))
         body = []
         for i, r in enumerate(self.rows):
             cls = ' class="sep"' if i in self.rules_after else ""
-            cells = "".join(f"<td>{c}</td>" for c in r)
+            cells = "".join(
+                "<td" + (' class="wrap"' if j in cols else "") + f">{c}</td>"
+                for j, c in enumerate(r))
             body.append(f"<tr{cls}>{cells}</tr>")
         note = (f'\n      <p class="note"><span class="lab">Lecture.</span> {self.note}</p>'
                 if self.note else "")
+        klass = ' class="wide"' if self.wide else ""
         return (
-            '    <figure>\n'
+            f'    <figure{klass}>\n'
             f'      <figcaption><span class="lab">Table {number}</span> — {self.caption}</figcaption>\n'
             '      <div class="scroll">\n'
             '      <table>\n'

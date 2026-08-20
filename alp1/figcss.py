@@ -11,7 +11,7 @@ FIGURE_CSS = """
   .fig .lg   { font-size: 10px;   fill: var(--soft); font-family: var(--serif); }
   .fig .dl   { font-size: 9.5px;  fill: var(--ink); }
   .fig .cell { font-size: 10px;   font-variant-numeric: lining-nums tabular-nums; }
-  .fig .halo { paint-order: stroke; stroke: var(--paper); stroke-width: 3px;
+  .fig .halo { paint-order: stroke; stroke: var(--paper); stroke-width: 3.4px;
                stroke-linejoin: round; }
 
   .fig .gl   { stroke: var(--hair); stroke-width: 1; fill: none; }
@@ -40,6 +40,26 @@ FIGURE_CSS = """
   .fig .ze    { fill: var(--mid); }
   .fig .floor { fill: none; stroke: var(--hair); stroke-width: 1; }
   .fig .post  { stroke: var(--hair); stroke-width: 1; }
+
+  /* --- chrome de panneau : figures en plusieurs cadres --- */
+
+  .fig .hdr {
+    font-family: var(--serif); font-size: 10px; font-weight: 600;
+    fill: var(--ink); letter-spacing: 0.09em; text-transform: uppercase;
+  }
+  .fig .sub   { font-size: 9.5px; fill: var(--muted); }
+  .fig .read  { font-size: 10px; fill: var(--ink); }
+  .fig .frame { fill: none; stroke: var(--hair); stroke-width: 1; }
+  .fig .hsep  { stroke: var(--hair); stroke-width: 1; }
+  .fig .lvl   { fill: none; stroke: var(--soft); stroke-width: 1; stroke-dasharray: 4 3; }
+  .fig .lvl.strong { stroke: var(--ink); stroke-dasharray: none; }
+  .fig .tag   { fill: var(--paper); stroke: var(--hair); stroke-width: 1; }
+  .fig .tagtx { font-size: 9px; fill: var(--ink); }
+  .fig .px    { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+  .fig .s1f { fill: var(--s1); }  .fig .s2f { fill: var(--s2); }  .fig .s3f { fill: var(--s3); }
+  .fig .negf { fill: var(--dv-neg); }
+  .fig .wash  { fill: var(--wash); }
+  .fig .swatch-wash { fill: var(--wash); stroke: var(--hair); stroke-width: 1; }
 
   .fig .hm0 { fill: var(--hm0); }  .fig .hm4 { fill: var(--hm4); }
   .fig .hm1 { fill: var(--hm1); }  .fig .hm5 { fill: var(--hm5); }

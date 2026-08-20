@@ -266,7 +266,14 @@
   }
   tbody tr:last-child td { border-bottom: 1.1px solid var(--rule); }
   tbody tr.sep td { border-top: 0.6px solid var(--hair); }
-  td.wrap, th.wrap { white-space: normal; min-width: 11rem; }
+  td.wrap, th.wrap { white-space: normal; min-width: 9rem; }
+  td.wrap { text-align: left; }
+
+  /* Tables larges : elles débordent la largeur de lecture, centrées. */
+  figure.wide { width: min(92vw, 60rem); margin-left: 50%; transform: translateX(-50%); }
+  figure.wide table { font-size: 0.8rem; }
+  figure.wide figcaption, figure.wide .note { max-width: 40rem; margin-left: auto;
+                                              margin-right: auto; }
 
   .note {
     font-size: 0.82rem;
@@ -309,6 +316,7 @@
     :root { --paper: #FFF; --ink: #000; --rule: #000; --hair: #999; --soft: #333; --muted: #555; }
     body { font-size: 10.5pt; }
     .sheet { max-width: none; padding: 0; }
+    figure.wide { width: 100%; margin-left: 0; transform: none; }
     h2, h3 { break-after: avoid; }
     figure, .prop, .eq { break-inside: avoid; }
     .fig .band, .fig .hm, .fig .area, .fig .mesh { -webkit-print-color-adjust: exact;
@@ -316,6 +324,10 @@
   }
 
 {{FIGURE_CSS}}
+  @media (max-width: 64rem) {
+    figure.wide { width: 100%; margin-left: 0; transform: none; }
+  }
+
   @media (max-width: 34rem) {
     .sheet { padding: 2.5rem 1.1rem 4rem; }
     .eq { grid-template-columns: 0 1fr 2.2rem; }
@@ -340,8 +352,12 @@
     <p>Le résultat structurant est un théorème d'invariance. Sous un prix sans dérive, l'espérance nette d'un trade vaut exactement <span class="v">−c/L</span> — la friction rapportée au risque nominal — quels que soient le placement des barrières et la règle de gestion du stop. Le taux de réussite affiché est lui aussi invariant, ainsi que le produit du ratio affiché par sa probabilité de réalisation.</p>
     <p>De ce théorème découle un critère unique, obtenu par l'identité de Wald&nbsp;: l'espérance nette vaut <span class="v">µ</span>·E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>, le produit de la dérive captée par la durée d'exposition, diminué de la friction. La géométrie du trade n'agit que par l'exposition qu'elle procure. Il en résulte trois conséquences chiffrées. L'amélioration <em>relative</em> exigée du signal est constante et vaut <span class="v">c/L</span>, soit {{lift_rel}}&nbsp;% quel que soit le ratio retenu. Le ratio d'information requis vaut <span class="v">c</span>/√(<span class="v">ab</span>) et tombe à {{ir20}} au ratio 1:20. Enfin, l'exposition sature&nbsp;: au-delà de 1:30, éloigner le target n'ajoute plus de temps de marché, tandis que la probabilité d'y parvenir continue de décroître.</p>
     <p>La faisabilité d'un ratio élevé ne dépend donc pas du ratio lui-même mais d'une propriété mesurable du prix, la vitesse à laquelle sa dispersion croît avec l'horizon. Sous dispersion en racine du temps, un target à 1:30 est hors de portée d'une séance&nbsp;; sous la loi d'échelle calibrée sur la dispersion réellement observée, il est atteint dans {{ptp30}}&nbsp;% des cas. Quant à la remontée du stop, elle est neutre en espérance si et seulement si la dérive postérieure à la confirmation est nulle, et coûteuse dès qu'elle est positive.</p>
+    <p>La seconde partie du papier applique le même traitement aux sept couches d'analyse elles-mêmes — théorie de Dow, supports et résistances, profil de volume, bandes VWAP, exposition gamma, carnet d'ordres, grille de Fibonacci. Chacune reçoit une définition calculatoire, une loi nulle et un prédicat testable. Cinq de ces lois nulles admettent une forme fermée sans paramètre, et elles sont sévères&nbsp;: la règle de continuation journalière se déclenche trois jours sur quatre sur un prix sans mémoire, la «&nbsp;mèche de rejet&nbsp;» apparaît un jour sur trois, un niveau de retracement à 0,618 est touché une fois sur sept, et la fréquence de continuation d'une structure de swings est fixée par la seule profondeur du repli. Trois résultats nouveaux en découlent&nbsp;: un stop exprimé en pourcentage du prix n'est pas un risque constant, sa largeur en écarts-types locaux variant d'un facteur un et demi selon le nœud de volume où l'entrée a lieu&nbsp;; la grille de Fibonacci améliore l'espérance par signal si et seulement si le signal est perdant, exactement comme la remontée du stop&nbsp;; et un signal de carnet, dont l'information a une demi-vie de quelques secondes, ne peut pas financer une friction d'aller-retour sur une exposition d'une demi-heure, quelle que soit sa justesse.</p>
+
+    <p>Le mécanisme du régime de gamma est dérivé jusqu'à sa conséquence chiffrée&nbsp;: la boucle de couverture crée une autocorrélation de rendement, donc un exposant d'échelle, donc une atteignabilité de target. Le contrôle de plausibilité qui en découle contredit la calibration retenue — reproduire l'exposant supposé exigerait un gamma net d'un ordre de grandeur supérieur à tout gamma observable sur un indice. Cette contradiction est signalée plutôt que résolue, et elle fixe l'ordre des tests.</p>
+
     <p>Aucune mesure empirique n'est présentée ici. Les résultats sont analytiques et vérifiés numériquement&nbsp;; ils délimitent l'espace dans lequel un edge peut exister et chiffrent ce qu'il devrait valoir, sans établir qu'il existe.</p>
-    <p class="keywords"><span>Mots-clés —</span> microstructure de marché&nbsp;; théorème d'arrêt optionnel&nbsp;; premier passage&nbsp;; identité de Wald&nbsp;; coûts de transaction&nbsp;; loi d'échelle&nbsp;; gamma dealer&nbsp;; surajustement.</p>
+    <p class="keywords"><span>Mots-clés —</span> microstructure de marché&nbsp;; théorème d'arrêt optionnel&nbsp;; premier passage&nbsp;; identité de Wald&nbsp;; coûts de transaction&nbsp;; loi d'échelle&nbsp;; gamma dealer&nbsp;; profil de volume&nbsp;; densité d'occupation&nbsp;; carnet d'ordres&nbsp;; loi nulle&nbsp;; surajustement.</p>
   </div>
 
   <hr class="rule">
@@ -350,7 +366,7 @@
 
   <p>ALP-1 empile sept outils publics en confluence&nbsp;: théorie de Dow en journalier, supports et résistances, profil de volume, bandes VWAP en écarts-types, exposition gamma des teneurs de marché, lecture du carnet d'ordres, grille de Fibonacci sur mèche de confirmation. C'est une architecture répandue et rarement formalisée, ce qui la rend en pratique difficile à valider comme à invalider.</p>
 
-  <p>Ce papier ne propose pas une couche supplémentaire. Il délimite l'espace dans lequel un edge peut exister pour cette stratégie, mesure ce qu'il faudrait démontrer pour établir qu'il existe, et en déduit un protocole de test.</p>
+  <p>Ce papier ne propose pas une couche supplémentaire. Il délimite l'espace dans lequel un edge peut exister pour cette stratégie, mesure ce qu'il faudrait démontrer pour établir qu'il existe, et en déduit un protocole de test. Les sections 9 à 15 y ajoutent ce qui manque le plus souvent à ces piles&nbsp;: pour chaque couche, la fréquence à laquelle son motif se produit sur un prix sans dérive. Une observation de marché n'a pas d'unité de mesure tant que cette fréquence n'est pas connue&nbsp;; elle l'est ici, en forme fermée, pour cinq des sept couches.</p>
 
   <h3>Le paramétrage étudié</h3>
 
@@ -366,7 +382,11 @@
 
   <h3>Plan</h3>
 
-  <p>La section 2 pose le cadre formel. La section 3 démontre le théorème d'invariance et ses corollaires. La section 4 en tire le critère maître — dérive multipliée par exposition — et les seuils qui en découlent. La section 5 examine ce que la clôture de séance change pour un ratio de 1:20 à 1:30. La section 6 traite de la remontée du stop et du ratio affiché. La section 7 chiffre l'horizon de validation. La section 8 réexamine le conditionnement par le régime de gamma. La section 9 énonce le protocole de falsification, la section 10 les limites.</p>
+  <p>Le document se lit en deux parties. La première traite la stratégie comme une géométrie et n'a besoin d'aucune couche d'analyse&nbsp;: la section 2 pose le cadre formel, la section 3 démontre le théorème d'invariance et ses corollaires, la section 4 en tire le critère maître — dérive multipliée par exposition — et les seuils qui en découlent, la section 5 examine ce que la clôture de séance change pour un ratio de 1:20 à 1:30, la section 6 traite de la remontée du stop et du ratio affiché, la section 7 chiffre l'horizon de validation, la section 8 réexamine le conditionnement par le régime de gamma.</p>
+
+  <p>La seconde partie examine les sept couches une à une, chacune selon le même protocole&nbsp;: définition calculatoire, loi nulle en forme fermée, prédicat testable. La section 9 en donne le lexique complet et la vue d'ensemble&nbsp;; la section 10 traite l'exposition gamma et ses niveaux, la section 11 le profil de volume et les bandes VWAP, la section 12 la théorie de Dow, la section 13 la grille de Fibonacci, la section 14 le flux d'ordres et la liquidité. La section 15 dresse l'audit de falsifiabilité couche par couche.</p>
+
+  <p>La section 16 énonce le protocole de falsification, la section 17 les limites.</p>
 
   <p>Toutes les tables et figures sont produites par le module <code>alp1.report</code> sous les hypothèses de la Table&nbsp;1, sans autre paramètre libre.</p>
 
@@ -542,7 +562,7 @@
     <div class="no">(10)</div>
   </div>
 
-  <p>Le processus <span class="v">X<sub>t</sub></span>&nbsp;=&nbsp;<span class="v">σ</span><sub>1</sub><span class="v">W</span>(<span class="v">t</span><sup>&thinsp;2H</sup>) reproduit exactement cette loi tout en restant une martingale&nbsp;: le changement de temps étant déterministe, toutes les formules de premier passage s'appliquent en remplaçant l'horizon réel par le temps effectif <span class="v">T</span><sup>2H</sup>, et les propositions 2 et 4 sont préservées. <span class="v">H</span> n'est pas un paramètre libre&nbsp;: il se mesure, et sa mesure est le premier test du protocole de la section 9.</p>
+  <p>Le processus <span class="v">X<sub>t</sub></span>&nbsp;=&nbsp;<span class="v">σ</span><sub>1</sub><span class="v">W</span>(<span class="v">t</span><sup>&thinsp;2H</sup>) reproduit exactement cette loi tout en restant une martingale&nbsp;: le changement de temps étant déterministe, toutes les formules de premier passage s'appliquent en remplaçant l'horizon réel par le temps effectif <span class="v">T</span><sup>2H</sup>, et les propositions 2 et 4 sont préservées. <span class="v">H</span> n'est pas un paramètre libre&nbsp;: il se mesure, et sa mesure est le premier test du protocole de la section 16.</p>
 
   <h3>Composition des issues</h3>
 
@@ -616,7 +636,7 @@
 
   <p>Les ratios élevés jouent ici dans les deux sens. Ils augmentent l'espérance par trade, par l'exposition&nbsp;; ils augmentent aussi la dispersion, car le résultat est dominé par une queue rare et grande. La Table&nbsp;8 et la Figure&nbsp;6 tranchent&nbsp;: <strong>à dérive captée égale, le ratio élevé l'emporte</strong> — {{n20_k2}} trades au ratio 1:20 contre {{n10_k2}} au ratio 1:10 pour une dérive de {{mu_k2}} point par heure — mais les ordres de grandeur restent exigeants. Une dérive de deux fois le seuil d'équilibre demande plusieurs milliers de trades, soit plusieurs années à deux trades par séance. Une dérive de trois fois le seuil ramène l'exigence à {{n20_k3}} trades.</p>
 
-  <p>Ce constat ne condamne pas la stratégie&nbsp;; il fixe l'ordre dans lequel les tests doivent être conduits. Les mesures de la section 9 portent sur des propriétés du prix conditionnées au signal, estimables sur historique en quelques jours de travail, et non sur un P&amp;L simulé qui demanderait des années de données pour trancher.</p>
+  <p>Ce constat ne condamne pas la stratégie&nbsp;; il fixe l'ordre dans lequel les tests doivent être conduits. Les mesures de la section 16 portent sur des propriétés du prix conditionnées au signal, estimables sur historique en quelques jours de travail, et non sur un P&amp;L simulé qui demanderait des années de données pour trancher.</p>
 
 {{TABLE:validation}}
 
@@ -653,7 +673,320 @@
 
   <h3>Cohérence avec l'anomalie de bande</h3>
 
-  <p>Une observation de terrain — les extrêmes de bande à trois écarts-types donnent lieu à des balayages suivis de clôtures au-delà — est cohérente avec un régime de gamma négatif à ces niveaux. Cette cohérence est un point en faveur du mécanisme&nbsp;: elle aurait pu manquer. Sa force probante reste faible pour trois raisons&nbsp;: elle porte sur un phénomène unique, elle était disponible au moment où l'hypothèse a été formée, et elle admet au moins une explication concurrente sans contenu gamma — les extrêmes de bande sont par construction les zones où les ordres stop s'accumulent, et un balayage suivi d'une clôture au-delà est le comportement attendu d'une simple chasse aux stops. Elle ne dispense d'aucun des tests de la section 9.</p>
+  <p>Une observation de terrain — les extrêmes de bande à trois écarts-types donnent lieu à des balayages suivis de clôtures au-delà — est cohérente avec un régime de gamma négatif à ces niveaux. Cette cohérence est un point en faveur du mécanisme&nbsp;: elle aurait pu manquer. Sa force probante reste faible pour trois raisons&nbsp;: elle porte sur un phénomène unique, elle était disponible au moment où l'hypothèse a été formée, et elle admet au moins une explication concurrente sans contenu gamma — les extrêmes de bande sont par construction les zones où les ordres stop s'accumulent, et un balayage suivi d'une clôture au-delà est le comportement attendu d'une simple chasse aux stops. Elle ne dispense d'aucun des tests de la section 16.</p>
+
+  <h2>Les instruments de la pile</h2>
+
+  <h3>Ce qu'un sigle doit dire</h3>
+
+  <p>Les sections précédentes ont traité la stratégie comme une géométrie&nbsp;: un stop, un target, une règle de sortie. Elles n'ont rien dit des sept couches qui décident d'entrer. Cette partie les traite une à une, avec un même protocole d'examen en trois temps&nbsp;: la définition calculatoire de chaque grandeur, la fréquence à laquelle elle se produit sous un prix sans dérive, et le prédicat qu'il faudrait mesurer pour lui reconnaître une valeur.</p>
+
+  <p>Le deuxième temps est le moins pratiqué et le plus décisif. Un motif qui apparaît trois jours sur quatre sur une marche aléatoire ne devient pas informatif parce qu'on l'a vu précéder trois hausses&nbsp;; un niveau touché une fois sur sept n'est pas «&nbsp;respecté&nbsp;» parce qu'il l'a été. Sans loi nulle, une observation de marché n'a pas d'unité de mesure. Nous en donnons une, en forme fermée, pour chaque couche où c'est possible — et ce l'est pour six des sept.</p>
+
+  <p>Le troisième temps ramène tout au critère maître. Une fréquence n'est pas comparable à un seuil de rentabilité&nbsp;; une dérive l'est. Chaque couche est donc traduite en points d'indice par unité de temps, seule grandeur que l'équation&nbsp;(6) accepte en entrée.</p>
+
+{{FIGURE:cockpit|État de la pile sur une configuration, et décomposition de l'espérance par trade. Les six cadres supérieurs sont produits par les modules correspondants&nbsp;; le cadre inférieur montre que six lectures concordantes n'agissent que par un canal, la dérive captée pendant l'exposition.}}
+
+{{TABLE:lexicon}}
+
+  <h2>Exposition gamma&nbsp;: construction des niveaux et mécanique du flux</h2>
+
+  <h3>Ce que mesure le GEX</h3>
+
+  <p>Le <em>gamma exposure</em> est le notionnel que les teneurs de marché doivent échanger pour rester delta-neutres quand le sous-jacent varie d'un pour cent. Pour une chaîne d'options d'échéance <span class="v">τ</span>, il vaut</p>
+
+  <div class="eq">
+    <div class="body">GEX(<span class="v">S</span>)<span class="op">=</span>&Sigma;<sub>&thinsp;<span class="v">i</span></sub>&thinsp;<span class="v">ε<sub>i</sub></span>&thinsp;OI<sub><span class="v">i</span></sub>&thinsp;<span class="v">m</span>&thinsp;<span class="v">Γ</span>(<span class="v">S</span>,<span class="v">K<sub>i</sub></span>)&thinsp;<span class="v">S</span>²&thinsp;&times;&thinsp;1&nbsp;%,</div>
+    <div class="no">(12)</div>
+  </div>
+
+  <p>où <span class="v">m</span>&nbsp;=&nbsp;100 est le multiplicateur du contrat, <span class="v">Γ</span> le gamma de Black-Scholes et <span class="v">ε<sub>i</sub></span> le signe du gamma détenu par les teneurs sur cette ligne. Le facteur <span class="v">S</span>² provient de deux conversions successives&nbsp;: <span class="v">Γ</span>·<span class="v">S</span> transforme un gamma par point en variation de delta, le second <span class="v">S</span> convertit ce delta en notionnel.</p>
+
+  <p>Trois remarques s'imposent, et chacune est une source d'erreur de lecture courante.</p>
+
+  <p><em>Le GEX est une fonction du spot, pas une constante.</em> Chaque gamma est réévalué au niveau courant. Un marché «&nbsp;en gamma positif aujourd'hui&nbsp;» ne l'est plus nécessairement un pour cent plus bas&nbsp;; c'est précisément l'objet du niveau HVL défini plus loin.</p>
+
+  <p><em>Le signe <span class="v">ε<sub>i</sub></span> est une convention, pas une identité comptable.</em> La convention usuelle — teneurs longs de gamma sur les calls, courts sur les puts — traduit le déséquilibre habituel de la demande finale&nbsp;: les investisseurs achètent de la protection en puts et vendent des calls couverts. C'est une régularité de flux, qui s'inverse sur un marché où la demande finale porte sur les calls. Toute conclusion tirée d'un GEX publié est conditionnelle à ce paramètre, et le protocole de la section&nbsp;16 le teste plutôt qu'il ne le suppose.</p>
+
+  <p><em>Le gamma d'une option 0DTE croît comme</em> <span class="v">1</span>/√<span class="v">τ</span>. Une option expirant le jour même porte, trois heures avant l'échéance, un gamma sans commune mesure avec celui d'une échéance mensuelle de même open interest, et il est concentré sur une largeur <span class="v">S</span>·<span class="v">σ</span>√<span class="v">τ</span> — une trentaine de points sur ES. La domination du gamma 0DTE en fin de séance n'est donc pas une hypothèse de marché&nbsp;: c'est une propriété de la formule.</p>
+
+  <h3>Les niveaux publiés</h3>
+
+  <p>Les tableaux de bord publient quatre familles de niveaux, que la Figure&nbsp;12 reconstruit depuis une chaîne synthétique. Le <strong>gamma wall</strong>, noté GW ou 0GW pour la série 0DTE, est le strike de concentration gamma maximale&nbsp;: le point d'ancrage du flux de couverture. Les <strong>call resistances</strong> CR1, CR2… sont les strikes au-dessus du spot classés par concentration décroissante, les <strong>put supports</strong> PS1, PS2… leurs symétriques en dessous. Le <strong>HVL</strong>, <em>high volatility level</em>, est le niveau de spot où le gamma net change de signe&nbsp;; les termes <em>gamma flip</em> et <em>zero gamma level</em> désignent le même objet, le sigle HVL en nommant la conséquence plutôt que la cause.</p>
+
+  <p>Deux précisions valent d'être faites, parce qu'elles expliquent des désaccords apparents entre fournisseurs. D'abord, le rang d'un niveau porte sur la <em>taille</em>, non sur la distance&nbsp;: PS2 n'est pas le deuxième strike en descendant, c'est le deuxième par la concentration, et il peut être plus proche du spot que PS1. Ensuite, la concentration peut s'évaluer de deux façons — au spot du jour, ce qui désigne les strikes voisins et répond à «&nbsp;où la couverture s'exerce en ce moment&nbsp;», ou à la monnaie, chaque strike étant évalué comme si le prix l'atteignait, ce qui désigne les grands strikes ronds et répond à «&nbsp;où la couverture deviendra intense si le prix y va&nbsp;». Un niveau employé comme cible relève de la seconde question. Deux tableaux de bord peuvent donc publier des murs différents pour la même chaîne sans qu'aucun ne se trompe.</p>
+
+{{FIGURE:gexlevels|Trois lectures d'une même chaîne 0DTE sur un axe de prix commun&nbsp;: concentration potentielle par strike, gamma net porté au spot du jour, et profil GEX(S) dont le passage par zéro définit le HVL.}}
+
+{{TABLE:gex_levels}}
+
+  <h3>Ce qu'est un mur, exactement</h3>
+
+  <p>Le récit courant attaché au <em>put support</em> mérite d'être corrigé, parce qu'il est incompatible avec la convention de signe qu'il invoque. Il dit&nbsp;: «&nbsp;les teneurs sont courts des puts, donc ils achètent à ce niveau, donc il supporte&nbsp;». Or un intervenant court de gamma vend dans la baisse&nbsp;; il l'amplifie, il ne la contient pas.</p>
+
+  <p>La formulation exacte passe par le delta et non par le gamma. Le flux de couverture entre deux niveaux vaut la <em>variation</em> du delta agrégé,</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">Q</span><span class="op">=</span><span class="v">Δ</span>(<span class="v">S</span><sub>1</sub>)<span class="op">−</span><span class="v">Δ</span>(<span class="v">S</span><sub>0</sub>),</div>
+    <div class="no">(13)</div>
+  </div>
+
+  <p>et le delta d'une option sature&nbsp;: sous un strike franchi, il ne varie plus. Le flux qu'imposait ce strike s'<em>épuise</em>, et d'autant plus nettement qu'il portait d'open interest. Un mur n'est donc pas un niveau où un flux pousse le prix dans un sens&nbsp;: c'est un niveau où un flux cesse. Sur le graphe de <span class="v">Δ</span>(<span class="v">S</span>), il apparaît comme le point d'inflexion au-delà duquel la courbe s'aplatit.</p>
+
+  <p>Cette version se démontre à partir de la formule de Black-Scholes et se teste&nbsp;: elle prédit une structure dans l'<em>intensité du flux</em> autour des grands strikes, non dans le prix. C'est une prédiction plus faible que le récit qu'elle remplace, et c'est la seule que la mécanique autorise.</p>
+
+  <h3>De la couverture à la loi d'échelle</h3>
+
+  <p>Reste à relier ce flux à la seule grandeur qui compte dans ce papier. Un choc exogène <span class="v">dS</span><sub>0</sub> déclenche une couverture proportionnelle au déplacement, dont l'impact de prix agit en retour&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">dS</span><span class="op">=</span><span class="v">dS</span><sub>0</sub><span class="op">−</span><span class="v">λΓ</span>&thinsp;<span class="v">dS</span><span class="op">&nbsp;⟹&nbsp;</span><span class="v">dS</span><span class="op">=</span><span class="frac"><span><span class="v">dS</span><sub>0</sub></span><span>1<span class="op">+</span><span class="v">λΓ</span></span></span>,</div>
+    <div class="no">(14)</div>
+  </div>
+
+  <p>où <span class="v">λ</span> est l'impact de prix par unité échangée et <span class="v">Γ</span> le gamma net. Gamma positif&nbsp;: le multiplicateur est inférieur à un, la volatilité réalisée est comprimée. Gamma négatif&nbsp;: il excède un.</p>
+
+  <p>Cette boucle laisse une trace mesurable. Le flux d'un pas est déclenché par le rendement du pas précédent et s'exerce en sens contraire de <span class="v">Γ</span>&nbsp;; à l'ordre un, le rendement observé suit un processus autorégressif de coefficient</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">ρ</span><span class="op">=</span><span class="op">−</span><span class="frac"><span><span class="v">λΓ</span></span><span>1<span class="op">+</span><span class="v">λΓ</span></span></span>,<span class="op"></span>&nbsp;&nbsp;d'où&nbsp;&nbsp;<span class="v">H</span><span class="op">=</span><span class="frac"><span>1</span><span>2</span></span><span class="op">+</span><span class="frac"><span>ln&thinsp;√((1<span class="op">+</span><span class="v">ρ</span>)/(1<span class="op">−</span><span class="v">ρ</span>))</span><span>ln&thinsp;<span class="v">T</span></span></span>.</div>
+    <div class="no">(15)</div>
+  </div>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 8.</span> Le régime de gamma n'agit sur l'espérance d'un trade que par l'exposant d'échelle. La chaîne est complète et sans autre canal&nbsp;: <span class="v">Γ</span>&nbsp;→&nbsp;<span class="v">λΓ</span>&nbsp;→&nbsp;<span class="v">ρ</span>&nbsp;→&nbsp;<span class="v">H</span>&nbsp;→&nbsp;P(target) et E[<span class="v">τ</span>∧<span class="v">T</span>]&nbsp;→&nbsp;<span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> La Proposition&nbsp;4 établit que l'espérance nette ne dépend de la loi du prix que par E[<span class="v">τ</span>∧<span class="v">T</span>] et par la dérive. Le signe du gamma ne contraint pas la dérive&nbsp;; il contraint la structure d'autocorrélation par (14), donc l'exposant d'échelle par (15), donc l'exposition et les probabilités d'absorption. ∎</p>
+  </div>
+
+  <p>Deux seuils bornent le domaine où (15) a un sens, et il ne faut pas les confondre. En <span class="v">λΓ</span>&nbsp;=&nbsp;−½, l'autocorrélation atteint l'unité&nbsp;: les rendements cessent d'être stationnaires et la dispersion croît linéairement en temps au lieu de croître en racine — c'est la forme quantitative du <em>gamma squeeze</em>. En <span class="v">λΓ</span>&nbsp;=&nbsp;−1, c'est l'amplification d'un seul pas qui diverge. Le premier seuil est le plus contraignant.</p>
+
+{{FIGURE:gammafeedback|Chaîne causale du gamma à l'atteignabilité du target. À gauche, l'exposant d'échelle impliqué par un niveau de GEX, la bande grisée marquant le domaine plausible sur un indice. À droite, ce que l'exposant décide&nbsp;: la probabilité d'atteindre un target à 1:20 et à 1:30.}}
+
+{{TABLE:gex_regime}}
+
+  <h3>Un contrôle de plausibilité, et ce qu'il révèle</h3>
+
+  <p>La relation (15) s'inverse, et cette inversion est un instrument de critique. Elle demande à une calibration en <span class="v">H</span> ce qu'elle suppose du marché. Sous un volume quotidien de {{adv_bn}}&nbsp;milliards de dollars pour le complexe indiciel et un impact d'un pour cent par volume quotidien échangé, l'exposant <span class="v">H</span>&nbsp;=&nbsp;{{hurst}} retenu par ce papier exigerait un gamma net de {{gex_req_bn}}&nbsp;milliards de dollars par pour cent, soit {{gex_req_adv}}&nbsp;% du volume quotidien — un ordre de grandeur au-dessus de tout gamma observable sur un indice, et à un cinquième du seuil de non-stationnarité.</p>
+
+  <p>La conclusion est nette et elle va contre l'hypothèse&nbsp;: <strong>la persistance calibrée dans ce papier ne peut pas être attribuée au régime de gamma.</strong> Le mécanisme existe, il est correctement dérivé, et son ordre de grandeur est trop petit d'un facteur dix. Deux explications concurrentes restent ouvertes, et le protocole doit les départager&nbsp;: une saisonnalité intraséance de la volatilité — la dispersion se concentre en ouverture et en clôture, ce qui gonfle la dispersion de séance sans créer d'autocorrélation — ou une surestimation de la dispersion de séance elle-même.</p>
+
+  <p>Cette seconde possibilité mérite un examen chiffré, car elle porte sur le paramètre le plus fragile du document. Les {{sigma_sess}} points retenus sont-ils un écart-type de clôture ou une amplitude haut-bas&nbsp;? L'amplitude moyenne d'un brownien vaut environ 1,6 écart-type. Sous la seconde lecture, l'exposant tombe à {{hurst_alt}} et la probabilité d'atteindre un target à 1:30 passe de {{ptp30}}&nbsp;% à {{ptp30_alt}}&nbsp;%.</p>
+
+{{TABLE:hurst_sensitivity}}
+
+  <p>Il faut donc lire la section&nbsp;5 avec cette réserve&nbsp;: l'énoncé «&nbsp;1:30 est à la limite de la portée d'une séance&nbsp;» est conditionnel à une mesure qui n'a pas été faite ici, et dont la valeur alternative la plus plausible le renverse. C'est la raison pour laquelle le premier test du protocole ne porte sur aucun signal.</p>
+
+  <h2>Le profil de volume comme densité d'occupation</h2>
+
+  <h3>POC, aire de valeur, HVN et LVN</h3>
+
+  <p>Le profil de volume est un histogramme du volume échangé par niveau de prix, et non par unité de temps. Le <strong>POC</strong>, <em>point of control</em>, en est le maximum. L'<strong>aire de valeur</strong> est le plus petit intervalle contigu autour du POC contenant une fraction fixée du volume, traditionnellement 70&nbsp;%&nbsp;; ses bornes sont notées VAH et VAL, ou HVA et LVA selon les logiciels — c'est le même objet. Un <strong>HVN</strong> est un maximum local de l'histogramme, un <strong>LVN</strong> un minimum local.</p>
+
+  <p>La sélection visuelle des nœuds est la principale source de surajustement de cette couche&nbsp;: sur un profil réel, tout creux peut être appelé LVN a posteriori. Le module <code>alp1.vprofile</code> les extrait par proéminence topographique — la hauteur d'un extrémum au-dessus du col qui le sépare d'un extrémum plus marqué — avec un seuil fixé avant lecture. C'est la seule façon connue de rendre cette couche reproductible.</p>
+
+  <h3>L'histogramme est une carte du temps</h3>
+
+  <p>À vitesse d'échange stable, un profil de volume estime la <strong>densité d'occupation</strong> du prix&nbsp;: le temps passé par niveau. Cette lecture n'est pas une image, c'est un résultat de la théorie des diffusions. Pour un processus de volatilité locale <span class="v">σ</span>(<span class="v">x</span>), la densité d'occupation vérifie</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">m</span>(<span class="v">x</span>)<span class="op">∝</span><span class="frac"><span>1</span><span><span class="v">σ</span>(<span class="v">x</span>)²</span></span>,</div>
+    <div class="no">(16)</div>
+  </div>
+
+  <p>et s'inverse&nbsp;: <span class="v">σ</span>(<span class="v">x<sub>i</sub></span>)&nbsp;=&nbsp;<span class="v">σ̄</span>√(<span class="v">v̄</span>/<span class="v">v<sub>i</sub></span>). Le profil devient alors une carte de la volatilité locale, ce que la lecture usuelle n'en tire pas.</p>
+
+  <p>Trois conséquences suivent, et chacune corrige une formulation courante.</p>
+
+  <ul>
+    <li>Un LVN n'est pas un vide que le prix «&nbsp;comble&nbsp;»&nbsp;: c'est un intervalle de volatilité locale élevée. La traversée rapide n'est pas la prédiction, c'est la définition. L'énoncé testable est le rapport des temps de traversée entre nœuds, pas l'existence d'un mouvement vers le LVN.</li>
+    <li>Le POC est le mode de la densité d'occupation, donc le point de volatilité locale minimale. «&nbsp;Le prix revient au POC&nbsp;» est un énoncé sur le temps de séjour, pas sur une force de rappel&nbsp;: un prix qui erre sans dérive y passe plus de temps parce qu'il y avance moins vite.</li>
+    <li>Un profil composite sur plusieurs séances et un profil de séance répondent à deux questions différentes — où l'inventaire s'est accumulé sur la période longue, où il s'échange aujourd'hui. Leurs POC n'ont pas à coïncider et leur désaccord n'est pas un signal.</li>
+  </ul>
+
+  <h3>Conséquence&nbsp;: un stop constant n'est pas un risque constant</h3>
+
+  <p>Voici le résultat opérationnel de cette section, et il est nouveau dans ce papier. Le stop d'ALP-1 est fixé à {{stop_pct}}&nbsp;% du niveau d'indice, soit {{stop_pts}} points partout. Cette constance est une constance <em>en points</em>, pas <em>en unités de risque</em>. Rapportée à la volatilité locale du nœud d'entrée, la même distance vaut {{stop_sigma_poc}} écarts-types sur le POC et {{stop_sigma_lvn}} sur le LVN le plus creux du profil de référence. La probabilité d'être sorti par le seul bruit en une demi-heure passe alors de {{pstop_poc}}&nbsp;% à {{pstop_lvn}}&nbsp;%.</p>
+
+  <p>Or la règle d'entrée de la pile privilégie explicitement les LVN. Elle sélectionne donc, sans le dire, les endroits où le stop affiché est le plus fragile. La correction est immédiate et ne coûte rien&nbsp;: indexer la largeur du stop sur la volatilité locale du nœud plutôt que sur le niveau de l'indice. Cela ne crée aucune espérance — la Proposition&nbsp;2 l'interdit — mais cela rend comparables des trades qui ne l'étaient pas, et rend la mesure du protocole interprétable.</p>
+
+{{FIGURE:vprofile|Profil de volume de séance, volatilité locale qu'il implique par l'équation (16), et probabilité de sortie au stop pour un stop nominal identique en tout point. Les trois cadres partagent l'axe des prix.}}
+
+{{TABLE:profile_levels}}
+
+  <h3>Les bandes VWAP</h3>
+
+  <p>Le VWAP est le prix moyen pondéré par les volumes depuis l'ouverture&nbsp;; les bandes sont tracées à <span class="v">k</span> écarts-types de l'écart au VWAP. Sous un prix sans dérive, cet écart rapporté à sa dispersion est une variable centrée réduite à chaque instant. La part de séance passée au-delà de <span class="v">k</span> écarts-types vaut donc exactement</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">f</span>(<span class="v">k</span>)<span class="op">=</span>2&thinsp;Φ(−<span class="v">k</span>),</div>
+    <div class="no">(17)</div>
+  </div>
+
+  <p>sans aucun paramètre. Sur une séance de {{session}} minutes, cela fait {{vwap1_min}} minutes au-delà d'un écart-type et {{vwap3_min}} minute au-delà de trois. Une règle d'entrée accrochée à la bande 3 est donc rare par construction, et son échantillon croît d'autant plus lentement — ce qui, rapporté à l'horizon de validation de la section&nbsp;7, est une contrainte sévère avant même toute question d'edge.</p>
+
+{{FIGURE:vwapbands|Enveloppe VWAP en écarts-types sur une séance et temps de séjour au-delà de chaque bande sous un prix sans dérive. La trajectoire est simulée de façon déterministe, sans donnée de marché.}}
+
+  <h2>La théorie de Dow et sa loi nulle</h2>
+
+  <h3>Les six principes</h3>
+
+  <p>Charles Dow n'a jamais publié de théorie&nbsp;; ses éditoriaux du <em>Wall Street Journal</em>, parus entre 1899 et 1902, ont été codifiés après sa mort par William Hamilton puis Robert Rhea. Six principes en sont issus&nbsp;: le marché escompte toute information connue&nbsp;; trois tendances coexistent, la secondaire retraçant du tiers aux deux tiers de la primaire&nbsp;; trois phases se succèdent, accumulation, participation, distribution&nbsp;; deux indices liés doivent se confirmer&nbsp;; le volume confirme la tendance&nbsp;; la tendance persiste jusqu'à un signal de retournement clair.</p>
+
+  <p>Le premier principe est un énoncé d'efficience faible, antérieur d'un demi-siècle à sa formulation académique, et difficilement compatible avec les cinq suivants pris au sérieux. Le troisième n'est pas testable&nbsp;: les phases ne sont identifiables qu'a posteriori. Le deuxième, le quatrième et le cinquième le sont, et il vaut d'être noté que l'attention portée aux retracements profonds vient de là — de Dow — et non de Fibonacci.</p>
+
+  <p>ALP-1 n'utilise que le sixième, sous deux formes&nbsp;: une clôture au-delà du <em>corps</em> de la veille vaut continuation, une clôture avec mèche dominante vaut rejet.</p>
+
+  <h3>Deux identités exactes</h3>
+
+  <p>Ces deux règles ont une loi nulle en forme fermée, et le résultat est plus sévère qu'on ne l'attend.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 9.</span> Pour une journée sans dérive, la probabilité que la mèche haute atteigne <span class="v">k</span> fois le corps vaut exactement 1/(2<span class="v">k</span>&nbsp;+&nbsp;1). En particulier, une journée sur trois présente une mèche haute au moins aussi longue que son corps.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> On modélise la séance par un brownien issu de l'ouverture&nbsp;: <span class="v">O</span>&nbsp;=&nbsp;0, <span class="v">C</span>&nbsp;=&nbsp;<span class="v">X</span>&nbsp;∼&nbsp;<span class="v">N</span>(0,&nbsp;<span class="v">σ</span>²), <span class="v">M</span>&nbsp;=&nbsp;max. Conditionnellement à la clôture, le maximum suit la loi du maximum d'un pont brownien&nbsp;: P(<span class="v">M</span>&nbsp;≥&nbsp;<span class="v">m</span>&nbsp;|&nbsp;<span class="v">C</span>&nbsp;=&nbsp;<span class="v">x</span>)&nbsp;=&nbsp;exp(−2<span class="v">m</span>(<span class="v">m</span>&nbsp;−&nbsp;<span class="v">x</span>)/<span class="v">σ</span>²) pour <span class="v">m</span>&nbsp;≥&nbsp;max(0,&nbsp;<span class="v">x</span>). La condition demandée s'écrit <span class="v">M</span>&nbsp;≥&nbsp;(1&nbsp;+&nbsp;<span class="v">k</span>)<span class="v">x</span> si <span class="v">x</span>&nbsp;&gt;&nbsp;0 et <span class="v">M</span>&nbsp;≥&nbsp;−<span class="v">kx</span> sinon&nbsp;; dans les deux cas la probabilité conditionnelle vaut exp(−2<span class="v">k</span>(<span class="v">k</span>&nbsp;+&nbsp;1)<span class="v">x</span>²/<span class="v">σ</span>²). L'intégration contre la densité normale donne 1/√(1&nbsp;+&nbsp;4<span class="v">k</span>(<span class="v">k</span>&nbsp;+&nbsp;1))&nbsp;=&nbsp;1/(2<span class="v">k</span>&nbsp;+&nbsp;1). La volatilité disparaît&nbsp;: le résultat vaut pour tout marché et tout horizon de barre. ∎</p>
+  </div>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 10.</span> Pour deux journées sans dérive indépendantes, la clôture d'aujourd'hui tombe au-dessus du corps de la veille avec probabilité 3/8, en dessous avec probabilité 3/8, et à l'intérieur avec probabilité 1/4.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> La veille ouvre en 0 et clôture en <span class="v">X</span>&nbsp;; son corps couvre [min(0,&nbsp;<span class="v">X</span>),&nbsp;max(0,&nbsp;<span class="v">X</span>)]. Aujourd'hui clôture en <span class="v">X</span>&nbsp;+&nbsp;<span class="v">Y</span>. Le signal haussier demande <span class="v">Y</span>&nbsp;&gt;&nbsp;max(−<span class="v">X</span>,&nbsp;0), d'où P&nbsp;=&nbsp;P(<span class="v">X</span>&nbsp;&gt;&nbsp;0)P(<span class="v">Y</span>&nbsp;&gt;&nbsp;0)&nbsp;+&nbsp;∫<sub>0</sub><sup>∞</sup>&thinsp;φ(<span class="v">u</span>)[1&nbsp;−&nbsp;Φ(<span class="v">u</span>)]&thinsp;d<span class="v">u</span>&nbsp;=&nbsp;¼&nbsp;+&nbsp;⅛. Le cas baissier est symétrique. ∎</p>
+  </div>
+
+  <p>La règle de continuation se déclenche donc <strong>trois jours sur quatre</strong> sur un marché sans mémoire, à parts égales dans les deux sens, et la règle de rejet un jour sur trois. Ces fréquences ne sont pas des estimations&nbsp;: ce sont des identités sans paramètre. Elles disqualifient d'emblée la fréquence d'apparition d'un motif comme argument. La valeur de la couche, s'il y en a une, réside entièrement dans la dérive conditionnelle qu'elle isole, et c'est cette dérive que le protocole doit mesurer.</p>
+
+  <h3>La structure de swings</h3>
+
+  <p>La forme structurelle de la tendance — sommets et creux croissants — a elle aussi une loi nulle exacte. Avec un seuil de détection de pivot <span class="v">δ</span>, un sommet confirmé en <span class="v">H</span> et un creux confirmé en <span class="v">P</span>&nbsp;=&nbsp;<span class="v">H</span>&nbsp;−&nbsp;<span class="v">d</span>, la structure haussière se poursuit si le prix atteint <span class="v">H</span> avant de tomber de <span class="v">δ</span> sous <span class="v">P</span>. C'est une ruine du joueur à deux barrières, d'où</p>
+
+  <div class="eq">
+    <div class="body">P(nouveau sommet)<span class="op">=</span><span class="frac"><span><span class="v">δ</span></span><span><span class="v">d</span><span class="op">+</span><span class="v">δ</span></span></span>.</div>
+    <div class="no">(18)</div>
+  </div>
+
+  <p>Le résultat est purement géométrique&nbsp;: il ne dépend ni de la volatilité, ni de l'échelle de temps. Un repli égal au seuil de détection donne une chance sur deux&nbsp;; un repli deux fois plus profond, une sur trois. La profondeur du repli, et elle seule, fixe la fréquence attendue de la continuation — ce qui explique qu'une tendance «&nbsp;qui respire peu&nbsp;» paraisse si fiable sans qu'aucune information ne soit en jeu.</p>
+
+  <h3>Traduction dans le critère maître</h3>
+
+  <p>Une fréquence de continuation ne se compare pas à un seuil de rentabilité&nbsp;; une dérive, oui. L'inversion de (4) convertit une fréquence observée en points par minute, et la composition avec le critère maître donne l'exigence sous sa forme la plus parlante. Pour qu'une exposition intraséance de {{tau20}} minutes couvre la friction, il faut un biais directionnel journalier d'au moins</p>
+
+  <div class="eq">
+    <div class="body">biais<span class="op">=</span><span class="frac"><span><span class="v">c</span></span><span>E[<span class="v">τ</span>∧<span class="v">T</span>]</span></span><span class="op">×</span><span class="v">T</span><sub>séance</sub><span class="op">=</span>{{daily_bias}}&nbsp;points,</div>
+    <div class="no">(19)</div>
+  </div>
+
+  <p>soit {{daily_bias_pct}}&nbsp;% de l'indice, réparti uniformément sur la séance. L'hypothèse de répartition uniforme est optimiste — la dérive intraséance se concentre en ouverture et en clôture — ce qui est la bonne convention pour un seuil de rejet. C'est sous cette forme, et non sous celle d'un taux de réussite, que la couche journalière doit être testée.</p>
+
+{{FIGURE:downull|Fréquence des motifs de Dow sous un prix sans dérive. À gauche la loi exacte de la mèche dominante et la répartition des clôtures relatives au corps de la veille&nbsp;; à droite la continuation de structure, dont trois dérives distinctes déplacent à peine la courbe.}}
+
+{{TABLE:dow_null}}
+
+  <h2>Fibonacci&nbsp;: d'une grille de prix à un arbitrage d'exécution</h2>
+
+  <h3>D'où viennent les ratios</h3>
+
+  <p>La suite de Fibonacci a pour rapport limite le nombre d'or <span class="v">φ</span>&nbsp;=&nbsp;(1&nbsp;+&nbsp;√5)/2. Les ratios tracés en sont des puissances ou des racines&nbsp;: 0,618&nbsp;=&nbsp;1/<span class="v">φ</span>, 0,382&nbsp;=&nbsp;1/<span class="v">φ</span>², 0,786&nbsp;=&nbsp;√(1/<span class="v">φ</span>). Deux niveaux couramment tracés n'en sont pas&nbsp;: 0,500 est la moitié, héritée de la théorie de Dow, et 0,705 est la moyenne de 0,618 et 0,79, à un millième près √0,5 — une construction de praticien, sans généalogie mathématique.</p>
+
+  <p>Aucune propriété du nombre d'or ne se transmet au prix, et il n'existe aucun mécanisme par lequel un rapport de suite entière contraindrait un carnet d'ordres. Ce que la grille produit en revanche, et qui est réel, c'est un prix d'entrée meilleur obtenu au prix de signaux non exécutés. C'est un arbitrage, et il se chiffre.</p>
+
+  <h3>La loi nulle du retracement</h3>
+
+  <p>Après une impulsion de longueur <span class="v">R</span> terminée en <span class="v">B</span>, déclarons la continuation acquise si le prix dépasse <span class="v">B</span>&nbsp;+&nbsp;<span class="v">η</span><span class="v">R</span> et le retracement atteint s'il touche <span class="v">B</span>&nbsp;−&nbsp;<span class="v">fR</span>. Sous un prix sans dérive, c'est encore une ruine du joueur&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body">P(retracement&nbsp;≥&nbsp;<span class="v">f</span>)<span class="op">=</span><span class="frac"><span><span class="v">η</span></span><span><span class="v">f</span><span class="op">+</span><span class="v">η</span></span></span>.</div>
+    <div class="no">(20)</div>
+  </div>
+
+  <p>La probabilité ne dépend que du rapport des deux seuils. Avec <span class="v">η</span>&nbsp;=&nbsp;10&nbsp;%, la borne 0,618 est touchée dans {{fill_618}}&nbsp;% des cas, et 0,786 dans {{fill_786}}&nbsp;%. Ce sont les taux de remplissage qu'une grille d'ordres limites obtient sans qu'aucune information ne soit en jeu&nbsp;; c'est aussi la barre que doit franchir toute affirmation du type «&nbsp;le prix respecte le 0,618&nbsp;».</p>
+
+  <h3>L'arbitrage exact</h3>
+
+  <p>Un signal travaillé en zone OTE ne rapporte rien s'il n'est pas rempli, et rapporte <span class="v">µ</span>&thinsp;E[<span class="v">τ</span><sub>OTE</sub>]&nbsp;−&nbsp;<span class="v">c</span> sinon, avec une exposition plus longue puisque le target, fixé en niveau de prix, est plus éloigné de l'entrée. En notant <span class="v">q</span> le taux de remplissage&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">Δ</span><span class="op">=</span><span class="v">q</span>(<span class="v">µ</span>&thinsp;E[<span class="v">τ</span><sub>OTE</sub>]<span class="op">−</span><span class="v">c</span>)<span class="op">−</span>(<span class="v">µ</span>&thinsp;E[<span class="v">τ</span><sub>m</sub>]<span class="op">−</span><span class="v">c</span>).</div>
+    <div class="no">(21)</div>
+  </div>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 11.</span> Si l'entrée en retracement ne modifie pas l'exposition, alors <span class="v">Δ</span>&nbsp;=&nbsp;−(1&nbsp;−&nbsp;<span class="v">q</span>)&thinsp;E<sub>marché</sub>. Attendre le retracement améliore l'espérance par signal <em>si et seulement si</em> le signal exécuté au marché est perdant.</p>
+    <p class="proof"><span class="lab">Démonstration.</span> En posant E[<span class="v">τ</span><sub>OTE</sub>]&nbsp;=&nbsp;E[<span class="v">τ</span><sub>m</sub>]&nbsp;=&nbsp;E[<span class="v">τ</span>] dans (21), il vient <span class="v">Δ</span>&nbsp;=&nbsp;(<span class="v">q</span>&nbsp;−&nbsp;1)(<span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>). Comme <span class="v">q</span>&nbsp;&lt;&nbsp;1, le signe de <span class="v">Δ</span> est l'opposé de celui de l'espérance au marché. ∎</p>
+  </div>
+
+  <p>Le résultat a la même forme que celui de la section&nbsp;6 sur la remontée du stop, et c'est frappant&nbsp;: la grille de Fibonacci paie exactement quand le signal ne vaut rien. Sous un prix sans dérive, <span class="v">Δ</span>&nbsp;=&nbsp;<span class="v">c</span>(1&nbsp;−&nbsp;<span class="v">q</span>)&nbsp;&gt;&nbsp;0 — non parce que l'entrée est meilleure, mais parce que chaque trade évité est une friction épargnée. Dès que la dérive dépasse le seuil, les signaux manqués sont ceux qui partaient. Sous la géométrie réelle, où l'entrée en retracement allonge l'exposition, le seuil de changement de signe vaut {{mu_crit_ote}} point par heure, à comparer à <span class="v">µ</span>*&nbsp;=&nbsp;{{mu_star_h}}.</p>
+
+  <p>Reste un gain qui, lui, est certain et n'a rien de prédictif&nbsp;: un ordre limite touché ne paie pas le spread à l'entrée. Sur ES, une demi-tick épargnée vaut {{half_tick_pts}} point, à comparer aux {{friction_pts}} points de friction de référence. C'est la contribution mesurable de cette couche&nbsp;: un gain d'exécution, pas une prédiction — et il est du même ordre de grandeur que tout ce que la section discute par ailleurs.</p>
+
+{{FIGURE:fibgrid|Grille de retracement sur une impulsion, avec la probabilité qu'un prix sans dérive atteigne chaque niveau, et écart d'espérance par signal entre entrée au marché et entrée en zone OTE selon la dérive captée.}}
+
+{{TABLE:fib_levels}}
+
+  <h2>Flux d'ordres&nbsp;: ce qu'une lecture de carnet peut financer</h2>
+
+  <h3>Le vocabulaire</h3>
+
+  <p>Le carnet se diffuse à trois profondeurs&nbsp;: L1 donne la meilleure limite de chaque côté avec sa taille, L2 les tailles agrégées par niveau de prix, L3 les ordres individuels avec leur rang dans la file. On appelle <em>absorption</em> le fait qu'un volume agressif important frappe un niveau sans le déplacer, la file y étant reconstituée aussi vite qu'elle est consommée&nbsp;; <em>sweep</em> le cas inverse, où un ordre consomme plusieurs niveaux d'un coup&nbsp;; <em>spoofing</em> l'affichage d'une taille qu'on retire à l'approche du prix. Le <strong>CVD</strong>, <em>cumulative volume delta</em>, est la somme courante des volumes exécutés à l'ask moins ceux exécutés au bid.</p>
+
+  <p>Distinguer une absorption d'un leurre exige de savoir si une taille a été <em>exécutée</em> ou <em>annulée</em> — donc du L3, ou à tout le moins du L2 horodaté. Cette exigence n'est pas un détail d'implémentation&nbsp;: elle décide de la falsifiabilité de la couche.</p>
+
+  <h3>La demi-vie d'un signal</h3>
+
+  <p>Voici la contrainte structurante, et elle vaut pour toute lecture de flux. Un signal de carnet a une demi-vie&nbsp;: l'information qu'il porte se dissipe à mesure que la file se reconstitue ou se retire. Or l'espérance d'un trade vaut <span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>, où ce qui compte n'est pas l'intensité instantanée du signal mais son intégrale sur la durée d'exposition. En modélisant la dérive produite par <span class="v">µ</span>(<span class="v">t</span>)&nbsp;=&nbsp;<span class="v">µ</span><sub>0</sub>&thinsp;e<sup>−<span class="v">t</span>/<span class="v">T<sub>c</sub></span></sup>, la dérive instantanée exigée pour couvrir la friction vaut</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">µ</span><sub>0</sub><span class="op">=</span><span class="frac"><span><span class="v">c</span></span><span><span class="v">T<sub>c</sub></span>(1<span class="op">−</span>e<sup>−<span class="v">τ</span>/<span class="v">T<sub>c</sub></span></sup>)</span></span>.</div>
+    <div class="no">(22)</div>
+  </div>
+
+  <p>Appliquée à une exposition de {{tau20}} minutes, elle est sans appel. Un signal de demi-vie trois secondes exigerait {{mu0_quote}} points par minute, soit {{mu0_quote_sigma}} fois la volatilité d'une minute&nbsp;: le signal devrait prédire un déplacement plus grand que celui que le marché produit. Un signal de demi-vie trente secondes exige encore {{mu0_queue}} point par minute.</p>
+
+  <p>Trois issues, et une seule est cohérente. Réduire l'exposition à l'échelle du signal — ce qui change la stratégie du tout au tout et la sort du cadre de ce papier. Réduire la friction en entrant passivement — ce qui ramène à la section précédente, et n'est qu'un facteur deux. Ou reclasser la couche en outil d'<strong>exécution</strong>&nbsp;: décider où placer un ordre limite, décider de ne pas traverser le spread. C'est une décision dont l'horizon est celui du signal, et c'est le seul emploi que la mécanique autorise.</p>
+
+{{FIGURE:sighorizon|Part de la dérive d'un signal qu'une exposition de trente minutes conserve, et dérive instantanée exigée pour couvrir la friction, selon la demi-vie du signal. Les cinq points marquent les échelles de liquidité.}}
+
+{{TABLE:liquidity_scales}}
+
+  <h3>Absorption contre leurre&nbsp;: le LPR et son plafond</h3>
+
+  <p>Le <em>Liquidity Persistence Ratio</em>, introduit par ce papier, mesure ce qu'une lecture visuelle prétend voir&nbsp;: la taille restante au contact rapportée à la taille affichée avant le contact. Les annulations étant indépendantes, la fraction survivante d'une file de taux d'annulation <span class="v">h</span> vaut e<sup>−<span class="v">h</span>Δ<span class="v">t</span></sup>&nbsp;: une file tenue par un intervenant qui veut être exécuté décroît lentement, un affichage de leurre disparaît avant le contact.</p>
+
+  <p>Le pouvoir discriminant de cette mesure se calcule. Deux sources de variabilité s'y superposent&nbsp;: le taux d'annulation varie d'un intervenant à l'autre au sein de chaque classe, et la file compte un nombre fini de contrats. D'où une séparation</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">d</span>′<span class="op">=</span><span class="frac"><span>|ln(<span class="v">h</span><sub>leurre</sub>/<span class="v">h</span><sub>réel</sub>)|</span><span>√(2<span class="v">σ</span>²<span class="op">+</span><span class="v">v</span><sub>réel</sub><span class="op">+</span><span class="v">v</span><sub>leurre</sub>)</span></span>,<span class="op"></span>&nbsp;&nbsp;AUC<span class="op">=</span>Φ(<span class="v">d</span>′/√2).</div>
+    <div class="no">(23)</div>
+  </div>
+
+  <p>Le résultat est instructif dans les deux sens. La profondeur du niveau n'améliore la lecture que lorsqu'elle est très faible&nbsp;: au-delà d'une dizaine de contrats, le terme d'échantillonnage disparaît devant la dispersion comportementale, et l'aire sous la courbe ROC plafonne vers {{auc_max}}. Atteindre 0,90 exigerait <span class="v">d</span>′&nbsp;=&nbsp;{{dprime_req}}, hors de portée sous des taux d'annulation plausibles. <strong>Ce qui borne la lecture d'absorption n'est donc ni la finesse de l'œil ni la taille de la file, mais le recouvrement entre deux façons de se comporter dans le carnet&nbsp;;</strong> aucune amélioration d'interface ne le fera baisser.</p>
+
+{{FIGURE:lprpower|Décroissance de la file d'ordres selon son taux d'annulation, et courbes ROC du ratio de persistance de liquidité pour trois profondeurs. L'aire sous la courbe plafonne bien avant la profondeur.}}
+
+  <h3>La friction est endogène</h3>
+
+  <p>La section&nbsp;4 traite <span class="v">c</span> comme un paramètre. Le carnet en fait une variable d'état. L'impact d'un ordre agressif vaut, sur un carnet uniforme, taille divisée par profondeur — la forme discrète du coefficient de Kyle, <span class="v">λ</span>&nbsp;=&nbsp;tick/profondeur. Or un stop est un ordre au marché exécuté pendant le mouvement même qui l'a déclenché, c'est-à-dire au moment où le carnet est le plus mince. Une profondeur de sortie divisée par quinze fait passer la friction de {{friction_pts}} à {{friction_thin}} points.</p>
+
+  <p>La conséquence porte directement sur le critère maître&nbsp;: <span class="v">µ</span>*&nbsp;=&nbsp;<span class="v">c</span>/E[<span class="v">τ</span>] n'est pas un nombre fixe, et il monte précisément dans les conditions où la stratégie prend ses pertes. Toute estimation de la friction faite sur les seules entrées est optimiste par construction, et la Table&nbsp;4 doit être lue comme une borne inférieure.</p>
+
+  <h3>Le CVD et ses divergences</h3>
+
+  <p>Une <em>divergence</em> désigne un désaccord de signe entre le déplacement du prix et celui du CVD sur une fenêtre. Prix et delta agressif sont fortement corrélés à l'échelle intraséance — l'agressivité nette <em>est</em> une des causes du déplacement — mais une corrélation n'est pas une identité. Pour un couple gaussien de corrélation <span class="v">ρ</span>, le théorème de Sheppard donne P(<span class="v">X</span>&nbsp;&gt;&nbsp;0,&nbsp;<span class="v">Y</span>&nbsp;&gt;&nbsp;0)&nbsp;=&nbsp;¼&nbsp;+&nbsp;arcsin(<span class="v">ρ</span>)/2π, d'où</p>
+
+  <div class="eq">
+    <div class="body">P(signes opposés)<span class="op">=</span><span class="frac"><span>1</span><span>2</span></span><span class="op">−</span><span class="frac"><span>arcsin(<span class="v">ρ</span>)</span><span><span class="v">π</span></span></span>.</div>
+    <div class="no">(24)</div>
+  </div>
+
+  <p>Sous une corrélation de 0,80, {{cvd_div}}&nbsp;% des fenêtres présentent une divergence <em>sans qu'aucune information ne soit présente</em>. La fréquence brute des divergences ne dit donc rien tant que la corrélation de référence n'a pas été mesurée, et détecter un excès de deux points de pourcentage demande de l'ordre de {{cvd_n}} observations.</p>
+
+{{FIGURE:liqmap|Carte de la liquidité au repos, trajectoire de prix et delta de volume cumulé. Deux murs identiques à l'œil&nbsp;: l'un tient au contact, l'autre se retire à l'approche. La construction est déterministe et ne contient aucune donnée de marché.}}
+
+  <h2>Audit de falsifiabilité</h2>
+
+  <p>Les six sections précédentes permettent de dresser, couche par couche, le tableau qui manque à la plupart des piles de confluence&nbsp;: ce que chacune produit sous la loi nulle, ce qu'il faudrait mesurer pour lui reconnaître une valeur, et si cette mesure est possible avec les données dont on dispose.</p>
+
+{{TABLE:layer_audit}}
+
+  <p>Une couche non falsifiable n'est pas une couche fausse&nbsp;: c'est une couche dont la contribution est indécidable, et qui ne peut donc pas être créditée d'une part de l'espérance. Une seule est dans ce cas, et la difficulté est d'infrastructure, non de principe.</p>
+
+  <p>Deux conclusions transversales méritent d'être retenues avant le protocole. D'abord, cinq des sept couches ont une loi nulle en forme fermée, et aucune de ces lois nulles n'exige de données&nbsp;: elles étaient calculables avant toute mesure, et elles suffisent à écarter les arguments fondés sur la fréquence d'apparition d'un motif. Ensuite, la couche que la pile traite comme la plus décisive — la lecture du carnet en confirmation — est la seule qui ne soit pas mesurable en l'état, et sa demi-vie la place de toute façon hors du domaine où elle pourrait financer un aller-retour d'une demi-heure.</p>
 
   <h2>Protocole de falsification</h2>
 
@@ -675,6 +1008,18 @@
 
   <p>Mesurer <span class="v">µ</span><sub>2</sub> conditionnellement à chacun des deux déclencheurs — confirmation prise, et confirmation invalidée. La Proposition 7 fait de ce signe la décision entière&nbsp;: si <span class="v">µ</span><sub>2</sub> est positif après confirmation, la règle actuelle doit être abandonnée ou inversée. Ce test exige un flux L2 horodaté et enregistrable, ce qui constitue à ce jour la principale limite d'infrastructure du projet.</p>
 
+  <h3>Test 5 — Lois nulles des couches</h3>
+
+  <p>Les identités de la section&nbsp;12 se vérifient sur n'importe quel historique journalier en quelques minutes de calcul, et elles constituent un contrôle de l'appareil de mesure avant tout test de signal. Sur un échantillon suffisant, la fréquence des mèches dominantes doit valoir 1/3, celle des clôtures au-delà du corps 3/4, et la continuation de structure <span class="v">δ</span>/(<span class="v">d</span>&nbsp;+&nbsp;<span class="v">δ</span>). <em>Critère de lecture&nbsp;:</em> un écart significatif à ces valeurs n'est pas un edge — c'est la mesure d'un écart du prix à la marche aléatoire, et il faut alors le chiffrer en dérive impliquée avant de le comparer à <span class="v">µ</span>*. Un écart nul invalide toute lecture de la couche fondée sur la fréquence d'apparition du motif.</p>
+
+  <h3>Test 6 — Volatilité locale et largeur de stop</h3>
+
+  <p>Reconstruire le profil de volume de chaque séance, en extraire les nœuds par proéminence à seuil fixé d'avance, puis mesurer la volatilité réalisée locale dans chaque nœud. <em>Critère de passage&nbsp;:</em> la volatilité locale mesurée doit varier avec le volume par prix dans le sens et l'ordre de grandeur prédits par l'équation (16). Ce test décide si le stop doit être indexé sur le nœud d'entrée plutôt que sur le niveau de l'indice, et il ne dépend d'aucun signal.</p>
+
+  <h3>Test 7 — Edge d'exécution de la grille</h3>
+
+  <p>Sur les signaux déjà validés par le Test&nbsp;2, comparer l'espérance par signal des deux modes d'entrée, marché et limite en zone OTE, en comptant les signaux non exécutés pour zéro. <em>Critère de passage&nbsp;:</em> <span class="v">Δ</span>&nbsp;&gt;&nbsp;0 au sens de l'équation (21). La Proposition&nbsp;11 impose de lire ce test avec sa réciproque&nbsp;: un <span class="v">Δ</span> positif obtenu sur un échantillon où l'espérance au marché est négative ne valide pas la grille, il confirme que le signal ne vaut rien.</p>
+
   <h3>Ordre et critères d'arrêt</h3>
 
   <ol>
@@ -682,6 +1027,8 @@
     <li><strong>Dérive captée.</strong> Échec &rarr; la pile ne produit pas de dérive à l'entrée&nbsp;; inutile de conditionner ou d'optimiser la gestion.</li>
     <li><strong>Structure en croix.</strong> Échec &rarr; le conditionnement n'apporte rien&nbsp;; conserver la pile seule si le Test 2 a réussi.</li>
     <li><strong>Dérive post-confirmation</strong>, sur données L2 enregistrées. Décide de la règle de remontée du stop et de son sens.</li>
+    <li><strong>Lois nulles et volatilité locale</strong> (Tests 5 et 6). Sans données de signal, en amont de tout le reste&nbsp;: ils contrôlent l'appareil de mesure et fixent la largeur du stop.</li>
+    <li><strong>Edge d'exécution</strong> (Test 7), une fois le Test 2 franchi et pas avant, faute de quoi son résultat est ininterprétable.</li>
     <li><strong>Validation avant engagement de capital&nbsp;:</strong> le nombre de trades de la Table&nbsp;8, à budget de configurations fixé d'avance.</li>
   </ol>
 
@@ -689,16 +1036,23 @@
 
   <h3>Ce qui est établi</h3>
 
-  <p>Quatre résultats de ce papier sont démontrés analytiquement et vérifiés numériquement. Ils ne dépendent d'aucune donnée de marché et ne peuvent être infirmés par un backtest&nbsp;:</p>
+  <p>Les résultats suivants sont démontrés analytiquement et vérifiés numériquement. Ils ne dépendent d'aucune donnée de marché et ne peuvent être infirmés par un backtest&nbsp;:</p>
 
   <ul>
     <li>Aucun placement de barrières et aucune règle de gestion du stop ne crée d'espérance sur un prix sans dérive&nbsp;; toutes laissent −<span class="v">c</span> par aller-retour (Propositions 1 et 2).</li>
     <li>Ni l'espérance ni le taux de réussite affiché ne renseignent sur l'utilité d'une remontée du stop (Proposition 3), et le ratio affiché sur le risque résiduel est compensé exactement par sa probabilité (Proposition 6).</li>
     <li>L'espérance nette vaut <span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>&nbsp;: une géométrie ne vaut que par l'exposition qu'elle procure, l'exigence relative de taux de touche est invariante et vaut <span class="v">c/L</span>, et le ratio d'information requis vaut <span class="v">c</span>/√(<span class="v">ab</span>) (Propositions 4 et 5).</li>
     <li>La remontée du stop n'est profitable que si la dérive post-confirmation est négative (Proposition 7).</li>
+    <li>Le régime de gamma n'agit sur l'espérance que par l'exposant d'échelle, et par aucun autre canal (Proposition 8).</li>
+    <li>Sur un prix sans dérive, la mèche haute atteint <span class="v">k</span> fois le corps avec probabilité 1/(2<span class="v">k</span>&nbsp;+&nbsp;1), et la clôture sort du corps de la veille trois jours sur quatre (Propositions 9 et 10). Ces identités sont sans paramètre et valent pour tout marché.</li>
+    <li>Attendre un retracement améliore l'espérance par signal si et seulement si le signal exécuté au marché est perdant (Proposition 11).</li>
   </ul>
 
+  <p>Trois conséquences opérationnelles s'en déduisent, et elles ne coûtent rien à mettre en œuvre&nbsp;: indexer la largeur du stop sur la volatilité locale du nœud d'entrée plutôt que sur le niveau de l'indice&nbsp;; traiter la lecture de carnet comme un outil d'exécution et non comme une source de dérive&nbsp;; et ne juger la grille de retracement qu'après avoir établi que le signal sous-jacent est gagnant.</p>
+
   <h3>Ce qui ne l'est pas</h3>
+
+  <p>Un résultat de ce papier va contre l'hypothèse qui le motive, et il doit être énoncé au même rang que les autres&nbsp;: la persistance calibrée en section&nbsp;5 ne peut pas être attribuée au régime de gamma, dont l'ordre de grandeur est trop petit d'un facteur dix. L'exposant d'échelle reste le paramètre le plus fragile du document, et la valeur alternative la plus plausible — {{sigma_sess}} points lus comme une amplitude plutôt que comme un écart-type — renverse la conclusion de la section&nbsp;5 sur le ratio 1:30. Rien dans ce papier ne tranche entre les deux lectures.</p>
 
   <p>Aucune des propositions ci-dessus n'établit que la stratégie possède un edge. Elles délimitent l'espace dans lequel un edge pourrait vivre et mesurent ce qu'il devrait valoir&nbsp;; elles ne mesurent pas ce qu'il vaut. Le candidat unique reste la dérive conditionnelle produite par les sept couches à l'instant de l'entrée. Cette dérive n'a pas été mesurée. Le conditionnement par le régime de gamma n'a fait l'objet d'aucun test empirique. Le <em>Liquidity Persistence Ratio</em>, qui porte l'essentiel de la lecture d'orderflow, reste non falsifiable en l'état faute de flux L2 enregistrable.</p>
 
@@ -706,7 +1060,9 @@
 
   <ul>
     <li><strong>La diffusion.</strong> Le brownien arithmétique ignore les sauts et l'hétéroscédasticité intra-séance. Le changement de temps de l'équation (10) rend compte de la croissance de la dispersion avec l'horizon, mais reste déterministe&nbsp;: il ne représente pas la forme intra-séance de la volatilité, ni son caractère aléatoire. Les probabilités de premier passage sont donc approximatives&nbsp;; les propositions d'invariance, elles, ne dépendent que de la propriété de martingale et survivent à ces généralisations.</li>
-    <li><strong>La friction.</strong> Le slippage à la sortie est traité comme une constante alors qu'il dépend de l'état du carnet, et il est le plus élevé dans les mouvements mêmes qui déclenchent les stops. Le scénario réaliste reste vraisemblablement optimiste.</li>
+    <li><strong>La friction.</strong> Le slippage à la sortie est traité comme une constante alors qu'il dépend de l'état du carnet, et il est le plus élevé dans les mouvements mêmes qui déclenchent les stops. La section&nbsp;14 en donne la forme endogène et l'ordre de grandeur — la friction passe de {{friction_pts}} à {{friction_thin}} points sur un carnet aminci — mais les tables du papier retiennent la version constante, et sont donc à lire comme une borne inférieure.</li>
+    <li><strong>La chaîne d'options.</strong> Les niveaux de gamma de la section&nbsp;10 sont reconstruits sur une chaîne synthétique dont la forme d'open interest est plausible sans être mesurée. Les définitions et les mécanismes qu'elle illustre n'en dépendent pas&nbsp;; les valeurs numériques citées, si.</li>
+    <li><strong>La convention de signe du gamma.</strong> Le sens de tout GEX publié dépend d'une hypothèse sur le côté que prennent les teneurs, qui est une régularité de flux et non une identité. Elle s'inverse sur un marché où la demande finale porte sur les calls, et aucune conclusion de la section&nbsp;10 ne survit à cette inversion sans être retestée.</li>
     <li><strong>La dérive constante.</strong> L'équation (6) suppose une dérive constante sur la durée d'exposition. Une dérive issue d'un signal de microstructure décroît vraisemblablement avec le temps, ce qui borne le gain à éloigner le target bien avant la saturation géométrique de la Figure&nbsp;4. La forme de cette décroissance est mesurable&nbsp;: c'est la courbe de dérive cumulée conditionnelle au signal, et elle indique directement où placer le target.</li>
     <li><strong>Le déclencheur de confirmation.</strong> Sa modélisation par un niveau de prix est une simplification&nbsp;; une confirmation survenant sans progrès de prix laisserait le stop initial actif plus longtemps et dégraderait davantage les résultats de la section 6.</li>
     <li><strong>La discrétion résiduelle.</strong> Plusieurs couches restent des appréciations visuelles. Tant qu'elles le demeurent, leur contribution à l'espérance est indécidable et le dispositif de validation ne peut porter que sur la partie formalisée.</li>
@@ -720,9 +1076,17 @@
       <li>Bailey, D. et López de Prado, M. «&nbsp;The Deflated Sharpe Ratio&nbsp;», <em>Journal of Portfolio Management</em>, 2014.</li>
       <li>Baltussen, G., Da, Z., Lammers, S. et Martens, M. «&nbsp;Hedging Demand and Market Intraday Momentum&nbsp;», <em>Journal of Financial Economics</em>, 2021.</li>
       <li>Barbon, A. et Buraschi, A. «&nbsp;Gamma Fragility&nbsp;», document de travail, 2021.</li>
+      <li>Borodin, A. et Salminen, P. <em>Handbook of Brownian Motion — Facts and Formulae</em>, Birkhäuser, 2002 — lois de premier passage, maximum du pont brownien.</li>
+      <li>Bouchaud, J.-P., Bonart, J., Donier, J. et Gould, M. <em>Trades, Quotes and Prices</em>, Cambridge University Press, 2018 — carnet d'ordres, impact et liquidité.</li>
+      <li>Cont, R., Kukanov, A. et Stoikov, S. «&nbsp;The Price Impact of Order Book Events&nbsp;», <em>Journal of Financial Econometrics</em>, 2014.</li>
       <li>Harvey, C., Liu, Y. et Zhu, H. «&nbsp;… and the Cross-Section of Expected Returns&nbsp;», <em>Review of Financial Studies</em>, 2016.</li>
       <li>Karatzas, I. et Shreve, S. <em>Brownian Motion and Stochastic Calculus</em>, Springer, 1991 — théorème d'arrêt optionnel, identité de Wald et premier passage.</li>
+      <li>Kyle, A. «&nbsp;Continuous Auctions and Insider Trading&nbsp;», <em>Econometrica</em>, 1985 — coefficient d'impact.</li>
       <li>Lo, A. et MacKinlay, A. «&nbsp;Stock Market Prices Do Not Follow Random Walks&nbsp;: Evidence from a Simple Specification Test&nbsp;», <em>Review of Financial Studies</em>, 1988 — test de ratio de variance.</li>
+      <li>Revuz, D. et Yor, M. <em>Continuous Martingales and Brownian Motion</em>, Springer, 1999 — temps local et densité d'occupation.</li>
+      <li>Rhea, R. <em>The Dow Theory</em>, Barron's, 1932 — codification des éditoriaux de Charles Dow.</li>
+      <li>Sheppard, W. F. «&nbsp;On the Application of the Theory of Error to Cases of Normal Distribution and Normal Correlation&nbsp;», <em>Philosophical Transactions of the Royal Society A</em>, 1899 — probabilité d'orthant.</li>
+      <li>Steidlmayer, J. P. et Koy, K. <em>Markets and Market Logic</em>, Porcupine Press, 1986 — profil de volume et aire de valeur.</li>
     </ol>
   </div>
 

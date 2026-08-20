@@ -11,6 +11,11 @@ Une analyse **analytique**, sans donnée de marché. Elle délimite l'espace dan
 lequel un edge peut exister pour cette stratégie et chiffre ce qu'il devrait
 valoir ; elle n'établit pas qu'il existe. Aucun test empirique n'a été conduit.
 
+Le document se lit en deux parties. La première traite la stratégie comme une
+géométrie — un stop, un target, une règle de sortie — et n'a besoin d'aucune
+couche d'analyse. La seconde examine les sept couches une à une : GEX, profil
+de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres.
+
 ## Le résultat structurant
 
 Sous un prix sans dérive, l'espérance nette par trade vaut exactement `−c/L` —
@@ -56,11 +61,12 @@ prix : la vitesse à laquelle sa dispersion croît avec l'horizon, `σ(T) = σ�
 | 1:30 | 0,02 % | 2,40 % | 35,0 min |
 | 1:50 | 0,00 % | 0,31 % | 38,2 min |
 
-L'exposant `H = 0,65` n'est pas choisi : il est impliqué par la volatilité à une
-minute et par la dispersion d'une séance. Sous cette calibration, **1:20 est à
-l'intérieur de la portée d'une séance, 1:30 à sa limite**, et l'exposition
-sature au-delà — éloigner encore le target n'achète plus de temps de marché mais
-continue de diviser la probabilité d'y parvenir.
+Sous la calibration retenue, 1:20 est à l'intérieur de la portée d'une séance,
+1:30 à sa limite. **C'est le paramètre le plus fragile du document** : si les
+60 points de dispersion de séance sont une amplitude haut-bas et non un
+écart-type de clôture, l'exposant tombe à 0,57 et P(1:30) est divisée par
+quatre. Le premier test du protocole porte donc sur la loi d'échelle, avant
+tout signal.
 
 ## La remontée du stop
 
@@ -73,33 +79,81 @@ qui le motive, un signal favorable.
 **Reformulation proposée :** déclencher la remontée sur l'*invalidation* de la
 confirmation — mur retiré avant d'être touché, absorption qui échoue, liquidité
 prise du côté opposé. Même information, même endroit du carnet, signe inversé.
-Le `Liquidity Persistence Ratio` du module `alp1.signals` fournit la mesure.
 
-Quant au ratio affiché après remontée, il est arithmétiquement exact et sans
-effet sur l'espérance : un 1:290 se paie d'une probabilité de réalisation de
-0,34 %, vaut 1:138 une fois la friction prise en compte, et laisse un risque
-résiduel que le seul bruit balaie dans 91 % des cas en cinq minutes.
+## Les sept couches, et leurs lois nulles
 
-## Le régime de gamma
+Chaque couche reçoit une définition calculatoire, la fréquence à laquelle son
+motif se produit sur un prix **sans dérive**, et un prédicat testable. Cinq de
+ces lois nulles ont une forme fermée sans paramètre, et elles sont sévères.
+
+| Motif | Loi nulle | Valeur |
+|---|---|---|
+| Mèche haute ≥ k × corps | `1/(2k + 1)` | **un jour sur trois** à k = 1 |
+| Clôture au-delà du corps de la veille | `3/8` de chaque côté | **trois jours sur quatre** |
+| Nouveau sommet avant nouveau creux | `δ/(d + δ)` | fixé par la profondeur du repli seule |
+| Retracement ≥ f avant continuation | `η/(f + η)` | 13,9 % au 0,618 |
+| Séance passée au-delà de k σ du VWAP | `2·Φ(−k)` | 1,1 min par séance à 3 σ |
+
+Un motif qui apparaît trois jours sur quatre sur une marche aléatoire ne devient
+pas informatif parce qu'on l'a vu précéder trois hausses. Sans loi nulle, une
+observation de marché n'a pas d'unité de mesure.
+
+### Trois résultats nouveaux
+
+**Un stop constant n'est pas un risque constant.** Le profil de volume est, à
+vitesse d'échange stable, une estimation de la densité d'occupation du prix. Or
+pour une diffusion, cette densité vaut `1/σ(x)²` : un LVN n'est pas un vide que
+le prix comble, c'est un intervalle de volatilité locale élevée. Un stop de
+0,050 % vaut donc 3,6 écarts-types locaux sur le POC et 2,3 sur un LVN, et la
+probabilité d'être sorti par le bruit seul en trente minutes passe de 51 % à
+67 %. La règle d'entrée de la pile privilégie précisément les LVN.
+
+**La grille de Fibonacci paie quand le signal ne vaut rien.** À exposition
+inchangée, l'écart d'espérance entre entrée en zone OTE et entrée au marché
+vaut `Δ = −(1 − q)·E_marché` : attendre le retracement améliore l'espérance par
+signal *si et seulement si* le signal exécuté au marché est perdant. Même forme
+que le résultat sur la remontée du stop.
+
+**Un signal de carnet ne peut pas financer un aller-retour.** L'information
+d'un signal de flux a une demi-vie. Sur une exposition de 29 minutes, un signal
+de demi-vie trois secondes en conserve 0,2 % et exigerait 4,6 points de dérive
+par minute — 3,7 fois la volatilité — pour couvrir la friction. La couche relève
+de l'exécution, pas de la prédiction.
+
+## Le régime de gamma, et ce que le contrôle de plausibilité révèle
 
 Le signe du gamma net prédit une propriété de la variance et de
-l'autocorrélation, non une direction : ce n'est pas un signal directionnel mais
-une variable de conditionnement. Son rôle testable est de conditionner la
-**géométrie** — l'exposant d'échelle `H`, donc l'atteignabilité des targets
-éloignés — et la prédiction se teste sans aucun signal d'entrée : `H(Γ < 0)`
-doit excéder `H(Γ > 0)`.
+l'autocorrélation, non une direction. Le mécanisme se dérive jusqu'au bout :
+
+```
+Γ → λΓ → ρ = −λΓ/(1 + λΓ) → H = ½ + ln√((1+ρ)/(1−ρ))/ln T → P(target) → E[τ]
+```
+
+C'est le seul canal par lequel le gamma agit sur l'espérance. Inversée, la
+relation devient un instrument de critique : reproduire l'exposant `H = 0,649`
+retenu par le papier exigerait un gamma net de **−166 milliards de dollars par
+1 %**, soit 42 % du volume quotidien du complexe indiciel — un ordre de grandeur
+au-dessus de tout gamma observable, et à un cinquième du seuil où
+l'autocorrélation atteint l'unité.
+
+Conclusion, et elle va contre l'hypothèse : la persistance calibrée **ne peut
+pas** être attribuée au régime de gamma. Le papier le signale plutôt que de le
+résoudre.
 
 ## Utilisation
 
 ```bash
-python main.py            # tables quantitatives du paper
+python main.py            # tables quantitatives du cadre
+python main.py --layers   # lexique des sigles et tables des sept couches
 python main.py --paper    # reconstruit docs/alp1-paper.html depuis le gabarit
-python main.py --tests    # 64 tests unitaires du noyau
+python main.py --tests    # 114 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
 
 ## Structure
+
+Le cadre du trade, indépendant de toute couche d'analyse :
 
 | Module | Rôle |
 |---|---|
@@ -107,15 +161,35 @@ Aucune dépendance : stdlib uniquement, Python 3.11+.
 | `alp1/barriers.py` | Premier passage brownien sans limite de durée |
 | `alp1/horizon.py` | Premier passage sous contrainte de séance, loi d'échelle `σ₁·T^H` |
 | `alp1/stops.py` | Remontée du stop : distribution des issues, coût, seuil de neutralité |
+| `alp1/momentum.py` | Géométrie stop-seul, dimensionnement |
+
+Les sept couches :
+
+| Module | Rôle |
+|---|---|
+| `alp1/gex.py` | Gamma Black-Scholes, niveaux 0GW / CR / PS / HVL, boucle de couverture → `H` |
+| `alp1/vprofile.py` | POC, aire de valeur, HVN/LVN, inversion densité → volatilité locale |
+| `alp1/dow.py` | Six principes, structure de swings, lois nulles en forme fermée |
+| `alp1/fib.py` | Provenance des ratios, loi du retracement, arbitrage d'exécution OTE |
+| `alp1/orderflow.py` | Échelles de liquidité, LPR et son plafond, impact de Kyle, CVD |
 | `alp1/regime.py` | Classification par gamma dealer et playbooks par régime |
 | `alp1/signals.py` | Les 7 couches formalisées en prédicats testables |
-| `alp1/report.py` | Tables chiffrées du paper |
-| `alp1/figures.py` | Figures SVG du paper |
+
+La production du document :
+
+| Module | Rôle |
+|---|---|
+| `alp1/report.py` | Tables chiffrées du cadre |
+| `alp1/lexicon.py` | Lexique des sigles et tables des couches |
+| `alp1/figures.py` | Figures SVG du cadre |
+| `alp1/figterm.py` | Planches des couches, en panneaux de terminal |
+| `alp1/figcss.py` | Feuille de style partagée des figures |
 | `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
 
 Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
 injectés par le code de l'autre. Un chiffre du texte et le point correspondant
-d'une figure ne peuvent pas diverger.
+d'une figure ne peuvent pas diverger. Il compte 18 tables et 16 figures, toutes
+produites par le noyau.
 
 ## Statut
 

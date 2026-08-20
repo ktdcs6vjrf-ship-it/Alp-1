@@ -1,6 +1,7 @@
 """Point d'entrée ALP-1.
 
     python main.py            # tables quantitatives du paper
+    python main.py --layers   # lexique des sigles et tables des sept couches
     python main.py --paper    # reconstruit docs/alp1-paper.html
     python main.py --tests    # suite de tests du noyau
 """
@@ -18,6 +19,12 @@ def main() -> int:
         suite = loader.discover("tests", top_level_dir=".")
         result = unittest.TextTestRunner(verbosity=2).run(suite)
         return 0 if result.wasSuccessful() else 1
+
+    if "--layers" in sys.argv:
+        from alp1.lexicon import main as lexicon_main
+
+        lexicon_main()
+        return 0
 
     if "--paper" in sys.argv:
         from alp1.paper import main as paper_main

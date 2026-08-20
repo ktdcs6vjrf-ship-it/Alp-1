@@ -6,6 +6,7 @@ Exécution : python -m tests.test_alp1  (ou pytest)
 from __future__ import annotations
 
 import math
+import re
 import unittest
 
 from alp1.barriers import (
@@ -24,7 +25,7 @@ from alp1.costs import (
     _norm_ppf,
     norm_cdf,
 )
-from alp1 import figures, horizon, paper, report
+from alp1 import dow, fib, figterm, figures, gex, horizon, lexicon, orderflow, paper, report, vprofile
 from alp1.regime import GammaState, Regime, classify, playbook_for
 from alp1.stops import (
     TradeGeometry,
@@ -501,8 +502,10 @@ class TestReportAndPaper(unittest.TestCase):
     def test_paper_builds_without_leftover_placeholders(self):
         html = paper.build()
         self.assertNotIn("{{", html)
-        self.assertEqual(html.count('<span class="lab">Table '), len(report.TABLES))
-        self.assertEqual(html.count('<span class="lab">Figure '), len(figures.ALL_FIGURES))
+        self.assertEqual(html.count('<span class="lab">Table '),
+                         len(report.TABLES) + len(lexicon.TABLES))
+        self.assertEqual(html.count('<span class="lab">Figure '),
+                         len(figures.ALL_FIGURES) + len(figterm.ALL_FIGURES))
 
     def test_paper_values_are_consistent_with_tables(self):
         v = paper.values()
@@ -511,3 +514,367 @@ class TestReportAndPaper(unittest.TestCase):
         # Le ratio affiché cité dans le texte est celui de la Table 6.
         table = report.all_tables()["displayed"]
         self.assertIn("1:" + v["displayed_ratio"], [row[2] for row in table.rows])
+
+
+# --- Les sept couches -------------------------------------------------------
+
+
+class TestGex(unittest.TestCase):
+    """Exposition gamma : formules, niveaux, et chaîne vers la loi d'échelle."""
+
+    def test_gamma_peaks_at_the_money(self):
+        tau = gex.years_to_expiry(195.0)
+        atm = gex.bs_gamma(6000.0, 6000.0, 0.12, tau)
+        for k in (5900.0, 5950.0, 6050.0, 6100.0):
+            self.assertLess(gex.bs_gamma(6000.0, k, 0.12, tau), atm)
+
+    def test_gamma_grows_as_inverse_root_of_time(self):
+        g_short = gex.bs_gamma(6000.0, 6000.0, 0.12, gex.years_to_expiry(60.0))
+        g_long = gex.bs_gamma(6000.0, 6000.0, 0.12, gex.years_to_expiry(240.0))
+        self.assertAlmostEqual(g_short / g_long, 2.0, delta=1e-4)
+
+    def test_dealer_sign_is_a_convention_that_flips(self):
+        self.assertEqual(gex.dealer_sign(gex.Kind.CALL, True), 1.0)
+        self.assertEqual(gex.dealer_sign(gex.Kind.PUT, True), -1.0)
+        self.assertEqual(gex.dealer_sign(gex.Kind.CALL, False), -1.0)
+
+    def test_reference_chain_has_a_sign_change_at_the_hvl(self):
+        chain = gex.reference_chain()
+        lv = gex.levels(chain, 6000.0)
+        self.assertIsNotNone(lv.hvl)
+        self.assertLess(chain.gex(lv.hvl - 20.0), 0.0)
+        self.assertGreater(chain.gex(lv.hvl + 20.0), 0.0)
+        self.assertAlmostEqual(chain.gex(lv.hvl), 0.0, delta=1e6)
+
+    def test_levels_are_on_the_expected_side_of_spot(self):
+        chain = gex.reference_chain()
+        lv = gex.levels(chain, 6000.0)
+        for level in lv.call_resistance:
+            self.assertGreater(level, 6000.0)
+        for level in lv.put_support:
+            self.assertLess(level, 6000.0)
+        # Le classement porte sur la taille, pas sur la distance.
+        conc = chain.potential_notional_by_strike()
+        self.assertGreaterEqual(conc[lv.cr1], conc[lv.cr2])
+        self.assertGreaterEqual(conc[lv.ps1], conc[lv.ps2])
+
+    def test_the_two_wall_conventions_can_disagree(self):
+        chain = gex.reference_chain()
+        near = gex.levels(chain, 6000.0, mode="spot")
+        far = gex.levels(chain, 6000.0, mode="potential")
+        self.assertNotEqual(near.put_support, far.put_support)
+
+    def test_feedback_maps_to_hurst_and_back(self):
+        for h in (0.52, 0.58, 0.6489):
+            k = gex.feedback_from_hurst(h, 390.0)
+            self.assertAlmostEqual(gex.hurst_from_feedback(k, 390.0), h, places=9)
+
+    def test_positive_gamma_damps_and_negative_amplifies(self):
+        self.assertEqual(gex.vol_multiplier(0.0), 1.0)
+        self.assertLess(gex.vol_multiplier(0.2), 1.0)
+        self.assertGreater(gex.vol_multiplier(-0.2), 1.0)
+        self.assertLess(gex.autocorrelation_from_feedback(0.2), 0.0)
+        self.assertGreater(gex.autocorrelation_from_feedback(-0.2), 0.0)
+        self.assertLess(gex.hurst_from_feedback(0.2), 0.5)
+        self.assertGreater(gex.hurst_from_feedback(-0.2), 0.5)
+
+    def test_unit_root_threshold_is_enforced(self):
+        with self.assertRaises(ValueError):
+            gex.autocorrelation_from_feedback(-0.5)
+
+    def test_required_gex_for_calibrated_hurst_is_implausible(self):
+        adv = 4.0e11
+        req = gex.required_gex_for_hurst(0.6489, adv, horizon_min=390.0)
+        # Négatif — il faudrait du gamma court — et d'un ordre de grandeur
+        # au-dessus de tout gamma indiciel observable.
+        self.assertLess(req, 0.0)
+        self.assertGreater(abs(req) / adv, 0.3)
+
+    def test_hedge_flow_is_the_variation_of_delta(self):
+        chain = gex.reference_chain()
+        flow = gex.hedge_flow_between(chain, 5990.0, 6010.0)
+        back = gex.hedge_flow_between(chain, 6010.0, 5990.0)
+        self.assertAlmostEqual(flow, -back, places=6)
+
+
+class TestVolumeProfile(unittest.TestCase):
+    """Profil de volume lu comme densité d'occupation."""
+
+    def setUp(self):
+        self.prof = vprofile.reference_profile()
+
+    def test_poc_is_the_argmax(self):
+        idx = self.prof.volumes.index(max(self.prof.volumes))
+        self.assertEqual(self.prof.poc, self.prof.prices[idx])
+
+    def test_value_area_covers_the_target_fraction(self):
+        for frac in (0.5, 0.7, 0.9):
+            va = self.prof.value_area(frac)
+            self.assertGreaterEqual(va.covered, frac)
+            self.assertLess(va.low, self.prof.poc)
+            self.assertGreater(va.high, self.prof.poc)
+
+    def test_nodes_alternate_and_are_ordered(self):
+        hvn, lvn = self.prof.hvn(), self.prof.lvn()
+        self.assertEqual(len(hvn), 3)
+        self.assertEqual(len(lvn), 2)
+        for low in lvn:
+            self.assertTrue(any(h < low for h in hvn))
+            self.assertTrue(any(h > low for h in hvn))
+
+    def test_local_volatility_inverts_the_density(self):
+        sig = self.prof.local_volatility(1.25)
+        mean_v = self.prof.total / len(self.prof.volumes)
+        for v, s in zip(self.prof.volumes, sig):
+            expected = min(1.25 * math.sqrt(mean_v / v), 5.0)
+            self.assertAlmostEqual(s, expected, places=9)
+
+    def test_low_volume_means_high_local_volatility(self):
+        lvn = self.prof.lvn()[0]
+        self.assertGreater(self.prof.sigma_at(lvn, 1.25),
+                           self.prof.sigma_at(self.prof.poc, 1.25))
+
+    def test_a_constant_stop_is_not_a_constant_risk(self):
+        poc = self.prof.effective_stop_sigma(self.prof.poc, 3.0, 1.25)
+        lvn = self.prof.effective_stop_sigma(self.prof.lvn()[-1], 3.0, 1.25)
+        self.assertGreater(poc, lvn)
+        self.assertGreater(poc / lvn, 1.3)
+
+    def test_traversal_is_faster_across_a_low_volume_node(self):
+        step = self.prof.step
+        lvn = self.prof.lvn()[-1]
+        hvn = self.prof.hvn()[1]
+        t_lvn = self.prof.traversal_time(lvn - step, lvn + step, 1.25)
+        t_hvn = self.prof.traversal_time(hvn - step, hvn + step, 1.25)
+        self.assertLess(t_lvn, t_hvn)
+
+    def test_profile_from_a_path_counts_visits(self):
+        path = [100.0, 100.4, 100.8, 100.4, 100.0, 100.4]
+        prof = vprofile.from_path(path, 0.4)
+        self.assertAlmostEqual(prof.total, len(path))
+        self.assertIn(prof.poc, (100.4,))
+
+    def test_composite_sums_matching_grids(self):
+        comp = vprofile.composite([self.prof, self.prof])
+        self.assertAlmostEqual(comp.total, 2 * self.prof.total)
+        self.assertEqual(comp.poc, self.prof.poc)
+
+
+class TestDow(unittest.TestCase):
+    """Théorie de Dow : identités exactes et traduction en dérive."""
+
+    def test_dominant_wick_law(self):
+        self.assertAlmostEqual(dow.p_dominant_wick(1.0), 1 / 3, places=12)
+        self.assertAlmostEqual(dow.p_dominant_wick(2.0), 0.2, places=12)
+        self.assertAlmostEqual(dow.p_dominant_wick(0.0), 1.0, places=12)
+        for k in (0.5, 1.0, 2.0, 4.5):
+            self.assertAlmostEqual(
+                dow.wick_threshold_for_frequency(dow.p_dominant_wick(k)), k, places=9)
+
+    def test_close_beyond_body_partitions_the_unit(self):
+        up, down, inside = dow.p_close_beyond_body()
+        self.assertAlmostEqual(up, 0.375, places=12)
+        self.assertAlmostEqual(down, 0.375, places=12)
+        self.assertAlmostEqual(up + down + inside, 1.0, places=12)
+
+    def test_structure_continuation_is_purely_geometric(self):
+        self.assertAlmostEqual(dow.p_higher_high_null(4.0, 4.0), 0.5, places=12)
+        self.assertAlmostEqual(dow.p_higher_high_null(8.0, 4.0), 1 / 3, places=12)
+        # Sans dérive, la formule de premier passage retrouve la forme fermée.
+        self.assertAlmostEqual(dow.p_higher_high(8.0, 4.0, 0.0, 1.25),
+                               dow.p_higher_high_null(8.0, 4.0), places=9)
+
+    def test_implied_drift_inverts_the_frequency(self):
+        for p in (0.40, 0.50, 0.62):
+            mu = dow.implied_drift(p, 8.0, 4.0, 1.25)
+            self.assertAlmostEqual(dow.p_higher_high(8.0, 4.0, mu, 1.25), p, places=8)
+        self.assertAlmostEqual(dow.implied_drift(1 / 3, 8.0, 4.0, 1.25), 0.0, places=8)
+
+    def test_required_daily_bias_composes_the_master_criterion(self):
+        bias = dow.required_daily_bias(0.33, 28.9, 390.0)
+        self.assertAlmostEqual(bias, 0.33 / 28.9 * 390.0, places=12)
+        self.assertAlmostEqual(dow.drift_transfer(bias, 390.0), 0.33 / 28.9, places=12)
+
+    def test_swing_detection_is_causal_and_alternating(self):
+        path = [0, 2, 5, 9, 6, 3, 1, 4, 8, 12, 9, 6]
+        sw = dow.swings([float(x) for x in path], threshold=3.0)
+        self.assertTrue(sw)
+        for a, b in zip(sw, sw[1:]):
+            self.assertNotEqual(a.is_high, b.is_high)
+        pivots = dow.classify(sw)
+        self.assertTrue(all(isinstance(p, dow.Pivot) for p in pivots))
+
+    def test_confirmation_reduces_frequency(self):
+        joint = dow.confirmation_lift(0.375, 0.8)
+        self.assertLess(joint, 0.375)
+        self.assertGreater(joint, 0.375 ** 2)
+
+
+class TestFibonacci(unittest.TestCase):
+    """Grille de retracement : loi nulle et arbitrage d'exécution."""
+
+    def test_ratio_provenance_is_arithmetic(self):
+        self.assertAlmostEqual(1.0 / fib.PHI, 0.618, places=3)
+        self.assertAlmostEqual(1.0 / fib.PHI ** 2, 0.382, places=3)
+        self.assertAlmostEqual(math.sqrt(1.0 / fib.PHI), 0.786, places=3)
+
+    def test_retracement_law_is_a_ratio_of_thresholds(self):
+        self.assertAlmostEqual(fib.p_retrace_null(0.1, 0.1), 0.5, places=12)
+        self.assertAlmostEqual(fib.p_retrace_null(0.618, 0.10),
+                               0.10 / 0.718, places=12)
+        prev = 1.0
+        for ratio, _ in fib.RATIOS:
+            p = fib.p_retrace_null(ratio)
+            self.assertLess(p, prev)
+            prev = p
+
+    def test_drifted_fill_rate_matches_the_null_at_zero_drift(self):
+        q = fib.p_retrace(0.618, 0.10, 40.0, 0.0, 1.25)
+        self.assertAlmostEqual(q, fib.p_retrace_null(0.618, 0.10), places=8)
+
+    def test_waiting_pays_exactly_when_the_signal_loses(self):
+        """Proposition 11, à exposition inchangée : Δ = −(1 − q)·E_marché."""
+        tau = 28.9
+        for mu_h in (0.0, 0.4, 0.685, 1.5, 3.0):
+            mu = mu_h / 60.0
+            cmp = fib.compare(40.0, 3.0, 60.0, 0.33, mu, 1.25, tau, tau)
+            e_market = mu * tau - 0.33
+            self.assertAlmostEqual(cmp.edge, -(1.0 - cmp.fill_rate) * e_market,
+                                   places=9)
+            self.assertEqual(cmp.edge > 0, e_market < 0)
+
+    def test_critical_drift_equals_mu_star_when_exposure_is_unchanged(self):
+        tau = 28.9
+        cmp = fib.compare(40.0, 3.0, 60.0, 0.33, 0.0, 1.25, tau, tau)
+        self.assertAlmostEqual(cmp.critical_drift, 0.33 / tau, places=9)
+
+    def test_longer_exposure_raises_the_critical_drift(self):
+        cmp = fib.compare(40.0, 3.0, 60.0, 0.33, 0.0, 1.25, 28.9, 32.0)
+        self.assertGreater(cmp.critical_drift, 0.33 / 28.9)
+
+    def test_breakeven_fill_rate_is_demanding(self):
+        q_star = fib.breakeven_fill_rate(20.0, 24.1)
+        self.assertGreater(q_star, fib.expected_ote_fill())
+
+    def test_ote_zone_brackets_the_grid(self):
+        leg = fib.Leg(5960.0, 6000.0)
+        lo, hi = leg.ote()
+        self.assertLess(lo, leg.level(fib.OTE_LOW))
+        self.assertGreaterEqual(hi, leg.level(fib.OTE_LOW) - 1e-9)
+
+
+class TestOrderFlow(unittest.TestCase):
+    """Liquidité : échelles, persistance, discrimination, impact."""
+
+    def test_capture_grows_with_the_half_life(self):
+        prev = 0.0
+        for hl in (0.05, 0.5, 5.0, 30.0, 390.0):
+            cap = orderflow.captured_drift(1.0, hl, 28.9)
+            self.assertGreater(cap, prev)
+            self.assertLessEqual(cap, 1.0)
+            prev = cap
+
+    def test_required_drift_inverts_the_capture(self):
+        for hl in (0.05, 0.5, 30.0):
+            need = orderflow.required_instant_drift(0.33, hl, 28.9)
+            self.assertAlmostEqual(
+                orderflow.captured_drift(need, hl, 28.9) * 28.9, 0.33, places=9)
+
+    def test_book_scales_demand_implausible_drift(self):
+        quote = orderflow.required_instant_drift(0.33, 0.05, 28.9)
+        structural = orderflow.required_instant_drift(0.33, 390.0, 28.9)
+        self.assertGreater(quote / 1.25, 2.0)          # plusieurs σ par minute
+        self.assertLess(structural / 1.25, 0.05)
+        self.assertGreater(quote / structural, 100.0)
+
+    def test_queue_survival_and_half_life(self):
+        self.assertAlmostEqual(orderflow.lpr_expected(0.0, 5.0), 1.0, places=12)
+        h = 2.0
+        self.assertAlmostEqual(
+            orderflow.lpr_expected(h, orderflow.half_life_from_hazard(h)), 0.5,
+            places=12)
+
+    def test_auc_saturates_with_depth(self):
+        prev = 0.5
+        for depth in (1.0, 5.0, 20.0, 200.0):
+            auc = orderflow.lpr_auc(depth, 1.0, 4.0, 0.5)
+            self.assertGreater(auc, prev)
+            self.assertLess(auc, 1.0)
+            prev = auc
+        # Au-delà d'une dizaine de contrats, le gain devient marginal.
+        self.assertLess(orderflow.lpr_auc(1000.0, 1.0, 4.0, 0.5)
+                        - orderflow.lpr_auc(20.0, 1.0, 4.0, 0.5), 0.03)
+
+    def test_required_separation_is_out_of_reach(self):
+        d_req = orderflow.required_separation_for_auc(0.90)
+        d_have = orderflow.lpr_discriminability(200.0, 1.0, 4.0, 0.5)
+        self.assertGreater(d_req, d_have)
+
+    def test_impact_is_linear_and_inverse_to_depth(self):
+        self.assertAlmostEqual(orderflow.impact_ticks(20.0, 40.0), 0.5, places=12)
+        self.assertAlmostEqual(orderflow.impact_ticks(40.0, 40.0), 1.0, places=12)
+        self.assertAlmostEqual(orderflow.kyle_lambda(0.25, 50.0), 0.005, places=12)
+
+    def test_friction_rises_when_the_book_thins(self):
+        thick = orderflow.effective_friction(ES, 4.0, 5.0, 120.0, 120.0)
+        thin = orderflow.effective_friction(ES, 4.0, 5.0, 120.0, 3.0)
+        self.assertGreater(thin, thick)
+        self.assertGreater(thin / thick, 1.5)
+
+    def test_cvd_divergence_null_follows_sheppard(self):
+        self.assertAlmostEqual(orderflow.p_sign_divergence(0.0), 0.5, places=12)
+        self.assertAlmostEqual(orderflow.p_sign_divergence(0.8),
+                               0.5 - math.asin(0.8) / math.pi, places=12)
+        self.assertGreater(orderflow.p_sign_divergence(0.5),
+                           orderflow.p_sign_divergence(0.9))
+
+    def test_detecting_a_small_excess_needs_a_large_sample(self):
+        n = orderflow.trades_to_detect_excess(0.02, 0.205)
+        self.assertGreater(n, 1000.0)
+        self.assertEqual(orderflow.trades_to_detect_excess(0.0, 0.205), math.inf)
+
+
+class TestLayerFiguresAndTables(unittest.TestCase):
+    """Les planches et les tables de la seconde partie du document."""
+
+    def test_terminal_figures_are_well_formed_svg(self):
+        import xml.etree.ElementTree as ET
+
+        for key, svg in figterm.render_all().items():
+            with self.subTest(figure=key):
+                root = ET.fromstring(svg)
+                self.assertIn("viewBox", root.attrib)
+                self.assertIn("aria-label", root.attrib)
+                self.assertNotIn("#", svg.split(">", 1)[1])
+
+    def test_deterministic_noise_is_reproducible(self):
+        a = [figterm._Noise(7).gauss() for _ in range(3)]
+        b = [figterm._Noise(7).gauss() for _ in range(3)]
+        self.assertEqual(a, b)
+
+    def test_layer_tables_are_well_formed(self):
+        for key, table in lexicon.all_tables().items():
+            with self.subTest(table=key):
+                self.assertTrue(table.rows)
+                for row in table.rows:
+                    self.assertEqual(len(row), len(table.headers))
+                    for cell in row:
+                        # « nan » comme mot isolé, pas comme syllabe de « dominante ».
+                        self.assertIsNone(re.search(r"(?<![^\W\d_])nan(?![^\W\d_])",
+                                                    cell.lower()))
+                        self.assertNotIn("None", cell)
+                for col in table.wrapping():
+                    self.assertLess(col, len(table.headers))
+
+    def test_lexicon_covers_every_sigil_used_in_the_text(self):
+        keys = {row[0] for row in lexicon.table_lexicon().rows}
+        for sigil in ("GEX", "0GW", "HVL", "POC", "VAH / VAL", "HVN", "LVN",
+                      "VWAP", "OTE", "LPR", "CVD"):
+            self.assertIn(sigil, keys)
+
+    def test_layer_values_reach_the_document(self):
+        v = paper.values()
+        for key in ("gex_req_bn", "daily_bias", "fill_618", "auc_max",
+                    "stop_sigma_lvn", "mu0_quote", "cvd_div"):
+            self.assertIn(key, v)
+            self.assertTrue(v[key])

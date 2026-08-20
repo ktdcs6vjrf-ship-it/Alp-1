@@ -19,9 +19,11 @@ import math
 import pathlib
 import re
 
+from . import dow, fib, gex, lexicon, orderflow, vprofile
 from .barriers import prob_touch_single_barrier
-from .costs import COST_BASE, COST_REALISTIC, ES
+from .costs import COST_BASE, COST_REALISTIC, ES, norm_cdf
 from .figcss import FIGURE_CSS, FIGURE_TOKENS_DARK, FIGURE_TOKENS_LIGHT
+from .figterm import render_all as render_terminal_figures
 from .figures import render_all
 from .horizon import outcome, outcome_scaled
 from .report import (
@@ -127,7 +129,75 @@ def values() -> dict[str, str]:
         "n20_k3": num(_n_trades(20.0, 3 * mu_ref), 0),
         "sr_typ": "0,02 à 0,05",
     }
+    v.update(_layer_values())
     return v
+
+
+def _layer_values() -> dict[str, str]:
+    """Valeurs scalaires de la seconde partie — les sept couches.
+
+    Elles proviennent des mêmes fonctions que les tables et les figures de
+    `alp1.lexicon` et `alp1.figterm` : un chiffre du texte et le point
+    correspondant d'une figure ne peuvent pas diverger.
+    """
+    adv = lexicon.ADV_USD
+    gex_req = gex.required_gex_for_hurst(HURST, adv, horizon_min=SESSION_MIN)
+    o20 = _geom(20.0)
+    mu_star = FRICTION / o20.expected_time
+
+    prof = vprofile.reference_profile()
+    lvn = prof.lvn()
+    lvn_worst = min(lvn, key=lambda lv: prof.volumes[prof.prices.index(lv)])
+    sig_poc = prof.sigma_at(prof.poc, SIGMA_1MIN)
+    sig_lvn = prof.sigma_at(lvn_worst, SIGMA_1MIN)
+
+    leg_len = 40.0
+    target = 20.0 * STOP_PTS
+    o_ote = outcome_scaled(STOP_PTS, target + fib.OTE_LOW * leg_len, SESSION_MIN,
+                           SIGMA_1MIN, HURST)
+    cmp_ote = fib.compare(leg_len, STOP_PTS, target, FRICTION, mu_star, SIGMA_1MIN,
+                          o20.expected_time, o_ote.expected_time)
+
+    thin = orderflow.effective_friction(ES, COST_BASE.commission_rt, 5.0, 120.0, 8.0)
+    p30_alt = outcome_scaled(STOP_PTS, 30 * STOP_PTS, SESSION_MIN,
+                             SIGMA_1MIN, 0.570).p_target
+    quote, queue = orderflow.SCALES[0], orderflow.SCALES[1]
+    mu0_quote = orderflow.required_instant_drift(FRICTION, quote.half_life_min,
+                                                 o20.expected_time)
+    mu0_queue = orderflow.required_instant_drift(FRICTION, queue.half_life_min,
+                                                 o20.expected_time)
+    cvd_null = orderflow.p_sign_divergence(0.80)
+
+    return {
+        "adv_bn": num(adv / 1e9, 0),
+        "gex_req_bn": num(gex_req / 1e9, 0),
+        "gex_req_adv": num(100 * abs(gex_req) / adv, 0),
+        "hurst_alt": num(0.570, 3),
+        "ptp30_alt": num(100 * p30_alt, 2),
+        "stop_sigma_poc": num(prof.effective_stop_sigma(prof.poc, STOP_PTS, SIGMA_1MIN), 1),
+        "stop_sigma_lvn": num(prof.effective_stop_sigma(lvn_worst, STOP_PTS, SIGMA_1MIN), 1),
+        "pstop_poc": num(100 * prob_touch_single_barrier(STOP_PTS, sig_poc, 30.0), 0),
+        "pstop_lvn": num(100 * prob_touch_single_barrier(STOP_PTS, sig_lvn, 30.0), 0),
+        "vwap1_min": num(2 * norm_cdf(-1.0) * SESSION_MIN, 0),
+        "vwap3_min": num(2 * norm_cdf(-3.0) * SESSION_MIN, 1),
+        "daily_bias": num(dow.required_daily_bias(FRICTION, o20.expected_time,
+                                                  SESSION_MIN), 2),
+        "daily_bias_pct": num(100 * dow.required_daily_bias(
+            FRICTION, o20.expected_time, SESSION_MIN) / INDEX_LEVEL, 3),
+        "fill_618": num(100 * fib.p_retrace_null(fib.OTE_LOW), 1),
+        "fill_786": num(100 * fib.p_retrace_null(0.786), 1),
+        "mu_crit_ote": num(cmp_ote.critical_drift * 60.0, 2),
+        "mu_star_h": num(mu_star * 60.0, 3),
+        "half_tick_pts": num(fib.slippage_saving(0.5, ES.tick_value, ES.point_value), 3),
+        "mu0_quote": num(mu0_quote, 2),
+        "mu0_quote_sigma": num(mu0_quote / SIGMA_1MIN, 1),
+        "mu0_queue": num(mu0_queue, 2),
+        "auc_max": num(orderflow.lpr_auc(200.0, 1.0, 4.0, 0.5), 2),
+        "dprime_req": num(orderflow.required_separation_for_auc(0.90), 2),
+        "friction_thin": num(thin, 2),
+        "cvd_div": num(100 * cvd_null, 0),
+        "cvd_n": num(orderflow.trades_to_detect_excess(0.02, cvd_null), 0),
+    }
 
 
 def build() -> str:
@@ -140,7 +210,7 @@ def build() -> str:
     for key, val in values().items():
         text = text.replace("{{" + key + "}}", val)
 
-    tables = all_tables()
+    tables = {**all_tables(), **lexicon.all_tables()}
     counter = {"n": 0}
 
     def sub_table(m: re.Match) -> str:
@@ -152,7 +222,7 @@ def build() -> str:
 
     text = re.sub(r"\{\{TABLE:([a-z_]+)\}\}", sub_table, text)
 
-    figures = render_all()
+    figures = {**render_all(), **render_terminal_figures()}
     fig_counter = {"n": 0}
 
     def sub_figure(m: re.Match) -> str:
