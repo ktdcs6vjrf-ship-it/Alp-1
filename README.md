@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/invariance-exposition.html`](docs/invariance-exposition.html) —
-32 sections en cinq parties, 56 tables, 31 figures.
+34 sections en cinq parties, 61 tables, 34 figures.
 
 ## Ce que contient ce dépôt
 
@@ -149,8 +149,14 @@ au-dessus de tout gamma observable, et à un cinquième du seuil où
 l'autocorrélation atteint l'unité.
 
 Conclusion, et elle va contre l'hypothèse : la persistance calibrée **ne peut
-pas** être attribuée au régime de gamma. Le papier le signale plutôt que de le
-résoudre.
+pas** être attribuée au régime de gamma. Le candidat suivant de la littérature
+échoue pour une raison inverse et plus profonde. Le fractionnement des ordres
+institutionnels engendre bien une mémoire longue du flux signé, mais le noyau
+d'impact qui lui répond décroît selon l'exposant qui *restaure* exactement la
+diffusivité : le mécanisme le mieux documenté de persistance du flux garantit
+l'absence de persistance du prix. **Aucun mécanisme documenté ne soutient
+l'exposant retenu**, et la géométrie doit donc être choisie robuste à cet
+exposant plutôt qu'optimale en un point que personne n'a mesuré.
 
 ## Les instruments de validation, et le verdict qu'ils rendent
 
@@ -215,6 +221,43 @@ Deux leviers déplacent le verdict, et le calcul les chiffre.
 | Passer de 2 à 8 trades par séance | 25,1 ans → 6,3 ans, si la dérive survit à la multiplication des signaux |
 | Augmenter l'amplitude de l'edge | il faudrait `10,9 µ*` — un Sharpe annualisé de 3,8 — pour qu'une année suffise. Hors de portée. |
 
+## Deux corrections, et une échéance
+
+Le document porte deux résultats que ni ALP-1 ni ALP-2 ne contenaient, et qui
+touchent tous deux à la solidité de la conclusion plutôt qu'à sa portée.
+
+**La dérive est empruntée, et elle se déprécie.** Elle n'a pas été mesurée ici :
+elle vient de travaux publiés en 2018 et 2021. McLean et Pontiff mesurent sur
+97 anomalies une décote post-publication d'environ 58 %. Appliquée à cette
+dérive, elle donne deux nombres opposés.
+
+| | Sans décote | Datée de 2018 | Datée de 2021 |
+|---|---|---|---|
+| Dérive restante en 2026 | 6,00 pdb | **1,50 pdb** | 2,52 pdb |
+| Marge sur le point de rupture (1,16 pdb) | 5,17× | **1,29×** | 2,17× |
+| Année de bascule | — | **2027** | 2030 |
+
+Le rassurant : la conclusion survit à une décote de **80,7 %**, contre 58 %
+documentés. Le reste : le taux qui la fait basculer, 0,205 par an, tombe *à
+l'intérieur* de la boîte de plausibilité. L'absence de mesure n'est donc plus
+une lacune de complétude qu'on comble quand l'occasion se présente — **c'est une
+échéance**, entre dix-huit mois et quatre ans selon la date qu'on retient.
+
+**L'exposant d'échelle était posé deux fois, à deux valeurs.** La calibration le
+fixe à ½ par `σ₁ = D/√T` ; la discussion du gamma en retient 0,65. Refaite sous
+exposant imposé, la chaîne complète — volatilité, bande, stop, exposition, seuil
+— montre que l'incohérence joue **contre** la stratégie : le seuil requis monte
+d'un facteur 1,112 et la probabilité d'arrêt passe de 66,2 % à 71,5 %. La
+persistance invoquée pour rendre les targets atteignables les rend aussi plus
+coûteux à atteindre, et le second effet domine parce que le target n'est presque
+jamais touché.
+
+Évaluée au pire cas sur la boîte d'exposant, la géométrie désigne une entrée à
+**120 minutes** plutôt qu'à 90 : exposition de 172,2 minutes au lieu de 165,6,
+et 3,8 % de moins sur la dérive requise. L'écart est modeste et gratuit. Mais
+90 minutes figurent dans l'empreinte scellée : la corriger n'est légitime que
+**tant qu'aucune série de prix n'a été ouverte**, ce qui est encore le cas.
+
 ## Utilisation
 
 ```bash
@@ -227,7 +270,7 @@ python main.py --measure f.csv    # exécute le protocole sur un historique
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 305 tests unitaires du noyau
+python main.py --tests            # 390 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -273,6 +316,8 @@ chiffre soit défendable plutôt que seulement juste :
 | `alp1/grading.py` | Grille de notation, appliquée aux deux documents |
 | `alp1/dataset.py` | Lecture et audit d'un CSV de barres d'une minute |
 | `alp1/measure.py` | Exécution du protocole sur l'historique fourni |
+| `alp1/decay.py` | Décote post-publication de la dérive empruntée, durée de vie résiduelle |
+| `alp1/scaling.py` | Calibration sous exposant d'échelle imposé, géométrie au pire cas |
 
 Les instruments de validation :
 
@@ -296,7 +341,10 @@ La production du document :
 | `alp1/figterm.py` | Planches des couches, en panneaux de terminal |
 | `alp1/figquant.py` | Planches des instruments, surfaces isométriques comprises |
 | `alp1/figcss.py` | Feuille de style partagée des figures |
+| `alp1/report3.py` | Tables et valeurs de la décote et de l'exposant d'échelle |
+| `alp1/figdecay.py` | Figures de la décote et de l'exposant d'échelle |
 | `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
+| `alp1/workingpaper.py` | Assemblage du document de travail complet |
 
 Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
 injectés par le code de l'autre. Un chiffre du texte et le point correspondant

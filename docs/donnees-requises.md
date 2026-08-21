@@ -16,6 +16,32 @@ lever ces deux réserves : ce sont des critères qui portent sur une **mesure**,
 et une mesure exige des données. La chaîne qui les consomme est écrite,
 auditée et testée ; il lui manque un fichier.
 
+## 0. Ce qui a changé : la lacune a maintenant une date
+
+La section « La dérive empruntée, et ce que le temps lui fait » du document de
+travail chiffre la décote post-publication de l'effet sur lequel tout repose.
+Deux nombres en sortent, et ils tirent dans des directions opposées.
+
+**Le rassurant.** La conclusion survit à une décote de **80,7 %**, contre 58 %
+documentés en moyenne par McLean et Pontiff. La dérive publiée peut perdre les
+quatre cinquièmes de sa valeur sans que l'espérance nette devienne négative.
+
+**L'autre.** La décote court depuis la publication, pas depuis aujourd'hui.
+Datée du travail de 2018, la dérive subsistante en 2026 vaut **1,50 point de
+base** pour un point de rupture à 1,16 — une marge de **1,29×**, contre 5,17×
+sur la valeur publiée. La fenêtre se referme en **2027**. Datée de la
+généralisation de 2021, elle vaut 2,52 points de base, une marge de 2,17×, et
+la fenêtre tient jusqu'en **2030**.
+
+Le taux qui fait basculer la conclusion, 0,205 par an, tombe **à l'intérieur**
+de la boîte de plausibilité. Ce n'est donc plus une lacune de complétude qu'on
+comble quand l'occasion se présente. C'est une échéance.
+
+> **Conséquence pratique.** Entre dix-huit mois et quatre ans selon la date
+> qu'on retient. Un historique de cinq ans à la minute coûte quelques dizaines
+> d'euros et une soirée de travail. Le rapport entre ce coût et cette échéance
+> est le seul argument de cette page.
+
 ---
 
 ## 1. Avant de m'envoyer quoi que ce soit : publier le sceau
@@ -31,6 +57,17 @@ règle de décision, seuils, règles d'arrêt, critères de falsification, et le
 nombres de calibration eux-mêmes. Publiez cette empreinte quelque part
 d'horodaté et d'immuable **avant** que le premier fichier de prix n'entre dans
 le dépôt : un commit signé, un message daté, peu importe le support.
+
+**Et avant de le publier, une décision à prendre.** La section « La géométrie
+au pire cas » montre qu'une entrée à **120 minutes** plutôt qu'à 90 abaisse de
+3,8 % la dérive requise au pire cas sur la boîte d'exposant, et allonge
+l'exposition de 165,6 à 172,2 minutes. C'est gratuit : ni risque supplémentaire
+ni degré de liberté. Mais 90 minutes figurent dans l'empreinte actuelle.
+
+Corriger la géométrie est légitime **tant qu'aucune série de prix n'a été
+ouverte** — le choix ne peut alors pas avoir été informé par un résultat. Le
+jour où le premier fichier entre dans le dépôt, la même modification devient
+indéfendable. Décidez maintenant, puis scellez ; c'est la dernière occasion.
 
 Ce que cela vous achète : le jour où la mesure donne un résultat favorable,
 vous pourrez montrer que la règle n'a pas été choisie après l'avoir vu. Sans
@@ -191,6 +228,29 @@ Ce que la mesure ne changera pas : elle ne rend pas la stratégie rentable et ne
 prouve pas qu'elle l'est. Elle remplace une hypothèse reprise de tiers par une
 estimation faite sur vos données, avec un seuil fixé d'avance. C'est tout, et
 c'est la seule chose qui manque.
+
+---
+
+## 5 bis. Le second test gratuit, et pourquoi il vient en premier
+
+Le Test 1 mesure l'exposant d'échelle par ratio de variance. Il ne demande
+aucun signal, aucun paramètre libre, et il tourne sur le même fichier que le
+reste. Il décidait, dans la version précédente du document, de l'atteignabilité
+des targets ; la section « La cohérence de l'exposant d'échelle » lui donne une
+portée plus large.
+
+La calibration entière — volatilité par minute, bande de bruit, largeur de
+stop, exposition, seuil de signal — se déduit de la dispersion de séance par un
+exposant qui est **posé à ½ et jamais mesuré**. Refaite sous l'exposant que le
+document invoque par ailleurs, elle relève le seuil requis d'un facteur 1,112,
+et la probabilité d'arrêt passe de 66,2 % à 71,5 %. L'incohérence joue contre
+la stratégie, et aucun mécanisme documenté ne soutient la persistance invoquée
+— ni le régime de gamma, écarté par son propre ordre de grandeur, ni la mémoire
+longue du flux, dont le noyau d'impact restaure précisément la diffusivité.
+
+Une mesure de H sur cinq ans de barres à la minute prend quelques minutes de
+calcul et fixe la calibration entière. C'est le meilleur rapport entre ce qu'un
+test coûte et ce qu'il décide, de tout le protocole.
 
 ---
 

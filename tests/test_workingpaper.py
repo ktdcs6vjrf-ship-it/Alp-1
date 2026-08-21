@@ -42,10 +42,11 @@ class TestFusion(unittest.TestCase):
 
     def test_les_tables_des_deux_documents_sont_toutes_atteignables(self):
         t = monograph.tables()
-        self.assertEqual(len(t), 32 + 24)   # ALP-1 (report+lexicon+quant) et ALP-2
+        # ALP-1 (report+lexicon+quant), ALP-2, et les deux corrections
+        self.assertEqual(len(t), 32 + 24 + 5)
 
     def test_toutes_les_figures_coexistent(self):
-        self.assertEqual(len(monograph.figures()), 31)
+        self.assertEqual(len(monograph.figures()), 34)
 
 
 class TestPiedsDeFigure(unittest.TestCase):
@@ -110,10 +111,10 @@ class TestStructure(unittest.TestCase):
     def test_cinq_parties(self):
         self.assertEqual(self.corps.count('<div class="part">'), 5)
 
-    def test_trente_deux_sections_numerotees(self):
+    def test_les_sections_sont_numerotees_en_continu(self):
         ids = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)
-        self.assertEqual(len(ids), 32)
-        self.assertEqual(len(set(ids)), 32)
+        self.assertEqual(len(ids), 34)
+        self.assertEqual(len(set(ids)), 34)
 
     def test_le_sommaire_couvre_toutes_les_sections(self):
         ids = set(re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps))

@@ -615,6 +615,8 @@
           <li><a href="#s-adequation">L'adéquation du modèle à son objet</a></li>
           <li><a href="#s-friction">La friction, déduite plutôt que posée</a></li>
           <li><a href="#s-rupture">Ce qu'il faudrait croire pour renverser la conclusion</a></li>
+          <li><a href="#s-decote">La dérive empruntée, et ce que le temps lui fait</a></li>
+          <li><a href="#s-exposant">La cohérence de l'exposant d'échelle</a></li>
           <li><a href="#s-taille">Dimensionnement</a></li>
           <li><a href="#s-surajustement">Discipline anti-surajustement</a></li>
           <li><a href="#s-proto2">Le protocole de mesure</a></li>
@@ -1784,6 +1786,76 @@
 
   <p>Aucune rupture n'est atteinte à l'intérieur de la boîte. Il faudrait une friction de {{brk_friction}} point — {{brk_friction_factor}} fois le pire scénario d'exécution, et plus du double de la friction déduite au quantile 99&nbsp;% — ou une dérive tombée de {{edge_bps}} à {{brk_edge}} points de base. Ni la dispersion de séance ni l'heure d'entrée n'ont de point de rupture : aucune valeur explorée ne renverse la conclusion par ces axes.</p>
 
+
+  <h2 id="s-decote">La dérive empruntée, et ce que le temps lui fait</h2>
+
+  <p>La section précédente donne le point de rupture de la dérive&nbsp;: {{brk_edge}} point de base, contre {{edge_bps}} publiés. La marge paraît confortable. Elle ne l'est que si la dérive publiée est encore là, et il y a une raison documentée de croire qu'elle ne l'est plus tout à fait.</p>
+
+  <p>La dérive retenue ici n'a pas été mesurée&nbsp;: elle est empruntée. Or un effet publié s'arbitre. McLean et Pontiff mesurent sur quatre-vingt-dix-sept anomalies deux contractions distinctes — environ {{decay_oos}}&nbsp;% hors échantillon mais avant publication, ce qui mesure le surajustement du travail d'origine, puis environ {{decay_pub}}&nbsp;% après publication, ce qui mesure l'arbitrage par les lecteurs. C'est la seconde qui s'applique ici, puisque les deux travaux dont la dérive est tirée sont publiés depuis {{decay_first_year}} et {{decay_last_year}}.</p>
+
+  {{TABLE:decay_evidence}}
+
+  <p>Traduire un niveau de décote en taux annuel exige une hypothèse de forme. On retient la décroissance exponentielle&nbsp;: c'est la seule à un paramètre qui soit compatible avec une décote mesurée sur une fenêtre, et son paramètre est encadré plutôt que posé. La borne basse de la boîte est zéro, et ce n'est pas une précaution rhétorique&nbsp;: Jacobs et Müller ne retrouvent aucune décote post-publication sur trente-neuf marchés hors des États-Unis. La décote n'est pas une loi de la nature.</p>
+
+  {{FIGURE:decayrunway|Dérive subsistante après décote, comparée au point de rupture de l'espérance nette. Le trait vertical marque l'année d'observation, l'horizontale le point de rupture. L'intersection de la courbe et de l'horizontale est la date à laquelle la conclusion cesse de tenir.}}
+
+  {{TABLE:decay_runway}}
+
+  <p>Le premier résultat est rassurant, et il faut l'énoncer avant l'autre. La conclusion survit à une décote de {{decay_break}}&nbsp;%, contre {{decay_pub}}&nbsp;% documentés en moyenne&nbsp;: la dérive publiée peut perdre les quatre cinquièmes de sa valeur sans que l'espérance nette devienne négative. C'est une marge que peu de stratégies publiées peuvent revendiquer, et elle tient à la géométrie — c'est exactement ce que le facteur {{ir_factor}} de la section&nbsp;<a href="#s-compare">23</a> a acheté.</p>
+
+  <p>Le second résultat l'est moins. La décote ne s'applique pas à une date indifférente&nbsp;: elle court depuis la publication. Datée du travail de {{decay_first_year}}, la dérive subsistante en {{asof}} vaut {{decay_first_left}} point de base pour un point de rupture à {{decay_brk_bps}}. La marge n'est plus de {{decay_margin_nominal}}× mais de {{decay_first_margin}}×, et la fenêtre se referme en {{decay_first_expiry}}. Datée de la généralisation de {{decay_last_year}}, elle vaut {{decay_last_left}} points de base, une marge de {{decay_last_margin}}×, et la fenêtre tient jusqu'en {{decay_last_expiry}}.</p>
+
+  {{FIGURE:decayrate|Marge sur le point de rupture selon le taux de décroissance annuel supposé, pour chacune des deux dates de publication. La conclusion bascule au passage sous la ligne unitaire, et le trait vertical marque le taux auquel elle bascule pour la date la plus ancienne.}}
+
+  {{TABLE:decay_scenarios}}
+
+  <p>Le taux de bascule est de {{decay_brk_rate}} par an, soit une demi-vie de {{decay_brk_halflife}} ans, et il tombe <em>à l'intérieur</em> de la boîte de plausibilité. C'est le fait marquant de cette section, et il change la nature de la réserve principale du document. Jusqu'ici, l'absence de mesure était une lacune de complétude&nbsp;: le protocole existait, il attendait un fichier. Elle devient une lacune datée. La survie de la conclusion ne dépend plus seulement de la dérive publiée, mais de la vitesse à laquelle elle s'arbitre — laquelle n'est pas mesurée ici, et ne peut pas l'être sans les mêmes données.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que cette section ajoute au protocole</span>
+    <p>Rien, dans la règle de décision. Le Test&nbsp;2 mesure la dérive captée telle qu'elle est aujourd'hui, décote comprise&nbsp;: il n'a pas besoin de savoir d'où elle vient ni de combien elle a baissé. Ce que la section ajoute est un ordre de priorité. Un protocole dont la conclusion a une date d'expiration calculable ne se conduit pas quand l'occasion se présente&nbsp;; il se conduit maintenant, ou il ne sert à rien de l'avoir écrit.</p>
+  </div>
+
+  <h2 id="s-exposant">La cohérence de l'exposant d'échelle</h2>
+
+  <p>Une seconde objection porte sur un nombre qui n'apparaît nulle part dans les tables, et qui décide pourtant de toutes&nbsp;: l'exposant selon lequel la dispersion croît avec le temps.</p>
+
+  <p>La calibration pose une dispersion de séance et en déduit la volatilité par minute par σ₁&nbsp;=&nbsp;<i>D</i>/√<i>T</i>. Ce radical est l'exposant d'un brownien, <i>H</i>&nbsp;=&nbsp;½&nbsp;; il est posé, jamais mesuré. Ailleurs, la section&nbsp;<a href="#s-gamma">9</a> retient <i>H</i>&nbsp;=&nbsp;{{hurst}} pour discuter de l'atteignabilité des targets. Les deux énoncés ne peuvent pas être vrais ensemble. Ou bien le prix diffuse en racine du temps, et la calibration est bonne mais la persistance invoquée n'existe pas&nbsp;; ou bien il diffuse en <i>t</i><sup><i>H</i></sup> avec <i>H</i>&nbsp;&gt;&nbsp;½, et c'est σ₁ qui est faux — et avec lui la bande de bruit, le stop, l'exposition et le seuil.</p>
+
+  <p>Une seule calibration est cohérente avec un exposant donné&nbsp;: σ₁&nbsp;=&nbsp;<i>D</i>/<i>T</i><sup><i>H</i></sup>, tout le reste s'en déduisant. La table qui suit refait la chaîne complète, les trois entrées du document restant inchangées.</p>
+
+  {{TABLE:scaling_chain}}
+
+  {{FIGURE:scalinghurst|Seuil de signal requis et probabilité d'arrêt en fonction de l'exposant d'échelle, la calibration étant refaite en chaque point. Les deux courbes montent ensemble&nbsp;: la persistance invoquée pour rendre les targets atteignables rend aussi le stop plus fréquent.}}
+
+  <p>Le résultat va contre l'intuition qui avait motivé le recours à <i>H</i>&nbsp;&gt;&nbsp;½. Une persistance plus forte n'aide pas. Elle éloigne le prix plus vite du point d'entrée, donc le stop est touché plus souvent — {{scal_pstop_high}}&nbsp;% contre {{scal_pstop_half}}&nbsp;% —, et le seuil de signal monte d'un facteur {{scal_factor}}. Le canal par lequel le document faisait jouer <i>H</i>, l'atteignabilité du target, est négligeable devant ces deux effets, pour une raison que la section&nbsp;<a href="#s-gamma">9</a> donne elle-même&nbsp;: à {{ptp30}}&nbsp;% de probabilité, le target n'est presque jamais atteint, et la sortie effective est la clôture de séance.</p>
+
+  <div class="keybox">
+    <span class="lab">Réserve de méthode</span>
+    <p>Le premier passage d'un processus auto-similaire d'exposant <i>H</i>&nbsp;≠&nbsp;½ n'a pas de forme fermée. On emploie ici le changement de temps <i>t</i>&nbsp;→&nbsp;<i>t</i><sup>2<i>H</i></sup>, qui rend la loi marginale exacte — le processus a bien la dispersion σ₁<i>t</i><sup><i>H</i></sup> à toute date — mais qui ignore que les incréments d'un mouvement brownien fractionnaire sont corrélés, alors que ceux du brownien changé de temps ne le sont pas. La corrélation positive favorise les excursions longues, donc la probabilité d'arrêt est sous-estimée pour <i>H</i>&nbsp;&gt;&nbsp;½. Les écarts rapportés ici sont des bornes basses de l'effet, ce qui suffit à la conclusion&nbsp;: il joue déjà contre la stratégie sous sa forme la plus favorable. À <i>H</i>&nbsp;=&nbsp;½ le changement de temps est l'identité, et la première ligne de la table reproduit les nombres du document à la douzième décimale.</p>
+  </div>
+
+  <h3>Aucun mécanisme documenté ne soutient la persistance invoquée</h3>
+
+  <p>La section&nbsp;<a href="#s-gamma">9</a> a déjà écarté le régime de gamma&nbsp;: reproduire <i>H</i>&nbsp;=&nbsp;{{hurst}} exigerait un gamma net de {{gex_req_bn}}&nbsp;milliards de dollars par pour cent, un ordre de grandeur au-dessus de tout observable. Le candidat suivant de la littérature ne fait pas mieux, et son échec est instructif.</p>
+
+  <p>Le fractionnement des ordres institutionnels engendre bien une mémoire longue du flux signé&nbsp;: c'est le résultat de Lillo, Mike et Farmer, et il est solidement établi. Mais Bouchaud, Gefen, Potters et Wyart montrent que l'impact d'un ordre décroît selon un noyau dont l'exposant est précisément celui qui <em>restaure</em> la diffusivité. La mémoire du flux est compensée, et le prix reste à <i>H</i>&nbsp;≈&nbsp;½ par construction. Le mécanisme le mieux documenté de persistance du flux est donc aussi celui qui garantit l'absence de persistance du prix — ce qui n'est pas une coïncidence, mais la forme microstructurelle de l'efficience.</p>
+
+  <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement de l'atteignabilité du target, il décide de la calibration entière.</p>
+
+  <h3>La géométrie au pire cas</h3>
+
+  <p>Si <i>H</i> n'est pas mesuré, la seule décision défendable est celle qui tient au plus défavorable de la boîte. Le pire cas tombe en <i>H</i>&nbsp;=&nbsp;{{scal_worst_h}}, et il désigne une heure d'entrée différente de celle du protocole.</p>
+
+  {{TABLE:scaling_entry}}
+
+  <p>Retarder l'entrée élargit la bande de bruit, donc éloigne le stop et allonge l'exposition&nbsp;; mais la séance restante raccourcit, donc l'exposition plafonne. L'optimum est intérieur et tombe à {{scal_entry_best}} minutes, contre {{scal_entry_ref}} retenues par le protocole scellé — {{scal_expo_best}} minutes d'exposition au lieu de {{scal_expo_ref}}, et {{scal_entry_gain}}&nbsp;% de moins sur la dérive requise. L'écart est réel, modeste, et gratuit&nbsp;: il ne coûte ni risque supplémentaire ni degré de liberté.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que le sceau permet, et ce qu'il interdit</span>
+    <p>Adopter cette heure d'entrée exige de resceller le protocole, puisque {{scal_entry_ref}} minutes figurent dans l'empreinte publiée. Ce rescellement est légitime, et il ne le restera pas longtemps&nbsp;: il l'est parce qu'aucune série de prix n'a jamais été ouverte, de sorte que le choix ne peut pas avoir été informé par un résultat. Le jour où le premier fichier entre dans le dépôt, la même modification deviendrait indéfendable — elle serait indiscernable d'un paramètre ajusté après coup. C'est la dernière fois que la géométrie peut être corrigée sans rien coûter à la valeur probante de la mesure.</p>
+  </div>
+
   <h2 id="s-taille">Dimensionnement</h2>
 
   <p>Un stop de {{band}} points vaut {{band_es}}&nbsp;$ sur un contrat ES et {{band_mes}}&nbsp;$ sur un micro-contrat. À 0,5&nbsp;% de risque par trade, cela impose l'instrument.</p>
@@ -1865,12 +1937,13 @@
 
   <p>C'est la limite principale de ce document, et la seule que le dépôt ne puisse pas lever seul. Elle est énoncée ici plutôt que compensée par une affirmation de performance.</p>
 
-  <p>Un résultat va d'ailleurs contre l'hypothèse qui motivait la recherche, et il doit être énoncé au même rang que les autres&nbsp;: le contrôle de plausibilité du régime de gamma montre que la persistance calibrée <strong>ne peut pas</strong> lui être attribuée. Reproduire l'exposant retenu exigerait un gamma net d'un ordre de grandeur supérieur à tout gamma observable. Le document le signale plutôt que de le résoudre.</p>
+  <p>Deux résultats vont d'ailleurs contre l'hypothèse qui motivait la recherche, et ils doivent être énoncés au même rang que les autres. Le contrôle de plausibilité du régime de gamma montre que la persistance calibrée ne peut pas lui être attribuée&nbsp;: reproduire l'exposant retenu exigerait un gamma net d'un ordre de grandeur supérieur à tout gamma observable. Le candidat suivant de la littérature — la mémoire longue du flux engendrée par le fractionnement des ordres — échoue pour une raison inverse et plus profonde&nbsp;: le noyau d'impact qui lui répond restaure exactement la diffusivité, de sorte que le mécanisme le mieux documenté de persistance du flux garantit l'absence de persistance du prix. Aucun mécanisme documenté ne soutient donc l'exposant retenu, et la section&nbsp;<a href="#s-exposant">29</a> en tire la conséquence&nbsp;: la géométrie doit être choisie robuste à cet exposant plutôt qu'optimale en un point que personne n'a mesuré.</p>
 
-  <p>Quatre réserves s'ajoutent à la limite principale&nbsp;:</p>
+  <p>Cinq réserves s'ajoutent à la limite principale&nbsp;:</p>
 
   <ul>
-    <li><strong>La dérive est empruntée.</strong> Un effet documenté peut s'être éteint après publication&nbsp;— le document en donne un exemple, la dérive overnight, éteinte depuis 2021. Le test&nbsp;2 du protocole existe pour lever cette réserve, et lui seul le peut.</li>
+    <li><strong>La dérive est empruntée, et elle est datée.</strong> Un effet documenté s'arbitre après publication&nbsp;— le document en donne un exemple, la dérive overnight, éteinte depuis 2021. La section&nbsp;<a href="#s-decote">28</a> chiffre cette décote sur la dérive retenue ici&nbsp;: la conclusion survit à une perte de {{decay_break}}&nbsp;% de sa valeur, contre {{decay_pub}}&nbsp;% documentés en moyenne, mais la marge tombe de {{decay_margin_nominal}}× à {{decay_first_margin}}× une fois la décote datée de la publication de {{decay_first_year}}, et la fenêtre se referme en {{decay_first_expiry}}. Le test&nbsp;2 du protocole existe pour lever cette réserve, et lui seul le peut.</li>
+    <li><strong>L'exposant d'échelle n'est pas mesuré.</strong> La calibration le pose à ½ et la discussion du gamma en retient {{hurst}}, ce qui n'est pas cohérent. La section&nbsp;<a href="#s-exposant">29</a> refait la chaîne sous exposant imposé&nbsp;: l'incohérence joue contre la stratégie, d'un facteur {{scal_factor}} sur le seuil requis, et aucun mécanisme documenté ne soutient la persistance invoquée. Le test&nbsp;1 la lève.</li>
     <li><strong>La boîte de plausibilité est posée, pas mesurée.</strong> Ses bornes viennent d'observations publiques et du jugement. Un lecteur qui les juge trop larges ou trop étroites peut les modifier et relancer&nbsp;: les verdicts se recalculent.</li>
     <li><strong>Le modèle de carnet est paramétrique.</strong> Profondeur, amincissement au déclenchement et latence sont des ordres de grandeur, encadrés sur 243 combinaisons mais jamais observés sur un carnet réel.</li>
     <li><strong>Le conditionnement par le gamma reste une hypothèse.</strong> Il est inscrit au protocole comme configuration&nbsp;C2, et le document ne prétend pas qu'il fonctionne&nbsp;— seulement qu'il est testable sans données payantes.</li>
@@ -1879,7 +1952,7 @@
   <div class="keybox">
     <span class="lab">Le verdict, en une phrase</span>
     <p>Ce document n'établit pas qu'un avantage existe. Il établit qu'un changement de géométrie divise par {{ir_factor}} le seuil qu'un signal doit franchir, que la friction réelle laisse une marge de {{ir_margin}} sur une dérive documentée par des tiers, et qu'un protocole capable de trancher tient en cinq tests dont quatre se conduisent sur historique, sans donnée payante.</p>
-    <p>Ce qui manque est une série de prix. Rien d'autre.</p>
+    <p>Ce qui manque est une série de prix. Rien d'autre&nbsp;— et, depuis la section&nbsp;<a href="#s-decote">28</a>, ce qui manque a une date&nbsp;: au taux de décote documenté, la dérive empruntée passe sous son point de rupture en {{decay_first_expiry}} si on la date du travail d'origine, en {{decay_last_expiry}} si on la date de sa généralisation.</p>
   </div>
 
   <h2 class="unnumbered">Références indicatives</h2>

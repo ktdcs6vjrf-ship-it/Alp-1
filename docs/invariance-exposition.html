@@ -695,6 +695,8 @@
           <li><a href="#s-adequation">L'adéquation du modèle à son objet</a></li>
           <li><a href="#s-friction">La friction, déduite plutôt que posée</a></li>
           <li><a href="#s-rupture">Ce qu'il faudrait croire pour renverser la conclusion</a></li>
+          <li><a href="#s-decote">La dérive empruntée, et ce que le temps lui fait</a></li>
+          <li><a href="#s-exposant">La cohérence de l'exposant d'échelle</a></li>
           <li><a href="#s-taille">Dimensionnement</a></li>
           <li><a href="#s-surajustement">Discipline anti-surajustement</a></li>
           <li><a href="#s-proto2">Le protocole de mesure</a></li>
@@ -6553,12 +6555,254 @@
 
   <p>Aucune rupture n'est atteinte à l'intérieur de la boîte. Il faudrait une friction de 1,50 point — 2,59 fois le pire scénario d'exécution, et plus du double de la friction déduite au quantile 99&nbsp;% — ou une dérive tombée de 6,0 à 1,16 points de base. Ni la dispersion de séance ni l'heure d'entrée n'ont de point de rupture : aucune valeur explorée ne renverse la conclusion par ces axes.</p>
 
+
+  <h2 id="s-decote">La dérive empruntée, et ce que le temps lui fait</h2>
+
+  <p>La section précédente donne le point de rupture de la dérive&nbsp;: 1,16 point de base, contre 6,0 publiés. La marge paraît confortable. Elle ne l'est que si la dérive publiée est encore là, et il y a une raison documentée de croire qu'elle ne l'est plus tout à fait.</p>
+
+  <p>La dérive retenue ici n'a pas été mesurée&nbsp;: elle est empruntée. Or un effet publié s'arbitre. McLean et Pontiff mesurent sur quatre-vingt-dix-sept anomalies deux contractions distinctes — environ 26&nbsp;% hors échantillon mais avant publication, ce qui mesure le surajustement du travail d'origine, puis environ 58&nbsp;% après publication, ce qui mesure l'arbitrage par les lecteurs. C'est la seconde qui s'applique ici, puisque les deux travaux dont la dérive est tirée sont publiés depuis 2018 et 2021.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 50</span> — Ce que la littérature documente de la décote post-publication d'un effet, et le taux annuel qu'on en déduit.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Grandeur</th><th>Valeur</th><th class="wrap">Source</th><th class="wrap">Lecture</th></tr></thead>
+        <tbody>
+          <tr><td>Décote hors échantillon, avant publication</td><td>26 %</td><td class="wrap">McLean et Pontiff (2016), 97 anomalies</td><td class="wrap">Surajustement du travail d'origine</td></tr>
+          <tr><td>Décote après publication</td><td>58 %</td><td class="wrap">McLean et Pontiff (2016)</td><td class="wrap">Arbitrage par les lecteurs</td></tr>
+          <tr><td>Décote hors États-Unis</td><td>0 %</td><td class="wrap">Jacobs et Müller (2020), 39 marchés</td><td class="wrap">Aucune décote détectée : la borne basse de la boîte</td></tr>
+          <tr class="sep"><td>Taux annuel retenu</td><td>0,174 / an</td><td class="wrap">Déduit : 58 % consommés en 5 ans</td><td class="wrap">Demi-vie de 4,0 ans</td></tr>
+          <tr><td>Boîte du taux annuel</td><td>0,000 – 0,289</td><td class="wrap">Bornes des deux lignes précédentes</td><td class="wrap">58 % en 3 ans pour la borne haute</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Les deux premières lignes sont mesurées, la troisième est une absence de mesure, et les deux dernières sont déduites sous hypothèse de décroissance exponentielle — la seule forme à un paramètre compatible avec une décote observée sur une fenêtre. Aucune n'est estimée ici.</p>
+    </figure>
+
+  <p>Traduire un niveau de décote en taux annuel exige une hypothèse de forme. On retient la décroissance exponentielle&nbsp;: c'est la seule à un paramètre qui soit compatible avec une décote mesurée sur une fenêtre, et son paramètre est encadré plutôt que posé. La borne basse de la boîte est zéro, et ce n'est pas une précaution rhétorique&nbsp;: Jacobs et Müller ne retrouvent aucune décote post-publication sur trente-neuf marchés hors des États-Unis. La décote n'est pas une loi de la nature.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 31</span> — Dérive subsistante après décote, comparée au point de rupture de l'espérance nette. Le trait vertical marque l'année d'observation, l'horizontale le point de rupture. L'intersection de la courbe et de l'horizontale est la date à laquelle la conclusion cesse de tenir.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 268" role="img" aria-label="Dérive subsistante après décote post-publication, comparée au point de rupture de l'espérance nette" preserveAspectRatio="xMidYMid meet">
+<line class="gl" x1="52.0" y1="226.0" x2="516.0" y2="226.0"/>
+<text class="tk" x="46.0" y="229.0" text-anchor="end">0</text>
+<line class="gl" x1="52.0" y1="188.8" x2="516.0" y2="188.8"/>
+<text class="tk" x="46.0" y="191.8" text-anchor="end">1,16</text>
+<line class="gl" x1="52.0" y1="161.8" x2="516.0" y2="161.8"/>
+<text class="tk" x="46.0" y="164.8" text-anchor="end">2</text>
+<line class="gl" x1="52.0" y1="97.6" x2="516.0" y2="97.6"/>
+<text class="tk" x="46.0" y="100.6" text-anchor="end">4</text>
+<line class="gl" x1="52.0" y1="33.4" x2="516.0" y2="33.4"/>
+<text class="tk" x="46.0" y="36.4" text-anchor="end">6</text>
+<text class="ax" transform="translate(11,122.0) rotate(-90)" text-anchor="middle">dérive captée (points de base)</text>
+<line class="ba" x1="52.0" y1="226.0" x2="516.0" y2="226.0"/>
+<text class="tk" x="52.0" y="240.0" text-anchor="middle">2018</text>
+<text class="tk" x="184.6" y="240.0" text-anchor="middle">2022</text>
+<text class="tk" x="317.1" y="240.0" text-anchor="middle">2026</text>
+<text class="tk" x="383.4" y="240.0" text-anchor="middle">2028</text>
+<text class="tk" x="482.9" y="240.0" text-anchor="middle">2031</text>
+<text class="ax" x="284.0" y="264.0" text-anchor="middle">année</text>
+<line class="hl" x1="52.0" y1="188.8" x2="516.0" y2="188.8"/>
+<text class="dl halo" x="58.0" y="181.8">rupture 1,16 pdb</text>
+<line class="gl" x1="317.1" y1="18.0" x2="317.1" y2="226.0" stroke-dasharray="3 3"/>
+<path class="ln s1" d="M52.00,33.41 L60.29,41.58 L68.57,49.41 L76.86,56.91 L85.14,64.08 L93.43,70.96 L101.71,77.54 L110.00,83.84 L118.29,89.87 L126.57,95.65 L134.86,101.19 L143.14,106.48 L151.43,111.56 L159.71,116.41 L168.00,121.07 L176.29,125.52 L184.57,129.79 L192.86,133.87 L201.14,137.78 L209.43,141.53 L217.71,145.11 L226.00,148.54 L234.29,151.83 L242.57,154.98 L250.86,158.00 L259.14,160.88 L267.43,163.65 L275.71,166.29 L284.00,168.83 L292.29,171.25 L300.57,173.58 L308.86,175.80 L317.14,177.93 L325.43,179.97 L333.71,181.93 L342.00,183.80 L350.29,185.59 L358.57,187.31 L366.86,188.95 L375.14,190.52 L383.43,192.03 L391.71,193.47 L400.00,194.85 L408.29,196.17 L416.57,197.44 L424.86,198.65 L433.14,199.81 L441.43,200.92 L449.71,201.99 L458.00,203.01 L466.29,203.98 L474.57,204.92 L482.86,205.81 L491.14,206.67 L499.43,207.49 L507.71,208.28 L516.00,209.03"/>
+<circle class="pt s1" cx="52.00" cy="33.41" r="4"><title>Gao, Han, Li et Zhou (2018) · dérive publiée 6,00 pdb</title></circle>
+<circle class="pt s1" cx="317.14" cy="177.93" r="4"><title>Gao, Han, Li et Zhou (2018) · restant en 2026 : 1,50 pdb</title></circle>
+<circle class="pt s1" cx="365.92" cy="188.77" r="4"><title>Gao, Han, Li et Zhou (2018) · rupture en 2027</title></circle>
+<path class="ln s2" d="M151.43,33.41 L159.71,41.58 L168.00,49.41 L176.29,56.91 L184.57,64.08 L192.86,70.96 L201.14,77.54 L209.43,83.84 L217.71,89.87 L226.00,95.65 L234.29,101.19 L242.57,106.48 L250.86,111.56 L259.14,116.41 L267.43,121.07 L275.71,125.52 L284.00,129.79 L292.29,133.87 L300.57,137.78 L308.86,141.53 L317.14,145.11 L325.43,148.54 L333.71,151.83 L342.00,154.98 L350.29,158.00 L358.57,160.88 L366.86,163.65 L375.14,166.29 L383.43,168.83 L391.71,171.25 L400.00,173.58 L408.29,175.80 L416.57,177.93 L424.86,179.97 L433.14,181.93 L441.43,183.80 L449.71,185.59 L458.00,187.31 L466.29,188.95 L474.57,190.52 L482.86,192.03 L491.14,193.47 L499.43,194.85 L507.71,196.17 L516.00,197.44"/>
+<circle class="pt s2" cx="151.43" cy="33.41" r="4"><title>Baltussen, Da, Lammers et Martens (2021) · dérive publiée 6,00 pdb</title></circle>
+<circle class="pt s2" cx="317.14" cy="145.11" r="4"><title>Baltussen, Da, Lammers et Martens (2021) · restant en 2026 : 2,52 pdb</title></circle>
+<circle class="pt s2" cx="465.35" cy="188.77" r="4"><title>Baltussen, Da, Lammers et Martens (2021) · rupture en 2030</title></circle>
+<text class="dl" x="308.1" y="171.9" text-anchor="end">1,50 pdb</text>
+<line class="ln s1" x1="528.0" y1="36.0" x2="542.0" y2="36.0"/>
+<text class="lg" x="548.0" y="39.5">publié en 2018</text>
+<line class="ln s2" x1="528.0" y1="51.0" x2="542.0" y2="51.0"/>
+<text class="lg" x="548.0" y="54.5">publié en 2021</text>
+<text class="lg" x="528.0" y="78.0">rupture en 2027</text>
+<text class="lg" x="528.0" y="92.0">et en 2030</text>
+</svg></div>
+    </figure>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 51</span> — Dérive subsistante et durée de vie résiduelle de la conclusion, vues de 2026, au taux de décroissance retenu.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Travail source</th><th>Publié</th><th>Âge</th><th>Dérive restante (pdb)</th><th>Marge sur rupture</th><th>Année de rupture</th><th>Années restantes</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Gao, Han, Li et Zhou (2018)</td><td>2018</td><td>8</td><td>1,50</td><td>1,29×</td><td>2027</td><td>1,5</td></tr>
+          <tr><td class="wrap">Baltussen, Da, Lammers et Martens (2021)</td><td>2021</td><td>5</td><td>2,52</td><td>2,17×</td><td>2030</td><td>4,5</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le point de rupture est de 1,16 point de base : c'est la dérive sous laquelle l'espérance nette s'annule. La marge n'est pas le rapport de la dérive publiée à ce seuil, mais celui de la dérive qu'il en reste aujourd'hui. Lue depuis le travail de 2018, la fenêtre d'exploitation se referme avant la fin de la décennie.</p>
+    </figure>
+
+  <p>Le premier résultat est rassurant, et il faut l'énoncer avant l'autre. La conclusion survit à une décote de 80,7&nbsp;%, contre 58&nbsp;% documentés en moyenne&nbsp;: la dérive publiée peut perdre les quatre cinquièmes de sa valeur sans que l'espérance nette devienne négative. C'est une marge que peu de stratégies publiées peuvent revendiquer, et elle tient à la géométrie — c'est exactement ce que le facteur 5,69 de la section&nbsp;<a href="#s-compare">23</a> a acheté.</p>
+
+  <p>Le second résultat l'est moins. La décote ne s'applique pas à une date indifférente&nbsp;: elle court depuis la publication. Datée du travail de 2018, la dérive subsistante en 2026 vaut 1,50 point de base pour un point de rupture à 1,16. La marge n'est plus de 5,17× mais de 1,29×, et la fenêtre se referme en 2027. Datée de la généralisation de 2021, elle vaut 2,52 points de base, une marge de 2,17×, et la fenêtre tient jusqu'en 2030.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 32</span> — Marge sur le point de rupture selon le taux de décroissance annuel supposé, pour chacune des deux dates de publication. La conclusion bascule au passage sous la ligne unitaire, et le trait vertical marque le taux auquel elle bascule pour la date la plus ancienne.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 244" role="img" aria-label="Marge sur le point de rupture selon le taux de décroissance annuel supposé de l'effet publié" preserveAspectRatio="xMidYMid meet">
+<line class="gl" x1="54.0" y1="202.0" x2="522.0" y2="202.0"/>
+<text class="tk" x="48.0" y="205.0" text-anchor="end">0×</text>
+<line class="gl" x1="54.0" y1="169.1" x2="522.0" y2="169.1"/>
+<text class="tk" x="48.0" y="172.1" text-anchor="end">1×</text>
+<line class="gl" x1="54.0" y1="136.1" x2="522.0" y2="136.1"/>
+<text class="tk" x="48.0" y="139.1" text-anchor="end">2×</text>
+<line class="gl" x1="54.0" y1="103.2" x2="522.0" y2="103.2"/>
+<text class="tk" x="48.0" y="106.2" text-anchor="end">3×</text>
+<line class="gl" x1="54.0" y1="70.2" x2="522.0" y2="70.2"/>
+<text class="tk" x="48.0" y="73.2" text-anchor="end">4×</text>
+<line class="gl" x1="54.0" y1="37.3" x2="522.0" y2="37.3"/>
+<text class="tk" x="48.0" y="40.3" text-anchor="end">5×</text>
+<text class="ax" transform="translate(11,110.0) rotate(-90)" text-anchor="middle">marge sur le point de rupture</text>
+<line class="ba" x1="54.0" y1="202.0" x2="522.0" y2="202.0"/>
+<text class="tk" x="54.0" y="216.0" text-anchor="middle">0,000</text>
+<text class="tk" x="167.3" y="216.0" text-anchor="middle">0,070</text>
+<text class="tk" x="288.7" y="216.0" text-anchor="middle">0,145</text>
+<text class="tk" x="405.2" y="216.0" text-anchor="middle">0,217</text>
+<text class="tk" x="522.0" y="216.0" text-anchor="middle">0,289</text>
+<text class="ax" x="288.0" y="240.0" text-anchor="middle">taux de décroissance annuel</text>
+<line class="hl" x1="54.0" y1="169.1" x2="522.0" y2="169.1"/>
+<path class="ln s1" d="M54.00,31.63 L59.85,36.49 L65.70,41.20 L71.55,45.79 L77.40,50.24 L83.25,54.56 L89.10,58.77 L94.95,62.85 L100.80,66.82 L106.65,70.67 L112.50,74.41 L118.35,78.05 L124.20,81.58 L130.05,85.01 L135.90,88.35 L141.75,91.59 L147.60,94.73 L153.45,97.79 L159.30,100.76 L165.15,103.65 L171.00,106.45 L176.85,109.17 L182.70,111.82 L188.55,114.39 L194.40,116.89 L200.25,119.31 L206.10,121.67 L211.95,123.96 L217.80,126.18 L223.65,128.35 L229.50,130.44 L235.35,132.48 L241.20,134.47 L247.05,136.39 L252.90,138.26 L258.75,140.08 L264.60,141.84 L270.45,143.56 L276.30,145.22 L282.15,146.84 L288.00,148.41 L293.85,149.94 L299.70,151.42 L305.55,152.87 L311.40,154.27 L317.25,155.63 L323.10,156.95 L328.95,158.23 L334.80,159.48 L340.65,160.69 L346.50,161.87 L352.35,163.01 L358.20,164.12 L364.05,165.20 L369.90,166.25 L375.75,167.27 L381.60,168.26 L387.45,169.22 L393.30,170.16 L399.15,171.06 L405.00,171.95 L410.85,172.80 L416.70,173.64 L422.55,174.44 L428.40,175.23 L434.25,175.99 L440.10,176.73 L445.95,177.45 L451.80,178.15 L457.65,178.83 L463.50,179.49 L469.35,180.13 L475.20,180.76 L481.05,181.36 L486.90,181.95 L492.75,182.52 L498.60,183.08 L504.45,183.62 L510.30,184.14 L516.15,184.65 L522.00,185.15"/>
+<circle class="pt s1" cx="334.80" cy="159.48" r="4"><title>publié en 2018 · taux retenu · marge 1,29×</title></circle>
+<path class="ln s2" d="M54.00,31.63 L59.85,34.68 L65.70,37.68 L71.55,40.62 L77.40,43.51 L83.25,46.35 L89.10,49.14 L94.95,51.88 L100.80,54.56 L106.65,57.21 L112.50,59.80 L118.35,62.35 L124.20,64.85 L130.05,67.30 L135.90,69.72 L141.75,72.08 L147.60,74.41 L153.45,76.70 L159.30,78.94 L165.15,81.15 L171.00,83.31 L176.85,85.44 L182.70,87.52 L188.55,89.57 L194.40,91.59 L200.25,93.56 L206.10,95.51 L211.95,97.41 L217.80,99.29 L223.65,101.13 L229.50,102.93 L235.35,104.71 L241.20,106.45 L247.05,108.16 L252.90,109.84 L258.75,111.49 L264.60,113.11 L270.45,114.71 L276.30,116.27 L282.15,117.81 L288.00,119.31 L293.85,120.79 L299.70,122.25 L305.55,123.68 L311.40,125.08 L317.25,126.46 L323.10,127.81 L328.95,129.14 L334.80,130.44 L340.65,131.73 L346.50,132.98 L352.35,134.22 L358.20,135.43 L364.05,136.63 L369.90,137.80 L375.75,138.95 L381.60,140.08 L387.45,141.19 L393.30,142.28 L399.15,143.35 L405.00,144.40 L410.85,145.43 L416.70,146.44 L422.55,147.44 L428.40,148.41 L434.25,149.37 L440.10,150.32 L445.95,151.24 L451.80,152.15 L457.65,153.04 L463.50,153.92 L469.35,154.78 L475.20,155.63 L481.05,156.46 L486.90,157.27 L492.75,158.07 L498.60,158.86 L504.45,159.63 L510.30,160.39 L516.15,161.14 L522.00,161.87"/>
+<circle class="pt s2" cx="334.80" cy="130.44" r="4"><title>publié en 2021 · taux retenu · marge 2,17×</title></circle>
+<line class="gl" x1="386.5" y1="18.0" x2="386.5" y2="202.0" stroke-dasharray="3 3"/>
+<text class="dl halo" x="380.5" y="32.0" text-anchor="end">bascule</text>
+<line class="ln s1" x1="532.0" y1="36.0" x2="546.0" y2="36.0"/>
+<text class="lg" x="552.0" y="39.5">publié en 2018</text>
+<line class="ln s2" x1="532.0" y1="51.0" x2="546.0" y2="51.0"/>
+<text class="lg" x="552.0" y="54.5">publié en 2021</text>
+</svg></div>
+    </figure>
+
+      <figure>
+      <figcaption><span class="lab">Table 52</span> — La conclusion sur toute la boîte du taux de décroissance, dérive datée de la publication de 2018.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Taux annuel</th><th>Demi-vie (ans)</th><th>Dérive restante (pdb)</th><th>en points</th><th>Marge sur rupture</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>0,000 / an</td><td>∞</td><td>6,00</td><td>3,60</td><td>5,17×</td><td>tient</td></tr>
+          <tr><td>0,072 / an</td><td>9,6</td><td>3,36</td><td>2,02</td><td>2,90×</td><td>tient</td></tr>
+          <tr><td>0,145 / an</td><td>4,8</td><td>1,89</td><td>1,13</td><td>1,63×</td><td>tient</td></tr>
+          <tr><td>0,217 / an</td><td>3,2</td><td>1,06</td><td>0,64</td><td>0,91×</td><td>TOMBE</td></tr>
+          <tr><td>0,289 / an</td><td>2,4</td><td>0,59</td><td>0,36</td><td>0,51×</td><td>TOMBE</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La conclusion ne tient pas sur toute la boîte : elle bascule au-delà de 0,205 par an, soit une demi-vie de 3,4 ans. Ce taux est intérieur à la boîte de plausibilité, et c'est le fait marquant de cette section — la survie de la conclusion ne dépend plus seulement de la dérive publiée, mais de la vitesse à laquelle elle s'arbitre, qui n'est pas mesurée ici. La marge passe de 5,17× sans décote à 0,51× au taux le plus sévère.</p>
+    </figure>
+
+  <p>Le taux de bascule est de 0,205 par an, soit une demi-vie de 3,4 ans, et il tombe <em>à l'intérieur</em> de la boîte de plausibilité. C'est le fait marquant de cette section, et il change la nature de la réserve principale du document. Jusqu'ici, l'absence de mesure était une lacune de complétude&nbsp;: le protocole existait, il attendait un fichier. Elle devient une lacune datée. La survie de la conclusion ne dépend plus seulement de la dérive publiée, mais de la vitesse à laquelle elle s'arbitre — laquelle n'est pas mesurée ici, et ne peut pas l'être sans les mêmes données.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que cette section ajoute au protocole</span>
+    <p>Rien, dans la règle de décision. Le Test&nbsp;2 mesure la dérive captée telle qu'elle est aujourd'hui, décote comprise&nbsp;: il n'a pas besoin de savoir d'où elle vient ni de combien elle a baissé. Ce que la section ajoute est un ordre de priorité. Un protocole dont la conclusion a une date d'expiration calculable ne se conduit pas quand l'occasion se présente&nbsp;; il se conduit maintenant, ou il ne sert à rien de l'avoir écrit.</p>
+  </div>
+
+  <h2 id="s-exposant">La cohérence de l'exposant d'échelle</h2>
+
+  <p>Une seconde objection porte sur un nombre qui n'apparaît nulle part dans les tables, et qui décide pourtant de toutes&nbsp;: l'exposant selon lequel la dispersion croît avec le temps.</p>
+
+  <p>La calibration pose une dispersion de séance et en déduit la volatilité par minute par σ₁&nbsp;=&nbsp;<i>D</i>/√<i>T</i>. Ce radical est l'exposant d'un brownien, <i>H</i>&nbsp;=&nbsp;½&nbsp;; il est posé, jamais mesuré. Ailleurs, la section&nbsp;<a href="#s-gamma">9</a> retient <i>H</i>&nbsp;=&nbsp;0,65 pour discuter de l'atteignabilité des targets. Les deux énoncés ne peuvent pas être vrais ensemble. Ou bien le prix diffuse en racine du temps, et la calibration est bonne mais la persistance invoquée n'existe pas&nbsp;; ou bien il diffuse en <i>t</i><sup><i>H</i></sup> avec <i>H</i>&nbsp;&gt;&nbsp;½, et c'est σ₁ qui est faux — et avec lui la bande de bruit, le stop, l'exposition et le seuil.</p>
+
+  <p>Une seule calibration est cohérente avec un exposant donné&nbsp;: σ₁&nbsp;=&nbsp;<i>D</i>/<i>T</i><sup><i>H</i></sup>, tout le reste s'en déduisant. La table qui suit refait la chaîne complète, les trois entrées du document restant inchangées.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 53</span> — La chaîne de calibration refaite sous chaque exposant d'échelle, les trois entrées du document restant inchangées.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>H</th><th>σ₁ (pt)</th><th>Bande (pt)</th><th>P(stop)</th><th>E[τ∧T] (min)</th><th>µ* (pt/h)</th><th>IR*</th></tr></thead>
+        <tbody>
+          <tr><td>0,50</td><td>3,038</td><td>23,00</td><td>66,2 %</td><td>158,5</td><td>0,1249</td><td>0,0086</td></tr>
+          <tr><td>0,55</td><td>2,255</td><td>21,37</td><td>68,1 %</td><td>161,4</td><td>0,1227</td><td>0,0089</td></tr>
+          <tr><td>0,60</td><td>1,673</td><td>19,86</td><td>69,8 %</td><td>163,7</td><td>0,1209</td><td>0,0093</td></tr>
+          <tr><td>0,65</td><td>1,242</td><td>18,46</td><td>71,5 %</td><td>165,6</td><td>0,1196</td><td>0,0096</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La première ligne est la calibration du document, retrouvée à la douzième décimale. La dernière est celle qu'imposerait l'exposant que le document invoque par ailleurs : le seuil de signal y est 1,112 fois plus élevé. Une persistance plus forte n'aide donc pas — elle éloigne le prix plus vite du point d'entrée, le stop est touché plus souvent, et le seuil monte.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 33</span> — Seuil de signal requis et probabilité d'arrêt en fonction de l'exposant d'échelle, la calibration étant refaite en chaque point. Les deux courbes montent ensemble&nbsp;: la persistance invoquée pour rendre les targets atteignables rend aussi le stop plus fréquent.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 250" role="img" aria-label="Seuil de signal requis et probabilité d'arrêt en fonction de l'exposant d'échelle, calibration refaite à chaque point" preserveAspectRatio="xMidYMid meet">
+<line class="gl" x1="56.0" y1="183.8" x2="514.0" y2="183.8"/>
+<text class="tk" x="50.0" y="186.8" text-anchor="end">0,0085</text>
+<line class="gl" x1="56.0" y1="126.8" x2="514.0" y2="126.8"/>
+<text class="tk" x="50.0" y="129.8" text-anchor="end">0,0090</text>
+<line class="gl" x1="56.0" y1="69.8" x2="514.0" y2="69.8"/>
+<text class="tk" x="50.0" y="72.8" text-anchor="end">0,0095</text>
+<text class="ax" transform="translate(11,114.0) rotate(-90)" text-anchor="middle">IR* requis du signal</text>
+<line class="ba" x1="56.0" y1="208.0" x2="514.0" y2="208.0"/>
+<text class="tk" x="56.0" y="222.0" text-anchor="middle">0,50</text>
+<text class="tk" x="208.7" y="222.0" text-anchor="middle">0,55</text>
+<text class="tk" x="361.3" y="222.0" text-anchor="middle">0,60</text>
+<text class="tk" x="514.0" y="222.0" text-anchor="middle">0,65</text>
+<text class="ax" x="285.0" y="246.0" text-anchor="middle">exposant d'échelle H</text>
+<path class="ln s1" d="M56.00,169.29 L75.08,165.00 L94.17,160.68 L113.25,156.34 L132.33,151.97 L151.42,147.57 L170.50,143.14 L189.58,138.69 L208.67,134.21 L227.75,129.70 L246.83,125.17 L265.92,120.60 L285.00,116.01 L304.08,111.39 L323.17,106.75 L342.25,102.07 L361.33,97.37 L380.42,92.64 L399.50,87.88 L418.58,83.09 L437.67,78.27 L456.75,73.42 L475.83,68.55 L494.92,63.64 L514.00,58.71"/>
+<circle class="pt s1" cx="56.00" cy="169.29" r="4"><title>H = 0,50 · IR* 0,0086 · P(stop) 66,2 %</title></circle>
+<circle class="pt s1" cx="514.00" cy="58.71" r="4"><title>H = 0,65 · IR* 0,0096 · P(stop) 71,5 %</title></circle>
+<path class="ln s3" d="M56.00,200.48 L75.08,192.74 L94.17,185.05 L113.25,177.41 L132.33,169.82 L151.42,162.27 L170.50,154.76 L189.58,147.31 L208.67,139.90 L227.75,132.54 L246.83,125.22 L265.92,117.95 L285.00,110.72 L304.08,103.54 L323.17,96.41 L342.25,89.32 L361.33,82.27 L380.42,75.27 L399.50,68.32 L418.58,61.41 L437.67,54.54 L456.75,47.72 L475.83,40.94 L494.92,34.21 L514.00,27.52" stroke-dasharray="5 3"/>
+<text class="dl halo" x="506.0" y="192.0" text-anchor="end">P(stop) : 66,2 % → 71,5 %</text>
+<line class="ln s1" x1="524.0" y1="40.0" x2="538.0" y2="40.0"/>
+<text class="lg" x="544.0" y="43.5">IR* requis</text>
+<line class="ln s3" x1="524.0" y1="55.0" x2="538.0" y2="55.0"/>
+<text class="lg" x="544.0" y="58.5">P(stop), échelle libre</text>
+</svg></div>
+    </figure>
+
+  <p>Le résultat va contre l'intuition qui avait motivé le recours à <i>H</i>&nbsp;&gt;&nbsp;½. Une persistance plus forte n'aide pas. Elle éloigne le prix plus vite du point d'entrée, donc le stop est touché plus souvent — 71,5&nbsp;% contre 66,2&nbsp;% —, et le seuil de signal monte d'un facteur 1,112. Le canal par lequel le document faisait jouer <i>H</i>, l'atteignabilité du target, est négligeable devant ces deux effets, pour une raison que la section&nbsp;<a href="#s-gamma">9</a> donne elle-même&nbsp;: à 2,40&nbsp;% de probabilité, le target n'est presque jamais atteint, et la sortie effective est la clôture de séance.</p>
+
+  <div class="keybox">
+    <span class="lab">Réserve de méthode</span>
+    <p>Le premier passage d'un processus auto-similaire d'exposant <i>H</i>&nbsp;≠&nbsp;½ n'a pas de forme fermée. On emploie ici le changement de temps <i>t</i>&nbsp;→&nbsp;<i>t</i><sup>2<i>H</i></sup>, qui rend la loi marginale exacte — le processus a bien la dispersion σ₁<i>t</i><sup><i>H</i></sup> à toute date — mais qui ignore que les incréments d'un mouvement brownien fractionnaire sont corrélés, alors que ceux du brownien changé de temps ne le sont pas. La corrélation positive favorise les excursions longues, donc la probabilité d'arrêt est sous-estimée pour <i>H</i>&nbsp;&gt;&nbsp;½. Les écarts rapportés ici sont des bornes basses de l'effet, ce qui suffit à la conclusion&nbsp;: il joue déjà contre la stratégie sous sa forme la plus favorable. À <i>H</i>&nbsp;=&nbsp;½ le changement de temps est l'identité, et la première ligne de la table reproduit les nombres du document à la douzième décimale.</p>
+  </div>
+
+  <h3>Aucun mécanisme documenté ne soutient la persistance invoquée</h3>
+
+  <p>La section&nbsp;<a href="#s-gamma">9</a> a déjà écarté le régime de gamma&nbsp;: reproduire <i>H</i>&nbsp;=&nbsp;0,65 exigerait un gamma net de −166&nbsp;milliards de dollars par pour cent, un ordre de grandeur au-dessus de tout observable. Le candidat suivant de la littérature ne fait pas mieux, et son échec est instructif.</p>
+
+  <p>Le fractionnement des ordres institutionnels engendre bien une mémoire longue du flux signé&nbsp;: c'est le résultat de Lillo, Mike et Farmer, et il est solidement établi. Mais Bouchaud, Gefen, Potters et Wyart montrent que l'impact d'un ordre décroît selon un noyau dont l'exposant est précisément celui qui <em>restaure</em> la diffusivité. La mémoire du flux est compensée, et le prix reste à <i>H</i>&nbsp;≈&nbsp;½ par construction. Le mécanisme le mieux documenté de persistance du flux est donc aussi celui qui garantit l'absence de persistance du prix — ce qui n'est pas une coïncidence, mais la forme microstructurelle de l'efficience.</p>
+
+  <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement de l'atteignabilité du target, il décide de la calibration entière.</p>
+
+  <h3>La géométrie au pire cas</h3>
+
+  <p>Si <i>H</i> n'est pas mesuré, la seule décision défendable est celle qui tient au plus défavorable de la boîte. Le pire cas tombe en <i>H</i>&nbsp;=&nbsp;0,65, et il désigne une heure d'entrée différente de celle du protocole.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 54</span> — Heure d'entrée évaluée au pire cas sur la boîte d'exposant, toutes les autres entrées inchangées.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Entrée (min)</th><th>E[τ∧T] (min)</th><th>µ* (pt/h)</th><th>IR*</th><th class="wrap">Statut</th></tr></thead>
+        <tbody>
+          <tr><td>30</td><td>115,9</td><td>0,1709</td><td>0,0121</td><td class="wrap"></td></tr>
+          <tr><td>60</td><td>149,1</td><td>0,1328</td><td>0,0103</td><td class="wrap"></td></tr>
+          <tr><td>90</td><td>165,6</td><td>0,1196</td><td>0,0096</td><td class="wrap">retenu par le protocole</td></tr>
+          <tr><td>120</td><td>172,2</td><td>0,1150</td><td>0,0094</td><td class="wrap">optimum au pire cas</td></tr>
+          <tr><td>180</td><td>164,6</td><td>0,1203</td><td>0,0096</td><td class="wrap"></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Retarder l'entrée élargit la bande de bruit, donc éloigne le stop et allonge l'exposition ; mais la séance restante raccourcit. L'optimum est intérieur et tombe à 120 minutes, contre 90 retenues par le protocole scellé. L'écart est de 3,8 % sur la dérive requise — réel, modeste, et gratuit.</p>
+    </figure>
+
+  <p>Retarder l'entrée élargit la bande de bruit, donc éloigne le stop et allonge l'exposition&nbsp;; mais la séance restante raccourcit, donc l'exposition plafonne. L'optimum est intérieur et tombe à 120 minutes, contre 90 retenues par le protocole scellé — 172,2 minutes d'exposition au lieu de 165,6, et 3,8&nbsp;% de moins sur la dérive requise. L'écart est réel, modeste, et gratuit&nbsp;: il ne coûte ni risque supplémentaire ni degré de liberté.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que le sceau permet, et ce qu'il interdit</span>
+    <p>Adopter cette heure d'entrée exige de resceller le protocole, puisque 90 minutes figurent dans l'empreinte publiée. Ce rescellement est légitime, et il ne le restera pas longtemps&nbsp;: il l'est parce qu'aucune série de prix n'a jamais été ouverte, de sorte que le choix ne peut pas avoir été informé par un résultat. Le jour où le premier fichier entre dans le dépôt, la même modification deviendrait indéfendable — elle serait indiscernable d'un paramètre ajusté après coup. C'est la dernière fois que la géométrie peut être corrigée sans rien coûter à la valeur probante de la mesure.</p>
+  </div>
+
   <h2 id="s-taille">Dimensionnement</h2>
 
   <p>Un stop de 23,0 points vaut 1 150&nbsp;$ sur un contrat ES et 115&nbsp;$ sur un micro-contrat. À 0,5&nbsp;% de risque par trade, cela impose l'instrument.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 50</span> — Dimensionnement à 0,5 % de risque par trade, stop de 23,0 points.</figcaption>
+      <figcaption><span class="lab">Table 55</span> — Dimensionnement à 0,5 % de risque par trade, stop de 23,0 points.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Capital</th><th>Risque visé</th><th>MES (exact)</th><th>MES (retenu)</th><th>ES (exact)</th><th>Risque réel</th><th>Notionnel</th></tr></thead>
@@ -6581,7 +6825,7 @@
   <p>Le document précédent calculait le seuil de Sharpe déflaté et exigeait qu'un budget de configurations soit posé d'avance, sans jamais le rapporter à un essai réel. La correction est de traiter le budget comme une contrainte exécutable plutôt que comme une recommandation.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 51</span> — Seuil de Sharpe par trade attendu du meilleur essai sous l'hypothèse nulle, selon le nombre de configurations essayées et la taille d'échantillon.</figcaption>
+      <figcaption><span class="lab">Table 56</span> — Seuil de Sharpe par trade attendu du meilleur essai sous l'hypothèse nulle, selon le nombre de configurations essayées et la taille d'échantillon.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Trades</th><th>1 essai</th><th>3 essais</th><th>10 essais</th><th>100 essais</th><th>SR/trade attendu</th></tr></thead>
@@ -6597,7 +6841,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 31</span> — Seuil de sélection déflaté selon le nombre d'essais, face au Sharpe qu'implique la dérive documentée. Le croisement à trois essais tombe vers 301 trades&nbsp;: en deçà, un Sharpe mesuré au niveau attendu reste indiscernable du meilleur de trois essais sous l'hypothèse nulle.</figcaption>
+      <figcaption><span class="lab">Figure 34</span> — Seuil de sélection déflaté selon le nombre d'essais, face au Sharpe qu'implique la dérive documentée. Le croisement à trois essais tombe vers 301 trades&nbsp;: en deçà, un Sharpe mesuré au niveau attendu reste indiscernable du meilleur de trois essais sous l'hypothèse nulle.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 640 244" role="img" aria-label="Seuil de sélection déflaté et Sharpe attendu selon l'échantillon" preserveAspectRatio="xMidYMid meet">
 <line class="gl" x1="58.0" y1="204.0" x2="508.0" y2="204.0"/>
 <text class="tk" x="52.0" y="207.0" text-anchor="end">0,00</text>
@@ -6642,7 +6886,7 @@
   <h3>Le protocole scellé</h3>
 
       <figure>
-      <figcaption><span class="lab">Table 52</span> — Le protocole scellé. L'empreinte se publie avant la mesure ; toute modification ultérieure la change et se voit.</figcaption>
+      <figcaption><span class="lab">Table 57</span> — Le protocole scellé. L'empreinte se publie avant la mesure ; toute modification ultérieure la change et se voit.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Élément</th><th>Valeur</th><th class="wrap">Détail</th></tr></thead>
@@ -6666,7 +6910,7 @@
   <p>Le budget n'est pas une intention : demander une quatrième configuration lève une exception dans le code de mesure. Les degrés de liberté sont énumérés et gelés, y compris les nombres de calibration, qui entrent dans le sceau.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 53</span> — Tout ce qui aurait pu être ajusté, et la valeur à laquelle c'est gelé.</figcaption>
+      <figcaption><span class="lab">Table 58</span> — Tout ce qui aurait pu être ajusté, et la valeur à laquelle c'est gelé.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Degré de liberté</th><th class="wrap">Valeur gelée</th></tr></thead>
@@ -6692,7 +6936,7 @@
   <h2 id="s-proto2">Le protocole de mesure</h2>
 
       <figure>
-      <figcaption><span class="lab">Table 54</span> — Protocole de validation, du moins coûteux au plus coûteux. Chaque ligne peut interrompre la séquence.</figcaption>
+      <figcaption><span class="lab">Table 59</span> — Protocole de validation, du moins coûteux au plus coûteux. Chaque ligne peut interrompre la séquence.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>#</th><th>Test</th><th>Mesure</th><th>Données requises</th><th>Critère d'arrêt</th></tr></thead>
@@ -6724,7 +6968,7 @@
   <p>La grille qui suit a été fixée avant d'être appliquée, et ne contient aucun critère taillé pour l'un des deux documents : douze critères, trois familles, des poids qui somment à cent, et une échelle d'ancrage commune de 0 à 5. Chaque score est accompagné du fait qui le justifie, de sorte qu'un score se conteste en contestant ce fait — la seule propriété qu'on demande à une note.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 55</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
+      <figcaption><span class="lab">Table 60</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Critère</th><th>Poids</th><th>ALP-1</th><th>ALP-2</th><th>Points ALP-1</th><th>Points ALP-2</th></tr></thead>
@@ -6749,7 +6993,7 @@
     </figure>
 
       <figure>
-      <figcaption><span class="lab">Table 56</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
+      <figcaption><span class="lab">Table 61</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Famille</th><th>Maximum</th><th>ALP-1</th><th>ALP-2</th><th>Écart</th></tr></thead>
@@ -6792,12 +7036,13 @@
 
   <p>C'est la limite principale de ce document, et la seule que le dépôt ne puisse pas lever seul. Elle est énoncée ici plutôt que compensée par une affirmation de performance.</p>
 
-  <p>Un résultat va d'ailleurs contre l'hypothèse qui motivait la recherche, et il doit être énoncé au même rang que les autres&nbsp;: le contrôle de plausibilité du régime de gamma montre que la persistance calibrée <strong>ne peut pas</strong> lui être attribuée. Reproduire l'exposant retenu exigerait un gamma net d'un ordre de grandeur supérieur à tout gamma observable. Le document le signale plutôt que de le résoudre.</p>
+  <p>Deux résultats vont d'ailleurs contre l'hypothèse qui motivait la recherche, et ils doivent être énoncés au même rang que les autres. Le contrôle de plausibilité du régime de gamma montre que la persistance calibrée ne peut pas lui être attribuée&nbsp;: reproduire l'exposant retenu exigerait un gamma net d'un ordre de grandeur supérieur à tout gamma observable. Le candidat suivant de la littérature — la mémoire longue du flux engendrée par le fractionnement des ordres — échoue pour une raison inverse et plus profonde&nbsp;: le noyau d'impact qui lui répond restaure exactement la diffusivité, de sorte que le mécanisme le mieux documenté de persistance du flux garantit l'absence de persistance du prix. Aucun mécanisme documenté ne soutient donc l'exposant retenu, et la section&nbsp;<a href="#s-exposant">29</a> en tire la conséquence&nbsp;: la géométrie doit être choisie robuste à cet exposant plutôt qu'optimale en un point que personne n'a mesuré.</p>
 
-  <p>Quatre réserves s'ajoutent à la limite principale&nbsp;:</p>
+  <p>Cinq réserves s'ajoutent à la limite principale&nbsp;:</p>
 
   <ul>
-    <li><strong>La dérive est empruntée.</strong> Un effet documenté peut s'être éteint après publication&nbsp;— le document en donne un exemple, la dérive overnight, éteinte depuis 2021. Le test&nbsp;2 du protocole existe pour lever cette réserve, et lui seul le peut.</li>
+    <li><strong>La dérive est empruntée, et elle est datée.</strong> Un effet documenté s'arbitre après publication&nbsp;— le document en donne un exemple, la dérive overnight, éteinte depuis 2021. La section&nbsp;<a href="#s-decote">28</a> chiffre cette décote sur la dérive retenue ici&nbsp;: la conclusion survit à une perte de 80,7&nbsp;% de sa valeur, contre 58&nbsp;% documentés en moyenne, mais la marge tombe de 5,17× à 1,29× une fois la décote datée de la publication de 2018, et la fenêtre se referme en 2027. Le test&nbsp;2 du protocole existe pour lever cette réserve, et lui seul le peut.</li>
+    <li><strong>L'exposant d'échelle n'est pas mesuré.</strong> La calibration le pose à ½ et la discussion du gamma en retient 0,65, ce qui n'est pas cohérent. La section&nbsp;<a href="#s-exposant">29</a> refait la chaîne sous exposant imposé&nbsp;: l'incohérence joue contre la stratégie, d'un facteur 1,112 sur le seuil requis, et aucun mécanisme documenté ne soutient la persistance invoquée. Le test&nbsp;1 la lève.</li>
     <li><strong>La boîte de plausibilité est posée, pas mesurée.</strong> Ses bornes viennent d'observations publiques et du jugement. Un lecteur qui les juge trop larges ou trop étroites peut les modifier et relancer&nbsp;: les verdicts se recalculent.</li>
     <li><strong>Le modèle de carnet est paramétrique.</strong> Profondeur, amincissement au déclenchement et latence sont des ordres de grandeur, encadrés sur 243 combinaisons mais jamais observés sur un carnet réel.</li>
     <li><strong>Le conditionnement par le gamma reste une hypothèse.</strong> Il est inscrit au protocole comme configuration&nbsp;C2, et le document ne prétend pas qu'il fonctionne&nbsp;— seulement qu'il est testable sans données payantes.</li>
@@ -6806,7 +7051,7 @@
   <div class="keybox">
     <span class="lab">Le verdict, en une phrase</span>
     <p>Ce document n'établit pas qu'un avantage existe. Il établit qu'un changement de géométrie divise par 5,69 le seuil qu'un signal doit franchir, que la friction réelle laisse une marge de 10,9 sur une dérive documentée par des tiers, et qu'un protocole capable de trancher tient en cinq tests dont quatre se conduisent sur historique, sans donnée payante.</p>
-    <p>Ce qui manque est une série de prix. Rien d'autre.</p>
+    <p>Ce qui manque est une série de prix. Rien d'autre&nbsp;— et, depuis la section&nbsp;<a href="#s-decote">28</a>, ce qui manque a une date&nbsp;: au taux de décote documenté, la dérive empruntée passe sous son point de rupture en 2027 si on la date du travail d'origine, en 2030 si on la date de sa généralisation.</p>
   </div>
 
   <h2 class="unnumbered">Références indicatives</h2>
