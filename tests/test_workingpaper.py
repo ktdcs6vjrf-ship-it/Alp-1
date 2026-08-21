@@ -42,11 +42,12 @@ class TestFusion(unittest.TestCase):
 
     def test_les_tables_des_deux_documents_sont_toutes_atteignables(self):
         t = monograph.tables()
-        # ALP-1 (report+lexicon+quant), ALP-2, et les deux corrections
-        self.assertEqual(len(t), 32 + 24 + 5)
+        # ALP-1 (report+lexicon+quant), ALP-2, les deux corrections, et le
+        # protocole à horizon borné
+        self.assertEqual(len(t), 32 + 24 + 5 + 8)
 
     def test_toutes_les_figures_coexistent(self):
-        self.assertEqual(len(monograph.figures()), 34)
+        self.assertEqual(len(monograph.figures()), 36)
 
 
 class TestPiedsDeFigure(unittest.TestCase):
@@ -113,14 +114,42 @@ class TestStructure(unittest.TestCase):
 
     def test_les_sections_sont_numerotees_en_continu(self):
         ids = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)
-        self.assertEqual(len(ids), 34)
-        self.assertEqual(len(set(ids)), 34)
+        self.assertEqual(len(ids), 35)
+        self.assertEqual(len(set(ids)), 35)
 
     def test_le_sommaire_couvre_toutes_les_sections(self):
         ids = set(re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps))
         ancres = set(re.findall(r'href="#([a-z0-9-]+)"', self.corps))
         self.assertEqual(ids - ancres, set(), "sections absentes du sommaire")
         self.assertEqual(ancres - ids, set(), "ancres mortes")
+
+    def test_les_renvois_citent_le_bon_numero_de_section(self):
+        """Un renvoi « section 9 » doit pointer vers la neuvième section.
+
+        Le numéro affiché dans le corps vient d'un compteur CSS ; celui écrit
+        dans le texte est à la main. Rien n'empêche les deux de diverger, sinon
+        ce test — et l'insertion d'une section les fait diverger en silence.
+        """
+        ids = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)
+        numero = {cle: i for i, cle in enumerate(ids, 1)}
+        for cle, cite in re.findall(r'href="#([a-z0-9-]+)">(\d+)<', self.corps):
+            with self.subTest(section=cle):
+                self.assertEqual(int(cite), numero[cle])
+
+    def test_le_sommaire_numerote_comme_le_corps(self):
+        """Les `start` du sommaire suivent la numérotation réelle."""
+        ids = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)
+        numero = {cle: i for i, cle in enumerate(ids, 1)}
+        sommaire = self.corps.split('</nav>')[0]
+        courant = 1
+        for start, ancre in re.findall(
+                r'<ol start="(\d+)">|<li><a href="#([a-z0-9-]+)"', sommaire):
+            if start:
+                courant = int(start)
+                continue
+            with self.subTest(section=ancre):
+                self.assertEqual(numero[ancre], courant)
+            courant += 1
 
     def test_le_sommaire_est_dans_l_ordre_du_document(self):
         ordre_doc = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)

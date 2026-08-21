@@ -32,12 +32,14 @@ from dataclasses import dataclass
 from .dataset import SESSION_MINUTES, Session, session_dispersion
 from .friction import RETAIL_ES, friction_law
 from .momentum import mean_abs_move, sigma_from_session
+from .power import SEALED_MAX_INFORMATION
 from .prereg import PROTOCOL, Decision, Protocol, decide, spend
 
 WINDOW_OPEN = {"C1": 30, "C2": 30, "C3": 90}    # minutes après l'ouverture
 EXIT_MINUTE = 388                                # 15:58 ET
 MODEL_STOP_RATE = 0.66                           # P(stop) du noyau, cf. report2
 CALIBRATION_SESSIONS = 14
+MAX_ENTRIES = PROTOCOL.max_entries_per_session
 
 
 @dataclass(frozen=True)
@@ -86,8 +88,9 @@ def _rolling_sigma(sessions: list[Session], index: int,
 
 
 def scan_session(session: Session, sigma_hat: float, window_open: int,
-                 friction: float, exit_minute: int = EXIT_MINUTE) -> Trade | None:
-    """Applique la règle à une séance : au plus un trade, aucune discrétion.
+                 friction: float, exit_minute: int = EXIT_MINUTE,
+                 max_entries: int = MAX_ENTRIES) -> list[Trade]:
+    """Applique la règle à une séance : jusqu'à trois trades, aucune discrétion.
 
     La cassure est la première minute, après l'ouverture de la fenêtre, dont la
     clôture s'écarte de l'ouverture de plus que la bande de bruit à cet
@@ -95,38 +98,59 @@ def scan_session(session: Session, sigma_hat: float, window_open: int,
     selon ce qui vient en premier ; un stop touché à l'intérieur d'une barre
     est exécuté au niveau du stop, ce qui est optimiste et le reste : la loi de
     friction porte le glissement séparément.
+
+    Après une sortie au stop, la règle se **ré-arme** : elle n'accepte une
+    nouvelle cassure qu'une fois le prix revenu à l'intérieur de la bande.
+    Sans cette condition, un stop serait immédiatement suivi d'une entrée au
+    même endroit, et la cadence achèterait des trades sans acheter
+    d'information. Le plafond de trois entrées est scellé, la règle de
+    ré-armement aussi ; ni l'un ni l'autre n'est ajustable après coup.
     """
+    trades: list[Trade] = []
     if not session.bars:
-        return None
+        return trades
     open_price = session.open_price
-    entry = None
+    live = None
+    armed = True
     for bar in session.bars:
-        if bar.minute < window_open or bar.minute >= exit_minute:
+        if bar.minute < window_open or bar.minute > exit_minute:
             continue
         band = mean_abs_move(sigma_hat, bar.minute + 1)
         move = bar.close - open_price
-        if abs(move) > band:
-            entry = (bar, 1 if move > 0 else -1, band)
-            break
-    if entry is None:
-        return None
 
-    bar, direction, stop = entry
-    stop_level = bar.close - direction * stop
-    for nxt in session.bars:
-        if nxt.minute <= bar.minute or nxt.minute > exit_minute:
+        if live is not None:
+            entry_bar, direction, stop, stop_level = live
+            breached = (bar.low <= stop_level if direction > 0
+                        else bar.high >= stop_level)
+            if breached:
+                trades.append(Trade(session.day, direction, entry_bar.minute,
+                                    entry_bar.close, stop, bar.minute,
+                                    stop_level, True, friction))
+                live, armed = None, False
+            elif bar.minute >= exit_minute:
+                trades.append(Trade(session.day, direction, entry_bar.minute,
+                                    entry_bar.close, stop, bar.minute,
+                                    bar.close, False, friction))
+                live = None
             continue
-        breached = nxt.low <= stop_level if direction > 0 else nxt.high >= stop_level
-        if breached:
-            return Trade(session.day, direction, bar.minute, bar.close, stop,
-                         nxt.minute, stop_level, True, friction)
-        if nxt.minute == exit_minute:
-            return Trade(session.day, direction, bar.minute, bar.close, stop,
-                         nxt.minute, nxt.close, False, friction)
 
-    last = session.bars[-1]
-    return Trade(session.day, direction, bar.minute, bar.close, stop,
-                 last.minute, last.close, False, friction)
+        if not armed:
+            if abs(move) < band:
+                armed = True
+            continue
+        if len(trades) >= max_entries or bar.minute >= exit_minute:
+            continue
+        if abs(move) > band:
+            direction = 1 if move > 0 else -1
+            live = (bar, direction, band, bar.close - direction * band)
+
+    if live is not None:
+        entry_bar, direction, stop, _ = live
+        last = session.bars[-1]
+        trades.append(Trade(session.day, direction, entry_bar.minute,
+                            entry_bar.close, stop, last.minute, last.close,
+                            False, friction))
+    return trades
 
 
 @dataclass(frozen=True)
@@ -139,6 +163,10 @@ class Measurement:
     trades: tuple[Trade, ...]
     sigma_hat_mean: float
     friction_used: float
+    drift_per_min: float
+    information: float
+    information_fraction: float
+    z_stat: float
     decision: Decision
 
     @property
@@ -147,6 +175,14 @@ class Measurement:
 
     @property
     def trigger_rate(self) -> float:
+        """Séances où la règle s'est déclenchée au moins une fois."""
+        if not self.n_scanned:
+            return 0.0
+        return len({t.day for t in self.trades}) / self.n_scanned
+
+    @property
+    def entries_per_session(self) -> float:
+        """Entrées par séance retenue — la cadence réellement obtenue."""
         return self.n_trades / self.n_scanned if self.n_scanned else 0.0
 
     @property
@@ -216,6 +252,7 @@ def measure(sessions: list[Session], config_key: str = "C1",
 
     window = WINDOW_OPEN[config.key]
     trades: list[Trade] = []
+    clusters: list[tuple[float, float]] = []
     sigmas: list[float] = []
     frictions: list[float] = []
     scanned = 0
@@ -237,21 +274,46 @@ def measure(sessions: list[Session], config_key: str = "C1",
                            size_contracts=1.0, venue=RETAIL_ES)
         friction = law.quantile(friction_quantile)
         frictions.append(friction)
-        t = scan_session(session, sigma_hat, window, friction)
-        if t is not None:
-            trades.append(t)
+        found = scan_session(session, sigma_hat, window, friction)
+        trades.extend(found)
+        if found:
+            w = 1.0 / (sigma_hat * sigma_hat)
+            clusters.append((sum(w * t.net_points for t in found),
+                             sum(w * t.exposure_min for t in found)))
 
-    sharpe = 0.0
-    if len(trades) > 1:
-        sd = _sd([t.net_points for t in trades])
-        sharpe = _mean([t.net_points for t in trades]) / sd if sd > 0 else 0.0
-
+    stat = _statistic(clusters)
+    frac = stat["information"] / SEALED_MAX_INFORMATION
     return Measurement(
         config_key=config.key, n_sessions=len(sessions), n_scanned=scanned,
         trades=tuple(trades), sigma_hat_mean=_mean(sigmas),
         friction_used=_mean(frictions),
-        decision=decide(protocol, sharpe, len(trades)),
+        drift_per_min=stat["drift"], information=stat["information"],
+        information_fraction=frac, z_stat=stat["z"],
+        decision=decide(protocol, stat["z"], frac, scanned),
     )
+
+
+def _statistic(clusters: list[tuple[float, float]]) -> dict[str, float]:
+    """La statistique principale du protocole, à partir des grappes de date.
+
+    Chaque date apporte ``(A, B) = (Σ w·R, Σ w·τ)`` avec ``w = 1/σ̂²``. La
+    dérive nette par minute vaut ``µ̂ = ΣA/ΣB``, et sa variance se lit sur les
+    résidus **de date** — ``V = Σ_d (A_d − µ̂·B_d)²`` — sans modèle de
+    corrélation entre marchés ni entre entrées d'une même séance. C'est ce qui
+    permet au protocole d'être valide sans rien supposer de cette corrélation.
+    """
+    if len(clusters) < 2:
+        return {"drift": 0.0, "information": 0.0, "z": 0.0}
+    b_total = sum(b for _, b in clusters)
+    if b_total <= 0.0:
+        return {"drift": 0.0, "information": 0.0, "z": 0.0}
+    mu = sum(a for a, _ in clusters) / b_total
+    v = sum((a - mu * b) ** 2 for a, b in clusters)
+    if v <= 0.0:
+        return {"drift": mu, "information": 0.0, "z": 0.0}
+    information = (b_total * b_total) / v
+    return {"drift": mu, "information": information,
+            "z": mu * math.sqrt(information)}
 
 
 # --- Tests 3 et 4 : conditionnement et stabilité -----------------------------
@@ -355,7 +417,8 @@ def run_protocol(sessions: list[Session], gamma: dict[str, float] | None = None,
     rate_ok = m.trigger_rate >= 0.5
     stages.append(Stage(
         1, "Fréquence de cassure",
-        f"{100 * m.trigger_rate:.1f} % des séances retenues",
+        f"{100 * m.trigger_rate:.1f} % des séances déclenchent, "
+        f"{m.entries_per_session:.2f} entrée(s) par séance",
         "au moins une séance sur deux", rate_ok, not rate_ok))
     if not rate_ok:
         return ProtocolRun(tuple(stages), m)
@@ -390,8 +453,9 @@ def run_protocol(sessions: list[Session], gamma: dict[str, float] | None = None,
 
     stages.append(Stage(
         5, "Décision pré-enregistrée",
-        f"SR/trade = {m.sharpe_trade:.4f} sur {m.n_trades} trades",
-        m.decision.reason, m.decision.accepted, False))
+        f"Z = {m.z_stat:+.3f} à {100 * m.information_fraction:.1f} % de "
+        f"l'information maximale, sur {m.n_trades} trades",
+        m.decision.reason, m.decision.rejected, False))
     return ProtocolRun(tuple(stages), m)
 
 
@@ -416,6 +480,10 @@ def format_run(run: ProtocolRun) -> str:
                      f"réussite {100 * m.hit_rate:.1f} %, "
                      f"stop {100 * m.stop_rate:.1f} %, "
                      f"exposition {m.mean_exposure:.0f} min")
+        lines.append(f"  dérive nette {m.drift_per_min:+.5f} pt/min, "
+                     f"information {m.information:.0f} "
+                     f"({100 * m.information_fraction:.1f} % de I_max), "
+                     f"Z = {m.z_stat:+.3f}")
         lines.append(f"  décision : {m.decision.reason}")
     return "\n".join(lines)
 

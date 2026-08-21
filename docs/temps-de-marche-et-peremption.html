@@ -639,7 +639,7 @@
 
     <p>Cette dérive est toutefois empruntée, non mesurée, et un effet publié s'arbitre. La décote post-publication documentée par McLean et Pontiff donne deux résultats opposés. La conclusion survit à une perte de 80,7&nbsp;% de la dérive, contre 58&nbsp;% observés en moyenne&nbsp;: c'est précisément ce que le changement de géométrie a acheté. Mais la décote court depuis la publication, et non depuis aujourd'hui&nbsp;: datée du travail de 2018, la dérive subsistante en 2026 laisse une marge de 1,29× sur son point de rupture, et la fenêtre se referme en 2027. <strong>L'absence de mesure cesse d'être une lacune de complétude pour devenir une échéance.</strong></p>
 
-    <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">14cd4100705eab00</span>, borné à 3 configurations par le code lui-même, et il refuse de conclure en deçà de 1 000 trades.</p>
+    <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">02a53022705e9383</span>, et borné à 3 configurations par le code lui-même. Il est surtout <strong>borné en temps</strong>&nbsp;: une statistique qui compte le temps d'exposition plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel de 5 contrats et une décision séquentielle jalonnée en information suffisent à rendre un verdict sur toute dérive captée supérieure à 3,68 points de base en 5 années de données au plus, et 2,02 en médiane sous l'hypothèse retenue — à niveau et puissance inchangés, la simulation de la procédure entière donnant une taille de 0,046 pour 0,05 nominal. Ce que ce dispositif n'absorbe pas est une décote supérieure à 39 %, et la décote documentée est plus forte&nbsp;: <strong>la question n'est pas seulement de savoir si l'avantage existe, mais s'il est encore décidable.</strong></p>
 
     <p class="keywords"><span>Mots-clés —</span> théorème d'arrêt optionnel&nbsp;; identité de Wald&nbsp;; premier passage&nbsp;; exposition au marché&nbsp;; coûts de transaction endogènes&nbsp;; lois nulles&nbsp;; momentum intraday&nbsp;; gamma des teneurs de marché&nbsp;; Sharpe déflaté&nbsp;; pré-enregistrement.</p>
     <p class="jel"><span>Classification JEL —</span> C12, C58, G11, G13, G14</p>
@@ -650,6 +650,7 @@
     <div><span class="n">10,9&#8202;×</span><span class="t">marge de la dérive documentée sur ce seuil</span></div>
     <div><span class="n">2027</span><span class="t">année où la décote documentée la ramène sous ce seuil</span></div>
     <div><span class="n">0,650&#8202;pt</span><span class="t">friction déduite du carnet, contre 0,33 posée</span></div>
+    <div><span class="n">5&#8202;ans</span><span class="t">horizon du protocole, pour une dérive détectable de 3,68&#8202;pdb</span></div>
     <div><span class="n">0</span><span class="t">série de prix ouverte à ce jour</span></div>
   </div>
 
@@ -707,12 +708,13 @@
           <li><a href="#s-exposant">La cohérence de l'exposant d'échelle</a></li>
           <li><a href="#s-taille">Dimensionnement</a></li>
           <li><a href="#s-surajustement">Discipline anti-surajustement</a></li>
+          <li><a href="#s-borne">Le protocole à horizon borné</a></li>
           <li><a href="#s-proto2">Le protocole de mesure</a></li>
         </ol>
       </li>
       <li>
         <span class="pt">Verdict</span>
-        <ol start="31">
+        <ol start="34">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -1463,6 +1465,8 @@
   <p>Les ratios élevés jouent ici dans les deux sens. Ils augmentent l'espérance par trade, par l'exposition&nbsp;; ils augmentent aussi la dispersion, car le résultat est dominé par une queue rare et grande. La Table&nbsp;8 et la Figure&nbsp;6 tranchent&nbsp;: <strong>à dérive captée égale, le ratio élevé l'emporte</strong> — 6 548 trades au ratio 1:20 contre 38 046 au ratio 1:10 pour une dérive de 1,37 point par heure — mais les ordres de grandeur restent exigeants. Une dérive de deux fois le seuil d'équilibre demande plusieurs milliers de trades, soit plusieurs années à deux trades par séance. Une dérive de trois fois le seuil ramène l'exigence à 1 637 trades.</p>
 
   <p>Ce constat ne condamne pas la stratégie&nbsp;; il fixe l'ordre dans lequel les tests doivent être conduits. Les mesures de la section <a href="#s-proto1">18</a> portent sur des propriétés du prix conditionnées au signal, estimables sur historique en quelques jours de travail, et non sur un P&amp;L simulé qui demanderait des années de données pour trancher.</p>
+
+  <p>Il faut ajouter à ce constat une précision qui en change la portée, et la section&nbsp;<a href="#s-borne">32</a> la démontre. Les nombres ci-dessus sont ceux d'un dispositif précis&nbsp;: un marché, une entrée par séance, une moyenne non pondérée sur des trades traités comme des observations interchangeables, un seuil corrigé de Bonferroni, une décision unique en fin d'échantillon. <strong>Ils mesurent le coût de ce dispositif, non une propriété de la stratégie.</strong> La même exigence de niveau et de puissance, servie par une statistique qui compte le temps de marché plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel et une décision séquentielle, tient dans un horizon borné à cinq années. La présente section reste la borne à opposer à un backtest ordinaire, et c'est à ce titre qu'elle est conservée telle quelle.</p>
 
     <figure>
       <figcaption><span class="lab">Table 8</span> — Trades requis pour atteindre un t-statistique de 2, selon la dérive réellement captée à l'entrée et le ratio retenu.</figcaption>
@@ -5906,6 +5910,8 @@
 
   <p><strong>Troisièmement, il en découle une conclusion sur le surajustement qui est plus forte que la précaution habituelle.</strong> Puisqu'aucun backtest d'un an ne peut distinguer l'edge du bruit, un bon backtest d'un an n'est pas une <em>preuve faible</em>&nbsp;: c'est une observation dont l'explication par défaut est la sélection. Le surajustement n'est pas ici un risque à surveiller, c'est l'hypothèse nulle qu'il faudrait réfuter — et les seuils ci-dessus disent exactement à quel prix.</p>
 
+  <p><strong>Ces trois propositions portent sur un dispositif de mesure, et il faut dire lequel.</strong> Le nombre d'années ci-dessus est celui d'une moyenne non pondérée de trades comptés un par un, sur un marché, avec un seuil corrigé de Bonferroni et une décision unique. C'est le dispositif implicite de la quasi-totalité des backtests publiés, et c'est à ce titre qu'il fixe la barre. Ce n'est pas le meilleur dispositif disponible&nbsp;: la section&nbsp;<a href="#s-borne">32</a> en construit un qui atteint le même niveau et la même puissance dans un horizon borné à cinq années, sans relever d'un point la dérive supposée. La deuxième proposition doit donc se lire dans sa forme exacte — l'edge supposé n'est pas mesurable <em>par le dispositif ordinaire</em> dans un échantillon réalisable —, et la troisième reste entière, puisqu'elle ne porte pas sur la durée mais sur ce qu'un bon backtest d'un an autorise à conclure.</p>
+
   <p>Reste ce qui déplacerait le verdict, et le calcul le dit sans ambiguïté. La table finale l'énonce dans les deux sens où la question est décidable&nbsp;: par l'amplitude requise, et par la cadence.</p>
 
     <figure class="wide">
@@ -5937,6 +5943,8 @@
   </ul>
 
   <p>Ces trois lectures ne se substituent pas au protocole de la section suivante&nbsp;: elles en fixent le budget. Le Test&nbsp;2 y mesure la dérive captée&nbsp;; la présente partie dit combien de trades il faudra pour que sa réponse veuille dire quelque chose, et ce que coûtera chaque configuration essayée en chemin.</p>
+
+  <p>Un cinquième levier n'apparaît pas dans cette table parce qu'il ne porte pas sur la stratégie mais sur l'instrument de mesure&nbsp;: <strong>compter le temps d'exposition plutôt que les trades, pondérer par la volatilité connue avant l'entrée, ordonner les configurations au lieu de les corriger, élargir à un panel, décider séquentiellement.</strong> Pris ensemble, ces cinq gestes divisent la durée par plus de cinq, à hypothèse d'edge rigoureusement inchangée. La section&nbsp;<a href="#s-borne">32</a> les chiffre un par un, nomme l'hypothèse que chacun exige, et mesure sur la procédure entière ce qu'ils obtiennent réellement.</p>
 
   <h2 id="s-proto1">Protocole de falsification</h2>
 
@@ -6845,7 +6853,7 @@
         </tbody>
       </table>
       </div>
-      <p class="note"><span class="lab">Lecture.</span> La dernière colonne est le Sharpe par trade qu'implique la dérive publiée. À 400 trades et trois configurations, le seuil de sélection vaut déjà 0,074 pour un Sharpe attendu de 0,090 : la marge est mince. Deux conséquences opérationnelles — ne pas dépasser trois variantes, et ne rien conclure avant un millier de trades.</p>
+      <p class="note"><span class="lab">Lecture.</span> La dernière colonne est le Sharpe par trade qu'implique la dérive publiée. À 400 trades et trois configurations, le seuil de sélection vaut déjà 0,074 pour un Sharpe attendu de 0,090 : la marge est mince. Ce seuil reste le bon repère à opposer à un Sharpe rapporté sans protocole ; il n'est pas la règle de décision retenue, qui traite la multiplicité en séquence fixée plutôt qu'en la corrigeant après coup.</p>
     </figure>
 
       <figure class="plate">
@@ -6889,7 +6897,9 @@
 </svg></div>
     </figure>
 
-  <p>La lecture est sévère. À 301 trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de 0,085. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et ne rien conclure avant 1 000 trades — soit 5,0 années à 200 trades par an.</p>
+  <p>La lecture est sévère. À 301 trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de 0,085. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et n'ouvrir aucun examen avant 252 séances — une année pleine, pour qu'aucune décision ne repose sur une seule saison.</p>
+
+  <p>Le protocole scellé va toutefois plus loin que la déflation, et par une autre route. Déflater un Sharpe corrige <em>après coup</em> ce que le nombre d'essais explique à lui seul ; ordonner les configurations <em>avant</em> la mesure supprime le problème au lieu de le corriger. La section&nbsp;<a href="#s-borne">32</a> montre ce que l'échange rapporte : à taux d'erreur par famille identique, la séquence fixée rend au test principal le niveau plein, et le seuil de la configuration de référence redescend de 2,128 à 1,645. La table ci-dessus reste le bon repère à opposer à un Sharpe rapporté sans protocole ; elle n'est plus la règle de décision.</p>
 
   <h3>Le protocole scellé</h3>
 
@@ -6899,14 +6909,16 @@
       <table>
         <thead><tr><th>Élément</th><th>Valeur</th><th class="wrap">Détail</th></tr></thead>
         <tbody>
-          <tr><td>Sceau SHA-256</td><td>14cd4100705eab00…</td><td class="wrap">empreinte de la sérialisation canonique du protocole, publiable avant d'ouvrir le moindre fichier de prix</td></tr>
-          <tr><td>Version</td><td>ALP-2/1.0</td><td class="wrap">scellée le 2026-08-21</td></tr>
-          <tr><td>Budget</td><td>3 configurations</td><td class="wrap">C1 — Bande de bruit, sans filtre, C2 — Bande de bruit, conditionnée au gamma net, C3 — Bande de bruit, entrée retardée</td></tr>
-          <tr><td>Statistique primaire</td><td>Sharpe par trade</td><td class="wrap">Sharpe par trade du résultat net, en points d'indice, friction déduite du modèle de carnet et non posée.</td></tr>
-          <tr><td>Règle de décision</td><td>trois conditions</td><td class="wrap">Accepter seulement si les trois conditions tiennent : N ≥ min_trades, SR/trade > seuil déflaté à 3 essais, t = SR·√N > z_{1−α/3}.</td></tr>
-          <tr><td>Échantillon minimal</td><td>1 000 trades</td><td class="wrap">soit 5,0 années à 200 trades par an</td></tr>
+          <tr><td>Sceau SHA-256</td><td>02a53022705e9383…</td><td class="wrap">empreinte de la sérialisation canonique du protocole, publiable avant d'ouvrir le moindre fichier de prix</td></tr>
+          <tr><td>Version</td><td>ALP-2/2.0</td><td class="wrap">scellée le 2026-08-21</td></tr>
+          <tr><td>Budget</td><td>3 configurations, en séquence fixée</td><td class="wrap">C1 — Bande de bruit, sans filtre, C2 — Bande de bruit, conditionnée au gamma net, C3 — Bande de bruit, entrée retardée</td></tr>
+          <tr><td>Panel</td><td>5 contrats</td><td class="wrap">ES, NQ, FESX, FDAX, NK — même règle, trois fuseaux, aucun ajout ni retrait</td></tr>
+          <tr><td>Statistique primaire</td><td>dérive nette par minute</td><td class="wrap">Dérive nette par minute d'exposition, estimée par µ̂ = Σw·R / Σw·τ avec w = 1/σ̂² — moindres carrés généralisés sur la volatilité de séance estimée avant l'entrée —, variance groupée par date, friction relevée au journal d'exécution et non posée.</td></tr>
+          <tr><td>Multiplicité</td><td>séquence fixée</td><td class="wrap">Séquence fixée : C1, puis C2 seulement si C1 rejette, puis C3 seulement si C2 rejette. Chaque test au niveau plein α ; le taux d'erreur par famille reste α.</td></tr>
+          <tr><td>Règle de décision</td><td>4 examens séquentiels</td><td class="wrap">Jalonnement en information : examen à chaque franchissement d'une fraction pré-enregistrée de I_max. Rejet si Z ≥ frontière d'efficacité d'O'Brien-Fleming, abandon si Z ≤ frontière de futilité (non contraignante). Au-delà de l'horizon sans avoir atteint le dernier examen, le protocole ne conclut pas.</td></tr>
+          <tr><td>Horizon</td><td>1 260 séances</td><td class="wrap">soit 5 années ; budget d'information calé sur 1 134 séances, et aucun examen avant 252</td></tr>
+          <tr><td>Cadence</td><td>3 entrées par séance au plus</td><td class="wrap">ré-armement imposé : le prix doit revenir dans la bande avant qu'une nouvelle cassure compte</td></tr>
           <tr><td>Validation croisée</td><td>5 plis purgés</td><td class="wrap">embargo de 1 séance de part et d'autre de chaque pli</td></tr>
-          <tr><td>Seuil de sélection</td><td>0,0469</td><td class="wrap">Sharpe par trade attendu du meilleur de 3 essais sous l'hypothèse nulle, à 1 000 trades</td></tr>
         </tbody>
       </table>
       </div>
@@ -6925,11 +6937,17 @@
         <tbody>
           <tr><td>Seuil de cassure</td><td class="wrap">√(2/π)·σ̂₁·√t, aucun multiplicateur libre</td></tr>
           <tr><td>Fenêtre d'estimation de σ̂₁</td><td class="wrap">14 séances précédentes, close</td></tr>
-          <tr><td>Heure d'ouverture de la fenêtre</td><td class="wrap">10:00 ET (C1, C2) ou 11:00 ET (C3)</td></tr>
+          <tr><td>Ouverture de la fenêtre</td><td class="wrap">30,8 % de la séance (C1, C2) ou 23,1 % (C3)</td></tr>
           <tr><td>Largeur du stop</td><td class="wrap">la bande à l'entrée, jamais déplacée</td></tr>
-          <tr><td>Heure de sortie</td><td class="wrap">15:58 ET, fixe</td></tr>
-          <tr><td>Nombre d'entrées par séance</td><td class="wrap">une au plus</td></tr>
+          <tr><td>Heure de sortie</td><td class="wrap">clôture de la séance moins deux minutes, fixe</td></tr>
+          <tr><td>Nombre d'entrées par séance</td><td class="wrap">trois au plus, ré-armement imposé</td></tr>
           <tr><td>Filtre</td><td class="wrap">aucun (C1, C3) ou signe du gamma net (C2)</td></tr>
+          <tr><td>Panel</td><td class="wrap">cinq contrats nommés, aucun ajout ni retrait</td></tr>
+          <tr><td>Pondération</td><td class="wrap">1/σ̂², σ̂ estimée avant l'entrée ; aucune autre</td></tr>
+          <tr><td>Variance</td><td class="wrap">groupée par date, sans modèle de corrélation</td></tr>
+          <tr><td>Ordre des configurations</td><td class="wrap">C1, C2, C3 ; fixé, non révisable</td></tr>
+          <tr><td>Examens</td><td class="wrap">quatre, aux fractions 0,25 / 0,50 / 0,75 / 1,00 de I_max</td></tr>
+          <tr><td>Horizon</td><td class="wrap">1 260 séances ; aucune prolongation</td></tr>
           <tr><td>Friction</td><td class="wrap">loi déduite du carnet, quantile 90 % pour les arrêts</td></tr>
           <tr><td>Taille</td><td class="wrap">un contrat pour la mesure ; le dimensionnement ne fait pas partie du test</td></tr>
           <tr><td>Sous-période</td><td class="wrap">aucune : l'échantillon est pris en entier</td></tr>
@@ -6941,10 +6959,464 @@
 
   <p>L'intérêt de cette liste n'est pas d'être longue mais d'être close. Un degré de liberté qui n'y figure pas et qui est pourtant utilisé dans la mesure est une violation du protocole, repérable par simple lecture du code.</p>
 
+  <h2 id="s-borne">Le protocole à horizon borné</h2>
+
+  <p>Un protocole de vérification a deux propriétés, et les confondre est l'erreur qui rend un papier de stratégie inexploitable. La première est sa <strong>validité</strong>&nbsp;: la fréquence à laquelle il conclut à tort. La seconde est sa <strong>durée</strong>&nbsp;: le temps de marché qu'il faut lui donner pour qu'il conclue tout court. La section&nbsp;<a href="#s-horizon">8</a> chiffrait la seconde, et le chiffre était considérable — plusieurs milliers de trades, une décennie à deux trades par séance. Ce chiffre est exact pour le dispositif sur lequel il est calculé&nbsp;: un marché, une entrée par séance, une moyenne non pondérée, un seuil corrigé de Bonferroni, une décision unique en fin d'échantillon. Il n'est pas une propriété de la stratégie, et le confondre avec elle revient à confondre la qualité d'un signal avec celle de l'instrument qui le mesure.</p>
+
+  <p>Cette section construit le dispositif qui atteint la même validité — même niveau, même puissance, aucune concession sur l'un ni sur l'autre — dans un horizon borné à 5 années de données. Elle repose sur cinq leviers. Aucun ne touche à l'hypothèse d'edge&nbsp;: la dérive supposée reste celle de la section&nbsp;<a href="#s-derive">24</a>, ni relevée, ni réécrite. Ce qui change est la manière de la mesurer.</p>
+
+  <h3>L'information n'est pas le nombre de trades</h3>
+
+  <p>Le critère maître donne la statistique. Si <span class="v">E</span>[<span class="v">R</span>]&nbsp;=&nbsp;<span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>, alors la quantité à estimer est la dérive nette <em>par unité d'exposition</em>, et non la moyenne par trade&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">µ̂</span><span class="op">=</span><span class="frac"><span>&Sigma;<span class="v">w<sub>i</sub></span>&thinsp;<span class="v">R<sub>i</sub></span></span><span>&Sigma;<span class="v">w<sub>i</sub></span>&thinsp;<span class="v">τ<sub>i</sub></span></span></span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">w<sub>i</sub></span><span class="op">=</span>1/<span class="v">σ̂<sub>i</sub></span>²,<span class="op"></span>&nbsp;&nbsp;<span class="v">I</span><span class="op">=</span>1/Var(<span class="v">µ̂</span>),</div>
+    <div class="no">(33)</div>
+  </div>
+
+  <p>Deux conséquences suivent, et elles sont l'essentiel du gain. La première&nbsp;: <strong>deux trades de dix minutes ne valent pas un trade de vingt minutes</strong> s'ils sont comptés comme deux observations d'une moyenne, alors qu'ils portent la même information sur <span class="v">µ</span>. Compter des tickets plutôt que du temps de marché jette une part de l'échantillon. La seconde&nbsp;: la volatilité d'une séance d'indice varie d'un facteur deux entre ses quantiles à 15 et 85&nbsp;%, et une moyenne non pondérée paie cette dispersion en variance. Pondérer par la volatilité estimée <em>avant</em> l'entrée — les quatorze séances précédentes, déjà gelées au protocole — est la pondération des moindres carrés généralisés, et son gain d'information est majoré exactement par <span class="v">E</span>[<span class="v">σ</span>²]&thinsp;·&thinsp;<span class="v">E</span>[1/<span class="v">σ</span>²]&nbsp;=&nbsp;<span class="v">e</span><sup>4<span class="v">ν</span>²</sup>, soit 1,63 à <span class="v">ν</span>&nbsp;=&nbsp;0,35. C'est un majorant&nbsp;: il suppose la volatilité connue, alors qu'elle est estimée&nbsp;; la simulation mesure ce qu'il en reste.</p>
+
+  <p>La variance de <span class="v">µ̂</span> est <strong>groupée par date</strong>, sans modèle de corrélation entre marchés ni entre entrées d'une même séance. C'est ce qui rend le dispositif valide sans rien supposer de cette corrélation — un point sur lequel la section revient, parce qu'il est le seul qui empêche le panel d'être un tour de passe-passe.</p>
+
+  <h3>Cinq leviers, et ce que chacun coûte</h3>
+
+  <p>Le tableau qui suit part du dispositif de la section&nbsp;<a href="#s-horizon">8</a> et retire un levier à la fois. L'ordre est celui du coût en hypothèses, du plus gratuit au plus cher&nbsp;: un lecteur qui refuse le dernier levier lit sa durée à l'avant-dernière ligne, et ainsi de suite jusqu'en haut.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 59</span> — Du dispositif naïf au dispositif borné, un levier à la fois</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Levier</th><th>Facteur</th><th>Durée du verdict</th><th class="wrap">Ce qu'il exige en échange</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Dispositif du document précédent</td><td>—</td><td>4,76 ans</td><td class="wrap">un marché, une entrée, Bonferroni, décision unique</td></tr>
+          <tr><td class="wrap">Séquence fixée au lieu de Bonferroni</td><td>×0,701</td><td>3,33 ans</td><td class="wrap">un ordre de priorité déclaré avant les données ; aucune hypothèse de marché</td></tr>
+          <tr><td class="wrap">Pondération GLS par la volatilité pré-entrée</td><td>×0,613</td><td>2,04 ans</td><td class="wrap">dérive constante en points par minute ; le gain est majoré en forme fermée, et le réalisé est mesuré par simulation</td></tr>
+          <tr><td class="wrap">Cadence : jusqu'à trois entrées par séance</td><td>×0,929</td><td>1,90 ans</td><td class="wrap">la dérive survit aux entrées de rang 2 et 3 ; falsificateur de décroissance en rang</td></tr>
+          <tr><td class="wrap">Panel de cinq contrats, trois fuseaux</td><td>×0,570</td><td>1,08 ans</td><td class="wrap">dérive commune au panel ; porte de non-homogénéité avant lecture du test principal</td></tr>
+          <tr><td class="wrap">Décision séquentielle, quatre examens</td><td>×0,837</td><td>0,91 ans</td><td class="wrap">aucune ; l'information maximale monte de 15,7 % et la durée espérée baisse d'un tiers</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Sous l'hypothèse de dérive du document, inchangée : 6,00 points de base captés par trade. Aucun levier ne relève l'edge supposé ; tous portent sur la manière de le mesurer. L'ordre est celui du coût en hypothèses, du plus gratuit au plus cher : un lecteur qui refuse le dernier levier lit la durée à l'avant-dernière ligne, et ainsi de suite.</p>
+    </figure>
+
+  <p>Deux d'entre eux ne coûtent rien du tout, et il vaut la peine de dire pourquoi. La <strong>séquence fixée</strong> remplace la correction de Bonferroni&nbsp;: les trois configurations sont ordonnées d'avance, et la deuxième n'est lue que si la première rejette. Le taux d'erreur par famille reste <span class="v">α</span> sans qu'aucun test ne perde de niveau — le seuil de la configuration de référence redescend de 2,128 à 1,645 — et le prix se paie ailleurs&nbsp;: si C1 échoue, C2 et C3 ne sont jamais lues, quelles qu'aient été leurs valeurs. C'est exactement ce qu'on veut d'un protocole, puisqu'un filtre qui rattrape une règle défaillante n'a rien démontré sur la règle. La <strong>décision séquentielle</strong> ne coûte rien non plus, à ceci près qu'elle majore l'information maximale de 15,7 %&nbsp;: c'est le prix du droit de regarder en cours de route, et il est très inférieur au tiers de durée que le droit fait gagner.</p>
+
+  <p>Les trois autres coûtent une hypothèse, et elle est nommée dans la dernière colonne. La cadence suppose que la dérive survive aux entrées de rang deux et trois&nbsp;; le panel, qu'elle soit commune aux cinq contrats. Ces deux hypothèses ne sont pas des vœux&nbsp;: chacune est inscrite au protocole comme <em>falsificateur</em>, et sa violation arrête la mesure au lieu de la biaiser.</p>
+
+  <h3>La décision est séquentielle, et jalonnée en information</h3>
+
+  <p>Les examens ne tombent pas à date fixe. Ils tombent quand l'information accumulée — <span class="v">1</span>/Var(<span class="v">µ̂</span>), mesurée sur les données et non prédite — franchit une fraction pré-enregistrée de l'information maximale. La conséquence est décisive et mérite d'être isolée&nbsp;: <strong>la corrélation entre marchés, la cadence des entrées et la persistance de la volatilité déplacent la <em>date</em> des examens, jamais leurs seuils.</strong> Aucune de ces trois hypothèses de calibration n'entre donc dans le taux d'erreur du protocole. Elles n'entrent que dans sa durée prévisible.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 60</span> — Le plan séquentiel : quatre examens jalonnés en information</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Examen</th><th>Fraction d'information</th><th>Seuil de rejet</th><th>Seuil d'abandon</th><th>P(rejet) sous H₀</th><th>P(rejet) sous H₁</th></tr></thead>
+        <tbody>
+          <tr><td>Examen 1</td><td>0,25</td><td>3,750</td><td>−0,976</td><td>0,0 %</td><td>0,8 %</td></tr>
+          <tr><td>Examen 2</td><td>0,50</td><td>2,540</td><td>0,390</td><td>0,6 %</td><td>25,3 %</td></tr>
+          <tr><td>Examen 3</td><td>0,75</td><td>2,015</td><td>1,130</td><td>1,8 %</td><td>35,9 %</td></tr>
+          <tr><td>Examen 4</td><td>1,00</td><td>1,722</td><td>—</td><td>2,0 %</td><td>17,9 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Frontières de la fonction de dépense d'O'Brien-Fleming, au niveau unilatéral 5 % et à la puissance 80 %. Le premier examen exige 3,75 écarts-types : presque rien n'est dépensé tôt, ce qui laisse le seuil final à 1,722 au lieu de 1,645 pour une décision unique. Le prix de ce droit de regard est une information maximale majorée de 15,7 % ; le gain est une durée espérée de 72 % de l'échantillon complet sous H₁ et de 57 % sous H₀. La borne d'abandon est déclarée non contraignante : la franchir autorise à arrêter, n'y oblige pas, et le niveau du test reste valide dans les deux cas.</p>
+    </figure>
+
+  <p>Les frontières sont celles de la fonction de dépense d'O'Brien-Fleming, et leur forme porte tout le dispositif&nbsp;: presque rien n'est dépensé tôt — le premier examen exige 3,75 écarts-types —, de sorte que le seuil final reste à 1,722 au lieu de 1,645 pour une décision unique. Un plan qui dépenserait son niveau au premier examen achèterait une réponse rapide au prix d'un seuil final que l'échantillon complet ne franchirait plus.</p>
+
+  <h3>Le budget de cinq années, et la dérive qu'il tranche</h3>
+
+  <p>Le protocole ne se donne pas une taille d'échantillon puis un calendrier. Il se donne un <strong>budget de temps de marché</strong> — 1 260 séances, soit 5 années — et en déduit ce qu'il peut trancher. Le budget d'information est calé sur 1 134 séances plutôt que sur 1 260&nbsp;: l'information ne s'accumule pas à cadence fixe, et un budget calé sur l'horizon exact laisserait une part des histoires atteindre le plafond sans avoir atteint leur dernier examen. Sous cette contrainte, une dérive et une seule est détectable à la puissance visée, et c'est celle-là que le protocole publie&nbsp;: <strong><span class="v">θ</span>₁&nbsp;=&nbsp;3,68 points de base captés par trade</strong>, soit 61 % de la dérive empruntée.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 61</span> — Ce que cinq années tranchent, et ce qu'elles ne tranchent pas</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Hypothèse de dérive captée</th><th>Dérive</th><th>Net par trade</th><th>Dispositif naïf</th><th>Dispositif borné</th><th>Décidable en 5 ans</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Dérive empruntée, sans décote</td><td>6,00 pdb</td><td>2,98 pt</td><td>4,8 ans</td><td>1,25 ans</td><td>oui</td></tr>
+          <tr><td class="wrap">Décote de 25 %</td><td>4,50 pdb</td><td>2,08 pt</td><td>9,8 ans</td><td>2,57 ans</td><td>oui</td></tr>
+          <tr><td class="wrap">Dérive dimensionnante du protocole</td><td>3,68 pdb</td><td>1,58 pt</td><td>16,8 ans</td><td>4,43 ans</td><td>oui</td></tr>
+          <tr><td class="wrap">Décote documentée, datée de 2021</td><td>2,52 pdb</td><td>0,89 pt</td><td>53,1 ans</td><td>13,98 ans</td><td>non</td></tr>
+          <tr><td class="wrap">Décote documentée, datée de 2018</td><td>1,50 pdb</td><td>0,28 pt</td><td>540,7 ans</td><td>142,29 ans</td><td>non</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La colonne « dispositif naïf » est celle du document précédent : un marché, une entrée par séance, seuil corrigé de Bonferroni sur trois configurations, décision unique. La colonne « dispositif borné » est l'information maximale du plan séquentiel, convertie en années à la cadence du panel. La dernière ligne est le résultat inconfortable, et il est énoncé plutôt que contourné : à la décote documentée en moyenne sur les anomalies publiées, la dérive tombe sous ce que n'importe quel horizon réalisable peut distinguer de zéro.</p>
+    </figure>
+
+      <figure>
+      <figcaption><span class="lab">Table 62</span> — Dérive minimale détectable, par horizon et par largeur de panel</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Horizon</th><th>Trades effectifs</th><th>Existence (µ ≠ 0)</th><th>Viabilité (µ &gt; µ*)</th><th>Viabilité, un seul marché</th></tr></thead>
+        <tbody>
+          <tr><td>1 an</td><td>671</td><td>5,56 pdb</td><td>6,59 pdb</td><td>8,39 pdb</td></tr>
+          <tr><td>2 ans</td><td>1 343</td><td>3,93 pdb</td><td>4,96 pdb</td><td>6,24 pdb</td></tr>
+          <tr><td>3 ans</td><td>2 014</td><td>3,21 pdb</td><td>4,24 pdb</td><td>5,28 pdb</td></tr>
+          <tr><td>4 ans</td><td>2 685</td><td>2,78 pdb</td><td>3,81 pdb</td><td>4,71 pdb</td></tr>
+          <tr><td>5 ans</td><td>3 357</td><td>2,48 pdb</td><td>3,52 pdb</td><td>4,32 pdb</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Deux seuils, deux questions. L'<em>existence</em> demande si la dérive captée est non nulle et ignore la friction, qui est une constante observée au journal. La <em>viabilité</em> demande si la dérive nette est positive et supporte la friction en entier : elle est toujours plus exigeante, et c'est elle qui décide d'engager du capital. Ce tableau est ce qui rend un échec du protocole informatif : ne pas rejeter à cinq années exclut, à 80 % de puissance, toute dérive supérieure à la valeur de la dernière ligne.</p>
+    </figure>
+
+  <p>Ce second tableau est ce qui rend un <em>échec</em> du protocole informatif, et c'est la propriété qu'un protocole doit avoir pour mériter d'être conduit. Ne pas rejeter au terme des cinq années n'est pas un résultat nul&nbsp;: c'est l'exclusion, à 80 % de puissance, de toute dérive captée supérieure à la valeur de la dernière ligne. Un protocole qui ne publie pas sa dérive minimale détectable ne peut rien conclure de son propre silence.</p>
+
+  <h3>Ce que la simulation du protocole mesure</h3>
+
+  <p>Les chiffres ci-dessus sont des prévisions en forme fermée. Elles sont confrontées à une simulation de la <strong>procédure entière</strong> — et non de la stratégie&nbsp;: on ne demande pas ce que la stratégie produit, on demande à quelle fréquence le protocole se trompe et combien de temps il met à ne pas se tromper. La simulation se fait en trois étages. La séance est simulée minute par minute avec la saisonnalité en U, la volatilité de séance lognormale, les sauts, la bande estimée sur quatorze séances et donc entachée d'erreur, le stop surveillé en continu par pont brownien et le ré-armement après sortie&nbsp;: la loi du résultat d'un trade y est asymétrique (+1,36) et à queue épaisse (+2,66), et c'est cette loi-là, non une approximation normale, qui alimente la suite. Les cinq contrats d'une même date sont ensuite noués par une copule à structure de blocs. Le protocole est enfin rejoué, examen par examen, 1 500 fois par point.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 63</span> — Taille, puissance et durée du protocole, mesurées sur la procédure entière</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Dérive imposée</th><th>Équivalent capté</th><th>Rejet</th><th>Abandon</th><th>Horizon épuisé</th><th>Durée médiane</th><th>Durée au décile 9</th></tr></thead>
+        <tbody>
+          <tr><td>0,00 · θ₁ (hypothèse nulle)</td><td>1,06 pdb</td><td>0,046 ± 0,005</td><td>0,954</td><td>0,000</td><td>2,17 ans</td><td>3,47 ans</td></tr>
+          <tr><td>0,50 · θ₁</td><td>2,37 pdb</td><td>0,349 ± 0,012</td><td>0,651</td><td>0,000</td><td>3,05 ans</td><td>4,22 ans</td></tr>
+          <tr><td>0,75 · θ₁</td><td>3,02 pdb</td><td>0,623 ± 0,013</td><td>0,377</td><td>0,000</td><td>3,10 ans</td><td>4,23 ans</td></tr>
+          <tr><td>1,00 · θ₁</td><td>3,68 pdb</td><td>0,827 ± 0,010</td><td>0,173</td><td>0,000</td><td>3,06 ans</td><td>4,21 ans</td></tr>
+          <tr><td>1,40 · θ₁</td><td>4,72 pdb</td><td>0,963 ± 0,005</td><td>0,037</td><td>0,000</td><td>2,21 ans</td><td>3,35 ans</td></tr>
+          <tr class="sep"><td>1,89 · θ₁ (hypothèse empruntée)</td><td>6,00 pdb</td><td>0,999 ± 0,001</td><td>0,001</td><td>0,000</td><td>2,02 ans</td><td>2,83 ans</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Chaque ligne est une re-simulation complète du marché sous la dérive indiquée, suivie de 1 500 exécutions du protocole. La première ligne est le contrôle qui compte : sous l'hypothèse nulle, le protocole rejette 0,046 ± 0,005 pour un niveau nominal de 0,05. La puissance à θ₁ vaut 0,827 ± 0,010 pour une cible de 0,80. Aucun réglage n'a été choisi au vu de ces deux nombres : c'est leur coïncidence avec les valeurs nominales qui atteste que le plan fait ce qu'il annonce.</p>
+    </figure>
+
+  <p>Deux lignes de ce tableau décident de tout le reste. Sous l'hypothèse nulle, le protocole rejette <strong>0,046&nbsp;±&nbsp;0,005</strong> pour un niveau nominal de 0,05. À la dérive dimensionnante, il rejette <strong>0,827</strong> pour une cible de 80 %. Aucun réglage du dispositif n'a été choisi au vu de ces deux nombres, et c'est leur coïncidence avec les valeurs nominales qui atteste que le plan fait ce qu'il annonce plutôt que ce qu'on aurait voulu. Sous l'hypothèse empruntée, la puissance vaut 0,999 et la durée médiane du verdict tombe à <strong>2,02 années</strong>, avec un décile supérieur à 2,83&nbsp;: la séquentialité rend le verdict deux fois plus vite que le budget ne le prévoit, précisément parce que la dérive supposée dépasse celle pour laquelle le plan est dimensionné.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 35</span> — Puissance du protocole selon la dérive captée, loi de la durée du verdict, décompte des leviers, et robustesse à la corrélation du panel. Les barres verticales de la courbe de puissance sont l'erreur-type de Monte-Carlo&nbsp;: elles disent la précision du calcul, non celle du monde.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 614" role="img" aria-label="Puissance, durée, leviers et robustesse du protocole borné" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Puissance du protocole</text>
+<text class="sub" x="318.0" y="21.0" text-anchor="end">1 500 exécutions par point</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="318.0" y2="40.0"/>
+<rect class="frame" x="56.0" y="46.0" width="262.0" height="192.0"/>
+<line class="gl" x1="56.0" y1="238.0" x2="318.0" y2="238.0"/>
+<text class="tk" x="51.0" y="241.0" text-anchor="end">0,00</text>
+<line class="gl" x1="56.0" y1="190.0" x2="318.0" y2="190.0"/>
+<text class="tk" x="51.0" y="193.0" text-anchor="end">0,25</text>
+<line class="gl" x1="56.0" y1="142.0" x2="318.0" y2="142.0"/>
+<text class="tk" x="51.0" y="145.0" text-anchor="end">0,50</text>
+<line class="gl" x1="56.0" y1="84.4" x2="318.0" y2="84.4"/>
+<text class="tk" x="51.0" y="87.4" text-anchor="end">0,80</text>
+<line class="gl" x1="56.0" y1="46.0" x2="318.0" y2="46.0"/>
+<text class="tk" x="51.0" y="49.0" text-anchor="end">1,00</text>
+<text class="tk" x="56.0" y="251.0" text-anchor="middle">0</text>
+<text class="tk" x="135.4" y="251.0" text-anchor="middle">2</text>
+<text class="tk" x="214.8" y="251.0" text-anchor="middle">4</text>
+<text class="tk" x="294.2" y="251.0" text-anchor="middle">6</text>
+<line class="ba" x1="56.0" y1="238.0" x2="318.0" y2="238.0"/>
+<text class="ax" x="187.0" y="266.0" text-anchor="middle">dérive captée, en points de base</text>
+<line class="lvl strong" x1="56.0" y1="84.4" x2="318.0" y2="84.4"/>
+<text class="lg halo" x="62.0" y="78.4" text-anchor="start">puissance visée</text>
+<line class="lvl" x1="56.0" y1="228.4" x2="318.0" y2="228.4"/>
+<line class="lvl" x1="97.9" y1="46.0" x2="97.9" y2="238.0"/>
+<text class="lg halo" x="103.9" y="99.8" text-anchor="start">seuil de rentabilité</text>
+<line class="lvl" x1="201.9" y1="46.0" x2="201.9" y2="238.0"/>
+<text class="lg halo" x="196.9" y="213.0" text-anchor="end">θ₁ dimensionnante</text>
+<line class="lvl" x1="294.2" y1="46.0" x2="294.2" y2="238.0"/>
+<text class="lg halo" x="289.2" y="161.2" text-anchor="end">hypothèse empruntée</text>
+<rect class="area ar3" x="96.73" y="227.09" width="2.40" height="4.15"></rect>
+<rect class="area ar3" x="148.72" y="166.20" width="2.40" height="9.45"></rect>
+<rect class="area ar3" x="174.71" y="113.52" width="2.40" height="9.61"></rect>
+<rect class="area ar3" x="200.70" y="75.53" width="2.40" height="7.51"></rect>
+<rect class="area ar3" x="242.28" y="51.18" width="2.40" height="3.73"></rect>
+<rect class="area ar3" x="293.02" y="46.00" width="2.40" height="0.62"></rect>
+<path class="ln s1" d="M97.93,229.17 L149.92,170.93 L175.91,118.32 L201.90,79.28 L243.48,53.04 L294.22,46.26"></path>
+<circle class="pt s1f" cx="97.93" cy="229.17" r="4"><title>1,06 pdb → 0,046</title></circle>
+<circle class="pt s1f" cx="149.92" cy="170.93" r="4"><title>2,37 pdb → 0,349</title></circle>
+<circle class="pt s1f" cx="175.91" cy="118.32" r="4"><title>3,02 pdb → 0,623</title></circle>
+<circle class="pt s1f" cx="201.90" cy="79.28" r="4"><title>3,68 pdb → 0,827</title></circle>
+<circle class="pt s1f" cx="243.48" cy="53.04" r="4"><title>4,72 pdb → 0,963</title></circle>
+<circle class="pt s1f" cx="294.22" cy="46.26" r="4"><title>6,00 pdb → 0,999</title></circle>
+<text class="hdr" x="372.0" y="34.0">Durée du verdict</text>
+<text class="sub" x="616.0" y="21.0" text-anchor="end">loi sur les exécutions</text>
+<line class="hsep" x1="372.0" y1="40.0" x2="616.0" y2="40.0"/>
+<rect class="frame" x="372.0" y="46.0" width="244.0" height="192.0"/>
+<line class="gl" x1="372.0" y1="238.0" x2="616.0" y2="238.0"/>
+<text class="tk" x="367.0" y="241.0" text-anchor="end">0,0</text>
+<line class="gl" x1="372.0" y1="146.6" x2="616.0" y2="146.6"/>
+<text class="tk" x="367.0" y="149.6" text-anchor="end">0,5</text>
+<line class="gl" x1="372.0" y1="55.1" x2="616.0" y2="55.1"/>
+<text class="tk" x="367.0" y="58.1" text-anchor="end">1,0</text>
+<text class="tk" x="397.4" y="251.0" text-anchor="middle">1</text>
+<text class="tk" x="448.2" y="251.0" text-anchor="middle">2</text>
+<text class="tk" x="499.1" y="251.0" text-anchor="middle">3</text>
+<text class="tk" x="549.9" y="251.0" text-anchor="middle">4</text>
+<text class="tk" x="600.8" y="251.0" text-anchor="middle">5</text>
+<line class="ba" x1="372.0" y1="238.0" x2="616.0" y2="238.0"/>
+<text class="ax" x="494.0" y="266.0" text-anchor="middle">années de données</text>
+<path class="ln s3" d="M372.00,238.00 L397.42,235.03 L397.42,232.06 L397.42,229.09 L398.02,226.11 L399.23,223.14 L400.24,220.17 L401.45,217.20 L403.27,214.23 L405.28,211.26 L406.70,208.29 L409.52,205.31 L437.76,202.34 L441.19,199.37 L443.21,196.40 L445.43,193.43 L446.23,190.46 L447.24,187.49 L448.45,184.51 L449.66,181.54 L450.47,178.57 L451.28,175.60 L451.88,172.63 L452.69,169.66 L453.09,166.69 L454.10,163.71 L454.71,160.74 L455.31,157.77 L455.92,154.80 L456.52,151.83 L457.13,148.86 L457.93,145.89 L458.94,142.91 L459.55,139.94 L460.15,136.97 L461.16,134.00 L461.97,131.03 L463.58,128.06 L464.99,125.09 L467.21,122.11 L469.83,119.14 L488.19,116.17 L494.04,113.20 L497.27,110.23 L500.29,107.26 L501.71,104.29 L503.92,101.31 L504.93,98.34 L506.75,95.37 L508.36,92.40 L509.77,89.43 L511.59,86.46 L513.61,83.49 L515.42,80.51 L518.25,77.54 L520.47,74.57 L530.75,71.60 L548.10,68.63 L552.94,65.66 L560.81,62.69 L569.28,59.71 L573.52,56.74 L616.00,55.14"></path>
+<path class="ln s2" d="M372.00,238.00 L408.71,235.03 L437.36,232.06 L440.38,229.09 L442.20,226.11 L444.22,223.14 L445.43,220.17 L446.64,217.20 L448.05,214.23 L448.86,211.26 L450.07,208.29 L450.87,205.31 L451.68,202.34 L452.49,199.37 L453.29,196.40 L453.90,193.43 L454.71,190.46 L455.71,187.49 L457.33,184.51 L459.34,181.54 L460.55,178.57 L462.57,175.60 L466.20,172.63 L484.76,169.66 L489.60,166.69 L492.43,163.71 L494.24,160.74 L495.86,157.77 L497.27,154.80 L498.68,151.83 L499.69,148.86 L500.70,145.89 L501.50,142.91 L502.92,139.94 L503.72,136.97 L504.53,134.00 L505.54,131.03 L506.55,128.06 L507.56,125.09 L508.56,122.11 L509.57,119.14 L510.38,116.17 L511.59,113.20 L513.20,110.23 L514.21,107.26 L516.03,104.29 L518.65,101.31 L529.14,98.34 L540.64,95.37 L544.47,92.40 L546.89,89.43 L550.12,86.46 L552.34,83.49 L554.35,80.51 L558.19,77.54 L559.80,74.57 L562.83,71.60 L564.64,68.63 L567.47,65.66 L570.69,62.69 L575.74,59.71 L581.18,56.74 L616.00,55.14"></path>
+<path class="ln s1" d="M372.00,238.00 L397.42,235.03 L397.42,232.06 L397.42,229.09 L397.42,226.11 L397.42,223.14 L399.84,220.17 L401.85,217.20 L404.48,214.23 L427.88,211.26 L433.52,208.29 L435.34,205.31 L437.76,202.34 L439.37,199.37 L440.38,196.40 L441.59,193.43 L442.40,190.46 L443.01,187.49 L443.81,184.51 L444.22,181.54 L444.62,178.57 L445.22,175.60 L445.63,172.63 L446.23,169.66 L446.43,166.69 L447.04,163.71 L447.44,160.74 L448.05,157.77 L448.45,154.80 L448.86,151.83 L449.06,148.86 L449.46,145.89 L450.07,142.91 L450.27,139.94 L450.87,136.97 L451.28,134.00 L452.08,131.03 L452.49,128.06 L453.09,125.09 L453.70,122.11 L454.50,119.14 L455.11,116.17 L455.51,113.20 L455.71,110.23 L456.12,107.26 L456.92,104.29 L457.33,101.31 L458.13,98.34 L458.94,95.37 L459.34,92.40 L460.15,89.43 L461.77,86.46 L463.18,83.49 L463.98,80.51 L469.03,77.54 L486.17,74.57 L493.84,71.60 L497.47,68.63 L500.09,65.66 L505.13,62.69 L510.78,59.71 L515.83,56.74 L616.00,55.14"></path>
+<line class="lvl strong" x1="600.8" y1="46.0" x2="600.8" y2="238.0"/>
+<text class="lg halo" x="594.8" y="157.5" text-anchor="end">plafond</text>
+<line class="lvl" x1="575.3" y1="46.0" x2="575.3" y2="238.0"/>
+<text class="lg halo" x="569.3" y="201.4" text-anchor="end">budget</text>
+<line class="ln s3" x1="376.0" y1="278.0" x2="390.0" y2="278.0"/>
+<text class="lg" x="396.0" y="281.5">sans dérive</text>
+<line class="ln s2" x1="460.0" y1="278.0" x2="474.0" y2="278.0"/>
+<text class="lg" x="480.0" y="281.5">à θ₁</text>
+<line class="ln s1" x1="544.0" y1="278.0" x2="558.0" y2="278.0"/>
+<text class="lg" x="564.0" y="281.5">empruntée</text>
+<text class="hdr" x="56.0" y="318.0">Le décompte des leviers</text>
+<text class="sub" x="318.0" y="305.0" text-anchor="end">durée du verdict, en années</text>
+<line class="hsep" x1="56.0" y1="324.0" x2="318.0" y2="324.0"/>
+<rect class="frame" x="56.0" y="330.0" width="262.0" height="204.0"/>
+<text class="tk" x="56.0" y="547.0" text-anchor="middle">0</text>
+<text class="tk" x="98.4" y="547.0" text-anchor="middle">1</text>
+<text class="tk" x="140.7" y="547.0" text-anchor="middle">2</text>
+<text class="tk" x="183.1" y="547.0" text-anchor="middle">3</text>
+<text class="tk" x="225.5" y="547.0" text-anchor="middle">4</text>
+<text class="tk" x="267.9" y="547.0" text-anchor="middle">5</text>
+<line class="ba" x1="56.0" y1="534.0" x2="318.0" y2="534.0"/>
+<text class="ax" x="187.0" y="562.0" text-anchor="middle">années</text>
+<rect class="area ar3" x="56.00" y="343.89" width="201.54" height="9.00"><title>Dispositif du document précédent : 4,76 ans</title></rect>
+<text class="tk" x="263.5" y="352.4" text-anchor="start">4,76</text>
+<text class="lg halo" x="58.0" y="336.4" text-anchor="start">Dispositif du document précédent</text>
+<rect class="area ar3" x="56.00" y="377.34" width="141.29" height="9.00"><title>Séquence fixée au lieu de Bonferroni : 3,33 ans</title></rect>
+<rect class="ba" x="197.29" y="377.34" width="60.25" height="9.00"><title>retiré : 1,42 ans</title></rect>
+<text class="tk" x="263.5" y="385.8" text-anchor="start">3,33</text>
+<text class="lg halo" x="58.0" y="369.8" text-anchor="start">Séquence fixée au lieu de Bonferroni</text>
+<rect class="area ar3" x="56.00" y="410.78" width="86.56" height="9.00"><title>Pondération GLS par la volatilité pré-entrée : 2,04 ans</title></rect>
+<rect class="ba" x="142.56" y="410.78" width="54.73" height="9.00"><title>retiré : 1,29 ans</title></rect>
+<text class="tk" x="203.3" y="419.3" text-anchor="start">2,04</text>
+<text class="lg halo" x="58.0" y="403.2" text-anchor="start">Pondération GLS par la volatilité pré-entrée</text>
+<rect class="area ar3" x="56.00" y="444.22" width="80.41" height="9.00"><title>Cadence : jusqu'à trois entrées par séance : 1,90 ans</title></rect>
+<rect class="ba" x="136.41" y="444.22" width="6.15" height="9.00"><title>retiré : 0,15 ans</title></rect>
+<text class="tk" x="148.6" y="452.7" text-anchor="start">1,90</text>
+<text class="lg halo" x="58.0" y="436.7" text-anchor="start">Cadence : jusqu'à trois entrées par séance</text>
+<rect class="area ar3" x="56.00" y="477.66" width="45.86" height="9.00"><title>Panel de cinq contrats, trois fuseaux : 1,08 ans</title></rect>
+<rect class="ba" x="101.86" y="477.66" width="34.55" height="9.00"><title>retiré : 0,82 ans</title></rect>
+<text class="tk" x="142.4" y="486.2" text-anchor="start">1,08</text>
+<text class="lg halo" x="58.0" y="470.1" text-anchor="start">Panel de cinq contrats, trois fuseaux</text>
+<rect class="area ar3" x="56.00" y="511.11" width="38.38" height="9.00"><title>Décision séquentielle, quatre examens : 0,91 ans</title></rect>
+<rect class="ba" x="94.38" y="511.11" width="7.48" height="9.00"><title>retiré : 0,18 ans</title></rect>
+<text class="tk" x="107.9" y="519.6" text-anchor="start">0,91</text>
+<text class="lg halo" x="58.0" y="503.6" text-anchor="start">Décision séquentielle, quatre examens</text>
+<text class="hdr" x="372.0" y="318.0">Robustesse à la corrélation</text>
+<text class="sub" x="616.0" y="305.0" text-anchor="end">taille à gauche, durée à droite</text>
+<line class="hsep" x1="372.0" y1="324.0" x2="616.0" y2="324.0"/>
+<rect class="frame" x="372.0" y="330.0" width="244.0" height="204.0"/>
+<line class="gl" x1="372.0" y1="534.0" x2="616.0" y2="534.0"/>
+<text class="tk" x="367.0" y="537.0" text-anchor="end">0,00</text>
+<line class="gl" x1="372.0" y1="432.0" x2="616.0" y2="432.0"/>
+<text class="tk" x="367.0" y="435.0" text-anchor="end">0,05</text>
+<line class="gl" x1="372.0" y1="330.0" x2="616.0" y2="330.0"/>
+<text class="tk" x="367.0" y="333.0" text-anchor="end">0,10</text>
+<text class="tk" x="394.2" y="547.0" text-anchor="middle">0,50</text>
+<text class="tk" x="460.7" y="547.0" text-anchor="middle">0,65</text>
+<text class="tk" x="527.3" y="547.0" text-anchor="middle">0,80</text>
+<text class="tk" x="593.8" y="547.0" text-anchor="middle">0,95</text>
+<line class="ba" x1="372.0" y1="534.0" x2="616.0" y2="534.0"/>
+<text class="ax" x="494.0" y="562.0" text-anchor="middle">corrélation intra-fuseau</text>
+<line class="lvl strong" x1="372.0" y1="432.0" x2="616.0" y2="432.0"/>
+<text class="lg halo" x="376.0" y="423.0" text-anchor="start">niveau nominal</text>
+<rect class="area ar3" x="392.68" y="420.11" width="3.00" height="52.35"></rect>
+<circle class="pt s1f" cx="394.18" cy="446.28" r="4"><title>ρ = 0,50 → taille 0,043</title></circle>
+<rect class="area ar3" x="459.23" y="420.11" width="3.00" height="52.35"></rect>
+<circle class="pt s1f" cx="460.73" cy="446.28" r="4"><title>ρ = 0,65 → taille 0,043</title></circle>
+<rect class="area ar3" x="525.77" y="420.11" width="3.00" height="52.35"></rect>
+<circle class="pt s1f" cx="527.27" cy="446.28" r="4"><title>ρ = 0,80 → taille 0,043</title></circle>
+<rect class="area ar3" x="592.32" y="417.78" width="3.00" height="52.92"></rect>
+<circle class="pt s1f" cx="593.82" cy="444.24" r="4"><title>ρ = 0,95 → taille 0,044</title></circle>
+<path class="ln s1" d="M394.18,446.28 L460.73,446.28 L527.27,446.28 L593.82,444.24"></path>
+<line class="gl" x1="372.0" y1="534.0" x2="616.0" y2="534.0"/>
+<text class="tk" x="621.0" y="537.0">2,0</text>
+<line class="gl" x1="372.0" y1="483.0" x2="616.0" y2="483.0"/>
+<text class="tk" x="621.0" y="486.0">2,5</text>
+<line class="gl" x1="372.0" y1="432.0" x2="616.0" y2="432.0"/>
+<text class="tk" x="621.0" y="435.0">3,0</text>
+<line class="gl" x1="372.0" y1="381.0" x2="616.0" y2="381.0"/>
+<text class="tk" x="621.0" y="384.0">3,5</text>
+<line class="gl" x1="372.0" y1="330.0" x2="616.0" y2="330.0"/>
+<text class="tk" x="621.0" y="333.0">4,0</text>
+<path class="ln s2" d="M394.18,486.64 L460.73,457.90 L527.27,426.94 L593.82,400.23" stroke-dasharray="5 3"></path>
+<circle class="pt s2f" cx="394.18" cy="486.64" r="4"><title>durée médiane 2,46 ans</title></circle>
+<circle class="pt s2f" cx="460.73" cy="457.90" r="4"><title>durée médiane 2,75 ans</title></circle>
+<circle class="pt s2f" cx="527.27" cy="426.94" r="4"><title>durée médiane 3,05 ans</title></circle>
+<circle class="pt s2f" cx="593.82" cy="400.23" r="4"><title>durée médiane 3,31 ans</title></circle>
+
+
+</svg></div>
+      <p class="note">La taille reste au niveau nominal sur toute la plage de corrélation ; seule la durée du verdict s'allonge. C'est la propriété que le jalonnement en information achète, et la raison pour laquelle ρ n'a pas à être connu.</p>
+    </figure>
+
+  <h3>Ce qui rend ces chiffres non surajustés</h3>
+
+  <p>Une simulation qui mesure une puissance est exposée au même soupçon qu'un backtest qui mesure un Sharpe. La réponse tient en cinq propriétés, et elles sont vérifiables dans le code plutôt que promises.</p>
+
+  <ul>
+    <li><strong>Rien de ce qui est mesuré ici n'est un résultat qu'on pourrait vouloir flatteur.</strong> La simulation porte sur la procédure de décision, pas sur une stratégie. Une procédure qui rejette trop souvent sous l'hypothèse nulle est disqualifiée, et c'est la première chose que la simulation regarde.</li>
+    <li><strong>La taille est publiée à côté de la puissance.</strong> Un levier ajusté en cachette pour gagner de la puissance se paierait en taille&nbsp;; les deux sont mesurés sur les mêmes tirages et rapportés avec leur erreur-type.</li>
+    <li><strong>La dérive n'est jamais estimée&nbsp;: elle est imposée.</strong> La simulation ne mesure que la capacité du protocole à retrouver une quantité connue d'avance.</li>
+    <li><strong>Les frontières viennent d'une fonction de dépense publiée</strong>, le niveau et la puissance sont ceux du document, le panel et la cadence sont scellés. Il n'y a rien à régler.</li>
+    <li><strong>Les graines sont explicites et les contrôles publiés.</strong> Une simulation dont la graine n'est pas publiée n'est pas un résultat.</li>
+  </ul>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 64</span> — Les contrôles de la simulation, et ce qu'ils autorisent à conclure</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Contrôle</th><th class="wrap">Ce qui est confronté</th><th>Valeurs</th><th class="wrap">Lecture</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Arrêt optionnel sur le marché simulé</td><td class="wrap">dérive brute nulle sous martingale</td><td>−0,00230 ± 0,00344 pt/min</td><td class="wrap">z = −0,67</td></tr>
+          <tr><td class="wrap">Recentrage de l'hypothèse nulle</td><td class="wrap">friction rapportée à l'exposition / résidu du vivier</td><td>−0,00464 / −0,00208 pt/min</td><td class="wrap">le premier terme est définitionnel, le second est du bruit</td></tr>
+          <tr><td class="wrap">Information par date</td><td class="wrap">prévue en forme fermée / mesurée</td><td>47,73 / 50,93</td><td class="wrap">écart 6,7 %</td></tr>
+          <tr><td class="wrap">Exposition réalisée</td><td class="wrap">simulée / forme fermée</td><td>136,7 / 163,4 min</td><td class="wrap">écart −16,4 %</td></tr>
+          <tr><td class="wrap">Corrélation de date réalisée</td><td class="wrap">structure de blocs du panel</td><td>0,218</td><td class="wrap">effet de grappe 1,99</td></tr>
+          <tr><td class="wrap">Dérive ajoutée contre dérive simulée</td><td class="wrap">puissance, deux routes</td><td>0,854 / 0,821</td><td class="wrap">z = −1,76</td></tr>
+          <tr><td class="wrap">Coût de la sélection</td><td class="wrap">ordre scellé / meilleur de trois</td><td>0,046 / 0,107</td><td class="wrap">×2,3</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Aucun de ces contrôles ne mesure une performance : tous mesurent si l'appareil de mesure dit la vérité. Le premier est le plus important — si le marché simulé ne retrouvait pas l'identité d'arrêt optionnel, tout ce qui suit serait sans objet. Le dernier est le seul qui porte sur une pratique plutôt que sur un calcul : à données identiques et procédure identique, lire la famille par son meilleur élément multiplie le taux d'erreur par 2,3.</p>
+    </figure>
+
+  <p>Le premier contrôle est le plus important&nbsp;: si le marché simulé ne retrouvait pas l'identité d'arrêt optionnel — dérive brute nulle sous martingale, quelle que soit la géométrie —, tout ce qui suit serait sans objet. Il la retrouve à −0,67 erreur-type. Le résidu du vivier est retranché avant de mesurer la taille, faute de quoi le taux d'erreur serait celui d'une hypothèse nulle décalée, c'est-à-dire d'aucune procédure. Deux contrôles vont contre le confort du document et sont conservés à ce titre&nbsp;: l'exposition réellement produite par la règle vaut 136,7 minutes contre 163,4 en forme fermée, soit 16 % de moins, saisonnalité et bande estimée comprises&nbsp;; et la prévision d'information en forme fermée est plus basse que la mesure, donc prudente, mais de 6,7 % seulement.</p>
+
+  <p>Le dernier contrôle ne porte pas sur un calcul mais sur une pratique, et c'est le seul de la table qu'un opérateur puisse reconnaître dans son propre travail. À données identiques et procédure identique, lire la famille de trois configurations dans l'ordre scellé donne un taux d'erreur de 0,046&nbsp;; la lire par son meilleur élément le porte à 0,107. <strong>Seul l'ordre de lecture change.</strong></p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 36</span> — Trajectoires du <span class="v">Z</span> de décision contre les frontières séquentielles, sans dérive puis sous l'hypothèse empruntée&nbsp;; et le coût de la sélection, mesuré sur les mêmes tirages. Chaque trajectoire s'arrête où le protocole s'arrête.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 348" role="img" aria-label="Trajectoires séquentielles et coût de la sélection" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Trajectoires de décision</text>
+<text class="sub" x="348.0" y="21.0" text-anchor="end">Z contre les frontières d'O'Brien-Fleming</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="348.0" y2="40.0"/>
+<rect class="frame" x="56.0" y="46.0" width="292.0" height="214.0"/>
+<line class="gl" x1="56.0" y1="233.2" x2="348.0" y2="233.2"/>
+<text class="tk" x="51.0" y="236.2" text-anchor="end">-2</text>
+<line class="gl" x1="56.0" y1="179.8" x2="348.0" y2="179.8"/>
+<text class="tk" x="51.0" y="182.8" text-anchor="end">0</text>
+<line class="gl" x1="56.0" y1="126.2" x2="348.0" y2="126.2"/>
+<text class="tk" x="51.0" y="129.2" text-anchor="end">2</text>
+<line class="gl" x1="56.0" y1="72.8" x2="348.0" y2="72.8"/>
+<text class="tk" x="51.0" y="75.8" text-anchor="end">4</text>
+<text class="tk" x="73.8" y="273.0" text-anchor="middle">0,25</text>
+<text class="tk" x="162.8" y="273.0" text-anchor="middle">0,50</text>
+<text class="tk" x="251.9" y="273.0" text-anchor="middle">0,75</text>
+<text class="tk" x="340.9" y="273.0" text-anchor="middle">1,00</text>
+<line class="ba" x1="56.0" y1="260.0" x2="348.0" y2="260.0"/>
+<text class="ax" x="202.0" y="288.0" text-anchor="middle">fraction d'information</text>
+<path class="ln s1" d="M73.80,79.44 L162.83,111.81 L251.85,125.86 L340.88,133.70" stroke-dasharray="5 3"></path>
+<path class="ln s1" d="M73.80,205.85 L162.83,169.33 L251.85,149.53 L340.88,133.70" stroke-dasharray="5 3"></path>
+<circle class="pt s1f" cx="73.80" cy="79.44" r="3"><title>rejet à t = 0,25 : z ≥ 3,750</title></circle>
+<circle class="pt s1f" cx="162.83" cy="111.81" r="3"><title>rejet à t = 0,50 : z ≥ 2,540</title></circle>
+<circle class="pt s1f" cx="251.85" cy="125.86" r="3"><title>rejet à t = 0,75 : z ≥ 2,015</title></circle>
+<circle class="pt s1f" cx="340.88" cy="133.70" r="3"><title>rejet à t = 1,00 : z ≥ 1,722</title></circle>
+<circle class="pt s1f" cx="73.80" cy="205.85" r="3"><title>abandon à t = 0,25 : z ≤ -0,976</title></circle>
+<circle class="pt s1f" cx="162.83" cy="169.33" r="3"><title>abandon à t = 0,50 : z ≤ 0,390</title></circle>
+<circle class="pt s1f" cx="251.85" cy="149.53" r="3"><title>abandon à t = 0,75 : z ≤ 1,130</title></circle>
+<path class="ln s3" d="M76.90,174.04 L81.24,164.65 L87.92,160.04 L95.44,149.06 L101.53,148.30 L111.55,149.08 L119.64,146.64 L125.92,143.29 L131.78,140.41 L140.06,136.82 L141.72,145.70 L148.70,146.11 L153.06,155.57 L158.99,154.20 L163.54,157.90 L169.47,164.54 L178.93,172.66 L187.33,171.11 L195.30,178.22 L203.91,171.22 L212.31,169.15 L217.64,166.03 L225.18,175.31 L232.76,179.79 L237.81,178.98 L244.33,183.63 L250.33,182.34"></path>
+<path class="ln s3" d="M62.02,170.74 L70.25,179.71 L77.78,185.98 L84.81,189.46 L94.27,179.44 L102.20,182.10 L111.71,183.12 L120.94,185.60 L125.82,183.85 L134.49,185.87 L144.83,179.77 L155.46,179.34 L162.77,177.27"></path>
+<path class="ln s3" d="M69.99,180.93 L75.20,201.79 L71.62,203.95 L77.35,203.87 L82.58,206.06 L89.45,199.48 L98.10,196.32 L106.33,196.37 L115.38,204.08 L119.75,203.07 L128.31,200.92 L132.83,195.79 L139.08,192.22 L145.40,198.86 L155.12,195.96"></path>
+<path class="ln s3" d="M68.26,192.07 L75.55,193.67 L85.47,190.77 L92.75,186.42 L100.75,190.07 L110.33,182.32 L116.74,179.72 L126.35,174.27 L128.07,173.39 L138.09,175.93 L146.16,177.14 L155.24,181.46 L164.13,183.37"></path>
+<path class="ln s3" d="M60.78,174.90 L68.02,168.92 L76.09,166.23 L87.24,161.76 L95.72,159.03 L105.42,149.64 L111.66,165.41 L120.72,170.07 L127.42,173.39 L130.26,167.45 L138.64,161.28 L146.67,166.68 L154.00,169.70 L162.91,168.71 L170.83,169.48 L179.44,175.15 L187.12,170.99 L190.72,178.54 L196.27,173.98 L204.70,176.08 L214.09,174.50 L219.72,175.73 L224.84,175.40 L235.22,172.64 L242.64,173.03"></path>
+<path class="ln s3" d="M68.42,194.19 L77.42,182.83 L83.79,186.04 L91.66,190.89 L100.41,189.67 L104.50,190.55 L113.82,190.74 L118.83,182.56 L121.75,178.39 L132.70,164.33 L137.31,172.56 L145.75,167.62 L154.18,169.32 L160.34,158.97 L163.79,167.09 L167.67,163.26 L169.89,158.75 L177.63,159.95 L181.85,168.65 L192.11,169.18 L199.31,169.43 L207.89,167.05 L214.46,173.43 L223.97,174.99 L232.41,176.41 L238.45,179.45 L246.36,181.01"></path>
+<path class="ln s3" d="M84.41,202.95 L98.16,198.60 L112.09,198.40 L123.04,195.57 L128.14,198.55 L131.07,201.20 L136.29,183.62 L144.53,182.75 L144.24,164.60 L154.19,166.16 L158.69,163.11 L167.98,168.05 L176.93,169.36 L183.80,172.99 L195.17,178.07 L204.74,171.73 L209.15,176.24 L213.27,176.37 L212.82,181.79 L222.89,174.88 L232.51,172.78 L239.56,175.21 L245.09,164.69"></path>
+<path class="ln s3" d="M66.52,169.71 L75.24,172.61 L84.69,181.48 L91.02,184.24 L97.30,182.82 L103.55,172.02 L109.24,174.79 L116.43,176.43 L121.64,177.57 L131.18,177.47 L138.29,184.45 L145.67,182.16 L151.38,190.55 L159.47,188.37"></path>
+<path class="ln s3" d="M78.11,153.39 L84.40,154.33 L82.66,146.39 L93.19,136.80 L99.02,143.68 L107.73,138.49 L115.97,136.71 L124.63,139.10 L133.19,133.78 L143.40,138.36 L150.93,139.56 L154.16,133.26 L163.62,130.53 L173.06,137.36 L180.85,136.46 L181.88,139.56 L188.28,138.47 L196.30,135.28 L204.44,134.28 L204.97,133.98 L210.86,130.12 L214.21,128.77 L219.82,127.16 L225.35,133.07 L233.21,140.68 L242.92,135.73 L248.47,132.21 L253.18,138.15 L261.22,144.93 L268.35,146.47 L275.33,147.57 L280.07,154.85 L287.12,157.36 L293.58,163.59 L299.95,161.77 L305.49,166.27 L311.98,167.95 L321.98,168.60 L332.47,166.83 L337.30,172.31 L340.88,171.25"></path>
+<path class="ln s3" d="M88.82,169.81 L97.05,168.92 L99.68,168.61 L104.96,152.68 L113.83,151.04 L119.15,159.40 L129.06,161.81 L129.33,155.81 L140.82,157.33 L149.81,152.25 L159.31,143.82 L167.66,136.04 L177.22,135.09 L187.34,138.84 L197.24,136.31 L205.12,130.44 L208.83,126.95 L219.70,126.34 L226.47,126.72 L234.36,130.29 L245.42,128.30 L247.53,128.69"></path>
+<path class="ln s3" d="M59.41,175.97 L68.77,176.71 L74.50,183.38 L80.83,190.13 L87.25,188.92 L92.55,193.10 L100.07,190.90 L105.91,198.41 L112.13,194.16 L117.66,196.55 L124.52,191.81 L130.45,196.16 L133.31,190.24 L139.72,185.34 L147.85,189.11 L154.55,198.12 L162.26,198.09"></path>
+<path class="ln s3" d="M70.15,203.65 L72.45,197.40 L82.04,193.80 L88.77,191.02 L99.04,198.04 L105.89,190.97 L111.91,186.59 L121.54,194.55 L128.43,192.05 L134.03,196.39 L141.96,193.58 L149.08,193.34 L158.15,200.26"></path>
+<path class="ln s3" d="M76.54,127.72 L84.21,134.25 L98.06,127.19 L104.64,123.04 L113.31,123.91 L116.62,130.23 L120.30,133.20 L129.55,130.38 L135.78,137.01 L146.99,137.01 L150.77,149.37 L156.38,156.08 L161.14,163.13 L162.75,167.87 L168.76,170.24 L180.86,171.15 L186.37,170.84 L194.90,174.14 L203.84,168.21 L213.89,170.43 L218.70,166.15 L225.47,177.83 L229.90,173.43 L232.35,166.46 L238.83,171.42 L244.14,169.65 L251.06,176.17"></path>
+<path class="ln s2" d="M57.58,112.64 L61.80,117.41 L68.67,122.19 L74.91,121.25 L81.06,113.11 L84.55,122.12 L91.33,114.07 L99.94,114.18 L102.63,117.36 L109.48,109.06 L119.78,107.30 L127.80,104.45 L136.48,97.98 L145.03,101.61 L153.44,89.89 L161.49,92.62"></path>
+<path class="ln s2" d="M69.51,98.85 L72.95,106.64 L78.11,102.85 L83.84,104.41 L90.71,92.79 L96.03,92.10 L104.51,90.34 L100.75,101.78 L107.79,106.40 L112.32,93.04 L122.24,89.39 L129.02,94.26 L132.92,86.44 L139.87,82.40 L150.19,75.54 L157.28,69.07"></path>
+<path class="ln s2" d="M74.06,108.72 L79.53,113.37 L86.31,116.08 L94.53,116.39 L102.47,119.12 L106.64,115.16 L115.56,115.66 L122.49,111.07 L126.05,116.61 L138.74,108.22 L145.61,110.99 L152.80,109.27 L158.60,103.55"></path>
+<path class="ln s2" d="M68.22,119.43 L73.41,120.95 L77.80,123.22 L83.92,122.47 L92.56,123.75 L97.29,123.02 L101.37,137.93 L107.99,140.51 L114.03,134.44 L122.63,131.62 L124.89,118.25 L130.46,117.10 L134.21,117.64 L137.91,116.44 L145.56,103.45 L151.52,102.50 L158.66,102.12 L162.90,96.38"></path>
+<path class="ln s2" d="M81.84,119.55 L91.67,119.55 L94.48,122.94 L107.02,116.03 L114.69,115.99 L121.37,121.64 L131.39,113.98 L135.58,115.53 L142.67,108.96 L155.02,104.74 L161.39,104.68"></path>
+<path class="ln s2" d="M79.91,167.61 L90.21,159.94 L94.73,148.77 L100.60,136.75 L96.16,132.52 L102.87,118.96 L111.28,106.84 L120.56,102.63 L125.90,95.43 L131.19,105.01 L138.81,103.34 L143.86,90.84 L151.99,89.67 L161.37,81.47"></path>
+<path class="ln s2" d="M71.16,129.29 L76.62,136.98 L86.66,126.31 L94.31,119.95 L98.06,116.50 L102.27,98.94 L111.71,104.39 L119.80,99.27 L131.40,83.83 L140.79,85.59 L145.75,79.82 L153.12,81.85 L157.64,72.17"></path>
+<path class="ln s2" d="M81.90,115.49 L89.12,119.18 L93.70,130.78 L107.95,128.92 L110.83,122.83 L121.08,104.97 L130.68,95.10 L143.09,86.41 L154.60,87.82 L161.00,85.98"></path>
+<path class="ln s2" d="M62.91,121.59 L68.31,124.34 L75.78,118.05 L82.89,113.00 L90.70,110.66 L96.50,110.58 L104.29,110.96 L108.55,113.60 L110.04,118.77 L121.45,111.89 L129.70,105.13 L137.50,104.38 L146.87,94.43 L155.31,93.42 L163.60,94.94"></path>
+<path class="ln s2" d="M69.61,77.25 L74.15,90.65 L82.96,82.42 L91.93,81.85 L98.75,71.50 L105.90,67.77 L118.11,54.84 L124.33,50.40 L133.40,51.73 L141.93,54.86 L148.14,57.56 L156.52,50.88 L159.54,48.39"></path>
+<path class="ln s2" d="M72.46,138.03 L81.23,123.75 L90.41,117.13 L101.10,114.71 L108.99,106.18 L110.74,106.28 L116.86,114.39 L124.81,115.58 L135.42,107.97 L138.49,112.25 L145.91,97.98 L154.55,99.23"></path>
+<line class="ln s1" x1="56.0" y1="300.0" x2="70.0" y2="300.0"/>
+<text class="lg" x="76.0" y="303.5">frontières</text>
+<line class="ln s3" x1="160.0" y1="300.0" x2="174.0" y2="300.0"/>
+<text class="lg" x="180.0" y="303.5">sans dérive</text>
+<line class="ln s2" x1="264.0" y1="300.0" x2="278.0" y2="300.0"/>
+<text class="lg" x="284.0" y="303.5">hypothèse empruntée</text>
+<text class="hdr" x="402.0" y="34.0">Le coût de la sélection</text>
+<text class="sub" x="616.0" y="21.0" text-anchor="end">taux d'erreur sous H₀</text>
+<line class="hsep" x1="402.0" y1="40.0" x2="616.0" y2="40.0"/>
+<rect class="frame" x="402.0" y="46.0" width="214.0" height="214.0"/>
+<line class="gl" x1="402.0" y1="260.0" x2="616.0" y2="260.0"/>
+<text class="tk" x="397.0" y="263.0" text-anchor="end">0,00</text>
+<line class="gl" x1="402.0" y1="183.6" x2="616.0" y2="183.6"/>
+<text class="tk" x="397.0" y="186.6" text-anchor="end">0,05</text>
+<line class="gl" x1="402.0" y1="107.1" x2="616.0" y2="107.1"/>
+<text class="tk" x="397.0" y="110.1" text-anchor="end">0,10</text>
+<line class="lvl strong" x1="402.0" y1="183.6" x2="616.0" y2="183.6"/>
+<rect class="ba" x="422.95" y="189.94" width="40.00" height="70.06"><title>ordre scellé : 0,046</title></rect>
+<text class="tk halo" x="443.0" y="182.9" text-anchor="middle">0,046</text>
+<text class="lg" x="443.0" y="275.0" text-anchor="middle">ordre scellé</text>
+<rect class="area ar1" x="489.00" y="95.68" width="40.00" height="164.32"><title>meilleur de 3 : 0,107</title></rect>
+<text class="tk halo" x="509.0" y="88.7" text-anchor="middle">0,107</text>
+<text class="lg" x="509.0" y="275.0" text-anchor="middle">meilleur de 3</text>
+<rect class="area ar3" x="555.05" y="183.57" width="40.00" height="76.43"><title>nominal : 0,050</title></rect>
+<text class="tk halo" x="575.0" y="176.6" text-anchor="middle">0,050</text>
+<text class="lg" x="575.0" y="275.0" text-anchor="middle">nominal</text>
+<text class="lg" x="509.0" y="300.0" text-anchor="middle">Mêmes données, même procédure :</text>
+<text class="lg" x="509.0" y="318.0" text-anchor="middle">seul l'ordre de lecture change.</text>
+</svg></div>
+    </figure>
+
+  <h3>La corrélation ne déplace que la durée</h3>
+
+  <p>Le panel est l'endroit où un lecteur attentif cherchera la faille, et il a raison de la chercher là&nbsp;: cinq contrats indiciels de trois fuseaux ne sont pas cinq expériences indépendantes, et un dispositif qui les compterait comme telles diviserait ses erreurs-types par un facteur inexistant. C'est précisément ce que la variance groupée par date interdit. La vérification est directe&nbsp;: on fait varier la corrélation intra-fuseau du simple au presque parfait, et on regarde ce qui bouge.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 65</span> — Ce que la corrélation du panel change — et ce qu'elle ne change pas</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Corrélation intra-fuseau</th><th>Effet de grappe</th><th>Trades effectifs par date</th><th>Taille</th><th>Puissance à θ₁</th><th>Durée médiane</th></tr></thead>
+        <tbody>
+          <tr><td>0,50</td><td>1,62</td><td>3,43</td><td>0,043 ± 0,006</td><td>0,776</td><td>2,46 ans</td></tr>
+          <tr><td>0,65</td><td>1,79</td><td>3,12</td><td>0,043 ± 0,006</td><td>0,784</td><td>2,75 ans</td></tr>
+          <tr><td>0,80</td><td>1,99</td><td>2,79</td><td>0,043 ± 0,006</td><td>0,813</td><td>3,05 ans</td></tr>
+          <tr><td>0,95</td><td>2,19</td><td>2,54</td><td>0,044 ± 0,006</td><td>0,831</td><td>3,31 ans</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La corrélation entre marchés est la seule hypothèse de calibration dont on pourrait craindre qu'elle porte la validité du protocole. Elle ne la porte pas : la taille reste au niveau nominal sur toute la plage, du simple au presque parfait. Ce qui bouge est la <strong>durée</strong>, de 2,46 à 3,31 années. C'est la conséquence directe du jalonnement en information : les examens tombent quand l'information est là, pas à une date convenue, et une corrélation plus forte retarde les examens sans déplacer leurs seuils.</p>
+    </figure>
+
+  <p>La taille reste au niveau nominal sur toute la plage — de 0,043 à 0,044 —, et la durée médiane passe de 2,46 à 3,31 années. C'est la signature exacte du jalonnement en information&nbsp;: une corrélation plus forte retarde les examens sans déplacer leurs seuils. Si la taille dérivait avec <span class="v">ρ</span>, le protocole serait faux, et ce tableau le montrerait.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 66</span> — Ce que la largeur du panel achète, hypothèse par hypothèse</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Marchés</th><th class="wrap">Trades effectifs par date</th><th>Taille</th><th>Puissance à θ₁</th><th>Horizon épuisé</th><th class="wrap">Puissance à l'hypothèse empruntée</th><th>Durée médiane</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="wrap">1,13</td><td>0,004</td><td>0,136</td><td>0,844</td><td class="wrap">0,469</td><td>5,00 ans</td></tr>
+          <tr><td>3</td><td class="wrap">2,11</td><td>0,022</td><td>0,758</td><td>0,150</td><td class="wrap">0,995</td><td>2,58 ans</td></tr>
+          <tr><td>5</td><td class="wrap">2,79</td><td>0,041</td><td>0,819</td><td>0,000</td><td class="wrap">0,998</td><td>2,03 ans</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le panel n'est pas un ornement. À information maximale scellée, un marché unique n'atteint pas son dernier examen dans l'horizon 84 % du temps sous θ₁ — il ne conclut pas, faute de temps de marché, et non faute de dérive. Trois contrats suffisent à trancher l'hypothèse empruntée ; les cinq sont ce qui rend décidable sa version décotée.</p>
+    </figure>
+
+  <p>Reste à dire ce que le panel achète, et le tableau ne le flatte pas. À information maximale scellée, un marché unique n'atteint pas son dernier examen dans l'horizon 53 % du temps sous l'hypothèse empruntée&nbsp;: il ne conclut pas, faute de temps de marché et non faute de dérive. Trois contrats suffisent à trancher cette hypothèse-là (0,995 de puissance)&nbsp;; les cinq sont ce qui rend décidable sa version décotée. <strong>Le panel n'est pas un ornement statistique&nbsp;: c'est ce qui rend l'horizon de cinq années atteignable.</strong></p>
+
+  <div class="keybox">
+    <span class="lab">Ce que l'horizon borné tranche, et ce qu'il ne tranche pas</span>
+    <p>Le protocole rend un verdict sur toute dérive captée supérieure à 3,68 points de base, dans 5 années au plus et 2,02 en médiane sous l'hypothèse du document. Il absorbe donc une décote de 39 % sur la dérive empruntée — mais pas davantage, et la section&nbsp;<a href="#s-decote">28</a> a établi que la décote documentée en moyenne sur les anomalies publiées est plus forte que cela.</p>
+    <p>Les deux résultats se composent en une inégalité qu'il faut énoncer sans l'adoucir. La dérive reste au-dessus du seuil de détectabilité seulement si son taux de décroissance annuel est inférieur à 6,1 %, contre 17,4 % documentés. Datée du travail de 2018, elle est passée sous ce seuil en 2021&nbsp;; datée de sa généralisation, en 2024. <strong>Ce n'est pas le protocole qui est trop lent&nbsp;: c'est la question qui a peut-être cessé d'être décidable, et le protocole est ce qui permet de le dire plutôt que de le supposer.</strong> Un silence de cinq années, adossé à une dérive minimale détectable publiée, est lui-même une mesure.</p>
+  </div>
+
   <h2 id="s-proto2">Le protocole de mesure</h2>
 
       <figure>
-      <figcaption><span class="lab">Table 59</span> — Protocole de validation, du moins coûteux au plus coûteux. Chaque ligne peut interrompre la séquence.</figcaption>
+      <figcaption><span class="lab">Table 67</span> — Protocole de validation, du moins coûteux au plus coûteux. Chaque ligne peut interrompre la séquence.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>#</th><th>Test</th><th>Mesure</th><th>Données requises</th><th>Critère d'arrêt</th></tr></thead>
@@ -6976,7 +7448,7 @@
   <p>La grille qui suit a été fixée avant d'être appliquée, et ne contient aucun critère taillé pour l'un des deux documents : douze critères, trois familles, des poids qui somment à cent, et une échelle d'ancrage commune de 0 à 5. Chaque score est accompagné du fait qui le justifie, de sorte qu'un score se conteste en contestant ce fait — la seule propriété qu'on demande à une note.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 60</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
+      <figcaption><span class="lab">Table 68</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Critère</th><th>Poids</th><th>ALP-1</th><th>ALP-2</th><th>Points ALP-1</th><th>Points ALP-2</th></tr></thead>
@@ -7001,7 +7473,7 @@
     </figure>
 
       <figure>
-      <figcaption><span class="lab">Table 61</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
+      <figcaption><span class="lab">Table 69</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Famille</th><th>Maximum</th><th>ALP-1</th><th>ALP-2</th><th>Écart</th></tr></thead>
@@ -7036,6 +7508,8 @@
     <li>Sur un prix sans dérive, la mèche haute atteint <span class="v">k</span> fois le corps avec probabilité 1/(2<span class="v">k</span>&nbsp;+&nbsp;1), et la clôture dépasse le corps de la veille trois jours sur quatre.</li>
     <li>Attendre un retracement améliore l'espérance par signal si et seulement si le signal exécuté au marché est perdant.</li>
     <li>Le passage de la géométrie ALP-1 à la géométrie ALP-2 divise par 5,69 le ratio d'information exigé du signal, sans rien changer au signal lui-même.</li>
+    <li>Un protocole de vérification a une durée qui dépend de son dispositif de mesure et non de la seule stratégie&nbsp;: à niveau et puissance inchangés, cinq gestes — exposition plutôt que tickets, pondération par la volatilité pré-entrée, séquence fixée plutôt que Bonferroni, panel, décision séquentielle — ramènent le verdict de 4,8 à 0,91 années sur l'hypothèse du document.</li>
+    <li>Le taux d'erreur d'une famille de trois configurations ne dépend pas des données mais de l'ordre dans lequel on les lit&nbsp;: 0,046 dans l'ordre scellé, 0,107 par le meilleur élément, sur les mêmes tirages.</li>
   </ul>
 
   <h3>Ce qu'il n'établit pas</h3>
@@ -7053,6 +7527,8 @@
     <li><strong>L'exposant d'échelle n'est pas mesuré.</strong> La calibration le pose à ½ et la discussion du gamma en retient 0,65, ce qui n'est pas cohérent. La section&nbsp;<a href="#s-exposant">29</a> refait la chaîne sous exposant imposé&nbsp;: l'incohérence joue contre la stratégie, d'un facteur 1,112 sur le seuil requis, et aucun mécanisme documenté ne soutient la persistance invoquée. Le test&nbsp;1 la lève.</li>
     <li><strong>La boîte de plausibilité est posée, pas mesurée.</strong> Ses bornes viennent d'observations publiques et du jugement. Un lecteur qui les juge trop larges ou trop étroites peut les modifier et relancer&nbsp;: les verdicts se recalculent.</li>
     <li><strong>Le modèle de carnet est paramétrique.</strong> Profondeur, amincissement au déclenchement et latence sont des ordres de grandeur, encadrés sur 243 combinaisons mais jamais observés sur un carnet réel.</li>
+    <li><strong>La décidabilité elle-même est datée.</strong> Le protocole de la section&nbsp;<a href="#s-borne">32</a> tranche toute dérive captée supérieure à 3,68 points de base, soit une décote de 39 % au plus sur la dérive empruntée. La décote documentée est plus forte&nbsp;: si elle court depuis la publication, la dérive est passée sous le seuil de détectabilité en 2021 ou 2024 selon la datation retenue. Le protocole conserve alors sa valeur, mais elle change de nature&nbsp;— un silence de cinq années adossé à une dérive minimale détectable publiée exclut une amplitude, il ne mesure plus un avantage.</li>
+    <li><strong>Le panel suppose une dérive commune.</strong> Cinq contrats de trois fuseaux ne sont pas cinq expériences indépendantes, et le dispositif ne prétend pas le contraire&nbsp;: sa variance est groupée par date, ce qui le rend valide quelle que soit la corrélation, et l'hétérogénéité entre marchés est un falsificateur inscrit au protocole. Si la dérive est propre à un marché, le panel la dilue au lieu de la mesurer, et c'est le test de Cochran qui doit le dire avant la lecture du test principal.</li>
     <li><strong>Le conditionnement par le gamma reste une hypothèse.</strong> Il est inscrit au protocole comme configuration&nbsp;C2, et le document ne prétend pas qu'il fonctionne&nbsp;— seulement qu'il est testable sans données payantes.</li>
   </ul>
 
@@ -7060,6 +7536,7 @@
     <span class="lab">Le verdict, en une phrase</span>
     <p>Ce document n'établit pas qu'un avantage existe. Il établit qu'un changement de géométrie divise par 5,69 le seuil qu'un signal doit franchir, que la friction réelle laisse une marge de 10,9 sur une dérive documentée par des tiers, et qu'un protocole capable de trancher tient en cinq tests dont quatre se conduisent sur historique, sans donnée payante.</p>
     <p>Ce qui manque est une série de prix. Rien d'autre&nbsp;— et, depuis la section&nbsp;<a href="#s-decote">28</a>, ce qui manque a une date&nbsp;: au taux de décote documenté, la dérive empruntée passe sous son point de rupture en 2027 si on la date du travail d'origine, en 2030 si on la date de sa généralisation.</p>
+    <p>Ce qui ne manque plus est le temps. Le protocole rend son verdict sur 5 années de barres d'une minute au plus, 2,02 en médiane sous l'hypothèse retenue, à un niveau mesuré de 0,046 et une puissance de 0,999. La décennie que la section&nbsp;<a href="#s-horizon">8</a> annonçait était le coût d'un instrument de mesure, non celui de la question.</p>
   </div>
 
   <h2 class="unnumbered">Références indicatives</h2>
@@ -7097,7 +7574,7 @@
 
   <div class="colophon">
     <p><strong>Avertissement.</strong> Ce document est un travail de recherche méthodologique. Il ne constitue ni un conseil en investissement, ni une recommandation d'opérer, et ne comporte aucune affirmation de performance. Les stratégies décrites n'ont fait l'objet d'aucune validation empirique par leurs auteurs. Le trading de contrats à terme avec effet de levier expose à un risque de perte supérieure au capital engagé.</p>
-    <p>Document de travail. Toutes les tables et figures sont reproductibles par <code>python main.py --wp</code>&nbsp;; la prose vit dans un gabarit et les chiffres y sont injectés par le noyau de calcul, de sorte qu'un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le protocole de mesure est scellé sous l'empreinte SHA-256 <span class="v">14cd4100705eab00</span>, publiable avant l'ouverture du moindre fichier de prix.</p>
+    <p>Document de travail. Toutes les tables et figures sont reproductibles par <code>python main.py --wp</code>&nbsp;; la prose vit dans un gabarit et les chiffres y sont injectés par le noyau de calcul, de sorte qu'un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le protocole de mesure est scellé sous l'empreinte SHA-256 <span class="v">02a53022705e9383</span>, publiable avant l'ouverture du moindre fichier de prix.</p>
   </div>
 
 </div>

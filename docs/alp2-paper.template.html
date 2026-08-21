@@ -388,7 +388,7 @@
 
     <p>Trois différences de méthode séparent ce document du précédent. La calibration part de trois nombres dont tout le reste se déduit, et sept identités le vérifient à chaque exécution. La dérive n'est plus un espoir mais une grandeur publiée — {{edge_bps}} points de base par trade, rapportés par des travaux sur soixante contrats et quarante-six ans —, confrontée au seuil de friction. La friction elle-même n'est plus posée mais déduite du barème, de la profondeur du carnet et de la latence : {{friction_mean}} point en moyenne, soit le double de ce que le scénario de référence supposait.</p>
 
-    <p>Aucune mesure n'est conduite ici non plus. Mais le protocole qui la conduirait est écrit, scellé avant qu'aucune donnée n'existe — empreinte <span class="v">{{seal}}</span> —, borné à {{budget}} configurations, et il refuse de conclure en deçà de {{n_min}} trades. C'est la seule limite que ce dépôt ne puisse pas lever seul.</p>
+    <p>Aucune mesure n'est conduite ici non plus. Mais le protocole qui la conduirait est écrit, scellé avant qu'aucune donnée n'existe — empreinte <span class="v">{{seal}}</span> —, borné à {{budget}} configurations, et il n'ouvre aucun examen avant {{n_min}} séances — une année pleine. C'est la seule limite que ce dépôt ne puisse pas lever seul.</p>
 
     <p class="keywords"><span>Mots-clés —</span> identité de Wald&nbsp;; exposition au marché&nbsp;; momentum intraday&nbsp;; friction endogène&nbsp;; pré-enregistrement&nbsp;; Sharpe déflaté&nbsp;; capacité.</p>
   </div>
@@ -610,7 +610,7 @@
 
   {{FIGURE:a2power|Seuil de sélection déflaté selon le nombre d'essais, face au Sharpe qu'implique la dérive documentée. Le croisement à trois essais tombe vers {{n_star}} trades&nbsp;: en deçà, un Sharpe mesuré au niveau attendu reste indiscernable du meilleur de trois essais sous l'hypothèse nulle.}}
 
-  <p>La lecture est sévère. À {{n_star}} trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de {{sr_trade}}. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et ne rien conclure avant {{n_min}} trades — soit {{years_min}} années à {{trades_year}} trades par an.</p>
+  <p>La lecture est sévère. À {{n_star}} trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de {{sr_trade}}. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et n'ouvrir aucun examen avant {{n_min}} séances, l'horizon complet du protocole étant borné à {{years_min}} années.</p>
 
   <h3>Le protocole scellé</h3>
 

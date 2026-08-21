@@ -151,9 +151,9 @@ def values() -> dict[str, str]:
         "sr_annual": num(annualised_sharpe(sr, TRADES_PER_YEAR), 2),
         "n_t2": num(trades_for_t_stat(sr), 0),
         "n_star": num(n_star, 0),
-        "n_min": num(PROTOCOL.min_trades, 0),
+        "n_min": num(PROTOCOL.min_sessions, 0),
         "trades_year": num(TRADES_PER_YEAR, 0),
-        "years_min": num(PROTOCOL.min_trades / TRADES_PER_YEAR, 1),
+        "years_min": num(PROTOCOL.horizon_sessions / 252.0, 0),
 
         # --- ruptures ---
         "brk_friction": num(brk["friction"].value, 2),

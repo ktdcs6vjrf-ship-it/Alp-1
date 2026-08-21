@@ -559,7 +559,7 @@
 
     <p>Cette dérive est toutefois empruntée, non mesurée, et un effet publié s'arbitre. La décote post-publication documentée par McLean et Pontiff donne deux résultats opposés. La conclusion survit à une perte de {{decay_break}}&nbsp;% de la dérive, contre {{decay_pub}}&nbsp;% observés en moyenne&nbsp;: c'est précisément ce que le changement de géométrie a acheté. Mais la décote court depuis la publication, et non depuis aujourd'hui&nbsp;: datée du travail de {{decay_first_year}}, la dérive subsistante en {{asof}} laisse une marge de {{decay_first_margin}}× sur son point de rupture, et la fenêtre se referme en {{decay_first_expiry}}. <strong>L'absence de mesure cesse d'être une lacune de complétude pour devenir une échéance.</strong></p>
 
-    <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">{{seal}}</span>, borné à {{budget}} configurations par le code lui-même, et il refuse de conclure en deçà de {{n_min}} trades.</p>
+    <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">{{seal}}</span>, et borné à {{budget}} configurations par le code lui-même. Il est surtout <strong>borné en temps</strong>&nbsp;: une statistique qui compte le temps d'exposition plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel de {{pw_markets}} contrats et une décision séquentielle jalonnée en information suffisent à rendre un verdict sur toute dérive captée supérieure à {{pw_mde_bps}} points de base en {{pw_horizon_years}} années de données au plus, et {{pw_median_ref}} en médiane sous l'hypothèse retenue — à niveau et puissance inchangés, la simulation de la procédure entière donnant une taille de {{pw_size}} pour {{pw_alpha}} nominal. Ce que ce dispositif n'absorbe pas est une décote supérieure à {{pw_decay_absorbed}}, et la décote documentée est plus forte&nbsp;: <strong>la question n'est pas seulement de savoir si l'avantage existe, mais s'il est encore décidable.</strong></p>
 
     <p class="keywords"><span>Mots-clés —</span> théorème d'arrêt optionnel&nbsp;; identité de Wald&nbsp;; premier passage&nbsp;; exposition au marché&nbsp;; coûts de transaction endogènes&nbsp;; lois nulles&nbsp;; momentum intraday&nbsp;; gamma des teneurs de marché&nbsp;; Sharpe déflaté&nbsp;; pré-enregistrement.</p>
     <p class="jel"><span>Classification JEL —</span> C12, C58, G11, G13, G14</p>
@@ -570,6 +570,7 @@
     <div><span class="n">{{ir_margin}}&#8202;×</span><span class="t">marge de la dérive documentée sur ce seuil</span></div>
     <div><span class="n">{{decay_first_expiry}}</span><span class="t">année où la décote documentée la ramène sous ce seuil</span></div>
     <div><span class="n">{{friction_mean}}&#8202;pt</span><span class="t">friction déduite du carnet, contre {{friction_ref}} posée</span></div>
+    <div><span class="n">{{pw_horizon_years}}&#8202;ans</span><span class="t">horizon du protocole, pour une dérive détectable de {{pw_mde_bps}}&#8202;pdb</span></div>
     <div><span class="n">0</span><span class="t">série de prix ouverte à ce jour</span></div>
   </div>
 
@@ -627,12 +628,13 @@
           <li><a href="#s-exposant">La cohérence de l'exposant d'échelle</a></li>
           <li><a href="#s-taille">Dimensionnement</a></li>
           <li><a href="#s-surajustement">Discipline anti-surajustement</a></li>
+          <li><a href="#s-borne">Le protocole à horizon borné</a></li>
           <li><a href="#s-proto2">Le protocole de mesure</a></li>
         </ol>
       </li>
       <li>
         <span class="pt">Verdict</span>
-        <ol start="31">
+        <ol start="34">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -1000,6 +1002,8 @@
   <p>Les ratios élevés jouent ici dans les deux sens. Ils augmentent l'espérance par trade, par l'exposition&nbsp;; ils augmentent aussi la dispersion, car le résultat est dominé par une queue rare et grande. La Table&nbsp;8 et la Figure&nbsp;6 tranchent&nbsp;: <strong>à dérive captée égale, le ratio élevé l'emporte</strong> — {{n20_k2}} trades au ratio 1:20 contre {{n10_k2}} au ratio 1:10 pour une dérive de {{mu_k2}} point par heure — mais les ordres de grandeur restent exigeants. Une dérive de deux fois le seuil d'équilibre demande plusieurs milliers de trades, soit plusieurs années à deux trades par séance. Une dérive de trois fois le seuil ramène l'exigence à {{n20_k3}} trades.</p>
 
   <p>Ce constat ne condamne pas la stratégie&nbsp;; il fixe l'ordre dans lequel les tests doivent être conduits. Les mesures de la section <a href="#s-proto1">18</a> portent sur des propriétés du prix conditionnées au signal, estimables sur historique en quelques jours de travail, et non sur un P&amp;L simulé qui demanderait des années de données pour trancher.</p>
+
+  <p>Il faut ajouter à ce constat une précision qui en change la portée, et la section&nbsp;<a href="#s-borne">32</a> la démontre. Les nombres ci-dessus sont ceux d'un dispositif précis&nbsp;: un marché, une entrée par séance, une moyenne non pondérée sur des trades traités comme des observations interchangeables, un seuil corrigé de Bonferroni, une décision unique en fin d'échantillon. <strong>Ils mesurent le coût de ce dispositif, non une propriété de la stratégie.</strong> La même exigence de niveau et de puissance, servie par une statistique qui compte le temps de marché plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel et une décision séquentielle, tient dans un horizon borné à cinq années. La présente section reste la borne à opposer à un backtest ordinaire, et c'est à ce titre qu'elle est conservée telle quelle.</p>
 
 {{TABLE:validation}}
 
@@ -1552,6 +1556,8 @@
 
   <p><strong>Troisièmement, il en découle une conclusion sur le surajustement qui est plus forte que la précaution habituelle.</strong> Puisqu'aucun backtest d'un an ne peut distinguer l'edge du bruit, un bon backtest d'un an n'est pas une <em>preuve faible</em>&nbsp;: c'est une observation dont l'explication par défaut est la sélection. Le surajustement n'est pas ici un risque à surveiller, c'est l'hypothèse nulle qu'il faudrait réfuter — et les seuils ci-dessus disent exactement à quel prix.</p>
 
+  <p><strong>Ces trois propositions portent sur un dispositif de mesure, et il faut dire lequel.</strong> Le nombre d'années ci-dessus est celui d'une moyenne non pondérée de trades comptés un par un, sur un marché, avec un seuil corrigé de Bonferroni et une décision unique. C'est le dispositif implicite de la quasi-totalité des backtests publiés, et c'est à ce titre qu'il fixe la barre. Ce n'est pas le meilleur dispositif disponible&nbsp;: la section&nbsp;<a href="#s-borne">32</a> en construit un qui atteint le même niveau et la même puissance dans un horizon borné à cinq années, sans relever d'un point la dérive supposée. La deuxième proposition doit donc se lire dans sa forme exacte — l'edge supposé n'est pas mesurable <em>par le dispositif ordinaire</em> dans un échantillon réalisable —, et la troisième reste entière, puisqu'elle ne porte pas sur la durée mais sur ce qu'un bon backtest d'un an autorise à conclure.</p>
+
   <p>Reste ce qui déplacerait le verdict, et le calcul le dit sans ambiguïté. La table finale l'énonce dans les deux sens où la question est décidable&nbsp;: par l'amplitude requise, et par la cadence.</p>
 
 {{TABLE:verdict}}
@@ -1565,6 +1571,8 @@
   </ul>
 
   <p>Ces trois lectures ne se substituent pas au protocole de la section suivante&nbsp;: elles en fixent le budget. Le Test&nbsp;2 y mesure la dérive captée&nbsp;; la présente partie dit combien de trades il faudra pour que sa réponse veuille dire quelque chose, et ce que coûtera chaque configuration essayée en chemin.</p>
+
+  <p>Un cinquième levier n'apparaît pas dans cette table parce qu'il ne porte pas sur la stratégie mais sur l'instrument de mesure&nbsp;: <strong>compter le temps d'exposition plutôt que les trades, pondérer par la volatilité connue avant l'entrée, ordonner les configurations au lieu de les corriger, élargir à un panel, décider séquentiellement.</strong> Pris ensemble, ces cinq gestes divisent la durée par plus de cinq, à hypothèse d'edge rigoureusement inchangée. La section&nbsp;<a href="#s-borne">32</a> les chiffre un par un, nomme l'hypothèse que chacun exige, et mesure sur la procédure entière ce qu'ils obtiennent réellement.</p>
 
   <h2 id="s-proto1">Protocole de falsification</h2>
 
@@ -1880,7 +1888,9 @@
 
   {{FIGURE:a2power|Seuil de sélection déflaté selon le nombre d'essais, face au Sharpe qu'implique la dérive documentée. Le croisement à trois essais tombe vers {{n_star}} trades&nbsp;: en deçà, un Sharpe mesuré au niveau attendu reste indiscernable du meilleur de trois essais sous l'hypothèse nulle.}}
 
-  <p>La lecture est sévère. À {{n_star}} trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de {{sr_trade}}. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et ne rien conclure avant {{n_min}} trades — soit {{years_min}} années à {{trades_year}} trades par an.</p>
+  <p>La lecture est sévère. À {{n_star}} trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de {{sr_trade}}. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et n'ouvrir aucun examen avant {{n_min}} séances — une année pleine, pour qu'aucune décision ne repose sur une seule saison.</p>
+
+  <p>Le protocole scellé va toutefois plus loin que la déflation, et par une autre route. Déflater un Sharpe corrige <em>après coup</em> ce que le nombre d'essais explique à lui seul ; ordonner les configurations <em>avant</em> la mesure supprime le problème au lieu de le corriger. La section&nbsp;<a href="#s-borne">32</a> montre ce que l'échange rapporte : à taux d'erreur par famille identique, la séquence fixée rend au test principal le niveau plein, et le seuil de la configuration de référence redescend de {{pw_bonf_z}} à {{pw_fixed_z}}. La table ci-dessus reste le bon repère à opposer à un Sharpe rapporté sans protocole ; elle n'est plus la règle de décision.</p>
 
   <h3>Le protocole scellé</h3>
 
@@ -1893,6 +1903,101 @@
   {{TABLE:dof}}
 
   <p>L'intérêt de cette liste n'est pas d'être longue mais d'être close. Un degré de liberté qui n'y figure pas et qui est pourtant utilisé dans la mesure est une violation du protocole, repérable par simple lecture du code.</p>
+
+  <h2 id="s-borne">Le protocole à horizon borné</h2>
+
+  <p>Un protocole de vérification a deux propriétés, et les confondre est l'erreur qui rend un papier de stratégie inexploitable. La première est sa <strong>validité</strong>&nbsp;: la fréquence à laquelle il conclut à tort. La seconde est sa <strong>durée</strong>&nbsp;: le temps de marché qu'il faut lui donner pour qu'il conclue tout court. La section&nbsp;<a href="#s-horizon">8</a> chiffrait la seconde, et le chiffre était considérable — plusieurs milliers de trades, une décennie à deux trades par séance. Ce chiffre est exact pour le dispositif sur lequel il est calculé&nbsp;: un marché, une entrée par séance, une moyenne non pondérée, un seuil corrigé de Bonferroni, une décision unique en fin d'échantillon. Il n'est pas une propriété de la stratégie, et le confondre avec elle revient à confondre la qualité d'un signal avec celle de l'instrument qui le mesure.</p>
+
+  <p>Cette section construit le dispositif qui atteint la même validité — même niveau, même puissance, aucune concession sur l'un ni sur l'autre — dans un horizon borné à {{pw_horizon_years}} années de données. Elle repose sur cinq leviers. Aucun ne touche à l'hypothèse d'edge&nbsp;: la dérive supposée reste celle de la section&nbsp;<a href="#s-derive">24</a>, ni relevée, ni réécrite. Ce qui change est la manière de la mesurer.</p>
+
+  <h3>L'information n'est pas le nombre de trades</h3>
+
+  <p>Le critère maître donne la statistique. Si <span class="v">E</span>[<span class="v">R</span>]&nbsp;=&nbsp;<span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>, alors la quantité à estimer est la dérive nette <em>par unité d'exposition</em>, et non la moyenne par trade&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">µ̂</span><span class="op">=</span><span class="frac"><span>&Sigma;<span class="v">w<sub>i</sub></span>&thinsp;<span class="v">R<sub>i</sub></span></span><span>&Sigma;<span class="v">w<sub>i</sub></span>&thinsp;<span class="v">τ<sub>i</sub></span></span></span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">w<sub>i</sub></span><span class="op">=</span>1/<span class="v">σ̂<sub>i</sub></span>²,<span class="op"></span>&nbsp;&nbsp;<span class="v">I</span><span class="op">=</span>1/Var(<span class="v">µ̂</span>),</div>
+    <div class="no">(33)</div>
+  </div>
+
+  <p>Deux conséquences suivent, et elles sont l'essentiel du gain. La première&nbsp;: <strong>deux trades de dix minutes ne valent pas un trade de vingt minutes</strong> s'ils sont comptés comme deux observations d'une moyenne, alors qu'ils portent la même information sur <span class="v">µ</span>. Compter des tickets plutôt que du temps de marché jette une part de l'échantillon. La seconde&nbsp;: la volatilité d'une séance d'indice varie d'un facteur deux entre ses quantiles à 15 et 85&nbsp;%, et une moyenne non pondérée paie cette dispersion en variance. Pondérer par la volatilité estimée <em>avant</em> l'entrée — les quatorze séances précédentes, déjà gelées au protocole — est la pondération des moindres carrés généralisés, et son gain d'information est majoré exactement par <span class="v">E</span>[<span class="v">σ</span>²]&thinsp;·&thinsp;<span class="v">E</span>[1/<span class="v">σ</span>²]&nbsp;=&nbsp;<span class="v">e</span><sup>4<span class="v">ν</span>²</sup>, soit {{pw_gls}} à <span class="v">ν</span>&nbsp;=&nbsp;{{pw_nu}}. C'est un majorant&nbsp;: il suppose la volatilité connue, alors qu'elle est estimée&nbsp;; la simulation mesure ce qu'il en reste.</p>
+
+  <p>La variance de <span class="v">µ̂</span> est <strong>groupée par date</strong>, sans modèle de corrélation entre marchés ni entre entrées d'une même séance. C'est ce qui rend le dispositif valide sans rien supposer de cette corrélation — un point sur lequel la section revient, parce qu'il est le seul qui empêche le panel d'être un tour de passe-passe.</p>
+
+  <h3>Cinq leviers, et ce que chacun coûte</h3>
+
+  <p>Le tableau qui suit part du dispositif de la section&nbsp;<a href="#s-horizon">8</a> et retire un levier à la fois. L'ordre est celui du coût en hypothèses, du plus gratuit au plus cher&nbsp;: un lecteur qui refuse le dernier levier lit sa durée à l'avant-dernière ligne, et ainsi de suite jusqu'en haut.</p>
+
+  {{TABLE:power_ledger}}
+
+  <p>Deux d'entre eux ne coûtent rien du tout, et il vaut la peine de dire pourquoi. La <strong>séquence fixée</strong> remplace la correction de Bonferroni&nbsp;: les trois configurations sont ordonnées d'avance, et la deuxième n'est lue que si la première rejette. Le taux d'erreur par famille reste <span class="v">α</span> sans qu'aucun test ne perde de niveau — le seuil de la configuration de référence redescend de {{pw_bonf_z}} à {{pw_fixed_z}} — et le prix se paie ailleurs&nbsp;: si C1 échoue, C2 et C3 ne sont jamais lues, quelles qu'aient été leurs valeurs. C'est exactement ce qu'on veut d'un protocole, puisqu'un filtre qui rattrape une règle défaillante n'a rien démontré sur la règle. La <strong>décision séquentielle</strong> ne coûte rien non plus, à ceci près qu'elle majore l'information maximale de {{pw_inflation_pct}}&nbsp;: c'est le prix du droit de regarder en cours de route, et il est très inférieur au tiers de durée que le droit fait gagner.</p>
+
+  <p>Les trois autres coûtent une hypothèse, et elle est nommée dans la dernière colonne. La cadence suppose que la dérive survive aux entrées de rang deux et trois&nbsp;; le panel, qu'elle soit commune aux cinq contrats. Ces deux hypothèses ne sont pas des vœux&nbsp;: chacune est inscrite au protocole comme <em>falsificateur</em>, et sa violation arrête la mesure au lieu de la biaiser.</p>
+
+  <h3>La décision est séquentielle, et jalonnée en information</h3>
+
+  <p>Les examens ne tombent pas à date fixe. Ils tombent quand l'information accumulée — <span class="v">1</span>/Var(<span class="v">µ̂</span>), mesurée sur les données et non prédite — franchit une fraction pré-enregistrée de l'information maximale. La conséquence est décisive et mérite d'être isolée&nbsp;: <strong>la corrélation entre marchés, la cadence des entrées et la persistance de la volatilité déplacent la <em>date</em> des examens, jamais leurs seuils.</strong> Aucune de ces trois hypothèses de calibration n'entre donc dans le taux d'erreur du protocole. Elles n'entrent que dans sa durée prévisible.</p>
+
+  {{TABLE:power_plan}}
+
+  <p>Les frontières sont celles de la fonction de dépense d'O'Brien-Fleming, et leur forme porte tout le dispositif&nbsp;: presque rien n'est dépensé tôt — le premier examen exige {{pw_eff_first}} écarts-types —, de sorte que le seuil final reste à {{pw_eff_last}} au lieu de {{pw_fixed_z}} pour une décision unique. Un plan qui dépenserait son niveau au premier examen achèterait une réponse rapide au prix d'un seuil final que l'échantillon complet ne franchirait plus.</p>
+
+  <h3>Le budget de cinq années, et la dérive qu'il tranche</h3>
+
+  <p>Le protocole ne se donne pas une taille d'échantillon puis un calendrier. Il se donne un <strong>budget de temps de marché</strong> — {{pw_horizon_sessions}} séances, soit {{pw_horizon_years}} années — et en déduit ce qu'il peut trancher. Le budget d'information est calé sur {{pw_design_sessions}} séances plutôt que sur {{pw_horizon_sessions}}&nbsp;: l'information ne s'accumule pas à cadence fixe, et un budget calé sur l'horizon exact laisserait une part des histoires atteindre le plafond sans avoir atteint leur dernier examen. Sous cette contrainte, une dérive et une seule est détectable à la puissance visée, et c'est celle-là que le protocole publie&nbsp;: <strong><span class="v">θ</span>₁&nbsp;=&nbsp;{{pw_mde_bps}} points de base captés par trade</strong>, soit {{pw_mde_share}} de la dérive empruntée.</p>
+
+  {{TABLE:power_horizon}}
+
+  {{TABLE:power_mde}}
+
+  <p>Ce second tableau est ce qui rend un <em>échec</em> du protocole informatif, et c'est la propriété qu'un protocole doit avoir pour mériter d'être conduit. Ne pas rejeter au terme des cinq années n'est pas un résultat nul&nbsp;: c'est l'exclusion, à {{pw_power_pct}} de puissance, de toute dérive captée supérieure à la valeur de la dernière ligne. Un protocole qui ne publie pas sa dérive minimale détectable ne peut rien conclure de son propre silence.</p>
+
+  <h3>Ce que la simulation du protocole mesure</h3>
+
+  <p>Les chiffres ci-dessus sont des prévisions en forme fermée. Elles sont confrontées à une simulation de la <strong>procédure entière</strong> — et non de la stratégie&nbsp;: on ne demande pas ce que la stratégie produit, on demande à quelle fréquence le protocole se trompe et combien de temps il met à ne pas se tromper. La simulation se fait en trois étages. La séance est simulée minute par minute avec la saisonnalité en U, la volatilité de séance lognormale, les sauts, la bande estimée sur quatorze séances et donc entachée d'erreur, le stop surveillé en continu par pont brownien et le ré-armement après sortie&nbsp;: la loi du résultat d'un trade y est asymétrique ({{pw_skew}}) et à queue épaisse ({{pw_kurtosis}}), et c'est cette loi-là, non une approximation normale, qui alimente la suite. Les cinq contrats d'une même date sont ensuite noués par une copule à structure de blocs. Le protocole est enfin rejoué, examen par examen, {{pw_replicates}} fois par point.</p>
+
+  {{TABLE:power_operating}}
+
+  <p>Deux lignes de ce tableau décident de tout le reste. Sous l'hypothèse nulle, le protocole rejette <strong>{{pw_size}}&nbsp;±&nbsp;{{pw_size_se}}</strong> pour un niveau nominal de {{pw_alpha}}. À la dérive dimensionnante, il rejette <strong>{{pw_power_theta1}}</strong> pour une cible de {{pw_power_pct}}. Aucun réglage du dispositif n'a été choisi au vu de ces deux nombres, et c'est leur coïncidence avec les valeurs nominales qui atteste que le plan fait ce qu'il annonce plutôt que ce qu'on aurait voulu. Sous l'hypothèse empruntée, la puissance vaut {{pw_power_ref}} et la durée médiane du verdict tombe à <strong>{{pw_median_ref}} années</strong>, avec un décile supérieur à {{pw_q90_ref}}&nbsp;: la séquentialité rend le verdict deux fois plus vite que le budget ne le prévoit, précisément parce que la dérive supposée dépasse celle pour laquelle le plan est dimensionné.</p>
+
+{{FIGURE:qbounded|Puissance du protocole selon la dérive captée, loi de la durée du verdict, décompte des leviers, et robustesse à la corrélation du panel. Les barres verticales de la courbe de puissance sont l'erreur-type de Monte-Carlo&nbsp;: elles disent la précision du calcul, non celle du monde.}}
+
+  <h3>Ce qui rend ces chiffres non surajustés</h3>
+
+  <p>Une simulation qui mesure une puissance est exposée au même soupçon qu'un backtest qui mesure un Sharpe. La réponse tient en cinq propriétés, et elles sont vérifiables dans le code plutôt que promises.</p>
+
+  <ul>
+    <li><strong>Rien de ce qui est mesuré ici n'est un résultat qu'on pourrait vouloir flatteur.</strong> La simulation porte sur la procédure de décision, pas sur une stratégie. Une procédure qui rejette trop souvent sous l'hypothèse nulle est disqualifiée, et c'est la première chose que la simulation regarde.</li>
+    <li><strong>La taille est publiée à côté de la puissance.</strong> Un levier ajusté en cachette pour gagner de la puissance se paierait en taille&nbsp;; les deux sont mesurés sur les mêmes tirages et rapportés avec leur erreur-type.</li>
+    <li><strong>La dérive n'est jamais estimée&nbsp;: elle est imposée.</strong> La simulation ne mesure que la capacité du protocole à retrouver une quantité connue d'avance.</li>
+    <li><strong>Les frontières viennent d'une fonction de dépense publiée</strong>, le niveau et la puissance sont ceux du document, le panel et la cadence sont scellés. Il n'y a rien à régler.</li>
+    <li><strong>Les graines sont explicites et les contrôles publiés.</strong> Une simulation dont la graine n'est pas publiée n'est pas un résultat.</li>
+  </ul>
+
+  {{TABLE:power_controls}}
+
+  <p>Le premier contrôle est le plus important&nbsp;: si le marché simulé ne retrouvait pas l'identité d'arrêt optionnel — dérive brute nulle sous martingale, quelle que soit la géométrie —, tout ce qui suit serait sans objet. Il la retrouve à {{pw_martingale_z}} erreur-type. Le résidu du vivier est retranché avant de mesurer la taille, faute de quoi le taux d'erreur serait celui d'une hypothèse nulle décalée, c'est-à-dire d'aucune procédure. Deux contrôles vont contre le confort du document et sont conservés à ce titre&nbsp;: l'exposition réellement produite par la règle vaut {{pw_exposure}} minutes contre {{pw_exposure_closed}} en forme fermée, soit {{pw_exposure_gap}} de moins, saisonnalité et bande estimée comprises&nbsp;; et la prévision d'information en forme fermée est plus basse que la mesure, donc prudente, mais de {{pw_info_gap}} seulement.</p>
+
+  <p>Le dernier contrôle ne porte pas sur un calcul mais sur une pratique, et c'est le seul de la table qu'un opérateur puisse reconnaître dans son propre travail. À données identiques et procédure identique, lire la famille de trois configurations dans l'ordre scellé donne un taux d'erreur de {{pw_sel_sealed}}&nbsp;; la lire par son meilleur élément le porte à {{pw_sel_best}}. <strong>Seul l'ordre de lecture change.</strong></p>
+
+{{FIGURE:qmcnull|Trajectoires du <span class="v">Z</span> de décision contre les frontières séquentielles, sans dérive puis sous l'hypothèse empruntée&nbsp;; et le coût de la sélection, mesuré sur les mêmes tirages. Chaque trajectoire s'arrête où le protocole s'arrête.}}
+
+  <h3>La corrélation ne déplace que la durée</h3>
+
+  <p>Le panel est l'endroit où un lecteur attentif cherchera la faille, et il a raison de la chercher là&nbsp;: cinq contrats indiciels de trois fuseaux ne sont pas cinq expériences indépendantes, et un dispositif qui les compterait comme telles diviserait ses erreurs-types par un facteur inexistant. C'est précisément ce que la variance groupée par date interdit. La vérification est directe&nbsp;: on fait varier la corrélation intra-fuseau du simple au presque parfait, et on regarde ce qui bouge.</p>
+
+  {{TABLE:power_rho}}
+
+  <p>La taille reste au niveau nominal sur toute la plage — de {{pw_rho_size_lo}} à {{pw_rho_size_hi}} —, et la durée médiane passe de {{pw_rho_years_lo}} à {{pw_rho_years_hi}} années. C'est la signature exacte du jalonnement en information&nbsp;: une corrélation plus forte retarde les examens sans déplacer leurs seuils. Si la taille dérivait avec <span class="v">ρ</span>, le protocole serait faux, et ce tableau le montrerait.</p>
+
+  {{TABLE:power_panel}}
+
+  <p>Reste à dire ce que le panel achète, et le tableau ne le flatte pas. À information maximale scellée, un marché unique n'atteint pas son dernier examen dans l'horizon {{pw_solo_exhausted}} du temps sous l'hypothèse empruntée&nbsp;: il ne conclut pas, faute de temps de marché et non faute de dérive. Trois contrats suffisent à trancher cette hypothèse-là ({{pw_three_power_ref}} de puissance)&nbsp;; les cinq sont ce qui rend décidable sa version décotée. <strong>Le panel n'est pas un ornement statistique&nbsp;: c'est ce qui rend l'horizon de cinq années atteignable.</strong></p>
+
+  <div class="keybox">
+    <span class="lab">Ce que l'horizon borné tranche, et ce qu'il ne tranche pas</span>
+    <p>Le protocole rend un verdict sur toute dérive captée supérieure à {{pw_mde_bps}} points de base, dans {{pw_horizon_years}} années au plus et {{pw_median_ref}} en médiane sous l'hypothèse du document. Il absorbe donc une décote de {{pw_decay_absorbed}} sur la dérive empruntée — mais pas davantage, et la section&nbsp;<a href="#s-decote">28</a> a établi que la décote documentée en moyenne sur les anomalies publiées est plus forte que cela.</p>
+    <p>Les deux résultats se composent en une inégalité qu'il faut énoncer sans l'adoucir. La dérive reste au-dessus du seuil de détectabilité seulement si son taux de décroissance annuel est inférieur à {{pw_decay_max_rate_pct}}, contre {{pw_decay_documented_pct}} documentés. Datée du travail de {{decay_first_year}}, elle est passée sous ce seuil en {{pw_deadline_first}}&nbsp;; datée de sa généralisation, en {{pw_deadline_last}}. <strong>Ce n'est pas le protocole qui est trop lent&nbsp;: c'est la question qui a peut-être cessé d'être décidable, et le protocole est ce qui permet de le dire plutôt que de le supposer.</strong> Un silence de cinq années, adossé à une dérive minimale détectable publiée, est lui-même une mesure.</p>
+  </div>
 
   <h2 id="s-proto2">Le protocole de mesure</h2>
 
@@ -1937,6 +2042,8 @@
     <li>Sur un prix sans dérive, la mèche haute atteint <span class="v">k</span> fois le corps avec probabilité 1/(2<span class="v">k</span>&nbsp;+&nbsp;1), et la clôture dépasse le corps de la veille trois jours sur quatre.</li>
     <li>Attendre un retracement améliore l'espérance par signal si et seulement si le signal exécuté au marché est perdant.</li>
     <li>Le passage de la géométrie ALP-1 à la géométrie ALP-2 divise par {{ir_factor}} le ratio d'information exigé du signal, sans rien changer au signal lui-même.</li>
+    <li>Un protocole de vérification a une durée qui dépend de son dispositif de mesure et non de la seule stratégie&nbsp;: à niveau et puissance inchangés, cinq gestes — exposition plutôt que tickets, pondération par la volatilité pré-entrée, séquence fixée plutôt que Bonferroni, panel, décision séquentielle — ramènent le verdict de {{pw_naive_years}} à {{pw_bounded_years}} années sur l'hypothèse du document.</li>
+    <li>Le taux d'erreur d'une famille de trois configurations ne dépend pas des données mais de l'ordre dans lequel on les lit&nbsp;: {{pw_sel_sealed}} dans l'ordre scellé, {{pw_sel_best}} par le meilleur élément, sur les mêmes tirages.</li>
   </ul>
 
   <h3>Ce qu'il n'établit pas</h3>
@@ -1954,6 +2061,8 @@
     <li><strong>L'exposant d'échelle n'est pas mesuré.</strong> La calibration le pose à ½ et la discussion du gamma en retient {{hurst}}, ce qui n'est pas cohérent. La section&nbsp;<a href="#s-exposant">29</a> refait la chaîne sous exposant imposé&nbsp;: l'incohérence joue contre la stratégie, d'un facteur {{scal_factor}} sur le seuil requis, et aucun mécanisme documenté ne soutient la persistance invoquée. Le test&nbsp;1 la lève.</li>
     <li><strong>La boîte de plausibilité est posée, pas mesurée.</strong> Ses bornes viennent d'observations publiques et du jugement. Un lecteur qui les juge trop larges ou trop étroites peut les modifier et relancer&nbsp;: les verdicts se recalculent.</li>
     <li><strong>Le modèle de carnet est paramétrique.</strong> Profondeur, amincissement au déclenchement et latence sont des ordres de grandeur, encadrés sur 243 combinaisons mais jamais observés sur un carnet réel.</li>
+    <li><strong>La décidabilité elle-même est datée.</strong> Le protocole de la section&nbsp;<a href="#s-borne">32</a> tranche toute dérive captée supérieure à {{pw_mde_bps}} points de base, soit une décote de {{pw_decay_absorbed}} au plus sur la dérive empruntée. La décote documentée est plus forte&nbsp;: si elle court depuis la publication, la dérive est passée sous le seuil de détectabilité en {{pw_deadline_first}} ou {{pw_deadline_last}} selon la datation retenue. Le protocole conserve alors sa valeur, mais elle change de nature&nbsp;— un silence de cinq années adossé à une dérive minimale détectable publiée exclut une amplitude, il ne mesure plus un avantage.</li>
+    <li><strong>Le panel suppose une dérive commune.</strong> Cinq contrats de trois fuseaux ne sont pas cinq expériences indépendantes, et le dispositif ne prétend pas le contraire&nbsp;: sa variance est groupée par date, ce qui le rend valide quelle que soit la corrélation, et l'hétérogénéité entre marchés est un falsificateur inscrit au protocole. Si la dérive est propre à un marché, le panel la dilue au lieu de la mesurer, et c'est le test de Cochran qui doit le dire avant la lecture du test principal.</li>
     <li><strong>Le conditionnement par le gamma reste une hypothèse.</strong> Il est inscrit au protocole comme configuration&nbsp;C2, et le document ne prétend pas qu'il fonctionne&nbsp;— seulement qu'il est testable sans données payantes.</li>
   </ul>
 
@@ -1961,6 +2070,7 @@
     <span class="lab">Le verdict, en une phrase</span>
     <p>Ce document n'établit pas qu'un avantage existe. Il établit qu'un changement de géométrie divise par {{ir_factor}} le seuil qu'un signal doit franchir, que la friction réelle laisse une marge de {{ir_margin}} sur une dérive documentée par des tiers, et qu'un protocole capable de trancher tient en cinq tests dont quatre se conduisent sur historique, sans donnée payante.</p>
     <p>Ce qui manque est une série de prix. Rien d'autre&nbsp;— et, depuis la section&nbsp;<a href="#s-decote">28</a>, ce qui manque a une date&nbsp;: au taux de décote documenté, la dérive empruntée passe sous son point de rupture en {{decay_first_expiry}} si on la date du travail d'origine, en {{decay_last_expiry}} si on la date de sa généralisation.</p>
+    <p>Ce qui ne manque plus est le temps. Le protocole rend son verdict sur {{pw_horizon_years}} années de barres d'une minute au plus, {{pw_median_ref}} en médiane sous l'hypothèse retenue, à un niveau mesuré de {{pw_size}} et une puissance de {{pw_power_ref}}. La décennie que la section&nbsp;<a href="#s-horizon">8</a> annonçait était le coût d'un instrument de mesure, non celui de la question.</p>
   </div>
 
   <h2 class="unnumbered">Références indicatives</h2>

@@ -5,6 +5,7 @@
     python main.py --quant            # instruments de validation et de stress
     python main.py --alp2             # tables d'ALP-2, grille de notation comprise
     python main.py --prereg           # protocole scellé et son empreinte SHA-256
+    python main.py --power            # protocole à horizon borné et son Monte-Carlo
     python main.py --measure [f.csv]  # exécute le protocole sur un historique
     python main.py --paper            # reconstruit docs/alp1-paper.html
     python main.py --paper2           # reconstruit docs/alp2-paper.html
@@ -46,6 +47,12 @@ def main() -> int:
         from alp1.prereg import main as prereg_main
 
         prereg_main()
+        return 0
+
+    if "--power" in sys.argv:
+        from alp1.report4 import main as power_main
+
+        power_main()
         return 0
 
     if "--measure" in sys.argv:

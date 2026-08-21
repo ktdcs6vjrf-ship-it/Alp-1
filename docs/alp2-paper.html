@@ -468,7 +468,7 @@
 
     <p>Trois différences de méthode séparent ce document du précédent. La calibration part de trois nombres dont tout le reste se déduit, et sept identités le vérifient à chaque exécution. La dérive n'est plus un espoir mais une grandeur publiée — 6,0 points de base par trade, rapportés par des travaux sur soixante contrats et quarante-six ans —, confrontée au seuil de friction. La friction elle-même n'est plus posée mais déduite du barème, de la profondeur du carnet et de la latence : 0,650 point en moyenne, soit le double de ce que le scénario de référence supposait.</p>
 
-    <p>Aucune mesure n'est conduite ici non plus. Mais le protocole qui la conduirait est écrit, scellé avant qu'aucune donnée n'existe — empreinte <span class="v">14cd4100705eab00</span> —, borné à 3 configurations, et il refuse de conclure en deçà de 1 000 trades. C'est la seule limite que ce dépôt ne puisse pas lever seul.</p>
+    <p>Aucune mesure n'est conduite ici non plus. Mais le protocole qui la conduirait est écrit, scellé avant qu'aucune donnée n'existe — empreinte <span class="v">02a53022705e9383</span> —, borné à 3 configurations, et il n'ouvre aucun examen avant 252 séances — une année pleine. C'est la seule limite que ce dépôt ne puisse pas lever seul.</p>
 
     <p class="keywords"><span>Mots-clés —</span> identité de Wald&nbsp;; exposition au marché&nbsp;; momentum intraday&nbsp;; friction endogène&nbsp;; pré-enregistrement&nbsp;; Sharpe déflaté&nbsp;; capacité.</p>
   </div>
@@ -1110,7 +1110,7 @@
         </tbody>
       </table>
       </div>
-      <p class="note"><span class="lab">Lecture.</span> La dernière colonne est le Sharpe par trade qu'implique la dérive publiée. À 400 trades et trois configurations, le seuil de sélection vaut déjà 0,074 pour un Sharpe attendu de 0,090 : la marge est mince. Deux conséquences opérationnelles — ne pas dépasser trois variantes, et ne rien conclure avant un millier de trades.</p>
+      <p class="note"><span class="lab">Lecture.</span> La dernière colonne est le Sharpe par trade qu'implique la dérive publiée. À 400 trades et trois configurations, le seuil de sélection vaut déjà 0,074 pour un Sharpe attendu de 0,090 : la marge est mince. Ce seuil reste le bon repère à opposer à un Sharpe rapporté sans protocole ; il n'est pas la règle de décision retenue, qui traite la multiplicité en séquence fixée plutôt qu'en la corrigeant après coup.</p>
     </figure>
 
       <figure class="plate">
@@ -1154,7 +1154,7 @@
 </svg></div>
     </figure>
 
-  <p>La lecture est sévère. À 301 trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de 0,085. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et ne rien conclure avant 1 000 trades — soit 5,0 années à 200 trades par an.</p>
+  <p>La lecture est sévère. À 301 trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de 0,085. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et n'ouvrir aucun examen avant 252 séances, l'horizon complet du protocole étant borné à 5 années.</p>
 
   <h3>Le protocole scellé</h3>
 
@@ -1164,14 +1164,16 @@
       <table>
         <thead><tr><th>Élément</th><th>Valeur</th><th class="wrap">Détail</th></tr></thead>
         <tbody>
-          <tr><td>Sceau SHA-256</td><td>14cd4100705eab00…</td><td class="wrap">empreinte de la sérialisation canonique du protocole, publiable avant d'ouvrir le moindre fichier de prix</td></tr>
-          <tr><td>Version</td><td>ALP-2/1.0</td><td class="wrap">scellée le 2026-08-21</td></tr>
-          <tr><td>Budget</td><td>3 configurations</td><td class="wrap">C1 — Bande de bruit, sans filtre, C2 — Bande de bruit, conditionnée au gamma net, C3 — Bande de bruit, entrée retardée</td></tr>
-          <tr><td>Statistique primaire</td><td>Sharpe par trade</td><td class="wrap">Sharpe par trade du résultat net, en points d'indice, friction déduite du modèle de carnet et non posée.</td></tr>
-          <tr><td>Règle de décision</td><td>trois conditions</td><td class="wrap">Accepter seulement si les trois conditions tiennent : N ≥ min_trades, SR/trade > seuil déflaté à 3 essais, t = SR·√N > z_{1−α/3}.</td></tr>
-          <tr><td>Échantillon minimal</td><td>1 000 trades</td><td class="wrap">soit 5,0 années à 200 trades par an</td></tr>
+          <tr><td>Sceau SHA-256</td><td>02a53022705e9383…</td><td class="wrap">empreinte de la sérialisation canonique du protocole, publiable avant d'ouvrir le moindre fichier de prix</td></tr>
+          <tr><td>Version</td><td>ALP-2/2.0</td><td class="wrap">scellée le 2026-08-21</td></tr>
+          <tr><td>Budget</td><td>3 configurations, en séquence fixée</td><td class="wrap">C1 — Bande de bruit, sans filtre, C2 — Bande de bruit, conditionnée au gamma net, C3 — Bande de bruit, entrée retardée</td></tr>
+          <tr><td>Panel</td><td>5 contrats</td><td class="wrap">ES, NQ, FESX, FDAX, NK — même règle, trois fuseaux, aucun ajout ni retrait</td></tr>
+          <tr><td>Statistique primaire</td><td>dérive nette par minute</td><td class="wrap">Dérive nette par minute d'exposition, estimée par µ̂ = Σw·R / Σw·τ avec w = 1/σ̂² — moindres carrés généralisés sur la volatilité de séance estimée avant l'entrée —, variance groupée par date, friction relevée au journal d'exécution et non posée.</td></tr>
+          <tr><td>Multiplicité</td><td>séquence fixée</td><td class="wrap">Séquence fixée : C1, puis C2 seulement si C1 rejette, puis C3 seulement si C2 rejette. Chaque test au niveau plein α ; le taux d'erreur par famille reste α.</td></tr>
+          <tr><td>Règle de décision</td><td>4 examens séquentiels</td><td class="wrap">Jalonnement en information : examen à chaque franchissement d'une fraction pré-enregistrée de I_max. Rejet si Z ≥ frontière d'efficacité d'O'Brien-Fleming, abandon si Z ≤ frontière de futilité (non contraignante). Au-delà de l'horizon sans avoir atteint le dernier examen, le protocole ne conclut pas.</td></tr>
+          <tr><td>Horizon</td><td>1 260 séances</td><td class="wrap">soit 5 années ; budget d'information calé sur 1 134 séances, et aucun examen avant 252</td></tr>
+          <tr><td>Cadence</td><td>3 entrées par séance au plus</td><td class="wrap">ré-armement imposé : le prix doit revenir dans la bande avant qu'une nouvelle cassure compte</td></tr>
           <tr><td>Validation croisée</td><td>5 plis purgés</td><td class="wrap">embargo de 1 séance de part et d'autre de chaque pli</td></tr>
-          <tr><td>Seuil de sélection</td><td>0,0469</td><td class="wrap">Sharpe par trade attendu du meilleur de 3 essais sous l'hypothèse nulle, à 1 000 trades</td></tr>
         </tbody>
       </table>
       </div>
@@ -1190,11 +1192,17 @@
         <tbody>
           <tr><td>Seuil de cassure</td><td class="wrap">√(2/π)·σ̂₁·√t, aucun multiplicateur libre</td></tr>
           <tr><td>Fenêtre d'estimation de σ̂₁</td><td class="wrap">14 séances précédentes, close</td></tr>
-          <tr><td>Heure d'ouverture de la fenêtre</td><td class="wrap">10:00 ET (C1, C2) ou 11:00 ET (C3)</td></tr>
+          <tr><td>Ouverture de la fenêtre</td><td class="wrap">30,8 % de la séance (C1, C2) ou 23,1 % (C3)</td></tr>
           <tr><td>Largeur du stop</td><td class="wrap">la bande à l'entrée, jamais déplacée</td></tr>
-          <tr><td>Heure de sortie</td><td class="wrap">15:58 ET, fixe</td></tr>
-          <tr><td>Nombre d'entrées par séance</td><td class="wrap">une au plus</td></tr>
+          <tr><td>Heure de sortie</td><td class="wrap">clôture de la séance moins deux minutes, fixe</td></tr>
+          <tr><td>Nombre d'entrées par séance</td><td class="wrap">trois au plus, ré-armement imposé</td></tr>
           <tr><td>Filtre</td><td class="wrap">aucun (C1, C3) ou signe du gamma net (C2)</td></tr>
+          <tr><td>Panel</td><td class="wrap">cinq contrats nommés, aucun ajout ni retrait</td></tr>
+          <tr><td>Pondération</td><td class="wrap">1/σ̂², σ̂ estimée avant l'entrée ; aucune autre</td></tr>
+          <tr><td>Variance</td><td class="wrap">groupée par date, sans modèle de corrélation</td></tr>
+          <tr><td>Ordre des configurations</td><td class="wrap">C1, C2, C3 ; fixé, non révisable</td></tr>
+          <tr><td>Examens</td><td class="wrap">quatre, aux fractions 0,25 / 0,50 / 0,75 / 1,00 de I_max</td></tr>
+          <tr><td>Horizon</td><td class="wrap">1 260 séances ; aucune prolongation</td></tr>
           <tr><td>Friction</td><td class="wrap">loi déduite du carnet, quantile 90 % pour les arrêts</td></tr>
           <tr><td>Taille</td><td class="wrap">un contrat pour la mesure ; le dimensionnement ne fait pas partie du test</td></tr>
           <tr><td>Sous-période</td><td class="wrap">aucune : l'échantillon est pris en entier</td></tr>
@@ -1311,7 +1319,7 @@
 
   <div class="colophon">
     <p><strong>Avertissement.</strong> Ce document est un travail de recherche méthodologique. Il ne constitue ni un conseil en investissement, ni une recommandation d'opérer, et ne comporte aucune affirmation de performance. Les stratégies décrites n'ont fait l'objet d'aucune validation empirique par leurs auteurs. Le trading de contrats à terme avec effet de levier expose à un risque de perte supérieure au capital engagé.</p>
-    <p>Toutes les tables et figures sont produites par le code du dépôt et reconstruites à chaque assemblage du document : un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le protocole est scellé sous l'empreinte SHA-256 <span class="v">14cd4100705eab00</span>, publiable avant l'ouverture du moindre fichier de prix.</p>
+    <p>Toutes les tables et figures sont produites par le code du dépôt et reconstruites à chaque assemblage du document : un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le protocole est scellé sous l'empreinte SHA-256 <span class="v">02a53022705e9383</span>, publiable avant l'ouverture du moindre fichier de prix.</p>
   </div>
 
 </div>

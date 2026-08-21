@@ -1775,7 +1775,9 @@ class TestPreregistration(unittest.TestCase):
         import dataclasses
 
         base = prereg.PROTOCOL.fingerprint()
-        for field_name, value in (("alpha", 0.01), ("min_trades", 999),
+        for field_name, value in (("alpha", 0.01), ("min_sessions", 999),
+                                  ("horizon_sessions", 1300),
+                                  ("markets", ("ES",)),
                                   ("sealed_on", "2026-08-22")):
             other = dataclasses.replace(prereg.PROTOCOL, **{field_name: value})
             self.assertNotEqual(other.fingerprint(), base, field_name)
@@ -1794,13 +1796,29 @@ class TestPreregistration(unittest.TestCase):
         self.assertGreater(p.hurdle(200), p.hurdle(1000))
         self.assertGreater(p.hurdle(1000), p.hurdle(5000))
 
-    def test_decision_requires_all_three_conditions(self):
+    def test_decision_follows_the_sequential_boundaries(self):
         p = prereg.PROTOCOL
-        self.assertFalse(prereg.decide(p, 0.090, 400).accepted)      # trop court
-        self.assertFalse(prereg.decide(p, 0.040, 1000).accepted)     # sélection
-        self.assertTrue(prereg.decide(p, 0.090, 1000).accepted)
-        d = prereg.decide(p, 0.090, 1000)
-        self.assertTrue(d.beats_selection and d.significant and d.enough_trades)
+        plan = p.bounds()
+        # Sous la première fraction d'information : aucune décision définie.
+        early = prereg.decide(p, 9.0, 0.10, 300)
+        self.assertFalse(early.conclusive)
+        self.assertEqual(early.look, 0)
+        # Au deuxième examen, la frontière d'efficacité décide.
+        self.assertTrue(prereg.decide(p, plan.efficacy[1] + 0.01, 0.52, 700).rejected)
+        self.assertFalse(prereg.decide(p, plan.efficacy[1] - 0.01, 0.52, 700).rejected)
+        self.assertTrue(prereg.decide(p, plan.futility[1] - 0.01, 0.52, 700).abandoned)
+        # Horizon atteint sans dernier examen : le protocole ne conclut pas.
+        exhausted = prereg.decide(p, 9.0, 0.80, p.horizon_sessions)
+        self.assertTrue(exhausted.exhausted)
+        self.assertFalse(exhausted.rejected)
+
+    def test_boundaries_are_monotone_and_ordered(self):
+        plan = prereg.PROTOCOL.bounds()
+        self.assertEqual(len(plan.efficacy), len(prereg.PROTOCOL.looks))
+        for a, b in zip(plan.efficacy, plan.efficacy[1:]):
+            self.assertGreater(a, b)
+        for e, f in zip(plan.efficacy, plan.futility):
+            self.assertGreaterEqual(e, f)
 
     def test_degrees_of_freedom_are_enumerated(self):
         dof = prereg.degrees_of_freedom()

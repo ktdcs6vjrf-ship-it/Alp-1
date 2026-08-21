@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
-34 sections en cinq parties, 61 tables, 34 figures.
+35 sections en cinq parties, 69 tables, 36 figures.
 
 ## Ce que contient ce dépôt
 
@@ -205,21 +205,127 @@ réponse en trois propositions.
 
 1. **Aucun instrument ne peut établir qu'un edge existe**, et ce n'est pas une
    limite des instruments : ce dépôt ne contient aucune donnée de marché.
-2. **L'edge supposé, s'il existe à l'amplitude retenue, n'est pas mesurable dans
-   un échantillon que la stratégie possédera un jour** — 9,7 ans sans sélection,
-   25,1 ans après cent configurations essayées.
+2. **L'edge supposé n'est pas mesurable par le dispositif ordinaire** — une
+   moyenne non pondérée de trades comptés un par un, sur un marché, seuil
+   corrigé de Bonferroni, décision unique : 9,7 ans sans sélection, 25,1 ans
+   après cent configurations essayées.
 3. **Il en découle une conclusion plus forte que la précaution habituelle sur le
    surajustement.** Puisqu'aucun backtest d'un an ne distingue l'edge du bruit,
    un bon backtest d'un an n'est pas une preuve faible : c'est une observation
    dont l'explication par défaut est la sélection.
 
-Deux leviers déplacent le verdict, et le calcul les chiffre.
+La deuxième proposition porte sur un **instrument de mesure**, et c'est ce que
+la partie suivante exploite : la durée d'une vérification n'est pas une
+propriété de la stratégie.
 
 | Levier | Effet |
 |---|---|
 | Fixer la configuration **avant** de regarder les données | 25,1 ans → 9,7 ans. Gratuit. |
 | Passer de 2 à 8 trades par séance | 25,1 ans → 6,3 ans, si la dérive survit à la multiplication des signaux |
 | Augmenter l'amplitude de l'edge | il faudrait `10,9 µ*` — un Sharpe annualisé de 3,8 — pour qu'une année suffise. Hors de portée. |
+| **Changer de dispositif de mesure** | **4,8 ans → 0,91 an** à niveau, puissance et hypothèse d'edge inchangés (section suivante) |
+
+## Le protocole à horizon borné : décider en cinq ans
+
+Un protocole de vérification a deux propriétés distinctes, et les confondre est
+l'erreur qui rend un papier de stratégie inexploitable. Sa **validité** est la
+fréquence à laquelle il conclut à tort. Sa **durée** est le temps de marché
+qu'il faut lui donner pour qu'il conclue tout court. Les dix à vingt-cinq
+années ci-dessus sont exactes pour le dispositif sur lequel elles sont
+calculées — un marché, une entrée par séance, moyenne non pondérée, Bonferroni,
+décision unique. Ce n'est pas une propriété de la stratégie.
+
+Le protocole scellé atteint **la même validité en cinq années de données au
+plus**, sans relever d'un point la dérive supposée. Cinq leviers, et chacun
+nomme l'hypothèse qu'il exige.
+
+| Levier | Facteur | Durée | Ce qu'il exige |
+|---|---|---|---|
+| Dispositif du document précédent | — | 4,8 ans | un marché, une entrée, Bonferroni, décision unique |
+| Séquence fixée au lieu de Bonferroni | ×0,70 | 3,3 ans | un ordre déclaré avant les données ; aucune hypothèse de marché |
+| Pondération GLS par la volatilité pré-entrée | ×0,61 | 2,0 ans | dérive constante en points par minute |
+| Cadence : jusqu'à trois entrées par séance | ×0,93 | 1,9 an | la dérive survit aux entrées de rang 2 et 3 |
+| Panel de cinq contrats, trois fuseaux | ×0,57 | 1,1 an | dérive commune au panel |
+| Décision séquentielle, quatre examens | ×0,84 | **0,91 an** | aucune ; le maximum monte de 15,7 % |
+
+**La statistique change de nature.** Ce qui est estimé n'est plus une moyenne
+par trade mais la dérive nette **par unité d'exposition** :
+`µ̂ = Σw·R / Σw·τ` avec `w = 1/σ̂²`, variance groupée par date. Deux trades de
+dix minutes ne valent pas un trade de vingt, et les compter comme deux
+observations d'une moyenne jette une part de l'échantillon.
+
+**Les examens sont jalonnés en information, pas en calendrier.** Ils tombent
+quand `1/Var(µ̂)` franchit une fraction pré-enregistrée du budget. Conséquence
+décisive : la corrélation entre marchés, la cadence et la persistance de la
+volatilité déplacent la *date* des examens, jamais leurs seuils. **Aucune
+hypothèse de calibration n'entre dans le taux d'erreur du protocole.**
+
+### Ce que cinq années tranchent
+
+Le protocole ne se donne pas une taille d'échantillon puis un calendrier : il
+se donne un budget de temps de marché — 1 260 séances — et en déduit ce qu'il
+peut trancher. Sous cette contrainte, une dérive et une seule est détectable à
+80 % de puissance, et elle est publiée.
+
+| | Valeur |
+|---|---|
+| Dérive minimale détectable, viabilité | **3,68 points de base captés** |
+| Décote absorbée sur la dérive empruntée | 39 % |
+| Durée médiane du verdict, hypothèse empruntée | **2,02 ans** |
+| Puissance à l'hypothèse empruntée | 0,999 |
+| Horizon épuisé sans conclure | 0,000 |
+
+C'est ce chiffre qui rend un *échec* du protocole informatif : ne pas rejeter
+au terme des cinq années exclut, à 80 % de puissance, toute dérive supérieure à
+3,68 points de base. Un protocole qui ne publie pas sa dérive minimale
+détectable ne peut rien conclure de son propre silence.
+
+### Le Monte-Carlo porte sur la procédure, pas sur la stratégie
+
+La simulation ne demande pas ce que la stratégie produit. Elle demande à quelle
+fréquence le protocole se trompe. Trois étages : la séance minute par minute
+(saisonnalité en U, volatilité lognormale, sauts, bande estimée sur 14 séances
+donc entachée d'erreur, stop surveillé en continu par pont brownien,
+ré-armement) ; les cinq contrats d'une date noués par une copule à blocs ; puis
+le protocole rejoué examen par examen, 1 500 fois par point.
+
+| Contrôle | Mesuré | Attendu |
+|---|---|---|
+| Taille sous H₀ | **0,046 ± 0,005** | 0,05 |
+| Puissance à θ₁ | **0,827** | 0,80 |
+| Arrêt optionnel sur le marché simulé | z = −0,67 | 0 |
+| Information par date, prévue / mesurée | 47,7 / 50,9 | écart prudent |
+| Exposition réalisée / forme fermée | 136,7 / 163,4 min | la forme fermée surestime |
+| Taille selon ρ ∈ [0,50 ; 0,95] | 0,043 – 0,046 | plate |
+| Durée médiane selon ρ | 2,46 → 3,34 ans | c'est elle qui bouge |
+
+**Ce qui met la mesure à l'abri du surajustement**, et il faut l'énoncer :
+aucun réglage n'est choisi au vu de la sortie ; la taille est publiée à côté de
+la puissance, de sorte qu'un levier ajusté en cachette se paierait en taille ;
+la dérive n'est jamais estimée mais **imposée** ; les frontières viennent d'une
+fonction de dépense publiée ; les graines sont explicites.
+
+Le dernier contrôle ne porte pas sur un calcul mais sur une pratique. À données
+identiques et procédure identique, lire la famille de trois configurations dans
+l'ordre scellé donne un taux d'erreur de **0,046** ; la lire par son meilleur
+élément le porte à **0,107**. Seul l'ordre de lecture change.
+
+### Ce que le protocole ne tranche pas
+
+Le panel n'est pas un ornement : à information maximale scellée, un marché
+unique n'atteint pas son dernier examen 53 % du temps sous l'hypothèse
+empruntée — il ne conclut pas, faute de temps de marché et non faute de dérive.
+Trois contrats suffisent pour cette hypothèse-là (0,995 de puissance), les cinq
+pour sa version décotée.
+
+Et la limite se dit sans l'adoucir. Le protocole absorbe une décote de 39 % ;
+la décote documentée est plus forte. La dérive reste au-dessus du seuil de
+**détectabilité** seulement si son taux de décroissance annuel est inférieur à
+**6,1 %/an**, contre **17,4 %** documentés. Datée du travail de 2018, elle est
+passée sous ce seuil en 2021 ; datée de sa généralisation, en 2024. Ce n'est
+pas le protocole qui est trop lent : c'est la question qui a peut-être cessé
+d'être décidable — et le protocole est ce qui permet de le dire plutôt que de
+le supposer.
 
 ## Deux corrections, et une échéance
 
@@ -266,11 +372,12 @@ python main.py --layers           # lexique des sigles et tables des couches
 python main.py --quant            # instruments de validation et de stress
 python main.py --alp2             # tables d'ALP-2 et grille de notation
 python main.py --prereg           # protocole scellé et son empreinte SHA-256
+python main.py --power            # protocole à horizon borné et son Monte-Carlo
 python main.py --measure f.csv    # exécute le protocole sur un historique
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 390 tests unitaires du noyau
+python main.py --tests            # 430 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -318,6 +425,8 @@ chiffre soit défendable plutôt que seulement juste :
 | `alp1/measure.py` | Exécution du protocole sur l'historique fourni |
 | `alp1/decay.py` | Décote post-publication de la dérive empruntée, durée de vie résiduelle |
 | `alp1/scaling.py` | Calibration sous exposant d'échelle imposé, géométrie au pire cas |
+| `alp1/power.py` | Frontières séquentielles, information du panel, dérive minimale détectable |
+| `alp1/mcprotocol.py` | Monte-Carlo du protocole entier : taille, puissance, durée du verdict |
 
 Les instruments de validation :
 
@@ -342,13 +451,15 @@ La production du document :
 | `alp1/figquant.py` | Planches des instruments, surfaces isométriques comprises |
 | `alp1/figcss.py` | Feuille de style partagée des figures |
 | `alp1/report3.py` | Tables et valeurs de la décote et de l'exposant d'échelle |
+| `alp1/report4.py` | Tables et valeurs du protocole à horizon borné |
 | `alp1/figdecay.py` | Figures de la décote et de l'exposant d'échelle |
+| `alp1/figpower.py` | Planches de puissance, de durée et de trajectoires séquentielles |
 | `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
 | `alp1/workingpaper.py` | Assemblage du document de travail complet |
 
 Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
 injectés par le code de l'autre. Un chiffre du texte et le point correspondant
-d'une figure ne peuvent pas diverger. Il compte 32 tables et 26 figures, toutes
+d'une figure ne peuvent pas diverger. Il compte 40 tables et 28 figures, toutes
 produites par le noyau ; les tables d'ALP-2 en ajoutent 24. Les simulations sont ensemencées explicitement : deux
 exécutions du dépôt produisent le même document, au bit près.
 
@@ -412,7 +523,9 @@ sans avoir été calibré dessus.
 ## Statut
 
 Analyse théorique, batterie d'instruments et protocole. **Aucune validation
-empirique.** Les instruments de la troisième partie sont appliqués à des lois
+empirique.** Le protocole de vérification est en revanche complet, scellé,
+exécutable, et son Monte-Carlo établit qu'il rend un verdict sur cinq années de
+barres d'une minute au plus. Les instruments de la troisième partie sont appliqués à des lois
 déduites du modèle et à des séries synthétiques dont la vérité est connue
 d'avance — ce qui les contrôle, mais ne mesure rien du marché. Ce dépôt ne
 constitue pas un conseil en investissement et ne comporte aucune affirmation de

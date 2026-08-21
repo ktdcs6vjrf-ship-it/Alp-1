@@ -417,8 +417,9 @@ def table_deflation() -> Table:
         note="La dernière colonne est le Sharpe par trade qu'implique la dérive "
              "publiée. À 400 trades et trois configurations, le seuil de sélection "
              "vaut déjà 0,074 pour un Sharpe attendu de 0,090 : la marge est mince. "
-             "Deux conséquences opérationnelles — ne pas dépasser trois variantes, et "
-             "ne rien conclure avant un millier de trades.")
+             "Ce seuil reste le bon repère à opposer à un Sharpe rapporté sans "
+             "protocole ; il n'est pas la règle de décision retenue, qui traite la "
+             "multiplicité en séquence fixée plutôt qu'en la corrigeant après coup.")
 
 
 def table_protocol() -> Table:
@@ -736,18 +737,23 @@ def table_prereg() -> Table:
         ["Sceau SHA-256", p.seal + "…", "empreinte de la sérialisation canonique "
          "du protocole, publiable avant d'ouvrir le moindre fichier de prix"],
         ["Version", p.version, f"scellée le {p.sealed_on}"],
-        ["Budget", num(BUDGET, 0) + " configurations",
+        ["Budget", num(BUDGET, 0) + " configurations, en séquence fixée",
          ", ".join(f"{c.key} — {c.label}" for c in p.configurations)],
-        ["Statistique primaire", "Sharpe par trade", p.primary_statistic],
-        ["Règle de décision", "trois conditions", p.decision_rule],
-        ["Échantillon minimal", num(p.min_trades, 0) + " trades",
-         f"soit {num(p.min_trades / TRADES_PER_YEAR, 1)} années à "
-         f"{num(TRADES_PER_YEAR, 0)} trades par an"],
+        ["Panel", num(len(p.markets), 0) + " contrats", ", ".join(p.markets)
+         + " — même règle, trois fuseaux, aucun ajout ni retrait"],
+        ["Statistique primaire", "dérive nette par minute", p.primary_statistic],
+        ["Multiplicité", "séquence fixée", p.multiplicity],
+        ["Règle de décision", num(len(p.looks), 0) + " examens séquentiels",
+         p.decision_rule],
+        ["Horizon", num(p.horizon_sessions, 0) + " séances",
+         "soit " + num(p.horizon_sessions / 252, 0) + " années ; budget "
+         "d'information calé sur " + num(p.design_sessions, 0) + " séances, et "
+         "aucun examen avant " + num(p.min_sessions, 0)],
+        ["Cadence", num(p.max_entries_per_session, 0) + " entrées par séance "
+         "au plus", "ré-armement imposé : le prix doit revenir dans la bande "
+         "avant qu'une nouvelle cassure compte"],
         ["Validation croisée", f"{p.cv_folds} plis purgés",
          f"embargo de {p.cv_embargo_days} séance de part et d'autre de chaque pli"],
-        ["Seuil de sélection", num(p.hurdle(p.min_trades), 4),
-         f"Sharpe par trade attendu du meilleur de {BUDGET} essais sous "
-         f"l'hypothèse nulle, à {num(p.min_trades, 0)} trades"],
     ]
     return Table(
         "prereg",
