@@ -16,7 +16,8 @@
     --serif: "Source Serif 4", "Times New Roman", Times, serif;
     --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-    --measure: 40rem;
+    --measure: 46rem;
+    --plate:   58rem;
 {{TOKENS_LIGHT}}  }
 
   @media (prefers-color-scheme: dark) {
@@ -42,8 +43,8 @@
     background: var(--paper);
     color: var(--ink);
     font-family: var(--serif);
-    font-size: 1.0625rem;
-    line-height: 1.62;
+    font-size: 1.1875rem;
+    line-height: 1.66;
     font-variant-numeric: oldstyle-nums proportional-nums;
     -webkit-font-smoothing: antialiased;
     counter-reset: section;
@@ -52,7 +53,7 @@
   .sheet {
     max-width: var(--measure);
     margin: 0 auto;
-    padding: 4.5rem 1.5rem 6rem;
+    padding: 3.2rem 1.6rem 5rem;
   }
 
   /* ---------- bloc de titre ---------- */
@@ -60,7 +61,7 @@
   .titleblock { text-align: center; margin-bottom: 2.6rem; }
 
   .venue {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--muted);
@@ -69,30 +70,30 @@
   }
 
   h1 {
-    font-size: 1.72rem;
+    font-size: 2.05rem;
     font-weight: 600;
-    line-height: 1.22;
+    line-height: 1.2;
     letter-spacing: -0.008em;
     margin: 0 0 1.1rem;
     text-wrap: balance;
   }
 
-  .byline { font-size: 1rem; margin: 0 0 0.25rem; }
-  .affil  { font-size: 0.86rem; color: var(--muted); font-style: italic; margin: 0 0 0.2rem; }
-  .dateline { font-size: 0.86rem; color: var(--muted); font-variant-numeric: lining-nums; }
+  .byline { font-size: 1.06rem; margin: 0 0 0.25rem; }
+  .affil  { font-size: 0.94rem; color: var(--muted); font-style: italic; margin: 0 0 0.2rem; }
+  .dateline { font-size: 0.94rem; color: var(--muted); font-variant-numeric: lining-nums; }
 
   /* ---------- résumé ---------- */
 
   .abstract {
     margin: 2.4rem auto 2.8rem;
-    max-width: 34rem;
-    font-size: 0.95rem;
-    line-height: 1.58;
+    max-width: 40rem;
+    font-size: 1.06rem;
+    line-height: 1.62;
     text-align: justify;
     hyphens: auto;
   }
   .abstract h2 {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     text-align: center;
@@ -102,7 +103,7 @@
   }
   .abstract h2::before { content: none; }
   .abstract p { margin: 0 0 0.75rem; text-indent: 0; }
-  .keywords { font-size: 0.88rem; color: var(--soft); margin-top: 1.1rem; }
+  .keywords { font-size: 0.95rem; color: var(--soft); margin-top: 1.1rem; }
   .keywords span { font-style: italic; }
 
   hr.rule {
@@ -116,9 +117,9 @@
   h2 {
     counter-increment: section;
     counter-reset: subsection;
-    font-size: 1.06rem;
+    font-size: 1.32rem;
     font-weight: 600;
-    margin: 2.6rem 0 0.8rem;
+    margin: 2.7rem 0 0.85rem;
     line-height: 1.3;
   }
   h2::before {
@@ -129,7 +130,7 @@
 
   h3 {
     counter-increment: subsection;
-    font-size: 0.98rem;
+    font-size: 1.14rem;
     font-weight: 600;
     font-style: italic;
     margin: 1.9rem 0 0.55rem;
@@ -145,10 +146,22 @@
   .unnumbered { counter-increment: none; }
   .unnumbered::before { content: none; }
 
+  /* Césure : les motifs suivent la langue du contenu, déclarée par le
+     `lang="fr"` porté par .sheet. Sans lui le navigateur coupe les mots
+     français sur des motifs anglais. Les limites interdisent les fragments
+     de moins de trois lettres. */
+  p, li, .abstract, .note, .prop {
+    hyphens: auto;
+    -webkit-hyphenate-limit-before: 3;
+    -webkit-hyphenate-limit-after: 3;
+    -webkit-hyphenate-limit-lines: 2;
+    hyphenate-limit-chars: 7 3 3;
+    hyphenate-limit-lines: 2;
+  }
+
   p {
     margin: 0 0 0.35rem;
     text-align: justify;
-    hyphens: auto;
   }
   p + p { text-indent: 1.4em; }
   h2 + p, h3 + p, .eq + p, table + p, .prop + p, ul + p, ol + p, figure + p {
@@ -175,14 +188,17 @@
   .eq > .body {
     grid-column: 2;
     text-align: center;
-    font-size: 1.02rem;
-    line-height: 1.7;
+    font-size: 1.12rem;
+    line-height: 1.72;
+    min-width: 0;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
   }
   .eq > .no {
     grid-column: 3;
     text-align: right;
     color: var(--soft);
-    font-size: 0.92rem;
+    font-size: 1rem;
     font-variant-numeric: lining-nums;
   }
 
@@ -191,7 +207,10 @@
   .frac {
     display: inline-flex;
     flex-direction: column;
-    vertical-align: -0.55em;
+    /* La ligne de base d'une boîte inline-flex est celle de son premier
+       enfant — le numérateur. `middle` remet la barre de fraction sur l'axe
+       mathématique, à hauteur du signe d'égalité. */
+    vertical-align: middle;
     text-align: center;
     margin: 0 0.22em;
     line-height: 1.18;
@@ -206,7 +225,7 @@
     margin: 1.3rem 0;
     padding: 0.85rem 0 0.85rem 1rem;
     border-left: 2px solid var(--rule);
-    font-size: 0.98rem;
+    font-size: 1.08rem;
   }
   .prop .lab {
     font-weight: 600;
@@ -217,7 +236,7 @@
   .prop p + p { margin-top: 0.5rem; }
   .prop .proof {
     font-style: normal;
-    font-size: 0.92rem;
+    font-size: 1rem;
     color: var(--soft);
     margin-top: 0.6rem;
   }
@@ -228,8 +247,8 @@
   figure { margin: 1.8rem 0; }
 
   figcaption {
-    font-size: 0.85rem;
-    line-height: 1.45;
+    font-size: 0.95rem;
+    line-height: 1.5;
     text-align: center;
     margin-bottom: 0.55rem;
     color: var(--ink);
@@ -246,7 +265,7 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    font-size: 0.86rem;
+    font-size: 0.95rem;
     font-variant-numeric: lining-nums tabular-nums;
     line-height: 1.4;
   }
@@ -270,14 +289,23 @@
   td.wrap { text-align: left; }
 
   /* Tables larges : elles débordent la largeur de lecture, centrées. */
-  figure.wide { width: min(92vw, 60rem); margin-left: 50%; transform: translateX(-50%); }
-  figure.wide table { font-size: 0.8rem; }
-  figure.wide figcaption, figure.wide .note { max-width: 40rem; margin-left: auto;
+  figure.wide { width: min(94vw, 66rem); margin-left: 50%; transform: translateX(-50%); }
+  figure.wide table { font-size: 0.88rem; }
+  figure.wide figcaption, figure.wide .note { max-width: 44rem; margin-left: auto;
                                               margin-right: auto; }
 
+  /* Planches : une figure est dessinée sur une grille de 640 unités. Ramenée
+     à la colonne de lecture elle rendrait ses étiquettes sous les 10 px ; on
+     la laisse déborder, ce qui agrandit le dessin entier sans en déranger la
+     composition. */
+  figure.plate { width: min(94vw, var(--plate)); margin-left: 50%;
+                 transform: translateX(-50%); }
+  figure.plate figcaption, figure.plate .note { max-width: 44rem; margin-left: auto;
+                                                margin-right: auto; }
+
   .note {
-    font-size: 0.82rem;
-    line-height: 1.5;
+    font-size: 0.9rem;
+    line-height: 1.55;
     color: var(--soft);
     margin-top: 0.55rem;
     text-align: justify;
@@ -293,7 +321,7 @@
 
   /* ---------- références ---------- */
 
-  .refs { font-size: 0.88rem; line-height: 1.5; }
+  .refs { font-size: 0.96rem; line-height: 1.55; }
   .refs ol { padding-left: 1.6rem; }
   .refs li { margin-bottom: 0.5rem; text-align: left; }
 
@@ -301,8 +329,8 @@
     margin-top: 3rem;
     padding-top: 1rem;
     border-top: 0.6px solid var(--hair);
-    font-size: 0.8rem;
-    line-height: 1.5;
+    font-size: 0.88rem;
+    line-height: 1.55;
     color: var(--muted);
     text-align: left;
   }
@@ -324,19 +352,22 @@
   }
 
 {{FIGURE_CSS}}
-  @media (max-width: 64rem) {
-    figure.wide { width: 100%; margin-left: 0; transform: none; }
+  /* Le débordement se borne de lui-même à 94vw ; il ne reste qu'à le
+     supprimer sur les écrans où il n'y a plus de marge à prendre. */
+  @media (max-width: 50rem) {
+    figure.wide, figure.plate { width: 100%; margin-left: 0; transform: none; }
   }
 
   @media (max-width: 34rem) {
-    .sheet { padding: 2.5rem 1.1rem 4rem; }
-    .eq { grid-template-columns: 0 1fr 2.2rem; }
+    .sheet { padding: 2.2rem 1.1rem 4rem; }
+    h1 { font-size: 1.72rem; }
+    .eq { grid-template-columns: 0 1fr 2.4rem; }
     p, li { text-align: left; }
   }
 </style>
 
 
-<div class="sheet">
+<div class="sheet" lang="fr">
 
   <div class="titleblock">
     <div class="venue">Document de travail ALP-1 &nbsp;·&nbsp; Microstructure et futures indiciels</div>

@@ -231,7 +231,7 @@ def build() -> str:
         if key not in figures:
             raise KeyError(f"figure inconnue : {key}")
         return (
-            '    <figure>\n'
+            '    <figure class="plate">\n'
             f'      <figcaption><span class="lab">Figure {fig_counter["n"]}</span> — {caption}</figcaption>\n'
             f'      <div class="scroll">{figures[key]}</div>\n'
             '    </figure>'
