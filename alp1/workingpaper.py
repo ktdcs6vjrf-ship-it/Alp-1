@@ -23,7 +23,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import lexicon, paper, paper2, quant, report, report2, report3, report4
+from . import (lexicon, paper, paper2, quant, report, report2, report3,
+               report4, report5)
 from .figalp2 import render_all as render_alp2_figures
 from .figdecay import render_all as render_decay_figures
 from .figpower import render_all as render_power_figures
@@ -47,7 +48,8 @@ def values() -> dict[str, str]:
     """Union des valeurs des deux documents, collisions préfixées."""
     v1, v2 = paper.values(), paper2.values()
     merged = dict(v1)
-    for key, val in {**v2, **report3.values(), **report4.values()}.items():
+    for key, val in {**v2, **report3.values(), **report4.values(),
+                     **report5.values()}.items():
         if key in COLLISIONS_VALEURS:
             merged[f"{key}_a2"] = val
         elif key in merged and merged[key] != val:
@@ -68,6 +70,7 @@ def tables() -> dict[str, report.Table]:
         **quant.all_tables(),
         **report3.all_tables(),
         **report4.all_tables(),
+        **report5.all_tables(),
     }
     for key, table in report2.all_tables().items():
         if key in COLLISIONS_TABLES:

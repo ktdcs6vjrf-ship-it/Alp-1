@@ -709,12 +709,13 @@
           <li><a href="#s-taille">Dimensionnement</a></li>
           <li><a href="#s-surajustement">Discipline anti-surajustement</a></li>
           <li><a href="#s-borne">Le protocole à horizon borné</a></li>
+          <li><a href="#s-remplissage">Ce que les barres d'une minute ne tranchent pas</a></li>
           <li><a href="#s-proto2">Le protocole de mesure</a></li>
         </ol>
       </li>
       <li>
         <span class="pt">Verdict</span>
-        <ol start="34">
+        <ol start="35">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -6785,12 +6786,49 @@
 
   <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement de l'atteignabilité du target, il décide de la calibration entière.</p>
 
+
+  <h3>L'estimateur, et ce qu'il révèle de lui-même</h3>
+
+  <p>Les deux paragraphes précédents concluent que l'exposant doit être mesuré. Il l'est désormais&nbsp;: le ratio de variance de Lo et MacKinlay, à fenêtres chevauchantes et sous sa forme robuste à l'hétéroscédasticité, est calculé sur les séances de l'historique — chacune traitée séparément, aucun rendement n'enjambant un gap de nuit dont la variance n'a rien à voir avec celle de la séance. De <span class="v">VR</span>(<span class="v">q</span>)&nbsp;=&nbsp;<span class="v">q</span><sup>2<i>H</i>−1</sup> on tire l'exposant, horizon par horizon puis par régression sur la grille entière.</p>
+
+  <p>La mise en œuvre a produit un résultat qui ne portait pas sur le marché mais sur l'instrument, et qu'il faut énoncer avant tout usage.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 54</span> — Ratio de variance mesuré sur une série sans dérive, et ce que l'estimateur en dit — brut, puis rapporté à sa propre loi nulle.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>q (min)</th><th>VR(q)</th><th>VR sous marche aléatoire</th><th>Ĥ brut</th><th>Ĥ corrigé</th><th>z asymptotique</th><th>z contre la nulle</th></tr></thead>
+        <tbody>
+          <tr><td>2</td><td>1,0078</td><td>1,0050</td><td>0,5056</td><td>0,5020</td><td>2,46</td><td>1,32</td></tr>
+          <tr><td>5</td><td>1,0195</td><td>1,0131</td><td>0,5060</td><td>0,5019</td><td>2,78</td><td>1,45</td></tr>
+          <tr><td>10</td><td>1,0298</td><td>1,0265</td><td>0,5064</td><td>0,5007</td><td>2,76</td><td>0,51</td></tr>
+          <tr><td>15</td><td>1,0469</td><td>1,0422</td><td>0,5085</td><td>0,5008</td><td>3,46</td><td>0,52</td></tr>
+          <tr><td>30</td><td>1,0982</td><td>1,0902</td><td>0,5138</td><td>0,5011</td><td>5,00</td><td>0,40</td></tr>
+          <tr><td>60</td><td>1,2225</td><td>1,1977</td><td>0,5245</td><td>0,5025</td><td>8,00</td><td>0,59</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La série est une marche aléatoire par construction : la seule réponse juste est Ĥ = 0,50 et un z qui ne rejette rien. La colonne « z asymptotique » est celle de Lo et MacKinlay ; elle rejette la marche aléatoire à tous les horizons. C'est le biais d'échantillon fini de l'estimateur sur des séances de 390 minutes, non une propriété du prix. Seule la dernière colonne décide.</p>
+    </figure>
+
+  <p>La série de cette table est une marche aléatoire par construction. La seule réponse juste est donc <i>H</i>&nbsp;=&nbsp;0,50, et un test qui ne rejette rien. Or la statistique asymptotique de Lo et MacKinlay <strong>rejette la marche aléatoire à tous les horizons de la grille</strong>, de 2,46 à 8,00 écarts-types, et la régression brute rend Ĥ&nbsp;=&nbsp;0,5208. Ce n'est pas une propriété du prix&nbsp;: c'est le biais d'échantillon fini de l'estimateur sur des séances de 390 minutes, où la correction sans biais cesse de suffire dès que l'horizon dépasse quelques dizaines de minutes — à <span class="v">q</span>&nbsp;=&nbsp;60, une martingale donne déjà <span class="v">VR</span>&nbsp;≈&nbsp;1,1977.</p>
+
+  <p>La conséquence est sévère et elle vise ce document. Un Test&nbsp;1 conduit avec la statistique du manuel aurait conclu à la persistance — c'est-à-dire précisément à ce dont la calibration de la section&nbsp;<a href="#s-seance">6</a> a besoin, et précisément ce que la section&nbsp;<a href="#s-gamma">9</a> ne parvient à expliquer par aucun mécanisme. Le risque n'était pas de manquer un effet&nbsp;: il était d'en fabriquer un, et de le fabriquer exactement là où le document l'attendait.</p>
+
+  <p>Le remède est celui que le document applique partout ailleurs, retourné cette fois contre son propre appareil&nbsp;: rapporter un motif à sa fréquence sous un prix sans dérive. La loi nulle de l'estimateur est simulée sur des séances de même longueur, et c'est à elle — non à l'unité — que le ratio mesuré se compare. Ainsi corrigé, l'exposant revient à 0,5018 par régression, et reste à un demi à chaque horizon pris séparément&nbsp;; l'écart maximal à la loi nulle tombe à 1,45 écart-type.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce qu'il faut lire, et ce qu'il ne faut pas lire</span>
+    <p>Quand l'historique arrivera, la colonne « z asymptotique » de cette table sera la première chose à ne pas regarder. Un Ĥ mesuré à 0,52 ne dira rien tant qu'il ne sera pas rapporté à ce que le même estimateur produit sur une série sans mémoire de la même longueur de séance.</p>
+    <p>C'est une remarque de méthode, mais elle porte ici la conclusion entière&nbsp;: l'exposant décide de σ₁, donc de la bande, donc du stop, donc de l'exposition, donc du seuil. Un biais de deux centièmes sur <i>H</i> se propage à tous ces nombres, et il se propage dans le sens qui flatte la stratégie.</p>
+  </div>
+
   <h3>La géométrie au pire cas</h3>
 
   <p>Si <i>H</i> n'est pas mesuré, la seule décision défendable est celle qui tient au plus défavorable de la boîte. Le pire cas tombe en <i>H</i>&nbsp;=&nbsp;0,65, et il désigne une heure d'entrée différente de celle du protocole.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 54</span> — Heure d'entrée évaluée au pire cas sur la boîte d'exposant, toutes les autres entrées inchangées.</figcaption>
+      <figcaption><span class="lab">Table 55</span> — Heure d'entrée évaluée au pire cas sur la boîte d'exposant, toutes les autres entrées inchangées.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Entrée (min)</th><th>E[τ∧T] (min)</th><th>µ* (pt/h)</th><th>IR*</th><th class="wrap">Statut</th></tr></thead>
@@ -6818,7 +6856,7 @@
   <p>Un stop de 23,0 points vaut 1 150&nbsp;$ sur un contrat ES et 115&nbsp;$ sur un micro-contrat. À 0,5&nbsp;% de risque par trade, cela impose l'instrument.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 55</span> — Dimensionnement à 0,5 % de risque par trade, stop de 23,0 points.</figcaption>
+      <figcaption><span class="lab">Table 56</span> — Dimensionnement à 0,5 % de risque par trade, stop de 23,0 points.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Capital</th><th>Risque visé</th><th>MES (exact)</th><th>MES (retenu)</th><th>ES (exact)</th><th>Risque réel</th><th>Notionnel</th></tr></thead>
@@ -6841,7 +6879,7 @@
   <p>Le document précédent calculait le seuil de Sharpe déflaté et exigeait qu'un budget de configurations soit posé d'avance, sans jamais le rapporter à un essai réel. La correction est de traiter le budget comme une contrainte exécutable plutôt que comme une recommandation.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 56</span> — Seuil de Sharpe par trade attendu du meilleur essai sous l'hypothèse nulle, selon le nombre de configurations essayées et la taille d'échantillon.</figcaption>
+      <figcaption><span class="lab">Table 57</span> — Seuil de Sharpe par trade attendu du meilleur essai sous l'hypothèse nulle, selon le nombre de configurations essayées et la taille d'échantillon.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Trades</th><th>1 essai</th><th>3 essais</th><th>10 essais</th><th>100 essais</th><th>SR/trade attendu</th></tr></thead>
@@ -6904,7 +6942,7 @@
   <h3>Le protocole scellé</h3>
 
       <figure>
-      <figcaption><span class="lab">Table 57</span> — Le protocole scellé. L'empreinte se publie avant la mesure ; toute modification ultérieure la change et se voit.</figcaption>
+      <figcaption><span class="lab">Table 58</span> — Le protocole scellé. L'empreinte se publie avant la mesure ; toute modification ultérieure la change et se voit.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Élément</th><th>Valeur</th><th class="wrap">Détail</th></tr></thead>
@@ -6930,7 +6968,7 @@
   <p>Le budget n'est pas une intention : demander une quatrième configuration lève une exception dans le code de mesure. Les degrés de liberté sont énumérés et gelés, y compris les nombres de calibration, qui entrent dans le sceau.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 58</span> — Tout ce qui aurait pu être ajusté, et la valeur à laquelle c'est gelé.</figcaption>
+      <figcaption><span class="lab">Table 59</span> — Tout ce qui aurait pu être ajusté, et la valeur à laquelle c'est gelé.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Degré de liberté</th><th class="wrap">Valeur gelée</th></tr></thead>
@@ -6983,7 +7021,7 @@
   <p>Le tableau qui suit part du dispositif de la section&nbsp;<a href="#s-horizon">8</a> et retire un levier à la fois. L'ordre est celui du coût en hypothèses, du plus gratuit au plus cher&nbsp;: un lecteur qui refuse le dernier levier lit sa durée à l'avant-dernière ligne, et ainsi de suite jusqu'en haut.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 59</span> — Du dispositif naïf au dispositif borné, un levier à la fois</figcaption>
+      <figcaption><span class="lab">Table 60</span> — Du dispositif naïf au dispositif borné, un levier à la fois</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Levier</th><th>Facteur</th><th>Durée du verdict</th><th class="wrap">Ce qu'il exige en échange</th></tr></thead>
@@ -7009,7 +7047,7 @@
   <p>Les examens ne tombent pas à date fixe. Ils tombent quand l'information accumulée — <span class="v">1</span>/Var(<span class="v">µ̂</span>), mesurée sur les données et non prédite — franchit une fraction pré-enregistrée de l'information maximale. La conséquence est décisive et mérite d'être isolée&nbsp;: <strong>la corrélation entre marchés, la cadence des entrées et la persistance de la volatilité déplacent la <em>date</em> des examens, jamais leurs seuils.</strong> Aucune de ces trois hypothèses de calibration n'entre donc dans le taux d'erreur du protocole. Elles n'entrent que dans sa durée prévisible.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 60</span> — Le plan séquentiel : quatre examens jalonnés en information</figcaption>
+      <figcaption><span class="lab">Table 61</span> — Le plan séquentiel : quatre examens jalonnés en information</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Examen</th><th>Fraction d'information</th><th>Seuil de rejet</th><th>Seuil d'abandon</th><th>P(rejet) sous H₀</th><th>P(rejet) sous H₁</th></tr></thead>
@@ -7031,7 +7069,7 @@
   <p>Le protocole ne se donne pas une taille d'échantillon puis un calendrier. Il se donne un <strong>budget de temps de marché</strong> — 1 260 séances, soit 5 années — et en déduit ce qu'il peut trancher. Le budget d'information est calé sur 1 134 séances plutôt que sur 1 260&nbsp;: l'information ne s'accumule pas à cadence fixe, et un budget calé sur l'horizon exact laisserait une part des histoires atteindre le plafond sans avoir atteint leur dernier examen. Sous cette contrainte, une dérive et une seule est détectable à la puissance visée, et c'est celle-là que le protocole publie&nbsp;: <strong><span class="v">θ</span>₁&nbsp;=&nbsp;3,68 points de base captés par trade</strong>, soit 61 % de la dérive empruntée.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 61</span> — Ce que cinq années tranchent, et ce qu'elles ne tranchent pas</figcaption>
+      <figcaption><span class="lab">Table 62</span> — Ce que cinq années tranchent, et ce qu'elles ne tranchent pas</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Hypothèse de dérive captée</th><th>Dérive</th><th>Net par trade</th><th>Dispositif naïf</th><th>Dispositif borné</th><th>Décidable en 5 ans</th></tr></thead>
@@ -7048,7 +7086,7 @@
     </figure>
 
       <figure>
-      <figcaption><span class="lab">Table 62</span> — Dérive minimale détectable, par horizon et par largeur de panel</figcaption>
+      <figcaption><span class="lab">Table 63</span> — Dérive minimale détectable, par horizon et par largeur de panel</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Horizon</th><th>Trades effectifs</th><th>Existence (µ ≠ 0)</th><th>Viabilité (µ &gt; µ*)</th><th>Viabilité, un seul marché</th></tr></thead>
@@ -7071,7 +7109,7 @@
   <p>Les chiffres ci-dessus sont des prévisions en forme fermée. Elles sont confrontées à une simulation de la <strong>procédure entière</strong> — et non de la stratégie&nbsp;: on ne demande pas ce que la stratégie produit, on demande à quelle fréquence le protocole se trompe et combien de temps il met à ne pas se tromper. La simulation se fait en trois étages. La séance est simulée minute par minute avec la saisonnalité en U, la volatilité de séance lognormale, les sauts, la bande estimée sur quatorze séances et donc entachée d'erreur, le stop surveillé en continu par pont brownien et le ré-armement après sortie&nbsp;: la loi du résultat d'un trade y est asymétrique (+1,36) et à queue épaisse (+2,66), et c'est cette loi-là, non une approximation normale, qui alimente la suite. Les cinq contrats d'une même date sont ensuite noués par une copule à structure de blocs. Le protocole est enfin rejoué, examen par examen, 1 500 fois par point.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 63</span> — Taille, puissance et durée du protocole, mesurées sur la procédure entière</figcaption>
+      <figcaption><span class="lab">Table 64</span> — Taille, puissance et durée du protocole, mesurées sur la procédure entière</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Dérive imposée</th><th>Équivalent capté</th><th>Rejet</th><th>Abandon</th><th>Horizon épuisé</th><th>Durée médiane</th><th>Durée au décile 9</th></tr></thead>
@@ -7261,7 +7299,7 @@
   </ul>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 64</span> — Les contrôles de la simulation, et ce qu'ils autorisent à conclure</figcaption>
+      <figcaption><span class="lab">Table 65</span> — Les contrôles de la simulation, et ce qu'ils autorisent à conclure</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Contrôle</th><th class="wrap">Ce qui est confronté</th><th>Valeurs</th><th class="wrap">Lecture</th></tr></thead>
@@ -7373,7 +7411,7 @@
   <p>Le panel est l'endroit où un lecteur attentif cherchera la faille, et il a raison de la chercher là&nbsp;: cinq contrats indiciels de trois fuseaux ne sont pas cinq expériences indépendantes, et un dispositif qui les compterait comme telles diviserait ses erreurs-types par un facteur inexistant. C'est précisément ce que la variance groupée par date interdit. La vérification est directe&nbsp;: on fait varier la corrélation intra-fuseau du simple au presque parfait, et on regarde ce qui bouge.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 65</span> — Ce que la corrélation du panel change — et ce qu'elle ne change pas</figcaption>
+      <figcaption><span class="lab">Table 66</span> — Ce que la corrélation du panel change — et ce qu'elle ne change pas</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Corrélation intra-fuseau</th><th>Effet de grappe</th><th>Trades effectifs par date</th><th>Taille</th><th>Puissance à θ₁</th><th>Durée médiane</th></tr></thead>
@@ -7391,7 +7429,7 @@
   <p>La taille reste au niveau nominal sur toute la plage — de 0,043 à 0,044 —, et la durée médiane passe de 2,46 à 3,31 années. C'est la signature exacte du jalonnement en information&nbsp;: une corrélation plus forte retarde les examens sans déplacer leurs seuils. Si la taille dérivait avec <span class="v">ρ</span>, le protocole serait faux, et ce tableau le montrerait.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 66</span> — Ce que la largeur du panel achète, hypothèse par hypothèse</figcaption>
+      <figcaption><span class="lab">Table 67</span> — Ce que la largeur du panel achète, hypothèse par hypothèse</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Marchés</th><th class="wrap">Trades effectifs par date</th><th>Taille</th><th>Puissance à θ₁</th><th>Horizon épuisé</th><th class="wrap">Puissance à l'hypothèse empruntée</th><th>Durée médiane</th></tr></thead>
@@ -7413,10 +7451,46 @@
     <p>Les deux résultats se composent en une inégalité qu'il faut énoncer sans l'adoucir. La dérive reste au-dessus du seuil de détectabilité seulement si son taux de décroissance annuel est inférieur à 6,1 %, contre 17,4 % documentés. Datée du travail de 2018, elle est passée sous ce seuil en 2021&nbsp;; datée de sa généralisation, en 2024. <strong>Ce n'est pas le protocole qui est trop lent&nbsp;: c'est la question qui a peut-être cessé d'être décidable, et le protocole est ce qui permet de le dire plutôt que de le supposer.</strong> Un silence de cinq années, adossé à une dérive minimale détectable publiée, est lui-même une mesure.</p>
   </div>
 
+
+  <h2 id="s-remplissage">Ce que les barres d'une minute ne tranchent pas</h2>
+
+  <p>Le protocole se conduit sur des barres d'une minute, et cette granularité laisse une question ouverte dont la portée n'avait pas été chiffrée. Quand le stop est touché <em>à l'intérieur</em> d'une barre, à quel prix la position sort-elle&nbsp;? La barre ne donne que son ouverture, son extrême haut, son extrême bas et sa clôture&nbsp;: elle ne dit ni dans quel ordre ces niveaux ont été visités, ni ce qu'un ordre au marché aurait obtenu à cet instant.</p>
+
+  <p>La chaîne de mesure retenait le niveau du stop lui-même — le remplissage le plus favorable compatible avec la barre. Le choix était documenté et assumé, la loi de friction portant le glissement séparément. Ce qui manquait était son ampleur.</p>
+
+  <p>Deux règles bornent ce que la donnée autorise. Au <strong>niveau du stop</strong>&nbsp;: la position sort exactement où l'ordre était placé, ce qui suppose qu'aucun mouvement ne l'a dépassé avant d'être exécuté. À l'<strong>extrême de la barre</strong>&nbsp;: au plus bas pour un achat, au plus haut pour une vente, ce qui suppose le pire instant possible. Le prix réel est entre les deux, et aucune barre d'une minute ne dit où.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 68</span> — La même mesure sous les deux remplissages du stop, sur trois tirages d'une série sans dérive.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Tirage</th><th>Au stop (pt)</th><th>À l'extrême (pt)</th><th>Écart (pt)</th><th>Friction (pt)</th><th>Signe renversé</th></tr></thead>
+        <tbody>
+          <tr><td>20260821</td><td>0,4500</td><td>−0,6925</td><td>1,1425</td><td>0,5280</td><td>oui</td></tr>
+          <tr><td>11</td><td>2,4139</td><td>1,4583</td><td>0,9556</td><td>0,5359</td><td>non</td></tr>
+          <tr><td>4242</td><td>−1,2809</td><td>−2,5080</td><td>1,2271</td><td>0,5269</td><td>non</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Deux lectures, de statut différent. L'écart entre les deux remplissages ne dépend pas du tirage et dépasse la friction à chaque fois : l'hypothèse d'exécution pèse plus lourd que la grandeur que la mesure cherche à franchir. Le renversement de signe, lui, dépend du tirage — mais il survient dès que l'espérance vraie tombe dans la bande, et la bande est plus large que la friction.</p>
+    </figure>
+
+  <p>L'écart vaut 1,1425 point sur le tirage de référence, soit 254&nbsp;% de la borne favorable — et sur 3 tirages il ne descend jamais sous 0,96 point ni ne dépasse 1,23. <strong>Il excède la friction elle-même</strong>, 0,5280 point, c'est-à-dire la grandeur exacte que le critère maître demande à la dérive de franchir. Une hypothèse d'exécution pèse donc plus lourd, dans le résultat, que la quantité mesurée.</p>
+
+  <p>Il faut séparer deux lectures que la table permet de confondre. Ce qui se généralise est la <em>largeur de la bande</em>&nbsp;: elle ne dépend pas du tirage. Ce qui en dépend, en revanche, est le <em>renversement de signe</em> de l'espérance nette, qui ne survient que 1 fois sur 3 ici. Mais la seconde propriété découle de la première dès que l'espérance vraie tombe dans la bande — et la bande étant plus large que la friction, c'est le cas de toute espérance proche du seuil, c'est-à-dire de tout résultat intéressant.</p>
+
+  <div class="prop">
+    <span class="lab">Règle de lecture.</span>
+    <p>La mesure est rejouée sous les deux remplissages, et son verdict se lit sur les deux bornes ensemble. Si elles tombent du même côté du seuil, la conclusion ne dépend pas de ce que la donnée ignore, et elle tient. Si le seuil tombe entre elles, <strong>la mesure sur barres ne conclut pas</strong> — et aucun raffinement d'analyse ne remplacera la donnée manquante.</p>
+    <p class="proof"><span class="lab">Conséquence.</span> Publier la borne favorable seule reviendrait à présenter une hypothèse d'exécution comme une mesure. C'est la raison pour laquelle le protocole rend désormais les deux, et pourquoi la seconde n'est pas facultative.</p>
+  </div>
+
+  <p>La sortie de l'indécision a un prix, et il est connu. Quelques centaines de séances de données au niveau du carnet suffisent à estimer l'écart réel entre les deux bornes et à le porter dans la loi de friction, après quoi la mesure sur barres redevient interprétable sur tout l'historique. C'est la seule dépense de ce document qu'un résultat indécis rendrait obligatoire — et elle ne se justifie qu'après avoir constaté l'indécision, jamais avant.</p>
+
   <h2 id="s-proto2">Le protocole de mesure</h2>
 
       <figure>
-      <figcaption><span class="lab">Table 67</span> — Protocole de validation, du moins coûteux au plus coûteux. Chaque ligne peut interrompre la séquence.</figcaption>
+      <figcaption><span class="lab">Table 69</span> — Protocole de validation, du moins coûteux au plus coûteux. Chaque ligne peut interrompre la séquence.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>#</th><th>Test</th><th>Mesure</th><th>Données requises</th><th>Critère d'arrêt</th></tr></thead>
@@ -7448,7 +7522,7 @@
   <p>La grille qui suit a été fixée avant d'être appliquée, et ne contient aucun critère taillé pour l'un des deux documents : douze critères, trois familles, des poids qui somment à cent, et une échelle d'ancrage commune de 0 à 5. Chaque score est accompagné du fait qui le justifie, de sorte qu'un score se conteste en contestant ce fait — la seule propriété qu'on demande à une note.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 68</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
+      <figcaption><span class="lab">Table 70</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Critère</th><th>Poids</th><th>ALP-1</th><th>ALP-2</th><th>Points ALP-1</th><th>Points ALP-2</th></tr></thead>
@@ -7473,7 +7547,7 @@
     </figure>
 
       <figure>
-      <figcaption><span class="lab">Table 69</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
+      <figcaption><span class="lab">Table 71</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Famille</th><th>Maximum</th><th>ALP-1</th><th>ALP-2</th><th>Écart</th></tr></thead>

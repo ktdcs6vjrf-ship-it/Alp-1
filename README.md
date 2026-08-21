@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
-35 sections en cinq parties, 69 tables, 36 figures.
+36 sections en cinq parties, 71 tables, 36 figures.
 
 ## Ce que contient ce dépôt
 
@@ -505,6 +505,7 @@ chiffre soit défendable plutôt que seulement juste :
 | `alp1/decay.py` | Décote post-publication de la dérive empruntée, durée de vie résiduelle |
 | `alp1/scaling.py` | Calibration sous exposant d'échelle imposé, géométrie au pire cas |
 | `alp1/varratio.py` | Loi d'échelle mesurée : ratio de variance, loi nulle de l'estimateur |
+| `alp1/report5.py` | Tables de la loi d'échelle mesurée et de l'encadrement du remplissage |
 | `alp1/power.py` | Frontières séquentielles, information du panel, dérive minimale détectable |
 | `alp1/mcprotocol.py` | Monte-Carlo du protocole entier : taille, puissance, durée du verdict |
 

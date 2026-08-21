@@ -629,12 +629,13 @@
           <li><a href="#s-taille">Dimensionnement</a></li>
           <li><a href="#s-surajustement">Discipline anti-surajustement</a></li>
           <li><a href="#s-borne">Le protocole à horizon borné</a></li>
+          <li><a href="#s-remplissage">Ce que les barres d'une minute ne tranchent pas</a></li>
           <li><a href="#s-proto2">Le protocole de mesure</a></li>
         </ol>
       </li>
       <li>
         <span class="pt">Verdict</span>
-        <ol start="34">
+        <ol start="35">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -1859,6 +1860,27 @@
 
   <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement de l'atteignabilité du target, il décide de la calibration entière.</p>
 
+
+  <h3>L'estimateur, et ce qu'il révèle de lui-même</h3>
+
+  <p>Les deux paragraphes précédents concluent que l'exposant doit être mesuré. Il l'est désormais&nbsp;: le ratio de variance de Lo et MacKinlay, à fenêtres chevauchantes et sous sa forme robuste à l'hétéroscédasticité, est calculé sur les séances de l'historique — chacune traitée séparément, aucun rendement n'enjambant un gap de nuit dont la variance n'a rien à voir avec celle de la séance. De <span class="v">VR</span>(<span class="v">q</span>)&nbsp;=&nbsp;<span class="v">q</span><sup>2<i>H</i>−1</sup> on tire l'exposant, horizon par horizon puis par régression sur la grille entière.</p>
+
+  <p>La mise en œuvre a produit un résultat qui ne portait pas sur le marché mais sur l'instrument, et qu'il faut énoncer avant tout usage.</p>
+
+  {{TABLE:varratio}}
+
+  <p>La série de cette table est une marche aléatoire par construction. La seule réponse juste est donc <i>H</i>&nbsp;=&nbsp;0,50, et un test qui ne rejette rien. Or la statistique asymptotique de Lo et MacKinlay <strong>rejette la marche aléatoire à tous les horizons de la grille</strong>, de {{vr_z_asym_lo}} à {{vr_z_asym_hi}} écarts-types, et la régression brute rend Ĥ&nbsp;=&nbsp;{{vr_h_brut}}. Ce n'est pas une propriété du prix&nbsp;: c'est le biais d'échantillon fini de l'estimateur sur des séances de 390 minutes, où la correction sans biais cesse de suffire dès que l'horizon dépasse quelques dizaines de minutes — à <span class="v">q</span>&nbsp;=&nbsp;{{vr_qmax}}, une martingale donne déjà <span class="v">VR</span>&nbsp;≈&nbsp;{{vr_null_hi}}.</p>
+
+  <p>La conséquence est sévère et elle vise ce document. Un Test&nbsp;1 conduit avec la statistique du manuel aurait conclu à la persistance — c'est-à-dire précisément à ce dont la calibration de la section&nbsp;<a href="#s-seance">6</a> a besoin, et précisément ce que la section&nbsp;<a href="#s-gamma">9</a> ne parvient à expliquer par aucun mécanisme. Le risque n'était pas de manquer un effet&nbsp;: il était d'en fabriquer un, et de le fabriquer exactement là où le document l'attendait.</p>
+
+  <p>Le remède est celui que le document applique partout ailleurs, retourné cette fois contre son propre appareil&nbsp;: rapporter un motif à sa fréquence sous un prix sans dérive. La loi nulle de l'estimateur est simulée sur des séances de même longueur, et c'est à elle — non à l'unité — que le ratio mesuré se compare. Ainsi corrigé, l'exposant revient à {{vr_h_corr}} par régression, et reste à un demi à chaque horizon pris séparément&nbsp;; l'écart maximal à la loi nulle tombe à {{vr_z_nul_hi}} écart-type.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce qu'il faut lire, et ce qu'il ne faut pas lire</span>
+    <p>Quand l'historique arrivera, la colonne « z asymptotique » de cette table sera la première chose à ne pas regarder. Un Ĥ mesuré à 0,52 ne dira rien tant qu'il ne sera pas rapporté à ce que le même estimateur produit sur une série sans mémoire de la même longueur de séance.</p>
+    <p>C'est une remarque de méthode, mais elle porte ici la conclusion entière&nbsp;: l'exposant décide de σ₁, donc de la bande, donc du stop, donc de l'exposition, donc du seuil. Un biais de deux centièmes sur <i>H</i> se propage à tous ces nombres, et il se propage dans le sens qui flatte la stratégie.</p>
+  </div>
+
   <h3>La géométrie au pire cas</h3>
 
   <p>Si <i>H</i> n'est pas mesuré, la seule décision défendable est celle qui tient au plus défavorable de la boîte. Le pire cas tombe en <i>H</i>&nbsp;=&nbsp;{{scal_worst_h}}, et il désigne une heure d'entrée différente de celle du protocole.</p>
@@ -1998,6 +2020,29 @@
     <p>Le protocole rend un verdict sur toute dérive captée supérieure à {{pw_mde_bps}} points de base, dans {{pw_horizon_years}} années au plus et {{pw_median_ref}} en médiane sous l'hypothèse du document. Il absorbe donc une décote de {{pw_decay_absorbed}} sur la dérive empruntée — mais pas davantage, et la section&nbsp;<a href="#s-decote">28</a> a établi que la décote documentée en moyenne sur les anomalies publiées est plus forte que cela.</p>
     <p>Les deux résultats se composent en une inégalité qu'il faut énoncer sans l'adoucir. La dérive reste au-dessus du seuil de détectabilité seulement si son taux de décroissance annuel est inférieur à {{pw_decay_max_rate_pct}}, contre {{pw_decay_documented_pct}} documentés. Datée du travail de {{decay_first_year}}, elle est passée sous ce seuil en {{pw_deadline_first}}&nbsp;; datée de sa généralisation, en {{pw_deadline_last}}. <strong>Ce n'est pas le protocole qui est trop lent&nbsp;: c'est la question qui a peut-être cessé d'être décidable, et le protocole est ce qui permet de le dire plutôt que de le supposer.</strong> Un silence de cinq années, adossé à une dérive minimale détectable publiée, est lui-même une mesure.</p>
   </div>
+
+
+  <h2 id="s-remplissage">Ce que les barres d'une minute ne tranchent pas</h2>
+
+  <p>Le protocole se conduit sur des barres d'une minute, et cette granularité laisse une question ouverte dont la portée n'avait pas été chiffrée. Quand le stop est touché <em>à l'intérieur</em> d'une barre, à quel prix la position sort-elle&nbsp;? La barre ne donne que son ouverture, son extrême haut, son extrême bas et sa clôture&nbsp;: elle ne dit ni dans quel ordre ces niveaux ont été visités, ni ce qu'un ordre au marché aurait obtenu à cet instant.</p>
+
+  <p>La chaîne de mesure retenait le niveau du stop lui-même — le remplissage le plus favorable compatible avec la barre. Le choix était documenté et assumé, la loi de friction portant le glissement séparément. Ce qui manquait était son ampleur.</p>
+
+  <p>Deux règles bornent ce que la donnée autorise. Au <strong>niveau du stop</strong>&nbsp;: la position sort exactement où l'ordre était placé, ce qui suppose qu'aucun mouvement ne l'a dépassé avant d'être exécuté. À l'<strong>extrême de la barre</strong>&nbsp;: au plus bas pour un achat, au plus haut pour une vente, ce qui suppose le pire instant possible. Le prix réel est entre les deux, et aucune barre d'une minute ne dit où.</p>
+
+  {{TABLE:fillbounds}}
+
+  <p>L'écart vaut {{fill_spread}} point sur le tirage de référence, soit {{fill_spread_pct}}&nbsp;% de la borne favorable — et sur {{fill_seeds}} tirages il ne descend jamais sous {{fill_spread_lo}} point ni ne dépasse {{fill_spread_hi}}. <strong>Il excède la friction elle-même</strong>, {{fill_friction}} point, c'est-à-dire la grandeur exacte que le critère maître demande à la dérive de franchir. Une hypothèse d'exécution pèse donc plus lourd, dans le résultat, que la quantité mesurée.</p>
+
+  <p>Il faut séparer deux lectures que la table permet de confondre. Ce qui se généralise est la <em>largeur de la bande</em>&nbsp;: elle ne dépend pas du tirage. Ce qui en dépend, en revanche, est le <em>renversement de signe</em> de l'espérance nette, qui ne survient que {{fill_flips}} fois sur {{fill_seeds}} ici. Mais la seconde propriété découle de la première dès que l'espérance vraie tombe dans la bande — et la bande étant plus large que la friction, c'est le cas de toute espérance proche du seuil, c'est-à-dire de tout résultat intéressant.</p>
+
+  <div class="prop">
+    <span class="lab">Règle de lecture.</span>
+    <p>La mesure est rejouée sous les deux remplissages, et son verdict se lit sur les deux bornes ensemble. Si elles tombent du même côté du seuil, la conclusion ne dépend pas de ce que la donnée ignore, et elle tient. Si le seuil tombe entre elles, <strong>la mesure sur barres ne conclut pas</strong> — et aucun raffinement d'analyse ne remplacera la donnée manquante.</p>
+    <p class="proof"><span class="lab">Conséquence.</span> Publier la borne favorable seule reviendrait à présenter une hypothèse d'exécution comme une mesure. C'est la raison pour laquelle le protocole rend désormais les deux, et pourquoi la seconde n'est pas facultative.</p>
+  </div>
+
+  <p>La sortie de l'indécision a un prix, et il est connu. Quelques centaines de séances de données au niveau du carnet suffisent à estimer l'écart réel entre les deux bornes et à le porter dans la loi de friction, après quoi la mesure sur barres redevient interprétable sur tout l'historique. C'est la seule dépense de ce document qu'un résultat indécis rendrait obligatoire — et elle ne se justifie qu'après avoir constaté l'indécision, jamais avant.</p>
 
   <h2 id="s-proto2">Le protocole de mesure</h2>
 
