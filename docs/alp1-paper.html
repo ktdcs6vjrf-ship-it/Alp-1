@@ -4053,6 +4053,1531 @@
 
   <p>Deux conclusions transversales méritent d'être retenues avant le protocole. D'abord, cinq des sept couches ont une loi nulle en forme fermée, et aucune de ces lois nulles n'exige de données&nbsp;: elles étaient calculables avant toute mesure, et elles suffisent à écarter les arguments fondés sur la fréquence d'apparition d'un motif. Ensuite, la couche que la pile traite comme la plus décisive — la lecture du carnet en confirmation — est la seule qui ne soit pas mesurable en l'état, et sa demi-vie la place de toute façon hors du domaine où elle pourrait financer un aller-retour d'une demi-heure.</p>
 
+  <h2>La boîte à outils de validation</h2>
+
+  <h3>Ce qu'une troisième partie ajoute</h3>
+
+  <p>Les deux premières parties ont établi ce qu'une géométrie ne peut pas faire, puis ce que chaque couche produit sous une loi nulle. Aucune des deux n'a dit comment on saurait, un jour, que la stratégie fonctionne. C'est l'objet de cette partie&nbsp;: 16 instruments de mesure, de simulation et de stress — ceux que les grandes maisons quantitatives appliquent avant d'allouer du capital —, chacun défini calculatoirement, chacun appliqué à la calibration du papier, et chacun accompagné de ce qu'il ne voit pas.</p>
+
+  <p>Ils partagent une propriété qu'il faut énoncer d'emblée, parce qu'elle gouverne la lecture de tout ce qui suit&nbsp;: <strong>aucun de ces instruments ne crée d'information.</strong> Un ratio de Sortino ne sait rien qu'un ratio de Sharpe ignore&nbsp;; un Monte-Carlo ne connaît que la loi qu'on lui a donnée&nbsp;; un modèle à régimes cachés converge aussi bien sur du bruit que sur un marché. Chacun transforme une hypothèse en conséquence chiffrée. Leur valeur est là, et elle est grande&nbsp;: ils rendent une hypothèse réfutable. Elle n'est pas ailleurs.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 19</span> — Les seize instruments, ce qu'ils mesurent et ce qu'ils ne voient pas</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Instrument</th><th class="wrap">Définition</th><th class="wrap">Porte sur</th><th class="wrap">Angle mort</th></tr></thead>
+        <tbody>
+          <tr><td>Sharpe</td><td class="wrap">E[R]/σ[R]</td><td class="wrap">dispersion totale</td><td class="wrap">aveugle à l'asymétrie ; gonflé par l'autocorrélation</td></tr>
+          <tr><td>Sortino</td><td class="wrap">E[R]/√E[min(R,0)²]</td><td class="wrap">dispersion à la baisse</td><td class="wrap">flatté d'un facteur σ/DD par un ratio gain/risque élevé</td></tr>
+          <tr><td>Omega</td><td class="wrap">E[(R−θ)⁺]/E[(θ−R)⁻]</td><td class="wrap">loi entière</td><td class="wrap">sans hypothèse de moment ; Ω > 1 ⟺ E[R] > θ</td></tr>
+          <tr><td>Calmar</td><td class="wrap">gain annuel / E[MDD]</td><td class="wrap">pire perte cumulée</td><td class="wrap">dénominateur croissant avec la fenêtre : non comparable</td></tr>
+          <tr><td>Ulcer</td><td class="wrap">√moyenne(DD²)</td><td class="wrap">profondeur et durée</td><td class="wrap">seule mesure qui pénalise la durée sous les eaux</td></tr>
+          <tr><td>Kelly</td><td class="wrap">argmax E[ln(1+fR)]</td><td class="wrap">croissance logarithmique</td><td class="wrap">suppose la loi connue ; ruineux si l'edge est surestimé</td></tr>
+          <tr><td>VaR / ES</td><td class="wrap">quantile et sa moyenne</td><td class="wrap">queue de perte</td><td class="wrap">la VaR n'est pas sous-additive ; l'ES l'est</td></tr>
+          <tr><td>EVT (GPD)</td><td class="wrap">loi des dépassements</td><td class="wrap">au-delà de l'échantillon</td><td class="wrap">seule extrapolation légitime hors des données</td></tr>
+          <tr><td>Monte-Carlo</td><td class="wrap">loi empirique par tirage</td><td class="wrap">toute la trajectoire</td><td class="wrap">ne crée aucune information : il propage les hypothèses</td></tr>
+          <tr><td>Bootstrap</td><td class="wrap">ré-échantillonnage</td><td class="wrap">incertitude d'estimation</td><td class="wrap">le bootstrap i.i.d. détruit la dépendance ; blocs obligatoires</td></tr>
+          <tr><td>Permutation</td><td class="wrap">randomisation du signe</td><td class="wrap">hypothèse de non-prédiction</td><td class="wrap">sans hypothèse de loi ; ne teste que la direction</td></tr>
+          <tr><td>HMM</td><td class="wrap">Baum-Welch, Viterbi</td><td class="wrap">régimes latents</td><td class="wrap">converge toujours, y compris sur du bruit</td></tr>
+          <tr><td>DSR / MinTRL</td><td class="wrap">PSR déflaté du maximum</td><td class="wrap">sélection</td><td class="wrap">corrige ce que le nombre d'essais explique à lui seul</td></tr>
+          <tr><td>PBO (CSCV)</td><td class="wrap">rang hors échantillon du meilleur</td><td class="wrap">procédure entière</td><td class="wrap">mesure la sélection, non la rentabilité</td></tr>
+          <tr><td>CV purgée</td><td class="wrap">purge et embargo</td><td class="wrap">fuite temporelle</td><td class="wrap">indispensable dès que les étiquettes se chevauchent</td></tr>
+          <tr><td>Stress inversé</td><td class="wrap">choc qui efface l'année</td><td class="wrap">scénario critique</td><td class="wrap">ne dépend d'aucun choix de scénario</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Aucun instrument de cette liste ne crée d'information. Chacun transforme une hypothèse en conséquence chiffrée ; la colonne de droite indique laquelle des hypothèses il laisse intacte.</p>
+    </figure>
+
+  <h3>La loi d'un trade</h3>
+
+  <p>Tous les instruments qui suivent opèrent sur une même primitive&nbsp;: la loi du résultat net d'un trade, exprimée en multiples du risque nominal <span class="v">L</span>. Elle n'est pas postulée, elle se déduit de la distribution d'issues déjà établie à la section&nbsp;5. Deux atomes de barrière, plus la branche de clôture de séance discrétisée en deux points placés en <span class="v">µ<sub>o</sub></span>&thinsp;±&thinsp;<span class="v">σ<sub>o</sub></span> à poids égaux&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">R</span><span class="op">=</span><span class="frac"><span>1</span><span><span class="v">a</span></span></span>&thinsp;&times;&thinsp;{&thinsp;<span class="v">b</span>&nbsp;−&nbsp;<span class="v">c</span> avec <span class="v">p<sub>+</sub></span>&thinsp;; −<span class="v">a</span>&nbsp;−&nbsp;<span class="v">c</span> avec <span class="v">p<sub>−</sub></span>&thinsp;; <span class="v">µ<sub>o</sub></span>&thinsp;±&thinsp;<span class="v">σ<sub>o</sub></span>&nbsp;−&nbsp;<span class="v">c</span> avec <span class="v">p<sub>o</sub></span>/2&thinsp;}.</div>
+    <div class="no">(25)</div>
+  </div>
+
+  <p>Cette discrétisation à deux points reproduit <em>exactement</em> la moyenne et la variance conditionnelles de la branche ouverte&nbsp;; la loi obtenue possède donc les deux premiers moments exacts de <span class="v">X<sub>τ∧T</sub></span>, et non une approximation. Sans dérive, sa moyenne vaut −0,110&nbsp;R — c'est <span class="v">−c/L</span>, le théorème d'invariance transporté tel quel dans l'appareil de mesure.</p>
+
+  <p>Pour imposer une dérive, on procède par <em>inclinaison exponentielle</em>, la transformée d'Esscher&nbsp;: les atomes sont repondérés par <span class="v">e</span><sup><span class="v">θR</span></sup> et <span class="v">θ</span> est résolu pour que la moyenne atteigne la valeur du critère maître,</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">p<sub>i</sub></span>&thinsp;&prop;&thinsp;<span class="v">p<sub>i</sub></span>&thinsp;<span class="v">e</span><sup><span class="v">θ v<sub>i</sub></span></sup>, avec <span class="v">θ</span> tel que E[<span class="v">R</span>]<span class="op">=</span>(<span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>)/<span class="v">a</span>.</div>
+    <div class="no">(26)</div>
+  </div>
+
+  <p>C'est la déformation d'entropie relative minimale sous contrainte de moyenne&nbsp;: elle ajoute exactement l'information «&nbsp;la dérive vaut <span class="v">µ</span>&nbsp;», et rien d'autre. Elle laisse le support inchangé, donc la géométrie du trade inchangée. <strong>L'edge de référence de toute cette partie est <span class="v">µ</span>&nbsp;=&nbsp;2&thinsp;<span class="v">µ</span>*</strong> — le double du seuil de rentabilité de l'équation&nbsp;(7) —, ce qui donne par construction E[<span class="v">R</span>]&nbsp;=&nbsp;<span class="v">c/L</span>&nbsp;=&nbsp;0,110&nbsp;R. C'est la seule hypothèse d'edge du document, elle est explicite, et elle n'a pas de paramètre libre.</p>
+
+  <h3>Les ratios, et le facteur que la géométrie fabrique</h3>
+
+  <p>Sharpe, Sortino, Omega, Calmar, Kelly&nbsp;: cinq ratios calculés sur la même loi. Le premier résultat de cette partie est qu'ils ne disent pas cinq choses, mais deux, et que l'écart entre le premier et le deuxième est une constante que la géométrie fixe et que l'edge ignore.</p>
+
+  <p>Le ratio de Sortino divise l'espérance par la seule dispersion à la baisse. Son rapport au Sharpe vaut donc, identiquement,</p>
+
+  <div class="eq">
+    <div class="body"><span class="frac"><span>Sortino</span><span>Sharpe</span></span><span class="op">=</span><span class="frac"><span><span class="v">σ</span>[<span class="v">R</span>]</span><span>DD[<span class="v">R</span>]</span></span>, où DD[<span class="v">R</span>]<span class="op">=</span>&radic;<span style="text-decoration:overline">E[min(<span class="v">R</span>,&thinsp;0)²]</span>.</div>
+    <div class="no">(27)</div>
+  </div>
+
+  <p>Or sur une géométrie à stop fixe, la dispersion à la baisse est <em>bornée par le stop</em>&nbsp;: elle vaut 1,08&nbsp;R et ne bouge pas quand on éloigne le target. La dispersion totale, elle, est portée par la queue de gain et croît avec lui. Le rapport vaut 4,54 à 1:20, et il monte à 5,9 à 1:50. <strong>Publier un Sortino pour une stratégie à ratio gain/risque élevé, c'est publier un Sharpe multiplié par une constante qui ne contient aucune information sur le signal.</strong> Le même mécanisme, en sens inverse, explique pourquoi la VaR gaussienne d'un tel trade surestime la perte d'un facteur 10&nbsp;: elle lit un écart-type dont la quasi-totalité vient du côté des gains.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 20</span> — Tableau de bord des ratios, sans dérive puis sous la dérive de référence</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Grandeur</th><th>µ = 0</th><th>µ = 2 µ*</th></tr></thead>
+        <tbody>
+          <tr><td>Espérance E[R] (R)</td><td>−0,1100</td><td>0,1100</td></tr>
+          <tr><td>Écart-type σ[R] (R)</td><td>4,45</td><td>4,89</td></tr>
+          <tr><td>Asymétrie γ₃</td><td>4,25</td><td>3,78</td></tr>
+          <tr><td>Excès de kurtosis γ₄ − 3</td><td>16,1</td><td>12,3</td></tr>
+          <tr class="sep"><td>Taux de gain (%)</td><td>4,87</td><td>5,93</td></tr>
+          <tr><td>Sharpe par trade</td><td>−0,0247</td><td>0,0225</td></tr>
+          <tr><td>Sharpe annualisé (504 trades)</td><td>−0,555</td><td>0,505</td></tr>
+          <tr><td>Déviation à la baisse (R)</td><td>1,083</td><td>1,077</td></tr>
+          <tr><td>Sortino par trade</td><td>−0,1016</td><td>0,1022</td></tr>
+          <tr><td>Facteur σ/DD</td><td>4,11</td><td>4,54</td></tr>
+          <tr><td>Omega (seuil 0)</td><td>0,896</td><td>1,105</td></tr>
+          <tr><td>Fraction de Kelly</td><td>0,0000</td><td>0,0050</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le facteur σ/DD est le rapport exact entre Sortino et Sharpe : à 1:20 il vaut 4,54. Publier un Sortino pour une géométrie à ratio élevé, c'est publier un Sharpe multiplié par une constante que la géométrie fixe et que l'edge ignore. Le Sharpe annualisé d'un edge égal au double du seuil de rentabilité vaut 0,50.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 17</span> — Le rapport Sortino/Sharpe sur la grille des ratios gain/risque et des multiples de dérive, les trois ratios sur la calibration de référence, et la décomposition qui les sépare. La surface est presque plate le long de l'axe de la dérive&nbsp;: le facteur est une propriété de la géométrie, non du signal.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 348" role="img" aria-label="Sharpe, Sortino et Omega, et le facteur que la géométrie impose au rapport des deux premiers" preserveAspectRatio="xMidYMid meet">
+<polygon class="floor" points="166.0,210.0 235.0,247.5 166.0,285.0 97.0,247.5"></polygon>
+<line class="post" x1="166.0" y1="210.0" x2="166.0" y2="157.2"/>
+<line class="post" x1="235.0" y1="247.5" x2="235.0" y2="126.3"/>
+<line class="post" x1="166.0" y1="285.0" x2="166.0" y2="141.0"/>
+<line class="post" x1="97.0" y1="247.5" x2="97.0" y2="191.0"/>
+<polygon class="mesh hm6" points="166.0,150.2 189.0,141.1 166.0,141.0 143.0,153.9"><title>Sortino / Sharpe = 5.44</title></polygon>
+<polygon class="mesh hm3" points="143.0,171.3 166.0,150.2 143.0,153.9 120.0,179.5"><title>Sortino / Sharpe = 4.16</title></polygon>
+<polygon class="mesh hm5" points="189.0,142.4 212.0,135.3 189.0,141.1 166.0,150.2"><title>Sortino / Sharpe = 5.09</title></polygon>
+<polygon class="mesh hm1" points="120.0,180.6 143.0,171.3 120.0,179.5 97.0,191.0"><title>Sortino / Sharpe = 2.89</title></polygon>
+<polygon class="mesh hm3" points="166.0,161.1 189.0,142.4 166.0,150.2 143.0,171.3"><title>Sortino / Sharpe = 3.94</title></polygon>
+<polygon class="mesh hm5" points="212.0,132.3 235.0,126.3 212.0,135.3 189.0,142.4"><title>Sortino / Sharpe = 4.90</title></polygon>
+<polygon class="mesh hm1" points="143.0,169.2 166.0,161.1 143.0,171.3 120.0,180.6"><title>Sortino / Sharpe = 2.78</title></polygon>
+<polygon class="mesh hm3" points="189.0,149.8 212.0,132.3 189.0,142.4 166.0,161.1"><title>Sortino / Sharpe = 3.83</title></polygon>
+<polygon class="mesh hm1" points="166.0,157.2 189.0,149.8 166.0,161.1 143.0,169.2"><title>Sortino / Sharpe = 2.73</title></polygon>
+<text class="tk halo" x="90.0" y="259.5" text-anchor="end">1:5</text>
+<text class="tk halo" x="113.0" y="272.0" text-anchor="end">1:10</text>
+<text class="tk halo" x="136.0" y="284.5" text-anchor="end">1:20</text>
+<text class="tk halo" x="159.0" y="297.0" text-anchor="end">1:30</text>
+<text class="tk halo" x="242.0" y="258.5">1,5 µ*</text>
+<text class="tk halo" x="173.0" y="296.0">5 µ*</text>
+<text class="tk" x="57.0" y="250.5" text-anchor="end">0</text>
+<line class="gl" x1="62.0" y1="247.5" x2="73.0" y2="247.5"/>
+<text class="tk" x="57.0" y="204.2" text-anchor="end">2</text>
+<line class="gl" x1="62.0" y1="201.2" x2="73.0" y2="201.2"/>
+<text class="tk" x="57.0" y="157.9" text-anchor="end">4</text>
+<line class="gl" x1="62.0" y1="154.9" x2="73.0" y2="154.9"/>
+<text class="tk" x="57.0" y="111.6" text-anchor="end">6</text>
+<line class="gl" x1="62.0" y1="108.6" x2="73.0" y2="108.6"/>
+<text class="hdr" x="56" y="30">Rapport Sortino / Sharpe</text>
+<text class="sub" x="56" y="44">il vaut exactement σ/DD : un facteur que la géométrie fabrique,</text>
+<text class="sub" x="56" y="57">et que la dérive ne change presque pas</text>
+<text class="hdr" x="384.0" y="62.0">Par trade</text>
+<text class="sub" x="508.0" y="49.0" text-anchor="end">R:R 1:20</text>
+<line class="hsep" x1="384.0" y1="68.0" x2="508.0" y2="68.0"/>
+<rect class="frame" x="384.0" y="74.0" width="124.0" height="168.0"/>
+<line class="gl" x1="384.0" y1="236.8" x2="508.0" y2="236.8"/>
+<text class="tk" x="379.0" y="239.8" text-anchor="end">-0,15</text>
+<line class="gl" x1="384.0" y1="210.5" x2="508.0" y2="210.5"/>
+<text class="tk" x="379.0" y="213.5" text-anchor="end">-0,10</text>
+<line class="gl" x1="384.0" y1="184.2" x2="508.0" y2="184.2"/>
+<text class="tk" x="379.0" y="187.2" text-anchor="end">-0,05</text>
+<line class="gl" x1="384.0" y1="158.0" x2="508.0" y2="158.0"/>
+<text class="tk" x="379.0" y="161.0" text-anchor="end">0,00</text>
+<line class="gl" x1="384.0" y1="131.8" x2="508.0" y2="131.8"/>
+<text class="tk" x="379.0" y="134.8" text-anchor="end">0,05</text>
+<line class="gl" x1="384.0" y1="105.5" x2="508.0" y2="105.5"/>
+<text class="tk" x="379.0" y="108.5" text-anchor="end">0,10</text>
+<line class="gl" x1="384.0" y1="79.2" x2="508.0" y2="79.2"/>
+<text class="tk" x="379.0" y="82.2" text-anchor="end">0,15</text>
+<line class="zero" x1="384.0" y1="158.0" x2="508.0" y2="158.0"/>
+<rect class="dn" x="390.14" y="158.00" width="15.00" height="12.98"><title>Sharpe · µ = 0 · -0.025</title></rect>
+<rect class="s1f" x="404.19" y="146.19" width="15.00" height="11.81"><title>Sharpe · µ = 2µ* · +0.022</title></rect>
+<text class="tk" transform="translate(404.7,272.0) rotate(-38)" text-anchor="middle">Sharpe</text>
+<rect class="dn" x="431.47" y="158.00" width="15.00" height="53.34"><title>Sortino · µ = 0 · -0.102</title></rect>
+<rect class="s1f" x="445.53" y="104.36" width="15.00" height="53.64"><title>Sortino · µ = 2µ* · +0.102</title></rect>
+<text class="tk" transform="translate(446.0,272.0) rotate(-38)" text-anchor="middle">Sortino</text>
+<rect class="dn" x="472.81" y="158.00" width="15.00" height="54.69"><title>Omega − 1 · µ = 0 · -0.104</title></rect>
+<rect class="s1f" x="486.86" y="102.70" width="15.00" height="55.30"><title>Omega − 1 · µ = 2µ* · +0.105</title></rect>
+<text class="tk" transform="translate(487.3,272.0) rotate(-38)" text-anchor="middle">Omega − 1</text>
+<text class="hdr" x="546.0" y="62.0">Dispersion</text>
+<text class="sub" x="636.0" y="49.0" text-anchor="end">σ/DD = 4,54</text>
+<line class="hsep" x1="546.0" y1="68.0" x2="636.0" y2="68.0"/>
+<rect class="frame" x="546.0" y="74.0" width="90.0" height="168.0"/>
+<line class="gl" x1="546.0" y1="242.0" x2="636.0" y2="242.0"/>
+<text class="tk" x="541.0" y="245.0" text-anchor="end">0</text>
+<line class="gl" x1="546.0" y1="214.0" x2="636.0" y2="214.0"/>
+<text class="tk" x="541.0" y="217.0" text-anchor="end">1</text>
+<line class="gl" x1="546.0" y1="186.0" x2="636.0" y2="186.0"/>
+<text class="tk" x="541.0" y="189.0" text-anchor="end">2</text>
+<line class="gl" x1="546.0" y1="158.0" x2="636.0" y2="158.0"/>
+<text class="tk" x="541.0" y="161.0" text-anchor="end">3</text>
+<line class="gl" x1="546.0" y1="130.0" x2="636.0" y2="130.0"/>
+<text class="tk" x="541.0" y="133.0" text-anchor="end">4</text>
+<line class="gl" x1="546.0" y1="102.0" x2="636.0" y2="102.0"/>
+<text class="tk" x="541.0" y="105.0" text-anchor="end">5</text>
+<line class="gl" x1="546.0" y1="74.0" x2="636.0" y2="74.0"/>
+<text class="tk" x="541.0" y="77.0" text-anchor="end">6</text>
+<rect class="s2f" x="551.50" y="105.06" width="34.00" height="136.94"><title>écart-type total 4.89 R</title></rect>
+<rect class="s3f" x="596.50" y="211.85" width="34.00" height="30.15"><title>déviation à la baisse 1.08 R</title></rect>
+<text class="tk" transform="translate(568.5,272.0) rotate(-38)" text-anchor="middle">σ total</text>
+<text class="tk" transform="translate(613.5,272.0) rotate(-38)" text-anchor="middle">baisse</text>
+<text class="lg halo" x="615.5" y="201.9" text-anchor="middle">borné par le stop</text>
+<rect class="dn" x="384.0" y="296.5" width="11" height="11" rx="2"/>
+<text class="lg" x="401.0" y="305.5">µ = 0</text>
+<rect class="s1f" x="472.0" y="296.5" width="11" height="11" rx="2"/>
+<text class="lg" x="489.0" y="305.5">µ = 2 µ*</text>
+<text class="lg" x="330.0" y="332.0" text-anchor="middle">la dispersion à la baisse est bornée par le stop : tout l'écart entre les deux ratios vient de la queue de gain</text>
+</svg></div>
+    </figure>
+
+  <h3>La question à laquelle les ratios répondent vraiment</h3>
+
+  <p>Un Sharpe n'est pas une performance, c'est une estimation, et une estimation a une précision. La longueur minimale d'historique de Bailey et López de Prado en donne la forme exacte, en tenant compte de l'asymétrie et des queues épaisses que le Sharpe seul ignore. Sur l'edge de référence — Sharpe par trade 0,0225, asymétrie 3,78, excès de kurtosis 12,3 — elle vaut 4 905 trades, soit 9,7 années à deux trades par séance, <em>simplement pour affirmer que le Sharpe vrai est positif</em>.</p>
+
+  <p>La table suivante balaie la grille des géométries en tenant la dérive du signal fixe — elle appartient au signal, pas au placement des barrières. Élargir le target allonge l'exposition, donc l'espérance par l'équation&nbsp;(6), donc la détectabilité. Le gain est réel et il va dans le sens du paramétrage retenu par la pile. Il ne suffit pas.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 21</span> — Détectabilité de l'edge selon la géométrie, à dérive de signal constante</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>R:R</th><th>E[τ] (min)</th><th>E[R] (R)</th><th>Sharpe/trade</th><th>Sharpe an.</th><th>Sortino/Sharpe</th><th>MinTRL (trades)</th><th>MinTRL (ans)</th><th>après 100 essais (ans)</th></tr></thead>
+        <tbody>
+          <tr><td>1:3</td><td>8,3</td><td>−0,0471</td><td>−0,0266</td><td>−0,598</td><td>—</td><td>∞</td><td>∞</td><td>∞</td></tr>
+          <tr class="sep"><td>1:5</td><td>11,8</td><td>−0,0202</td><td>−0,0087</td><td>−0,196</td><td>—</td><td>∞</td><td>∞</td><td>∞</td></tr>
+          <tr><td>1:10</td><td>18,7</td><td>0,0324</td><td>0,0097</td><td>0,217</td><td>3,19</td><td>28 258</td><td>56,1</td><td>136,1</td></tr>
+          <tr><td>1:20</td><td>28,9</td><td>0,1100</td><td>0,0225</td><td>0,505</td><td>4,54</td><td>4 905</td><td>9,7</td><td>25,1</td></tr>
+          <tr><td>1:30</td><td>35,0</td><td>0,1565</td><td>0,0268</td><td>0,603</td><td>5,39</td><td>3 306</td><td>6,6</td><td>17,6</td></tr>
+          <tr><td>1:50</td><td>38,2</td><td>0,1806</td><td>0,0283</td><td>0,636</td><td>5,89</td><td>2 878</td><td>5,7</td><td>15,9</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La dérive est tenue fixe : elle appartient au signal, pas à la géométrie. Élargir le target allonge l'exposition, donc l'espérance, donc la détectabilité — mais aucune colonne ne descend sous une décennie une fois la sélection prise en compte. C'est le résultat central de cette partie.</p>
+    </figure>
+
+  <h3>Le drawdown&nbsp;: √<span class="v">N</span> contre ln&thinsp;<span class="v">N</span></h3>
+
+  <p>Le drawdown est la seule statistique de risque qu'un allocataire regarde avant le Sharpe, et la seule que la loi d'un trade ne donne pas directement&nbsp;: elle porte sur la trajectoire, donc sur l'ordre des trades. Deux formes fermées l'encadrent.</p>
+
+  <p>Sans dérive, le théorème de Lévy identifie en loi le processus de drawdown <span class="v">M<sub>t</sub></span>&nbsp;−&nbsp;<span class="v">W<sub>t</sub></span> au brownien réfléchi |<span class="v">W<sub>t</sub></span>|. Le drawdown maximal a donc exactement la loi de sup|<span class="v">W</span>|, d'où</p>
+
+  <div class="eq">
+    <div class="body">E[MDD<sub><span class="v">N</span></sub>]<span class="op">=</span><span class="v">σ<sub>R</sub></span>&thinsp;&radic;<span style="text-decoration:overline"><span class="v">πN</span>/2</span>&nbsp;&asymp;&nbsp;1,2533&thinsp;<span class="v">σ<sub>R</sub></span>&thinsp;&radic;<span style="text-decoration:overline"><span class="v">N</span></span>.</div>
+    <div class="no">(28)</div>
+  </div>
+
+  <p>Aucune dérive n'entre dans cette expression, et pourtant elle croît sans borne. <strong>Un drawdown record n'est donc pas la preuve qu'une stratégie s'est cassée&nbsp;; c'est le comportement attendu de n'importe quelle stratégie observée assez longtemps.</strong> Avec dérive, la profondeur cesse de croître en racine&nbsp;: le coefficient d'ajustement de Lundberg <span class="v">θ</span>*, unique racine positive de E[<span class="v">e</span><sup>−<span class="v">θR</span></sup>]&nbsp;=&nbsp;1, borne la probabilité de jamais perdre <span class="v">D</span> unités de risque,</p>
+
+  <div class="eq">
+    <div class="body">P(drawdown&nbsp;&ge;&nbsp;<span class="v">D</span>)&nbsp;&le;&nbsp;<span class="v">e</span><sup>−<span class="v">θ*D</span></sup>, et E[MDD<sub><span class="v">N</span></sub>]&nbsp;&asymp;&nbsp;(ln(1&nbsp;+&nbsp;<span class="v">N</span>&thinsp;E[<span class="v">R</span>]&thinsp;<span class="v">θ</span>*)&nbsp;+&nbsp;<span class="v">γ</span>)/<span class="v">θ</span>*.</div>
+    <div class="no">(29)</div>
+  </div>
+
+  <p><span class="v">θ</span>* est exactement l'inclinaison d'Esscher qui rendrait la loi martingale&nbsp;: la même quantité gouverne la mesure de stress de l'équation&nbsp;(26) et la mesure de ruine. Sur l'edge de référence elle vaut 0,0098, ce qui place à 307&nbsp;R la profondeur atteinte une année sur vingt — soit 5,5 années de gain espéré. Et sur un an, le drawdown maximal espéré, 103&nbsp;R, <strong>dépasse le gain annuel espéré, 55&nbsp;R</strong>. Le ratio de Calmar correspondant vaut 0,54.</p>
+
+  <p>Une dernière identité ferme la lecture du drawdown. La fraction du temps qu'une marche sans dérive passe sous son sommet suit la loi de l'arcsinus, dont la densité est <em>minimale en son centre</em>&nbsp;: une stratégie sans edge passe typiquement soit presque tout son temps sous les eaux, soit presque aucun, pratiquement jamais la moitié. L'observation «&nbsp;la stratégie est restée sous son plus haut quatre-vingts pour cent de l'année&nbsp;» a, sous la loi nulle, une probabilité de 30&nbsp;%.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 22</span> — Drawdown : loi nulle en √N, loi sous dérive en ln N, et ruine</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Grandeur</th><th>Forme</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>E[MDD] sans dérive, 1 an</td><td>σ_R·√(πN/2)</td><td>125,2 R</td></tr>
+          <tr><td>E[MDD] sans dérive, 4 ans</td><td>croissance en √N</td><td>250,4 R</td></tr>
+          <tr class="sep"><td>Quantile 95 % du MDD, 1 an</td><td>loi de sup|W| (Lévy)</td><td>223,9 R</td></tr>
+          <tr><td>E[MDD] sous dérive, 1 an</td><td>(ln m + γ)/θ*</td><td>103,4 R</td></tr>
+          <tr class="sep"><td>Gain annuel espéré</td><td>N·E[R]</td><td>55,4 R</td></tr>
+          <tr><td>Coefficient de Lundberg θ*</td><td>E[e^{−θR}] = 1</td><td>0,00976</td></tr>
+          <tr><td>Échelle du pire drawdown</td><td>1/θ*</td><td>102 R</td></tr>
+          <tr class="sep"><td>Profondeur atteinte 1 fois sur 20</td><td>−ln(0,05)/θ*</td><td>307 R</td></tr>
+          <tr><td>Ratio de Calmar, 1 an</td><td>N·E[R] / E[MDD]</td><td>0,54</td></tr>
+          <tr><td>P(80 % du temps sous les eaux)</td><td>loi de l'arcsinus</td><td>30 %</td></tr>
+          <tr><td>Médiane du temps sous les eaux</td><td>sin²(π/4)</td><td>50 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le drawdown maximal espéré sur un an sous la dérive de référence — 103 R — dépasse le gain annuel espéré, 55 R. C'est la traduction en trajectoire de ce que le Sharpe annualisé disait déjà en niveau : l'edge existe peut-être, il ne se voit pas.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 18</span> — Les deux lois de croissance du drawdown sur la même loi de trade — dérive retirée, puis conservée —, la loi simulée du drawdown annuel confrontée aux deux formes fermées, et la loi de l'arcsinus du temps sous les eaux.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 306" role="img" aria-label="Drawdown : loi de croissance sans dérive et sous dérive, loi simulée du drawdown annuel, loi de l'arcsinus du temps sous les eaux" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Croissance du drawdown</text>
+<text class="sub" x="228.0" y="21.0" text-anchor="end">en R, échelle log</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="228.0" y2="40.0"/>
+<rect class="frame" x="56.0" y="46.0" width="172.0" height="168.0"/>
+<line class="gl" x1="56.0" y1="214.0" x2="228.0" y2="214.0"/>
+<text class="tk" x="51.0" y="217.0" text-anchor="end">1</text>
+<line class="gl" x1="56.0" y1="183.2" x2="228.0" y2="183.2"/>
+<text class="tk" x="51.0" y="186.2" text-anchor="end">3</text>
+<line class="gl" x1="56.0" y1="149.4" x2="228.0" y2="149.4"/>
+<text class="tk" x="51.0" y="152.4" text-anchor="end">10</text>
+<line class="gl" x1="56.0" y1="118.6" x2="228.0" y2="118.6"/>
+<text class="tk" x="51.0" y="121.6" text-anchor="end">30</text>
+<line class="gl" x1="56.0" y1="84.9" x2="228.0" y2="84.9"/>
+<text class="tk" x="51.0" y="87.9" text-anchor="end">100</text>
+<line class="gl" x1="56.0" y1="54.1" x2="228.0" y2="54.1"/>
+<text class="tk" x="51.0" y="57.1" text-anchor="end">300</text>
+<text class="tk" x="56.0" y="227.0" text-anchor="middle">10</text>
+<text class="tk" x="108.1" y="227.0" text-anchor="middle">100</text>
+<text class="tk" x="160.2" y="227.0" text-anchor="middle">1000</text>
+<text class="tk" x="212.3" y="227.0" text-anchor="middle">10000</text>
+<line class="ba" x1="56.0" y1="214.0" x2="228.0" y2="214.0"/>
+<text class="ax" x="142.0" y="242.0" text-anchor="middle">trades</text>
+<path class="ln s2" d="M56.00,130.88 L58.16,129.54 L61.94,127.20 L63.61,126.16 L66.64,124.29 L69.30,122.64 L71.69,121.16 L73.84,119.82 L76.73,118.03 L79.30,116.44 L82.32,114.57 L84.35,113.31 L87.37,111.44 L90.04,109.79 L92.42,108.31 L94.98,106.72 L97.65,105.07 L100.35,103.40 L102.77,101.90 L105.47,100.23 L108.10,98.60 L110.67,97.01 L113.33,95.36 L115.88,93.78 L118.46,92.18 L121.15,90.51 L123.79,88.88 L126.35,87.29 L128.93,85.69 L131.57,84.06 L134.14,82.46 L136.77,80.83 L139.36,79.23 L141.99,77.60 L144.57,76.00 L147.17,74.39 L149.79,72.77 L152.40,71.15 L154.99,69.55 L157.60,67.93 L160.21,66.31 L162.81,64.70 L165.42,63.08 L168.03,61.47 L170.63,59.86 L173.23,58.25 L175.84,56.63 L178.45,55.01 L181.05,53.40 L183.65,51.79 L186.26,50.17 L188.87,48.56 L191.47,46.94"></path>
+<path class="ln s1" d="M56.00,130.88 L58.16,129.54 L61.94,127.20 L63.61,126.16 L66.64,124.29 L69.30,122.64 L71.69,121.16 L73.84,119.82 L76.73,118.03 L79.30,116.44 L82.32,114.57 L84.35,113.31 L87.37,111.44 L90.04,109.79 L92.42,108.31 L94.98,106.72 L97.65,105.07 L100.35,103.40 L102.77,101.90 L105.47,100.23 L108.10,98.60 L110.67,97.01 L113.33,95.36 L115.88,93.78 L118.46,92.87 L121.15,92.18 L123.79,91.46 L126.35,90.71 L128.93,89.90 L131.57,89.03 L134.14,88.12 L136.77,87.15 L139.36,86.14 L141.99,85.07 L144.57,83.98 L147.17,82.84 L149.79,81.66 L152.40,80.46 L154.99,79.23 L157.60,77.97 L160.21,76.70 L162.81,75.41 L165.42,74.12 L168.03,72.82 L170.63,71.53 L173.23,70.24 L175.84,68.95 L178.45,67.68 L181.05,66.42 L183.65,65.18 L186.26,63.96 L188.87,62.76 L191.47,61.58 L194.08,60.42 L196.68,59.29 L199.29,58.19 L201.90,57.10 L204.50,56.04 L207.10,55.01 L209.71,54.00 L212.31,53.02"></path>
+<path class="ln s3" d="M56.00,211.33 L58.16,208.66 L61.94,203.97 L63.61,201.89 L66.64,198.15 L69.30,194.85 L71.69,191.89 L73.84,189.22 L76.73,185.63 L79.30,182.46 L82.32,178.71 L84.35,176.20 L87.37,172.46 L90.04,169.15 L92.42,166.20 L94.98,163.02 L97.65,159.72 L100.35,156.37 L102.77,153.37 L105.47,150.03 L108.10,146.76 L110.67,143.59 L113.33,140.28 L115.88,137.13 L118.46,133.94 L121.15,130.60 L123.79,127.33 L126.35,124.15 L128.93,120.96 L131.57,117.69 L134.14,114.50 L136.77,111.24 L139.36,108.03 L141.99,104.78 L144.57,101.58 L147.17,98.36 L149.79,95.11 L152.40,91.88 L154.99,88.67 L157.60,85.44 L160.21,82.20 L162.81,78.97 L165.42,75.74 L168.03,72.51 L170.63,69.28 L173.23,66.06 L175.84,62.83 L178.45,59.60 L181.05,56.37 L183.65,53.15 L186.26,49.92 L188.87,46.69" stroke-dasharray="4 3"></path>
+<line class="lvl" x1="144.7" y1="46.0" x2="144.7" y2="214.0"/>
+<text class="lg halo" x="149.7" y="58.1" text-anchor="start">1 an</text>
+<text class="hdr" x="280.0" y="34.0">Drawdown annuel</text>
+<text class="sub" x="444.0" y="21.0" text-anchor="end">4 000 années simulées</text>
+<line class="hsep" x1="280.0" y1="40.0" x2="444.0" y2="40.0"/>
+<rect class="frame" x="280.0" y="46.0" width="164.0" height="168.0"/>
+<line class="gl" x1="280.0" y1="161.5" x2="444.0" y2="161.5"/>
+<text class="tk" x="275.0" y="164.5" text-anchor="end">0,5</text>
+<line class="gl" x1="280.0" y1="109.0" x2="444.0" y2="109.0"/>
+<text class="tk" x="275.0" y="112.0" text-anchor="end">1,0</text>
+<line class="gl" x1="280.0" y1="56.5" x2="444.0" y2="56.5"/>
+<text class="tk" x="275.0" y="59.5" text-anchor="end">1,5</text>
+<text class="tk" x="280.0" y="227.0" text-anchor="middle">0</text>
+<text class="tk" x="331.3" y="227.0" text-anchor="middle">100</text>
+<text class="tk" x="382.5" y="227.0" text-anchor="middle">200</text>
+<text class="tk" x="433.8" y="227.0" text-anchor="middle">300</text>
+<line class="ba" x1="280.0" y1="214.0" x2="444.0" y2="214.0"/>
+<text class="ax" x="362.0" y="242.0" text-anchor="middle">R</text>
+<rect class="area ar3" x="299.44" y="210.37" width="4.53" height="3.63"></rect>
+<rect class="area ar3" x="304.26" y="202.01" width="4.53" height="11.99"></rect>
+<rect class="area ar3" x="309.09" y="184.43" width="4.53" height="29.57"></rect>
+<rect class="area ar3" x="313.91" y="172.72" width="4.53" height="41.28"></rect>
+<rect class="area ar3" x="318.73" y="149.84" width="4.53" height="64.16"></rect>
+<rect class="area ar3" x="323.56" y="147.61" width="4.53" height="66.39"></rect>
+<rect class="area ar3" x="328.38" y="133.11" width="4.53" height="80.89"></rect>
+<rect class="area ar3" x="333.20" y="137.57" width="4.53" height="76.43"></rect>
+<rect class="area ar3" x="338.03" y="137.57" width="4.53" height="76.43"></rect>
+<rect class="area ar3" x="342.85" y="145.66" width="4.53" height="68.34"></rect>
+<rect class="area ar3" x="347.67" y="140.92" width="4.53" height="73.08"></rect>
+<rect class="area ar3" x="352.50" y="142.03" width="4.53" height="71.97"></rect>
+<rect class="area ar3" x="357.32" y="154.03" width="4.53" height="59.97"></rect>
+<rect class="area ar3" x="362.14" y="156.26" width="4.53" height="57.74"></rect>
+<rect class="area ar3" x="366.97" y="162.40" width="4.53" height="51.60"></rect>
+<rect class="area ar3" x="371.79" y="170.21" width="4.53" height="43.79"></rect>
+<rect class="area ar3" x="376.62" y="169.09" width="4.53" height="44.91"></rect>
+<rect class="area ar3" x="381.44" y="180.25" width="4.53" height="33.75"></rect>
+<rect class="area ar3" x="386.26" y="181.08" width="4.53" height="32.92"></rect>
+<rect class="area ar3" x="391.09" y="189.73" width="4.53" height="24.27"></rect>
+<rect class="area ar3" x="395.91" y="190.85" width="4.53" height="23.15"></rect>
+<rect class="area ar3" x="400.73" y="198.10" width="4.53" height="15.90"></rect>
+<rect class="area ar3" x="405.56" y="197.54" width="4.53" height="16.46"></rect>
+<rect class="area ar3" x="410.38" y="204.79" width="4.53" height="9.21"></rect>
+<rect class="area ar3" x="415.20" y="202.56" width="4.53" height="11.44"></rect>
+<rect class="area ar3" x="420.03" y="208.42" width="4.53" height="5.58"></rect>
+<rect class="area ar3" x="424.85" y="208.70" width="4.53" height="5.30"></rect>
+<rect class="area ar3" x="429.67" y="211.21" width="4.53" height="2.79"></rect>
+<rect class="area ar3" x="434.50" y="209.54" width="4.53" height="4.46"></rect>
+<rect class="area ar3" x="439.32" y="211.21" width="4.53" height="2.79"></rect>
+<rect class="area ar1" x="295.39" y="212.33" width="2.99" height="1.67"></rect>
+<rect class="area ar1" x="300.21" y="193.36" width="2.99" height="20.64"></rect>
+<rect class="area ar1" x="305.03" y="152.07" width="2.99" height="61.93"></rect>
+<rect class="area ar1" x="309.86" y="115.81" width="2.99" height="98.19"></rect>
+<rect class="area ar1" x="314.68" y="97.12" width="2.99" height="116.88"></rect>
+<rect class="area ar1" x="319.50" y="80.94" width="2.99" height="133.06"></rect>
+<rect class="area ar1" x="324.33" y="98.52" width="2.99" height="115.48"></rect>
+<rect class="area ar1" x="329.15" y="102.14" width="2.99" height="111.86"></rect>
+<rect class="area ar1" x="333.98" y="131.71" width="2.99" height="82.29"></rect>
+<rect class="area ar1" x="338.80" y="140.92" width="2.99" height="73.08"></rect>
+<rect class="area ar1" x="343.62" y="147.89" width="2.99" height="66.11"></rect>
+<rect class="area ar1" x="348.45" y="158.21" width="2.99" height="55.79"></rect>
+<rect class="area ar1" x="353.27" y="176.06" width="2.99" height="37.94"></rect>
+<rect class="area ar1" x="358.09" y="176.34" width="2.99" height="37.66"></rect>
+<rect class="area ar1" x="362.92" y="191.41" width="2.99" height="22.59"></rect>
+<rect class="area ar1" x="367.74" y="193.08" width="2.99" height="20.92"></rect>
+<rect class="area ar1" x="372.56" y="199.49" width="2.99" height="14.51"></rect>
+<rect class="area ar1" x="377.39" y="204.24" width="2.99" height="9.76"></rect>
+<rect class="area ar1" x="382.21" y="206.19" width="2.99" height="7.81"></rect>
+<rect class="area ar1" x="387.03" y="207.03" width="2.99" height="6.97"></rect>
+<rect class="area ar1" x="391.86" y="208.14" width="2.99" height="5.86"></rect>
+<rect class="area ar1" x="396.68" y="209.82" width="2.99" height="4.18"></rect>
+<rect class="area ar1" x="401.50" y="210.93" width="2.99" height="3.07"></rect>
+<rect class="area ar1" x="406.33" y="211.77" width="2.99" height="2.23"></rect>
+<rect class="area ar1" x="411.15" y="212.88" width="2.99" height="1.12"></rect>
+<rect class="area ar1" x="415.98" y="212.05" width="2.99" height="1.95"></rect>
+<rect class="area ar1" x="420.80" y="213.16" width="2.99" height="0.84"></rect>
+<rect class="area ar1" x="425.62" y="213.44" width="2.99" height="0.56"></rect>
+<rect class="area ar1" x="430.45" y="213.72" width="2.99" height="0.40"></rect>
+<rect class="area ar1" x="435.27" y="213.72" width="2.99" height="0.40"></rect>
+<rect class="area ar1" x="440.09" y="213.72" width="2.99" height="0.40"></rect>
+<line class="lvl" x1="350.5" y1="46.0" x2="350.5" y2="214.0"/>
+<text class="lg halo" x="354.5" y="58.6" text-anchor="start">√N</text>
+<line class="lvl strong" x1="333.0" y1="46.0" x2="333.0" y2="214.0"/>
+<text class="lg halo" x="337.0" y="79.6" text-anchor="start">ln N</text>
+<text class="hdr" x="504.0" y="34.0">Temps sous les eaux</text>
+<text class="sub" x="636.0" y="21.0" text-anchor="end">loi de l'arcsinus</text>
+<line class="hsep" x1="504.0" y1="40.0" x2="636.0" y2="40.0"/>
+<rect class="frame" x="504.0" y="46.0" width="132.0" height="168.0"/>
+<line class="gl" x1="504.0" y1="214.0" x2="636.0" y2="214.0"/>
+<text class="tk" x="499.0" y="217.0" text-anchor="end">0,00</text>
+<line class="gl" x1="504.0" y1="172.0" x2="636.0" y2="172.0"/>
+<text class="tk" x="499.0" y="175.0" text-anchor="end">0,25</text>
+<line class="gl" x1="504.0" y1="130.0" x2="636.0" y2="130.0"/>
+<text class="tk" x="499.0" y="133.0" text-anchor="end">0,50</text>
+<line class="gl" x1="504.0" y1="88.0" x2="636.0" y2="88.0"/>
+<text class="tk" x="499.0" y="91.0" text-anchor="end">0,75</text>
+<line class="gl" x1="504.0" y1="46.0" x2="636.0" y2="46.0"/>
+<text class="tk" x="499.0" y="49.0" text-anchor="end">1,00</text>
+<text class="tk" x="504.0" y="227.0" text-anchor="middle">0,0</text>
+<text class="tk" x="570.0" y="227.0" text-anchor="middle">0,5</text>
+<text class="tk" x="636.0" y="227.0" text-anchor="middle">1,0</text>
+<line class="ba" x1="504.0" y1="214.0" x2="636.0" y2="214.0"/>
+<text class="ax" x="570.0" y="242.0" text-anchor="middle">fraction du temps</text>
+<path class="ln s1" d="M504.66,206.43 L505.32,203.29 L505.98,200.87 L506.64,198.82 L507.30,197.02 L507.96,195.38 L508.62,193.87 L509.28,192.46 L509.94,191.14 L510.60,189.88 L511.26,188.68 L511.92,187.53 L512.58,186.43 L513.24,185.36 L513.90,184.33 L514.56,183.33 L515.22,182.36 L515.88,181.41 L516.54,180.49 L517.20,179.59 L517.86,178.71 L518.52,177.84 L519.18,177.00 L519.84,176.17 L520.50,175.35 L521.16,174.55 L521.82,173.76 L522.48,172.98 L523.14,172.22 L523.80,171.47 L524.46,170.72 L525.12,169.99 L525.78,169.26 L526.44,168.55 L527.10,167.84 L527.76,167.14 L528.42,166.45 L529.08,165.76 L529.74,165.08 L530.40,164.41 L531.06,163.75 L531.72,163.09 L532.38,162.43 L533.04,161.79 L533.70,161.14 L534.36,160.50 L535.02,159.87 L535.68,159.24 L536.34,158.62 L537.00,158.00 L537.66,157.38 L538.32,156.77 L538.98,156.17 L539.64,155.56 L540.30,154.96 L540.96,154.36 L541.62,153.77 L542.28,153.18 L542.94,152.59 L543.60,152.01 L544.26,151.42 L544.92,150.84 L545.58,150.27 L546.24,149.69 L546.90,149.12 L547.56,148.55 L548.22,147.98 L548.88,147.42 L549.54,146.86 L550.20,146.29 L550.86,145.73 L551.52,145.18 L552.18,144.62 L552.84,144.07 L553.50,143.51 L554.16,142.96 L554.82,142.41 L555.48,141.86 L556.14,141.31 L556.80,140.77 L557.46,140.22 L558.12,139.68 L558.78,139.14 L559.44,138.59 L560.10,138.05 L560.76,137.51 L561.42,136.97 L562.08,136.43 L562.74,135.89 L563.40,135.36 L564.06,134.82 L564.72,134.28 L565.38,133.75 L566.04,133.21 L566.70,132.67 L567.36,132.14 L568.02,131.60 L568.68,131.07 L569.34,130.53 L570.00,130.00 L570.66,129.47 L571.32,128.93 L571.98,128.40 L572.64,127.86 L573.30,127.33 L573.96,126.79 L574.62,126.25 L575.28,125.72 L575.94,125.18 L576.60,124.64 L577.26,124.11 L577.92,123.57 L578.58,123.03 L579.24,122.49 L579.90,121.95 L580.56,121.41 L581.22,120.86 L581.88,120.32 L582.54,119.78 L583.20,119.23 L583.86,118.69 L584.52,118.14 L585.18,117.59 L585.84,117.04 L586.50,116.49 L587.16,115.93 L587.82,115.38 L588.48,114.82 L589.14,114.27 L589.80,113.71 L590.46,113.14 L591.12,112.58 L591.78,112.02 L592.44,111.45 L593.10,110.88 L593.76,110.31 L594.42,109.73 L595.08,109.16 L595.74,108.58 L596.40,107.99 L597.06,107.41 L597.72,106.82 L598.38,106.23 L599.04,105.64 L599.70,105.04 L600.36,104.44 L601.02,103.83 L601.68,103.23 L602.34,102.62 L603.00,102.00 L603.66,101.38 L604.32,100.76 L604.98,100.13 L605.64,99.50 L606.30,98.86 L606.96,98.21 L607.62,97.57 L608.28,96.91 L608.94,96.25 L609.60,95.59 L610.26,94.92 L610.92,94.24 L611.58,93.55 L612.24,92.86 L612.90,92.16 L613.56,91.45 L614.22,90.74 L614.88,90.01 L615.54,89.28 L616.20,88.53 L616.86,87.78 L617.52,87.02 L618.18,86.24 L618.84,85.45 L619.50,84.65 L620.16,83.83 L620.82,83.00 L621.48,82.16 L622.14,81.29 L622.80,80.41 L623.46,79.51 L624.12,78.59 L624.78,77.64 L625.44,76.67 L626.10,75.67 L626.76,74.64 L627.42,73.57 L628.08,72.47 L628.74,71.32 L629.40,70.12 L630.06,68.86 L630.72,67.54 L631.38,66.13 L632.04,64.62 L632.70,62.98 L633.36,61.18 L634.02,59.13 L634.68,56.71 L635.34,53.57"></path>
+<path class="ln s2" d="M504.66,213.16 L505.32,212.32 L505.98,211.48 L506.64,210.64 L507.30,209.80 L507.96,208.96 L508.62,208.12 L509.28,207.28 L509.94,206.44 L510.60,205.60 L511.26,204.76 L511.92,203.92 L512.58,203.08 L513.24,202.24 L513.90,201.40 L514.56,200.56 L515.22,199.72 L515.88,198.88 L516.54,198.04 L517.20,197.20 L517.86,196.36 L518.52,195.52 L519.18,194.68 L519.84,193.84 L520.50,193.00 L521.16,192.16 L521.82,191.32 L522.48,190.48 L523.14,189.64 L523.80,188.80 L524.46,187.96 L525.12,187.12 L525.78,186.28 L526.44,185.44 L527.10,184.60 L527.76,183.76 L528.42,182.92 L529.08,182.08 L529.74,181.24 L530.40,180.40 L531.06,179.56 L531.72,178.72 L532.38,177.88 L533.04,177.04 L533.70,176.20 L534.36,175.36 L535.02,174.52 L535.68,173.68 L536.34,172.84 L537.00,172.00 L537.66,171.16 L538.32,170.32 L538.98,169.48 L539.64,168.64 L540.30,167.80 L540.96,166.96 L541.62,166.12 L542.28,165.28 L542.94,164.44 L543.60,163.60 L544.26,162.76 L544.92,161.92 L545.58,161.08 L546.24,160.24 L546.90,159.40 L547.56,158.56 L548.22,157.72 L548.88,156.88 L549.54,156.04 L550.20,155.20 L550.86,154.36 L551.52,153.52 L552.18,152.68 L552.84,151.84 L553.50,151.00 L554.16,150.16 L554.82,149.32 L555.48,148.48 L556.14,147.64 L556.80,146.80 L557.46,145.96 L558.12,145.12 L558.78,144.28 L559.44,143.44 L560.10,142.60 L560.76,141.76 L561.42,140.92 L562.08,140.08 L562.74,139.24 L563.40,138.40 L564.06,137.56 L564.72,136.72 L565.38,135.88 L566.04,135.04 L566.70,134.20 L567.36,133.36 L568.02,132.52 L568.68,131.68 L569.34,130.84 L570.00,130.00 L570.66,129.16 L571.32,128.32 L571.98,127.48 L572.64,126.64 L573.30,125.80 L573.96,124.96 L574.62,124.12 L575.28,123.28 L575.94,122.44 L576.60,121.60 L577.26,120.76 L577.92,119.92 L578.58,119.08 L579.24,118.24 L579.90,117.40 L580.56,116.56 L581.22,115.72 L581.88,114.88 L582.54,114.04 L583.20,113.20 L583.86,112.36 L584.52,111.52 L585.18,110.68 L585.84,109.84 L586.50,109.00 L587.16,108.16 L587.82,107.32 L588.48,106.48 L589.14,105.64 L589.80,104.80 L590.46,103.96 L591.12,103.12 L591.78,102.28 L592.44,101.44 L593.10,100.60 L593.76,99.76 L594.42,98.92 L595.08,98.08 L595.74,97.24 L596.40,96.40 L597.06,95.56 L597.72,94.72 L598.38,93.88 L599.04,93.04 L599.70,92.20 L600.36,91.36 L601.02,90.52 L601.68,89.68 L602.34,88.84 L603.00,88.00 L603.66,87.16 L604.32,86.32 L604.98,85.48 L605.64,84.64 L606.30,83.80 L606.96,82.96 L607.62,82.12 L608.28,81.28 L608.94,80.44 L609.60,79.60 L610.26,78.76 L610.92,77.92 L611.58,77.08 L612.24,76.24 L612.90,75.40 L613.56,74.56 L614.22,73.72 L614.88,72.88 L615.54,72.04 L616.20,71.20 L616.86,70.36 L617.52,69.52 L618.18,68.68 L618.84,67.84 L619.50,67.00 L620.16,66.16 L620.82,65.32 L621.48,64.48 L622.14,63.64 L622.80,62.80 L623.46,61.96 L624.12,61.12 L624.78,60.28 L625.44,59.44 L626.10,58.60 L626.76,57.76 L627.42,56.92 L628.08,56.08 L628.74,55.24 L629.40,54.40 L630.06,53.56 L630.72,52.72 L631.38,51.88 L632.04,51.04 L632.70,50.20 L633.36,49.36 L634.02,48.52 L634.68,47.68 L635.34,46.84" stroke-dasharray="4 3"></path>
+<rect class="wash" x="609.6" y="46.0" width="26.4" height="168.0"/>
+<text class="dl halo" x="603.6" y="109.8" text-anchor="end">30 % des années</text>
+<line class="ln s2" x1="56.0" y1="268.0" x2="70.0" y2="268.0"/>
+<text class="lg" x="76.0" y="271.5">même loi, dérive retirée : √N</text>
+<line class="ln s1" x1="198.0" y1="268.0" x2="212.0" y2="268.0"/>
+<text class="lg" x="218.0" y="271.5">avec dérive : ln N</text>
+<line class="ln s3" x1="340.0" y1="268.0" x2="354.0" y2="268.0"/>
+<text class="lg" x="360.0" y="271.5">gain cumulé espéré</text>
+<line class="ln s1" x1="496.0" y1="268.0" x2="510.0" y2="268.0"/>
+<text class="lg" x="516.0" y="271.5">arcsinus</text>
+<line class="ln s2" x1="572.0" y1="268.0" x2="586.0" y2="268.0"/>
+<text class="lg" x="592.0" y="271.5">uniforme</text>
+<text class="lg" x="330.0" y="296.0" text-anchor="middle">les deux lois de croissance se séparent d'autant plus que l'historique s'allonge : c'est l'écart, non le niveau, qui informe</text>
+</svg></div>
+    </figure>
+
+  <h3>Monte-Carlo&nbsp;: un backtest est un tirage</h3>
+
+  <p>Le Monte-Carlo ne remplace ici aucun calcul&nbsp;: toutes les grandeurs centrales ont une forme fermée. Il sert à trois choses qu'elles ne font pas. Il donne des <em>lois</em> et non des moyennes — c'est le quantile qui décide d'une allocation, pas l'espérance. Il <em>vérifie</em> les formes fermées, et c'est le seul contrôle qui ne partage pas les hypothèses de la dérivation. Et il produit la loi nulle empirique des statistiques qui n'en ont pas.</p>
+
+  <p>Le résultat de 4 000 années simulées tient en une comparaison. Une stratégie <strong>sans aucun edge</strong> termine l'année en gain 28 fois sur cent, et produit une année sur vingt un Sharpe par trade de 0,044 — <em>supérieur au Sharpe vrai de la stratégie avec edge</em>, 0,0225. Symétriquement, la stratégie avec edge termine l'année en perte 30 fois sur cent. Un an de résultats ne sépare pas les deux hypothèses, et aucun instrument appliqué à cette année-là n'y changera rien&nbsp;: l'information n'est pas dans l'échantillon.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 23</span> — Monte-Carlo : 4 000 années simulées de 504 trades</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Statistique</th><th>µ = 0</th><th>µ = 2 µ*</th></tr></thead>
+        <tbody>
+          <tr><td>P(P&L annuel > 0)</td><td>28,2 %</td><td>70,2 %</td></tr>
+          <tr><td>P&L annuel, quantile 5 %</td><td>−209 R</td><td>−118 R</td></tr>
+          <tr><td>P&L annuel, médiane</td><td>−61 R</td><td>55 R</td></tr>
+          <tr class="sep"><td>P&L annuel, quantile 95 %</td><td>113 R</td><td>239 R</td></tr>
+          <tr><td>MDD moyen simulé</td><td>144,7 R</td><td>103,3 R</td></tr>
+          <tr><td>MDD, forme fermée</td><td>125,2 R</td><td>103,4 R</td></tr>
+          <tr class="sep"><td>MDD, quantile 95 %</td><td>249 R</td><td>181 R</td></tr>
+          <tr><td>Sharpe mesuré, quantile 95 %</td><td>0,0439</td><td>0,0858</td></tr>
+          <tr><td>Sharpe vrai</td><td>−0,0247</td><td>0,0225</td></tr>
+          <tr><td>Temps sous les eaux, médiane</td><td>99 %</td><td>98 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La ligne décisive est l'avant-dernière paire. Une stratégie <strong>sans aucun edge</strong> produit, une année sur vingt, un Sharpe par trade de 0,044 — supérieur au Sharpe <strong>vrai</strong> de la stratégie avec edge, 0,022. Un an de résultats ne sépare donc pas les deux hypothèses, quel que soit l'instrument qu'on lui applique.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 19</span> — Faisceaux de courbes d'équité simulées, sans dérive puis sous la dérive de référence, et lois du P&amp;L annuel. Le recouvrement des deux faisceaux est le résultat&nbsp;: ils occupent la même région du plan pendant toute l'année.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 308" role="img" aria-label="Faisceaux de courbes d équité simulées sans dérive puis sous dérive, et lois du P&amp;L annuel" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Sans dérive</text>
+<text class="read" x="252.0" y="34.0" text-anchor="end">µ = 0</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="252.0" y2="40.0"/>
+<rect class="frame" x="56.0" y="46.0" width="196.0" height="186.0"/>
+<line class="gl" x1="56.0" y1="227.3" x2="252.0" y2="227.3"/>
+<text class="tk" x="51.0" y="230.3" text-anchor="end">-200</text>
+<line class="gl" x1="56.0" y1="186.6" x2="252.0" y2="186.6"/>
+<text class="tk" x="51.0" y="189.6" text-anchor="end">-100</text>
+<line class="gl" x1="56.0" y1="146.0" x2="252.0" y2="146.0"/>
+<text class="tk" x="51.0" y="149.0" text-anchor="end">0</text>
+<line class="gl" x1="56.0" y1="105.3" x2="252.0" y2="105.3"/>
+<text class="tk" x="51.0" y="108.3" text-anchor="end">100</text>
+<line class="gl" x1="56.0" y1="64.7" x2="252.0" y2="64.7"/>
+<text class="tk" x="51.0" y="67.7" text-anchor="end">200</text>
+<text class="ax" transform="translate(22.0,139.0) rotate(-90)" text-anchor="middle">R cumulés</text>
+<text class="tk" x="56.0" y="245.0" text-anchor="middle">0</text>
+<text class="tk" x="105.0" y="245.0" text-anchor="middle">126</text>
+<text class="tk" x="154.0" y="245.0" text-anchor="middle">252</text>
+<text class="tk" x="203.0" y="245.0" text-anchor="middle">378</text>
+<text class="tk" x="252.0" y="245.0" text-anchor="middle">504</text>
+<line class="ba" x1="56.0" y1="232.0" x2="252.0" y2="232.0"/>
+<text class="ax" x="154.0" y="260.0" text-anchor="middle">trades</text>
+<line class="zero" x1="56.0" y1="146.0" x2="252.0" y2="146.0"/>
+<path class="wash" d="M56.0,146.0 L60.7,134.3 L65.3,131.2 L70.0,128.1 L74.7,125.0 L79.3,124.2 L84.0,127.3 L88.7,124.1 L93.3,123.4 L98.0,120.3 L102.7,123.3 L107.3,120.2 L112.0,117.1 L116.7,116.3 L121.3,113.2 L126.0,116.2 L130.7,113.1 L135.3,112.3 L140.0,113.0 L144.7,112.3 L149.3,111.6 L154.0,114.6 L158.7,113.9 L163.3,114.5 L168.0,113.7 L172.7,112.9 L177.3,109.9 L182.0,112.9 L186.7,109.8 L191.3,109.1 L196.0,109.7 L200.7,109.0 L205.3,112.0 L210.0,111.3 L214.7,108.1 L219.3,107.4 L224.0,110.4 L228.7,107.3 L233.3,106.6 L238.0,109.6 L242.7,106.5 L247.3,105.8 L252.0,105.0 L252.0,232.0 L247.3,229.0 L242.7,226.0 L238.0,224.3 L233.3,223.7 L228.7,224.4 L224.0,221.5 L219.3,222.1 L214.7,219.1 L210.0,219.8 L205.3,216.9 L200.7,216.3 L196.0,214.5 L191.3,211.5 L186.7,212.2 L182.0,209.2 L177.3,209.9 L172.7,204.5 L168.0,207.6 L163.3,202.2 L158.7,200.7 L154.0,199.9 L149.3,194.6 L144.7,197.6 L140.0,196.0 L135.3,195.4 L130.7,196.1 L126.0,193.1 L121.3,190.1 L116.7,190.8 L112.0,185.4 L107.3,182.4 L102.7,183.1 L98.0,177.6 L93.3,172.2 L88.7,175.4 L84.0,169.9 L79.3,166.9 L74.7,167.6 L70.0,162.2 L65.3,156.8 L60.7,151.4 L56.0,146.0 Z"/>
+<path class="ln s2" d="M56.00,145.99 L60.67,151.40 L65.33,156.82 L70.00,153.69 L74.67,159.11 L79.33,155.99 L84.00,161.40 L88.67,158.28 L93.33,163.69 L98.00,166.70 L102.67,165.99 L107.33,165.28 L112.00,168.28 L116.67,167.57 L121.33,170.57 L126.00,172.60 L130.67,172.87 L135.33,175.87 L140.00,175.16 L144.67,174.45 L149.33,177.45 L154.00,176.74 L158.67,179.74 L163.33,179.03 L168.00,182.04 L172.67,181.33 L177.33,184.33 L182.00,183.62 L186.67,186.62 L191.33,185.91 L196.00,186.78 L200.67,185.79 L205.33,188.80 L210.00,188.09 L214.67,191.09 L219.33,190.38 L224.00,192.40 L228.67,192.67 L233.33,195.68 L238.00,194.97 L242.67,197.97 L247.33,197.26 L252.00,196.55" stroke-dasharray="3 3"></path>
+<path class="ln s2" d="M56.00,145.99 L60.67,142.86 L65.33,139.74 L70.00,145.16 L74.67,142.03 L79.33,138.91 L84.00,144.33 L88.67,141.21 L93.33,138.08 L98.00,143.50 L102.67,140.38 L107.33,139.66 L112.00,142.67 L116.67,139.55 L121.33,142.55 L126.00,141.84 L130.67,138.72 L135.33,144.13 L140.00,141.01 L144.67,140.30 L149.33,143.30 L154.00,140.18 L158.67,137.06 L163.33,142.47 L168.00,139.35 L172.67,142.03 L177.33,141.64 L182.00,140.93 L186.67,143.94 L191.33,140.82 L196.00,143.82 L200.67,143.11 L205.33,142.40 L210.00,142.99 L214.67,142.28 L219.33,141.57 L224.00,142.16 L228.67,143.86 L233.33,143.15 L238.00,143.74 L242.67,143.03 L247.33,143.62 L252.00,142.91" stroke-dasharray="3 3"></path>
+<path class="ln s2" d="M56.00,145.99 L60.67,151.40 L65.33,148.28 L70.00,145.16 L74.67,150.57 L79.33,149.86 L84.00,152.86 L88.67,149.74 L93.33,155.16 L98.00,152.04 L102.67,157.45 L107.33,154.33 L112.00,153.62 L116.67,156.62 L121.33,153.50 L126.00,158.91 L130.67,155.79 L135.33,155.08 L140.00,158.08 L144.67,157.37 L149.33,160.38 L154.00,158.46 L158.67,162.67 L163.33,159.55 L168.00,160.14 L172.67,161.84 L177.33,161.13 L182.00,164.13 L186.67,163.42 L191.33,166.43 L196.00,165.72 L200.67,166.31 L205.33,165.60 L210.00,166.74 L214.67,167.89 L219.33,169.59 L224.00,170.18 L228.67,167.71 L233.33,170.07 L238.00,171.76 L242.67,172.36 L247.33,171.65 L252.00,170.94"></path>
+<text class="dl halo" x="246.0" y="164.9" text-anchor="end">-61 R</text>
+<text class="hdr" x="288.0" y="34.0">Sous dérive</text>
+<text class="read" x="484.0" y="34.0" text-anchor="end">µ = 2 µ*</text>
+<line class="hsep" x1="288.0" y1="40.0" x2="484.0" y2="40.0"/>
+<rect class="frame" x="288.0" y="46.0" width="196.0" height="186.0"/>
+<line class="gl" x1="288.0" y1="227.3" x2="484.0" y2="227.3"/>
+<text class="tk" x="283.0" y="230.3" text-anchor="end">-200</text>
+<line class="gl" x1="288.0" y1="186.6" x2="484.0" y2="186.6"/>
+<text class="tk" x="283.0" y="189.6" text-anchor="end">-100</text>
+<line class="gl" x1="288.0" y1="146.0" x2="484.0" y2="146.0"/>
+<text class="tk" x="283.0" y="149.0" text-anchor="end">0</text>
+<line class="gl" x1="288.0" y1="105.3" x2="484.0" y2="105.3"/>
+<text class="tk" x="283.0" y="108.3" text-anchor="end">100</text>
+<line class="gl" x1="288.0" y1="64.7" x2="484.0" y2="64.7"/>
+<text class="tk" x="283.0" y="67.7" text-anchor="end">200</text>
+<text class="tk" x="288.0" y="245.0" text-anchor="middle">0</text>
+<text class="tk" x="337.0" y="245.0" text-anchor="middle">126</text>
+<text class="tk" x="386.0" y="245.0" text-anchor="middle">252</text>
+<text class="tk" x="435.0" y="245.0" text-anchor="middle">378</text>
+<text class="tk" x="484.0" y="245.0" text-anchor="middle">504</text>
+<line class="ba" x1="288.0" y1="232.0" x2="484.0" y2="232.0"/>
+<text class="ax" x="386.0" y="260.0" text-anchor="middle">trades</text>
+<line class="zero" x1="288.0" y1="146.0" x2="484.0" y2="146.0"/>
+<path class="wash" d="M288.0,146.0 L292.7,134.3 L297.3,122.7 L302.0,119.5 L306.7,122.5 L311.3,113.3 L316.0,110.2 L320.7,107.1 L325.3,103.9 L330.0,103.2 L334.7,100.1 L339.3,97.0 L344.0,97.6 L348.7,96.9 L353.3,93.7 L358.0,90.6 L362.7,87.5 L367.3,84.4 L372.0,84.9 L376.7,84.3 L381.3,83.5 L386.0,80.4 L390.7,79.7 L395.3,76.6 L400.0,75.9 L404.7,71.6 L409.3,69.6 L414.0,70.2 L418.7,67.1 L423.3,66.4 L428.0,65.7 L432.7,60.1 L437.3,63.1 L442.0,60.0 L446.7,62.8 L451.3,62.3 L456.0,59.2 L460.7,56.1 L465.3,53.0 L470.0,50.9 L474.7,49.1 L479.3,46.0 L484.0,46.6 L484.0,194.1 L479.3,194.8 L474.7,191.8 L470.0,192.6 L465.3,192.0 L460.7,192.7 L456.0,189.9 L451.3,190.4 L446.7,191.1 L442.0,188.1 L437.3,191.2 L432.7,191.9 L428.0,188.9 L423.3,189.7 L418.7,189.0 L414.0,187.3 L409.3,184.3 L404.7,185.0 L400.0,182.2 L395.3,185.2 L390.7,185.9 L386.0,182.9 L381.3,186.0 L376.7,180.6 L372.0,183.7 L367.3,178.3 L362.7,181.4 L358.0,182.2 L353.3,179.1 L348.7,176.1 L344.0,176.8 L339.3,173.8 L334.7,174.5 L330.0,169.1 L325.3,172.2 L320.7,166.8 L316.0,169.9 L311.3,164.5 L306.7,167.6 L302.0,162.2 L297.3,156.8 L292.7,151.4 L288.0,146.0 Z"/>
+<path class="ln s1" d="M288.00,145.99 L292.67,151.40 L297.33,148.28 L302.00,153.69 L306.67,150.57 L311.33,155.99 L316.00,152.86 L320.67,158.28 L325.33,155.16 L330.00,154.45 L334.67,157.45 L339.33,154.33 L344.00,159.74 L348.67,156.62 L353.33,153.50 L358.00,158.91 L362.67,155.79 L367.33,155.08 L372.00,158.08 L376.67,154.96 L381.33,157.97 L386.00,157.26 L390.67,154.13 L395.33,157.74 L400.00,156.43 L404.67,155.71 L409.33,158.72 L414.00,155.60 L418.67,154.89 L423.33,155.48 L428.00,154.77 L432.67,151.65 L437.33,157.06 L442.00,153.94 L446.67,153.23 L451.33,153.82 L456.00,153.11 L460.67,155.13 L465.33,155.40 L470.00,152.28 L474.67,155.28 L479.33,154.57 L484.00,153.86" stroke-dasharray="3 3"></path>
+<path class="ln s1" d="M288.00,145.99 L292.67,142.86 L297.33,139.74 L302.00,136.62 L306.67,133.50 L311.33,130.38 L316.00,129.66 L320.67,132.67 L325.33,129.55 L330.00,126.42 L334.67,123.30 L339.33,122.59 L344.00,125.59 L348.67,122.47 L353.33,119.35 L358.00,118.64 L362.67,119.23 L367.33,118.52 L372.00,115.40 L376.67,114.69 L381.33,117.69 L386.00,114.57 L390.67,111.45 L395.33,110.74 L400.00,111.33 L404.67,110.62 L409.33,107.50 L414.00,106.78 L418.67,107.38 L423.33,106.67 L428.00,103.54 L432.67,106.55 L437.33,103.43 L442.00,102.72 L446.67,101.40 L451.33,99.86 L456.00,101.89 L460.67,98.76 L465.33,98.05 L470.00,94.93 L474.67,97.93 L479.33,94.81 L484.00,94.10" stroke-dasharray="3 3"></path>
+<path class="ln s1" d="M288.00,145.99 L292.67,142.86 L297.33,148.28 L302.00,145.16 L306.67,142.03 L311.33,147.45 L316.00,144.33 L320.67,141.21 L325.33,144.21 L330.00,143.50 L334.67,140.38 L339.33,143.38 L344.00,142.67 L348.67,139.55 L353.33,136.42 L358.00,139.43 L362.67,138.72 L367.33,135.60 L372.00,137.29 L376.67,137.89 L381.33,134.77 L386.00,137.77 L390.67,137.06 L395.33,133.94 L400.00,133.23 L404.67,133.82 L409.33,133.11 L414.00,129.99 L418.67,132.99 L423.33,132.28 L428.00,131.57 L432.67,133.92 L437.33,131.45 L442.00,128.33 L446.67,131.33 L451.33,130.62 L456.00,127.50 L460.67,129.85 L465.33,129.79 L470.00,126.67 L474.67,127.26 L479.33,128.96 L484.00,128.25"></path>
+<text class="dl halo" x="478.0" y="122.2" text-anchor="end">44 R</text>
+<text class="hdr" x="528.0" y="34.0">P&amp;L annuel</text>
+<text class="sub" x="636.0" y="21.0" text-anchor="end">densité ‰</text>
+<line class="hsep" x1="528.0" y1="40.0" x2="636.0" y2="40.0"/>
+<rect class="frame" x="528.0" y="46.0" width="108.0" height="186.0"/>
+<line class="gl" x1="528.0" y1="182.4" x2="636.0" y2="182.4"/>
+<text class="tk" x="523.0" y="185.4" text-anchor="end">2</text>
+<line class="gl" x1="528.0" y1="132.8" x2="636.0" y2="132.8"/>
+<text class="tk" x="523.0" y="135.8" text-anchor="end">4</text>
+<line class="gl" x1="528.0" y1="83.2" x2="636.0" y2="83.2"/>
+<text class="tk" x="523.0" y="86.2" text-anchor="end">6</text>
+<text class="tk" x="530.7" y="245.0" text-anchor="middle">-200</text>
+<text class="tk" x="577.9" y="245.0" text-anchor="middle">0</text>
+<text class="tk" x="625.2" y="245.0" text-anchor="middle">200</text>
+<line class="ba" x1="528.0" y1="232.0" x2="636.0" y2="232.0"/>
+<text class="ax" x="582.0" y="260.0" text-anchor="middle">R</text>
+<rect class="area ar3" x="528.07" y="188.91" width="3.46" height="43.09"></rect>
+<rect class="area ar3" x="531.67" y="186.88" width="3.46" height="45.12"></rect>
+<rect class="area ar3" x="535.27" y="186.88" width="3.46" height="45.12"></rect>
+<rect class="area ar3" x="538.87" y="168.99" width="3.46" height="63.01"></rect>
+<rect class="area ar3" x="542.47" y="163.30" width="3.46" height="68.70"></rect>
+<rect class="area ar3" x="546.07" y="178.74" width="3.46" height="53.26"></rect>
+<rect class="area ar3" x="549.67" y="132.81" width="3.46" height="99.19"></rect>
+<rect class="area ar3" x="553.27" y="107.60" width="3.46" height="124.40"></rect>
+<rect class="area ar3" x="556.87" y="123.05" width="3.46" height="108.95"></rect>
+<rect class="area ar3" x="560.47" y="148.25" width="3.46" height="83.75"></rect>
+<rect class="area ar3" x="564.07" y="138.09" width="3.46" height="93.91"></rect>
+<rect class="area ar3" x="567.67" y="139.31" width="3.46" height="92.69"></rect>
+<rect class="area ar3" x="571.27" y="103.13" width="3.46" height="128.87"></rect>
+<rect class="area ar3" x="574.87" y="174.27" width="3.46" height="57.73"></rect>
+<rect class="area ar3" x="578.47" y="157.60" width="3.46" height="74.40"></rect>
+<rect class="area ar3" x="582.07" y="169.80" width="3.46" height="62.20"></rect>
+<rect class="area ar3" x="585.67" y="186.47" width="3.46" height="45.53"></rect>
+<rect class="area ar3" x="589.27" y="181.18" width="3.46" height="50.82"></rect>
+<rect class="area ar3" x="592.87" y="181.59" width="3.46" height="50.41"></rect>
+<rect class="area ar3" x="596.47" y="193.79" width="3.46" height="38.21"></rect>
+<rect class="area ar3" x="600.07" y="210.86" width="3.46" height="21.14"></rect>
+<rect class="area ar3" x="603.67" y="209.23" width="3.46" height="22.77"></rect>
+<rect class="area ar3" x="607.27" y="215.74" width="3.46" height="16.26"></rect>
+<rect class="area ar3" x="610.87" y="221.02" width="3.46" height="10.98"></rect>
+<rect class="area ar3" x="614.47" y="212.89" width="3.46" height="19.11"></rect>
+<rect class="area ar3" x="618.07" y="224.68" width="3.46" height="7.32"></rect>
+<rect class="area ar3" x="621.67" y="227.93" width="3.46" height="4.07"></rect>
+<rect class="area ar3" x="625.27" y="229.97" width="3.46" height="2.03"></rect>
+<rect class="area ar3" x="628.87" y="227.93" width="3.46" height="4.07"></rect>
+<rect class="area ar3" x="632.47" y="230.78" width="3.46" height="1.22"></rect>
+<rect class="area ar1" x="528.68" y="225.09" width="2.23" height="6.91"></rect>
+<rect class="area ar1" x="532.28" y="223.87" width="2.23" height="8.13"></rect>
+<rect class="area ar1" x="535.88" y="228.34" width="2.23" height="3.66"></rect>
+<rect class="area ar1" x="539.48" y="218.58" width="2.23" height="13.42"></rect>
+<rect class="area ar1" x="543.08" y="212.49" width="2.23" height="19.51"></rect>
+<rect class="area ar1" x="546.68" y="216.55" width="2.23" height="15.45"></rect>
+<rect class="area ar1" x="550.28" y="207.61" width="2.23" height="24.39"></rect>
+<rect class="area ar1" x="553.88" y="190.94" width="2.23" height="41.06"></rect>
+<rect class="area ar1" x="557.48" y="188.91" width="2.23" height="43.09"></rect>
+<rect class="area ar1" x="561.08" y="197.85" width="2.23" height="34.15"></rect>
+<rect class="area ar1" x="564.68" y="170.61" width="2.23" height="61.39"></rect>
+<rect class="area ar1" x="568.28" y="161.26" width="2.23" height="70.74"></rect>
+<rect class="area ar1" x="571.88" y="136.87" width="2.23" height="95.13"></rect>
+<rect class="area ar1" x="575.48" y="162.89" width="2.23" height="69.11"></rect>
+<rect class="area ar1" x="579.08" y="141.34" width="2.23" height="90.66"></rect>
+<rect class="area ar1" x="582.68" y="145.41" width="2.23" height="86.59"></rect>
+<rect class="area ar1" x="586.28" y="169.39" width="2.23" height="62.61"></rect>
+<rect class="area ar1" x="589.88" y="140.12" width="2.23" height="91.88"></rect>
+<rect class="area ar1" x="593.48" y="118.17" width="2.23" height="113.83"></rect>
+<rect class="area ar1" x="597.08" y="133.62" width="2.23" height="98.38"></rect>
+<rect class="area ar1" x="600.68" y="168.17" width="2.23" height="63.83"></rect>
+<rect class="area ar1" x="604.28" y="154.35" width="2.23" height="77.65"></rect>
+<rect class="area ar1" x="607.88" y="163.70" width="2.23" height="68.30"></rect>
+<rect class="area ar1" x="611.48" y="183.62" width="2.23" height="48.38"></rect>
+<rect class="area ar1" x="615.08" y="153.54" width="2.23" height="78.46"></rect>
+<rect class="area ar1" x="618.68" y="188.09" width="2.23" height="43.91"></rect>
+<rect class="area ar1" x="622.28" y="194.60" width="2.23" height="37.40"></rect>
+<rect class="area ar1" x="625.88" y="206.39" width="2.23" height="25.61"></rect>
+<rect class="area ar1" x="629.48" y="204.76" width="2.23" height="27.24"></rect>
+<rect class="area ar1" x="633.08" y="205.17" width="2.23" height="26.83"></rect>
+<line class="zero" x1="577.9" y1="46.0" x2="577.9" y2="232.0"/>
+<line class="ln s2" x1="56.0" y1="272.0" x2="70.0" y2="272.0"/>
+<text class="lg" x="76.0" y="275.5">médiane sans dérive</text>
+<line class="ln s1" x1="238.0" y1="272.0" x2="252.0" y2="272.0"/>
+<text class="lg" x="258.0" y="275.5">médiane sous dérive</text>
+<rect class="swatch-wash" x="430.0" y="266.5" width="11" height="11" rx="2"/>
+<text class="lg" x="447.0" y="275.5">intervalle 90 %</text>
+<text class="lg" x="330.0" y="296.0" text-anchor="middle">traits pleins : médianes ; tirets : quartiles ; chaque faisceau enveloppe 900 années simulées — un backtest en est une</text>
+</svg></div>
+    </figure>
+
+  <h3>Ré-échantillonnage et randomisation</h3>
+
+  <p>Trois façons de fabriquer une loi nulle à partir d'un échantillon réel, et ce qui les sépare. Le <em>bootstrap i.i.d.</em> tire avec remise&nbsp;; il est correct pour des trades indépendants et détruit toute dépendance sérielle, donc sous-estime l'incertitude dès que les positions se chevauchent. Le <em>bootstrap stationnaire</em> de Politis et Romano recolle des blocs de longueur géométrique&nbsp;; c'est celui qu'il faut retenir dès que <span class="v">H</span>&nbsp;&ne;&nbsp;½, c'est-à-dire dans toute l'hypothèse de persistance sur laquelle repose la section&nbsp;5. Le <em>test de permutation de signe</em> ne randomise que la direction, et ne suppose donc ni normalité ni indépendance des amplitudes&nbsp;: sa loi nulle est exactement «&nbsp;la pile de couches ne prédit pas le sens&nbsp;».</p>
+
+  <p>Un quatrième point, moins connu et plus coûteux&nbsp;: sous un AR(1) de coefficient <span class="v">ρ</span>, agréger <span class="v">q</span> périodes ne multiplie pas le Sharpe par &radic;<span class="v">q</span> mais par <span class="v">q</span>/&radic;(<span class="v">q</span>&nbsp;+&nbsp;2&thinsp;&Sigma;(<span class="v">q</span>&nbsp;−&nbsp;<span class="v">k</span>)<span class="v">ρ</span><sup><span class="v">k</span></sup>). Une autocorrélation positive — celle que produit toute stratégie dont les positions se chevauchent — <strong>gonfle</strong> le Sharpe annualisé publié, d'environ un cinquième à <span class="v">ρ</span>&nbsp;=&nbsp;0,2.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 20</span> — Bootstrap i.i.d. et par blocs stationnaires sur une série indépendante — leur coïncidence est le contrôle de l'instrument —, test de permutation de signe, et facteur d'annualisation réel rapporté à &radic;q sous autocorrélation.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 312" role="img" aria-label="Bootstrap i.i.d. et par blocs, test de permutation de signe, et biais d annualisation du Sharpe sous autocorrélation" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Bootstrap de la moyenne</text>
+<text class="sub" x="232.0" y="21.0" text-anchor="end">504 trades, 900 tirages</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="232.0" y2="40.0"/>
+<rect class="frame" x="56.0" y="46.0" width="176.0" height="176.0"/>
+<line class="gl" x1="56.0" y1="188.2" x2="232.0" y2="188.2"/>
+<text class="tk" x="51.0" y="191.2" text-anchor="end">0,5</text>
+<line class="gl" x1="56.0" y1="154.3" x2="232.0" y2="154.3"/>
+<text class="tk" x="51.0" y="157.3" text-anchor="end">1,0</text>
+<line class="gl" x1="56.0" y1="120.5" x2="232.0" y2="120.5"/>
+<text class="tk" x="51.0" y="123.5" text-anchor="end">1,5</text>
+<line class="gl" x1="56.0" y1="86.6" x2="232.0" y2="86.6"/>
+<text class="tk" x="51.0" y="89.6" text-anchor="end">2,0</text>
+<line class="gl" x1="56.0" y1="52.8" x2="232.0" y2="52.8"/>
+<text class="tk" x="51.0" y="55.8" text-anchor="end">2,5</text>
+<text class="tk" x="113.6" y="235.0" text-anchor="middle">-0,2</text>
+<text class="tk" x="138.4" y="235.0" text-anchor="middle">0,0</text>
+<text class="tk" x="163.3" y="235.0" text-anchor="middle">0,2</text>
+<text class="tk" x="188.1" y="235.0" text-anchor="middle">0,4</text>
+<line class="ba" x1="56.0" y1="222.0" x2="232.0" y2="222.0"/>
+<text class="ax" x="144.0" y="250.0" text-anchor="middle">E[R] rééchantillonnée</text>
+<rect class="area ar3" x="56.11" y="220.30" width="5.28" height="1.70"></rect>
+<rect class="area ar3" x="61.61" y="220.30" width="5.28" height="1.70"></rect>
+<rect class="area ar3" x="67.11" y="220.30" width="5.28" height="1.70"></rect>
+<rect class="area ar3" x="78.11" y="216.90" width="5.28" height="5.10"></rect>
+<rect class="area ar3" x="83.61" y="203.31" width="5.28" height="18.69"></rect>
+<rect class="area ar3" x="89.11" y="206.71" width="5.28" height="15.29"></rect>
+<rect class="area ar3" x="94.61" y="182.92" width="5.28" height="39.08"></rect>
+<rect class="area ar3" x="100.11" y="181.23" width="5.28" height="40.77"></rect>
+<rect class="area ar3" x="105.61" y="145.55" width="5.28" height="76.45"></rect>
+<rect class="area ar3" x="111.11" y="154.04" width="5.28" height="67.96"></rect>
+<rect class="area ar3" x="116.61" y="125.16" width="5.28" height="96.84"></rect>
+<rect class="area ar3" x="122.11" y="137.05" width="5.28" height="84.95"></rect>
+<rect class="area ar3" x="127.61" y="79.29" width="5.28" height="142.71"></rect>
+<rect class="area ar3" x="133.11" y="113.27" width="5.28" height="108.73"></rect>
+<rect class="area ar3" x="138.61" y="82.69" width="5.28" height="139.31"></rect>
+<rect class="area ar3" x="144.11" y="114.97" width="5.28" height="107.03"></rect>
+<rect class="area ar3" x="149.61" y="120.06" width="5.28" height="101.94"></rect>
+<rect class="area ar3" x="155.11" y="101.37" width="5.28" height="120.63"></rect>
+<rect class="area ar3" x="160.61" y="138.75" width="5.28" height="83.25"></rect>
+<rect class="area ar3" x="166.11" y="154.04" width="5.28" height="67.96"></rect>
+<rect class="area ar3" x="171.61" y="159.14" width="5.28" height="62.86"></rect>
+<rect class="area ar3" x="177.11" y="177.83" width="5.28" height="44.17"></rect>
+<rect class="area ar3" x="182.61" y="196.52" width="5.28" height="25.48"></rect>
+<rect class="area ar3" x="188.11" y="201.61" width="5.28" height="20.39"></rect>
+<rect class="area ar3" x="193.61" y="203.31" width="5.28" height="18.69"></rect>
+<rect class="area ar3" x="199.11" y="213.51" width="5.28" height="8.49"></rect>
+<rect class="area ar3" x="204.61" y="211.81" width="5.28" height="10.19"></rect>
+<rect class="area ar3" x="210.11" y="213.51" width="5.28" height="8.49"></rect>
+<rect class="area ar3" x="215.61" y="216.90" width="5.28" height="5.10"></rect>
+<rect class="area ar3" x="226.61" y="218.60" width="5.28" height="3.40"></rect>
+<rect class="area ar1" x="73.60" y="220.30" width="3.30" height="1.70"></rect>
+<rect class="area ar1" x="79.10" y="216.90" width="3.30" height="5.10"></rect>
+<rect class="area ar1" x="84.60" y="210.11" width="3.30" height="11.89"></rect>
+<rect class="area ar1" x="90.10" y="206.71" width="3.30" height="15.29"></rect>
+<rect class="area ar1" x="95.60" y="203.31" width="3.30" height="18.69"></rect>
+<rect class="area ar1" x="101.10" y="186.32" width="3.30" height="35.68"></rect>
+<rect class="area ar1" x="106.60" y="159.14" width="3.30" height="62.86"></rect>
+<rect class="area ar1" x="112.10" y="157.44" width="3.30" height="64.56"></rect>
+<rect class="area ar1" x="117.60" y="143.85" width="3.30" height="78.15"></rect>
+<rect class="area ar1" x="123.10" y="125.16" width="3.30" height="96.84"></rect>
+<rect class="area ar1" x="128.60" y="52.11" width="3.30" height="169.89"></rect>
+<rect class="area ar1" x="134.10" y="91.18" width="3.30" height="130.82"></rect>
+<rect class="area ar1" x="139.60" y="53.80" width="3.30" height="168.20"></rect>
+<rect class="area ar1" x="145.10" y="99.68" width="3.30" height="122.32"></rect>
+<rect class="area ar1" x="150.60" y="97.98" width="3.30" height="124.02"></rect>
+<rect class="area ar1" x="156.10" y="82.69" width="3.30" height="139.31"></rect>
+<rect class="area ar1" x="161.60" y="150.64" width="3.30" height="71.36"></rect>
+<rect class="area ar1" x="167.10" y="143.85" width="3.30" height="78.15"></rect>
+<rect class="area ar1" x="172.60" y="176.13" width="3.30" height="45.87"></rect>
+<rect class="area ar1" x="178.10" y="191.42" width="3.30" height="30.58"></rect>
+<rect class="area ar1" x="183.60" y="194.82" width="3.30" height="27.18"></rect>
+<rect class="area ar1" x="189.10" y="203.31" width="3.30" height="18.69"></rect>
+<rect class="area ar1" x="194.60" y="215.20" width="3.30" height="6.80"></rect>
+<rect class="area ar1" x="205.60" y="218.60" width="3.30" height="3.40"></rect>
+<rect class="area ar1" x="222.10" y="220.30" width="3.30" height="1.70"></rect>
+<line class="zero" x1="138.4" y1="46.0" x2="138.4" y2="222.0"/>
+<line class="lvl strong" x1="141.7" y1="46.0" x2="141.7" y2="222.0"/>
+<text class="lg halo" x="146.7" y="62.9" text-anchor="start">observée</text>
+<text class="hdr" x="280.0" y="34.0">Permutation de signe</text>
+<text class="sub" x="456.0" y="21.0" text-anchor="end">p = 0,450</text>
+<line class="hsep" x1="280.0" y1="40.0" x2="456.0" y2="40.0"/>
+<rect class="frame" x="280.0" y="46.0" width="176.0" height="176.0"/>
+<line class="gl" x1="280.0" y1="163.3" x2="456.0" y2="163.3"/>
+<text class="tk" x="275.0" y="166.3" text-anchor="end">1</text>
+<line class="gl" x1="280.0" y1="104.7" x2="456.0" y2="104.7"/>
+<text class="tk" x="275.0" y="107.7" text-anchor="end">2</text>
+<line class="gl" x1="280.0" y1="46.0" x2="456.0" y2="46.0"/>
+<text class="tk" x="275.0" y="49.0" text-anchor="end">3</text>
+<text class="tk" x="314.1" y="235.0" text-anchor="middle">-0,4</text>
+<text class="tk" x="339.8" y="235.0" text-anchor="middle">-0,2</text>
+<text class="tk" x="365.5" y="235.0" text-anchor="middle">0,0</text>
+<text class="tk" x="391.1" y="235.0" text-anchor="middle">0,2</text>
+<text class="tk" x="416.8" y="235.0" text-anchor="middle">0,4</text>
+<line class="ba" x1="280.0" y1="222.0" x2="456.0" y2="222.0"/>
+<text class="ax" x="368.0" y="250.0" text-anchor="middle">E[R] sous signes aléatoires</text>
+<rect class="area ar2" x="280.11" y="218.96" width="5.28" height="3.04"></rect>
+<rect class="area ar2" x="285.61" y="220.48" width="5.28" height="1.52"></rect>
+<rect class="area ar2" x="291.11" y="220.48" width="5.28" height="1.52"></rect>
+<rect class="area ar2" x="296.61" y="218.96" width="5.28" height="3.04"></rect>
+<rect class="area ar2" x="302.11" y="211.35" width="5.28" height="10.65"></rect>
+<rect class="area ar2" x="307.61" y="205.27" width="5.28" height="16.73"></rect>
+<rect class="area ar2" x="313.11" y="199.19" width="5.28" height="22.81"></rect>
+<rect class="area ar2" x="318.61" y="203.75" width="5.28" height="18.25"></rect>
+<rect class="area ar2" x="324.11" y="187.02" width="5.28" height="34.98"></rect>
+<rect class="area ar2" x="329.61" y="152.04" width="5.28" height="69.96"></rect>
+<rect class="area ar2" x="335.11" y="164.20" width="5.28" height="57.80"></rect>
+<rect class="area ar2" x="340.61" y="138.35" width="5.28" height="83.65"></rect>
+<rect class="area ar2" x="346.11" y="135.31" width="5.28" height="86.69"></rect>
+<rect class="area ar2" x="351.61" y="117.05" width="5.28" height="104.95"></rect>
+<rect class="area ar2" x="357.11" y="126.18" width="5.28" height="95.82"></rect>
+<rect class="area ar2" x="362.61" y="92.72" width="5.28" height="129.28"></rect>
+<rect class="area ar2" x="368.11" y="107.93" width="5.28" height="114.07"></rect>
+<rect class="area ar2" x="373.61" y="129.22" width="5.28" height="92.78"></rect>
+<rect class="area ar2" x="379.11" y="138.35" width="5.28" height="83.65"></rect>
+<rect class="area ar2" x="384.61" y="132.26" width="5.28" height="89.74"></rect>
+<rect class="area ar2" x="390.11" y="144.43" width="5.28" height="77.57"></rect>
+<rect class="area ar2" x="395.61" y="170.29" width="5.28" height="51.71"></rect>
+<rect class="area ar2" x="401.11" y="182.46" width="5.28" height="39.54"></rect>
+<rect class="area ar2" x="406.61" y="199.19" width="5.28" height="22.81"></rect>
+<rect class="area ar2" x="412.11" y="200.71" width="5.28" height="21.29"></rect>
+<rect class="area ar2" x="417.61" y="205.27" width="5.28" height="16.73"></rect>
+<rect class="area ar2" x="423.11" y="214.40" width="5.28" height="7.60"></rect>
+<rect class="area ar2" x="428.61" y="215.92" width="5.28" height="6.08"></rect>
+<rect class="area ar2" x="434.11" y="220.48" width="5.28" height="1.52"></rect>
+<rect class="area ar2" x="439.61" y="220.48" width="5.28" height="1.52"></rect>
+<rect class="area ar2" x="450.61" y="220.48" width="5.28" height="1.52"></rect>
+<line class="lvl strong" x1="368.9" y1="46.0" x2="368.9" y2="222.0"/>
+<text class="lg halo" x="373.9" y="63.6" text-anchor="start">observée</text>
+<polygon class="floor" points="566.0,212.0 611.0,236.0 566.0,260.0 521.0,236.0"></polygon>
+<line class="post" x1="566.0" y1="212.0" x2="566.0" y2="110.2"/>
+<line class="post" x1="611.0" y1="236.0" x2="611.0" y2="201.4"/>
+<line class="post" x1="566.0" y1="260.0" x2="566.0" y2="228.3"/>
+<line class="post" x1="521.0" y1="236.0" x2="521.0" y2="134.2"/>
+<polygon class="mesh hm4" points="566.0,179.3 581.0,220.0 566.0,228.3 551.0,187.4"><title>facteur réel / √q = 0.737</title></polygon>
+<polygon class="mesh hm2" points="551.0,153.5 566.0,179.3 551.0,187.4 536.0,161.5"><title>facteur réel / √q = 0.861</title></polygon>
+<polygon class="mesh hm4" points="581.0,171.0 596.0,211.5 581.0,220.0 566.0,179.3"><title>facteur réel / √q = 0.738</title></polygon>
+<polygon class="mesh hm1" points="536.0,126.2 551.0,153.5 536.0,161.5 521.0,134.2"><title>facteur réel / √q = 0.953</title></polygon>
+<polygon class="mesh hm2" points="566.0,145.3 581.0,171.0 566.0,179.3 551.0,153.5"><title>facteur réel / √q = 0.862</title></polygon>
+<polygon class="mesh hm4" points="596.0,161.9 611.0,201.4 596.0,211.5 581.0,171.0"><title>facteur réel / √q = 0.743</title></polygon>
+<polygon class="mesh hm1" points="551.0,118.2 566.0,145.3 551.0,153.5 536.0,126.2"><title>facteur réel / √q = 0.953</title></polygon>
+<polygon class="mesh hm2" points="581.0,136.7 596.0,161.9 581.0,171.0 566.0,145.3"><title>facteur réel / √q = 0.865</title></polygon>
+<polygon class="mesh hm1" points="566.0,110.2 581.0,136.7 566.0,145.3 551.0,118.2"><title>facteur réel / √q = 0.954</title></polygon>
+<text class="tk halo" x="514.0" y="248.0" text-anchor="end">ρ = 0</text>
+<text class="tk halo" x="559.0" y="272.0" text-anchor="end">ρ = 0,4</text>
+<text class="tk halo" x="618.0" y="247.0">q 21</text>
+<text class="tk halo" x="573.0" y="271.0">252</text>
+<text class="tk" x="481.0" y="218.6" text-anchor="end">0,6</text>
+<line class="gl" x1="486.0" y1="215.6" x2="497.0" y2="215.6"/>
+<text class="tk" x="481.0" y="177.9" text-anchor="end">0,8</text>
+<line class="gl" x1="486.0" y1="174.9" x2="497.0" y2="174.9"/>
+<text class="tk" x="481.0" y="137.2" text-anchor="end">1,0</text>
+<line class="gl" x1="486.0" y1="134.2" x2="497.0" y2="134.2"/>
+<text class="hdr" x="490" y="30">Annualisation</text>
+<text class="sub" x="490" y="44">facteur réel rapporté à √q ;</text>
+<text class="sub" x="490" y="57">sous 1, le Sharpe publié est gonflé</text>
+<rect class="s2f" x="56.0" y="270.5" width="11" height="11" rx="2"/>
+<text class="lg" x="73.0" y="279.5">bootstrap i.i.d.</text>
+<rect class="s1f" x="206.0" y="270.5" width="11" height="11" rx="2"/>
+<text class="lg" x="223.0" y="279.5">blocs stationnaires</text>
+<rect class="s3f" x="356.0" y="270.5" width="11" height="11" rx="2"/>
+<text class="lg" x="373.0" y="279.5">signes permutés</text>
+<text class="lg" x="240.0" y="300.0" text-anchor="middle">sur une série indépendante les deux bootstraps coïncident : c'est le contrôle de l'instrument, pas le résultat</text>
+</svg></div>
+    </figure>
+
+  <h3>Régimes cachés&nbsp;: ce que Baum-Welch trouve quand il n'y a rien</h3>
+
+  <p>Le modèle de Markov caché est l'outil standard de détection de régime, et c'est celui qu'appelle le conditionnement par le gamma de la section&nbsp;11. Il est aussi, dans cet usage, le plus dangereux des instruments de la boîte, pour une raison qui tient en une phrase&nbsp;: <strong>l'algorithme de Baum-Welch converge toujours.</strong> Appliqué à une série sans le moindre régime, il produit deux états, une matrice de transition persistante, un chemin de Viterbi net et un gain de vraisemblance. Rien dans sa sortie ne signale l'absence de structure.</p>
+
+  <p>La démonstration est faite ici sur trois séries dont la vérité est connue d'avance. Sur 120 points de bruit indépendant, l'ajustement produit deux régimes séparés de 1,87 écarts-types — une erreur de classification apparente de 18&nbsp;% seulement — et un chemin de Viterbi parfaitement lisible. Seul le &Delta;BIC démasque l'imposture, et seulement si on le calcule. Symétriquement, la colonne de gauche montre le prix à payer de l'autre côté&nbsp;: des régimes <em>réels</em> à séparabilité réaliste, <span class="v">d</span>′&nbsp;=&nbsp;0,46, ne franchissent le BIC que d'extrême justesse sur 750 observations.</p>
+
+  <p>Trois grandeurs rendent un régime réfutable, et elles doivent accompagner toute détection. La <em>séparabilité</em> <span class="v">d</span>′&nbsp;=&nbsp;|<span class="v">µ</span><sub>1</sub>&nbsp;−&nbsp;<span class="v">µ</span><sub>2</sub>|/<span class="v">σ</span>, seule quantité qui décide de la distinguabilité. L'<em>erreur de Bayes</em> <span class="v">Φ</span>(−<span class="v">d</span>′/2) qui en découle, borne inférieure de toute classification. Et le <em>nombre d'observations</em> nécessaire, qui croît en 1/<span class="v">d</span>′²&nbsp;: à <span class="v">d</span>′&nbsp;=&nbsp;0,30 — ordre de grandeur d'un écart de rendement moyen entre régimes de gamma sur données journalières — il faut 174 observations par régime, et diviser la séparation par deux le multiplie par quatre.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 24</span> — Un même HMM à deux états, ajusté sur trois séries dont on connaît la vérité</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Grandeur</th><th>deux régimes réels</th><th>aucun régime, série longue</th><th>aucun régime, série courte</th></tr></thead>
+        <tbody>
+          <tr><td>Observations</td><td>750</td><td>750</td><td>120</td></tr>
+          <tr><td>Séparabilité d′ estimée</td><td>0,46</td><td>0,02</td><td>1,87</td></tr>
+          <tr class="sep"><td>Erreur de Bayes par point</td><td>41 %</td><td>50 %</td><td>18 %</td></tr>
+          <tr><td>Persistances estimées</td><td>0,90 / 0,94</td><td>0,72 / 0,77</td><td>0,77 / 0,61</td></tr>
+          <tr><td>Séjour moyen, état 1</td><td>10,2</td><td>3,6</td><td>4,4</td></tr>
+          <tr class="sep"><td>Basculements de Viterbi</td><td>17</td><td>1</td><td>29</td></tr>
+          <tr><td>Gain de log-vraisemblance sur 1 état</td><td>17,54</td><td>0,01</td><td>3,43</td></tr>
+          <tr><td>ΔAIC (2 états − 1 état)</td><td>−25,1</td><td>10,0</td><td>3,1</td></tr>
+          <tr class="sep"><td>ΔBIC (2 états − 1 état)</td><td>−2,0</td><td>33,1</td><td>17,1</td></tr>
+          <tr><td>Observations requises pour d′</td><td>74</td><td>28 802</td><td>4</td></tr>
+          <tr><td>Exactitude du décodage</td><td>62 %</td><td>sans objet</td><td>sans objet</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Les deux colonnes de droite sont ajustées sur du bruit indépendant : il n'y a <strong>rien</strong> à trouver. Sur série longue, Baum-Welch le reconnaît et les deux états se confondent. Sur série courte il produit deux régimes séparés de 1,87 écarts-types, avec un chemin de Viterbi net — et rien dans la sortie du modèle ne signale l'imposture. Seul le ΔBIC la démasque, et seulement si on le calcule. Symétriquement, la colonne de gauche montre le prix à payer de l'autre côté : des régimes <strong>réels</strong> à séparabilité réaliste ne franchissent le BIC que d'extrême justesse sur sept cent cinquante observations.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 21</span> — Un HMM à deux états ajusté sur une série à régimes réels, puis sur du bruit indépendant court, et la séparabilité requise. La bande claire est l'état de moyenne haute selon Viterbi&nbsp;; dans le panneau du bas elle ne recouvre rien de réel.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 396" role="img" aria-label="HMM ajusté sur une série à deux régimes puis sur du bruit pur, et séparabilité requise" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Deux régimes réels</text>
+<text class="read" x="452.0" y="34.0" text-anchor="end">d′ = 0,46 · ΔBIC = −2,0</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="452.0" y2="40.0"/>
+<rect class="frame" x="56.0" y="46.0" width="396.0" height="118.0"/>
+<line class="gl" x1="56.0" y1="147.1" x2="452.0" y2="147.1"/>
+<text class="tk" x="51.0" y="150.1" text-anchor="end">-3</text>
+<line class="gl" x1="56.0" y1="105.0" x2="452.0" y2="105.0"/>
+<text class="tk" x="51.0" y="108.0" text-anchor="end">0</text>
+<line class="gl" x1="56.0" y1="62.9" x2="452.0" y2="62.9"/>
+<text class="tk" x="51.0" y="65.9" text-anchor="end">3</text>
+<text class="tk" x="56.0" y="177.0" text-anchor="middle">0</text>
+<text class="tk" x="254.0" y="177.0" text-anchor="middle">75</text>
+<text class="tk" x="452.0" y="177.0" text-anchor="middle">150</text>
+<line class="ba" x1="56.0" y1="164.0" x2="452.0" y2="164.0"/>
+<rect class="wash" x="56.0" y="46.0" width="23.8" height="118.0"/>
+<rect class="wash" x="383.4" y="46.0" width="34.3" height="118.0"/>
+<line class="zero" x1="56.0" y1="105.0" x2="452.0" y2="105.0"/>
+<path class="ln px" d="M56.00,84.26 L58.64,86.17 L61.28,108.90 L63.92,102.22 L66.56,105.71 L69.20,94.99 L71.84,108.71 L74.48,102.02 L77.12,84.15 L79.76,137.23 L82.40,110.82 L85.04,109.41 L87.68,70.28 L90.32,93.26 L92.96,106.15 L95.60,113.51 L98.24,103.54 L100.88,115.30 L103.52,117.20 L106.16,70.21 L108.80,68.18 L111.44,140.15 L114.08,96.85 L116.72,109.59 L119.36,94.42 L122.00,100.33 L124.64,102.80 L127.28,92.83 L129.92,109.50 L132.56,84.94 L135.20,108.61 L137.84,90.89 L140.48,128.51 L143.12,121.49 L145.76,89.54 L148.40,112.09 L151.04,121.23 L153.68,111.96 L156.32,86.39 L158.96,90.62 L161.60,129.28 L164.24,85.21 L166.88,112.05 L169.52,79.43 L172.16,108.83 L174.80,96.19 L177.44,97.32 L180.08,85.52 L182.72,88.78 L185.36,105.91 L188.00,76.50 L190.64,92.91 L193.28,119.67 L195.92,83.79 L198.56,126.58 L201.20,107.94 L203.84,101.39 L206.48,107.86 L209.12,125.87 L211.76,111.92 L214.40,83.30 L217.04,135.90 L219.68,113.38 L222.32,78.53 L224.96,74.02 L227.60,57.08 L230.24,87.53 L232.88,117.63 L235.52,88.00 L238.16,131.37 L240.80,61.13 L243.44,121.08 L246.08,80.74 L248.72,58.07 L251.36,88.62 L254.00,101.12 L256.64,106.14 L259.28,73.56 L261.92,132.38 L264.56,106.31 L267.20,109.41 L269.84,108.69 L272.48,88.29 L275.12,125.05 L277.76,101.53 L280.40,77.66 L283.04,130.25 L285.68,94.76 L288.32,96.46 L290.96,103.27 L293.60,99.67 L296.24,113.99 L298.88,137.22 L301.52,105.49 L304.16,69.06 L306.80,141.33 L309.44,130.88 L312.08,106.36 L314.72,153.53 L317.36,113.96 L320.00,85.31 L322.64,96.54 L325.28,71.95 L327.92,150.20 L330.56,115.25 L333.20,140.71 L335.84,135.96 L338.48,109.75 L341.12,112.69 L343.76,110.48 L346.40,75.84 L349.04,77.75 L351.68,110.25 L354.32,115.59 L356.96,96.25 L359.60,83.03 L362.24,108.39 L364.88,102.56 L367.52,104.45 L370.16,113.96 L372.80,80.49 L375.44,101.43 L378.08,112.08 L380.72,131.06 L383.36,80.12 L386.00,98.71 L388.64,106.15 L391.28,96.92 L393.92,105.54 L396.56,99.70 L399.20,107.07 L401.84,83.43 L404.48,97.04 L407.12,83.90 L409.76,86.65 L412.40,99.06 L415.04,96.98 L417.68,111.83 L420.32,118.64 L422.96,58.24 L425.60,98.51 L428.24,126.58 L430.88,124.26 L433.52,107.85 L436.16,108.40 L438.80,72.53 L441.44,134.58 L444.08,92.10 L446.72,105.69 L449.36,97.68"></path>
+<line class="lvl" x1="56.0" y1="98.5" x2="452.0" y2="98.5"/>
+<line class="lvl" x1="56.0" y1="105.6" x2="452.0" y2="105.6"/>
+<text class="hdr" x="56.0" y="200.0">Bruit pur, série courte</text>
+<text class="read" x="452.0" y="200.0" text-anchor="end">d′ = 1,87 · ΔBIC = +17,1</text>
+<line class="hsep" x1="56.0" y1="206.0" x2="452.0" y2="206.0"/>
+<rect class="frame" x="56.0" y="212.0" width="396.0" height="118.0"/>
+<line class="gl" x1="56.0" y1="313.1" x2="452.0" y2="313.1"/>
+<text class="tk" x="51.0" y="316.1" text-anchor="end">-3</text>
+<line class="gl" x1="56.0" y1="271.0" x2="452.0" y2="271.0"/>
+<text class="tk" x="51.0" y="274.0" text-anchor="end">0</text>
+<line class="gl" x1="56.0" y1="228.9" x2="452.0" y2="228.9"/>
+<text class="tk" x="51.0" y="231.9" text-anchor="end">3</text>
+<text class="tk" x="56.0" y="343.0" text-anchor="middle">0</text>
+<text class="tk" x="254.0" y="343.0" text-anchor="middle">60</text>
+<text class="tk" x="452.0" y="343.0" text-anchor="middle">120</text>
+<line class="ba" x1="56.0" y1="330.0" x2="452.0" y2="330.0"/>
+<rect class="wash" x="69.2" y="212.0" width="3.3" height="118.0"/>
+<rect class="wash" x="82.4" y="212.0" width="6.6" height="118.0"/>
+<rect class="wash" x="108.8" y="212.0" width="39.6" height="118.0"/>
+<rect class="wash" x="155.0" y="212.0" width="19.8" height="118.0"/>
+<rect class="wash" x="181.4" y="212.0" width="36.3" height="118.0"/>
+<rect class="wash" x="227.6" y="212.0" width="9.9" height="118.0"/>
+<rect class="wash" x="240.8" y="212.0" width="3.3" height="118.0"/>
+<rect class="wash" x="254.0" y="212.0" width="72.6" height="118.0"/>
+<rect class="wash" x="329.9" y="212.0" width="6.6" height="118.0"/>
+<rect class="wash" x="372.8" y="212.0" width="19.8" height="118.0"/>
+<rect class="wash" x="395.9" y="212.0" width="3.3" height="118.0"/>
+<rect class="wash" x="402.5" y="212.0" width="13.2" height="118.0"/>
+<rect class="wash" x="419.0" y="212.0" width="13.2" height="118.0"/>
+<rect class="wash" x="442.1" y="212.0" width="3.3" height="118.0"/>
+<rect class="wash" x="448.7" y="212.0" width="3.3" height="118.0"/>
+<line class="zero" x1="56.0" y1="271.0" x2="452.0" y2="271.0"/>
+<path class="ln px" d="M56.00,281.03 L59.30,277.96 L62.60,285.30 L65.90,317.50 L69.20,258.13 L72.50,275.39 L75.80,291.96 L79.10,282.11 L82.40,257.30 L85.70,258.05 L89.00,286.35 L92.30,294.67 L95.60,280.65 L98.90,279.89 L102.20,267.93 L105.50,286.03 L108.80,260.80 L112.10,278.71 L115.40,260.22 L118.70,270.50 L122.00,253.86 L125.30,256.30 L128.60,272.83 L131.90,256.29 L135.20,270.75 L138.50,264.42 L141.80,259.46 L145.10,253.99 L148.40,280.81 L151.70,299.30 L155.00,271.14 L158.30,247.89 L161.60,259.59 L164.90,268.81 L168.20,245.22 L171.50,268.87 L174.80,295.29 L178.10,296.58 L181.40,267.66 L184.70,271.30 L188.00,253.88 L191.30,252.52 L194.60,257.21 L197.90,255.57 L201.20,270.75 L204.50,265.27 L207.80,261.86 L211.10,275.29 L214.40,267.03 L217.70,275.08 L221.00,278.72 L224.30,282.68 L227.60,254.12 L230.90,260.48 L234.20,256.68 L237.50,284.91 L240.80,248.43 L244.10,288.00 L247.40,275.70 L250.70,278.80 L254.00,235.23 L257.30,262.88 L260.60,245.37 L263.90,280.83 L267.20,240.25 L270.50,279.56 L273.80,275.26 L277.10,255.84 L280.40,272.23 L283.70,274.22 L287.00,259.16 L290.30,251.19 L293.60,258.21 L296.90,262.07 L300.20,268.46 L303.50,260.39 L306.80,253.27 L310.10,276.85 L313.40,248.12 L316.70,271.20 L320.00,263.53 L323.30,271.53 L326.60,290.30 L329.90,235.63 L333.20,258.46 L336.50,294.27 L339.80,281.98 L343.10,285.81 L346.40,279.48 L349.70,295.32 L353.00,270.91 L356.30,295.15 L359.60,280.04 L362.90,282.03 L366.20,266.34 L369.50,287.88 L372.80,257.25 L376.10,262.34 L379.40,246.50 L382.70,257.36 L386.00,267.43 L389.30,271.13 L392.60,285.52 L395.90,260.20 L399.20,289.53 L402.50,270.55 L405.80,251.69 L409.10,263.56 L412.40,262.06 L415.70,294.67 L419.00,270.75 L422.30,251.35 L425.60,267.77 L428.90,264.49 L432.20,279.91 L435.50,292.12 L438.80,279.16 L442.10,261.17 L445.40,288.49 L448.70,259.81"></path>
+<line class="lvl" x1="56.0" y1="262.1" x2="452.0" y2="262.1"/>
+<line class="lvl" x1="56.0" y1="282.7" x2="452.0" y2="282.7"/>
+<text class="hdr" x="498.0" y="34.0">Séparabilité</text>
+<text class="sub" x="602.0" y="21.0" text-anchor="end">d′ décide de tout</text>
+<line class="hsep" x1="498.0" y1="40.0" x2="602.0" y2="40.0"/>
+<rect class="frame" x="498.0" y="46.0" width="104.0" height="284.0"/>
+<line class="gl" x1="498.0" y1="294.0" x2="602.0" y2="294.0"/>
+<text class="tk" x="607.0" y="297.0">10</text>
+<line class="gl" x1="498.0" y1="225.2" x2="602.0" y2="225.2"/>
+<text class="tk" x="607.0" y="228.2">100</text>
+<line class="gl" x1="498.0" y1="156.3" x2="602.0" y2="156.3"/>
+<text class="tk" x="607.0" y="159.3">1 k</text>
+<line class="gl" x1="498.0" y1="87.5" x2="602.0" y2="87.5"/>
+<text class="tk" x="607.0" y="90.5">10 k</text>
+<text class="tk" x="517.1" y="343.0" text-anchor="middle">0,5</text>
+<text class="tk" x="538.3" y="343.0" text-anchor="middle">1,0</text>
+<text class="tk" x="559.6" y="343.0" text-anchor="middle">1,5</text>
+<text class="tk" x="580.8" y="343.0" text-anchor="middle">2,0</text>
+<line class="ba" x1="498.0" y1="330.0" x2="602.0" y2="330.0"/>
+<text class="ax" x="550.0" y="358.0" text-anchor="middle">d′</text>
+<path class="ln s1" d="M498.00,101.37 L498.85,121.49 L499.70,136.52 L500.55,148.52 L501.40,158.51 L502.24,167.07 L503.09,174.55 L503.94,181.20 L504.79,187.19 L505.64,192.63 L506.49,197.61 L507.34,202.22 L508.19,206.49 L509.04,210.48 L509.89,214.22 L510.73,217.74 L511.58,221.06 L512.43,224.21 L513.28,227.20 L514.13,230.05 L514.98,232.76 L515.83,235.36 L516.68,237.86 L517.53,240.25 L518.38,242.55 L519.22,244.76 L520.07,246.90 L520.92,248.96 L521.77,250.96 L522.62,252.89 L523.47,254.76 L524.32,256.57 L525.17,258.33 L526.02,260.04 L526.87,261.70 L527.71,263.31 L528.56,264.89 L529.41,266.42 L530.26,267.92 L531.11,269.37 L531.96,270.80 L532.81,272.19 L533.66,273.55 L534.51,274.88 L535.36,276.18 L536.20,277.45 L537.05,278.70 L537.90,279.92 L538.75,281.11 L539.60,282.28 L540.45,283.43 L541.30,284.56 L542.15,285.67 L543.00,286.76 L543.84,287.83 L544.69,288.87 L545.54,289.91 L546.39,290.92 L547.24,291.92 L548.09,292.90 L548.94,293.86 L549.79,294.81 L550.64,295.74 L551.49,296.66 L552.33,297.57 L553.18,298.46 L554.03,299.34 L554.88,300.21 L555.73,301.06 L556.58,301.91 L557.43,302.74 L558.28,303.56 L559.13,304.36 L559.98,305.16 L560.82,305.95 L561.67,306.73 L562.52,307.49 L563.37,308.25 L564.22,309.00 L565.07,309.73 L565.92,310.46 L566.77,311.18 L567.62,311.90 L568.47,312.60 L569.31,313.30 L570.16,313.98 L571.01,314.66 L571.86,315.33 L572.71,316.00 L573.56,316.66 L574.41,317.31 L575.26,317.95 L576.11,318.59 L576.96,319.21 L577.80,319.84 L578.65,320.45 L579.50,321.06 L580.35,321.67 L581.20,322.27 L582.05,322.86 L582.90,323.44 L583.75,324.03 L584.60,324.60 L585.44,325.17 L586.29,325.73 L587.14,326.29 L587.99,326.85 L588.84,327.40 L589.69,327.94 L590.54,328.48 L591.39,329.01 L592.24,329.54"></path>
+<circle class="pt s2" cx="515.42" cy="234.13" r="4"><title>d′ = 0.46 · 74 observations</title></circle>
+<text class="dl halo" x="508.4" y="225.1" text-anchor="end">réels</text>
+<circle class="pt s3" cx="575.18" cy="317.89" r="4"><title>d′ = 1.87 · 4 observations</title></circle>
+<text class="dl halo" x="568.2" y="308.9" text-anchor="end">inventés</text>
+<rect class="s2f" x="56.0" y="350.5" width="11" height="11" rx="2"/>
+<text class="lg" x="73.0" y="359.5">régimes réels</text>
+<rect class="s3f" x="206.0" y="350.5" width="11" height="11" rx="2"/>
+<text class="lg" x="223.0" y="359.5">régimes inventés</text>
+<text class="lg" x="56.0" y="380.0" text-anchor="start">la bande claire est l'état de moyenne haute selon Viterbi ; dans le panneau du bas elle ne recouvre rien de réel — l'erreur de Bayes à d′ = 0,5 vaut 40 %</text>
+</svg></div>
+    </figure>
+
+  <h3>Sélection&nbsp;: la barre que le nombre d'essais fait monter</h3>
+
+  <p>Un backtest ne produit jamais un Sharpe. Il produit le <strong>maximum</strong> d'un ensemble de Sharpe&nbsp;: ceux de toutes les variantes essayées, y compris celles qu'on n'a pas notées et celles qu'on a écartées d'un coup d'œil. La loi d'un maximum n'est pas celle d'un tirage, et l'écart entre les deux <em>est</em> le surajustement. Bailey et López de Prado en donnent l'approximation de valeur extrême&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body">E[max&thinsp;ŜR]<span class="op">&asymp;</span><span class="v">σ</span><sub>essais</sub>&thinsp;[(1&nbsp;−&nbsp;<span class="v">γ</span>)&thinsp;<span class="v">Φ</span><sup>−1</sup>(1&nbsp;−&nbsp;1/<span class="v">N</span>)&nbsp;+&nbsp;<span class="v">γ</span>&thinsp;<span class="v">Φ</span><sup>−1</sup>(1&nbsp;−&nbsp;1/(<span class="v">N</span><span class="v">e</span>))].</div>
+    <div class="no">(30)</div>
+  </div>
+
+  <p>À 100 essais — chiffre modeste pour une pile à sept couches réglables — et un an d'historique, ce maximum vaut 2,53 en Sharpe annualisé. L'edge de référence en vaut 0,50. <strong>Le meilleur essai d'une famille sans aucun edge bat donc, d'un facteur cinq, la stratégie supposée en avoir un.</strong> Le Sharpe déflaté de l'edge de référence tombe en conséquence de 70&nbsp;% sans sélection à 1,7&nbsp;% après cent essais, et la longueur minimale de backtest passe de 9,7 à 25,1 années.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 25</span> — Ce que le nombre de configurations essayées coûte au résultat</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Essais</th><th class="wrap">Sharpe/trade attendu du meilleur</th><th>en annualisé</th><th>DSR de l'edge de référence</th><th>MinBTL (trades)</th><th>MinBTL (ans)</th><th class="wrap">Essais indépendants équivalents (ρ̄ = 0,5)</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="wrap">0,0000</td><td>0,000</td><td>70,1 %</td><td>0</td><td>0,0</td><td class="wrap">1,0</td></tr>
+          <tr><td>10</td><td class="wrap">0,0701</td><td>1,575</td><td>13,2 %</td><td>4 901</td><td>9,7</td><td class="wrap">1,8</td></tr>
+          <tr><td>100</td><td class="wrap">0,1127</td><td>2,531</td><td>1,7 %</td><td>12 659</td><td>25,1</td><td class="wrap">2,0</td></tr>
+          <tr><td>1 000</td><td class="wrap">0,1450</td><td>3,255</td><td>0,2 %</td><td>20 946</td><td>41,6</td><td class="wrap">2,0</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Toutes les colonnes se lisent à stratégie <strong>inchangée</strong> : seule varie la taille de l'espace de recherche. À cent essais — chiffre modeste pour une pile à sept couches réglables — le Sharpe attendu du meilleur essai <strong>sans aucun edge</strong>, 2,53 annualisé, dépasse de cinq fois celui de l'edge de référence, 0,50. La dernière colonne atténue le constat sans le renverser : des variantes corrélées comptent pour moins d'essais, mais elles explorent aussi un espace d'autant plus étroit.</p>
+    </figure>
+
+    <figure>
+      <figcaption><span class="lab">Table 26</span> — Décote de Harvey-Liu-Zhu : ce qui reste du Sharpe après correction</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Historique (ans)</th><th>Trades</th><th>t-statistique</th><th>1 essai</th><th>10 essais</th><th>100 essais</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>504</td><td>0,50</td><td>0 %</td><td>100 %</td><td>100 %</td></tr>
+          <tr><td>5</td><td>2 520</td><td>1,13</td><td>0 %</td><td>100 %</td><td>100 %</td></tr>
+          <tr><td>10</td><td>5 040</td><td>1,60</td><td>0 %</td><td>100 %</td><td>100 %</td></tr>
+          <tr><td>25</td><td>12 600</td><td>2,52</td><td>0 %</td><td>62 %</td><td>100 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Décote appliquée au Sharpe de l'edge de référence, 0,0225 par trade. Les trois colonnes de droite donnent la <strong>part du Sharpe effacée</strong> par la correction de tests multiples au sens de Benjamini-Hochberg-Yekutieli. La colonne « 1 essai » vaut zéro par construction — sans essais multiples il n'y a rien à corriger, ce qui ne rend pas pour autant le résultat significatif : la t-statistique reste sous 2 en deçà de vingt-cinq ans. Dès dix essais, la décote est totale jusqu'à ce même horizon, et à cent essais elle l'est partout.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 22</span> — La barre de sélection en Sharpe annualisé — le croisement avec l'edge de référence est atteint dès le deuxième essai — et la surface du Sharpe déflaté sur le plan essais × longueur d'historique.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 524" role="img" aria-label="Barre de sélection en Sharpe annualisé et surface du Sharpe déflaté sur le plan essais × historique" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="92.0" y="34.0">La barre de sélection</text>
+<text class="read" x="572.0" y="34.0" text-anchor="end">Sharpe annualisé, un an d'historique</text>
+<line class="hsep" x1="92.0" y1="40.0" x2="572.0" y2="40.0"/>
+<rect class="frame" x="92.0" y="46.0" width="480.0" height="146.0"/>
+<line class="gl" x1="92.0" y1="155.5" x2="572.0" y2="155.5"/>
+<text class="tk" x="87.0" y="158.5" text-anchor="end">1</text>
+<line class="gl" x1="92.0" y1="119.0" x2="572.0" y2="119.0"/>
+<text class="tk" x="87.0" y="122.0" text-anchor="end">2</text>
+<line class="gl" x1="92.0" y1="82.5" x2="572.0" y2="82.5"/>
+<text class="tk" x="87.0" y="85.5" text-anchor="end">3</text>
+<line class="gl" x1="92.0" y1="46.0" x2="572.0" y2="46.0"/>
+<text class="tk" x="87.0" y="49.0" text-anchor="end">4</text>
+<text class="tk" x="92.0" y="205.0" text-anchor="middle">1</text>
+<text class="tk" x="161.4" y="205.0" text-anchor="middle">3</text>
+<text class="tk" x="237.4" y="205.0" text-anchor="middle">10</text>
+<text class="tk" x="306.8" y="205.0" text-anchor="middle">30</text>
+<text class="tk" x="382.8" y="205.0" text-anchor="middle">100</text>
+<text class="tk" x="452.2" y="205.0" text-anchor="middle">300</text>
+<text class="tk" x="528.2" y="205.0" text-anchor="middle">1000</text>
+<line class="ba" x1="92.0" y1="192.0" x2="572.0" y2="192.0"/>
+<text class="ax" x="332.0" y="220.0" text-anchor="middle">configurations essayées</text>
+<path class="ln s2" d="M92.00,192.00 L135.77,173.03 L161.38,160.87 L179.55,153.60 L193.64,148.47 L205.15,144.54 L214.88,141.38 L223.32,138.75 L230.76,136.49 L237.41,134.53 L243.43,132.79 L253.98,129.83 L258.66,128.55 L267.09,126.28 L274.53,124.33 L281.18,122.62 L287.20,121.10 L295.27,119.10 L302.43,117.36 L310.86,115.35 L316.52,114.03 L324.95,112.08 L332.39,110.40 L339.05,108.91 L346.20,107.34 L353.64,105.73 L361.19,104.12 L367.93,102.70 L375.46,101.14 L382.82,99.63 L389.98,98.19 L397.41,96.70 L404.52,95.30 L411.70,93.90 L419.23,92.46 L426.59,91.06 L433.75,89.71 L440.93,88.38 L448.29,87.03 L455.48,85.72 L462.83,84.40 L470.05,83.11 L477.38,81.82 L484.58,80.56 L491.84,79.31 L499.15,78.05 L506.42,76.82 L513.66,75.60 L520.94,74.39 L528.23,73.19 L535.50,72.00 L542.77,70.82 L550.06,69.65 L557.31,68.49 L564.57,67.34 L571.84,66.20"></path>
+<path class="ln s1" d="M92.00,173.57 L572.00,173.57" stroke-dasharray="4 3"></path>
+<text class="dl halo" x="551.9" y="165.6" text-anchor="end">edge de référence</text>
+<circle class="pt s2" cx="237.41" cy="134.53" r="4"><title>10 essais · Sharpe attendu 1.57</title></circle>
+<text class="dl halo" x="237.4" y="124.5" text-anchor="middle">1,57</text>
+<circle class="pt s2" cx="382.82" cy="99.63" r="4"><title>100 essais · Sharpe attendu 2.53</title></circle>
+<text class="dl halo" x="382.8" y="89.6" text-anchor="middle">2,53</text>
+<circle class="pt s2" cx="528.23" cy="73.19" r="4"><title>1000 essais · Sharpe attendu 3.26</title></circle>
+<text class="dl halo" x="528.2" y="63.2" text-anchor="middle">3,26</text>
+<line class="lvl strong" x1="135.8" y1="46.0" x2="135.8" y2="192.0"/>
+<text class="lg halo" x="141.8" y="71.6" text-anchor="start">2 essais suffisent</text>
+<polygon class="floor" points="330.0,424.0 405.0,457.0 330.0,490.0 255.0,457.0"></polygon>
+<line class="post" x1="330.0" y1="424.0" x2="330.0" y2="341.3"/>
+<line class="post" x1="405.0" y1="457.0" x2="405.0" y2="456.8"/>
+<line class="post" x1="330.0" y1="490.0" x2="330.0" y2="454.1"/>
+<line class="post" x1="255.0" y1="457.0" x2="255.0" y2="339.2"/>
+<polygon class="mesh hm2" points="330.0,448.6 355.0,474.1 330.0,454.1 305.0,408.6"><title>DSR = 0.277</title></polygon>
+<polygon class="mesh hm4" points="305.0,396.9 330.0,448.6 305.0,408.6 280.0,362.6"><title>DSR = 0.541</title></polygon>
+<polygon class="mesh hm0" points="355.0,452.1 380.0,467.2 355.0,474.1 330.0,448.6"><title>DSR = 0.064</title></polygon>
+<polygon class="mesh hm6" points="280.0,333.6 305.0,396.9 280.0,362.6 255.0,339.2"><title>DSR = 0.838</title></polygon>
+<polygon class="mesh hm2" points="330.0,418.6 355.0,452.1 330.0,448.6 305.0,396.9"><title>DSR = 0.237</title></polygon>
+<polygon class="mesh hm0" points="380.0,444.0 405.0,456.8 380.0,467.2 355.0,452.1"><title>DSR = 0.017</title></polygon>
+<polygon class="mesh hm4" points="305.0,338.3 330.0,418.6 305.0,396.9 280.0,333.6"><title>DSR = 0.628</title></polygon>
+<polygon class="mesh hm1" points="355.0,419.4 380.0,444.0 355.0,452.1 330.0,418.6"><title>DSR = 0.106</title></polygon>
+<polygon class="mesh hm3" points="330.0,341.3 355.0,419.4 330.0,418.6 305.0,338.3"><title>DSR = 0.471</title></polygon>
+<text class="tk halo" x="248.0" y="469.0" text-anchor="end">1 essai</text>
+<text class="tk halo" x="273.0" y="480.0" text-anchor="end">10 essais</text>
+<text class="tk halo" x="298.0" y="491.0" text-anchor="end">100 essais</text>
+<text class="tk halo" x="337.0" y="501.0">30 ans</text>
+<text class="tk" x="215.0" y="460.0" text-anchor="end">0</text>
+<line class="gl" x1="220.0" y1="457.0" x2="231.0" y2="457.0"/>
+<text class="tk" x="215.0" y="401.0" text-anchor="end">0,5</text>
+<line class="gl" x1="220.0" y1="398.0" x2="231.0" y2="398.0"/>
+<text class="tk" x="215.0" y="347.9" text-anchor="end">0,95</text>
+<line class="gl" x1="220.0" y1="344.9" x2="231.0" y2="344.9"/>
+<text class="tk" x="215.0" y="342.0" text-anchor="end">1</text>
+<line class="gl" x1="220.0" y1="339.0" x2="231.0" y2="339.0"/>
+<text class="hdr" x="56" y="256">Sharpe déflaté</text>
+<text class="sub" x="56" y="270">probabilité que l'edge de référence survive à la déflation</text>
+<text class="sub" x="56" y="283">axe gauche : essais · axe droit : historique (1, 3, 10, 30 ans)</text>
+<line class="ln s2" x1="92.0" y1="232.0" x2="106.0" y2="232.0"/>
+<text class="lg" x="112.0" y="235.5">meilleur essai sans edge</text>
+<line class="ln s1" x1="302.0" y1="232.0" x2="316.0" y2="232.0"/>
+<text class="lg" x="322.0" y="235.5">edge de référence</text>
+<text class="lg" x="330.0" y="444.0" text-anchor="middle">seule la face « un seul essai, historique long » dépasse 0,95 ; partout ailleurs la sélection explique le résultat</text>
+</svg></div>
+    </figure>
+
+  <h3>La probabilité de surajustement, et sa propre précision</h3>
+
+  <p>La validation croisée combinatoirement symétrique ne demande pas si la stratégie gagne&nbsp;: elle demande si la <em>procédure qui a choisi ses paramètres</em> apprend quelque chose. La série est découpée en blocs&nbsp;; pour chaque partition symétrique, la configuration la meilleure en apprentissage est retenue et l'on regarde son rang hors échantillon. La PBO est la fréquence des cas où ce rang tombe sous la médiane.</p>
+
+  <p>Appliquée à des familles témoins dont la réponse est connue, elle se comporte comme la théorie l'exige&nbsp;: 48&nbsp;% en moyenne sans edge, 5&nbsp;% quand une configuration en possède un. Mais sa dispersion d'échantillonnage — rarement rapportée — est énorme&nbsp;: l'intervalle à 90&nbsp;% sous la loi nulle s'étend de 14&nbsp;% à 83&nbsp;%. <strong>Une PBO lue sur un seul backtest est elle-même une statistique bruitée&nbsp;;</strong> seule une valeur extrême conclut, et l'instrument mérite d'être appliqué à ses propres témoins avant d'être appliqué à la stratégie.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 27</span> — Probabilité de surajustement (CSCV) et sa propre dispersion d'échantillonnage</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Grandeur</th><th>24 configurations sans edge</th><th>une seule en possède un</th></tr></thead>
+        <tbody>
+          <tr class="sep"><td>Réplications indépendantes</td><td>120</td><td>120</td></tr>
+          <tr><td>PBO moyenne</td><td>48,2 %</td><td>4,6 %</td></tr>
+          <tr><td>PBO médiane</td><td>47,1 %</td><td>1,4 %</td></tr>
+          <tr><td>Quantile 5 %</td><td>14,2 %</td><td>0,0 %</td></tr>
+          <tr class="sep"><td>Quantile 95 %</td><td>82,9 %</td><td>17,3 %</td></tr>
+          <tr><td>Dégradation apprentissage → test</td><td>0,243</td><td>−0,000</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Contrôle de l'instrument sur deux cas dont la réponse est connue d'avance. Sans edge la PBO vaut 48 % en moyenne — exactement la moitié, comme la symétrie de la construction l'exige — mais son intervalle à 90 % s'étend de 14 % à 83 %. <strong>Une PBO lue sur un seul backtest est donc elle-même une statistique bruitée</strong>, et seule une valeur extrême conclut : sous 14 % elle est peu compatible avec l'absence d'edge, au-delà de 17 % elle l'est peu avec sa présence, et entre les deux elle ne tranche rien.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 23</span> — Lois d'échantillonnage de la probabilité de surajustement sur des backtests synthétiques répétés, sans edge puis avec un edge unique, et dégradation hors échantillon. La zone claire est celle où une lecture isolée ne tranche pas.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 276" role="img" aria-label="Loi d échantillonnage de la probabilité de surajustement et dégradation hors échantillon" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Loi d'échantillonnage de la PBO</text>
+<text class="sub" x="324.0" y="21.0" text-anchor="end">120 backtests synthétiques</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="324.0" y2="40.0"/>
+<rect class="frame" x="56.0" y="46.0" width="268.0" height="170.0"/>
+<line class="gl" x1="56.0" y1="173.5" x2="324.0" y2="173.5"/>
+<text class="tk" x="51.0" y="176.5" text-anchor="end">1</text>
+<line class="gl" x1="56.0" y1="131.0" x2="324.0" y2="131.0"/>
+<text class="tk" x="51.0" y="134.0" text-anchor="end">2</text>
+<line class="gl" x1="56.0" y1="88.5" x2="324.0" y2="88.5"/>
+<text class="tk" x="51.0" y="91.5" text-anchor="end">3</text>
+<line class="gl" x1="56.0" y1="46.0" x2="324.0" y2="46.0"/>
+<text class="tk" x="51.0" y="49.0" text-anchor="end">4</text>
+<text class="tk" x="56.0" y="229.0" text-anchor="middle">0,00</text>
+<text class="tk" x="123.0" y="229.0" text-anchor="middle">0,25</text>
+<text class="tk" x="190.0" y="229.0" text-anchor="middle">0,50</text>
+<text class="tk" x="257.0" y="229.0" text-anchor="middle">0,75</text>
+<text class="tk" x="324.0" y="229.0" text-anchor="middle">1,00</text>
+<line class="ba" x1="56.0" y1="216.0" x2="324.0" y2="216.0"/>
+<text class="ax" x="190.0" y="244.0" text-anchor="middle">PBO</text>
+<rect class="area ar3" x="69.67" y="187.67" width="12.86" height="28.33"></rect>
+<rect class="area ar3" x="83.07" y="194.75" width="12.86" height="21.25"></rect>
+<rect class="area ar3" x="96.47" y="187.67" width="12.86" height="28.33"></rect>
+<rect class="area ar3" x="109.87" y="166.42" width="12.86" height="49.58"></rect>
+<rect class="area ar3" x="123.27" y="145.17" width="12.86" height="70.83"></rect>
+<rect class="area ar3" x="136.67" y="173.50" width="12.86" height="42.50"></rect>
+<rect class="area ar3" x="150.07" y="152.25" width="12.86" height="63.75"></rect>
+<rect class="area ar3" x="163.47" y="109.75" width="12.86" height="106.25"></rect>
+<rect class="area ar3" x="176.87" y="180.58" width="12.86" height="35.42"></rect>
+<rect class="area ar3" x="190.27" y="123.92" width="12.86" height="92.08"></rect>
+<rect class="area ar3" x="203.67" y="166.42" width="12.86" height="49.58"></rect>
+<rect class="area ar3" x="217.07" y="180.58" width="12.86" height="35.42"></rect>
+<rect class="area ar3" x="230.47" y="123.92" width="12.86" height="92.08"></rect>
+<rect class="area ar3" x="243.87" y="180.58" width="12.86" height="35.42"></rect>
+<rect class="area ar3" x="257.27" y="180.58" width="12.86" height="35.42"></rect>
+<rect class="area ar3" x="270.67" y="187.67" width="12.86" height="28.33"></rect>
+<rect class="area ar3" x="284.07" y="194.75" width="12.86" height="21.25"></rect>
+<rect class="area ar3" x="297.47" y="208.92" width="12.86" height="7.08"></rect>
+<rect class="area ar3" x="310.87" y="208.92" width="12.86" height="7.08"></rect>
+<rect class="area ar1" x="58.68" y="46.00" width="8.04" height="170.00"></rect>
+<rect class="area ar1" x="72.08" y="116.83" width="8.04" height="99.17"></rect>
+<rect class="area ar1" x="85.48" y="138.08" width="8.04" height="77.92"></rect>
+<rect class="area ar1" x="98.88" y="194.75" width="8.04" height="21.25"></rect>
+<rect class="area ar1" x="112.28" y="201.83" width="8.04" height="14.17"></rect>
+<rect class="area ar1" x="125.68" y="208.92" width="8.04" height="7.08"></rect>
+<rect class="area ar1" x="139.08" y="208.92" width="8.04" height="7.08"></rect>
+<rect class="area ar1" x="152.48" y="208.92" width="8.04" height="7.08"></rect>
+<rect class="area ar1" x="219.48" y="208.92" width="8.04" height="7.08"></rect>
+<line class="lvl strong" x1="190.0" y1="46.0" x2="190.0" y2="216.0"/>
+<text class="lg halo" x="195.0" y="58.7" text-anchor="start">½ — symétrie</text>
+<rect class="wash" x="94.1" y="46.0" width="8.2" height="170.0"/>
+<text class="dl halo" x="98.2" y="92.8" text-anchor="middle">zone indécise</text>
+<text class="hdr" x="372.0" y="34.0">Dégradation hors échantillon</text>
+<text class="sub" x="636.0" y="21.0" text-anchor="end">performance par sous-période</text>
+<line class="hsep" x1="372.0" y1="40.0" x2="636.0" y2="40.0"/>
+<rect class="frame" x="372.0" y="46.0" width="264.0" height="170.0"/>
+<line class="gl" x1="372.0" y1="191.7" x2="636.0" y2="191.7"/>
+<text class="tk" x="367.0" y="194.7" text-anchor="end">0,00</text>
+<line class="gl" x1="372.0" y1="143.1" x2="636.0" y2="143.1"/>
+<text class="tk" x="367.0" y="146.1" text-anchor="end">0,10</text>
+<line class="gl" x1="372.0" y1="94.6" x2="636.0" y2="94.6"/>
+<text class="tk" x="367.0" y="97.6" text-anchor="end">0,20</text>
+<line class="gl" x1="372.0" y1="46.0" x2="636.0" y2="46.0"/>
+<text class="tk" x="367.0" y="49.0" text-anchor="end">0,30</text>
+<line class="zero" x1="372.0" y1="191.7" x2="636.0" y2="191.7"/>
+<rect class="dn" x="407.00" y="73.88" width="62.00" height="117.83"><title>sans edge · dégradation +0.243</title></rect>
+<text class="tk" x="438.0" y="230.0" text-anchor="middle">sans edge</text>
+<text class="dl halo" x="438.0" y="65.9" text-anchor="middle">+0,243</text>
+<rect class="s1f" x="539.00" y="191.71" width="62.00" height="0.40"><title>un edge réel · dégradation -0.000</title></rect>
+<text class="tk" x="570.0" y="230.0" text-anchor="middle">un edge réel</text>
+<text class="dl halo" x="570.0" y="183.7" text-anchor="middle">−0,000</text>
+<rect class="s2f" x="56.0" y="240.5" width="11" height="11" rx="2"/>
+<text class="lg" x="73.0" y="249.5">aucune configuration n'a d'edge</text>
+<rect class="s1f" x="306.0" y="240.5" width="11" height="11" rx="2"/>
+<text class="lg" x="323.0" y="249.5">une seule en possède un</text>
+<text class="lg" x="330.0" y="268.0" text-anchor="middle">sous la zone claire, une PBO isolée ne sépare pas les deux hypothèses</text>
+</svg></div>
+    </figure>
+
+  <h3>Validation croisée&nbsp;: purge, embargo, marche avant</h3>
+
+  <p>Une stratégie dont les trades durent 29 minutes ne peut pas être validée par une validation croisée ordinaire&nbsp;: à chaque bord de pli, les étiquettes d'apprentissage recouvrent la fenêtre de test. Sur une séance d'une observation par minute, la fuite atteint 74&nbsp;% à cinq plis et la totalité à dix. La validation croisée «&nbsp;valide&nbsp;» alors un modèle qui a vu son propre futur.</p>
+
+  <p>Les deux corrections sont connues et coûteuses. La <em>purge</em> retire de l'apprentissage toute observation dont l'étiquette recouvre le test&nbsp;; l'<em>embargo</em> retire en outre les observations qui suivent immédiatement, pour couper la corrélation sérielle résiduelle. Elles amputent l'apprentissage d'une dizaine de points. L'alternative, la <em>marche avant</em>, apprend sur moins de données encore mais ne fuit jamais, et son résultat s'interprète directement comme une performance atteignable — ce qui n'est le cas d'aucun autre protocole.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 28</span> — Fuite temporelle d'une validation croisée naïve, coût de la purge, et l'alternative</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Plis</th><th>Apprentissage naïf</th><th>Fuite sans purge</th><th>Apprentissage après purge</th><th>Coût de la purge</th><th>Apprentissage en marche avant</th></tr></thead>
+        <tbody>
+          <tr><td>3</td><td>67 %</td><td>45 %</td><td>56 %</td><td>11 pts</td><td>50 %</td></tr>
+          <tr><td>5</td><td>80 %</td><td>74 %</td><td>67 %</td><td>13 pts</td><td>50 %</td></tr>
+          <tr><td>10</td><td>90 %</td><td>100 %</td><td>76 %</td><td>14 pts</td><td>50 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Une observation par minute sur une séance de 390 minutes, un trade dont l'exposition dure 29 minutes — les valeurs du papier, pas des hypothèses nouvelles. La colonne « fuite » est la part de l'apprentissage qui recouvre la fenêtre de test&nbsp;: à dix plis, elle atteint la totalité, et la validation croisée ne valide plus rien. La marche avant apprend sur moins de données mais ne fuit jamais&nbsp;; c'est le seul protocole dont le résultat s'interprète comme une performance atteignable.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 24</span> — Géométrie des plis d'une validation croisée purgée et d'une marche avant sur une séance, et surface de fuite d'une validation croisée naïve selon le nombre de plis et la durée d'exposition d'un trade.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 340" role="img" aria-label="Géométrie des plis purgés et de la marche avant, et surface de fuite d une validation croisée naïve" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="56.0" y="34.0">Validation croisée purgée</text>
+<text class="sub" x="352.0" y="34.0" text-anchor="end">apprentissage 67 %</text>
+<line class="hsep" x1="56.0" y1="40.0" x2="352.0" y2="40.0"/>
+<rect class="floor" x="56.0" y="46.0" width="296.0" height="15.0"/>
+<rect class="s2f" x="56.0" y="47.0" width="59.2" height="13.0"><title>test : 78 observations</title></rect>
+<rect class="ze" x="115.2" y="47.0" width="25.0" height="13.0"><title>purge : 33 observations</title></rect>
+<rect class="s1f" x="140.2" y="47.0" width="211.8" height="13.0"><title>train : 279 observations</title></rect>
+<text class="tk" x="50.0" y="58.0" text-anchor="end">1</text>
+<rect class="floor" x="56.0" y="66.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="67.0" width="37.2" height="13.0"><title>train : 49 observations</title></rect>
+<rect class="ze" x="93.2" y="67.0" width="22.0" height="13.0"><title>purge : 29 observations</title></rect>
+<rect class="s2f" x="115.2" y="67.0" width="59.2" height="13.0"><title>test : 78 observations</title></rect>
+<rect class="ze" x="174.4" y="67.0" width="25.0" height="13.0"><title>purge : 33 observations</title></rect>
+<rect class="s1f" x="199.4" y="67.0" width="152.6" height="13.0"><title>train : 201 observations</title></rect>
+<text class="tk" x="50.0" y="78.0" text-anchor="end">2</text>
+<rect class="floor" x="56.0" y="86.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="87.0" width="96.4" height="13.0"><title>train : 127 observations</title></rect>
+<rect class="ze" x="152.4" y="87.0" width="22.0" height="13.0"><title>purge : 29 observations</title></rect>
+<rect class="s2f" x="174.4" y="87.0" width="59.2" height="13.0"><title>test : 78 observations</title></rect>
+<rect class="ze" x="233.6" y="87.0" width="25.0" height="13.0"><title>purge : 33 observations</title></rect>
+<rect class="s1f" x="258.6" y="87.0" width="93.4" height="13.0"><title>train : 123 observations</title></rect>
+<text class="tk" x="50.0" y="98.0" text-anchor="end">3</text>
+<rect class="floor" x="56.0" y="106.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="107.0" width="155.6" height="13.0"><title>train : 205 observations</title></rect>
+<rect class="ze" x="211.6" y="107.0" width="22.0" height="13.0"><title>purge : 29 observations</title></rect>
+<rect class="s2f" x="233.6" y="107.0" width="59.2" height="13.0"><title>test : 78 observations</title></rect>
+<rect class="ze" x="292.8" y="107.0" width="25.0" height="13.0"><title>purge : 33 observations</title></rect>
+<rect class="s1f" x="317.8" y="107.0" width="34.2" height="13.0"><title>train : 45 observations</title></rect>
+<text class="tk" x="50.0" y="118.0" text-anchor="end">4</text>
+<rect class="floor" x="56.0" y="126.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="127.0" width="214.8" height="13.0"><title>train : 283 observations</title></rect>
+<rect class="ze" x="270.8" y="127.0" width="22.0" height="13.0"><title>purge : 29 observations</title></rect>
+<rect class="s2f" x="292.8" y="127.0" width="59.2" height="13.0"><title>test : 78 observations</title></rect>
+<text class="tk" x="50.0" y="138.0" text-anchor="end">5</text>
+<text class="hdr" x="56.0" y="178.0">Marche avant</text>
+<text class="sub" x="352.0" y="178.0" text-anchor="end">apprentissage 50 %</text>
+<line class="hsep" x1="56.0" y1="184.0" x2="352.0" y2="184.0"/>
+<rect class="floor" x="56.0" y="190.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="191.0" width="49.3" height="13.0"><title>train : 65 observations</title></rect>
+<rect class="s2f" x="105.3" y="191.0" width="49.3" height="13.0"><title>test : 65 observations</title></rect>
+<rect class="ze" x="154.7" y="191.0" width="197.3" height="13.0"><title>purge : 260 observations</title></rect>
+<text class="tk" x="50.0" y="202.0" text-anchor="end">1</text>
+<rect class="floor" x="56.0" y="210.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="211.0" width="98.7" height="13.0"><title>train : 130 observations</title></rect>
+<rect class="s2f" x="154.7" y="211.0" width="49.3" height="13.0"><title>test : 65 observations</title></rect>
+<rect class="ze" x="204.0" y="211.0" width="148.0" height="13.0"><title>purge : 195 observations</title></rect>
+<text class="tk" x="50.0" y="222.0" text-anchor="end">2</text>
+<rect class="floor" x="56.0" y="230.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="231.0" width="148.0" height="13.0"><title>train : 195 observations</title></rect>
+<rect class="s2f" x="204.0" y="231.0" width="49.3" height="13.0"><title>test : 65 observations</title></rect>
+<rect class="ze" x="253.3" y="231.0" width="98.7" height="13.0"><title>purge : 130 observations</title></rect>
+<text class="tk" x="50.0" y="242.0" text-anchor="end">3</text>
+<rect class="floor" x="56.0" y="250.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="251.0" width="197.3" height="13.0"><title>train : 260 observations</title></rect>
+<rect class="s2f" x="253.3" y="251.0" width="49.3" height="13.0"><title>test : 65 observations</title></rect>
+<rect class="ze" x="302.7" y="251.0" width="49.3" height="13.0"><title>purge : 65 observations</title></rect>
+<text class="tk" x="50.0" y="262.0" text-anchor="end">4</text>
+<rect class="floor" x="56.0" y="270.0" width="296.0" height="15.0"/>
+<rect class="s1f" x="56.0" y="271.0" width="246.7" height="13.0"><title>train : 325 observations</title></rect>
+<rect class="s2f" x="302.7" y="271.0" width="49.3" height="13.0"><title>test : 65 observations</title></rect>
+<text class="tk" x="50.0" y="282.0" text-anchor="end">5</text>
+<polygon class="floor" points="520.0,236.0 577.5,267.0 520.0,298.0 462.5,267.0"></polygon>
+<line class="post" x1="520.0" y1="236.0" x2="520.0" y2="234.6"/>
+<line class="post" x1="577.5" y1="267.0" x2="577.5" y2="253.3"/>
+<line class="post" x1="520.0" y1="298.0" x2="520.0" y2="164.0"/>
+<line class="post" x1="462.5" y1="267.0" x2="462.5" y2="225.8"/>
+<polygon class="mesh hm7" points="520.0,151.6 531.5,157.8 520.0,164.0 508.5,157.8"><title>fuite = 1.00</title></polygon>
+<polygon class="mesh hm7" points="508.5,169.5 520.0,151.6 508.5,157.8 497.0,151.6"><title>fuite = 0.96</title></polygon>
+<polygon class="mesh hm7" points="531.5,180.4 543.0,151.6 531.5,157.8 520.0,151.6"><title>fuite = 0.93</title></polygon>
+<polygon class="mesh hm5" points="497.0,204.5 508.5,169.5 497.0,151.6 485.5,176.3"><title>fuite = 0.78</title></polygon>
+<polygon class="mesh hm5" points="520.0,207.2 531.5,180.4 520.0,151.6 508.5,169.5"><title>fuite = 0.76</title></polygon>
+<polygon class="mesh hm5" points="543.0,223.7 554.5,196.9 543.0,151.6 531.5,180.4"><title>fuite = 0.68</title></polygon>
+<polygon class="mesh hm4" points="485.5,225.8 497.0,204.5 485.5,176.3 474.0,211.4"><title>fuite = 0.51</title></polygon>
+<polygon class="mesh hm4" points="508.5,225.8 520.0,207.2 508.5,169.5 497.0,204.5"><title>fuite = 0.53</title></polygon>
+<polygon class="mesh hm3" points="531.5,234.0 543.0,223.7 531.5,180.4 520.0,207.2"><title>fuite = 0.46</title></polygon>
+<polygon class="mesh hm3" points="554.5,242.3 566.0,232.0 554.5,196.9 543.0,223.7"><title>fuite = 0.37</title></polygon>
+<polygon class="mesh hm2" points="474.0,233.3 485.5,225.8 474.0,211.4 462.5,225.8"><title>fuite = 0.32</title></polygon>
+<polygon class="mesh hm2" points="497.0,236.1 508.5,225.8 497.0,204.5 485.5,225.8"><title>fuite = 0.33</title></polygon>
+<polygon class="mesh hm2" points="520.0,240.2 531.5,234.0 520.0,207.2 508.5,225.8"><title>fuite = 0.30</title></polygon>
+<polygon class="mesh hm2" points="543.0,244.3 554.5,242.3 543.0,223.7 531.5,234.0"><title>fuite = 0.23</title></polygon>
+<polygon class="mesh hm1" points="566.0,252.6 577.5,253.3 566.0,232.0 554.5,242.3"><title>fuite = 0.16</title></polygon>
+<polygon class="mesh hm1" points="485.5,238.1 497.0,236.1 485.5,225.8 474.0,233.3"><title>fuite = 0.21</title></polygon>
+<polygon class="mesh hm1" points="508.5,242.2 520.0,240.2 508.5,225.8 497.0,236.1"><title>fuite = 0.18</title></polygon>
+<polygon class="mesh hm1" points="531.5,244.3 543.0,244.3 531.5,234.0 520.0,240.2"><title>fuite = 0.15</title></polygon>
+<polygon class="mesh hm1" points="554.5,249.1 566.0,252.6 554.5,242.3 543.0,244.3"><title>fuite = 0.10</title></polygon>
+<polygon class="mesh hm1" points="497.0,240.2 508.5,242.2 497.0,236.1 485.5,238.1"><title>fuite = 0.12</title></polygon>
+<polygon class="mesh hm1" points="520.0,242.2 531.5,244.3 520.0,240.2 508.5,242.2"><title>fuite = 0.09</title></polygon>
+<polygon class="mesh hm0" points="543.0,245.0 554.5,249.1 543.0,244.3 531.5,244.3"><title>fuite = 0.07</title></polygon>
+<polygon class="mesh hm0" points="508.5,238.1 520.0,242.2 508.5,242.2 497.0,240.2"><title>fuite = 0.06</title></polygon>
+<polygon class="mesh hm0" points="531.5,240.1 543.0,245.0 531.5,244.3 520.0,242.2"><title>fuite = 0.04</title></polygon>
+<polygon class="mesh hm0" points="520.0,234.6 531.5,240.1 520.0,242.2 508.5,238.1"><title>fuite = 0.03</title></polygon>
+<text class="tk halo" x="455.5" y="279.0" text-anchor="end">2 plis</text>
+<text class="tk halo" x="513.0" y="310.0" text-anchor="end">20</text>
+<text class="tk halo" x="584.5" y="278.0">1 min</text>
+<text class="tk halo" x="527.0" y="309.0">30</text>
+<text class="tk" x="422.5" y="270.0" text-anchor="end">0</text>
+<line class="gl" x1="427.5" y1="267.0" x2="438.5" y2="267.0"/>
+<text class="tk" x="422.5" y="203.0" text-anchor="end">½</text>
+<line class="gl" x1="427.5" y1="200.0" x2="438.5" y2="200.0"/>
+<text class="tk" x="422.5" y="136.0" text-anchor="end">1</text>
+<line class="gl" x1="427.5" y1="133.0" x2="438.5" y2="133.0"/>
+<text class="hdr" x="404" y="30">Fuite sans purge</text>
+<text class="sub" x="404" y="44">part de l'apprentissage</text>
+<text class="sub" x="404" y="57">qui recouvre le test</text>
+<rect class="s1f" x="56.0" y="294.5" width="11" height="11" rx="2"/>
+<text class="lg" x="73.0" y="303.5">apprentissage</text>
+<rect class="s2f" x="160.0" y="294.5" width="11" height="11" rx="2"/>
+<text class="lg" x="177.0" y="303.5">test</text>
+<rect class="ze" x="264.0" y="294.5" width="11" height="11" rx="2"/>
+<text class="lg" x="281.0" y="303.5">purge et embargo</text>
+<text class="lg" x="200.0" y="328.0" text-anchor="middle">une observation par minute, séance de 390 minutes, exposition de 29 minutes</text>
+</svg></div>
+    </figure>
+
+  <h3>Queues, sauts, scénarios</h3>
+
+  <p>La première partie suppose une diffusion continue. Cette hypothèse a une conséquence que le dispositif entier ignore&nbsp;: <strong>un stop n'est pas une garantie de perte maximale.</strong> C'est un ordre au marché conditionnel, et sa protection ne vaut que tant que le prix passe par tous les niveaux intermédiaires. Un saut ne le fait pas.</p>
+
+  <p>Sur la loi exacte d'un trade, la VaR et l'<em>expected shortfall</em> à 99&nbsp;% coïncident, à 1,11&nbsp;R&nbsp;: sous le pour-cent extrême, toute la masse est dans l'atome du stop. Le stop <em>est</em> l'ES — jusqu'au premier saut. Modélisé à la Merton, un saut d'espérance nulle et d'amplitude type douze points survient avec probabilité 0,37&nbsp;% pendant l'exposition d'un trade, et coûte alors 6,87 points au-delà du stop. L'espérance corrigée s'écrit</p>
+
+  <div class="eq">
+    <div class="body">E[<span class="v">R</span>]<sub>ajustée</sub><span class="op">=</span>E[<span class="v">R</span>]&nbsp;−&nbsp;P(saut)&thinsp;<span class="frac"><span>E[(|<span class="v">J</span>|&nbsp;−&nbsp;<span class="v">a</span>)<sup>+</sup>]</span><span><span class="v">a</span></span></span>,</div>
+    <div class="no">(31)</div>
+  </div>
+
+  <p>ce qui consomme 8&nbsp;% de l'edge de référence à l'intensité retenue. Le point à retenir n'est pas ce pourcentage, qui dépend d'un paramètre non mesuré&nbsp;: c'est que <em>le saut est centré et le trade ne l'est pas</em>. L'asymétrie est dans la géométrie — le stop tronque le gain et laisse la perte courir — et elle survit à toute hypothèse de saut d'espérance nulle.</p>
+
+  <p>Reste le stress-test, et la seule formulation qui ne dépende d'aucun choix de scénario. Plutôt que de demander «&nbsp;que perd-on dans tel scénario&nbsp;?&nbsp;», on demande quel choc efface exactement une année d'espérance&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">m</span>*<span class="op">=</span>100&thinsp;<span class="frac"><span><span class="v">a</span>&thinsp;(1&nbsp;+&nbsp;<span class="v">N</span>&thinsp;E[<span class="v">R</span>])</span><span>indice</span></span>&nbsp;=&nbsp;2,82&nbsp;%, soit 169 points d'indice.</div>
+    <div class="no">(32)</div>
+  </div>
+
+  <p>Un écart d'ouverture de deux pour cent — un événement que l'histoire documente plusieurs fois par décennie — efface 0,7 année de gain espéré. Le krach de 1987 en efface 7,4. La stratégie n'est pas exposée à ces chocs parce qu'elle serait mal construite&nbsp;: elle y est exposée parce que son risque nominal, trois points, est deux ordres de grandeur sous l'amplitude d'un choc de séance, et qu'aucun stop ne franchit cet écart.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 29</span> — Queues : approximation gaussienne, loi exacte du trade, extrapolation EVT du drawdown</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Grandeur</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>VaR 99 % d'un trade — loi exacte</td><td>1,11 R</td></tr>
+          <tr><td>VaR 99 % d'un trade — gaussienne</td><td>11,27 R</td></tr>
+          <tr class="sep"><td>Rapport gaussien / exact</td><td>10,2</td></tr>
+          <tr><td>ES 99 % d'un trade — loi exacte</td><td>1,11 R</td></tr>
+          <tr><td>ES 99 % d'un trade — gaussienne</td><td>12,92 R</td></tr>
+          <tr class="sep"><td>Cornish-Fisher applicable ?</td><td>non</td></tr>
+          <tr><td>Seuil EVT — quantile 90 % du drawdown annuel</td><td>158 R</td></tr>
+          <tr><td>Dépassements exploités</td><td>400</td></tr>
+          <tr><td>Indice de queue ξ — méthode des moments</td><td>−0,098</td></tr>
+          <tr><td>Indice de queue ξ — estimateur de Hill</td><td>0,155</td></tr>
+          <tr class="sep"><td>Variance de queue finie (ξ < ½) ?</td><td>oui</td></tr>
+          <tr><td>Drawdown annuel, quantile 99 % simulé</td><td>234 R</td></tr>
+          <tr><td>Drawdown annuel, quantile 99,9 % extrapolé</td><td>293 R</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Deux résultats, et ils vont en sens contraire. D'abord la VaR gaussienne d'un trade <strong>surestime</strong> la perte d'un facteur 10, parce qu'elle lit un écart-type dont la quasi-totalité vient de la queue de <strong>gain</strong> ; le correctif de Cornish-Fisher censé y remédier n'est pas monotone à cette asymétrie, et aucun de ses quantiles n'est interprétable. Ensuite la VaR et l'ES exacts d'un trade coïncident, à 1,11 R : sous le pour-cent extrême, toute la masse est dans l'atome du stop. <strong>Le stop est l'ES — jusqu'au premier saut</strong>, et c'est exactement ce que la table suivante chiffre.</p>
+    </figure>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 30</span> — Scénarios de choc, ramenés au risque nominal et à l'année d'espérance</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Scénario</th><th>Fenêtre</th><th>Amplitude</th><th>Points d'indice</th><th>Perte si le stop ne sert pas</th><th>en années d'espérance</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Krach de 1987</td><td>séance</td><td>20,5 %</td><td>1 230</td><td>410 R</td><td>7,4</td></tr>
+          <tr><td class="wrap">Octobre 2008</td><td>séance</td><td>9,0 %</td><td>540</td><td>180 R</td><td>3,2</td></tr>
+          <tr><td class="wrap">Flash crash 2010</td><td>trente minutes</td><td>5,7 %</td><td>342</td><td>114 R</td><td>2,1</td></tr>
+          <tr><td class="wrap">Février 2018</td><td>séance</td><td>4,1 %</td><td>246</td><td>82 R</td><td>1,5</td></tr>
+          <tr><td class="wrap">Mars 2020</td><td>séance</td><td>12,0 %</td><td>720</td><td>240 R</td><td>4,3</td></tr>
+          <tr><td class="wrap">Ouverture en écart</td><td>instantané</td><td>2,0 %</td><td>120</td><td>40 R</td><td>0,7</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le stop vaut 3 points. Toute amplitude qui le franchit sans exécution intermédiaire se paie intégralement : la colonne de droite exprime cette perte en années de gain espéré, à l'edge de référence. Un seul écart d'ouverture de 2 % efface 0,7 années.</p>
+    </figure>
+
+    <figure>
+      <figcaption><span class="lab">Table 31</span> — Risque de saut et stress inversé : ce que le stop ne protège pas</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Grandeur</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Intensité de saut retenue</td><td>0,050 / séance</td></tr>
+          <tr><td>Amplitude type d'un saut</td><td>12 points</td></tr>
+          <tr><td>Exposition d'un trade</td><td>28,9 min</td></tr>
+          <tr><td>P(un saut pendant l'exposition)</td><td>0,37 %</td></tr>
+          <tr><td>Surcoût espéré d'un saut, E[(|J| − a)⁺]</td><td>6,87 points</td></tr>
+          <tr class="sep"><td>en unités de risque</td><td>2,29 R</td></tr>
+          <tr><td>Espérance avant correction</td><td>0,1100 R</td></tr>
+          <tr><td>Espérance après correction de saut</td><td>0,1015 R</td></tr>
+          <tr class="sep"><td>Part de l'edge consommée</td><td>8 %</td></tr>
+          <tr><td>Choc qui efface une année d'espérance</td><td>2,82 %</td></tr>
+          <tr><td>en points d'indice</td><td>169</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le saut est d'espérance nulle — il ne biaise pas le prix. Il biaise le <strong>trade</strong>, parce que le stop tronque le gain et laisse la perte courir : l'asymétrie est dans la géométrie, pas dans le marché, et elle survit à toute hypothèse de saut centré. Elle consomme 8 % de l'edge de référence à l'intensité retenue.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 25</span> — Échelle des scénarios de choc ramenée en années de gain espéré, mesures de queue d'un trade en loi exacte et en approximation gaussienne, et surface de l'espérance corrigée du risque de saut selon la largeur du stop et l'intensité des sauts.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 510" role="img" aria-label="Échelle des scénarios de choc, mesures de queue d un trade, et espérance corrigée du risque de saut" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="148.0" y="34.0">Scénarios</text>
+<text class="read" x="368.0" y="34.0" text-anchor="end">en années d'espérance</text>
+<line class="hsep" x1="148.0" y1="40.0" x2="368.0" y2="40.0"/>
+<rect class="frame" x="148.0" y="46.0" width="220.0" height="168.0"/>
+<text class="tk" x="148.0" y="227.0" text-anchor="middle">0</text>
+<text class="tk" x="200.2" y="227.0" text-anchor="middle">2</text>
+<text class="tk" x="252.4" y="227.0" text-anchor="middle">4</text>
+<text class="tk" x="304.6" y="227.0" text-anchor="middle">6</text>
+<text class="tk" x="356.8" y="227.0" text-anchor="middle">8</text>
+<line class="ba" x1="148.0" y1="214.0" x2="368.0" y2="214.0"/>
+<text class="ax" x="258.0" y="242.0" text-anchor="middle">années de gain espéré</text>
+<rect class="dn" x="148.00" y="191.24" width="18.83" height="13.00"><title>Ouverture en écart · 40 R · 0.7 années</title></rect>
+<text class="tk" x="142.0" y="201.2" text-anchor="end">Ouverture en écart</text>
+<rect class="dn" x="148.00" y="164.15" width="38.60" height="13.00"><title>Février 2018 · 82 R · 1.5 années</title></rect>
+<text class="tk" x="142.0" y="174.1" text-anchor="end">Février 2018</text>
+<rect class="dn" x="148.00" y="137.05" width="53.66" height="13.00"><title>Flash crash 2010 · 114 R · 2.1 années</title></rect>
+<text class="tk" x="142.0" y="147.0" text-anchor="end">Flash crash 2010</text>
+<rect class="dn" x="148.00" y="109.95" width="84.72" height="13.00"><title>Octobre 2008 · 180 R · 3.2 années</title></rect>
+<text class="tk" x="142.0" y="120.0" text-anchor="end">Octobre 2008</text>
+<rect class="dn" x="148.00" y="82.85" width="112.97" height="13.00"><title>Mars 2020 · 240 R · 4.3 années</title></rect>
+<text class="tk" x="142.0" y="92.9" text-anchor="end">Mars 2020</text>
+<rect class="dn" x="148.00" y="55.76" width="192.98" height="13.00"><title>Krach de 1987 · 410 R · 7.4 années</title></rect>
+<text class="tk" x="142.0" y="65.8" text-anchor="end">Krach de 1987</text>
+<line class="lvl strong" x1="174.1" y1="46.0" x2="174.1" y2="214.0"/>
+<text class="lg halo" x="178.1" y="54.7" text-anchor="start">une année</text>
+<text class="hdr" x="448.0" y="34.0">Queue d'un trade</text>
+<text class="sub" x="636.0" y="21.0" text-anchor="end">99 %, en R</text>
+<line class="hsep" x1="448.0" y1="40.0" x2="636.0" y2="40.0"/>
+<rect class="frame" x="448.0" y="46.0" width="188.0" height="168.0"/>
+<line class="gl" x1="448.0" y1="214.0" x2="636.0" y2="214.0"/>
+<text class="tk" x="443.0" y="217.0" text-anchor="end">0</text>
+<line class="gl" x1="448.0" y1="166.0" x2="636.0" y2="166.0"/>
+<text class="tk" x="443.0" y="169.0" text-anchor="end">4</text>
+<line class="gl" x1="448.0" y1="118.0" x2="636.0" y2="118.0"/>
+<text class="tk" x="443.0" y="121.0" text-anchor="end">8</text>
+<line class="gl" x1="448.0" y1="70.0" x2="636.0" y2="70.0"/>
+<text class="tk" x="443.0" y="73.0" text-anchor="end">12</text>
+<rect class="s1f" x="461.86" y="200.68" width="26.00" height="13.32"><title>VaR exacte · 1.11 R</title></rect>
+<text class="tk" transform="translate(474.9,246.0) rotate(-32)" text-anchor="middle">VaR exacte</text>
+<rect class="dn" x="506.62" y="78.79" width="26.00" height="135.21"><title>VaR gauss. · 11.27 R</title></rect>
+<text class="tk" transform="translate(519.6,246.0) rotate(-32)" text-anchor="middle">VaR gauss.</text>
+<rect class="s1f" x="551.38" y="200.68" width="26.00" height="13.32"><title>ES exacte · 1.11 R</title></rect>
+<text class="tk" transform="translate(564.4,246.0) rotate(-32)" text-anchor="middle">ES exacte</text>
+<rect class="dn" x="596.14" y="58.90" width="26.00" height="155.10"><title>ES gauss. · 12.92 R</title></rect>
+<text class="tk" transform="translate(609.1,246.0) rotate(-32)" text-anchor="middle">ES gauss.</text>
+<line class="lvl strong" x1="448.0" y1="202.0" x2="636.0" y2="202.0"/>
+<text class="lg halo" x="474.9" y="193.0" text-anchor="middle">le stop</text>
+<polygon class="floor" points="330.0,379.8 405.0,412.8 330.0,445.8 255.0,412.8"></polygon>
+<line class="post" x1="330.0" y1="379.8" x2="330.0" y2="399.9"/>
+<line class="post" x1="405.0" y1="412.8" x2="405.0" y2="349.2"/>
+<line class="post" x1="330.0" y1="445.8" x2="330.0" y2="388.3"/>
+<line class="post" x1="255.0" y1="412.8" x2="255.0" y2="449.2"/>
+<polygon class="mesh up" points="330.0,367.8 355.0,373.6 330.0,388.3 305.0,388.7"><title>E[R] corrigée = +0.187 R</title></polygon>
+<polygon class="mesh up" points="305.0,387.8 330.0,367.8 305.0,388.7 280.0,411.0"><title>E[R] corrigée = +0.118 R</title></polygon>
+<polygon class="mesh up" points="355.0,352.7 380.0,361.0 355.0,373.6 330.0,367.8"><title>E[R] corrigée = +0.203 R</title></polygon>
+<polygon class="mesh dn" points="280.0,428.0 305.0,387.8 280.0,411.0 255.0,449.2"><title>E[R] corrigée = -0.021 R</title></polygon>
+<polygon class="mesh up" points="330.0,371.8 355.0,352.7 330.0,367.8 305.0,387.8"><title>E[R] corrigée = +0.145 R</title></polygon>
+<polygon class="mesh up" points="380.0,339.6 405.0,349.2 380.0,361.0 355.0,352.7"><title>E[R] corrigée = +0.211 R</title></polygon>
+<polygon class="mesh up" points="305.0,412.9 330.0,371.8 305.0,387.8 280.0,428.0"><title>E[R] corrigée = +0.005 R</title></polygon>
+<polygon class="mesh up" points="355.0,358.3 380.0,339.6 355.0,352.7 330.0,371.8"><title>E[R] corrigée = +0.156 R</title></polygon>
+<polygon class="mesh up" points="330.0,399.9 355.0,358.3 330.0,371.8 305.0,412.9"><title>E[R] corrigée = +0.017 R</title></polygon>
+<text class="tk halo" x="248.0" y="424.8" text-anchor="end">stop 0,025 %</text>
+<text class="tk halo" x="273.0" y="435.8" text-anchor="end">0,050 %</text>
+<text class="tk halo" x="298.0" y="446.8" text-anchor="end">0,100 %</text>
+<text class="tk halo" x="337.0" y="456.8">λ = 0,40</text>
+<text class="tk" x="215.0" y="460.0" text-anchor="end">−0,15</text>
+<line class="gl" x1="220.0" y1="457.0" x2="231.0" y2="457.0"/>
+<text class="tk" x="215.0" y="415.8" text-anchor="end">0</text>
+<line class="gl" x1="220.0" y1="412.8" x2="231.0" y2="412.8"/>
+<text class="tk" x="215.0" y="356.8" text-anchor="end">+0,20</text>
+<line class="gl" x1="220.0" y1="353.8" x2="231.0" y2="353.8"/>
+<text class="hdr" x="56" y="266">Espérance après correction de saut</text>
+<text class="sub" x="56" y="281">axe gauche : largeur du stop · axe droit : intensité de saut (0 ; 0,05 ; 0,15 ; 0,40 par séance)</text>
+<rect class="s1f" x="148.0" y="230.5" width="11" height="11" rx="2"/>
+<text class="lg" x="165.0" y="239.5">loi exacte</text>
+<rect class="dn" x="308.0" y="230.5" width="11" height="11" rx="2"/>
+<text class="lg" x="325.0" y="239.5">approximation gaussienne</text>
+<text class="lg" x="330.0" y="500.0" text-anchor="middle">un stop plus large coûte plus par trade mais encaisse le saut : la surface change de signe dans les deux directions</text>
+</svg></div>
+    </figure>
+
+  <h3>Dimensionnement</h3>
+
+  <p>La fraction de Kelly de l'edge de référence vaut 0,50&nbsp;% du capital par unité de risque. La courbe de croissance logarithmique est plate au voisinage de son optimum et brutale au-delà&nbsp;: miser le double annule la croissance sans rien ajouter au rendement espéré. Sur le plan (edge supposé, fraction misée), la surface est presque plate le long du premier axe et abrupte le long du second. <strong>L'erreur d'estimation de l'edge se paie sur l'axe de la mise, pas sur celui du rendement</strong> — et comme la partie entière vient d'établir que l'edge n'est pas mesurable dans un échantillon réalisable, l'erreur d'estimation n'est pas une éventualité, c'est l'état par défaut.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 26</span> — Croissance logarithmique par trade et fraction de Kelly, probabilité de ruine de Lundberg par profondeur, et surface de croissance sur le plan de l'edge supposé et de la fraction misée.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 508" role="img" aria-label="Croissance logarithmique et fraction de Kelly, probabilité de ruine de Lundberg, et surface de croissance" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="92.0" y="34.0">Croissance par trade</text>
+<text class="sub" x="316.0" y="21.0" text-anchor="end">f* = 0,50 %</text>
+<line class="hsep" x1="92.0" y1="40.0" x2="316.0" y2="40.0"/>
+<rect class="frame" x="92.0" y="46.0" width="224.0" height="146.0"/>
+<line class="gl" x1="92.0" y1="192.0" x2="316.0" y2="192.0"/>
+<text class="tk" x="87.0" y="195.0" text-anchor="end">-4</text>
+<line class="gl" x1="92.0" y1="143.3" x2="316.0" y2="143.3"/>
+<text class="tk" x="87.0" y="146.3" text-anchor="end">-2</text>
+<line class="gl" x1="92.0" y1="94.7" x2="316.0" y2="94.7"/>
+<text class="tk" x="87.0" y="97.7" text-anchor="end">0</text>
+<line class="gl" x1="92.0" y1="46.0" x2="316.0" y2="46.0"/>
+<text class="tk" x="87.0" y="49.0" text-anchor="end">2</text>
+<text class="ax" transform="translate(58.0,119.0) rotate(-90)" text-anchor="middle">‰ par trade</text>
+<text class="tk" x="92.0" y="205.0" text-anchor="middle">0,0 %</text>
+<text class="tk" x="166.7" y="205.0" text-anchor="middle">0,5 %</text>
+<text class="tk" x="241.3" y="205.0" text-anchor="middle">1,0 %</text>
+<text class="tk" x="316.0" y="205.0" text-anchor="middle">1,5 %</text>
+<line class="ba" x1="92.0" y1="192.0" x2="316.0" y2="192.0"/>
+<text class="ax" x="204.0" y="220.0" text-anchor="middle">fraction misée</text>
+<line class="zero" x1="92.0" y1="94.7" x2="316.0" y2="94.7"/>
+<path class="ln s1" d="M92.00,94.67 L93.12,94.47 L94.24,94.27 L95.36,94.08 L96.48,93.89 L97.60,93.70 L98.72,93.51 L99.84,93.33 L100.96,93.16 L102.08,92.98 L103.20,92.81 L104.32,92.64 L105.44,92.48 L106.56,92.32 L107.68,92.16 L108.80,92.01 L109.92,91.85 L111.04,91.71 L112.16,91.56 L113.28,91.42 L114.40,91.28 L115.52,91.14 L116.64,91.01 L117.76,90.88 L118.88,90.75 L120.00,90.63 L121.12,90.51 L122.24,90.39 L123.36,90.28 L124.48,90.17 L125.60,90.06 L126.72,89.95 L127.84,89.85 L128.96,89.75 L130.08,89.66 L131.20,89.57 L132.32,89.48 L133.44,89.39 L134.56,89.30 L135.68,89.22 L136.80,89.15 L137.92,89.07 L139.04,89.00 L140.16,88.93 L141.28,88.86 L142.40,88.80 L143.52,88.74 L144.64,88.68 L145.76,88.63 L146.88,88.58 L148.00,88.53 L149.12,88.48 L150.24,88.44 L151.36,88.40 L152.48,88.36 L153.60,88.33 L154.72,88.30 L155.84,88.27 L156.96,88.24 L158.08,88.22 L159.20,88.20 L160.32,88.18 L161.44,88.17 L162.56,88.16 L163.68,88.15 L164.80,88.14 L165.92,88.14 L167.04,88.14 L168.16,88.14 L169.28,88.15 L170.40,88.15 L171.52,88.16 L172.64,88.18 L173.76,88.19 L174.88,88.21 L176.00,88.23 L177.12,88.26 L178.24,88.28 L179.36,88.31 L180.48,88.35 L181.60,88.38 L182.72,88.42 L183.84,88.46 L184.96,88.50 L186.08,88.55 L187.20,88.60 L188.32,88.65 L189.44,88.70 L190.56,88.76 L191.68,88.82 L192.80,88.88 L193.92,88.94 L195.04,89.01 L196.16,89.08 L197.28,89.15 L198.40,89.22 L199.52,89.30 L200.64,89.38 L201.76,89.46 L202.88,89.55 L204.00,89.63 L205.12,89.72 L206.24,89.82 L207.36,89.91 L208.48,90.01 L209.60,90.11 L210.72,90.21 L211.84,90.32 L212.96,90.42 L214.08,90.53 L215.20,90.65 L216.32,90.76 L217.44,90.88 L218.56,91.00 L219.68,91.12 L220.80,91.25 L221.92,91.37 L223.04,91.50 L224.16,91.64 L225.28,91.77 L226.40,91.91 L227.52,92.05 L228.64,92.19 L229.76,92.33 L230.88,92.48 L232.00,92.63 L233.12,92.78 L234.24,92.94 L235.36,93.09 L236.48,93.25 L237.60,93.41 L238.72,93.58 L239.84,93.74 L240.96,93.91 L242.08,94.08 L243.20,94.25 L244.32,94.43 L245.44,94.61 L246.56,94.79 L247.68,94.97 L248.80,95.15 L249.92,95.34 L251.04,95.53 L252.16,95.72 L253.28,95.92 L254.40,96.11 L255.52,96.31 L256.64,96.51 L257.76,96.71 L258.88,96.92 L260.00,97.13 L261.12,97.34 L262.24,97.55 L263.36,97.76 L264.48,97.98 L265.60,98.20 L266.72,98.42 L267.84,98.64 L268.96,98.87 L270.08,99.10 L271.20,99.33 L272.32,99.56 L273.44,99.80 L274.56,100.03 L275.68,100.27 L276.80,100.51 L277.92,100.76 L279.04,101.00 L280.16,101.25 L281.28,101.50 L282.40,101.75 L283.52,102.01 L284.64,102.26 L285.76,102.52 L286.88,102.78 L288.00,103.04 L289.12,103.31 L290.24,103.58 L291.36,103.85 L292.48,104.12 L293.60,104.39 L294.72,104.67 L295.84,104.94 L296.96,105.22 L298.08,105.51 L299.20,105.79 L300.32,106.08 L301.44,106.36 L302.56,106.66 L303.68,106.95 L304.80,107.24 L305.92,107.54 L307.04,107.84 L308.16,108.14 L309.28,108.44 L310.40,108.75 L311.52,109.05 L312.64,109.36 L313.76,109.67 L314.88,109.99"></path>
+<line class="lvl strong" x1="166.7" y1="46.0" x2="166.7" y2="192.0"/>
+<circle class="pt s1" cx="166.67" cy="88.14" r="4"><title>optimum f* = 0.0050</title></circle>
+<text class="dl halo" x="173.7" y="82.1" text-anchor="start">Kelly</text>
+<line class="lvl" x1="241.3" y1="46.0" x2="241.3" y2="192.0"/>
+<text class="lg halo" x="235.3" y="172.5" text-anchor="end">2× Kelly</text>
+<text class="hdr" x="380.0" y="34.0">Ruine de Lundberg</text>
+<text class="sub" x="572.0" y="21.0" text-anchor="end">θ* = 0,0098</text>
+<line class="hsep" x1="380.0" y1="40.0" x2="572.0" y2="40.0"/>
+<rect class="frame" x="380.0" y="46.0" width="192.0" height="146.0"/>
+<line class="gl" x1="380.0" y1="192.0" x2="572.0" y2="192.0"/>
+<text class="tk" x="375.0" y="195.0" text-anchor="end">0,001</text>
+<line class="gl" x1="380.0" y1="143.3" x2="572.0" y2="143.3"/>
+<text class="tk" x="375.0" y="146.3" text-anchor="end">0,010</text>
+<line class="gl" x1="380.0" y1="94.7" x2="572.0" y2="94.7"/>
+<text class="tk" x="375.0" y="97.7" text-anchor="end">0,100</text>
+<line class="gl" x1="380.0" y1="46.0" x2="572.0" y2="46.0"/>
+<text class="tk" x="375.0" y="49.0" text-anchor="end">1,000</text>
+<text class="tk" x="380.0" y="205.0" text-anchor="middle">0</text>
+<text class="tk" x="444.0" y="205.0" text-anchor="middle">200</text>
+<text class="tk" x="508.0" y="205.0" text-anchor="middle">400</text>
+<text class="tk" x="572.0" y="205.0" text-anchor="middle">600</text>
+<line class="ba" x1="380.0" y1="192.0" x2="572.0" y2="192.0"/>
+<text class="ax" x="476.0" y="220.0" text-anchor="middle">profondeur (R)</text>
+<path class="ln s1" d="M380.32,46.21 L381.28,46.83 L382.24,47.44 L383.20,48.06 L384.16,48.68 L385.12,49.30 L386.08,49.92 L387.04,50.54 L388.00,51.16 L388.96,51.78 L389.92,52.40 L390.88,53.02 L391.84,53.63 L392.80,54.25 L393.76,54.87 L394.72,55.49 L395.68,56.11 L396.64,56.73 L397.60,57.35 L398.56,57.97 L399.52,58.59 L400.48,59.21 L401.44,59.82 L402.40,60.44 L403.36,61.06 L404.32,61.68 L405.28,62.30 L406.24,62.92 L407.20,63.54 L408.16,64.16 L409.12,64.78 L410.08,65.39 L411.04,66.01 L412.00,66.63 L412.96,67.25 L413.92,67.87 L414.88,68.49 L415.84,69.11 L416.80,69.73 L417.76,70.35 L418.72,70.97 L419.68,71.58 L420.64,72.20 L421.60,72.82 L422.56,73.44 L423.52,74.06 L424.48,74.68 L425.44,75.30 L426.40,75.92 L427.36,76.54 L428.32,77.16 L429.28,77.77 L430.24,78.39 L431.20,79.01 L432.16,79.63 L433.12,80.25 L434.08,80.87 L435.04,81.49 L436.00,82.11 L436.96,82.73 L437.92,83.35 L438.88,83.96 L439.84,84.58 L440.80,85.20 L441.76,85.82 L442.72,86.44 L443.68,87.06 L444.64,87.68 L445.60,88.30 L446.56,88.92 L447.52,89.54 L448.48,90.15 L449.44,90.77 L450.40,91.39 L451.36,92.01 L452.32,92.63 L453.28,93.25 L454.24,93.87 L455.20,94.49 L456.16,95.11 L457.12,95.73 L458.08,96.34 L459.04,96.96 L460.00,97.58 L460.96,98.20 L461.92,98.82 L462.88,99.44 L463.84,100.06 L464.80,100.68 L465.76,101.30 L466.72,101.92 L467.68,102.53 L468.64,103.15 L469.60,103.77 L470.56,104.39 L471.52,105.01 L472.48,105.63 L473.44,106.25 L474.40,106.87 L475.36,107.49 L476.32,108.11 L477.28,108.72 L478.24,109.34 L479.20,109.96 L480.16,110.58 L481.12,111.20 L482.08,111.82 L483.04,112.44 L484.00,113.06 L484.96,113.68 L485.92,114.30 L486.88,114.91 L487.84,115.53 L488.80,116.15 L489.76,116.77 L490.72,117.39 L491.68,118.01 L492.64,118.63 L493.60,119.25 L494.56,119.87 L495.52,120.48 L496.48,121.10 L497.44,121.72 L498.40,122.34 L499.36,122.96 L500.32,123.58 L501.28,124.20 L502.24,124.82 L503.20,125.44 L504.16,126.06 L505.12,126.67 L506.08,127.29 L507.04,127.91 L508.00,128.53 L508.96,129.15 L509.92,129.77 L510.88,130.39 L511.84,131.01 L512.80,131.63 L513.76,132.25 L514.72,132.86 L515.68,133.48 L516.64,134.10 L517.60,134.72 L518.56,135.34 L519.52,135.96 L520.48,136.58 L521.44,137.20 L522.40,137.82 L523.36,138.44 L524.32,139.05 L525.28,139.67 L526.24,140.29 L527.20,140.91 L528.16,141.53 L529.12,142.15 L530.08,142.77 L531.04,143.39 L532.00,144.01 L532.96,144.63 L533.92,145.24 L534.88,145.86 L535.84,146.48 L536.80,147.10 L537.76,147.72 L538.72,148.34 L539.68,148.96 L540.64,149.58 L541.60,150.20 L542.56,150.82 L543.52,151.43 L544.48,152.05 L545.44,152.67 L546.40,153.29 L547.36,153.91 L548.32,154.53 L549.28,155.15 L550.24,155.77 L551.20,156.39 L552.16,157.01 L553.12,157.62 L554.08,158.24 L555.04,158.86 L556.00,159.48 L556.96,160.10 L557.92,160.72 L558.88,161.34 L559.84,161.96 L560.80,162.58 L561.76,163.20 L562.72,163.81 L563.68,164.43 L564.64,165.05 L565.60,165.67 L566.56,166.29 L567.52,166.91 L568.48,167.53 L569.44,168.15 L570.40,168.77 L571.36,169.39"></path>
+<circle class="pt s2" cx="478.20" cy="109.32" r="4"><title>1 an sur 20 : 307 R</title></circle>
+<text class="dl halo" x="486.2" y="122.3" text-anchor="start">1 an sur 20 : 307 R</text>
+<circle class="pt s2" cx="530.96" cy="143.33" r="4"><title>1 sur 100 : 472 R</title></circle>
+<text class="dl halo" x="539.0" y="156.3" text-anchor="start">1 sur 100 : 472 R</text>
+<polygon class="floor" points="330.0,368.7 405.0,401.7 330.0,434.7 255.0,401.7"></polygon>
+<line class="post" x1="330.0" y1="368.7" x2="330.0" y2="370.1"/>
+<line class="post" x1="405.0" y1="401.7" x2="405.0" y2="381.8"/>
+<line class="post" x1="330.0" y1="434.7" x2="330.0" y2="361.0"/>
+<line class="post" x1="255.0" y1="401.7" x2="255.0" y2="443.2"/>
+<polygon class="mesh up" points="330.0,392.2 355.0,363.3 330.0,361.0 305.0,407.6"><title>croissance = +0.00217 par trade</title></polygon>
+<polygon class="mesh up" points="305.0,401.2 330.0,392.2 305.0,407.6 280.0,425.4"><title>croissance = +0.00031 par trade</title></polygon>
+<polygon class="mesh up" points="355.0,386.1 380.0,376.3 355.0,363.3 330.0,392.2"><title>croissance = +0.00169 par trade</title></polygon>
+<polygon class="mesh dn" points="280.0,410.1 305.0,401.2 280.0,425.4 255.0,443.2"><title>croissance = -0.00093 par trade</title></polygon>
+<polygon class="mesh up" points="330.0,385.5 355.0,386.1 330.0,392.2 305.0,401.2"><title>croissance = +0.00053 par trade</title></polygon>
+<polygon class="mesh up" points="380.0,381.4 405.0,381.8 380.0,376.3 355.0,386.1"><title>croissance = +0.00103 par trade</title></polygon>
+<polygon class="mesh dn" points="305.0,384.9 330.0,385.5 305.0,401.2 280.0,410.1"><title>croissance = -0.00024 par trade</title></polygon>
+<polygon class="mesh up" points="355.0,375.7 380.0,381.4 355.0,386.1 330.0,385.5"><title>croissance = +0.00044 par trade</title></polygon>
+<polygon class="mesh up" points="330.0,370.1 355.0,375.7 330.0,385.5 305.0,384.9"><title>croissance = +0.00004 par trade</title></polygon>
+<text class="tk halo" x="248.0" y="413.7" text-anchor="end">edge µ*</text>
+<text class="tk halo" x="323.0" y="446.7" text-anchor="end">5 µ*</text>
+<text class="tk halo" x="337.0" y="445.7">3 f*</text>
+<text class="tk" x="215.0" y="444.1" text-anchor="end">−2</text>
+<line class="gl" x1="220.0" y1="441.1" x2="231.0" y2="441.1"/>
+<text class="tk" x="215.0" y="404.7" text-anchor="end">0</text>
+<line class="gl" x1="220.0" y1="401.7" x2="231.0" y2="401.7"/>
+<text class="tk" x="215.0" y="365.4" text-anchor="end">+2</text>
+<line class="gl" x1="220.0" y1="362.4" x2="231.0" y2="362.4"/>
+<text class="hdr" x="56" y="248">Croissance (‰ par trade)</text>
+<text class="sub" x="56" y="263">axe gauche : edge supposé (µ*, 2 µ*, 3 µ*, 5 µ*) · axe droit : fraction misée (½ f*, f*, 2 f*, 3 f*)</text>
+<text class="lg" x="330.0" y="484.0" text-anchor="middle">la surface est presque plate le long de l'axe de l'edge et abrupte le long de celui de la mise</text>
+<text class="lg" x="330.0" y="498.0" text-anchor="middle">surmiser un edge correct ruine plus vite que sous-miser un edge fort n'appauvrit</text>
+</svg></div>
+    </figure>
+
+  <h3>Verdict&nbsp;: un edge sans surajustement&nbsp;?</h3>
+
+  <p>La question posée au papier admet une réponse en trois propositions, et une seule d'entre elles est une opinion.</p>
+
+  <p><strong>Premièrement, la boîte à outils ne peut pas établir qu'un edge existe, et ce n'est pas une limite des instruments.</strong> Aucun chiffre de ce dépôt ne provient d'un historique de marché. Les instruments transforment des hypothèses en conséquences&nbsp;; sans mesure de la dérive conditionnelle à l'entrée, la question de l'existence reste exactement où la seconde partie l'a laissée.</p>
+
+  <p><strong>Deuxièmement — et c'est le résultat de cette partie — l'edge supposé, s'il existe à l'amplitude retenue, n'est pas mesurable dans un échantillon que la stratégie possédera un jour.</strong> Sous <span class="v">µ</span>&nbsp;=&nbsp;2&thinsp;<span class="v">µ</span>*, il faut 9,7 années de trading pour affirmer que le Sharpe est positif, et 25,1 années une fois 100 configurations essayées prises en compte. Sur une seule année, une stratégie sans aucun edge produit une fois sur vingt un Sharpe supérieur au Sharpe vrai de celle qui en a un. Le drawdown maximal espéré d'une année, 103&nbsp;R, dépasse son gain annuel espéré, 55&nbsp;R. Et un unique écart d'ouverture de 2,82&nbsp;% suffit à effacer l'année entière.</p>
+
+  <p><strong>Troisièmement, il en découle une conclusion sur le surajustement qui est plus forte que la précaution habituelle.</strong> Puisqu'aucun backtest d'un an ne peut distinguer l'edge du bruit, un bon backtest d'un an n'est pas une <em>preuve faible</em>&nbsp;: c'est une observation dont l'explication par défaut est la sélection. Le surajustement n'est pas ici un risque à surveiller, c'est l'hypothèse nulle qu'il faudrait réfuter — et les seuils ci-dessus disent exactement à quel prix.</p>
+
+  <p>Reste ce qui déplacerait le verdict, et le calcul le dit sans ambiguïté. La table finale l'énonce dans les deux sens où la question est décidable&nbsp;: par l'amplitude requise, et par la cadence.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 32</span> — Le verdict, dans les deux sens où la question est décidable</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Situation</th><th>Dérive requise ou délai</th><th>Sharpe annualisé ou délai après sélection</th></tr></thead>
+        <tbody>
+          <tr><td>Edge de référence (µ = 2 µ*)</td><td>0,110 R/trade</td><td>0,50</td></tr>
+          <tr><td>Déclarable en 1 an, 1 essai</td><td>4,2 µ*</td><td>1,46</td></tr>
+          <tr><td>Déclarable en 1 an, 100 essais</td><td>10,9 µ*</td><td>3,82</td></tr>
+          <tr class="sep"><td>Écart au réel</td><td>facteur 5,5</td><td>—</td></tr>
+          <tr><td>À 2 trades par séance</td><td>9,7 ans pour ŜR > 0</td><td>25,1 ans après 100 essais</td></tr>
+          <tr><td>À 4 trades par séance</td><td>4,9 ans pour ŜR > 0</td><td>12,6 ans après 100 essais</td></tr>
+          <tr><td>À 8 trades par séance</td><td>2,4 ans pour ŜR > 0</td><td>6,3 ans après 100 essais</td></tr>
+          <tr><td>À 16 trades par séance</td><td>1,2 ans pour ŜR > 0</td><td>3,1 ans après 100 essais</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Deux lectures d'un même calcul. Par le haut : pour qu'une année de résultats <strong>suffise</strong> à déclarer l'edge après 100 configurations essayées, il faudrait une dérive de 10,9 µ* — un Sharpe annualisé de 3,8, soit 5 fois l'hypothèse de référence. Par le bas : à edge de référence inchangé, le seul levier qui raccourcisse réellement le délai est la <strong>fréquence</strong> — le délai est un nombre de trades, et le convertir en années est le seul endroit où la cadence intervienne. Passer de deux à huit trades par séance ramène 25 ans à 6.</p>
+    </figure>
+
+  <p>Trois lectures s'en déduisent, et elles sont opérationnelles.</p>
+
+  <ul>
+    <li><strong>L'exigence d'amplitude est hors de portée.</strong> Pour qu'une année suffise après 100 essais, il faudrait une dérive de 10,9&thinsp;<span class="v">µ</span>*, soit un Sharpe annualisé de 3,8 — 5 fois l'hypothèse de référence, et un niveau que la littérature ne documente pour aucun signal public. Espérer valider la pile en un an par l'amplitude de son edge n'est pas un objectif ambitieux, c'est une impossibilité arithmétique.</li>
+    <li><strong>Le seul levier réel est le nombre d'essais, et il est gratuit.</strong> Le délai passe de 25,1 à 9,7 années en fixant la configuration <em>avant</em> de regarder les données. C'est la moitié du chemin, elle ne coûte rien, et elle est la seule décision de ce papier qui n'exige ni donnée ni capital&nbsp;: enregistrer les paramètres, dater l'enregistrement, ne plus y toucher.</li>
+    <li><strong>La cadence est le second levier, et elle est mécanique.</strong> Le délai est un nombre de <em>trades</em>&nbsp;; le convertir en années est le seul endroit où la fréquence intervienne. À huit trades par séance plutôt que deux, les 25,1 années deviennent 6,3. Encore faut-il que la dérive conditionnelle survive à la multiplication des signaux — ce qui est, précisément, la question que le Test&nbsp;2 du protocole mesure.</li>
+  </ul>
+
+  <p>Ces trois lectures ne se substituent pas au protocole de la section suivante&nbsp;: elles en fixent le budget. Le Test&nbsp;2 y mesure la dérive captée&nbsp;; la présente partie dit combien de trades il faudra pour que sa réponse veuille dire quelque chose, et ce que coûtera chaque configuration essayée en chemin.</p>
+
   <h2>Protocole de falsification</h2>
 
   <p>Les tests sont ordonnés du moins coûteux au plus coûteux, et du plus décisif au plus accessoire. Chacun peut interrompre la séquence.</p>

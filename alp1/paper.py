@@ -19,10 +19,11 @@ import math
 import pathlib
 import re
 
-from . import dow, fib, gex, lexicon, orderflow, vprofile
+from . import dow, fib, gex, lexicon, orderflow, quant, vprofile
 from .barriers import prob_touch_single_barrier
 from .costs import COST_BASE, COST_REALISTIC, ES, norm_cdf
 from .figcss import FIGURE_CSS, FIGURE_TOKENS_DARK, FIGURE_TOKENS_LIGHT
+from .figquant import render_all as render_quant_figures
 from .figterm import render_all as render_terminal_figures
 from .figures import render_all
 from .horizon import outcome, outcome_scaled
@@ -130,6 +131,7 @@ def values() -> dict[str, str]:
         "sr_typ": "0,02 à 0,05",
     }
     v.update(_layer_values())
+    v.update(quant.values())
     return v
 
 
@@ -210,7 +212,7 @@ def build() -> str:
     for key, val in values().items():
         text = text.replace("{{" + key + "}}", val)
 
-    tables = {**all_tables(), **lexicon.all_tables()}
+    tables = {**all_tables(), **lexicon.all_tables(), **quant.all_tables()}
     counter = {"n": 0}
 
     def sub_table(m: re.Match) -> str:
@@ -222,7 +224,8 @@ def build() -> str:
 
     text = re.sub(r"\{\{TABLE:([a-z_]+)\}\}", sub_table, text)
 
-    figures = {**render_all(), **render_terminal_figures()}
+    figures = {**render_all(), **render_terminal_figures(),
+               **render_quant_figures()}
     fig_counter = {"n": 0}
 
     def sub_figure(m: re.Match) -> str:

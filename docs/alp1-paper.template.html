@@ -1019,6 +1019,214 @@
 
   <p>Deux conclusions transversales méritent d'être retenues avant le protocole. D'abord, cinq des sept couches ont une loi nulle en forme fermée, et aucune de ces lois nulles n'exige de données&nbsp;: elles étaient calculables avant toute mesure, et elles suffisent à écarter les arguments fondés sur la fréquence d'apparition d'un motif. Ensuite, la couche que la pile traite comme la plus décisive — la lecture du carnet en confirmation — est la seule qui ne soit pas mesurable en l'état, et sa demi-vie la place de toute façon hors du domaine où elle pourrait financer un aller-retour d'une demi-heure.</p>
 
+  <h2>La boîte à outils de validation</h2>
+
+  <h3>Ce qu'une troisième partie ajoute</h3>
+
+  <p>Les deux premières parties ont établi ce qu'une géométrie ne peut pas faire, puis ce que chaque couche produit sous une loi nulle. Aucune des deux n'a dit comment on saurait, un jour, que la stratégie fonctionne. C'est l'objet de cette partie&nbsp;: {{q_n_instruments}} instruments de mesure, de simulation et de stress — ceux que les grandes maisons quantitatives appliquent avant d'allouer du capital —, chacun défini calculatoirement, chacun appliqué à la calibration du papier, et chacun accompagné de ce qu'il ne voit pas.</p>
+
+  <p>Ils partagent une propriété qu'il faut énoncer d'emblée, parce qu'elle gouverne la lecture de tout ce qui suit&nbsp;: <strong>aucun de ces instruments ne crée d'information.</strong> Un ratio de Sortino ne sait rien qu'un ratio de Sharpe ignore&nbsp;; un Monte-Carlo ne connaît que la loi qu'on lui a donnée&nbsp;; un modèle à régimes cachés converge aussi bien sur du bruit que sur un marché. Chacun transforme une hypothèse en conséquence chiffrée. Leur valeur est là, et elle est grande&nbsp;: ils rendent une hypothèse réfutable. Elle n'est pas ailleurs.</p>
+
+{{TABLE:instruments}}
+
+  <h3>La loi d'un trade</h3>
+
+  <p>Tous les instruments qui suivent opèrent sur une même primitive&nbsp;: la loi du résultat net d'un trade, exprimée en multiples du risque nominal <span class="v">L</span>. Elle n'est pas postulée, elle se déduit de la distribution d'issues déjà établie à la section&nbsp;5. Deux atomes de barrière, plus la branche de clôture de séance discrétisée en deux points placés en <span class="v">µ<sub>o</sub></span>&thinsp;±&thinsp;<span class="v">σ<sub>o</sub></span> à poids égaux&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">R</span><span class="op">=</span><span class="frac"><span>1</span><span><span class="v">a</span></span></span>&thinsp;&times;&thinsp;{&thinsp;<span class="v">b</span>&nbsp;−&nbsp;<span class="v">c</span> avec <span class="v">p<sub>+</sub></span>&thinsp;; −<span class="v">a</span>&nbsp;−&nbsp;<span class="v">c</span> avec <span class="v">p<sub>−</sub></span>&thinsp;; <span class="v">µ<sub>o</sub></span>&thinsp;±&thinsp;<span class="v">σ<sub>o</sub></span>&nbsp;−&nbsp;<span class="v">c</span> avec <span class="v">p<sub>o</sub></span>/2&thinsp;}.</div>
+    <div class="no">(25)</div>
+  </div>
+
+  <p>Cette discrétisation à deux points reproduit <em>exactement</em> la moyenne et la variance conditionnelles de la branche ouverte&nbsp;; la loi obtenue possède donc les deux premiers moments exacts de <span class="v">X<sub>τ∧T</sub></span>, et non une approximation. Sans dérive, sa moyenne vaut {{q_null_r}}&nbsp;R — c'est <span class="v">−c/L</span>, le théorème d'invariance transporté tel quel dans l'appareil de mesure.</p>
+
+  <p>Pour imposer une dérive, on procède par <em>inclinaison exponentielle</em>, la transformée d'Esscher&nbsp;: les atomes sont repondérés par <span class="v">e</span><sup><span class="v">θR</span></sup> et <span class="v">θ</span> est résolu pour que la moyenne atteigne la valeur du critère maître,</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">p<sub>i</sub></span>&thinsp;&prop;&thinsp;<span class="v">p<sub>i</sub></span>&thinsp;<span class="v">e</span><sup><span class="v">θ v<sub>i</sub></span></sup>, avec <span class="v">θ</span> tel que E[<span class="v">R</span>]<span class="op">=</span>(<span class="v">µ</span>&thinsp;E[<span class="v">τ</span>]&nbsp;−&nbsp;<span class="v">c</span>)/<span class="v">a</span>.</div>
+    <div class="no">(26)</div>
+  </div>
+
+  <p>C'est la déformation d'entropie relative minimale sous contrainte de moyenne&nbsp;: elle ajoute exactement l'information «&nbsp;la dérive vaut <span class="v">µ</span>&nbsp;», et rien d'autre. Elle laisse le support inchangé, donc la géométrie du trade inchangée. <strong>L'edge de référence de toute cette partie est <span class="v">µ</span>&nbsp;=&nbsp;{{q_mult}}&thinsp;<span class="v">µ</span>*</strong> — le double du seuil de rentabilité de l'équation&nbsp;(7) —, ce qui donne par construction E[<span class="v">R</span>]&nbsp;=&nbsp;<span class="v">c/L</span>&nbsp;=&nbsp;{{q_edge_r}}&nbsp;R. C'est la seule hypothèse d'edge du document, elle est explicite, et elle n'a pas de paramètre libre.</p>
+
+  <h3>Les ratios, et le facteur que la géométrie fabrique</h3>
+
+  <p>Sharpe, Sortino, Omega, Calmar, Kelly&nbsp;: cinq ratios calculés sur la même loi. Le premier résultat de cette partie est qu'ils ne disent pas cinq choses, mais deux, et que l'écart entre le premier et le deuxième est une constante que la géométrie fixe et que l'edge ignore.</p>
+
+  <p>Le ratio de Sortino divise l'espérance par la seule dispersion à la baisse. Son rapport au Sharpe vaut donc, identiquement,</p>
+
+  <div class="eq">
+    <div class="body"><span class="frac"><span>Sortino</span><span>Sharpe</span></span><span class="op">=</span><span class="frac"><span><span class="v">σ</span>[<span class="v">R</span>]</span><span>DD[<span class="v">R</span>]</span></span>, où DD[<span class="v">R</span>]<span class="op">=</span>&radic;<span style="text-decoration:overline">E[min(<span class="v">R</span>,&thinsp;0)²]</span>.</div>
+    <div class="no">(27)</div>
+  </div>
+
+  <p>Or sur une géométrie à stop fixe, la dispersion à la baisse est <em>bornée par le stop</em>&nbsp;: elle vaut {{q_dd}}&nbsp;R et ne bouge pas quand on éloigne le target. La dispersion totale, elle, est portée par la queue de gain et croît avec lui. Le rapport vaut {{q_sd_dd}} à 1:20, et il monte à {{q_sd_dd_50}} à 1:50. <strong>Publier un Sortino pour une stratégie à ratio gain/risque élevé, c'est publier un Sharpe multiplié par une constante qui ne contient aucune information sur le signal.</strong> Le même mécanisme, en sens inverse, explique pourquoi la VaR gaussienne d'un tel trade surestime la perte d'un facteur {{q_var_ratio}}&nbsp;: elle lit un écart-type dont la quasi-totalité vient du côté des gains.</p>
+
+{{TABLE:ratios}}
+
+{{FIGURE:qratios|Le rapport Sortino/Sharpe sur la grille des ratios gain/risque et des multiples de dérive, les trois ratios sur la calibration de référence, et la décomposition qui les sépare. La surface est presque plate le long de l'axe de la dérive&nbsp;: le facteur est une propriété de la géométrie, non du signal.}}
+
+  <h3>La question à laquelle les ratios répondent vraiment</h3>
+
+  <p>Un Sharpe n'est pas une performance, c'est une estimation, et une estimation a une précision. La longueur minimale d'historique de Bailey et López de Prado en donne la forme exacte, en tenant compte de l'asymétrie et des queues épaisses que le Sharpe seul ignore. Sur l'edge de référence — Sharpe par trade {{q_sharpe}}, asymétrie {{q_skew}}, excès de kurtosis {{q_kurt}} — elle vaut {{q_mtrl}} trades, soit {{q_mtrl_years}} années à deux trades par séance, <em>simplement pour affirmer que le Sharpe vrai est positif</em>.</p>
+
+  <p>La table suivante balaie la grille des géométries en tenant la dérive du signal fixe — elle appartient au signal, pas au placement des barrières. Élargir le target allonge l'exposition, donc l'espérance par l'équation&nbsp;(6), donc la détectabilité. Le gain est réel et il va dans le sens du paramétrage retenu par la pile. Il ne suffit pas.</p>
+
+{{TABLE:detectability}}
+
+  <h3>Le drawdown&nbsp;: √<span class="v">N</span> contre ln&thinsp;<span class="v">N</span></h3>
+
+  <p>Le drawdown est la seule statistique de risque qu'un allocataire regarde avant le Sharpe, et la seule que la loi d'un trade ne donne pas directement&nbsp;: elle porte sur la trajectoire, donc sur l'ordre des trades. Deux formes fermées l'encadrent.</p>
+
+  <p>Sans dérive, le théorème de Lévy identifie en loi le processus de drawdown <span class="v">M<sub>t</sub></span>&nbsp;−&nbsp;<span class="v">W<sub>t</sub></span> au brownien réfléchi |<span class="v">W<sub>t</sub></span>|. Le drawdown maximal a donc exactement la loi de sup|<span class="v">W</span>|, d'où</p>
+
+  <div class="eq">
+    <div class="body">E[MDD<sub><span class="v">N</span></sub>]<span class="op">=</span><span class="v">σ<sub>R</sub></span>&thinsp;&radic;<span style="text-decoration:overline"><span class="v">πN</span>/2</span>&nbsp;&asymp;&nbsp;1,2533&thinsp;<span class="v">σ<sub>R</sub></span>&thinsp;&radic;<span style="text-decoration:overline"><span class="v">N</span></span>.</div>
+    <div class="no">(28)</div>
+  </div>
+
+  <p>Aucune dérive n'entre dans cette expression, et pourtant elle croît sans borne. <strong>Un drawdown record n'est donc pas la preuve qu'une stratégie s'est cassée&nbsp;; c'est le comportement attendu de n'importe quelle stratégie observée assez longtemps.</strong> Avec dérive, la profondeur cesse de croître en racine&nbsp;: le coefficient d'ajustement de Lundberg <span class="v">θ</span>*, unique racine positive de E[<span class="v">e</span><sup>−<span class="v">θR</span></sup>]&nbsp;=&nbsp;1, borne la probabilité de jamais perdre <span class="v">D</span> unités de risque,</p>
+
+  <div class="eq">
+    <div class="body">P(drawdown&nbsp;&ge;&nbsp;<span class="v">D</span>)&nbsp;&le;&nbsp;<span class="v">e</span><sup>−<span class="v">θ*D</span></sup>, et E[MDD<sub><span class="v">N</span></sub>]&nbsp;&asymp;&nbsp;(ln(1&nbsp;+&nbsp;<span class="v">N</span>&thinsp;E[<span class="v">R</span>]&thinsp;<span class="v">θ</span>*)&nbsp;+&nbsp;<span class="v">γ</span>)/<span class="v">θ</span>*.</div>
+    <div class="no">(29)</div>
+  </div>
+
+  <p><span class="v">θ</span>* est exactement l'inclinaison d'Esscher qui rendrait la loi martingale&nbsp;: la même quantité gouverne la mesure de stress de l'équation&nbsp;(26) et la mesure de ruine. Sur l'edge de référence elle vaut {{q_theta}}, ce qui place à {{q_ruin_depth}}&nbsp;R la profondeur atteinte une année sur vingt — soit {{q_ruin_years}} années de gain espéré. Et sur un an, le drawdown maximal espéré, {{q_mdd_edge}}&nbsp;R, <strong>dépasse le gain annuel espéré, {{q_annual_gain}}&nbsp;R</strong>. Le ratio de Calmar correspondant vaut {{q_calmar}}.</p>
+
+  <p>Une dernière identité ferme la lecture du drawdown. La fraction du temps qu'une marche sans dérive passe sous son sommet suit la loi de l'arcsinus, dont la densité est <em>minimale en son centre</em>&nbsp;: une stratégie sans edge passe typiquement soit presque tout son temps sous les eaux, soit presque aucun, pratiquement jamais la moitié. L'observation «&nbsp;la stratégie est restée sous son plus haut quatre-vingts pour cent de l'année&nbsp;» a, sous la loi nulle, une probabilité de {{q_tuw80}}&nbsp;%.</p>
+
+{{TABLE:drawdown}}
+
+{{FIGURE:qdrawdown|Les deux lois de croissance du drawdown sur la même loi de trade — dérive retirée, puis conservée —, la loi simulée du drawdown annuel confrontée aux deux formes fermées, et la loi de l'arcsinus du temps sous les eaux.}}
+
+  <h3>Monte-Carlo&nbsp;: un backtest est un tirage</h3>
+
+  <p>Le Monte-Carlo ne remplace ici aucun calcul&nbsp;: toutes les grandeurs centrales ont une forme fermée. Il sert à trois choses qu'elles ne font pas. Il donne des <em>lois</em> et non des moyennes — c'est le quantile qui décide d'une allocation, pas l'espérance. Il <em>vérifie</em> les formes fermées, et c'est le seul contrôle qui ne partage pas les hypothèses de la dérivation. Et il produit la loi nulle empirique des statistiques qui n'en ont pas.</p>
+
+  <p>Le résultat de {{q_mc_paths}} années simulées tient en une comparaison. Une stratégie <strong>sans aucun edge</strong> termine l'année en gain {{q_p_profit_null}} fois sur cent, et produit une année sur vingt un Sharpe par trade de {{q_sr_null_q95}} — <em>supérieur au Sharpe vrai de la stratégie avec edge</em>, {{q_sharpe}}. Symétriquement, la stratégie avec edge termine l'année en perte {{q_p_loss_edge}} fois sur cent. Un an de résultats ne sépare pas les deux hypothèses, et aucun instrument appliqué à cette année-là n'y changera rien&nbsp;: l'information n'est pas dans l'échantillon.</p>
+
+{{TABLE:montecarlo}}
+
+{{FIGURE:qmontecarlo|Faisceaux de courbes d'équité simulées, sans dérive puis sous la dérive de référence, et lois du P&amp;L annuel. Le recouvrement des deux faisceaux est le résultat&nbsp;: ils occupent la même région du plan pendant toute l'année.}}
+
+  <h3>Ré-échantillonnage et randomisation</h3>
+
+  <p>Trois façons de fabriquer une loi nulle à partir d'un échantillon réel, et ce qui les sépare. Le <em>bootstrap i.i.d.</em> tire avec remise&nbsp;; il est correct pour des trades indépendants et détruit toute dépendance sérielle, donc sous-estime l'incertitude dès que les positions se chevauchent. Le <em>bootstrap stationnaire</em> de Politis et Romano recolle des blocs de longueur géométrique&nbsp;; c'est celui qu'il faut retenir dès que <span class="v">H</span>&nbsp;&ne;&nbsp;½, c'est-à-dire dans toute l'hypothèse de persistance sur laquelle repose la section&nbsp;5. Le <em>test de permutation de signe</em> ne randomise que la direction, et ne suppose donc ni normalité ni indépendance des amplitudes&nbsp;: sa loi nulle est exactement «&nbsp;la pile de couches ne prédit pas le sens&nbsp;».</p>
+
+  <p>Un quatrième point, moins connu et plus coûteux&nbsp;: sous un AR(1) de coefficient <span class="v">ρ</span>, agréger <span class="v">q</span> périodes ne multiplie pas le Sharpe par &radic;<span class="v">q</span> mais par <span class="v">q</span>/&radic;(<span class="v">q</span>&nbsp;+&nbsp;2&thinsp;&Sigma;(<span class="v">q</span>&nbsp;−&nbsp;<span class="v">k</span>)<span class="v">ρ</span><sup><span class="v">k</span></sup>). Une autocorrélation positive — celle que produit toute stratégie dont les positions se chevauchent — <strong>gonfle</strong> le Sharpe annualisé publié, d'environ un cinquième à <span class="v">ρ</span>&nbsp;=&nbsp;0,2.</p>
+
+{{FIGURE:qresampling|Bootstrap i.i.d. et par blocs stationnaires sur une série indépendante — leur coïncidence est le contrôle de l'instrument —, test de permutation de signe, et facteur d'annualisation réel rapporté à &radic;q sous autocorrélation.}}
+
+  <h3>Régimes cachés&nbsp;: ce que Baum-Welch trouve quand il n'y a rien</h3>
+
+  <p>Le modèle de Markov caché est l'outil standard de détection de régime, et c'est celui qu'appelle le conditionnement par le gamma de la section&nbsp;11. Il est aussi, dans cet usage, le plus dangereux des instruments de la boîte, pour une raison qui tient en une phrase&nbsp;: <strong>l'algorithme de Baum-Welch converge toujours.</strong> Appliqué à une série sans le moindre régime, il produit deux états, une matrice de transition persistante, un chemin de Viterbi net et un gain de vraisemblance. Rien dans sa sortie ne signale l'absence de structure.</p>
+
+  <p>La démonstration est faite ici sur trois séries dont la vérité est connue d'avance. Sur {{q_hmm_short_n}} points de bruit indépendant, l'ajustement produit deux régimes séparés de {{q_dprime_short}} écarts-types — une erreur de classification apparente de {{q_bayes_short}}&nbsp;% seulement — et un chemin de Viterbi parfaitement lisible. Seul le &Delta;BIC démasque l'imposture, et seulement si on le calcule. Symétriquement, la colonne de gauche montre le prix à payer de l'autre côté&nbsp;: des régimes <em>réels</em> à séparabilité réaliste, <span class="v">d</span>′&nbsp;=&nbsp;{{q_dprime_reg}}, ne franchissent le BIC que d'extrême justesse sur {{q_hmm_n}} observations.</p>
+
+  <p>Trois grandeurs rendent un régime réfutable, et elles doivent accompagner toute détection. La <em>séparabilité</em> <span class="v">d</span>′&nbsp;=&nbsp;|<span class="v">µ</span><sub>1</sub>&nbsp;−&nbsp;<span class="v">µ</span><sub>2</sub>|/<span class="v">σ</span>, seule quantité qui décide de la distinguabilité. L'<em>erreur de Bayes</em> <span class="v">Φ</span>(−<span class="v">d</span>′/2) qui en découle, borne inférieure de toute classification. Et le <em>nombre d'observations</em> nécessaire, qui croît en 1/<span class="v">d</span>′²&nbsp;: à <span class="v">d</span>′&nbsp;=&nbsp;0,30 — ordre de grandeur d'un écart de rendement moyen entre régimes de gamma sur données journalières — il faut {{q_obs_sep}} observations par régime, et diviser la séparation par deux le multiplie par quatre.</p>
+
+{{TABLE:hmm}}
+
+{{FIGURE:qhmm|Un HMM à deux états ajusté sur une série à régimes réels, puis sur du bruit indépendant court, et la séparabilité requise. La bande claire est l'état de moyenne haute selon Viterbi&nbsp;; dans le panneau du bas elle ne recouvre rien de réel.}}
+
+  <h3>Sélection&nbsp;: la barre que le nombre d'essais fait monter</h3>
+
+  <p>Un backtest ne produit jamais un Sharpe. Il produit le <strong>maximum</strong> d'un ensemble de Sharpe&nbsp;: ceux de toutes les variantes essayées, y compris celles qu'on n'a pas notées et celles qu'on a écartées d'un coup d'œil. La loi d'un maximum n'est pas celle d'un tirage, et l'écart entre les deux <em>est</em> le surajustement. Bailey et López de Prado en donnent l'approximation de valeur extrême&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body">E[max&thinsp;ŜR]<span class="op">&asymp;</span><span class="v">σ</span><sub>essais</sub>&thinsp;[(1&nbsp;−&nbsp;<span class="v">γ</span>)&thinsp;<span class="v">Φ</span><sup>−1</sup>(1&nbsp;−&nbsp;1/<span class="v">N</span>)&nbsp;+&nbsp;<span class="v">γ</span>&thinsp;<span class="v">Φ</span><sup>−1</sup>(1&nbsp;−&nbsp;1/(<span class="v">N</span><span class="v">e</span>))].</div>
+    <div class="no">(30)</div>
+  </div>
+
+  <p>À {{q_trials}} essais — chiffre modeste pour une pile à sept couches réglables — et un an d'historique, ce maximum vaut {{q_maxsr_an}} en Sharpe annualisé. L'edge de référence en vaut {{q_sharpe_an}}. <strong>Le meilleur essai d'une famille sans aucun edge bat donc, d'un facteur cinq, la stratégie supposée en avoir un.</strong> Le Sharpe déflaté de l'edge de référence tombe en conséquence de {{q_dsr1}}&nbsp;% sans sélection à {{q_dsr}}&nbsp;% après cent essais, et la longueur minimale de backtest passe de {{q_mtrl_years}} à {{q_mbtl_years}} années.</p>
+
+{{TABLE:selection}}
+
+{{TABLE:haircut}}
+
+{{FIGURE:qselection|La barre de sélection en Sharpe annualisé — le croisement avec l'edge de référence est atteint dès le deuxième essai — et la surface du Sharpe déflaté sur le plan essais × longueur d'historique.}}
+
+  <h3>La probabilité de surajustement, et sa propre précision</h3>
+
+  <p>La validation croisée combinatoirement symétrique ne demande pas si la stratégie gagne&nbsp;: elle demande si la <em>procédure qui a choisi ses paramètres</em> apprend quelque chose. La série est découpée en blocs&nbsp;; pour chaque partition symétrique, la configuration la meilleure en apprentissage est retenue et l'on regarde son rang hors échantillon. La PBO est la fréquence des cas où ce rang tombe sous la médiane.</p>
+
+  <p>Appliquée à des familles témoins dont la réponse est connue, elle se comporte comme la théorie l'exige&nbsp;: {{q_pbo_null}}&nbsp;% en moyenne sans edge, {{q_pbo_edge}}&nbsp;% quand une configuration en possède un. Mais sa dispersion d'échantillonnage — rarement rapportée — est énorme&nbsp;: l'intervalle à 90&nbsp;% sous la loi nulle s'étend de {{q_pbo_lo}}&nbsp;% à {{q_pbo_hi}}&nbsp;%. <strong>Une PBO lue sur un seul backtest est elle-même une statistique bruitée&nbsp;;</strong> seule une valeur extrême conclut, et l'instrument mérite d'être appliqué à ses propres témoins avant d'être appliqué à la stratégie.</p>
+
+{{TABLE:pbo}}
+
+{{FIGURE:qpbo|Lois d'échantillonnage de la probabilité de surajustement sur des backtests synthétiques répétés, sans edge puis avec un edge unique, et dégradation hors échantillon. La zone claire est celle où une lecture isolée ne tranche pas.}}
+
+  <h3>Validation croisée&nbsp;: purge, embargo, marche avant</h3>
+
+  <p>Une stratégie dont les trades durent {{q_horizon}} minutes ne peut pas être validée par une validation croisée ordinaire&nbsp;: à chaque bord de pli, les étiquettes d'apprentissage recouvrent la fenêtre de test. Sur une séance d'une observation par minute, la fuite atteint {{q_leak5}}&nbsp;% à cinq plis et la totalité à dix. La validation croisée «&nbsp;valide&nbsp;» alors un modèle qui a vu son propre futur.</p>
+
+  <p>Les deux corrections sont connues et coûteuses. La <em>purge</em> retire de l'apprentissage toute observation dont l'étiquette recouvre le test&nbsp;; l'<em>embargo</em> retire en outre les observations qui suivent immédiatement, pour couper la corrélation sérielle résiduelle. Elles amputent l'apprentissage d'une dizaine de points. L'alternative, la <em>marche avant</em>, apprend sur moins de données encore mais ne fuit jamais, et son résultat s'interprète directement comme une performance atteignable — ce qui n'est le cas d'aucun autre protocole.</p>
+
+{{TABLE:crossval}}
+
+{{FIGURE:qcrossval|Géométrie des plis d'une validation croisée purgée et d'une marche avant sur une séance, et surface de fuite d'une validation croisée naïve selon le nombre de plis et la durée d'exposition d'un trade.}}
+
+  <h3>Queues, sauts, scénarios</h3>
+
+  <p>La première partie suppose une diffusion continue. Cette hypothèse a une conséquence que le dispositif entier ignore&nbsp;: <strong>un stop n'est pas une garantie de perte maximale.</strong> C'est un ordre au marché conditionnel, et sa protection ne vaut que tant que le prix passe par tous les niveaux intermédiaires. Un saut ne le fait pas.</p>
+
+  <p>Sur la loi exacte d'un trade, la VaR et l'<em>expected shortfall</em> à 99&nbsp;% coïncident, à {{q_var_exact}}&nbsp;R&nbsp;: sous le pour-cent extrême, toute la masse est dans l'atome du stop. Le stop <em>est</em> l'ES — jusqu'au premier saut. Modélisé à la Merton, un saut d'espérance nulle et d'amplitude type douze points survient avec probabilité {{q_jump_p}}&nbsp;% pendant l'exposition d'un trade, et coûte alors {{q_jump_excess}} points au-delà du stop. L'espérance corrigée s'écrit</p>
+
+  <div class="eq">
+    <div class="body">E[<span class="v">R</span>]<sub>ajustée</sub><span class="op">=</span>E[<span class="v">R</span>]&nbsp;−&nbsp;P(saut)&thinsp;<span class="frac"><span>E[(|<span class="v">J</span>|&nbsp;−&nbsp;<span class="v">a</span>)<sup>+</sup>]</span><span><span class="v">a</span></span></span>,</div>
+    <div class="no">(31)</div>
+  </div>
+
+  <p>ce qui consomme {{q_jump_cost}}&nbsp;% de l'edge de référence à l'intensité retenue. Le point à retenir n'est pas ce pourcentage, qui dépend d'un paramètre non mesuré&nbsp;: c'est que <em>le saut est centré et le trade ne l'est pas</em>. L'asymétrie est dans la géométrie — le stop tronque le gain et laisse la perte courir — et elle survit à toute hypothèse de saut d'espérance nulle.</p>
+
+  <p>Reste le stress-test, et la seule formulation qui ne dépende d'aucun choix de scénario. Plutôt que de demander «&nbsp;que perd-on dans tel scénario&nbsp;?&nbsp;», on demande quel choc efface exactement une année d'espérance&nbsp;:</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">m</span>*<span class="op">=</span>100&thinsp;<span class="frac"><span><span class="v">a</span>&thinsp;(1&nbsp;+&nbsp;<span class="v">N</span>&thinsp;E[<span class="v">R</span>])</span><span>indice</span></span>&nbsp;=&nbsp;{{q_reverse}}&nbsp;%, soit {{q_reverse_pts}} points d'indice.</div>
+    <div class="no">(32)</div>
+  </div>
+
+  <p>Un écart d'ouverture de deux pour cent — un événement que l'histoire documente plusieurs fois par décennie — efface {{q_gap2_years}} année de gain espéré. Le krach de 1987 en efface {{q_1987_years}}. La stratégie n'est pas exposée à ces chocs parce qu'elle serait mal construite&nbsp;: elle y est exposée parce que son risque nominal, trois points, est deux ordres de grandeur sous l'amplitude d'un choc de séance, et qu'aucun stop ne franchit cet écart.</p>
+
+{{TABLE:tails}}
+
+{{TABLE:stress}}
+
+{{TABLE:jump}}
+
+{{FIGURE:qstress|Échelle des scénarios de choc ramenée en années de gain espéré, mesures de queue d'un trade en loi exacte et en approximation gaussienne, et surface de l'espérance corrigée du risque de saut selon la largeur du stop et l'intensité des sauts.}}
+
+  <h3>Dimensionnement</h3>
+
+  <p>La fraction de Kelly de l'edge de référence vaut {{q_kelly}}&nbsp;% du capital par unité de risque. La courbe de croissance logarithmique est plate au voisinage de son optimum et brutale au-delà&nbsp;: miser le double annule la croissance sans rien ajouter au rendement espéré. Sur le plan (edge supposé, fraction misée), la surface est presque plate le long du premier axe et abrupte le long du second. <strong>L'erreur d'estimation de l'edge se paie sur l'axe de la mise, pas sur celui du rendement</strong> — et comme la partie entière vient d'établir que l'edge n'est pas mesurable dans un échantillon réalisable, l'erreur d'estimation n'est pas une éventualité, c'est l'état par défaut.</p>
+
+{{FIGURE:qsizing|Croissance logarithmique par trade et fraction de Kelly, probabilité de ruine de Lundberg par profondeur, et surface de croissance sur le plan de l'edge supposé et de la fraction misée.}}
+
+  <h3>Verdict&nbsp;: un edge sans surajustement&nbsp;?</h3>
+
+  <p>La question posée au papier admet une réponse en trois propositions, et une seule d'entre elles est une opinion.</p>
+
+  <p><strong>Premièrement, la boîte à outils ne peut pas établir qu'un edge existe, et ce n'est pas une limite des instruments.</strong> Aucun chiffre de ce dépôt ne provient d'un historique de marché. Les instruments transforment des hypothèses en conséquences&nbsp;; sans mesure de la dérive conditionnelle à l'entrée, la question de l'existence reste exactement où la seconde partie l'a laissée.</p>
+
+  <p><strong>Deuxièmement — et c'est le résultat de cette partie — l'edge supposé, s'il existe à l'amplitude retenue, n'est pas mesurable dans un échantillon que la stratégie possédera un jour.</strong> Sous <span class="v">µ</span>&nbsp;=&nbsp;{{q_mult}}&thinsp;<span class="v">µ</span>*, il faut {{q_mtrl_years}} années de trading pour affirmer que le Sharpe est positif, et {{q_mbtl_years}} années une fois {{q_trials}} configurations essayées prises en compte. Sur une seule année, une stratégie sans aucun edge produit une fois sur vingt un Sharpe supérieur au Sharpe vrai de celle qui en a un. Le drawdown maximal espéré d'une année, {{q_mdd_edge}}&nbsp;R, dépasse son gain annuel espéré, {{q_annual_gain}}&nbsp;R. Et un unique écart d'ouverture de {{q_reverse}}&nbsp;% suffit à effacer l'année entière.</p>
+
+  <p><strong>Troisièmement, il en découle une conclusion sur le surajustement qui est plus forte que la précaution habituelle.</strong> Puisqu'aucun backtest d'un an ne peut distinguer l'edge du bruit, un bon backtest d'un an n'est pas une <em>preuve faible</em>&nbsp;: c'est une observation dont l'explication par défaut est la sélection. Le surajustement n'est pas ici un risque à surveiller, c'est l'hypothèse nulle qu'il faudrait réfuter — et les seuils ci-dessus disent exactement à quel prix.</p>
+
+  <p>Reste ce qui déplacerait le verdict, et le calcul le dit sans ambiguïté. La table finale l'énonce dans les deux sens où la question est décidable&nbsp;: par l'amplitude requise, et par la cadence.</p>
+
+{{TABLE:verdict}}
+
+  <p>Trois lectures s'en déduisent, et elles sont opérationnelles.</p>
+
+  <ul>
+    <li><strong>L'exigence d'amplitude est hors de portée.</strong> Pour qu'une année suffise après {{q_trials}} essais, il faudrait une dérive de {{q_k100}}&thinsp;<span class="v">µ</span>*, soit un Sharpe annualisé de {{q_k100_sharpe}} — {{q_k100_ratio}} fois l'hypothèse de référence, et un niveau que la littérature ne documente pour aucun signal public. Espérer valider la pile en un an par l'amplitude de son edge n'est pas un objectif ambitieux, c'est une impossibilité arithmétique.</li>
+    <li><strong>Le seul levier réel est le nombre d'essais, et il est gratuit.</strong> Le délai passe de {{q_mbtl_years}} à {{q_mtrl_years}} années en fixant la configuration <em>avant</em> de regarder les données. C'est la moitié du chemin, elle ne coûte rien, et elle est la seule décision de ce papier qui n'exige ni donnée ni capital&nbsp;: enregistrer les paramètres, dater l'enregistrement, ne plus y toucher.</li>
+    <li><strong>La cadence est le second levier, et elle est mécanique.</strong> Le délai est un nombre de <em>trades</em>&nbsp;; le convertir en années est le seul endroit où la fréquence intervienne. À huit trades par séance plutôt que deux, les {{q_mbtl_years}} années deviennent {{q_freq8}}. Encore faut-il que la dérive conditionnelle survive à la multiplication des signaux — ce qui est, précisément, la question que le Test&nbsp;2 du protocole mesure.</li>
+  </ul>
+
+  <p>Ces trois lectures ne se substituent pas au protocole de la section suivante&nbsp;: elles en fixent le budget. Le Test&nbsp;2 y mesure la dérive captée&nbsp;; la présente partie dit combien de trades il faudra pour que sa réponse veuille dire quelque chose, et ce que coûtera chaque configuration essayée en chemin.</p>
+
   <h2>Protocole de falsification</h2>
 
   <p>Les tests sont ordonnés du moins coûteux au plus coûteux, et du plus décisif au plus accessoire. Chacun peut interrompre la séquence.</p>

@@ -25,7 +25,9 @@ from alp1.costs import (
     _norm_ppf,
     norm_cdf,
 )
-from alp1 import dow, fib, figterm, figures, gex, horizon, lexicon, orderflow, paper, report, vprofile
+from alp1 import (dow, drawdown, fib, figquant, figterm, figures, gex, hmm, horizon,
+                  lexicon, mc, orderflow, overfit, paper, pathstats, quant, report,
+                  stress, vprofile)
 from alp1.regime import GammaState, Regime, classify, playbook_for
 from alp1.stops import (
     TradeGeometry,
@@ -503,9 +505,10 @@ class TestReportAndPaper(unittest.TestCase):
         html = paper.build()
         self.assertNotIn("{{", html)
         self.assertEqual(html.count('<span class="lab">Table '),
-                         len(report.TABLES) + len(lexicon.TABLES))
+                         len(report.TABLES) + len(lexicon.TABLES) + len(quant.TABLES))
         self.assertEqual(html.count('<span class="lab">Figure '),
-                         len(figures.ALL_FIGURES) + len(figterm.ALL_FIGURES))
+                         len(figures.ALL_FIGURES) + len(figterm.ALL_FIGURES)
+                         + len(figquant.ALL_FIGURES))
 
     def test_paper_values_are_consistent_with_tables(self):
         v = paper.values()
@@ -878,3 +881,605 @@ class TestLayerFiguresAndTables(unittest.TestCase):
                     "stop_sigma_lvn", "mu0_quote", "cvd_div"):
             self.assertIn(key, v)
             self.assertTrue(v[key])
+
+
+# ---------------------------------------------------------------------------
+# Troisième partie : les instruments de validation
+# ---------------------------------------------------------------------------
+
+class TestTradeLaw(unittest.TestCase):
+    """La loi d'un trade doit reproduire *exactement* le noyau dont elle sort."""
+
+    def setUp(self):
+        self.a = stop_points(6000.0, 0.050)
+        self.b = 20.0 * self.a
+        self.c = COST_BASE.friction_points(ES)
+        self.out = horizon.outcome_scaled(self.a, self.b, 390.0, 1.25, 0.6489)
+        self.law = pathstats.law_from_outcome(self.out, self.a, self.b, self.c)
+
+    def test_mean_is_exactly_minus_friction_over_risk(self):
+        # Théorème d'invariance : sans dérive, l'espérance vaut −c/L, point.
+        self.assertAlmostEqual(self.law.mean, -self.c / self.a, places=12)
+
+    def test_variance_matches_the_kernel(self):
+        self.assertAlmostEqual(self.law.sd, self.out.sd_gross / self.a, places=10)
+
+    def test_probabilities_sum_to_one(self):
+        self.assertAlmostEqual(sum(self.law.probs), 1.0, places=12)
+
+    def test_tilting_hits_the_requested_mean(self):
+        for target in (-0.05, 0.0, 0.11, 0.5, 2.0):
+            with self.subTest(target=target):
+                self.assertAlmostEqual(self.law.tilted_to_mean(target).mean,
+                                       target, places=9)
+
+    def test_tilting_preserves_the_support(self):
+        tilted = self.law.tilted_to_mean(0.11)
+        self.assertEqual(tilted.values, self.law.values)
+
+    def test_tilting_outside_the_support_is_refused(self):
+        with self.assertRaises(ValueError):
+            self.law.tilted_to_mean(max(self.law.values) + 1.0)
+
+    def test_sortino_over_sharpe_is_exactly_sigma_over_downside(self):
+        # C'est l'équation (27) : le rapport ne dépend que de la loi, pas du signe.
+        law = self.law.tilted_to_mean(0.11)
+        self.assertAlmostEqual(law.sortino() / law.sharpe_per_trade,
+                               law.sd / law.downside_deviation(), places=10)
+
+    def test_downside_deviation_is_bounded_by_the_stop_plus_friction(self):
+        worst = abs(min(self.law.values))
+        self.assertLessEqual(self.law.downside_deviation(), worst + 1e-12)
+
+    def test_omega_crosses_one_exactly_at_zero_expectancy(self):
+        self.assertLess(self.law.omega(), 1.0)                       # E[R] < 0
+        self.assertGreater(self.law.tilted_to_mean(0.1).omega(), 1.0)
+        self.assertAlmostEqual(self.law.tilted_to_mean(1e-9).omega(), 1.0, places=6)
+
+    def test_kelly_is_zero_without_edge_and_positive_with_one(self):
+        self.assertEqual(self.law.kelly_fraction(), 0.0)
+        f = self.law.tilted_to_mean(0.11).kelly_fraction()
+        self.assertGreater(f, 0.0)
+
+    def test_kelly_maximises_the_growth_rate(self):
+        law = self.law.tilted_to_mean(0.11)
+        f = law.kelly_fraction()
+        best = law.growth_rate(f)
+        for delta in (-0.4, -0.1, 0.1, 0.4):
+            self.assertLessEqual(law.growth_rate(f * (1.0 + delta)), best + 1e-12)
+
+    def test_moments_of_a_two_point_law_are_elementary(self):
+        law = pathstats.TradeLaw((-1.0, 1.0), (0.5, 0.5))
+        self.assertAlmostEqual(law.mean, 0.0)
+        self.assertAlmostEqual(law.sd, 1.0)
+        self.assertAlmostEqual(law.skewness, 0.0)
+        self.assertAlmostEqual(law.excess_kurtosis, -2.0)
+
+    def test_lo_adjustment_is_neutral_without_autocorrelation(self):
+        for q in (1, 12, 252):
+            self.assertAlmostEqual(pathstats.lo_adjustment(0.0, q), math.sqrt(q),
+                                   places=9)
+
+    def test_lo_adjustment_penalises_positive_autocorrelation(self):
+        # Une autocorrélation positive gonfle le Sharpe annualisé naïf.
+        self.assertLess(pathstats.lo_adjustment(0.2, 252), math.sqrt(252))
+        self.assertGreater(pathstats.lo_adjustment(-0.2, 252), math.sqrt(252))
+
+    def test_psr_is_one_half_exactly_at_the_benchmark(self):
+        self.assertAlmostEqual(pathstats.probabilistic_sharpe(0.05, 500, 0.05),
+                               0.5, places=12)
+
+    def test_psr_approaches_the_student_case_for_small_sharpe(self):
+        # Le terme de variance vaut 1 + ½ŜR² sous gaussienne : l'écart au test
+        # de Student est du second ordre en ŜR, et disparaît à la limite.
+        for sr in (0.05, 0.005):
+            with self.subTest(sr=sr):
+                self.assertAlmostEqual(pathstats.probabilistic_sharpe(sr, 500),
+                                       norm_cdf(sr * math.sqrt(499)),
+                                       delta=0.6 * sr**2)
+
+    def test_psr_is_monotone_in_the_estimated_sharpe(self):
+        vals = [pathstats.probabilistic_sharpe(sr, 500) for sr in (0.0, 0.02, 0.05, 0.1)]
+        self.assertEqual(vals, sorted(vals))
+
+    def test_negative_skew_and_fat_tails_reduce_the_psr(self):
+        base = pathstats.probabilistic_sharpe(0.05, 500)
+        self.assertLess(pathstats.probabilistic_sharpe(0.05, 500, 0.0, -1.5, 6.0),
+                        base)
+
+    def test_min_track_record_length_grows_as_sharpe_shrinks(self):
+        # Dominée par 1/ŜR², à la correction de second ordre du terme de variance.
+        a = pathstats.min_track_record_length(0.10)
+        b = pathstats.min_track_record_length(0.05)
+        self.assertAlmostEqual(b / a, 4.0, delta=0.05)
+        self.assertEqual(pathstats.min_track_record_length(-0.01), math.inf)
+
+
+class TestDrawdown(unittest.TestCase):
+    def test_expected_max_drawdown_null_matches_levy(self):
+        self.assertAlmostEqual(drawdown.expected_max_drawdown_null(1.0, 1),
+                               math.sqrt(math.pi / 2.0), places=12)
+
+    def test_reflected_max_cdf_integrates_to_the_known_mean(self):
+        # E[sup|W|] = ∫(1 − F) = √(π/2) : le quantile et l'espérance sont la
+        # même propriété, lue deux fois.
+        step, total, x = 1e-3, 0.0, 1e-3
+        while x < 12.0:
+            total += (1.0 - drawdown.reflected_max_cdf(x)) * step
+            x += step
+        self.assertAlmostEqual(total, math.sqrt(math.pi / 2.0), places=3)
+
+    def test_reflected_max_cdf_is_a_distribution(self):
+        prev = 0.0
+        for k in range(1, 120):
+            v = drawdown.reflected_max_cdf(k / 20.0)
+            self.assertGreaterEqual(v, prev - 1e-12)
+            self.assertLessEqual(v, 1.0)
+            prev = v
+
+    def test_drawdown_quantiles_are_ordered(self):
+        vals = [drawdown.drawdown_quantile_null(1.0, 100, q)
+                for q in (0.5, 0.9, 0.95, 0.99)]
+        self.assertEqual(vals, sorted(vals))
+
+    def test_arcsine_law(self):
+        self.assertAlmostEqual(drawdown.time_under_water_quantile_null(0.5), 0.5,
+                               places=12)
+        self.assertAlmostEqual(drawdown.prob_time_under_water_exceeds(0.5), 0.5,
+                               places=12)
+        # Densité minimale au centre : les bords sont les modes.
+        self.assertGreater(drawdown.prob_time_under_water_exceeds(0.8), 0.25)
+
+    def test_adjustment_coefficient_solves_its_own_equation(self):
+        law = quant.edge_law()
+        theta = drawdown.adjustment_coefficient(law)
+        self.assertGreater(theta, 0.0)
+        mgf = sum(p * math.exp(-theta * v) for v, p in zip(law.values, law.probs))
+        self.assertAlmostEqual(mgf, 1.0, places=9)
+
+    def test_no_adjustment_coefficient_without_edge(self):
+        self.assertEqual(drawdown.adjustment_coefficient(quant.null_law()), 0.0)
+        self.assertEqual(drawdown.risk_of_ruin(quant.null_law(), 100.0), 1.0)
+
+    def test_ruin_depth_inverts_risk_of_ruin(self):
+        law = quant.edge_law()
+        for p in (0.5, 0.05, 0.01):
+            depth = drawdown.ruin_depth_for_probability(law, p)
+            self.assertAlmostEqual(drawdown.risk_of_ruin(law, depth), p, places=9)
+
+    def test_drift_never_deepens_the_drawdown(self):
+        law = quant.edge_law()
+        for n in (10, 100, 504, 5040):
+            self.assertLessEqual(drawdown.expected_max_drawdown_drift(law, n),
+                                 drawdown.expected_max_drawdown_null(law.sd, n) + 1e-9)
+
+    def test_profile_reads_a_hand_checked_curve(self):
+        # Courbe : 0, 1, −2, −1, 3, 2. Sommet 1 avant le creux −2, donc un
+        # drawdown de 3 R au troisième point, effacé deux trades plus tard.
+        curve = drawdown.equity_curve([1.0, -3.0, 1.0, 4.0, -1.0])
+        self.assertEqual(curve, [0.0, 1.0, -2.0, -1.0, 3.0, 2.0])
+        prof = drawdown.profile(curve)
+        self.assertAlmostEqual(prof.max_drawdown, 3.0)
+        self.assertEqual(prof.recovery, 2)
+        self.assertEqual(prof.max_duration, 2)      # les deux points sous 1
+        self.assertAlmostEqual(prof.time_under_water, 0.5)
+        self.assertGreater(prof.ulcer_index, 0.0)
+
+
+class TestMonteCarlo(unittest.TestCase):
+    def test_generator_is_reproducible(self):
+        a = [mc.Rng(11).uniform() for _ in range(3)]
+        b = [mc.Rng(11).uniform() for _ in range(3)]
+        self.assertEqual(a, b)
+        self.assertNotEqual(mc.Rng(11).uniform(), mc.Rng(12).uniform())
+
+    def test_uniform_stays_in_the_unit_interval(self):
+        r = mc.Rng(3)
+        for _ in range(4000):
+            u = r.uniform()
+            self.assertGreaterEqual(u, 0.0)
+            self.assertLess(u, 1.0)
+
+    def test_gaussian_moments(self):
+        r = mc.Rng(5)
+        xs = [r.gauss() for _ in range(60000)]
+        mean = sum(xs) / len(xs)
+        var = sum((x - mean) ** 2 for x in xs) / len(xs)
+        self.assertAlmostEqual(mean, 0.0, delta=0.02)
+        self.assertAlmostEqual(var, 1.0, delta=0.03)
+
+    def test_sampling_reproduces_the_law(self):
+        law = quant.edge_law()
+        draws = mc.sample(law, 40000, mc.Rng(7))
+        mean = sum(draws) / len(draws)
+        self.assertAlmostEqual(mean, law.mean, delta=0.12)
+
+    def test_monte_carlo_confirms_the_driftless_drawdown_formula(self):
+        # Le contrôle qui ne partage pas les hypothèses de la dérivation :
+        # une marche gaussienne pure, contre l'équation (28).
+        r = mc.Rng(13)
+        n, paths = 400, 1200
+        total = 0.0
+        for _ in range(paths):
+            peak = cur = worst = 0.0
+            for _ in range(n):
+                cur += r.gauss()
+                peak = max(peak, cur)
+                worst = max(worst, peak - cur)
+            total += worst
+        closed = drawdown.expected_max_drawdown_null(1.0, n)
+        # Le suivi discret sous-estime le maximum continu de quelques pour cent.
+        self.assertLess(total / paths, closed)
+        self.assertGreater(total / paths, 0.90 * closed)
+
+    def test_drift_drawdown_formula_tracks_the_simulation(self):
+        law = quant.edge_law()
+        summaries = mc.simulate(law, 504, 900, mc.Rng(17))
+        simulated = sum(s.max_drawdown for s in summaries) / len(summaries)
+        closed = drawdown.expected_max_drawdown_drift(law, 504)
+        self.assertAlmostEqual(closed / simulated, 1.0, delta=0.15)
+
+    def test_quantiles_are_ordered_and_bracketed(self):
+        xs = [float(k) for k in range(101)]
+        self.assertAlmostEqual(mc.quantile(xs, 0.0), 0.0)
+        self.assertAlmostEqual(mc.quantile(xs, 0.5), 50.0)
+        self.assertAlmostEqual(mc.quantile(xs, 1.0), 100.0)
+
+    def test_stationary_bootstrap_preserves_length_and_support(self):
+        data = [1.0, -2.0, 3.0, -4.0]
+        out = mc.stationary_bootstrap(data, mc.Rng(2), 2.0, n=50)
+        self.assertEqual(len(out), 50)
+        self.assertTrue(set(out).issubset(set(data)))
+
+    def test_both_bootstraps_agree_on_an_independent_series(self):
+        # Contrôle de l'instrument : sans dépendance, les deux dispersions
+        # doivent coïncider. C'est ce qui rend leur écart interprétable ailleurs.
+        r = mc.Rng(23)
+        data = mc.sample(quant.edge_law(), 400, r)
+
+        def spread(fn):
+            means = [sum(fn()) / len(data) for _ in range(400)]
+            m = sum(means) / len(means)
+            return math.sqrt(sum((x - m) ** 2 for x in means) / len(means))
+
+        a = spread(lambda: mc.iid_bootstrap(data, r))
+        b = spread(lambda: mc.stationary_bootstrap(data, r, 10.0))
+        self.assertAlmostEqual(a / b, 1.0, delta=0.25)
+
+    def test_sign_permutation_is_uninformative_on_a_symmetric_sample(self):
+        p = mc.sign_permutation_pvalue([1.0, -1.0, 2.0, -2.0], mc.Rng(29), 600)
+        self.assertGreater(p, 0.15)
+
+    def test_block_length_grows_with_autocorrelation(self):
+        self.assertEqual(mc.block_length_for_autocorrelation(0.0), 1.0)
+        self.assertLess(mc.block_length_for_autocorrelation(0.3),
+                        mc.block_length_for_autocorrelation(0.8))
+
+
+class TestHMM(unittest.TestCase):
+    def test_stationary_distribution_is_invariant(self):
+        m = hmm.two_state_from_persistence(0.95, 0.90, 0.5, -0.5, 1.0, 1.0)
+        pi = m.stationary()
+        for j in range(2):
+            self.assertAlmostEqual(sum(pi[i] * m.trans[i][j] for i in range(2)),
+                                   pi[j], places=10)
+
+    def test_expected_sojourn_is_the_geometric_mean(self):
+        m = hmm.two_state_from_persistence(0.95, 0.90, 0.5, -0.5, 1.0, 1.0)
+        self.assertAlmostEqual(m.expected_sojourn(0), 20.0, places=9)
+        self.assertAlmostEqual(m.expected_sojourn(1), 10.0, places=9)
+
+    def test_free_parameter_count(self):
+        m = hmm.two_state_from_persistence(0.9, 0.9, 1.0, -1.0, 1.0, 1.0)
+        self.assertEqual(m.n_free_parameters, 7)
+
+    def test_forward_backward_posteriors_are_probabilities(self):
+        m = hmm.two_state_from_persistence(0.9, 0.85, 0.6, -0.6, 1.0, 1.2)
+        obs, _ = quant.hmm_series("regime")
+        _, gamma, xi = hmm.forward_backward(m, list(obs[:200]))
+        for row in gamma:
+            self.assertAlmostEqual(sum(row), 1.0, places=9)
+        for mat in xi:
+            self.assertAlmostEqual(sum(sum(r) for r in mat), 1.0, places=9)
+
+    def test_baum_welch_never_decreases_the_likelihood(self):
+        obs, _ = quant.hmm_series("regime")
+        seq = list(obs[:300])
+        start = hmm.log_likelihood(quant.HMM_INIT, seq)
+        fitted, end, _ = hmm.baum_welch(seq, quant.HMM_INIT, n_iter=25)
+        self.assertGreaterEqual(end, start - 1e-9)
+
+    def test_baum_welch_recovers_a_real_two_regime_structure(self):
+        fitted = quant.hmm_fit("regime")[0]
+        means = sorted(fitted.means)
+        self.assertLess(means[0], 0.0)
+        self.assertGreater(means[1], 0.0)
+
+    def test_baum_welch_invents_regimes_on_short_pure_noise(self):
+        # Le résultat que la section existe pour établir : sur du bruit court,
+        # l'ajustement produit une séparation nette, et seul le BIC la récuse.
+        fitted, loglik, _, _, ll1 = quant.hmm_fit("short")
+        d = hmm.separability(fitted.means[0], fitted.means[1],
+                             0.5 * (fitted.sds[0] + fitted.sds[1]))
+        self.assertGreater(d, 1.0)
+        self.assertGreater(loglik, ll1)
+        n = len(quant.hmm_series("short")[0])
+        delta_bic = (hmm.bic(loglik, fitted.n_free_parameters, n)
+                     - hmm.bic(ll1, 2, n))
+        self.assertGreater(delta_bic, 0.0)
+
+    def test_bic_accepts_the_real_structure_it_rejects_on_noise(self):
+        fitted, loglik, _, _, ll1 = quant.hmm_fit("regime")
+        n = len(quant.hmm_series("regime")[0])
+        self.assertLess(hmm.bic(loglik, fitted.n_free_parameters, n)
+                        - hmm.bic(ll1, 2, n), 0.0)
+
+    def test_viterbi_returns_a_full_path_of_valid_states(self):
+        fitted = quant.hmm_fit("regime")[0]
+        obs, _ = quant.hmm_series("regime")
+        path = hmm.viterbi(fitted, list(obs))
+        self.assertEqual(len(path), len(obs))
+        self.assertTrue(set(path).issubset({0, 1}))
+
+    def test_bayes_error_is_one_half_at_zero_separation(self):
+        self.assertAlmostEqual(hmm.bayes_error(0.0), 0.5, places=12)
+        self.assertLess(hmm.bayes_error(2.0), 0.20)
+
+    def test_observations_needed_scale_as_one_over_d_prime_squared(self):
+        a = hmm.observations_to_separate(0.4)
+        b = hmm.observations_to_separate(0.2)
+        self.assertAlmostEqual(b / a, 4.0, places=6)
+
+
+class TestOverfit(unittest.TestCase):
+    def test_expected_max_sharpe_grows_with_trials(self):
+        vals = [overfit.expected_max_sharpe(k, 1.0) for k in (2, 10, 100, 1000)]
+        self.assertEqual(vals, sorted(vals))
+        self.assertEqual(overfit.expected_max_sharpe(1, 1.0), 0.0)
+
+    def test_deflated_sharpe_falls_as_trials_rise(self):
+        law = quant.edge_law()
+        sr, n = law.sharpe_per_trade, 504
+        vals = [overfit.deflated_sharpe(sr, n, k, law.skewness, law.excess_kurtosis)
+                for k in (1, 10, 100, 1000)]
+        self.assertEqual(vals, sorted(vals, reverse=True))
+
+    def test_minimum_backtest_length_scales_as_one_over_sharpe_squared(self):
+        a = overfit.minimum_backtest_length(0.10, 100)
+        b = overfit.minimum_backtest_length(0.05, 100)
+        self.assertAlmostEqual(b / a, 4.0, places=6)
+
+    def test_multiple_testing_thresholds_are_ordered_by_severity(self):
+        # Bonferroni est le plus sévère, BHY le plus permissif au rang 1.
+        self.assertLess(overfit.bonferroni_threshold(0.05, 50),
+                        overfit.bhy_threshold(0.05, 50, rank=50))
+        self.assertEqual(overfit.holm_thresholds(0.05, 50)[0],
+                         overfit.bonferroni_threshold(0.05, 50))
+
+    def test_haircut_is_zero_for_a_single_test_and_total_for_many(self):
+        self.assertAlmostEqual(overfit.haircut_sharpe(0.10, 504, 1), 0.0, places=9)
+        self.assertEqual(overfit.haircut_sharpe(0.10, 504, 100000), 1.0)
+
+    def test_haircut_grows_with_the_number_of_tests(self):
+        vals = [overfit.haircut_sharpe(0.10, 5040, k) for k in (1, 10, 100, 1000)]
+        self.assertEqual(vals, sorted(vals))
+
+    def test_pbo_is_one_half_on_average_without_edge(self):
+        # La symétrie de la construction l'impose : c'est le contrôle de l'outil.
+        flat, real = quant.cscv_distribution()
+        self.assertAlmostEqual(sum(flat) / len(flat), 0.5, delta=0.08)
+        self.assertLess(sum(real) / len(real), 0.20)
+
+    def test_cscv_evaluates_every_symmetric_partition(self):
+        res = quant.cscv_null()
+        self.assertEqual(res.n_splits, 70)          # C(8, 4) = 70
+
+    def test_cscv_rejects_an_odd_block_count(self):
+        with self.assertRaises(ValueError):
+            overfit.cscv([[0.0] * 20, [1.0] * 20], n_blocks=7)
+
+    def test_purged_folds_never_leak_across_the_boundary(self):
+        folds = overfit.purged_folds(200, 5, horizon=7, embargo_pct=0.02)
+        self.assertEqual(len(folds), 5)
+        for f in folds:
+            self.assertFalse(set(f.train) & set(f.test))
+            for i in f.train:
+                for j in f.test:
+                    self.assertGreaterEqual(abs(i - j), 1)
+            lo, hi = min(f.test), max(f.test)
+            for i in f.train:
+                self.assertFalse(lo - 7 <= i < hi + 1 + 7)
+
+    def test_purging_costs_training_data(self):
+        naive = overfit.purged_folds(200, 5, horizon=0, embargo_pct=0.0)
+        purged = overfit.purged_folds(200, 5, horizon=7, embargo_pct=0.02)
+        self.assertLess(sum(len(f.train) for f in purged),
+                        sum(len(f.train) for f in naive))
+
+    def test_walk_forward_never_trains_on_the_future(self):
+        for f in overfit.walk_forward_windows(200, 4):
+            self.assertLess(max(f.train), min(f.test))
+
+    def test_leakage_saturates_at_one(self):
+        self.assertEqual(overfit.leakage_fraction(390, 20, 60), 1.0)
+        self.assertAlmostEqual(overfit.leakage_fraction(390, 1, 0), 0.0)
+
+    def test_effective_trials_collapse_under_correlation(self):
+        self.assertAlmostEqual(overfit.effective_trials(100, 0.0), 100.0)
+        self.assertLess(overfit.effective_trials(100, 0.5), 3.0)
+
+
+class TestStress(unittest.TestCase):
+    def test_gaussian_var_and_es_are_ordered(self):
+        self.assertLess(stress.var_gaussian(0.0, 1.0, 0.99),
+                        stress.es_gaussian(0.0, 1.0, 0.99))
+
+    def test_exact_var_and_es_coincide_inside_the_stop_atom(self):
+        # Sous le pour-cent extrême, toute la masse est dans l'atome du stop :
+        # le stop *est* l'expected shortfall, jusqu'au premier saut.
+        law = quant.edge_law()
+        self.assertAlmostEqual(stress.var_from_law(law, 0.99),
+                               stress.es_from_law(law, 0.99), places=9)
+
+    def test_gaussian_var_grossly_overstates_a_lottery_shaped_law(self):
+        law = quant.edge_law()
+        self.assertGreater(stress.var_gaussian(law.mean, law.sd, 0.99),
+                           5.0 * stress.var_from_law(law, 0.99))
+
+    def test_cornish_fisher_is_flagged_invalid_at_this_asymmetry(self):
+        law = quant.edge_law()
+        self.assertFalse(stress.cornish_fisher_is_valid(law.skewness,
+                                                        law.excess_kurtosis))
+        self.assertTrue(stress.cornish_fisher_is_valid(0.0, 0.0))
+
+    def test_es_of_a_two_point_law_is_its_worst_outcome(self):
+        law = pathstats.TradeLaw((-1.0, 1.0), (0.02, 0.98))
+        self.assertAlmostEqual(stress.es_from_law(law, 0.99), 1.0, places=9)
+
+    def test_gpd_recovers_an_exponential_tail(self):
+        # Une exponentielle est la GPD de forme ξ = 0 : l'ajustement doit le voir.
+        r = mc.Rng(31)
+        losses = [-math.log(max(r.uniform(), 1e-12)) for _ in range(8000)]
+        fit = stress.fit_gpd(losses, 1.0)
+        self.assertAlmostEqual(fit.shape, 0.0, delta=0.12)
+        self.assertTrue(fit.has_finite_variance)
+
+    def test_evt_var_exceeds_the_threshold_it_extrapolates_from(self):
+        dd = [p.max_drawdown for p in quant.mc_paths("edge")]
+        fit = stress.fit_gpd(dd, mc.quantile(dd, 0.90))
+        self.assertGreater(stress.var_evt(fit, 0.999), fit.threshold)
+
+    def test_hill_estimator_is_positive_on_a_pareto_tail(self):
+        r = mc.Rng(37)
+        losses = [max(r.uniform(), 1e-12) ** (-1.0 / 2.0) for _ in range(6000)]
+        self.assertAlmostEqual(stress.hill_estimator(losses, 300), 0.5, delta=0.12)
+
+    def test_jump_probability_follows_the_exposure(self):
+        p_short = stress.prob_jump_during_trade(quant.JUMP, 10.0, 390.0)
+        p_long = stress.prob_jump_during_trade(quant.JUMP, 60.0, 390.0)
+        self.assertLess(p_short, p_long)
+        self.assertAlmostEqual(stress.prob_jump_during_trade(quant.JUMP, 0.0, 390.0),
+                               0.0, places=12)
+
+    def test_a_centred_jump_still_costs_the_trade(self):
+        # L'asymétrie est dans la géométrie, pas dans le marché.
+        excess = stress.expected_slippage_beyond_stop(quant.JUMP, 3.0)
+        self.assertGreater(excess, 0.0)
+        law = quant.edge_law()
+        adjusted = stress.jump_adjusted_expectancy(law, quant.JUMP, 3.0, 28.9, 390.0)
+        self.assertLess(adjusted, law.mean)
+
+    def test_wider_stops_absorb_more_of_the_jump(self):
+        wide = stress.expected_slippage_beyond_stop(quant.JUMP, 12.0)
+        narrow = stress.expected_slippage_beyond_stop(quant.JUMP, 3.0)
+        self.assertLess(wide, narrow)
+
+    def test_scenario_loss_is_the_ratio_of_the_two_distances(self):
+        sc = stress.Scenario("test", -2.0, "instantané")
+        # 2 % de 6000 = 120 points ; stop de 3 points ⇒ 1 + 117/3 = 40 R.
+        self.assertAlmostEqual(stress.scenario_loss_r(sc, 6000.0, 3.0), 40.0, places=9)
+
+    def test_reverse_stress_erases_exactly_one_year(self):
+        # L'identité porte sur le *surcoût* du choc au-delà du stop : un trade
+        # stoppé aurait perdu son R de toute façon.
+        law = quant.edge_law()
+        m = stress.reverse_stress_move_pct(law, 504.0, 6000.0, 3.0)
+        loss = stress.scenario_loss_r(stress.Scenario("", -m, ""), 6000.0, 3.0)
+        self.assertAlmostEqual(loss - 1.0, 504.0 * law.mean, places=6)
+
+    def test_no_reverse_stress_without_an_edge(self):
+        self.assertEqual(
+            stress.reverse_stress_move_pct(quant.null_law(), 504.0, 6000.0, 3.0),
+            math.inf)
+
+
+class TestQuantCalibration(unittest.TestCase):
+    def test_reference_edge_equals_the_friction_ratio(self):
+        # µ = 2µ* ⇒ E[net] = c ⇒ E[R] = c/L. Aucun paramètre libre.
+        self.assertAlmostEqual(quant.edge_law().mean,
+                               quant.FRICTION / quant.STOP_PTS, places=9)
+
+    def test_null_law_carries_the_invariance_theorem(self):
+        self.assertAlmostEqual(quant.null_law().mean,
+                               -quant.FRICTION / quant.STOP_PTS, places=9)
+
+    def test_exposure_grows_with_the_reward_risk_ratio(self):
+        taus = [quant.geometry(rr).expected_time for rr in quant.RR_GRID]
+        self.assertEqual(taus, sorted(taus))
+
+    def test_detectability_improves_with_exposure_but_never_enough(self):
+        best = min(overfit.minimum_backtest_length(
+            quant.edge_law(rr).sharpe_per_trade, quant.N_TRIALS_REF)
+            for rr in quant.RR_GRID)
+        self.assertGreater(best / quant.TRADES_PER_YEAR, 10.0)
+
+    def test_required_multiple_is_far_above_the_reference(self):
+        k = quant.required_multiple(1.0, quant.N_TRIALS_REF)
+        self.assertGreater(k, 4.0 * quant.DRIFT_MULTIPLE)
+
+    def test_required_multiple_actually_reaches_the_confidence(self):
+        k = quant.required_multiple(1.0, quant.N_TRIALS_REF)
+        law = quant.law_at_multiple(k)
+        dsr = overfit.deflated_sharpe(law.sharpe_per_trade, int(quant.TRADES_PER_YEAR),
+                                      quant.N_TRIALS_REF, law.skewness,
+                                      law.excess_kurtosis)
+        self.assertAlmostEqual(dsr, 0.95, places=4)
+
+    def test_expected_drawdown_exceeds_the_expected_annual_gain(self):
+        law = quant.edge_law()
+        n = int(quant.TRADES_PER_YEAR)
+        self.assertGreater(drawdown.expected_max_drawdown_drift(law, n), n * law.mean)
+
+    def test_simulations_are_cached_and_reproducible(self):
+        self.assertIs(quant.mc_paths("null"), quant.mc_paths("null"))
+        self.assertEqual(quant.mc_paths("edge")[0], quant.mc_paths("edge")[0])
+
+    def test_quant_tables_are_well_formed(self):
+        for key, table in quant.all_tables().items():
+            with self.subTest(table=key):
+                self.assertTrue(table.rows)
+                for row in table.rows:
+                    self.assertEqual(len(row), len(table.headers))
+                    for cell in row:
+                        self.assertIsNone(re.search(r"(?<![^\W\d_])nan(?![^\W\d_])",
+                                                    cell.lower()))
+                        self.assertNotIn("None", cell)
+                for col in table.wrapping():
+                    self.assertLess(col, len(table.headers))
+
+    def test_table_notes_use_html_not_markdown(self):
+        # Les notes sont insérées en HTML brut : une paire d'astérisques y
+        # resterait visible dans le document.
+        for source in (report.all_tables(), lexicon.all_tables(), quant.all_tables()):
+            for key, table in source.items():
+                with self.subTest(table=key):
+                    self.assertNotIn("**", table.note)
+                    self.assertNotIn("**", table.caption)
+
+    def test_quant_values_reach_the_document(self):
+        v = paper.values()
+        for key in ("q_sharpe_an", "q_sortino", "q_sd_dd", "q_mtrl_years",
+                    "q_mbtl_years", "q_dsr", "q_pbo_null", "q_k100",
+                    "q_reverse", "q_mdd_edge"):
+            self.assertIn(key, v)
+            self.assertTrue(v[key])
+
+    def test_quant_figures_render_as_self_contained_svg(self):
+        for key, svg in figquant.render_all().items():
+            with self.subTest(figure=key):
+                self.assertTrue(svg.startswith('<svg class="fig"'))
+                self.assertTrue(svg.rstrip().endswith("</svg>"))
+                self.assertIn("aria-label", svg)
+                self.assertNotIn("#", svg)          # aucune couleur en dur
+                self.assertNotIn("nan", svg.lower())
+
+    def test_quant_figures_stay_inside_their_viewbox(self):
+        for key, svg in figquant.render_all().items():
+            with self.subTest(figure=key):
+                m = re.search(r'viewBox="0 0 (\d+) (\d+)"', svg)
+                self.assertIsNotNone(m)
+                limit = max(int(m.group(1)), int(m.group(2))) + 45
+                for raw in re.findall(
+                        r'(?:x|y|cx|cy|x1|y1|x2|y2)="(-?\d+\.?\d*)"', svg):
+                    self.assertGreater(float(raw), -45)
+                    self.assertLess(float(raw), limit)

@@ -1,7 +1,8 @@
 # Alp-1
 
-Formalisation, diagnostic quantitatif et protocole de falsification d'une
-stratégie intraday sur futures indiciels à sept couches.
+Formalisation, diagnostic quantitatif, batterie d'instruments de validation et
+protocole de falsification d'une stratégie intraday sur futures indiciels à
+sept couches.
 
 Le paper complet : [`docs/alp1-paper.html`](docs/alp1-paper.html).
 
@@ -11,10 +12,14 @@ Une analyse **analytique**, sans donnée de marché. Elle délimite l'espace dan
 lequel un edge peut exister pour cette stratégie et chiffre ce qu'il devrait
 valoir ; elle n'établit pas qu'il existe. Aucun test empirique n'a été conduit.
 
-Le document se lit en deux parties. La première traite la stratégie comme une
+Le document se lit en trois parties. La première traite la stratégie comme une
 géométrie — un stop, un target, une règle de sortie — et n'a besoin d'aucune
 couche d'analyse. La seconde examine les sept couches une à une : GEX, profil
-de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres.
+de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres. La troisième
+applique seize instruments de mesure, de simulation et de stress — Monte-Carlo,
+HMM, Sharpe, Sortino, drawdown maximal, VaR/ES, valeurs extrêmes, Sharpe
+déflaté, PBO, validation croisée purgée — pour décider **ce qu'un historique
+permettrait de conclure**.
 
 ## Le résultat structurant
 
@@ -140,13 +145,77 @@ Conclusion, et elle va contre l'hypothèse : la persistance calibrée **ne peut
 pas** être attribuée au régime de gamma. Le papier le signale plutôt que de le
 résoudre.
 
+## Les instruments de validation, et le verdict qu'ils rendent
+
+La troisième partie construit la loi du résultat d'un trade — quatre atomes qui
+reproduisent *exactement* la moyenne et la variance du noyau —, puis lui impose
+une dérive par inclinaison d'Esscher. L'edge de référence n'a pas de paramètre
+libre : c'est `µ = 2µ*`, le double du seuil de rentabilité, ce qui donne par
+construction `E[R] = c/L = 0,110 R`.
+
+Sur cette hypothèse, les seize instruments concordent.
+
+| Instrument | Résultat sur l'edge de référence |
+|---|---|
+| Sharpe annualisé | 0,50 |
+| Sortino / Sharpe | 4,54 — un facteur que la **géométrie** fabrique, pas le signal |
+| MinTRL | 4 905 trades, soit 9,7 ans, pour affirmer que le Sharpe est positif |
+| MinBTL après 100 essais | 12 659 trades, soit 25,1 ans |
+| Sharpe déflaté à 100 essais | 1,7 % |
+| E[drawdown max] sur 1 an | 103 R — **supérieur** au gain annuel espéré, 55 R |
+| Monte-Carlo, 4 000 années | une stratégie sans edge bat, une année sur vingt, le Sharpe **vrai** de celle qui en a un |
+| Stress inversé | un choc de 2,82 % efface une année entière d'espérance |
+
+**Trois résultats structurent la partie.**
+
+*Le ratio de Sortino ne dit rien de plus que le Sharpe.* Leur rapport vaut
+identiquement `σ/DD`, et sur une géométrie à stop fixe la dispersion à la baisse
+est bornée par le stop. Le facteur vaut 4,54 à 1:20 et 5,9 à 1:50 : il croît
+avec le ratio visé et ne contient aucune information sur le signal.
+
+*Un drawdown record ne prouve rien.* Sans dérive, `E[MDD] = σ_R·√(πN/2)` croît
+sans borne — c'est le théorème de Lévy, le processus de drawdown ayant la loi du
+brownien réfléchi. Avec dérive, la croissance devient logarithmique et le
+coefficient de Lundberg `θ*` borne la ruine. L'écart entre les deux lois, non le
+niveau de l'une, est ce qui informe.
+
+*Baum-Welch converge toujours.* Sur 120 points de bruit indépendant, un HMM à
+deux états produit des régimes séparés de 1,87 écarts-types et un chemin de
+Viterbi net. Rien dans la sortie du modèle ne signale l'imposture ; seul le ΔBIC
+la démasque. Symétriquement, des régimes **réels** à séparabilité réaliste ne
+franchissent le BIC que d'extrême justesse sur 750 observations.
+
+## Le verdict
+
+La question « la stratégie offre-t-elle un edge sans surajustement ? » admet une
+réponse en trois propositions.
+
+1. **Aucun instrument ne peut établir qu'un edge existe**, et ce n'est pas une
+   limite des instruments : ce dépôt ne contient aucune donnée de marché.
+2. **L'edge supposé, s'il existe à l'amplitude retenue, n'est pas mesurable dans
+   un échantillon que la stratégie possédera un jour** — 9,7 ans sans sélection,
+   25,1 ans après cent configurations essayées.
+3. **Il en découle une conclusion plus forte que la précaution habituelle sur le
+   surajustement.** Puisqu'aucun backtest d'un an ne distingue l'edge du bruit,
+   un bon backtest d'un an n'est pas une preuve faible : c'est une observation
+   dont l'explication par défaut est la sélection.
+
+Deux leviers déplacent le verdict, et le calcul les chiffre.
+
+| Levier | Effet |
+|---|---|
+| Fixer la configuration **avant** de regarder les données | 25,1 ans → 9,7 ans. Gratuit. |
+| Passer de 2 à 8 trades par séance | 25,1 ans → 6,3 ans, si la dérive survit à la multiplication des signaux |
+| Augmenter l'amplitude de l'edge | il faudrait `10,9 µ*` — un Sharpe annualisé de 3,8 — pour qu'une année suffise. Hors de portée. |
+
 ## Utilisation
 
 ```bash
 python main.py            # tables quantitatives du cadre
 python main.py --layers   # lexique des sigles et tables des sept couches
+python main.py --quant    # instruments de validation, simulation et stress
 python main.py --paper    # reconstruit docs/alp1-paper.html depuis le gabarit
-python main.py --tests    # 114 tests unitaires du noyau
+python main.py --tests    # 205 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -175,24 +244,41 @@ Les sept couches :
 | `alp1/regime.py` | Classification par gamma dealer et playbooks par régime |
 | `alp1/signals.py` | Les 7 couches formalisées en prédicats testables |
 
+Les instruments de validation :
+
+| Module | Rôle |
+|---|---|
+| `alp1/pathstats.py` | Loi du trade, inclinaison d'Esscher, Sharpe, Sortino, Omega, Kelly, PSR, MinTRL |
+| `alp1/drawdown.py` | `E[MDD]` sans dérive et sous dérive, quantiles de Lévy, Lundberg, ruine, Ulcer |
+| `alp1/mc.py` | Générateur reproductible, simulation de trajectoires, bootstrap stationnaire, permutation |
+| `alp1/hmm.py` | HMM gaussien, Baum-Welch, Viterbi, séparabilité, erreur de Bayes, AIC/BIC |
+| `alp1/overfit.py` | Sharpe déflaté, MinBTL, décote de Harvey-Liu-Zhu, PBO par CSCV, plis purgés, marche avant |
+| `alp1/stress.py` | VaR / ES, Cornish-Fisher et sa validité, GPD et Hill, sauts de Merton, scénarios, stress inversé |
+
 La production du document :
 
 | Module | Rôle |
 |---|---|
 | `alp1/report.py` | Tables chiffrées du cadre |
+| `alp1/quant.py` | Calibration de référence et tables des instruments |
 | `alp1/lexicon.py` | Lexique des sigles et tables des couches |
 | `alp1/figures.py` | Figures SVG du cadre |
 | `alp1/figterm.py` | Planches des couches, en panneaux de terminal |
+| `alp1/figquant.py` | Planches des instruments, surfaces isométriques comprises |
 | `alp1/figcss.py` | Feuille de style partagée des figures |
 | `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
 
 Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
 injectés par le code de l'autre. Un chiffre du texte et le point correspondant
-d'une figure ne peuvent pas diverger. Il compte 18 tables et 16 figures, toutes
-produites par le noyau.
+d'une figure ne peuvent pas diverger. Il compte 32 tables et 26 figures, toutes
+produites par le noyau. Les simulations sont ensemencées explicitement : deux
+exécutions du dépôt produisent le même document, au bit près.
 
 ## Statut
 
-Analyse théorique et protocole. **Aucune validation empirique.** Ce dépôt ne
+Analyse théorique, batterie d'instruments et protocole. **Aucune validation
+empirique.** Les instruments de la troisième partie sont appliqués à des lois
+déduites du modèle et à des séries synthétiques dont la vérité est connue
+d'avance — ce qui les contrôle, mais ne mesure rien du marché. Ce dépôt ne
 constitue pas un conseil en investissement et ne comporte aucune affirmation de
 performance.

@@ -2,6 +2,7 @@
 
     python main.py            # tables quantitatives du paper
     python main.py --layers   # lexique des sigles et tables des sept couches
+    python main.py --quant    # instruments de validation, simulation et stress
     python main.py --paper    # reconstruit docs/alp1-paper.html
     python main.py --tests    # suite de tests du noyau
 """
@@ -24,6 +25,12 @@ def main() -> int:
         from alp1.lexicon import main as lexicon_main
 
         lexicon_main()
+        return 0
+
+    if "--quant" in sys.argv:
+        from alp1.quant import main as quant_main
+
+        quant_main()
         return 0
 
     if "--paper" in sys.argv:
