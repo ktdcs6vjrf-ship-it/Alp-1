@@ -252,6 +252,47 @@ Une mesure de H sur cinq ans de barres à la minute prend quelques minutes de
 calcul et fixe la calibration entière. C'est le meilleur rapport entre ce qu'un
 test coûte et ce qu'il décide, de tout le protocole.
 
+**L'estimateur existe désormais** (`alp1/varratio.py`, `python main.py --hurst`),
+et sa construction a produit un avertissement qu'il faut lire avant de mesurer.
+Sur des séances de 390 minutes, la statistique asymptotique de Lo-MacKinlay
+rejette la marche aléatoire **sur une marche aléatoire**, à tous les horizons :
+l'estimateur est biaisé vers le haut à échantillon fini, et la régression brute
+rend Ĥ = 0,5208 sur une série qui est une martingale par construction. Corrigée
+de la loi nulle simulée de l'estimateur, elle rend 0,5014.
+
+Conséquence pratique : ne lisez jamais la colonne « z asympt. » de la sortie.
+Un Ĥ mesuré à 0,52 sur votre historique ne dit rien tant qu'il n'est pas
+rapporté à ce que l'estimateur produit sur une série sans mémoire de la même
+longueur de séance. C'est la colonne « Ĥ corrigé » qui décide, et elle seule.
+
+## 5 ter. Le stop, et ce que les barres ne disent pas
+
+Le protocole exécute un stop touché à l'intérieur d'une barre **au niveau du
+stop**. C'est optimiste, `scan_session` l'a toujours écrit, et l'ampleur est
+maintenant chiffrée. Sur 250 séances sans dérive :
+
+| Remplissage du stop | Espérance nette | SR/trade |
+|---|---|---|
+| Au stop (le protocole) | **+0,4500 pt** | +0,0132 |
+| À l'extrême de la barre | **−0,6925 pt** | −0,0200 |
+
+L'écart vaut 1,14 point — 254 % de la borne optimiste. Sur six tirages il va de
+0,96 à 1,34 point, **toujours davantage que la friction** (0,53 pt) que la
+mesure cherche à franchir : l'hypothèse d'exécution pèse plus lourd que la
+grandeur mesurée. Sur ce tirage-ci elle renverse le signe de l'espérance ; ce
+n'est le cas que deux fois sur six, mais dès que la vraie espérance tombe dans
+la bande, c'est elle qui décide du signe et non le marché.
+
+Deux voies, et la première est gratuite :
+
+1. **Rejouer sous les deux bornes** : `python main.py --bounds f.csv`. Si les
+   deux tombent du même côté de zéro, la conclusion ne dépend pas de ce qu'on
+   ignore. Si zéro tombe entre les deux, **la mesure sur barres ne conclut
+   pas** — et aucune finesse d'analyse ne remplacera la donnée manquante.
+2. **Acheter du tick** : MBO Databento sur 200 à 300 séances suffit à estimer
+   l'écart réel et à le porter dans `FrictionLaw`. À ne faire que si l'étape 1
+   rend un encadrement indécis — ce qui est le cas le plus probable.
+
 ---
 
 ## 6. Plus tard — le journal d'exécution

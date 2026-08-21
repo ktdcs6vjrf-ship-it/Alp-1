@@ -7,6 +7,8 @@
     python main.py --prereg           # protocole scellé et son empreinte SHA-256
     python main.py --power            # protocole à horizon borné et son Monte-Carlo
     python main.py --measure [f.csv]  # exécute le protocole sur un historique
+    python main.py --hurst [f.csv]    # loi d'échelle mesurée, ratio de variance
+    python main.py --bounds [f.csv]   # la mesure encadrée par les deux remplissages
     python main.py --paper            # reconstruit docs/alp1-paper.html
     python main.py --paper2           # reconstruit docs/alp2-paper.html
     python main.py --wp               # reconstruit le document de travail complet
@@ -53,6 +55,40 @@ def main() -> int:
         from alp1.report4 import main as power_main
 
         power_main()
+        return 0
+
+    if "--hurst" in sys.argv:
+        from alp1.varratio import main as varratio_main
+
+        rest = sys.argv[sys.argv.index("--hurst") + 1:]
+        files = [a for a in rest if not a.startswith("--")]
+        varratio_main(files[0] if files else None)
+        return 0
+
+    if "--bounds" in sys.argv:
+        from alp1.dataset import load_csv, synthetic_sessions
+        from alp1.measure import bounds
+
+        rest = sys.argv[sys.argv.index("--bounds") + 1:]
+        files = [a for a in rest if not a.startswith("--")]
+        if files:
+            sessions, origine = load_csv(files[0]), files[0]
+        else:
+            sessions = synthetic_sessions(250, seed=20260821)
+            origine = "série synthétique sans dérive"
+        b = bounds(sessions)
+        print(f"Encadrement par remplissage du stop — {origine}")
+        print(f"{len(sessions)} séances, {b.optimistic.n_trades} trades, "
+              f"{b.optimistic.stop_rate:.1%} d'arrêts\n")
+        print(f"  remplissage au stop      net {b.optimistic.mean_net:+.4f} pt   "
+              f"SR/trade {b.optimistic.sharpe_trade:+.4f}")
+        print(f"  remplissage à l'extrême  net {b.worst.mean_net:+.4f} pt   "
+              f"SR/trade {b.worst.sharpe_trade:+.4f}")
+        print(f"\n  écart {b.spread_points:.4f} pt "
+              f"({b.spread_fraction:.0%} de la borne optimiste)")
+        print(f"  seuil {b.threshold:.4f} pt sur l'espérance nette "
+              f"(la friction est déjà retranchée)")
+        print(f"\n  {b.verdict}")
         return 0
 
     if "--measure" in sys.argv:

@@ -364,6 +364,83 @@ et 3,8 % de moins sur la dérive requise. L'écart est modeste et gratuit. Mais
 90 minutes figurent dans l'empreinte scellée : la corriger n'est légitime que
 **tant qu'aucune série de prix n'a été ouverte**, ce qui est encore le cas.
 
+## Deux mesures que le document annonçait sans savoir les faire
+
+Un audit du dépôt a relevé que `docs/donnees-requises.md` annonce un Test 1 qui
+« mesure l'exposant d'échelle par ratio de variance », et qu'aucun ratio de
+variance n'existait dans le code : `scaling.calibrate` recevait l'exposant en
+argument, et le Test 1 de la chaîne comptait des cassures de bande. Le même
+audit a relevé que `scan_session` documente lui-même son optimisme — « un stop
+touché à l'intérieur d'une barre est exécuté au niveau du stop ». Les deux
+manques sont comblés, et chacun produit un résultat.
+
+### `alp1/varratio.py` — la loi d'échelle, mesurée
+
+Ratio de variance de Lo et MacKinlay à fenêtres chevauchantes, statistique
+robuste à l'hétéroscédasticité, exposant par `Ĥ = ½ + ln VR(q)/(2 ln q)` et par
+régression de `ln Var(q)` sur `ln q`. Aucun rendement n'enjambe un gap de nuit
+ni un trou : les séances sont traitées séparément et les sommes agrégées.
+
+**Le résultat n'était pas prévu.** Sur des séances de 390 minutes, l'estimateur
+est biaisé vers le haut à échantillon fini, et la statistique asymptotique de
+Lo-MacKinlay **rejette la marche aléatoire sur une marche aléatoire** — à tous
+les horizons de la grille.
+
+| q | VR(q) | VR sous marche aléatoire | Ĥ brut | Ĥ corrigé | z asympt. | z nul |
+|---|---|---|---|---|---|---|
+| 2 | 1,0078 | 1,0054 | 0,5056 | **0,5018** | 2,46 | 1,28 |
+| 10 | 1,0298 | 1,0295 | 0,5064 | **0,5001** | 2,76 | 0,03 |
+| 30 | 1,0982 | 1,0939 | 0,5138 | **0,5006** | 5,00 | 0,22 |
+| 60 | 1,2225 | 1,2010 | 0,5245 | **0,5022** | 8,00 | 0,57 |
+
+La régression brute rend `Ĥ = 0,5208` sur une série qui est une martingale par
+construction ; corrigée de la loi nulle simulée de l'estimateur, `Ĥ = 0,5014`.
+Un Test 1 conduit avec la statistique du manuel aurait donc conclu à la
+persistance — c'est-à-dire précisément à ce dont la calibration a besoin.
+Le module applique à son propre estimateur la règle que le document impose
+partout ailleurs : rapporter un motif à sa fréquence sous un prix sans dérive.
+
+```bash
+python main.py --hurst [f.csv]
+```
+
+### `alp1/measure.py` — l'encadrement par remplissage du stop
+
+`scan_session` accepte désormais `fill="stop"` (le protocole, optimiste) ou
+`fill="extreme"` (remplissage au plus bas de la barre à l'achat, au plus haut à
+la vente — le pire compatible avec ce qu'on observe). `bounds()` rejoue la
+mesure sous les deux.
+
+**L'écart n'est pas de second ordre.** Sur 250 séances sans dérive :
+
+| | Espérance nette | SR/trade |
+|---|---|---|
+| Remplissage au stop | **+0,4500 pt** | +0,0132 |
+| Remplissage à l'extrême | **−0,6925 pt** | −0,0200 |
+
+Écart de 1,14 point, soit 254 % de la borne optimiste. Deux lectures, et il
+faut les séparer.
+
+Ce qui **se généralise** : la largeur de la bande. Sur six tirages, l'écart va
+de 0,96 à 1,34 point — toujours davantage que la friction (0,53 pt) que la
+mesure cherche à franchir. L'hypothèse d'exécution pèse donc plus lourd que la
+grandeur mesurée, à chaque tirage.
+
+Ce qui **dépend de l'échantillon** : le renversement de signe. Sur le tirage
+ci-dessus l'espérance passe de positive à négative selon le remplissage ; sur
+six tirages cela arrive deux fois. Mais dès que la vraie espérance tombe dans
+la bande — et la bande est plus large que la friction — c'est l'hypothèse
+d'exécution qui décide du signe, non le marché. Publier la borne optimiste
+seule reviendrait à présenter une hypothèse comme une mesure.
+
+La lecture est binaire : deux bornes du même côté de zéro, la conclusion tient ;
+un zéro entre les deux, **la mesure sur barres ne conclut pas** et il faut du
+tick.
+
+```bash
+python main.py --bounds [f.csv]
+```
+
 ## Utilisation
 
 ```bash
@@ -374,10 +451,12 @@ python main.py --alp2             # tables d'ALP-2 et grille de notation
 python main.py --prereg           # protocole scellé et son empreinte SHA-256
 python main.py --power            # protocole à horizon borné et son Monte-Carlo
 python main.py --measure f.csv    # exécute le protocole sur un historique
+python main.py --hurst f.csv      # loi d'échelle mesurée, ratio de variance
+python main.py --bounds f.csv     # la mesure encadrée par les deux remplissages
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 430 tests unitaires du noyau
+python main.py --tests            # 461 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -425,6 +504,7 @@ chiffre soit défendable plutôt que seulement juste :
 | `alp1/measure.py` | Exécution du protocole sur l'historique fourni |
 | `alp1/decay.py` | Décote post-publication de la dérive empruntée, durée de vie résiduelle |
 | `alp1/scaling.py` | Calibration sous exposant d'échelle imposé, géométrie au pire cas |
+| `alp1/varratio.py` | Loi d'échelle mesurée : ratio de variance, loi nulle de l'estimateur |
 | `alp1/power.py` | Frontières séquentielles, information du panel, dérive minimale détectable |
 | `alp1/mcprotocol.py` | Monte-Carlo du protocole entier : taille, puissance, durée du verdict |
 

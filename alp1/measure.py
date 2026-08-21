@@ -34,6 +34,7 @@ from .friction import RETAIL_ES, friction_law
 from .momentum import mean_abs_move, sigma_from_session
 from .power import SEALED_MAX_INFORMATION
 from .prereg import PROTOCOL, Decision, Protocol, decide, spend
+from .varratio import hurst_regression, null_grid, scan
 
 WINDOW_OPEN = {"C1": 30, "C2": 30, "C3": 90}    # minutes après l'ouverture
 EXIT_MINUTE = 388                                # 15:58 ET
@@ -89,15 +90,30 @@ def _rolling_sigma(sessions: list[Session], index: int,
 
 def scan_session(session: Session, sigma_hat: float, window_open: int,
                  friction: float, exit_minute: int = EXIT_MINUTE,
-                 max_entries: int = MAX_ENTRIES) -> list[Trade]:
+                 max_entries: int = MAX_ENTRIES,
+                 fill: str = "stop") -> list[Trade]:
     """Applique la règle à une séance : jusqu'à trois trades, aucune discrétion.
 
     La cassure est la première minute, après l'ouverture de la fenêtre, dont la
     clôture s'écarte de l'ouverture de plus que la bande de bruit à cet
     instant. Le stop est la bande elle-même. La sortie est le stop ou l'heure,
-    selon ce qui vient en premier ; un stop touché à l'intérieur d'une barre
-    est exécuté au niveau du stop, ce qui est optimiste et le reste : la loi de
-    friction porte le glissement séparément.
+    selon ce qui vient en premier.
+
+    `fill` décide de la seule chose que des barres d'une minute ne tranchent
+    pas : le prix auquel un stop touché **à l'intérieur** d'une barre est
+    exécuté.
+
+      ``"stop"``    au niveau du stop. Optimiste, et le reste : la loi de
+                    friction porte le glissement séparément.
+      ``"extreme"`` à l'extrême de la barre de franchissement — le bas pour un
+                    achat, le haut pour une vente. C'est le pire remplissage
+                    compatible avec la barre observée.
+
+    Le vrai prix est entre les deux, et aucune donnée d'une minute ne dit où.
+    Rejouer la mesure sous les deux règles encadre donc la conclusion sans
+    rien supposer : si elle bascule entre les deux bornes, la mesure sur barres
+    ne conclut pas, et il faut du tick. C'est la seule lecture honnête d'un
+    stop de trois points touché deux fois sur trois.
 
     Après une sortie au stop, la règle se **ré-arme** : elle n'accepte une
     nouvelle cassure qu'une fois le prix revenu à l'intérieur de la bande.
@@ -106,6 +122,8 @@ def scan_session(session: Session, sigma_hat: float, window_open: int,
     d'information. Le plafond de trois entrées est scellé, la règle de
     ré-armement aussi ; ni l'un ni l'autre n'est ajustable après coup.
     """
+    if fill not in ("stop", "extreme"):
+        raise ValueError("fill doit valoir 'stop' ou 'extreme'")
     trades: list[Trade] = []
     if not session.bars:
         return trades
@@ -123,9 +141,12 @@ def scan_session(session: Session, sigma_hat: float, window_open: int,
             breached = (bar.low <= stop_level if direction > 0
                         else bar.high >= stop_level)
             if breached:
+                exit_px = stop_level
+                if fill == "extreme":
+                    exit_px = bar.low if direction > 0 else bar.high
                 trades.append(Trade(session.day, direction, entry_bar.minute,
                                     entry_bar.close, stop, bar.minute,
-                                    stop_level, True, friction))
+                                    exit_px, True, friction))
                 live, armed = None, False
             elif bar.minute >= exit_minute:
                 trades.append(Trade(session.day, direction, entry_bar.minute,
@@ -236,7 +257,8 @@ def _sd(xs: list[float]) -> float:
 def measure(sessions: list[Session], config_key: str = "C1",
             protocol: Protocol = PROTOCOL,
             friction_quantile: float = 0.50,
-            gamma: dict[str, float] | None = None) -> Measurement:
+            gamma: dict[str, float] | None = None,
+            fill: str = "stop") -> Measurement:
     """Applique une configuration pré-enregistrée à l'historique fourni.
 
     `config_key` passe par `alp1.prereg.spend`, qui refuse toute configuration
@@ -244,6 +266,10 @@ def measure(sessions: list[Session], config_key: str = "C1",
     La friction n'est pas posée mais tirée de la loi déduite, au quantile
     demandé — la médiane pour la mesure, le quantile 90 % pour les règles
     d'arrêt, comme le protocole l'exige.
+
+    `fill` est passé tel quel à `scan_session` : ``"stop"`` pour le
+    remplissage optimiste du protocole, ``"extreme"`` pour son pire cas. La
+    mesure doit être rendue sous les deux, et `bounds` s'en charge.
     """
     config = spend(config_key)
     if config.key == "C2" and gamma is None:
@@ -274,7 +300,7 @@ def measure(sessions: list[Session], config_key: str = "C1",
                            size_contracts=1.0, venue=RETAIL_ES)
         friction = law.quantile(friction_quantile)
         frictions.append(friction)
-        found = scan_session(session, sigma_hat, window, friction)
+        found = scan_session(session, sigma_hat, window, friction, fill=fill)
         trades.extend(found)
         if found:
             w = 1.0 / (sigma_hat * sigma_hat)
@@ -291,6 +317,83 @@ def measure(sessions: list[Session], config_key: str = "C1",
         information_fraction=frac, z_stat=stat["z"],
         decision=decide(protocol, stat["z"], frac, scanned),
     )
+
+
+@dataclass(frozen=True)
+class Bounds:
+    """La même mesure sous les deux remplissages du stop, et son verdict.
+
+    Des barres d'une minute ne disent pas à quel prix un stop touché à
+    l'intérieur d'une barre a été exécuté. Le protocole retient le niveau du
+    stop, ce qui est optimiste ; l'extrême de la barre est le pire compatible
+    avec ce qu'on observe. Le prix réel est entre les deux, et rien dans la
+    donnée ne dit où.
+
+    L'encadrement se lit d'une seule façon. Si les deux bornes tombent du même
+    côté du seuil, la conclusion ne dépend pas de ce qu'on ignore, et elle
+    tient. Si elles l'encadrent, **la mesure sur barres ne conclut pas** : il
+    faut du tick, et aucune finesse d'analyse ne remplacera la donnée
+    manquante. Publier la borne optimiste seule reviendrait à présenter comme
+    une mesure ce qui est une hypothèse d'exécution.
+    """
+
+    optimistic: Measurement
+    worst: Measurement
+    threshold: float                 # sur l'espérance **nette**, donc zéro
+
+    @property
+    def spread_points(self) -> float:
+        """Écart d'espérance nette entre les deux remplissages, en points."""
+        return self.optimistic.mean_net - self.worst.mean_net
+
+    @property
+    def spread_fraction(self) -> float:
+        """Cet écart rapporté à l'espérance optimiste."""
+        m = self.optimistic.mean_net
+        return self.spread_points / abs(m) if m else float("inf")
+
+    @property
+    def straddles(self) -> bool:
+        """Le seuil tombe-t-il entre les deux bornes ?"""
+        return self.worst.mean_net <= self.threshold < self.optimistic.mean_net
+
+    @property
+    def conclusive(self) -> bool:
+        """Les deux bornes tranchent-elles dans le même sens ?"""
+        return not self.straddles
+
+    @property
+    def verdict(self) -> str:
+        if self.straddles:
+            return ("indécis : le seuil tombe entre les deux remplissages, "
+                    "la mesure sur barres ne conclut pas")
+        if self.worst.mean_net > self.threshold:
+            return "franchi sous les deux remplissages"
+        return "non franchi sous les deux remplissages"
+
+
+def bounds(sessions: list[Session], config_key: str = "C1",
+           protocol: Protocol = PROTOCOL,
+           friction_quantile: float = 0.50,
+           gamma: dict[str, float] | None = None,
+           threshold: float | None = None) -> Bounds:
+    """Rejoue la mesure sous les deux remplissages du stop et encadre.
+
+    `threshold` est le seuil auquel l'espérance se compare. Il vaut **zéro**
+    par défaut, et non le quantile de friction : `Trade.net_points` retranche
+    déjà la friction, de sorte que comparer une espérance nette à la friction
+    la compterait deux fois. Le seuil d'un critère maître écrit sur le brut se
+    passe explicitement.
+
+    Rejouer coûte exactement un second passage : la règle, la friction et la
+    fenêtre sont identiques, seul le prix de sortie des trades arrêtés change.
+    """
+    opt = measure(sessions, config_key, protocol, friction_quantile,
+                  gamma, fill="stop")
+    bad = measure(sessions, config_key, protocol, friction_quantile,
+                  gamma, fill="extreme")
+    return Bounds(optimistic=opt, worst=bad,
+                  threshold=0.0 if threshold is None else threshold)
 
 
 def _statistic(clusters: list[tuple[float, float]]) -> dict[str, float]:
@@ -409,9 +512,34 @@ class ProtocolRun:
 
 
 def run_protocol(sessions: list[Session], gamma: dict[str, float] | None = None,
-                 protocol: Protocol = PROTOCOL) -> ProtocolRun:
-    """Enchaîne les tests dans l'ordre pré-enregistré, arrêts compris."""
+                 protocol: Protocol = PROTOCOL,
+                 null_draws: int = 8) -> ProtocolRun:
+    """Enchaîne les tests dans l'ordre pré-enregistré, arrêts compris.
+
+    Le premier étage mesure la **loi d'échelle**, et non plus seulement la
+    fréquence de cassure. C'est ce que le document annonçait sans que le code
+    sache le faire : l'exposant décide de σ₁, de la bande, du stop, de
+    l'exposition et du seuil de signal, donc il précède tout le reste. Il est
+    mesuré par ratio de variance, rapporté à la loi nulle simulée de
+    l'estimateur — sans quoi une martingale passerait pour persistante.
+    """
     stages: list[Stage] = []
+
+    nulls = null_grid(n_sessions=min(len(sessions), 250), draws=null_draws)
+    sc = hurst_regression(sessions, nulls=nulls)
+    ecarts = []
+    for r in scan(sessions):
+        ecarts.append(abs(r.z_null(nulls[r.q])))
+    z_max = max(ecarts) if ecarts else 0.0
+    diffusif = abs(sc.hurst - 0.5) < 0.02
+    stages.append(Stage(
+        0, "Loi d'échelle",
+        f"Ĥ = {sc.hurst:.4f} corrigé de la loi nulle (R² {sc.r2:.4f}), "
+        f"écart maximal à la nulle {z_max:.2f} σ",
+        "l'exposant mesuré remplace celui posé ; H = 0,50 ferme le régime "
+        "de gamma comme explication",
+        True, False))
+
     m = measure(sessions, "C1", protocol)
 
     rate_ok = m.trigger_rate >= 0.5
