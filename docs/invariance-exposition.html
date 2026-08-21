@@ -1,4 +1,4 @@
-<title>Du signal au seuil</title>
+<title>Invariance et exposition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -462,10 +462,21 @@
     text-wrap: pretty;
     hyphens: manual;
   }
+  /* Le bloc de titre et les légendes gardent leur centrage : la règle
+     ci-dessus vise le corps du texte, pas les éléments composés. */
+  .titleblock p, .titleblock .venue, figcaption { text-align: center; }
+
   p + p { text-indent: 0; margin-top: 0.62rem; }
   h2 + p, h3 + p { margin-top: 0; }
   p { margin-bottom: 0; }
   li { margin-bottom: 0.5rem; }
+
+  /* Classification JEL : même registre que les mots-clés, un cran plus bas. */
+  .jel {
+    font-size: 0.88rem; color: var(--soft); margin-top: 0.35rem;
+    font-variant-numeric: lining-nums;
+  }
+  .jel span { font-style: italic; }
 
   /* ---------- sommaire ---------- */
 
@@ -600,11 +611,11 @@
 <div class="sheet" lang="fr">
 
   <div class="titleblock">
-    <div class="venue">Document de travail &nbsp;·&nbsp; Microstructure et futures indiciels</div>
-    <h1>Du signal au seuil&nbsp;: anatomie d'une stratégie intraday, et sa reconstruction</h1>
+    <div class="venue">Série de documents de travail ALP &nbsp;·&nbsp; n<sup>o</sup>&nbsp;1</div>
+    <h1>Invariance des règles d'arrêt et exposition au marché&nbsp;: anatomie et reconstruction d'une stratégie intraday sur futures indiciels</h1>
     <p class="byline">Recherche ALP</p>
-    <p class="affil">Monographie — réunit les documents de travail ALP-1 et ALP-2</p>
-    <p class="dateline">Août 2026</p>
+    <p class="affil">Microstructure de marché et coûts de transaction</p>
+    <p class="dateline">Première version&nbsp;: août 2026 &nbsp;·&nbsp; Cette version&nbsp;: août 2026</p>
   </div>
 
   <div class="abstract">
@@ -623,6 +634,7 @@
     <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">14cd4100705eab00</span>, borné à 3 configurations par le code lui-même, et il refuse de conclure en deçà de 1 000 trades.</p>
 
     <p class="keywords"><span>Mots-clés —</span> théorème d'arrêt optionnel&nbsp;; identité de Wald&nbsp;; premier passage&nbsp;; exposition au marché&nbsp;; coûts de transaction endogènes&nbsp;; lois nulles&nbsp;; momentum intraday&nbsp;; gamma des teneurs de marché&nbsp;; Sharpe déflaté&nbsp;; pré-enregistrement.</p>
+    <p class="jel"><span>Classification JEL —</span> C12, C58, G11, G13, G14</p>
   </div>
 
   <div class="figures-cles">
@@ -6825,9 +6837,14 @@
 
   <p class="note">Ces références situent les effets et les résultats invoqués dans la littérature existante. Les magnitudes reprises figurent dans la table des effets publics&nbsp;; elles n'ont pas été ré-estimées pour ce document et doivent être consultées directement avant toute citation formelle.</p>
 
+  <div class="keybox">
+    <span class="lab">Citation suggérée</span>
+    <p>Recherche ALP (2026). «&nbsp;Invariance des règles d'arrêt et exposition au marché&nbsp;: anatomie et reconstruction d'une stratégie intraday sur futures indiciels&nbsp;». <em>Série de documents de travail ALP</em>, n<sup>o</sup>&nbsp;1.</p>
+  </div>
+
   <div class="colophon">
     <p><strong>Avertissement.</strong> Ce document est un travail de recherche méthodologique. Il ne constitue ni un conseil en investissement, ni une recommandation d'opérer, et ne comporte aucune affirmation de performance. Les stratégies décrites n'ont fait l'objet d'aucune validation empirique par leurs auteurs. Le trading de contrats à terme avec effet de levier expose à un risque de perte supérieure au capital engagé.</p>
-    <p>Document de travail. Toutes les tables et figures sont reproductibles par <code>python main.py --monographie</code>&nbsp;; la prose vit dans un gabarit et les chiffres y sont injectés par le noyau de calcul, de sorte qu'un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le protocole de mesure est scellé sous l'empreinte SHA-256 <span class="v">14cd4100705eab00</span>, publiable avant l'ouverture du moindre fichier de prix.</p>
+    <p>Document de travail. Toutes les tables et figures sont reproductibles par <code>python main.py --wp</code>&nbsp;; la prose vit dans un gabarit et les chiffres y sont injectés par le noyau de calcul, de sorte qu'un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le protocole de mesure est scellé sous l'empreinte SHA-256 <span class="v">14cd4100705eab00</span>, publiable avant l'ouverture du moindre fichier de prix.</p>
   </div>
 
 </div>

@@ -1,4 +1,4 @@
-"""Tests de la monographie : fusion, structure, navigation, figures.
+"""Tests du document de travail : fusion, structure, navigation, figures.
 
 La fusion de deux documents crée des risques qu'aucun des deux n'avait :
 des clés qui se recouvrent silencieusement, un sommaire qui ment sur la
@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 import unittest
 
-from alp1 import monograph, paper, paper2, report2
+from alp1 import paper, paper2, report2, workingpaper as monograph
 
 
 class TestFusion(unittest.TestCase):

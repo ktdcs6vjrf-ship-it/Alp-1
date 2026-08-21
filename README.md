@@ -1,10 +1,12 @@
 # Alp-1
 
-Formalisation, diagnostic quantitatif, batterie d'instruments de validation et
-protocole de falsification d'une stratégie intraday sur futures indiciels à
-sept couches.
+> **Invariance des règles d'arrêt et exposition au marché : anatomie et
+> reconstruction d'une stratégie intraday sur futures indiciels**
+> *Série de documents de travail ALP, nº 1.* JEL : C12, C58, G11, G13, G14.
 
-Le paper complet : [`docs/alp1-paper.html`](docs/alp1-paper.html).
+Le document complet :
+[`docs/invariance-exposition.html`](docs/invariance-exposition.html) —
+32 sections en cinq parties, 56 tables, 31 figures.
 
 ## Ce que contient ce dépôt
 
@@ -12,14 +14,19 @@ Une analyse **analytique**, sans donnée de marché. Elle délimite l'espace dan
 lequel un edge peut exister pour cette stratégie et chiffre ce qu'il devrait
 valoir ; elle n'établit pas qu'il existe. Aucun test empirique n'a été conduit.
 
-Le document se lit en trois parties. La première traite la stratégie comme une
-géométrie — un stop, un target, une règle de sortie — et n'a besoin d'aucune
-couche d'analyse. La seconde examine les sept couches une à une : GEX, profil
-de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres. La troisième
-applique seize instruments de mesure, de simulation et de stress — Monte-Carlo,
-HMM, Sharpe, Sortino, drawdown maximal, VaR/ES, valeurs extrêmes, Sharpe
-déflaté, PBO, validation croisée purgée — pour décider **ce qu'un historique
-permettrait de conclure**.
+Deux stratégies y sont comparées. **ALP-1** est la pile d'origine : sept
+couches d'analyse, un stop serré, un objectif lointain, une remontée du stop
+déclenchée par le carnet. **ALP-2** est la géométrie que le diagnostic finit
+par désigner : aucun objectif, un stop posé sur la bande de bruit, une sortie
+au marché à la clôture.
+
+Le document se lit en cinq parties. La première définit les huit notions
+nécessaires. La deuxième établit ce qu'une géométrie peut et ne peut pas. La
+troisième passe les sept instruments au crible de leur loi nulle — GEX, profil
+de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres. La quatrième
+construit ALP-2 et la confronte à une dérive publiée et à une friction déduite
+du carnet. La cinquième note les deux approches sur une grille fixée d'avance,
+et énonce ce qui manque.
 
 ## Le résultat structurant
 
@@ -217,8 +224,10 @@ python main.py --quant            # instruments de validation et de stress
 python main.py --alp2             # tables d'ALP-2 et grille de notation
 python main.py --prereg           # protocole scellé et son empreinte SHA-256
 python main.py --measure f.csv    # exécute le protocole sur un historique
+python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
-python main.py --tests            # 264 tests unitaires du noyau
+python main.py --paper2           # reconstruit docs/alp2-paper.html
+python main.py --tests            # 305 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.

@@ -1,6 +1,6 @@
-"""Construction de la monographie : ALP-1 et ALP-2 réunis en un document.
+"""Construction du document de travail : ALP-1 et ALP-2 réunis en un seul.
 
-Le gabarit `docs/alp-monographie.template.html` porte la prose des deux
+Le gabarit `docs/invariance-exposition.template.html` porte la prose des deux
 documents, réordonnée en cinq parties et précédée d'un sommaire et d'une
 partie de définitions. Ce module lui fournit ce qu'il réclame.
 
@@ -31,8 +31,8 @@ from .figterm import render_all as render_terminal_figures
 from .figures import render_all as render_core_figures
 
 ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE = ROOT / "docs" / "alp-monographie.template.html"
-OUTPUT = ROOT / "docs" / "alp-monographie.html"
+TEMPLATE = ROOT / "docs" / "invariance-exposition.template.html"
+OUTPUT = ROOT / "docs" / "invariance-exposition.html"
 
 #: Clés produites par les deux documents avec des valeurs différentes. La
 #: version ALP-2 est exposée sous un nom préfixé ; la version ALP-1 garde le
