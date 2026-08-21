@@ -3,3 +3,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
+
+# Données de marché — non versionnées
+data/*
+!data/.gitkeep

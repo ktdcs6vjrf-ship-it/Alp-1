@@ -1,0 +1,3 @@
+Déposez ici vos fichiers de prix et de gamma.
+Ce répertoire est ignoré par git : rien de ce qui y est placé ne part dans le dépôt.
+Format attendu : docs/donnees-requises.md
