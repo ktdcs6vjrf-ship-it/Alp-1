@@ -211,14 +211,22 @@ Deux leviers déplacent le verdict, et le calcul les chiffre.
 ## Utilisation
 
 ```bash
-python main.py            # tables quantitatives du cadre
-python main.py --layers   # lexique des sigles et tables des sept couches
-python main.py --quant    # instruments de validation, simulation et stress
-python main.py --paper    # reconstruit docs/alp1-paper.html depuis le gabarit
-python main.py --tests    # 205 tests unitaires du noyau
+python main.py                    # tables quantitatives du cadre
+python main.py --layers           # lexique des sigles et tables des couches
+python main.py --quant            # instruments de validation et de stress
+python main.py --alp2             # tables d'ALP-2 et grille de notation
+python main.py --prereg           # protocole scellé et son empreinte SHA-256
+python main.py --measure f.csv    # exécute le protocole sur un historique
+python main.py --paper            # reconstruit docs/alp1-paper.html
+python main.py --tests            # 264 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
+
+Sans fichier, `--measure` fait tourner la chaîne de mesure sur une série
+synthétique de vérité connue — c'est un test de la chaîne, pas une mesure du
+marché. Le format attendu est décrit dans
+[`docs/donnees-requises.md`](docs/donnees-requises.md).
 
 ## Structure
 
@@ -230,7 +238,6 @@ Le cadre du trade, indépendant de toute couche d'analyse :
 | `alp1/barriers.py` | Premier passage brownien sans limite de durée |
 | `alp1/horizon.py` | Premier passage sous contrainte de séance, loi d'échelle `σ₁·T^H` |
 | `alp1/stops.py` | Remontée du stop : distribution des issues, coût, seuil de neutralité |
-| `alp1/momentum.py` | Géométrie stop-seul, dimensionnement |
 
 Les sept couches :
 
@@ -243,6 +250,20 @@ Les sept couches :
 | `alp1/orderflow.py` | Échelles de liquidité, LPR et son plafond, impact de Kyle, CVD |
 | `alp1/regime.py` | Classification par gamma dealer et playbooks par régime |
 | `alp1/signals.py` | Les 7 couches formalisées en prédicats testables |
+
+Le noyau ALP-2 — la géométrie à barrière unique, et ce qu'il faut pour qu'un
+chiffre soit défendable plutôt que seulement juste :
+
+| Module | Rôle |
+|---|---|
+| `alp1/momentum.py` | Géométrie stop-seul, exposition, seuils, dimensionnement |
+| `alp1/calib.py` | Identités du modèle, boîte de plausibilité, points de rupture |
+| `alp1/microstructure.py` | Saisonnalité en U, sauts, hétéroscédasticité, et ce qui y survit |
+| `alp1/friction.py` | La friction comme loi déduite du carnet, marge, capacité |
+| `alp1/prereg.py` | Protocole scellé et son empreinte SHA-256 |
+| `alp1/grading.py` | Grille de notation, appliquée aux deux documents |
+| `alp1/dataset.py` | Lecture et audit d'un CSV de barres d'une minute |
+| `alp1/measure.py` | Exécution du protocole sur l'historique fourni |
 
 Les instruments de validation :
 
@@ -271,8 +292,65 @@ La production du document :
 Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
 injectés par le code de l'autre. Un chiffre du texte et le point correspondant
 d'une figure ne peuvent pas diverger. Il compte 32 tables et 26 figures, toutes
-produites par le noyau. Les simulations sont ensemencées explicitement : deux
+produites par le noyau ; les tables d'ALP-2 en ajoutent 24. Les simulations sont ensemencées explicitement : deux
 exécutions du dépôt produisent le même document, au bit près.
+
+## ALP-2, et ce qui lui manque
+
+La grille de notation du dépôt — douze critères, trois familles, poids fixés
+d'avance — est appliquée aux deux documents avec la même échelle. ALP-1 obtient
+49,4 points sur 100, ALP-2 en obtient 90,2.
+
+| Famille | Maximum | ALP-1 | ALP-2 |
+|---|---|---|---|
+| Validité interne | 35 | 25,8 | **35,0** |
+| Contenu empirique | 35 | 9,8 | 25,2 |
+| Exploitabilité | 30 | 13,8 | **30,0** |
+
+**Les 9,8 points manquants sont tous au même endroit.** Deux critères — une
+mesure conduite sur historique, et un candidat de dérive ré-estimé sur données
+propres — portent sur une mesure, et le dépôt n'a jamais ouvert une série de
+prix. Aucun raisonnement ne les débloque ; un fichier CSV les débloque tous les
+deux. La chaîne qui le consomme est écrite, auditée et testée sur série
+synthétique de vérité connue : elle retrouve `−c` sous martingale et la dérive
+injectée sous momentum conditionnel.
+
+Ce qu'il faut fournir, où le trouver et dans quel ordre :
+[`docs/donnees-requises.md`](docs/donnees-requises.md).
+
+### Quatre résultats de la partie ALP-2
+
+**Le critère maître est plus robuste que le modèle dont il est tiré.**
+Saisonnalité intra-séance, sauts, volatilité de séance aléatoire : `E[R] =
+µ·E[τ∧T] − c` y survit exactement, et la vérification est une simulation du
+modèle complet plutôt qu'une algèbre — la moyenne simulée rejoint la prédiction
+à moins d'une erreur-type, l'exposition étant mesurée dans la simulation
+elle-même. Ce qui bouge est borné à 19 % sur une boîte de quatre-vingt-une
+combinaisons de paramètres.
+
+**Un saut ne coûte pas ce qu'on croit, et pas où on croit.** Sur une géométrie
+sans target, le dépassement du stop entre dans `X_{τ∧T}` et Wald l'absorbe :
+l'espérance ne bouge pas. C'est le **dénominateur** qui bouge — la perte réelle
+excède la perte nominale de 9,3 % sur un stop de trois points, de 0,3 % sur la
+bande de bruit. Un rapport de trente entre les deux géométries devant le même
+marché.
+
+**La friction posée était optimiste d'un facteur deux.** Déduite du barème, de
+la profondeur du carnet, de la latence et de la volatilité conditionnelle au
+déclenchement, elle vaut 0,65 point en moyenne contre 0,33 posé. Le glissement
+de sortie déduit, 1,8 tick, retombe par une route indépendante sur le tick et
+demi que le scénario réaliste posait. La marge tient quand même : la dérive
+publiée dépasse la friction d'un facteur 2,8 au pire coin de la boîte de
+carnet. Mais la contrainte de capacité mord tôt — quelques dizaines de contrats,
+pas quelques centaines.
+
+**Aucune conclusion ne bascule dans la boîte de plausibilité.** Les six
+conclusions du document sont encadrées sur 3 125 combinaisons des entrées, et
+le point de rupture de chacune est calculé par bissection : il faut une
+friction 2,6 fois supérieure au pire scénario d'exécution, ou une dérive tombée
+de 6 à 1,2 point de base, pour annuler l'espérance. Contrôle externe : le taux
+de réussite impliqué par la géométrie, 33,8 %, retombe sur les 38–40 % publiés
+sans avoir été calibré dessus.
 
 ## Statut
 

@@ -32,6 +32,21 @@ conclure :
     overfit   : Sharpe déflaté, tests multiples, PBO, validation croisée purgée
     stress    : VaR et ES, valeurs extrêmes, sauts, scénarios, stress inversé
 
+Le noyau ALP-2 — géométrie à barrière unique, et ce qu'il faut pour qu'un
+chiffre soit défendable plutôt que seulement juste :
+
+    momentum       : géométrie stop-seul, dimensionnement
+    calib          : identités du modèle, boîte de plausibilité, points de rupture
+    microstructure : saisonnalité, sauts, hétéroscédasticité, et ce qui y survit
+    friction       : la friction comme loi déduite du carnet, marge et capacité
+    prereg         : protocole scellé et son empreinte SHA-256
+    grading        : grille de notation et son application aux deux documents
+
+La mesure, qui attend un historique :
+
+    dataset  : lecture et audit d'un CSV de barres d'une minute
+    measure  : exécution du protocole pré-enregistré sur l'historique fourni
+
 Et la production du document :
 
     report   : tables chiffrées du cadre
@@ -44,10 +59,12 @@ Et la production du document :
     paper    : construction du document à partir du gabarit
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 __all__ = [
     "costs", "barriers", "horizon", "stops", "momentum",
+    "calib", "microstructure", "friction", "prereg", "grading",
+    "dataset", "measure", "report2",
     "gex", "vprofile", "dow", "fib", "orderflow", "regime", "signals",
     "pathstats", "drawdown", "mc", "hmm", "overfit", "stress",
     "report", "quant", "lexicon", "figures", "figterm", "figquant",

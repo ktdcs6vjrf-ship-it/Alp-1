@@ -1,10 +1,17 @@
 """Point d'entrée ALP-1.
 
-    python main.py            # tables quantitatives du paper
-    python main.py --layers   # lexique des sigles et tables des sept couches
-    python main.py --quant    # instruments de validation, simulation et stress
-    python main.py --paper    # reconstruit docs/alp1-paper.html
-    python main.py --tests    # suite de tests du noyau
+    python main.py                    # tables quantitatives du paper
+    python main.py --layers           # lexique des sigles et tables des couches
+    python main.py --quant            # instruments de validation et de stress
+    python main.py --alp2             # tables d'ALP-2, grille de notation comprise
+    python main.py --prereg           # protocole scellé et son empreinte SHA-256
+    python main.py --measure [f.csv]  # exécute le protocole sur un historique
+    python main.py --paper            # reconstruit docs/alp1-paper.html
+    python main.py --tests            # suite de tests du noyau
+
+Sans fichier, `--measure` fait tourner la chaîne de mesure sur une série
+synthétique de vérité connue : c'est un test de la chaîne, pas une mesure du
+marché. Le format attendu du fichier est décrit dans docs/donnees-requises.md.
 """
 
 from __future__ import annotations
@@ -25,6 +32,27 @@ def main() -> int:
         from alp1.lexicon import main as lexicon_main
 
         lexicon_main()
+        return 0
+
+    if "--alp2" in sys.argv:
+        from alp1.report2 import main as report2_main
+
+        report2_main()
+        return 0
+
+    if "--prereg" in sys.argv:
+        from alp1.prereg import main as prereg_main
+
+        prereg_main()
+        return 0
+
+    if "--measure" in sys.argv:
+        from alp1.measure import main as measure_main
+
+        rest = sys.argv[sys.argv.index("--measure") + 1:]
+        files = [a for a in rest if not a.startswith("--")]
+        measure_main(files[0] if files else None,
+                     files[1] if len(files) > 1 else None)
         return 0
 
     if "--quant" in sys.argv:

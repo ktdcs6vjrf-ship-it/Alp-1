@@ -25,9 +25,10 @@ from alp1.costs import (
     _norm_ppf,
     norm_cdf,
 )
-from alp1 import (dow, drawdown, fib, figquant, figterm, figures, gex, hmm, horizon,
-                  lexicon, mc, orderflow, overfit, paper, pathstats, quant, report,
-                  stress, vprofile)
+from alp1 import (calib, dataset, dow, drawdown, fib, figquant, figterm, figures,
+                  friction, gex, grading, hmm, horizon, lexicon, mc, measure,
+                  microstructure, momentum, orderflow, overfit, paper, pathstats,
+                  prereg, quant, report, report2, stress, vprofile)
 from alp1.regime import GammaState, Regime, classify, playbook_for
 from alp1.stops import (
     TradeGeometry,
@@ -1483,3 +1484,454 @@ class TestQuantCalibration(unittest.TestCase):
                         r'(?:x|y|cx|cy|x1|y1|x2|y2)="(-?\d+\.?\d*)"', svg):
                     self.assertGreater(float(raw), -45)
                     self.assertLess(float(raw), limit)
+
+
+# --- ALP-2 : géométrie stop-seul ------------------------------------------
+
+
+class TestMomentumGeometry(unittest.TestCase):
+    """Le noyau d'ALP-2 : une barrière, une sortie à l'heure."""
+
+    def setUp(self):
+        self.sigma = momentum.sigma_from_session(60.0, 390.0)
+        self.stop = momentum.mean_abs_move(self.sigma, 90.0)
+
+    def test_sigma_is_not_free(self):
+        # σ₁ reconstruit exactement la dispersion posée : aucun degré de liberté.
+        self.assertAlmostEqual(self.sigma * math.sqrt(390.0), 60.0, places=10)
+
+    def test_survival_bounds(self):
+        self.assertAlmostEqual(momentum.survival(self.stop, 0.0, self.sigma), 1.0)
+        self.assertAlmostEqual(
+            momentum.survival(1e9, 300.0, self.sigma), 1.0, places=9)
+        self.assertAlmostEqual(momentum.survival(0.0, 300.0, self.sigma), 0.0)
+
+    def test_exposure_limits(self):
+        # a → ∞ : la position vit toute la séance ; a → 0 : elle meurt aussitôt.
+        self.assertAlmostEqual(
+            momentum.expected_exposure(1e7, 300.0, self.sigma), 300.0, places=4)
+        self.assertAlmostEqual(
+            momentum.expected_exposure(1e-9, 300.0, self.sigma), 0.0, places=6)
+
+    def test_exposure_matches_quadrature(self):
+        # La forme fermée contre l'intégrale de la survie, par Simpson.
+        n, T = 2000, 300.0
+        h = T / n
+        acc = 0.0
+        for i in range(n + 1):
+            s = momentum.survival(self.stop, i * h, self.sigma)
+            w = 1.0 if i in (0, n) else (4.0 if i % 2 else 2.0)
+            acc += w * s
+        self.assertAlmostEqual(
+            momentum.expected_exposure(self.stop, T, self.sigma),
+            acc * h / 3.0, places=4)
+
+    def test_outcome_identities(self):
+        o = momentum.time_exit_outcome(self.stop, 300.0, self.sigma)
+        self.assertAlmostEqual(o.mean_gross, 0.0, places=12)
+        self.assertAlmostEqual(o.p_stop + o.p_open, 1.0, places=12)
+        self.assertAlmostEqual(o.p_stop * self.stop, o.p_open * o.mean_open,
+                               places=9)
+        self.assertAlmostEqual(
+            o.sd_gross, self.sigma * math.sqrt(o.expected_time), places=12)
+
+    def test_sharpe_is_ir_gap(self):
+        o = momentum.time_exit_outcome(self.stop, 300.0, self.sigma)
+        c = 0.33
+        ir = momentum.required_ir(c, self.sigma, o.expected_time)
+        self.assertAlmostEqual(
+            momentum.sharpe_per_trade(0.0, c, self.sigma, o.expected_time),
+            -ir, places=12)
+
+
+class TestCalibrationBox(unittest.TestCase):
+    """Cohérence des entrées et survie des conclusions."""
+
+    def test_reference_matches_report(self):
+        # calib et report2 ne peuvent pas diverger sur la calibration.
+        self.assertAlmostEqual(calib.REFERENCE.index_level, report2.INDEX_LEVEL)
+        self.assertAlmostEqual(calib.REFERENCE.session_dispersion,
+                               report2.SESSION_DISPERSION)
+        self.assertAlmostEqual(calib.REFERENCE.session_min, report2.SESSION_MIN)
+        self.assertAlmostEqual(calib.REFERENCE.entry_min, report2.ENTRY_MIN)
+        self.assertAlmostEqual(calib.REFERENCE.friction, report2.FRICTION)
+        d = calib.derive(calib.REFERENCE)
+        self.assertAlmostEqual(d.sigma_1min, report2.SIGMA_1MIN, places=12)
+        self.assertAlmostEqual(d.stop, report2.STOP_PTS, places=12)
+
+    def test_all_identities_hold(self):
+        for c in calib.identity_checks():
+            self.assertTrue(c.ok, f"identité violée : {c.label} ({c.gap:g})")
+
+    def test_all_plausibility_checks_hold(self):
+        for r in calib.plausibility_checks():
+            self.assertTrue(r.ok, f"hors fourchette : {r.label} = {r.obtained:g}")
+
+    def test_box_contains_reference(self):
+        self.assertTrue(calib.BOX.contains(calib.REFERENCE))
+
+    def test_conclusions_survive_the_box(self):
+        for v in calib.verdicts(n=5):
+            self.assertTrue(v.holds,
+                            f"conclusion renversée : {v.conclusion.claim}")
+            self.assertGreater(v.margin, 0.0)
+
+    def test_enclosure_contains_reference_value(self):
+        for v in calib.verdicts(n=5):
+            e = v.enclosure
+            self.assertLessEqual(e.lo, e.reference + 1e-9)
+            self.assertGreaterEqual(e.hi, e.reference - 1e-9)
+
+    def test_corner_count(self):
+        # Cinq axes libres : trente-deux sommets, la durée de séance étant gelée.
+        self.assertEqual(len(calib.BOX.free_axes()), 5)
+        self.assertEqual(len(list(calib.BOX.corners())), 32)
+
+    def test_no_breaking_point_inside_the_box(self):
+        net = [c for c in calib.CONCLUSIONS if c.key == "net_points"][0]
+        for b in calib.breaking_points(net):
+            self.assertFalse(b.inside_box,
+                             f"rupture atteinte dans la boîte sur {b.axis}")
+
+    def test_breaking_point_is_a_zero_of_the_margin(self):
+        import dataclasses
+
+        net = [c for c in calib.CONCLUSIONS if c.key == "net_points"][0]
+        worst = calib._worst_inputs(net, calib.BOX)
+        x = calib.breaking_point(net, "friction")
+        self.assertIsNotNone(x)
+        # À la rupture, la friction égale exactement la dérive captée, et le
+        # résultat net s'annule : c'est la définition du point de rupture.
+        at_break = calib.derive(dataclasses.replace(worst, friction=x))
+        self.assertAlmostEqual(at_break.net_points, 0.0, places=6)
+        self.assertAlmostEqual(x, at_break.edge_points, places=6)
+        # Il faut sortir de la boîte, et d'un facteur supérieur à deux.
+        self.assertGreater(x, calib.BOX.friction.hi * 2.0)
+
+    def test_degenerate_axis_is_frozen(self):
+        self.assertTrue(calib.BOX.session_min.degenerate)
+        for inp in calib.BOX.points(3):
+            self.assertEqual(inp.session_min, 390.0)
+
+
+class TestMicrostructure(unittest.TestCase):
+    """Saisonnalité, sauts, hétéroscédasticité."""
+
+    def setUp(self):
+        self.sigma = momentum.sigma_from_session(60.0, 390.0)
+        self.stop = momentum.mean_abs_move(self.sigma, 90.0)
+        self.seas = microstructure.Seasonality()
+
+    def test_seasonality_preserves_total_variance(self):
+        # Le profil redistribue le risque, il n'en ajoute pas.
+        self.assertAlmostEqual(self.seas.clock(390.0), 390.0, places=8)
+        self.assertAlmostEqual(self.seas.clock(0.0), 0.0, places=12)
+
+    def test_clock_is_the_integral_of_the_rate(self):
+        n, T = 4000, 390.0
+        h = T / n
+        acc = 0.0
+        for i in range(n + 1):
+            w = 1.0 if i in (0, n) else (4.0 if i % 2 else 2.0)
+            acc += w * self.seas.rate(i * h)
+        self.assertAlmostEqual(acc * h / 3.0, self.seas.clock(T), places=4)
+
+    def test_rate_is_u_shaped(self):
+        self.assertGreater(self.seas.rate(0.0), self.seas.rate(195.0))
+        self.assertGreater(self.seas.rate(390.0), self.seas.rate(195.0))
+
+    def test_flat_seasonality_reduces_to_diffusion(self):
+        flat = microstructure.FLAT
+        o = microstructure.seasonal_outcome(self.stop, 90.0, self.sigma, flat)
+        base = momentum.time_exit_outcome(self.stop, 300.0, self.sigma)
+        self.assertAlmostEqual(o.p_stop, base.p_stop, places=9)
+        self.assertAlmostEqual(o.expected_time, base.expected_time, places=3)
+        self.assertAlmostEqual(o.expected_variance_time, base.expected_time,
+                               places=3)
+
+    def test_closed_form_matches_simulation(self):
+        closed, sim, se = microstructure.mc_barrier_check(
+            self.stop, 90.0, self.sigma, n_paths=4000)
+        self.assertLess(abs(closed - sim), 3.5 * se + 0.01)
+
+    def test_master_criterion_survives_the_full_model(self):
+        # Wald sous saisonnalité, sauts et volatilité aléatoire réunis.
+        for mu, seed in ((0.0, 11), (0.02, 12)):
+            chk = microstructure.mc_wald_check(
+                self.stop, 90.0, self.sigma, mu, 0.33,
+                mix=microstructure.VolMixture(self.sigma, 0.35),
+                n_paths=3000, seed=seed)
+            self.assertTrue(chk.passes, f"z = {chk.z_score:+.2f} à µ = {mu}")
+
+    def test_vol_mixture_preserves_variance(self):
+        mix = microstructure.VolMixture(3.0, 0.4)
+        got = microstructure.expect_over_vol(lambda s: s * s, mix, 400)
+        self.assertAlmostEqual(got, 9.0, places=4)
+
+    def test_expect_over_vol_is_exact_on_constants(self):
+        mix = microstructure.VolMixture(3.0, 0.4)
+        self.assertAlmostEqual(
+            microstructure.expect_over_vol(lambda s: 7.0, mix), 7.0, places=12)
+
+    def test_gap_cost_falls_with_stop_width(self):
+        wide = microstructure.gap_cost(23.0, 158.0, microstructure.JUMPS)
+        tight = microstructure.gap_cost(3.0, 28.9, microstructure.JUMPS)
+        self.assertGreater(tight.inflation_pct, 10.0 * wide.inflation_pct)
+        self.assertEqual(wide.expectancy_shift, 0.0)
+
+    def test_adequacy_marks_the_invariants(self):
+        rows = microstructure.adequacy_rows(self.stop, 90.0, self.sigma, 0.33)
+        invariants = [r for r in rows if r.invariant]
+        self.assertEqual(len(invariants), 2)
+        for r in invariants:
+            self.assertEqual(r.worst_deviation_pct, 0.0)
+
+    def test_robustness_box_brackets_the_reference(self):
+        for r in microstructure.robustness_box(self.stop, 90.0, self.sigma, 0.33):
+            self.assertLess(r.worst_deviation_pct, 25.0)
+
+
+class TestFrictionLaw(unittest.TestCase):
+    """La friction comme loi, et la marge qu'elle laisse."""
+
+    def setUp(self):
+        self.sigma = momentum.sigma_from_session(60.0, 390.0)
+        self.stop = momentum.mean_abs_move(self.sigma, 90.0)
+        self.p_stop = momentum.time_exit_outcome(
+            self.stop, 300.0, self.sigma).p_stop
+        self.law = friction.friction_law(self.sigma, self.p_stop)
+        self.edge = 6.0 / 1e4 * 6000.0
+
+    def test_cdf_is_a_distribution(self):
+        self.assertAlmostEqual(self.law.cdf(self.law.deterministic - 1e-9), 0.0,
+                               places=9)
+        self.assertAlmostEqual(self.law.cdf(50.0), 1.0, places=6)
+        prev = -1.0
+        for x in [0.3 + 0.1 * i for i in range(30)]:
+            v = self.law.cdf(x)
+            self.assertGreaterEqual(v + 1e-12, prev)
+            prev = v
+
+    def test_quantile_inverts_the_cdf(self):
+        for q in (0.1, 0.5, 0.9, 0.99):
+            self.assertAlmostEqual(self.law.cdf(self.law.quantile(q)), q,
+                                   places=6)
+
+    def test_closed_form_mean_matches_numeric_integration(self):
+        # E[c] = ∫ (1 − F) sur le support, la friction étant positive.
+        lo = self.law.deterministic
+        n, hi = 4000, lo + 30.0
+        h = (hi - lo) / n
+        acc = 0.0
+        for i in range(n + 1):
+            w = 1.0 if i in (0, n) else (4.0 if i % 2 else 2.0)
+            acc += w * (1.0 - self.law.cdf(lo + i * h))
+        self.assertAlmostEqual(lo + acc * h / 3.0, self.law.mean, places=3)
+
+    def test_deduced_slippage_recovers_the_posed_one(self):
+        # Deux routes sans paramètre commun : le glissement déduit tombe entre
+        # le tick posé en référence et deux ticks.
+        ticks = friction.implied_exit_slippage_ticks(self.law)
+        self.assertGreater(ticks, 1.0)
+        self.assertLess(ticks, 2.5)
+
+    def test_friction_grows_with_size(self):
+        small = friction.friction_law(self.sigma, self.p_stop, 1.0)
+        large = friction.friction_law(self.sigma, self.p_stop, 50.0)
+        self.assertGreater(large.mean, small.mean)
+        self.assertGreater(large.quantile(0.99), small.quantile(0.99))
+
+    def test_margin_decreases_with_quantile(self):
+        ms = friction.margins(self.law, self.edge, self.stop)
+        for a, b in zip(ms, ms[1:]):
+            self.assertGreater(a.factor, b.factor)
+        self.assertTrue(all(m.survives for m in ms))
+
+    def test_capacity_is_monotone(self):
+        sizes = [friction.max_size_for_margin(self.sigma, self.p_stop,
+                                              self.edge, 2.0, q)
+                 for q in (0.50, 0.90, 0.99)]
+        self.assertGreater(sizes[0], sizes[1])
+        self.assertGreater(sizes[1], sizes[2])
+
+    def test_expectation_survives_the_venue_box_but_the_tail_does_not(self):
+        b = friction.friction_box(self.sigma, self.p_stop, self.edge)
+        self.assertTrue(b.survives)
+        self.assertGreater(b.mean_margin, 2.0)
+        self.assertFalse(b.tail_survives)
+        self.assertIn("profondeur", b.worst_corner)
+
+
+class TestPreregistration(unittest.TestCase):
+    """Le protocole scellé."""
+
+    def test_fingerprint_is_deterministic(self):
+        self.assertEqual(prereg.PROTOCOL.fingerprint(),
+                         prereg.PROTOCOL.fingerprint())
+        self.assertEqual(len(prereg.PROTOCOL.fingerprint()), 64)
+        self.assertEqual(prereg.SEAL, prereg.PROTOCOL.fingerprint()[:16])
+
+    def test_any_change_changes_the_seal(self):
+        import dataclasses
+
+        base = prereg.PROTOCOL.fingerprint()
+        for field_name, value in (("alpha", 0.01), ("min_trades", 999),
+                                  ("sealed_on", "2026-08-22")):
+            other = dataclasses.replace(prereg.PROTOCOL, **{field_name: value})
+            self.assertNotEqual(other.fingerprint(), base, field_name)
+        trimmed = dataclasses.replace(
+            prereg.PROTOCOL, configurations=prereg.CONFIGURATIONS[:2])
+        self.assertNotEqual(trimmed.fingerprint(), base)
+
+    def test_budget_is_enforced_by_the_code(self):
+        for key in ("C1", "C2", "C3"):
+            self.assertEqual(prereg.spend(key).key, key)
+        with self.assertRaises(prereg.BudgetExceeded):
+            prereg.spend("C4")
+
+    def test_hurdle_falls_with_sample_size(self):
+        p = prereg.PROTOCOL
+        self.assertGreater(p.hurdle(200), p.hurdle(1000))
+        self.assertGreater(p.hurdle(1000), p.hurdle(5000))
+
+    def test_decision_requires_all_three_conditions(self):
+        p = prereg.PROTOCOL
+        self.assertFalse(prereg.decide(p, 0.090, 400).accepted)      # trop court
+        self.assertFalse(prereg.decide(p, 0.040, 1000).accepted)     # sélection
+        self.assertTrue(prereg.decide(p, 0.090, 1000).accepted)
+        d = prereg.decide(p, 0.090, 1000)
+        self.assertTrue(d.beats_selection and d.significant and d.enough_trades)
+
+    def test_degrees_of_freedom_are_enumerated(self):
+        dof = prereg.degrees_of_freedom()
+        self.assertGreaterEqual(len(dof), 10)
+        self.assertTrue(all(len(x) == 2 for x in dof))
+
+
+class TestDatasetAndMeasurement(unittest.TestCase):
+    """La chaîne de mesure, contrôlée sur une série de vérité connue."""
+
+    def test_csv_round_trip(self):
+        import tempfile
+
+        sessions = dataset.synthetic_sessions(8, seed=5)
+        with tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False) as fh:
+            path = fh.name
+        dataset.write_csv(sessions, path)
+        back = dataset.load_csv(path)
+        self.assertEqual(len(back), len(sessions))
+        self.assertEqual(sum(s.n_bars for s in back),
+                         sum(s.n_bars for s in sessions))
+        self.assertAlmostEqual(dataset.session_dispersion(back),
+                               dataset.session_dispersion(sessions), places=1)
+
+    def test_audit_accepts_a_complete_history(self):
+        a = dataset.audit(dataset.synthetic_sessions(30, seed=6))
+        self.assertTrue(a.usable)
+        self.assertAlmostEqual(a.completeness, 1.0, places=6)
+        self.assertEqual(a.invalid_bars, 0)
+
+    def test_audit_rejects_an_incomplete_history(self):
+        sessions = dataset.synthetic_sessions(10, seed=7)
+        cut = [dataset.Session(s.day, s.bars[:150]) for s in sessions]
+        a = dataset.audit(cut)
+        self.assertFalse(a.usable)
+        self.assertTrue(a.problems())
+
+    def test_timestamp_parsing_variants(self):
+        want = "2026-01-02 09:31"
+        for raw in ("2026-01-02T09:31:00Z", "2026-01-02 09:31:00",
+                    "2026-01-02 09:31", "2026/01/02 09:31"):
+            ts = dataset._parse_timestamp(raw)
+            self.assertEqual(ts.strftime("%Y-%m-%d %H:%M"), want)
+        # Le format ambigu jour/mois est refusé, pas deviné.
+        with self.assertRaises(ValueError):
+            dataset._parse_timestamp("01/02/2026 09:31")
+
+    def test_measurement_recovers_minus_friction_under_martingale(self):
+        # Sans dérive conditionnelle, le résultat net moyen doit valoir −c.
+        m = measure.measure(
+            dataset.synthetic_sessions(300, momentum_points_per_min=0.0,
+                                       seed=99), "C1")
+        se = m.sd_net / math.sqrt(m.n_trades)
+        self.assertLess(abs(m.mean_net + m.friction_used), 3.0 * se)
+
+    def test_measurement_recovers_an_injected_conditional_drift(self):
+        m = measure.measure(
+            dataset.synthetic_sessions(300, momentum_points_per_min=0.03,
+                                       seed=99), "C1")
+        expected = 0.03 * m.mean_exposure - m.friction_used
+        self.assertGreater(m.mean_net, 0.0)
+        self.assertLess(abs(m.mean_net - expected), 0.35 * expected)
+
+    def test_unconditional_drift_is_not_captured(self):
+        # Une dérive constante n'est presque pas captée par une règle qui prend
+        # position dans les deux sens : c'est le contrôle négatif du dispositif.
+        m = measure.measure(
+            dataset.synthetic_sessions(300, drift_points_per_min=0.03,
+                                       seed=99), "C1")
+        self.assertLess(m.mean_net, 0.03 * m.mean_exposure / 3.0)
+
+    def test_calibration_window_is_strictly_prior(self):
+        sessions = dataset.synthetic_sessions(20, seed=8)
+        self.assertIsNone(measure._rolling_sigma(sessions, 13))
+        self.assertIsNotNone(measure._rolling_sigma(sessions, 14))
+
+    def test_measurement_refuses_unregistered_configuration(self):
+        sessions = dataset.synthetic_sessions(20, seed=9)
+        with self.assertRaises(prereg.BudgetExceeded):
+            measure.measure(sessions, "C9")
+
+    def test_c2_requires_a_gamma_file(self):
+        sessions = dataset.synthetic_sessions(20, seed=10)
+        with self.assertRaises(ValueError):
+            measure.measure(sessions, "C2")
+
+    def test_protocol_run_reports_every_stage(self):
+        run = measure.run_protocol(dataset.synthetic_sessions(120, seed=11))
+        self.assertTrue(run.stages)
+        self.assertIn("Test 1", measure.format_run(run))
+        for s in run.stages:
+            self.assertTrue(s.name and s.measured and s.criterion)
+
+    def test_half_hour_split_covers_every_trade(self):
+        m = measure.measure(dataset.synthetic_sessions(120, seed=12), "C1")
+        splits = measure.by_half_hour(m)
+        self.assertEqual(sum(s.n for s in splits), m.n_trades)
+        self.assertLessEqual(measure.concentration(splits), 1.0)
+
+
+class TestGradingAndReport2(unittest.TestCase):
+    """La grille, et les tables du document ALP-2."""
+
+    def test_weights_sum_to_one_hundred(self):
+        self.assertAlmostEqual(sum(c.weight for c in grading.CRITERIA), 100.0)
+
+    def test_scores_are_on_the_anchored_scale(self):
+        for a in grading.ASSESSMENTS.values():
+            self.assertEqual(set(a.scores), {c.key for c in grading.CRITERIA})
+            self.assertEqual(set(a.evidence), set(a.scores))
+            for k, v in a.scores.items():
+                self.assertIn(v, range(0, 6))
+                self.assertTrue(a.evidence[k].strip())
+
+    def test_family_totals_add_up(self):
+        for a in grading.ASSESSMENTS.values():
+            got = sum(a.family_total(f)[0] for f in grading.families())
+            self.assertAlmostEqual(got, a.total(), places=9)
+
+    def test_alp2_scores_top_marks_where_no_data_is_needed(self):
+        # Les seuls critères sous le maximum sont ceux qu'une mesure lèverait.
+        below = {k for k, v in grading.ALP2.scores.items() if v < 5}
+        self.assertEqual(below, {"b1", "b3"})
+
+    def test_all_tables_render(self):
+        tables = report2.all_tables()
+        self.assertGreaterEqual(len(tables), 20)
+        for key, t in tables.items():
+            self.assertTrue(t.caption)
+            self.assertTrue(t.rows)
+            for r in t.rows:
+                self.assertEqual(len(r), len(t.headers), key)
+            self.assertTrue(t.to_text())
+            self.assertTrue(t.to_html(1))

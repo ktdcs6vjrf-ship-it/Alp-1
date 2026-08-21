@@ -134,36 +134,67 @@ ALP1 = Assessment(
 
 ALP2 = Assessment(
     subject="ALP-2",
-    scores={"a1": 5, "a2": 5, "a3": 4, "a4": 3,
-            "b1": 1, "b2": 5, "b3": 4, "b4": 4,
-            "c1": 4, "c2": 5, "c3": 5, "c4": 5},
+    scores={"a1": 5, "a2": 5, "a3": 5, "a4": 5,
+            "b1": 1, "b2": 5, "b3": 4, "b4": 5,
+            "c1": 5, "c2": 5, "c3": 5, "c4": 5},
     evidence={
         "a1": "Le critère maître d'ALP-1 est conservé sans modification ; la "
               "géométrie à barrière unique ajoute deux formes fermées, vérifiées "
               "contre quadrature.",
         "a2": "Même dispositif : gabarit de prose, chiffres injectés par le noyau, "
               "tests unitaires.",
-        "a3": "σ₁ est déduit de la dispersion de séance au lieu d'être posé à côté "
-              "d'elle ; les seuils sont donnés sur une grille de stops et de "
-              "volatilités plutôt qu'à un point.",
-        "a4": "Même diffusion, mêmes angles morts : sauts, saisonnalité, "
-              "hétéroscédasticité. Le stop large et la sortie à l'heure y sont moins "
-              "sensibles que des barrières serrées, sans y échapper.",
+        "a3": "Six entrées, et tout le reste s'en déduit : sept identités du modèle "
+              "sont vérifiées numériquement une à une, et chacune des six "
+              "conclusions est encadrée sur une boîte de plausibilité par balayage "
+              "tensoriel. Aucune ne bascule à l'intérieur de la boîte, et le point "
+              "de rupture de chacune est obtenu par bissection — il faut une "
+              "friction 2,6 fois supérieure au pire scénario d'exécution, ou une "
+              "dérive tombée de 6 à 1,2 point de base, pour annuler l'espérance. "
+              "Contrôle externe : le taux de réussite impliqué, 33,8 %, retombe sur "
+              "les 38–40 % publiés sans avoir été calibré dessus.",
+        "a4": "Les trois écarts documentés — saisonnalité en U, sauts, "
+              "hétéroscédasticité — sont introduits séparément et chiffrés. Le "
+              "critère maître leur survit exactement, et la vérification est une "
+              "simulation du modèle complet plutôt qu'une algèbre : la moyenne "
+              "simulée rejoint µ·E[τ∧T] − c à moins d'une erreur-type, l'exposition "
+              "étant mesurée dans la simulation elle-même. Ce qui bouge est borné à "
+              "19 % sur une boîte de quatre-vingt-une combinaisons de paramètres. "
+              "Le seul changement de nature est identifié et chiffré : sous sauts, "
+              "la perte réalisée dépasse la perte nominale de 0,3 % sur la bande, "
+              "contre 9,3 % sur un stop de trois points.",
         "b1": "Aucune mesure conduite ici : le document reprend des résultats "
-              "publiés par des tiers, sans les ré-estimer. C'est la limite "
-              "principale du document.",
+              "publiés par des tiers, sans les ré-estimer. La chaîne de mesure est "
+              "écrite, auditée et validée sur série synthétique de vérité connue — "
+              "elle retrouve −c sous martingale et la dérive injectée sous momentum "
+              "conditionnel — mais elle n'a reçu aucun fichier de prix. Le critère "
+              "porte sur la mesure et non sur l'outil : il reste au plancher tant "
+              "qu'un historique n'est pas passé dedans. C'est la limite principale "
+              "du document, et la seule que le dépôt ne puisse pas lever seul.",
         "b2": "L'effet retenu est documenté sur 60 futures et 46 ans, répliqué sur "
               "actions et sur ES/NQ, et son mécanisme — la couverture gamma — fait "
               "l'objet d'une littérature séparée. Les magnitudes publiées sont "
               "reprises et comparées aux seuils calculés ici.",
         "b3": "Le candidat est nommé, daté, chiffré en points de base par trade, et "
               "confronté au seuil de friction. Il n'est pas ré-estimé sur données "
-              "propres, d'où la réserve.",
-        "b4": "Budget de configurations posé à trois, seuil déflaté calculé, et les "
-              "variantes optimisées de la littérature sont écartées comme telles.",
-        "c1": "c/L tombe à 1,6 % et IR* à 0,009 : la marge entre le seuil et la "
-              "dérive documentée est d'un facteur dix, contre un facteur inconnu "
-              "auparavant.",
+              "propres, d'où la réserve ; elle ne se lèvera que par le test 2 du "
+              "protocole conduit sur historique.",
+        "b4": "Le protocole est scellé avant toute donnée : trois configurations "
+              "complètes, statistique primaire, règle de décision à trois "
+              "conditions, taille d'échantillon minimale, plis purgés, règles "
+              "d'arrêt et critères de falsification, sérialisés de façon canonique "
+              "et empreintés en SHA-256. Le budget est appliqué par le code — "
+              "demander une quatrième configuration lève une exception — et les dix "
+              "degrés de liberté sont énumérés et gelés, y compris les nombres de "
+              "calibration, qui entrent dans le sceau.",
+        "c1": "La friction n'est plus posée mais déduite du barème publié, de la "
+              "profondeur du carnet, de la latence et de la volatilité de "
+              "déclenchement, et donnée comme loi et non comme point : 0,65 point "
+              "en moyenne, 1,71 au quantile 99 %. Le glissement de sortie déduit, "
+              "1,8 tick, retombe par une route indépendante sur le tick et demi que "
+              "le scénario réaliste posait. La marge en espérance tient sur les 243 "
+              "combinaisons de la boîte de carnet, au minimum 2,8× ; la queue à "
+              "99 % ne tient pas au pire coin, et la taille qui la rétablit est "
+              "calculée — 4 contrats au quantile 99 %, 24 à la médiane.",
         "c2": "Aucune donnée payante : prix à la minute, VWAP de séance, et un "
               "niveau de gamma net publié quotidiennement en accès libre.",
         "c3": "Une décision par demi-heure, une seule source de prix, aucune lecture "
