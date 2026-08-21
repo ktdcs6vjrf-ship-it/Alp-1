@@ -233,13 +233,13 @@ def fig_expectancy_plane() -> str:
 
         for k, r in enumerate(rr_grid):
             x, y = proj(k, nj - 1, 0.0)
-            parts.append(f'<text class="tk halo" x="{x - 7:.1f}" y="{y + 12:.1f}" '
+            parts.append(f'<text class="tk halo" x="{x - 16:.1f}" y="{y + 15:.1f}" '
                          f'text-anchor="end">1:{r:g}</text>')
         for k, g in enumerate(trig):
             if g not in (0.5, 4.0):
                 continue
             x, y = proj(ni - 1, k, 0.0)
-            parts.append(f'<text class="tk halo" x="{x + 7:.1f}" y="{y + 11:.1f}">BE {g:g} R</text>')
+            parts.append(f'<text class="tk halo" x="{x + 16:.1f}" y="{y + 14:.1f}">BE {g:g} R</text>')
 
         edge = ox - (nj - 1) * cx
         for val, lab in ((0.0, "0"), (-FRICTION / a, "−c/L")):

@@ -8,6 +8,7 @@
     python main.py --measure [f.csv]  # exécute le protocole sur un historique
     python main.py --paper            # reconstruit docs/alp1-paper.html
     python main.py --paper2           # reconstruit docs/alp2-paper.html
+    python main.py --monographie      # reconstruit docs/alp-monographie.html
     python main.py --tests            # suite de tests du noyau
 
 Sans fichier, `--measure` fait tourner la chaîne de mesure sur une série
@@ -60,6 +61,12 @@ def main() -> int:
         from alp1.quant import main as quant_main
 
         quant_main()
+        return 0
+
+    if "--monographie" in sys.argv:
+        from alp1.monograph import main as mono_main
+
+        mono_main()
         return 0
 
     if "--paper2" in sys.argv:

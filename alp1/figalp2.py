@@ -189,7 +189,7 @@ def fig_friction_tail() -> str:
     moyenne mais le quantile auquel elle rejoint la dérive — et il est très
     loin dans la queue.
     """
-    c = Canvas(640, 248, left=58, right=136, top=20, bottom=40)
+    c = Canvas(640, 248, left=58, right=24, top=20, bottom=40)
 
     o = time_exit_outcome(BAND, HORIZON_MIN, SIGMA_1MIN)
     law = friction_law(SIGMA_1MIN, o.p_stop, 1.0, RETAIL_ES)
@@ -200,7 +200,7 @@ def fig_friction_tail() -> str:
 
     c.domain(0.5, 0.999, 0.0, top)
     c.grid_y([0, 1, 2, 3], fmt=lambda v: f"{v:g}", label="friction aller-retour (points)")
-    c.ticks_x([0.5, 0.9, 0.99, 0.999],
+    c.ticks_x([0.5, 0.7, 0.9, 0.99],
               fmt=lambda v: f"{v * 100:g} %".replace(".", ","),
               label="quantile de la loi de friction")
 
@@ -215,23 +215,16 @@ def fig_friction_tail() -> str:
 
     c.path(pts, "s2")
 
-    for q, cls in ((0.50, "s2"), (0.90, "s2"), (0.99, "s2")):
+    # Les repères sont posés en alternance au-dessus et au-dessous de la
+    # courbe : à l'approche du quantile 99 % la pente devient forte et deux
+    # étiquettes du même côté se recouvriraient.
+    for i, q in enumerate((0.50, 0.90, 0.99)):
         v = law.quantile(q)
-        c.dot(q, v, cls, f"q{q:.2f} → {_num(v, 3)} pt")
-        c.label(q, v, f"{_num(v, 2)}", dx=6, dy=-8)
+        c.dot(q, v, "s2", f"q{q:.2f} → {_num(v, 3)} pt")
+        c.label(q, v, _num(v, 2), dx=8, dy=(-9 if i % 2 == 0 else 15))
 
-    c.add(f'<text class="lg" x="{c.left + c.pw + 12:.1f}" y="{c.top + 30:.1f}">'
-          f'La zone claire est</text>')
-    c.add(f'<text class="lg" x="{c.left + c.pw + 12:.1f}" y="{c.top + 45:.1f}">'
-          f'la marge : la dérive</text>')
-    c.add(f'<text class="lg" x="{c.left + c.pw + 12:.1f}" y="{c.top + 60:.1f}">'
-          f'moins la friction.</text>')
-    c.add(f'<text class="lg" x="{c.left + c.pw + 12:.1f}" y="{c.top + 84:.1f}">'
-          f'Elle ne se referme</text>')
-    c.add(f'<text class="lg" x="{c.left + c.pw + 12:.1f}" y="{c.top + 99:.1f}">'
-          f'à aucun quantile</text>')
-    c.add(f'<text class="lg" x="{c.left + c.pw + 12:.1f}" y="{c.top + 114:.1f}">'
-          f'représentable ici.</text>')
+    c.add(f'<text class="lg" x="{c.left + c.pw - 6:.1f}" y="{c.top + 14:.1f}" '
+          f'text-anchor="end">friction</text>')
 
     return c.render("Quantiles de la friction déduite face à la dérive documentée")
 

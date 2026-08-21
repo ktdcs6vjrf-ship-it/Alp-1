@@ -338,7 +338,7 @@ def fig_drawdown() -> str:
     p3.band_x(0.8, 1.0, "wash")
     p3.label(0.80, 0.62, "30 % des années", dx=-6, dy=0, anchor="end", cls="dl halo")
 
-    b.legend(56, 268, [("s2", "même loi, dérive retirée : √N"),
+    b.legend(56, 268, [("s2", "sans dérive : √N"),
                        ("s1", "avec dérive : ln N"),
                        ("s3", "gain cumulé espéré")], step=142, kind="line")
     b.legend(496, 268, [("s1", "arcsinus"), ("s2", "uniforme")], step=76, kind="line")
@@ -498,7 +498,8 @@ def fig_resampling() -> str:
     )
     b.add('<text class="hdr" x="490" y="30">Annualisation</text>')
     b.add('<text class="sub" x="490" y="44">facteur réel rapporté à √q ;</text>')
-    b.add('<text class="sub" x="490" y="57">sous 1, le Sharpe publié est gonflé</text>')
+    b.add('<text class="sub" x="490" y="57">sous 1, le Sharpe publié</text>')
+    b.add('<text class="sub" x="490" y="70">est gonflé</text>')
 
     b.legend(56, 276, [("s2f", "bootstrap i.i.d."),
                        ("s1f", "blocs stationnaires"),
@@ -649,7 +650,7 @@ def fig_selection() -> str:
         b, 330.0, 424.0, z, 0.0, 1.0, cx=25.0, cy=11.0, cz=118.0,
         row_labels=["1 essai", "10 essais", "100 essais", ""],
         col_labels=["", "", "", "30 ans"],
-        z_ticks=[(0.0, "0"), (0.5, "0,5"), (0.95, "0,95"), (1.0, "1")],
+        z_ticks=[(0.0, "0"), (0.5, "0,5"), (0.95, "0,95")],
         tip="DSR = {v:.3f}",
         classify=lambda v: heat_class(v),
     )
@@ -718,7 +719,7 @@ def fig_pbo() -> str:
         p2.label(i, res.degradation, _signed(res.degradation, 3), dx=0, dy=-8,
                  anchor="middle", cls="dl halo")
 
-    b.legend(56, 246, [("s2f", "aucune configuration n'a d'edge"),
+    b.legend(56, 254, [("s2f", "aucune configuration n'a d'edge"),
                        ("s1f", "une seule en possède un")], step=250)
     b.caption(330, 268, "sous la zone claire, une PBO isolée ne sépare pas les deux "
                         "hypothèses")
@@ -848,7 +849,7 @@ def fig_stress() -> str:
                readout="en années d'espérance")
     p1.domain(0.0, max(v for _, v in losses) / annual * 1.14, -0.6, len(losses) - 0.4)
     p1.frame()
-    p1.grid_x([0, 2, 4, 6, 8], lambda v: f"{v:g}", label="années de gain espéré")
+    p1.grid_x([0, 2, 4, 6, 8], lambda v: f"{v:g}", label="années")
     for i, (lab, v) in enumerate(losses):
         p1.hbar(i, 0.0, v / annual, 13.0, "dn",
                 f"{lab} · {v:.0f} R · {v / annual:.1f} années")

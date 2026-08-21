@@ -810,7 +810,7 @@ def fig_liquidity_map() -> str:
     p2.hline(0.0, "zero")
     p2.path([(t_max * i / (n_t - 1), cvd[i]) for i in range(n_t)], "s1")
 
-    ramp_x, ramp_y = 58.0, 256.0
+    ramp_x, ramp_y = 58.0, 265.0
     for k in range(8):
         b.add(f'<rect class="hm{k}" x="{ramp_x + 15 * k:.1f}" y="{ramp_y:.1f}" '
               f'width="15" height="9"/>')
@@ -949,7 +949,7 @@ def fig_signal_horizon() -> str:
         p2.label(sc.half_life_min, need, str(rank), dx=8, dy=-7, cls="tk halo")
     p2.label(5000.0, SIGMA_1MIN, "volatilité elle-même", dx=-6, dy=-6,
              anchor="end", cls="lg halo")
-    p2.label(0.02, 4.5, "irrecevable", dx=6, dy=0, cls="lg halo")
+    p2.label(3000.0, 6.0, "irrecevable", dx=-6, dy=0, anchor="end", cls="lg halo")
     p2.label(0.02, 0.02, "domaine plausible", dx=6, dy=0, cls="lg halo")
 
     b.caption(320, 306, "1 cotation · 2 file d'ordres · 3 inventaire · "
