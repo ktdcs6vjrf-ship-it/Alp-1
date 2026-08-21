@@ -7,6 +7,7 @@
     python main.py --prereg           # protocole scellé et son empreinte SHA-256
     python main.py --measure [f.csv]  # exécute le protocole sur un historique
     python main.py --paper            # reconstruit docs/alp1-paper.html
+    python main.py --paper2           # reconstruit docs/alp2-paper.html
     python main.py --tests            # suite de tests du noyau
 
 Sans fichier, `--measure` fait tourner la chaîne de mesure sur une série
@@ -59,6 +60,12 @@ def main() -> int:
         from alp1.quant import main as quant_main
 
         quant_main()
+        return 0
+
+    if "--paper2" in sys.argv:
+        from alp1.paper2 import main as paper2_main
+
+        paper2_main()
         return 0
 
     if "--paper" in sys.argv:
