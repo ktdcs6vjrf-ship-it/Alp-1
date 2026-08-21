@@ -583,14 +583,20 @@
 
   /* ---------- repères chiffrés ---------- */
 
+  /* Les filets sont portés par les cellules, non par un fond que le gap
+     laisserait voir : une rangée incomplète afficherait sinon un pavé de
+     couleur là où il manque des cellules. Les ombres portées des cellules
+     voisines se superposent en un seul filet. */
   .figures-cles {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-    gap: 1px; background: var(--hair);
-    border: 0.6px solid var(--hair);
+    gap: 0.6px; background: var(--paper);
     margin: 1.8rem 0;
   }
-  .figures-cles div { background: var(--paper); padding: 0.85rem 0.9rem; }
+  .figures-cles div {
+    background: var(--paper); padding: 0.85rem 0.9rem;
+    box-shadow: 0 0 0 0.6px var(--hair);
+  }
   .figures-cles .n {
     font-family: var(--mono); font-size: 1.28rem; font-weight: 500;
     font-variant-numeric: lining-nums tabular-nums;
@@ -631,6 +637,8 @@
 
     <p>Cette géométrie est alors confrontée à une dérive documentée plutôt qu'espérée — 6,0 points de base par trade, rapportés par des travaux couvrant soixante contrats et quarante-six ans — et à une friction déduite du barème, de la profondeur du carnet et de la latence plutôt que posée&nbsp;: 0,650 point en moyenne, soit le double de l'hypothèse de référence. La marge tient d'un facteur 10,9, et survit à un balayage de 3&nbsp;125 combinaisons des entrées libres.</p>
 
+    <p>Cette dérive est toutefois empruntée, non mesurée, et un effet publié s'arbitre. La décote post-publication documentée par McLean et Pontiff donne deux résultats opposés. La conclusion survit à une perte de 80,7&nbsp;% de la dérive, contre 58&nbsp;% observés en moyenne&nbsp;: c'est précisément ce que le changement de géométrie a acheté. Mais la décote court depuis la publication, et non depuis aujourd'hui&nbsp;: datée du travail de 2018, la dérive subsistante en 2026 laisse une marge de 1,29× sur son point de rupture, et la fenêtre se referme en 2027. <strong>L'absence de mesure cesse d'être une lacune de complétude pour devenir une échéance.</strong></p>
+
     <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">14cd4100705eab00</span>, borné à 3 configurations par le code lui-même, et il refuse de conclure en deçà de 1 000 trades.</p>
 
     <p class="keywords"><span>Mots-clés —</span> théorème d'arrêt optionnel&nbsp;; identité de Wald&nbsp;; premier passage&nbsp;; exposition au marché&nbsp;; coûts de transaction endogènes&nbsp;; lois nulles&nbsp;; momentum intraday&nbsp;; gamma des teneurs de marché&nbsp;; Sharpe déflaté&nbsp;; pré-enregistrement.</p>
@@ -640,8 +648,8 @@
   <div class="figures-cles">
     <div><span class="n">5,69&#8202;×</span><span class="t">division du seuil de signal par le seul changement de géométrie</span></div>
     <div><span class="n">10,9&#8202;×</span><span class="t">marge de la dérive documentée sur ce seuil</span></div>
+    <div><span class="n">2027</span><span class="t">année où la décote documentée la ramène sous ce seuil</span></div>
     <div><span class="n">0,650&#8202;pt</span><span class="t">friction déduite du carnet, contre 0,33 posée</span></div>
-    <div><span class="n">1 000</span><span class="t">trades avant que le protocole accepte de conclure</span></div>
     <div><span class="n">0</span><span class="t">série de prix ouverte à ce jour</span></div>
   </div>
 
