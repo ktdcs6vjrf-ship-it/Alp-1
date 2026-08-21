@@ -1,11 +1,11 @@
 # Alp-1
 
-> **Invariance des règles d'arrêt et exposition au marché : anatomie et
-> reconstruction d'une stratégie intraday sur futures indiciels**
+> **Temps de marché et péremption : invariance des règles d'arrêt,
+> exposition, et durée de vie d'une dérive empruntée**
 > *Série de documents de travail ALP, nº 1.* JEL : C12, C58, G11, G13, G14.
 
 Le document complet :
-[`docs/invariance-exposition.html`](docs/invariance-exposition.html) —
+[`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
 34 sections en cinq parties, 61 tables, 34 figures.
 
 ## Ce que contient ce dépôt
