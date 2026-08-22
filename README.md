@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
-48 sections en huit parties, 103 tables, 46 figures.
+49 sections en neuf parties, 107 tables, 48 figures.
 
 ## Ce que contient ce dépôt
 
@@ -20,7 +20,7 @@ déclenchée par le carnet. **ALP-2** est la géométrie que le diagnostic finit
 par désigner : aucun objectif, un stop posé sur la bande de bruit, une sortie
 au marché à la clôture.
 
-Le document se lit en sept parties. La première définit les huit notions
+Le document se lit en neuf parties. La première définit les huit notions
 nécessaires. La deuxième établit ce qu'une géométrie peut et ne peut pas. La
 troisième passe les sept instruments au crible de leur loi nulle — GEX, profil
 de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres. La quatrième
@@ -32,7 +32,9 @@ opérateur discrétionnaire — et ce que chacun coûte. La septième refait tou
 le travail sur la géométrie que l'opérateur pratique réellement — un stop de
 cinq à dix millièmes de pour cent, une remontée au point mort, deux pour cent
 du capital par tentative, et une répétition de l'entrée jusqu'à ce qu'elle
-passe. Le verdict note les deux approches sur une grille fixée d'avance, et
+passe. La huitième recompose ces couches en une seule règle exécutable, et
+chiffre ce que coûte chaque filtre de confluence en ratio de Sharpe avant de
+décider lesquels garder. Le verdict note les deux approches sur une grille fixée d'avance, et
 énonce ce qui manque.
 
 ## Le résultat structurant
@@ -910,7 +912,7 @@ python main.py --diffuseur f.csv  # évalue un registre de diffuseur collecté
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 649 tests unitaires du noyau
+python main.py --tests            # 690 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.

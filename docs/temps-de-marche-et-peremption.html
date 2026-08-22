@@ -745,8 +745,14 @@
         </ol>
       </li>
       <li>
-        <span class="pt">Verdict</span>
+        <span class="pt">Huitième partie — La règle, recomposée</span>
         <ol start="47">
+          <li><a href="#s-strategie">La stratégie, recomposée en une règle exécutable</a></li>
+        </ol>
+      </li>
+      <li>
+        <span class="pt">Verdict</span>
+        <ol start="48">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -7807,7 +7813,7 @@
 <text class="dl halo" x="66.0" y="94.5">Sharpe attendu de la dérive documentée</text>
 <line class="gl" x1="210.3" y1="22.0" x2="210.3" y2="210.0" stroke-dasharray="3 3"/>
 <circle class="pt s2" cx="210.30" cy="102.47" r="4"><title>rupture à 4.0 dérogations sur 7,012 trades</title></circle>
-<text class="dl halo" x="218.3" y="36.0">rupture&#8202;: 4,0 dérogations</text>
+<text class="dl halo" x="218.3" y="36.0">rupture : 4,0 dérogations</text>
 <text class="lg" x="526.0" y="44.0">soit une tous</text>
 <text class="lg" x="526.0" y="58.0">les 1 757 trades</text>
 </svg></div>
@@ -9070,6 +9076,197 @@
     <p>Et elle dit qu'une quatrième décision ne se prend pas sans mesure&nbsp;: le forçage lui-même. Son coût est démontré sous prix sans dérive&nbsp;; sa valeur, s'il en a une, tient dans une dérive conditionnelle qui n'a pas été mesurée ici. Le dispositif apparié de la section&nbsp;<a href="#s-operateur">42</a> est exactement l'instrument qui trancherait, et il est le seul de ce document qu'un opérateur seul peut conduire.</p>
   </div>
 
+
+  <div class="part">
+    <span class="lab">Huitième partie</span>
+    <h2>La règle, recomposée</h2>
+    <p>Le diagnostic des sept parties précédentes désigne un objet et un seul. Celle-ci le construit&nbsp;: une règle qu'une machine exécute sans discrétion, dont chaque paramètre porte sa raison, et qui refuse de conclure quand l'échantillon ne suffit pas.</p>
+  </div>
+
+  <h2 id="s-strategie">La stratégie, recomposée en une règle exécutable</h2>
+
+  <p>Le document a démonté sept couches, démontré qu'aucune géométrie ne crée d'espérance, désigné celle qui achète le plus de temps de marché, et chiffré ce qu'un signal doit porter. Il n'a jamais recomposé le tout. Cette section le fait, et le résultat ressemble peu à la pile d'origine — non par préférence, mais parce que chaque couche a été confrontée au prix qu'elle fait payer.</p>
+
+  <h3>Comment la règle est construite</h3>
+
+  <p>Le principe de conception contredit l'instinct, et il faut l'énoncer avant la règle elle-même. Ajouter une couche de confluence paraît toujours améliorer une stratégie&nbsp;: chaque filtre écarte des trades perdants, et le taux de réussite affiché monte. Le document a établi pourquoi c'est une illusion — chaque porte est un choix binaire, la famille des stratégies réalisables double, et le seuil de sélection croît comme la racine de son logarithme. Une pile de sept couches engendre cent vingt-huit stratégies&nbsp;; retenir la meilleure sur les données, c'est retenir le maximum de cent vingt-huit tirages.</p>
+
+  <p>La règle retenue est donc <strong>minimale par construction</strong>. Chaque porte doit justifier sa place par le rapport entre ce qu'elle apporte à l'espérance et ce qu'elle coûte au seuil — jamais par le taux de réussite qu'elle affiche.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 102</span> — La stratégie scellée, paramètre par paramètre, et la raison de chacun.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Élément</th><th class="wrap">Valeur</th><th class="wrap">Pourquoi celle-là</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Déclencheur</td><td class="wrap">Cassure de la bande de bruit</td><td class="wrap">Seule couche dont la loi nulle est exactement connue</td></tr>
+          <tr><td class="wrap">Heure d'entrée</td><td class="wrap">120 minutes</td><td class="wrap">Optimum au pire cas sur la boîte d'exposant, non l'heure qui maximise le rendement mesuré</td></tr>
+          <tr><td class="wrap">Largeur du stop</td><td class="wrap">La bande, indexée sur la volatilité du nœud</td><td class="wrap">Un stop en pourcentage fixe n'est pas un risque fixe</td></tr>
+          <tr><td class="wrap">Objectif</td><td class="wrap">Aucun</td><td class="wrap">Le théorème d'invariance interdit qu'il crée de l'espérance ; il ne ferait que raccourcir l'exposition</td></tr>
+          <tr><td class="wrap">Sortie</td><td class="wrap">Au marché, minute 388</td><td class="wrap">Maximise le temps de marché, seul canal par lequel une géométrie agit</td></tr>
+          <tr><td class="wrap">Entrées par séance</td><td class="wrap">3 au plus, ré-armement imposé</td><td class="wrap">Sans plafond, une séance agitée achèterait des trades sans acheter d'information</td></tr>
+          <tr><td class="wrap">Friction</td><td class="wrap">Loi déduite du carnet, quantile médian</td><td class="wrap">Déduite du barème, de la profondeur et de la latence, jamais posée</td></tr>
+          <tr><td class="wrap">Configurations</td><td class="wrap">1</td><td class="wrap">Aucune porte optionnelle ouverte, donc aucune taxe de sélection</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Rien n'y est ajustable après avoir vu les données. Aucune sous-période n'est écartée, aucun seuil de confluence n'est optimisé, et la règle refuse de conclure quand l'échantillon ne suffit pas — ce qui est le cas le plus fréquent.</p>
+    </figure>
+
+  <p>Deux choix méritent d'être soulignés parce qu'ils vont contre l'usage. L'heure d'entrée est l'optimum <em>au pire cas</em> sur la boîte d'exposant d'échelle, et non celle qui maximise le rendement mesuré&nbsp;: la différence entre les deux est exactement ce qui sépare une calibration d'un surajustement. Et la largeur du stop n'est pas un pourcentage fixe mais la bande indexée sur la volatilité locale du nœud d'entrée — conséquence directe du résultat de la section&nbsp;<a href="#s-vprofile">12</a>, où le profil de volume s'est révélé mesurer une densité d'occupation dont l'inverse est la volatilité locale.</p>
+
+  <h3>Les sept couches devant leur prix</h3>
+
+  <p>Aucune couche n'a été écartée par jugement. Chacune est déclarée, budgétée, et porte la raison qui la ferme — tirée du diagnostic de la troisième partie.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 103</span> — Les portes de la stratégie, l'état de chacune, et la raison qui la décide.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Porte</th><th class="wrap">Couche d'origine</th><th>État</th><th>Données exigées</th><th class="wrap">Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Cassure de la bande de bruit</td><td class="wrap">Bandes VWAP</td><td>ouverte</td><td>minute</td><td class="wrap">Seule couche dont la loi nulle est exactement connue et dont le paramètre se déduit de la dispersion mesurée. C'est le déclencheur, non une porte : la désactiver supprimerait la règle.</td></tr>
+          <tr><td class="wrap">Stop indexé sur la volatilité du nœud</td><td class="wrap">Profil de volume</td><td>ouverte</td><td>minute, volume</td><td class="wrap">Ce n'est pas un filtre d'entrée mais une correction de la largeur du stop : le profil de volume mesure une densité d'occupation dont l'inverse est la volatilité locale. N'ajoute aucune configuration, puisqu'elle ne décide d'aucune entrée.</td></tr>
+          <tr class="sep"><td class="wrap">Continuation de structure journalière</td><td class="wrap">Théorie de Dow</td><td>fermée</td><td>minute</td><td class="wrap">Loi nulle en forme fermée et sévère : la continuation survient trois jours sur quatre par hasard. La porte doublerait la famille pour un gain d'espérance que le document n'a pas su chiffrer au-dessus de cette fréquence.</td></tr>
+          <tr><td class="wrap">Écart aux bandes VWAP</td><td class="wrap">Bandes VWAP</td><td>fermée</td><td>minute</td><td class="wrap">Redondante avec le déclencheur : la bande de bruit et les bandes VWAP mesurent la même dispersion à des normalisations près. Deux portes qui disent la même chose coûtent deux fois et n'apportent qu'une fois.</td></tr>
+          <tr><td class="wrap">Entrée à cours limité en zone OTE</td><td class="wrap">Fibonacci</td><td>fermée</td><td>minute</td><td class="wrap">La Proposition sur l'arbitrage d'exécution est sans appel : attendre le retracement améliore l'espérance par signal **si et seulement si** le signal exécuté au marché est perdant. Ouvrir cette porte revient à parier que le déclencheur ne vaut rien.</td></tr>
+          <tr><td class="wrap">Signe du gamma net des teneurs</td><td class="wrap">Exposition gamma</td><td>fermée</td><td>minute, gamma</td><td class="wrap">Exige une série de gamma quotidienne non rattrapable rétrospectivement. Le contrôle de plausibilité a par ailleurs montré que le régime de gamma ne peut pas produire la persistance invoquée. Reste ouverte au test, fermée par défaut.</td></tr>
+          <tr><td class="wrap">Persistance de liquidité au carnet</td><td class="wrap">Flux d'ordres</td><td>fermée</td><td>minute, book</td><td class="wrap">La demi-vie d'un signal de carnet est de quelques secondes ; sur une exposition de deux cents minutes il n'en subsiste rien. Le document a chiffré la dérive qu'il faudrait — plusieurs fois la volatilité. La couche relève de l'exécution, pas de la prédiction.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Les deux premières lignes ne sont pas des portes optionnelles : le déclencheur définit la règle, et la correction de stop ne décide d'aucune entrée. Aucune des deux n'ajoute de configuration. Les cinq suivantes sont fermées, et chacune porte la raison qui la ferme — tirée du diagnostic de la troisième partie, non d'une préférence.</p>
+    </figure>
+
+  <p>Le catalogue mérite une lecture attentive, car il n'y a pas de verdict unique. La cassure de bande et la correction de stop ne sont pas des portes optionnelles&nbsp;: la première <em>est</em> la règle, la seconde ne décide d'aucune entrée. Ni l'une ni l'autre n'ajoute de configuration. Les cinq autres tombent chacune sur un résultat déjà établi&nbsp;: la théorie de Dow contre sa loi nulle, qui la donne trois jours sur quatre&nbsp;; les bandes VWAP par redondance avec le déclencheur, qui mesure la même dispersion&nbsp;; la grille de Fibonacci par la Proposition sur l'arbitrage d'exécution, qui n'améliore l'espérance que si le signal exécuté au marché est perdant&nbsp;; le régime de gamma par son ordre de grandeur, écarté à la section&nbsp;<a href="#s-gamma">9</a>&nbsp;; le carnet d'ordres par sa demi-vie de quelques secondes contre une exposition de deux cents minutes.</p>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — une configuration unique ne paie rien.</strong> Le seuil de sélection déflaté vaut zéro quand il n'y a qu'un candidat, et ce n'est pas une faveur mais l'énoncé exact du problème&nbsp;: il n'y a rien à sélectionner. C'est le seul endroit de tout le document où une grandeur défavorable s'annule, et il s'obtient en n'ajoutant rien.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 104</span> — Ce qu'une couche de confluence coûte au seuil de sélection, sur les 7 012 trades du protocole borné.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Portes ouvertes</th><th>Configurations</th><th>Seuil de sélection</th><th>Part du Sharpe consommée</th><th>Le signal franchit encore</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>1</td><td>0,0000</td><td>0 %</td><td>oui</td></tr>
+          <tr><td>1</td><td>2</td><td>0,0141</td><td>42 %</td><td>oui</td></tr>
+          <tr><td>2</td><td>4</td><td>0,0199</td><td>60 %</td><td>oui</td></tr>
+          <tr><td>3</td><td>8</td><td>0,0244</td><td>73 %</td><td>oui</td></tr>
+          <tr><td>4</td><td>16</td><td>0,0281</td><td>85 %</td><td>oui</td></tr>
+          <tr><td>5</td><td>32</td><td>0,0314</td><td>95 %</td><td>oui</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> C'est la version chiffrée d'une intuition répandue et fausse. Ajouter une couche paraît toujours améliorer une stratégie, puisque le taux de réussite affiché monte. Mais chaque porte est un choix binaire, la famille double, et le seuil croît comme la racine de son logarithme. Une porte consomme 42 % du Sharpe de la dérive documentée ; les cinq en consomment 95 % — avant qu'aucune n'ait prouvé qu'elle apporte quoi que ce soit. Une configuration unique, elle, ne paie rien.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 47</span> — Seuil de sélection déflaté selon le nombre de couches de confluence ouvertes, comparé au Sharpe qu'offre la dérive documentée. La courbe monte, l'horizontale ne bouge pas&nbsp;: leur écart est ce qui reste au signal après la taxe de sélection.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 262" role="img" aria-label="Seuil de sélection déflaté selon le nombre de couches de confluence ouvertes, comparé au Sharpe qu'offre la dérive documentée" preserveAspectRatio="xMidYMid meet">
+<line class="gl" x1="62.0" y1="216.0" x2="512.0" y2="216.0"/>
+<text class="tk" x="56.0" y="219.0" text-anchor="end">0,00</text>
+<line class="gl" x1="62.0" y1="172.0" x2="512.0" y2="172.0"/>
+<text class="tk" x="56.0" y="175.0" text-anchor="end">0,01</text>
+<line class="gl" x1="62.0" y1="128.0" x2="512.0" y2="128.0"/>
+<text class="tk" x="56.0" y="131.0" text-anchor="end">0,02</text>
+<line class="gl" x1="62.0" y1="84.0" x2="512.0" y2="84.0"/>
+<text class="tk" x="56.0" y="87.0" text-anchor="end">0,03</text>
+<text class="ax" transform="translate(11,119.0) rotate(-90)" text-anchor="middle">Sharpe par trade</text>
+<line class="ba" x1="62.0" y1="216.0" x2="512.0" y2="216.0"/>
+<text class="tk" x="62.0" y="230.0" text-anchor="middle">0</text>
+<text class="tk" x="137.0" y="230.0" text-anchor="middle">1</text>
+<text class="tk" x="212.0" y="230.0" text-anchor="middle">2</text>
+<text class="tk" x="287.0" y="230.0" text-anchor="middle">3</text>
+<text class="tk" x="362.0" y="230.0" text-anchor="middle">4</text>
+<text class="tk" x="437.0" y="230.0" text-anchor="middle">5</text>
+<text class="tk" x="512.0" y="230.0" text-anchor="middle">6</text>
+<text class="ax" x="287.0" y="258.0" text-anchor="middle">couches de confluence ouvertes</text>
+<line class="hl" x1="62.0" y1="69.9" x2="512.0" y2="69.9"/>
+<text class="dl halo" x="70.0" y="61.9">Sharpe offert par la dérive documentée</text>
+<path class="ln s2" d="M62.00,216.00 L69.50,216.00 L77.00,216.00 L84.50,216.00 L92.00,216.00 L99.50,216.00 L107.00,216.00 L114.50,216.00 L122.00,216.00 L129.50,216.00 L137.00,154.12 L144.50,151.10 L152.00,148.22 L159.50,145.45 L167.00,142.79 L174.50,140.22 L182.00,137.73 L189.50,135.32 L197.00,132.99 L204.50,130.71 L212.00,128.50 L219.50,126.33 L227.00,124.22 L234.50,122.16 L242.00,120.14 L249.50,118.17 L257.00,116.23 L264.50,114.33 L272.00,112.46 L279.50,110.63 L287.00,108.83 L294.50,107.06 L302.00,105.31 L309.50,103.60 L317.00,101.91 L324.50,100.24 L332.00,98.60 L339.50,96.98 L347.00,95.38 L354.50,93.81 L362.00,92.25 L369.50,90.71 L377.00,89.19 L384.50,87.69 L392.00,86.21 L399.50,84.74 L407.00,83.29 L414.50,81.86 L422.00,80.44 L429.50,79.03 L437.00,77.64 L444.50,76.27 L452.00,74.90 L459.50,73.55 L467.00,72.22 L474.50,70.89 L482.00,69.58 L489.50,68.28 L497.00,66.98 L504.50,65.71 L512.00,64.44"/>
+<circle class="pt s2" cx="137.00" cy="154.12" r="4"><title>1 couche(s) · seuil 0.0141 · 42 % du Sharpe consommé</title></circle>
+<text class="dl halo" x="146.0" y="158.1">42 %</text>
+<circle class="pt s2" cx="437.00" cy="77.64" r="4"><title>5 couche(s) · seuil 0.0314 · 95 % du Sharpe consommé</title></circle>
+<text class="dl halo" x="446.0" y="81.6">95 %</text>
+<text class="lg" x="522.0" y="44.0">ce que la</text>
+<text class="lg" x="522.0" y="58.0">sélection prélève</text>
+<text class="lg" x="522.0" y="84.0">zéro porte :</text>
+<text class="lg" x="522.0" y="98.0">aucune taxe</text>
+</svg></div>
+    </figure>
+
+  <p><strong>Deuxième point — une seule porte consomme 42&nbsp;% du Sharpe disponible.</strong> Sur les 7 012 trades du protocole borné, ouvrir une couche porte le seuil de zéro à 0,0141, contre un Sharpe de 0,085 qu'implique la dérive documentée. La couche n'a encore rien prouvé qu'elle a déjà pris deux cinquièmes de la marge.</p>
+
+  <p><strong>Troisième point — les cinq ensemble en consomment 95&nbsp;%.</strong> La pile complète ne laisse rien. C'est la version chiffrée d'une intuition répandue et fausse, et elle explique pourquoi tant de stratégies à confluence multiple paraissent excellentes en backtest et meurent en production&nbsp;: le backtest ne facture pas la sélection, le marché si.</p>
+
+  <p><strong>Quatrième point — la sobriété est ce qui rend la règle finançable.</strong> Une stratégie à une porte a besoin d'un signal qui franchisse zéro. La même à cinq portes a besoin d'un signal trois fois meilleur que la dérive documentée. Le choix n'est donc pas entre une règle riche et une règle pauvre, mais entre une règle testable et une règle qui ne le sera jamais.</p>
+
+  <h3>La batterie, et pourquoi aucun contrôle n'est facultatif</h3>
+
+  <p>La règle est soumise à sept contrôles enchaînés du moins coûteux au plus coûteux&nbsp;: taille d'échantillon rapportée à l'effet à détecter, seuil de sélection déflaté, intervalle de confiance par bootstrap stationnaire à longueur de bloc déduite de l'autocorrélation mesurée, p-valeur par permutation de signe, plis purgés avec embargo, probabilité de surajustement par validation croisée combinatoire, et espérance nette.</p>
+
+  <p><strong>Un seul contrôle manqué suffit à refuser.</strong> Aucune pondération, aucune moyenne, aucun score composite. C'est la seule règle de décision qui résiste à la tentation de chercher l'angle sous lequel un résultat paraît bon — et cette tentation est la forme la plus commune du surajustement, celle qu'aucune correction statistique ne rattrape.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 105</span> — La batterie appliquée à une série sans dérive, où la seule réponse juste est le refus.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Contrôle</th><th>Verdict</th><th class="wrap">Lecture</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Échantillon suffisant pour décider</td><td>MANQUÉ</td><td class="wrap">325 trades contre 10,568 exigés pour décider la dérive de référence (422.0×10⁻⁶ bit par trade)</td></tr>
+          <tr><td class="wrap">Sharpe au-dessus du seuil de sélection</td><td>MANQUÉ</td><td class="wrap">SR/trade -0.0620 contre un seuil de 0.0000 pour 1 configuration(s) — une seule configuration ne paie aucune taxe de sélection</td></tr>
+          <tr><td class="wrap">Borne basse de l'espérance au-dessus de zéro</td><td>MANQUÉ</td><td class="wrap">borne inférieure de l'intervalle à 95 % : -6.6141 point</td></tr>
+          <tr><td class="wrap">Loi nulle directionnelle rejetée</td><td>MANQUÉ</td><td class="wrap">p-valeur 0.8439 contre la loi des mêmes positions prises au hasard</td></tr>
+          <tr><td class="wrap">Plis purgés majoritairement positifs</td><td>MANQUÉ</td><td class="wrap">40 % des plis hors échantillon positifs, purge et embargo appliqués</td></tr>
+          <tr><td class="wrap">Probabilité de surajustement acceptable</td><td>franchi</td><td class="wrap">sans objet : une configuration unique n'offre aucune sélection à surajuster. Le contrôle reprend son sens dès qu'une porte optionnelle s'ouvre.</td></tr>
+          <tr><td class="wrap">Espérance strictement positive</td><td>MANQUÉ</td><td class="wrap">espérance nette -2.3518 point par trade, friction déduite comprise</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Aucun contrôle n'est facultatif et aucun n'est pondéré : un seul manqué suffit à refuser. C'est la seule règle de décision qui résiste à la tentation de chercher l'angle sous lequel un résultat paraît bon. La série de cette table est une marche aléatoire par construction, et la batterie manque 6 contrôles sur 7 — une batterie qui accepterait tout ne contrôlerait rien.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 48</span> — Verdict de la batterie contrôle par contrôle, sur une série dont la vérité est l'absence d'avantage. La seule réponse juste est le refus, et la batterie la donne.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 250" role="img" aria-label="Verdict de la batterie, contrôle par contrôle, sur une série dont la vérité est l'absence d'avantage" preserveAspectRatio="xMidYMid meet">
+<text class="lg" x="220.0" y="43.1" text-anchor="end">Échantillon suffisant pour décider</text>
+<circle class="pt s2" cx="244.0" cy="39.6" r="6"><title>325 trades contre 10,568 exigés pour décider la dérive de référence (422.0×10⁻⁶ bit par trade)</title></circle>
+<text class="dl" x="260.0" y="43.1">manqué</text>
+<text class="lg" x="220.0" y="70.2" text-anchor="end">Sharpe au-dessus du seuil de sélection</text>
+<circle class="pt s2" cx="244.0" cy="66.7" r="6"><title>SR/trade -0.0620 contre un seuil de 0.0000 pour 1 configuration(s) — une seule configuration ne paie aucune taxe de sélection</title></circle>
+<text class="dl" x="260.0" y="70.2">manqué</text>
+<text class="lg" x="220.0" y="97.4" text-anchor="end">Borne basse de l'espérance au-dessus de zéro</text>
+<circle class="pt s2" cx="244.0" cy="93.9" r="6"><title>borne inférieure de l'intervalle à 95 % : -6.6141 point</title></circle>
+<text class="dl" x="260.0" y="97.4">manqué</text>
+<text class="lg" x="220.0" y="124.5" text-anchor="end">Loi nulle directionnelle rejetée</text>
+<circle class="pt s2" cx="244.0" cy="121.0" r="6"><title>p-valeur 0.8439 contre la loi des mêmes positions prises au hasard</title></circle>
+<text class="dl" x="260.0" y="124.5">manqué</text>
+<text class="lg" x="220.0" y="151.6" text-anchor="end">Plis purgés majoritairement positifs</text>
+<circle class="pt s2" cx="244.0" cy="148.1" r="6"><title>40 % des plis hors échantillon positifs, purge et embargo appliqués</title></circle>
+<text class="dl" x="260.0" y="151.6">manqué</text>
+<text class="lg" x="220.0" y="178.8" text-anchor="end">Probabilité de surajustement acceptable</text>
+<circle class="pt s3" cx="244.0" cy="175.3" r="6"><title>sans objet : une configuration unique n'offre aucune sélection à surajuster. Le contrôle reprend son sens dès qu'une porte optionnelle s'ouvre.</title></circle>
+<text class="dl" x="260.0" y="178.8">franchi</text>
+<text class="lg" x="220.0" y="205.9" text-anchor="end">Espérance strictement positive</text>
+<circle class="pt s2" cx="244.0" cy="202.4" r="6"><title>espérance nette -2.3518 point par trade, friction déduite comprise</title></circle>
+<text class="dl" x="260.0" y="205.9">manqué</text>
+<text class="hdr" x="220.0" y="16.0" text-anchor="end">série sans dérive</text>
+<text class="lg" x="244.0" y="238.0">6 contrôles manqués sur 7  — la seule réponse juste</text>
+</svg></div>
+    </figure>
+
+  <p>La série de cette table est une marche aléatoire par construction&nbsp;: il n'y a rien à y trouver, et la batterie manque 6 contrôles sur 7. C'est le seul test qui distingue une batterie d'une décoration — un appareil qui accepterait tout ne contrôlerait rien, et l'on ne vérifie cela qu'en le pointant sur du bruit.</p>
+
+  <p>Un contrôle mérite un commentaire, parce qu'il a été mal construit dans une première version et que l'erreur est instructive. La taille d'échantillon se lit sur l'effet qu'on cherche à <em>détecter</em>, jamais sur celui qu'on a observé. La calculer sur le taux de réussite réalisé inverse le test&nbsp;: un résultat extrême, fût-il extrêmement mauvais, exige alors un petit échantillon et franchit le contrôle. Le seuil retenu est celui de la dérive de référence, 422,0 millionièmes de bit par trade, et il ne dépend d'aucune donnée.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que cette section ajoute, et ce qu'elle n'ajoute pas</span>
+    <p>Elle n'ajoute aucun avantage et ne mesure rien du marché. La stratégie qu'elle spécifie est exécutable sur n'importe quel historique à la minute par une seule commande, et la batterie rend un verdict binaire — mais aucun des deux n'a encore vu une série de prix.</p>
+    <p>Ce qu'elle ajoute est une <strong>règle qu'on ne peut pas ajuster après coup</strong>. Aucun paramètre libre, aucune sous-période écartée, aucun seuil de confluence optimisé, et un refus explicite quand l'échantillon ne suffit pas. Le document possédait le diagnostic&nbsp;; il lui manquait l'objet que le diagnostic désigne.</p>
+  </div>
+
   <div class="part">
     <span class="lab">Verdict</span>
     <h2>Ce que ce document établit, et ce qu'il n'établit pas</h2>
@@ -9081,7 +9278,7 @@
   <p>La grille qui suit a été fixée avant d'être appliquée, et ne contient aucun critère taillé pour l'un des deux documents : douze critères, trois familles, des poids qui somment à cent, et une échelle d'ancrage commune de 0 à 5. Chaque score est accompagné du fait qui le justifie, de sorte qu'un score se conteste en contestant ce fait — la seule propriété qu'on demande à une note.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 102</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
+      <figcaption><span class="lab">Table 106</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Critère</th><th>Poids</th><th>ALP-1</th><th>ALP-2</th><th>Points ALP-1</th><th>Points ALP-2</th></tr></thead>
@@ -9106,7 +9303,7 @@
     </figure>
 
       <figure>
-      <figcaption><span class="lab">Table 103</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
+      <figcaption><span class="lab">Table 107</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Famille</th><th>Maximum</th><th>ALP-1</th><th>ALP-2</th><th>Écart</th></tr></thead>

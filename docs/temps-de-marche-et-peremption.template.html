@@ -665,8 +665,14 @@
         </ol>
       </li>
       <li>
-        <span class="pt">Verdict</span>
+        <span class="pt">Huitième partie — La règle, recomposée</span>
         <ol start="47">
+          <li><a href="#s-strategie">La stratégie, recomposée en une règle exécutable</a></li>
+        </ol>
+      </li>
+      <li>
+        <span class="pt">Verdict</span>
+        <ol start="48">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -2494,6 +2500,69 @@
     <span class="lab">Ce que cette partie recommande, et ce qu'elle ne recommande pas</span>
     <p>Elle ne dit pas d'abandonner. Elle dit que trois décisions, prises avant tout signal et sans rien mesurer, déplacent l'exigence de plusieurs ordres de grandeur&nbsp;: <strong>changer de contrat</strong> — le tick du Nasdaq divise <span class="v">c/L</span> par près de trois à largeur égale&nbsp;; <strong>élargir le stop</strong> — chaque doublement divise l'exigence de Sharpe par plus de deux, par les deux canaux à la fois&nbsp;; <strong>cesser de compter les sorties au point mort comme neutres</strong>, puisqu'elles coûtent {{frc_be_hi}}&nbsp;R chacune.</p>
     <p>Et elle dit qu'une quatrième décision ne se prend pas sans mesure&nbsp;: le forçage lui-même. Son coût est démontré sous prix sans dérive&nbsp;; sa valeur, s'il en a une, tient dans une dérive conditionnelle qui n'a pas été mesurée ici. Le dispositif apparié de la section&nbsp;<a href="#s-operateur">42</a> est exactement l'instrument qui trancherait, et il est le seul de ce document qu'un opérateur seul peut conduire.</p>
+  </div>
+
+
+  <div class="part">
+    <span class="lab">Huitième partie</span>
+    <h2>La règle, recomposée</h2>
+    <p>Le diagnostic des sept parties précédentes désigne un objet et un seul. Celle-ci le construit&nbsp;: une règle qu'une machine exécute sans discrétion, dont chaque paramètre porte sa raison, et qui refuse de conclure quand l'échantillon ne suffit pas.</p>
+  </div>
+
+  <h2 id="s-strategie">La stratégie, recomposée en une règle exécutable</h2>
+
+  <p>Le document a démonté sept couches, démontré qu'aucune géométrie ne crée d'espérance, désigné celle qui achète le plus de temps de marché, et chiffré ce qu'un signal doit porter. Il n'a jamais recomposé le tout. Cette section le fait, et le résultat ressemble peu à la pile d'origine — non par préférence, mais parce que chaque couche a été confrontée au prix qu'elle fait payer.</p>
+
+  <h3>Comment la règle est construite</h3>
+
+  <p>Le principe de conception contredit l'instinct, et il faut l'énoncer avant la règle elle-même. Ajouter une couche de confluence paraît toujours améliorer une stratégie&nbsp;: chaque filtre écarte des trades perdants, et le taux de réussite affiché monte. Le document a établi pourquoi c'est une illusion — chaque porte est un choix binaire, la famille des stratégies réalisables double, et le seuil de sélection croît comme la racine de son logarithme. Une pile de sept couches engendre cent vingt-huit stratégies&nbsp;; retenir la meilleure sur les données, c'est retenir le maximum de cent vingt-huit tirages.</p>
+
+  <p>La règle retenue est donc <strong>minimale par construction</strong>. Chaque porte doit justifier sa place par le rapport entre ce qu'elle apporte à l'espérance et ce qu'elle coûte au seuil — jamais par le taux de réussite qu'elle affiche.</p>
+
+  {{TABLE:spec}}
+
+  <p>Deux choix méritent d'être soulignés parce qu'ils vont contre l'usage. L'heure d'entrée est l'optimum <em>au pire cas</em> sur la boîte d'exposant d'échelle, et non celle qui maximise le rendement mesuré&nbsp;: la différence entre les deux est exactement ce qui sépare une calibration d'un surajustement. Et la largeur du stop n'est pas un pourcentage fixe mais la bande indexée sur la volatilité locale du nœud d'entrée — conséquence directe du résultat de la section&nbsp;<a href="#s-vprofile">12</a>, où le profil de volume s'est révélé mesurer une densité d'occupation dont l'inverse est la volatilité locale.</p>
+
+  <h3>Les sept couches devant leur prix</h3>
+
+  <p>Aucune couche n'a été écartée par jugement. Chacune est déclarée, budgétée, et porte la raison qui la ferme — tirée du diagnostic de la troisième partie.</p>
+
+  {{TABLE:gates}}
+
+  <p>Le catalogue mérite une lecture attentive, car il n'y a pas de verdict unique. La cassure de bande et la correction de stop ne sont pas des portes optionnelles&nbsp;: la première <em>est</em> la règle, la seconde ne décide d'aucune entrée. Ni l'une ni l'autre n'ajoute de configuration. Les cinq autres tombent chacune sur un résultat déjà établi&nbsp;: la théorie de Dow contre sa loi nulle, qui la donne trois jours sur quatre&nbsp;; les bandes VWAP par redondance avec le déclencheur, qui mesure la même dispersion&nbsp;; la grille de Fibonacci par la Proposition sur l'arbitrage d'exécution, qui n'améliore l'espérance que si le signal exécuté au marché est perdant&nbsp;; le régime de gamma par son ordre de grandeur, écarté à la section&nbsp;<a href="#s-gamma">9</a>&nbsp;; le carnet d'ordres par sa demi-vie de quelques secondes contre une exposition de deux cents minutes.</p>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — une configuration unique ne paie rien.</strong> Le seuil de sélection déflaté vaut zéro quand il n'y a qu'un candidat, et ce n'est pas une faveur mais l'énoncé exact du problème&nbsp;: il n'y a rien à sélectionner. C'est le seul endroit de tout le document où une grandeur défavorable s'annule, et il s'obtient en n'ajoutant rien.</p>
+
+  {{TABLE:gate_price}}
+
+  {{FIGURE:gateprice|Seuil de sélection déflaté selon le nombre de couches de confluence ouvertes, comparé au Sharpe qu'offre la dérive documentée. La courbe monte, l'horizontale ne bouge pas&nbsp;: leur écart est ce qui reste au signal après la taxe de sélection.}}
+
+  <p><strong>Deuxième point — une seule porte consomme {{st_price_one_pct}}&nbsp;% du Sharpe disponible.</strong> Sur les {{st_trades}} trades du protocole borné, ouvrir une couche porte le seuil de zéro à {{st_price_one}}, contre un Sharpe de {{sr_trade}} qu'implique la dérive documentée. La couche n'a encore rien prouvé qu'elle a déjà pris deux cinquièmes de la marge.</p>
+
+  <p><strong>Troisième point — les cinq ensemble en consomment {{st_price_all_pct}}&nbsp;%.</strong> La pile complète ne laisse rien. C'est la version chiffrée d'une intuition répandue et fausse, et elle explique pourquoi tant de stratégies à confluence multiple paraissent excellentes en backtest et meurent en production&nbsp;: le backtest ne facture pas la sélection, le marché si.</p>
+
+  <p><strong>Quatrième point — la sobriété est ce qui rend la règle finançable.</strong> Une stratégie à une porte a besoin d'un signal qui franchisse zéro. La même à cinq portes a besoin d'un signal trois fois meilleur que la dérive documentée. Le choix n'est donc pas entre une règle riche et une règle pauvre, mais entre une règle testable et une règle qui ne le sera jamais.</p>
+
+  <h3>La batterie, et pourquoi aucun contrôle n'est facultatif</h3>
+
+  <p>La règle est soumise à sept contrôles enchaînés du moins coûteux au plus coûteux&nbsp;: taille d'échantillon rapportée à l'effet à détecter, seuil de sélection déflaté, intervalle de confiance par bootstrap stationnaire à longueur de bloc déduite de l'autocorrélation mesurée, p-valeur par permutation de signe, plis purgés avec embargo, probabilité de surajustement par validation croisée combinatoire, et espérance nette.</p>
+
+  <p><strong>Un seul contrôle manqué suffit à refuser.</strong> Aucune pondération, aucune moyenne, aucun score composite. C'est la seule règle de décision qui résiste à la tentation de chercher l'angle sous lequel un résultat paraît bon — et cette tentation est la forme la plus commune du surajustement, celle qu'aucune correction statistique ne rattrape.</p>
+
+  {{TABLE:battery}}
+
+  {{FIGURE:battery|Verdict de la batterie contrôle par contrôle, sur une série dont la vérité est l'absence d'avantage. La seule réponse juste est le refus, et la batterie la donne.}}
+
+  <p>La série de cette table est une marche aléatoire par construction&nbsp;: il n'y a rien à y trouver, et la batterie manque {{st_failed}} contrôles sur {{st_checks}}. C'est le seul test qui distingue une batterie d'une décoration — un appareil qui accepterait tout ne contrôlerait rien, et l'on ne vérifie cela qu'en le pointant sur du bruit.</p>
+
+  <p>Un contrôle mérite un commentaire, parce qu'il a été mal construit dans une première version et que l'erreur est instructive. La taille d'échantillon se lit sur l'effet qu'on cherche à <em>détecter</em>, jamais sur celui qu'on a observé. La calculer sur le taux de réussite réalisé inverse le test&nbsp;: un résultat extrême, fût-il extrêmement mauvais, exige alors un petit échantillon et franchit le contrôle. Le seuil retenu est celui de la dérive de référence, {{st_ref_bits}} millionièmes de bit par trade, et il ne dépend d'aucune donnée.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que cette section ajoute, et ce qu'elle n'ajoute pas</span>
+    <p>Elle n'ajoute aucun avantage et ne mesure rien du marché. La stratégie qu'elle spécifie est exécutable sur n'importe quel historique à la minute par une seule commande, et la batterie rend un verdict binaire — mais aucun des deux n'a encore vu une série de prix.</p>
+    <p>Ce qu'elle ajoute est une <strong>règle qu'on ne peut pas ajuster après coup</strong>. Aucun paramètre libre, aucune sous-période écartée, aucun seuil de confluence optimisé, et un refus explicite quand l'échantillon ne suffit pas. Le document possédait le diagnostic&nbsp;; il lui manquait l'objet que le diagnostic désigne.</p>
   </div>
 
   <div class="part">
