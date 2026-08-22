@@ -45,8 +45,8 @@ class TestFusion(unittest.TestCase):
         # ALP-1 (report+lexicon+quant), ALP-2, les deux corrections, et le
         # protocole à horizon borné
         # ALP-1, ALP-2, décote/exposant, horizon borné, instruments,
-        # puis les bornes venues d'ailleurs
-        self.assertEqual(len(t), 32 + 24 + 5 + 8 + 2 + 7)
+        # les bornes venues d'ailleurs, puis ce que le dehors offre
+        self.assertEqual(len(t), 32 + 24 + 5 + 8 + 2 + 7 + 15)
 
     def test_toutes_les_figures_coexistent(self):
         self.assertEqual(len(monograph.figures()), 40)
@@ -112,12 +112,12 @@ class TestStructure(unittest.TestCase):
         self.assertEqual(re.findall(r"\{\{[^}]+\}\}", self.html), [])
 
     def test_les_parties_sont_toutes_ouvertes(self):
-        self.assertEqual(self.corps.count('<div class="part">'), 6)
+        self.assertEqual(self.corps.count('<div class="part">'), 7)
 
     def test_les_sections_sont_numerotees_en_continu(self):
         ids = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)
-        self.assertEqual(len(ids), 40)
-        self.assertEqual(len(set(ids)), 40)
+        self.assertEqual(len(ids), 44)
+        self.assertEqual(len(set(ids)), 44)
 
     def test_le_sommaire_couvre_toutes_les_sections(self):
         ids = set(re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps))

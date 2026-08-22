@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
-40 sections en six parties, 78 tables, 40 figures.
+44 sections en sept parties, 93 tables, 40 figures.
 
 ## Ce que contient ce dépôt
 
@@ -20,13 +20,16 @@ déclenchée par le carnet. **ALP-2** est la géométrie que le diagnostic finit
 par désigner : aucun objectif, un stop posé sur la bande de bruit, une sortie
 au marché à la clôture.
 
-Le document se lit en cinq parties. La première définit les huit notions
+Le document se lit en six parties. La première définit les huit notions
 nécessaires. La deuxième établit ce qu'une géométrie peut et ne peut pas. La
 troisième passe les sept instruments au crible de leur loi nulle — GEX, profil
 de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres. La quatrième
 construit ALP-2 et la confronte à une dérive publiée et à une friction déduite
-du carnet. La cinquième note les deux approches sur une grille fixée d'avance,
-et énonce ce qui manque.
+du carnet. La cinquième va chercher hors de la finance les bornes que le
+théorème d'invariance laisse ouvertes. La sixième demande ce que le dehors
+offre — un signal diffusé en direct, un catalogue de dérives publiées, un
+opérateur discrétionnaire — et ce que chacun coûte. Le verdict note les deux
+approches sur une grille fixée d'avance, et énonce ce qui manque.
 
 ## Le résultat structurant
 
@@ -533,6 +536,172 @@ que l'avantage recherché soit petit : **il est plus petit que le bruit propre
 des appareils censés le voir.** C'est l'explication du mur, et elle dit
 pourquoi il est structurel.
 
+## Ce que le dehors offre, et ce qu'il coûte
+
+Trois questions qu'un opérateur pose avant d'engager du capital, et auxquelles
+rien de ce qui précède ne répondait. Un signal diffusé en direct vaut-il
+quelque chose à l'instant où on le reçoit ? La littérature offre-t-elle
+d'autres dérives que celle qui est empruntée, et combien peut-on en assembler ?
+Un talent discrétionnaire qui ne se formule pas peut-il malgré tout se mesurer ?
+
+### `alp1/broadcast.py` — le signal diffusé, et ce que le trajet lui prend
+
+Un signal a une demi-vie ; un direct a un délai — encodage, mémoire tampon,
+distribution, réaction humaine. La dérive captée par un receveur en retard de
+`Δ` vaut la dérive captée sans latence **multipliée par `2^(−Δ/h)`** : le
+retard ne déforme pas le profil de décroissance, il l'atténue d'un facteur qui
+ne dépend que du rapport de deux durées. D'où une frontière en forme fermée,
+`h* = Δ·ln 2 / ln(µ/µ*)`, et une égalité commode : à dérive double du seuil,
+la demi-vie minimale du signal **égale le délai**.
+
+| Nature du signal | Demi-vie | Δ = 3 s | Δ = 10 s | Δ = 30 s |
+|---|---|---|---|---|
+| flux de carnet | 3 s | 50,0 % | **9,9 %** | 0,1 % |
+| motif d'une barre | 60 s | 96,6 % | 89,1 % | 70,7 % |
+| motif de séance | 1 800 s | 99,9 % | 99,6 % | 98,8 % |
+
+**La lecture de flux ne se recopie pas**, et le résultat rejoint par une autre
+route celui de la couche de carnet : ce qui n'était pas transportable dans le
+temps ne l'est pas davantage dans l'espace. **Ce qui se recopie est ce qui
+n'avait pas besoin d'être diffusé** : un motif dont la demi-vie se compte en
+dizaines de minutes est, par construction, un motif que le spectateur pouvait
+voir sur ses propres barres.
+
+Deux bornes achèvent la couche, et elles portent sur la collecte plutôt que
+sur le signal.
+
+**Le classement fabrique le talent qu'on y cherche.** Chercher « le bon
+diffuseur » parmi K candidats est une sélection sur K configurations. Sur deux
+cents appels chacun et *aucun* talent, le meilleur d'une centaine de diffuseurs
+affiche **58,9 %** de réussite. Établir un avantage réel de cinq points au rang
+où un diffuseur est lu parmi cinquante demande **1 543 appels enregistrés**,
+soit une année et demie de collecte à cinq appels par direct.
+
+**Un historique reconstitué n'est pas un échantillon.** Si une fraction `d` des
+appels perdants ne survit pas au récapitulatif, le taux affiché vaut
+`p₀ / [p₀ + (1 − p₀)(1 − d)]`. La relation s'inverse, et le nombre qu'elle rend
+est petit : **un appel perdant effacé sur dix suffit à fabriquer l'intégralité
+de l'avantage que la géométrie 1:20 exige.** Aucune intention n'est supposée —
+un direct interrompu et un effacement délibéré ont la même arithmétique. Seule
+une collecte prospective, horodatée à la réception, est donc recevable, et
+c'est la seule que le dépôt implémente.
+
+Il reste une lecture recevable, et ce n'est pas celle qu'on cherchait. Ce qu'un
+direct mesure de façon fiable n'est pas une prévision de prix mais une
+**attention datée**. Le cadre range cette grandeur du côté de la capacité et de
+la friction, non de la dérive — et Barber, Huang, Odean et Schwarz (2022)
+documentent que les épisodes d'attention retail extrême sont suivis de
+rendements *négatifs*. Le témoin, s'il informe, informe à contre-pied. Les taux
+de base publiés par Kakhbod, Kazempour, Livdan et Schürhoff (2023) vont dans le
+même sens : **28 %** de talent contre **56 %** de talent négatif, de sorte
+qu'un filtre de contre-pied retient 58 % de sujets en plus avec une loi a
+posteriori plus pure — 92,1 % contre 84,1 %.
+
+```bash
+python main.py --tape <pseudo>    # enregistre un direct, une frappe par appel
+python main.py --diffuseur f.csv  # évalue le registre collecté
+```
+
+### `alp1/litedge.py` — neuf dérives publiées, passées au critère maître
+
+Un effet n'entre pas parce qu'il est célèbre : il entre si `cadence · [µ ·
+min(exposition, horizon) − c]` est positif après décote, et si son mandat, son
+instrument et son coût de données sont compatibles avec la géométrie. Quatre
+portes, et le résultat est négatif.
+
+| Porte | Restants |
+|---|---|
+| Documenté, taille d'effet publiée | 9 |
+| Mandat : sortie au marché à la clôture | 4 |
+| Coût : accessible à un opérateur de détail | 3 |
+| Familles distinctes après regroupement | **1** |
+
+Les trois entrées qui survivent sont **trois énoncés d'un même effet**, et la
+corrélation entre deux publications d'un même résultat vaut un. Le catalogue
+ouvert met à disposition de cette géométrie une pièce, et c'est celle que le
+document emprunte déjà.
+
+**Deux résultats corrigent le document au passage.**
+
+*Les constantes de temps doivent s'apparier.* Une exposition plus longue
+n'achète de la dérive que sur un effet plus long qu'elle. Sur le momentum
+intraséance, d'horizon trente minutes, les 165 minutes d'ALP-2 ne captent que
+**1,04** fois ce que captent les vingt-neuf d'ALP-1 ; sur un effet de trois
+heures, **5,7** fois plus. L'avantage d'exposition d'ALP-2 n'est donc pas
+acquis contre n'importe quelle dérive.
+
+*La convention de datation de la décote était un paramètre libre non déclaré.*
+Un effet se déprécie depuis sa **première** parution, non depuis chacune de ses
+republications : l'arbitrage répond à la première. Retenir l'autre convention
+multiplierait la dérive restante par **2,83** sur le même effet — davantage que
+la marge que le document conserve sur son point de rupture. La convention
+retenue ici est la plus sévère, et c'est elle qui avance l'échéance.
+
+### L'assemblage, et son nombre optimal de pièces
+
+Combiner k signaux indépendants de ratio d'information i donne `i·√k` ; mais
+estimer un poids coûte `1/N` en ratio d'information au carré. D'où un critère
+d'entrée d'une simplicité inattendue :
+
+> **Une pièce mérite sa place si et seulement si son ratio d'information
+> dépasse `1/√N`.** Ni le nombre de pièces déjà retenues, ni leur qualité, ni
+> leur corrélation n'entrent dans le critère.
+
+| | Valeur |
+|---|---|
+| IR par occurrence de l'unique pièce compatible | 0,01269 |
+| Seuil sur les 7 012 trades du protocole scellé | 0,01194 — franchi d'un cheveu |
+| Seuil sur le budget de 1 260 séances | 0,02817 — non franchi |
+| Information conservée après ajustement d'un poids | **33,8 %** |
+| Seuil imposé par la fouille du catalogue | 0,0199, soit **1,6 fois** ce que la pièce porte |
+
+Deux lectures s'opposent proprement. Sur un jeu déclaré d'avance, une seule
+pièce est optimale et elle conserve un tiers de son information. Sur un jeu
+choisi au vu des données, **la fouille coûte plus cher que le catalogue entier
+ne contient** — prendre tout, en revanche, ne coûte rien, parce que prendre
+tout n'est pas un choix. C'est le résultat de la discipline anti-surajustement,
+retrouvé sur un autre objet.
+
+### `alp1/discret.py` — l'edge discrétionnaire, rendu décidable sans être expliqué
+
+Le théorème d'invariance interdit qu'une règle d'arrêt crée de l'espérance. Il
+ne dit rien de la *sélection des moments*. Le critère maître se décompose :
+
+```
+E[R] = E[µ_t · τ_t] − c = E[µ]·E[τ] + Cov(µ, τ) − c
+```
+
+et le premier terme est ce que la règle scellée obtient déjà. **Tout l'écart
+tient dans la covariance entre la dérive locale et l'exposition choisie.**
+C'est l'énoncé exact de ce qu'un talent discrétionnaire peut être ici, et il a
+deux conséquences opposées : le talent est mesurable **sans être décrit**, et
+il est borné par ce que la dérive vaut. Un talent ne fabrique pas de dérive ;
+il en répartit une.
+
+**Le dispositif : apparier plutôt que comparer.** La différence entre le bras
+opérateur et le bras règle, sur les mêmes séances, a pour variance
+`2σ²(1 − ρ)` ; le gain d'échantillon vaut `1/(1 − ρ)`, soit cinq à
+`ρ = 0,80`. À corrélation moyenne, **276 séances — une année — suffisent** à
+trancher un écart de cinq centièmes de risque par trade.
+
+Le second avantage pèse davantage que le premier. **La dérive commune
+s'élimine dans la différence** : le dispositif ne repose sur aucune dérive
+publiée, donc sur aucune décote. Le document date sa propre péremption entre
+2027 et 2030 ; la question « cet opérateur fait-il mieux que sa règle ? » n'en
+a pas. C'est la seule question du dépôt qui reste décidable après l'échéance.
+
+**Et le même geste change de prix selon la date à laquelle il est déclaré.**
+Une dérogation prise en regardant le marché double la famille de
+configurations — quatre suffisent à détruire la valeur probante du protocole.
+Le même écart, déclaré d'avance comme un second bras, coûte une comparaison :
+un facteur **48** à quatre écarts. La différence entre un talent et une
+indiscipline n'est pas dans le geste, elle est dans la date à laquelle il a été
+déclaré.
+
+```bash
+python main.py --edge             # les trois bornes, en quinze tables
+```
+
 ## Utilisation
 
 ```bash
@@ -545,10 +714,13 @@ python main.py --power            # protocole à horizon borné et son Monte-Car
 python main.py --measure f.csv    # exécute le protocole sur un historique
 python main.py --hurst f.csv      # loi d'échelle mesurée, ratio de variance
 python main.py --bounds f.csv     # la mesure encadrée par les deux remplissages
+python main.py --edge             # témoin, catalogue de dérives, opérateur
+python main.py --tape <pseudo>    # enregistre un direct, une frappe par appel
+python main.py --diffuseur f.csv  # évalue un registre de diffuseur collecté
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 521 tests unitaires du noyau
+python main.py --tests            # 600 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -600,7 +772,11 @@ chiffre soit défendable plutôt que seulement juste :
 | `alp1/entropy.py` | Plafond de Kelly, information requise, biais des estimateurs |
 | `alp1/nonlinear.py` | Entropie de permutation, fluctuations redressées, lois nulles |
 | `alp1/discipline.py` | Dérogation comme multiplicité, point de rupture |
+| `alp1/broadcast.py` | Latence d'un signal diffusé, loi nulle du classement, effacement, registre |
+| `alp1/litedge.py` | Catalogue des dérives publiées, portes de compatibilité, assemblage |
+| `alp1/discret.py` | Talent comme covariance, dispositif apparié, bras déclaré |
 | `alp1/report5.py` | Tables de la loi d'échelle mesurée et de l'encadrement du remplissage |
+| `alp1/report7.py` | Tables du témoin, du catalogue et de l'opérateur |
 | `alp1/power.py` | Frontières séquentielles, information du panel, dérive minimale détectable |
 | `alp1/mcprotocol.py` | Monte-Carlo du protocole entier : taille, puissance, durée du verdict |
 
@@ -635,8 +811,8 @@ La production du document :
 
 Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
 injectés par le code de l'autre. Un chiffre du texte et le point correspondant
-d'une figure ne peuvent pas diverger. Il compte 40 tables et 28 figures, toutes
-produites par le noyau ; les tables d'ALP-2 en ajoutent 24. Les simulations sont ensemencées explicitement : deux
+d'une figure ne peuvent pas diverger. Il compte 93 tables et 40 figures, toutes
+produites par le noyau. Les simulations sont ensemencées explicitement : deux
 exécutions du dépôt produisent le même document, au bit près.
 
 ## ALP-2, et ce qui lui manque
@@ -699,7 +875,12 @@ sans avoir été calibré dessus.
 ## Statut
 
 Analyse théorique, batterie d'instruments et protocole. **Aucune validation
-empirique.** Le protocole de vérification est en revanche complet, scellé,
+empirique.** La sixième partie ajoute trois bornes sur ce que des sources
+extérieures peuvent apporter — un diffuseur en direct, un catalogue de dérives
+publiées, un opérateur discrétionnaire —, et le dépôt fournit la chaîne de
+collecte prospective qu'elles supposent ; aucun registre de diffuseur n'a été
+collecté à ce jour, et aucun des neuf effets du catalogue n'a été ré-estimé
+ici. Le protocole de vérification est en revanche complet, scellé,
 exécutable, et son Monte-Carlo établit qu'il rend un verdict sur cinq années de
 barres d'une minute au plus. Les instruments de la troisième partie sont appliqués à des lois
 déduites du modèle et à des séries synthétiques dont la vérité est connue

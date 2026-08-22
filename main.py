@@ -9,6 +9,9 @@
     python main.py --measure [f.csv]  # exécute le protocole sur un historique
     python main.py --hurst [f.csv]    # loi d'échelle mesurée, ratio de variance
     python main.py --bounds [f.csv]   # la mesure encadrée par les deux remplissages
+    python main.py --edge             # témoin, catalogue de dérives, opérateur
+    python main.py --tape <pseudo>    # enregistre un direct, une frappe par appel
+    python main.py --diffuseur f.csv  # évalue un registre de diffuseur déjà collecté
     python main.py --paper            # reconstruit docs/alp1-paper.html
     python main.py --paper2           # reconstruit docs/alp2-paper.html
     python main.py --wp               # reconstruit le document de travail complet
@@ -32,6 +35,45 @@ def main() -> int:
         suite = loader.discover("tests", top_level_dir=".")
         result = unittest.TextTestRunner(verbosity=2).run(suite)
         return 0 if result.wasSuccessful() else 1
+
+    if "--edge" in sys.argv:
+        from alp1.report7 import main as report7_main
+
+        report7_main()
+        return 0
+
+    if "--diffuseur" in sys.argv:
+        from alp1.report7 import main as report7_main
+
+        rest = sys.argv[sys.argv.index("--diffuseur") + 1:]
+        files = [a for a in rest if not a.startswith("--")]
+        report7_main(files[0] if files else "registre-inexistant")
+        return 0
+
+    if "--tape" in sys.argv:
+        from alp1.broadcast import TAPE_HELP, record, to_csv
+
+        rest = [a for a in sys.argv[sys.argv.index("--tape") + 1:]
+                if not a.startswith("--")]
+        if not rest:
+            print("usage : python main.py --tape <pseudo> [instrument]")
+            return 2
+        pseudo = rest[0]
+        instrument = rest[1] if len(rest) > 1 else "ES"
+        print(TAPE_HELP)
+        print(f"\nDiffuseur : {pseudo} — instrument : {instrument}\n")
+        registre = record(pseudo, instrument, sys.stdin)
+        sortie = to_csv(registre)
+        chemin = f"data/{pseudo}.csv"
+        try:
+            with open(chemin, "w", encoding="utf-8") as f:
+                f.write(sortie)
+            print(f"\n{len(registre.calls)} appels écrits dans {chemin}")
+        except OSError:
+            print("\n" + sortie)
+        for defaut in registre.audit():
+            print(f"  défaut : {defaut}")
+        return 0
 
     if "--layers" in sys.argv:
         from alp1.lexicon import main as lexicon_main

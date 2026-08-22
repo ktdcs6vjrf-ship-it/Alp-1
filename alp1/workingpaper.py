@@ -24,7 +24,7 @@ import re
 from pathlib import Path
 
 from . import (lexicon, paper, paper2, quant, report, report2, report3,
-               report4, report5, report6)
+               report4, report5, report6, report7)
 from .figalp2 import render_all as render_alp2_figures
 from .figdecay import render_all as render_decay_figures
 from .figedge import render_all as render_edge_figures
@@ -50,7 +50,8 @@ def values() -> dict[str, str]:
     v1, v2 = paper.values(), paper2.values()
     merged = dict(v1)
     for key, val in {**v2, **report3.values(), **report4.values(),
-                     **report5.values(), **report6.values()}.items():
+                     **report5.values(), **report6.values(),
+                     **report7.values()}.items():
         if key in COLLISIONS_VALEURS:
             merged[f"{key}_a2"] = val
         elif key in merged and merged[key] != val:
@@ -73,6 +74,7 @@ def tables() -> dict[str, report.Table]:
         **report4.all_tables(),
         **report5.all_tables(),
         **report6.all_tables(),
+        **report7.all_tables(),
     }
     for key, table in report2.all_tables().items():
         if key in COLLISIONS_TABLES:

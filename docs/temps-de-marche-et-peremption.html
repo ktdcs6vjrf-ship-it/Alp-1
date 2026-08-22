@@ -639,9 +639,11 @@
 
     <p>Cette dérive est toutefois empruntée, non mesurée, et un effet publié s'arbitre. La décote post-publication documentée par McLean et Pontiff donne deux résultats opposés. La conclusion survit à une perte de 80,7&nbsp;% de la dérive, contre 58&nbsp;% observés en moyenne&nbsp;: c'est précisément ce que le changement de géométrie a acheté. Mais la décote court depuis la publication, et non depuis aujourd'hui&nbsp;: datée du travail de 2018, la dérive subsistante en 2026 laisse une marge de 1,29× sur son point de rupture, et la fenêtre se referme en 2027. <strong>L'absence de mesure cesse d'être une lacune de complétude pour devenir une échéance.</strong></p>
 
+    <p>Une dernière partie sort du document et applique le même crible à trois sources d'avantage que l'opérateur a sous la main. Un signal diffusé en direct perd, sur le seul trajet de la diffusion, une part de son information égale à 2<sup>−Δ/h</sup>&nbsp;: la lecture de flux, de demi-vie trois secondes, arrive amputée de 90,1&nbsp;% au délai médian, et <strong>ce qui survit au trajet est ce que le spectateur pouvait voir lui-même</strong>. Le catalogue des dérives publiées, neuf effets passés aux portes du mandat, du coût et du critère maître, en laisse 1 qui soit compatible avec cette géométrie — et c'est celle que le document emprunte déjà. Un talent discrétionnaire, enfin, se réduit exactement dans ce cadre à la covariance entre la dérive locale et l'exposition choisie&nbsp;: il se mesure <strong>sans être décrit</strong>, par un dispositif apparié dont la dérive commune s'élimine, et c'est la seule question du document qui reste décidable après l'échéance.</p>
+
     <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">02a53022705e9383</span>, et borné à 3 configurations par le code lui-même. Il est surtout <strong>borné en temps</strong>&nbsp;: une statistique qui compte le temps d'exposition plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel de 5 contrats et une décision séquentielle jalonnée en information suffisent à rendre un verdict sur toute dérive captée supérieure à 3,68 points de base en 5 années de données au plus, et 2,02 en médiane sous l'hypothèse retenue — à niveau et puissance inchangés, la simulation de la procédure entière donnant une taille de 0,046 pour 0,05 nominal. Ce que ce dispositif n'absorbe pas est une décote supérieure à 39 %, et la décote documentée est plus forte&nbsp;: <strong>la question n'est pas seulement de savoir si l'avantage existe, mais s'il est encore décidable.</strong></p>
 
-    <p class="keywords"><span>Mots-clés —</span> théorème d'arrêt optionnel&nbsp;; identité de Wald&nbsp;; premier passage&nbsp;; exposition au marché&nbsp;; coûts de transaction endogènes&nbsp;; lois nulles&nbsp;; momentum intraday&nbsp;; gamma des teneurs de marché&nbsp;; Sharpe déflaté&nbsp;; pré-enregistrement.</p>
+    <p class="keywords"><span>Mots-clés —</span> théorème d'arrêt optionnel&nbsp;; identité de Wald&nbsp;; premier passage&nbsp;; exposition au marché&nbsp;; coûts de transaction endogènes&nbsp;; lois nulles&nbsp;; momentum intraday&nbsp;; gamma des teneurs de marché&nbsp;; Sharpe déflaté&nbsp;; pré-enregistrement&nbsp;; latence d'information&nbsp;; sélection de signaux&nbsp;; dispositif apparié.</p>
     <p class="jel"><span>Classification JEL —</span> C12, C58, G11, G13, G14</p>
   </div>
 
@@ -723,8 +725,17 @@
         </ol>
       </li>
       <li>
-        <span class="pt">Verdict</span>
+        <span class="pt">Sixième partie — Ce que le dehors offre, et ce qu'il coûte</span>
         <ol start="39">
+          <li><a href="#s-temoin">Le signal diffusé, et ce que le trajet lui prend</a></li>
+          <li><a href="#s-catalogue">Le catalogue des dérives publiées</a></li>
+          <li><a href="#s-assemblage">L'assemblage, et son nombre optimal de pièces</a></li>
+          <li><a href="#s-operateur">L'opérateur discrétionnaire, rendu décidable</a></li>
+        </ol>
+      </li>
+      <li>
+        <span class="pt">Verdict</span>
+        <ol start="43">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -737,6 +748,7 @@
     <p>Le document se lit à trois profondeurs. <strong>La thèse</strong> tient dans le résumé, les cinq repères chiffrés ci-dessus et la section&nbsp;5&nbsp;: une géométrie n'achète que du temps de marché, et c'est par là seulement qu'elle agit sur l'espérance.</p>
     <p><strong>L'argument</strong> occupe les deuxième et quatrième parties&nbsp;: le théorème d'invariance et ses conséquences, puis la géométrie qu'elles désignent. Elles se lisent sans la troisième.</p>
     <p><strong>Le diagnostic instrument par instrument</strong> est la troisième partie. Elle intéresse le lecteur qui utilise l'un de ces sept outils et veut savoir ce qu'il vaut contre sa loi nulle. Elle peut être consultée par entrée, chaque instrument y étant traité indépendamment.</p>
+    <p><strong>La sixième partie</strong> s'adresse au lecteur qui dispose d'une source extérieure — un diffuseur en direct, un article, sa propre discrétion — et veut savoir ce qu'elle vaut avant de l'incorporer. Elle se lit indépendamment des cinq premières, chacune de ses trois sources y étant traitée séparément.</p>
     <p>Toutes les tables et figures sont produites par le code du dépôt et reconstruites à chaque assemblage&nbsp;: un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le statut de chaque nombre est marqué — démontré, publié par un tiers, ou posé en hypothèse.</p>
   </div>
 
@@ -7840,6 +7852,367 @@
   </div>
 
   <div class="part">
+    <span class="lab">Sixième partie</span>
+    <h2>Ce que le dehors offre, et ce qu'il coûte</h2>
+    <p>Trois questions qu'un opérateur pose avant d'engager du capital, et auxquelles rien de ce qui précède ne répondait. Un signal diffusé en direct vaut-il quelque chose à l'instant où on le reçoit&nbsp;? La littérature offre-t-elle d'autres dérives que celle qui est empruntée, et combien peut-on en assembler&nbsp;? Un talent discrétionnaire qui ne se formule pas peut-il malgré tout se mesurer&nbsp;? Les trois réponses sortent du cadre déjà posé — critère maître, loi nulle, plafond d'information, coût de la sélection — et aucune n'exige de données payantes.</p>
+  </div>
+
+  <h2 id="s-temoin">Le signal diffusé, et ce que le trajet lui prend</h2>
+
+  <p>Un opérateur diffuse ses entrées en direct&nbsp;: la position est visible à l'écran, le commentaire accompagne l'exécution, et un spectateur peut recopier. La question n'est pas neuve — c'est celle du carnet d'ordres de la section&nbsp;<a href="#s-flux">15</a>, posée sur un canal plus lent et plus bruité — et le document possède déjà tout ce qu'il faut pour y répondre sans ouvrir une série de prix.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Un signal a une demi-vie&nbsp;; un direct a un délai. Trois postes s'y additionnent&nbsp;: l'encodage et la mémoire tampon du diffuseur, la distribution jusqu'au spectateur, et le temps de réaction humain. En reprenant la décroissance exponentielle de la section&nbsp;15, la dérive moyenne captée par un receveur qui entre avec un retard Δ et reste exposé τ vaut</p>
+
+  <p class="eq">µ̄ = µ₀ · 2<sup>−Δ/h</sup> · (T<sub>c</sub>/τ)·(1 − 2<sup>−τ/h</sup>)</p>
+
+  <p>soit exactement la dérive captée sans latence, multipliée par 2<sup>−Δ/h</sup>. <strong>Le retard ne déforme pas le profil de décroissance&nbsp;: il l'atténue d'un facteur qui ne dépend que du rapport du délai à la demi-vie.</strong> L'exponentielle étant sans mémoire, il n'y a pas de terme croisé, et la latence se facture séparément du reste.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 77</span> — Ce qu'un direct laisse arriver : part de l'information survivant au délai de diffusion</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Nature du signal</th><th>Demi-vie</th><th>Δ = 3 s</th><th>Δ = 10 s</th><th>Δ = 30 s</th></tr></thead>
+        <tbody>
+          <tr><td>flux de carnet</td><td>3 s</td><td>50,00 %</td><td>9,92 %</td><td>0,10 %</td></tr>
+          <tr><td>motif d'une barre</td><td>60 s</td><td>96,59 %</td><td>89,09 %</td><td>70,71 %</td></tr>
+          <tr><td>motif de séance</td><td>1 800 s</td><td>99,88 %</td><td>99,62 %</td><td>98,85 %</td></tr>
+          <tr><td>thèse de journée</td><td>23 400 s</td><td>99,99 %</td><td>99,97 %</td><td>99,91 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le facteur vaut 2^(−Δ/h) et **factorise exactement** la dérive captée : le délai n'altère pas le profil de décroissance, il le multiplie. Un signal de flux, celui que la lecture de carnet prétend fournir, arrive au spectateur amputé de 90 % au délai médian et de 99,9 % au délai haut.</p>
+    </figure>
+
+  <p>De là, une frontière en forme fermée. Si l'émetteur produit une dérive µ&nbsp;=&nbsp;ratio&nbsp;·&nbsp;µ*, le receveur reste au-dessus de zéro si et seulement si <span class="v">h</span>&nbsp;≥&nbsp;Δ·ln&thinsp;2&thinsp;/&thinsp;ln(ratio). La frontière diverge quand le ratio tend vers un&nbsp;: plus l'émetteur est juste rentable, plus son signal doit être lent pour supporter le trajet.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 78</span> — La frontière de recopiabilité : demi-vie minimale du signal, et délai toléré</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Qualité de l'émetteur</th><th>h* à Δ = 3 s</th><th>h* à Δ = 10 s</th><th>h* à Δ = 30 s</th><th>Δ toléré à h = 60 s</th></tr></thead>
+        <tbody>
+          <tr><td>µ = 1,5·µ*</td><td>5,1 s</td><td>17,1 s</td><td>51,3 s</td><td>35,1 s</td></tr>
+          <tr><td>µ = 2,0·µ*</td><td>3,0 s</td><td>10,0 s</td><td>30,0 s</td><td>60,0 s</td></tr>
+          <tr><td>µ = 3,0·µ*</td><td>1,9 s</td><td>6,3 s</td><td>18,9 s</td><td>95,1 s</td></tr>
+          <tr><td>µ = 10,0·µ*</td><td>0,9 s</td><td>3,0 s</td><td>9,0 s</td><td>199,3 s</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> `h* = Δ·ln 2 / ln(µ/µ*)`. À dérive exactement double du seuil, la demi-vie minimale **égale le délai** — l'égalité est fortuite et commode. La frontière diverge quand l'émetteur s'approche de son propre seuil : plus il est juste rentable, plus son signal doit être lent pour supporter le trajet.</p>
+    </figure>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — la lecture de flux ne se recopie pas.</strong> À un délai médian de 10&nbsp;secondes, un signal de demi-vie trois secondes — celui que la lecture de carnet prétend fournir — arrive au spectateur amputé de 90,1&nbsp;%. Le résultat rejoint celui de la section&nbsp;15 par une route différente&nbsp;: la couche de flux relève de l'exécution et non de la prédiction, et ce qui n'était pas transportable dans le temps ne l'est pas davantage dans l'espace.</p>
+
+  <p><strong>Deuxième point — ce qui se recopie est ce qui n'avait pas besoin d'être diffusé.</strong> Un motif de séance conserve 99,6&nbsp;% de son information au même délai. Mais un signal dont la demi-vie se compte en dizaines de minutes est, par construction, un signal que le spectateur pouvait voir lui-même sur ses propres barres. <strong>La diffusion n'apporte de valeur que là où elle n'en transporte pas.</strong></p>
+
+  <p><strong>Troisième point — le classement fabrique le talent qu'on y cherche.</strong> Chercher «&nbsp;le bon diffuseur&nbsp;» parmi K candidats est une sélection sur K configurations, et la section&nbsp;<a href="#s-outils">17</a> a déjà chiffré ce que cela coûte. Sur deux cents appels chacun et <em>aucun</em> talent, le meilleur d'une centaine de diffuseurs affiche 58,9&nbsp;% de réussite. Ce n'est pas un biais de lecture&nbsp;: c'est la loi nulle du maximum, et elle vaut pour des personnes comme elle valait pour des paramètres.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 79</span> — La loi nulle du classement : ce que le meilleur de K diffuseurs sans aucun talent affiche</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Diffuseurs regardés</th><th>Sharpe/appel du meilleur</th><th>Taux affiché</th><th>Appels pour trancher</th><th>Durée de collecte</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>0,0368</td><td>51,84 %</td><td>616</td><td>0,62 an</td></tr>
+          <tr><td>10</td><td>0,1113</td><td>55,57 %</td><td>1 165</td><td>1,17 an</td></tr>
+          <tr><td>50</td><td>0,1610</td><td>58,05 %</td><td>1 543</td><td>1,54 an</td></tr>
+          <tr><td>200</td><td>0,1956</td><td>59,78 %</td><td>1 865</td><td>1,86 an</td></tr>
+          <tr><td>1000</td><td>0,2302</td><td>61,51 %</td><td>2 235</td><td>2,24 an</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Colonnes 2 et 3 : sur 200 appels chacun et **aucun talent**, le meilleur d'une centaine de diffuseurs affiche six réussites sur dix. Colonnes 4 et 5 : appels nécessaires pour établir un avantage de cinq points au rang où le diffuseur est lu, seuil corrigé par le nombre de candidats, à raison de mille appels enregistrés par an.</p>
+    </figure>
+
+  <p><strong>Quatrième point — un historique reconstitué n'est pas un échantillon.</strong> Un diffuseur dont une fraction <span class="v">d</span> des appels perdants ne survit pas au récapitulatif affiche p<sub>obs</sub>&nbsp;=&nbsp;p₀&nbsp;/&nbsp;[p₀&nbsp;+&nbsp;(1&nbsp;−&nbsp;p₀)(1&nbsp;−&nbsp;d)]. La relation s'inverse, et le nombre qu'elle rend est petit.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 80</span> — Ce qu'il suffit d'effacer : fraction des appels perdants qui reproduit à elle seule le taux affiché</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Lecture de l'issue</th><th>Taux sous prix sans dérive</th><th>Taux affiché</th><th>Fraction effacée</th><th>Un perdant sur</th></tr></thead>
+        <tbody>
+          <tr><td>appel directionnel jugé au signe</td><td>50,00 %</td><td>55,50 %</td><td>19,8 %</td><td>5,0</td></tr>
+          <tr><td>appel directionnel jugé au signe</td><td>50,00 %</td><td>60,00 %</td><td>33,3 %</td><td>3,0</td></tr>
+          <tr><td>appel directionnel jugé au signe</td><td>50,00 %</td><td>70,00 %</td><td>57,1 %</td><td>1,8</td></tr>
+          <tr class="sep"><td>géométrie 1:20 d'ALP-1</td><td>4,76 %</td><td>5,29 %</td><td>10,4 %</td><td>9,6</td></tr>
+          <tr><td>géométrie 1:20 d'ALP-1</td><td>4,76 %</td><td>5,71 %</td><td>17,5 %</td><td>5,7</td></tr>
+          <tr><td>géométrie 1:20 d'ALP-1</td><td>4,76 %</td><td>6,67 %</td><td>30,0 %</td><td>3,3</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Aucune intention n'est supposée : un direct interrompu, un récapitulatif qui ne retient que ce qui mérite un commentaire, et un effacement délibéré produisent la même arithmétique. La ligne à retenir est la première du second bloc : **un appel perdant effacé sur dix suffit à fabriquer l'intégralité de l'avantage que la géométrie 1:20 exige.** C'est pourquoi seule une collecte prospective et horodatée à la réception est recevable.</p>
+    </figure>
+
+  <p>Aucune intention n'est supposée&nbsp;: un direct interrompu, un récapitulatif qui ne retient que ce qui mérite un commentaire, et un effacement délibéré produisent la même arithmétique. C'est pourquoi le module de collecte du dépôt n'accepte qu'un registre <strong>prospectif</strong>, horodaté à la réception et non à l'émission — l'écart entre les deux horodatages étant exactement la latence que la première table facture.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que le témoin mesure vraiment</span>
+    <p>Il reste une lecture recevable, et ce n'est pas celle qu'on cherchait. Ce qu'un direct mesure de façon fiable n'est pas une prévision de prix mais une <strong>attention datée</strong>&nbsp;: combien de participants regardent le même niveau au même instant. Le cadre de ce document range cette grandeur du côté de la capacité et de la friction — section&nbsp;<a href="#s-friction">26</a> —, non du côté de la dérive. Une foule qui regarde le même niveau y déplace le carnet&nbsp;; elle n'y déplace pas l'espérance.</p>
+    <p>La littérature va dans le même sens et un peu plus loin&nbsp;: Barber, Huang, Odean et Schwarz (2022) documentent que les épisodes d'attention retail extrême sont suivis de rendements <em>négatifs</em>. Le témoin, s'il informe, informe à contre-pied.</p>
+  </div>
+
+  <p><strong>Cinquième point — le sens de la recherche n'est pas symétrique.</strong> Kakhbod, Kazempour, Livdan et Schürhoff (2023) mesurent sur un échantillon de diffuseurs financiers 28&nbsp;% de talent et 56&nbsp;% de talent <em>négatif</em>. Appliqué à ces taux de base, un filtre de douze mois retient 76,0 diffuseurs pour mille dans le sens du suivi et 120,5 dans le sens du contre-pied, soit 58&nbsp;% de plus, avec une loi a posteriori plus pure — 92,1&nbsp;% contre 84,1&nbsp;%. Chercher le bon diffuseur revient à chercher dans une minorité&nbsp;; chercher le mauvais, dans la majorité.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 81</span> — Les deux sens de recherche, jugés sur les taux de base publiés</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Sens du filtre</th><th>Observation</th><th>P(talent sachant retenu)</th><th>P(talent négatif sachant retenu)</th><th>Retenus pour mille examinés</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">suivre le talent</td><td>6 mois</td><td>73,7 %</td><td>12,8 %</td><td>59,5</td></tr>
+          <tr><td class="wrap">suivre le talent</td><td>12 mois</td><td>84,1 %</td><td>5,4 %</td><td>76,0</td></tr>
+          <tr><td class="wrap">suivre le talent</td><td>36 mois</td><td>93,8 %</td><td>0,5 %</td><td>139,2</td></tr>
+          <tr class="sep"><td class="wrap">prendre le talent négatif à contre-pied</td><td>6 mois</td><td>3,5 %</td><td>87,5 %</td><td>89,4</td></tr>
+          <tr><td class="wrap">prendre le talent négatif à contre-pied</td><td>12 mois</td><td>1,3 %</td><td>92,1 %</td><td>120,5</td></tr>
+          <tr><td class="wrap">prendre le talent négatif à contre-pied</td><td>36 mois</td><td>0,1 %</td><td>96,4 %</td><td>229,7</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Taux de base : 28 % de talent, 16 % de neutres, 56 % de talent négatif (Kakhbod et al. 2023). La puissance du filtre sur chaque type n'est pas posée : elle se déduit de l'alpha publié pour ce type. Le filtre inverse gagne sur les deux tableaux — loi a posteriori plus pure **et** rendement plus élevé — parce qu'il vise la classe majoritaire.</p>
+    </figure>
+
+  <p>Ce résultat ne dit pas qu'une stratégie de contre-pied est rentable&nbsp;— la table du catalogue, section suivante, montre qu'elle ne passe pas les portes de ce document. Il dit dans quel sens dépenser un budget de recherche, et c'est une question de méthode, non de marché.</p>
+
+  <h2 id="s-catalogue">Le catalogue des dérives publiées</h2>
+
+  <p>Le document emprunte sa dérive à deux travaux et se demande, section&nbsp;<a href="#s-decote">28</a>, ce que le temps lui fait. La question symétrique n'était pas posée&nbsp;: la littérature en offre-t-elle d'autres&nbsp;? Neuf effets documentés y répondent, choisis pour être publiés avec une taille d'effet chiffrée, intraséance ou convertibles, et sans infrastructure institutionnelle apparente. Ils sont mesurés au critère maître, et à lui seul.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 82</span> — Neuf dérives documentées, mesurées au critère maître du document, en 2026</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Effet</th><th>Publié</th><th>Daté de</th><th>Restant (pdb)</th><th>Net ALP-1 (pdb)</th><th>Net ALP-2 (pdb)</th><th>IR/occurrence</th><th>Coût données</th><th>Compatible</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Momentum intraséance, États-Unis</td><td>2018</td><td>2018</td><td>1,50</td><td>+0,359</td><td>+0,414</td><td>+0,01269</td><td>0</td><td>oui</td></tr>
+          <tr><td class="wrap">Momentum intraséance, généralisation internationale</td><td>2021</td><td>2018</td><td>1,50</td><td>+0,359</td><td>+0,414</td><td>+0,01269</td><td>0</td><td>oui</td></tr>
+          <tr><td class="wrap">Franchissement de la bande de bruit</td><td>2024</td><td>2018</td><td>1,50</td><td>−0,861</td><td>+0,188</td><td>+0,00577</td><td>0</td><td>oui</td></tr>
+          <tr><td class="wrap">Dérive pré-annonce du comité de politique monétaire</td><td>2015</td><td>2015</td><td>7,27</td><td>−0,937</td><td>−0,248</td><td>−0,00759</td><td>0</td><td>non</td></tr>
+          <tr><td class="wrap">Périodicité intraséance de la section transversale</td><td>2010</td><td>2010</td><td>0,75</td><td>−0,363</td><td>−0,336</td><td>−0,01029</td><td>3</td><td>non</td></tr>
+          <tr><td class="wrap">Séparation nuit / séance</td><td>2019</td><td>2010</td><td>2,18</td><td>−0,922</td><td>−0,158</td><td>−0,00483</td><td>3</td><td>non</td></tr>
+          <tr><td class="wrap">Déséquilibre d'ordres de détail</td><td>2021</td><td>2021</td><td>16,80</td><td>−0,834</td><td>+0,343</td><td>+0,01052</td><td>3</td><td>non</td></tr>
+          <tr><td class="wrap">Herding d'attention des plateformes de détail</td><td>2022</td><td>2021</td><td>42,00</td><td>−0,935</td><td>−0,234</td><td>−0,00717</td><td>3</td><td>non</td></tr>
+          <tr><td class="wrap">Contre-pied du talent négatif des diffuseurs</td><td>2023</td><td>2021</td><td>50,40</td><td>−0,905</td><td>−0,064</td><td>−0,00197</td><td>3</td><td>non</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> « Daté de » est l'année de **première** parution de l'effet, toutes signatures confondues : republier un résultat ne remet pas le compteur de la décote à zéro. Le net retranche la friction déduite du carnet, 1,083 pdb par aller-retour. Le coût de données va de 0 — barres d'une minute d'un contrat, gratuites — à 3 — section transversale de milliers de titres, emprunt compris.</p>
+    </figure>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Chaque effet est ramené à une dérive par minute, puis passé par le critère maître&nbsp;: ce qu'une position en capte vaut µ&nbsp;·&nbsp;min(exposition, horizon), et le net retranche la friction déduite du carnet, 1,083&nbsp;pdb par aller-retour. Trois portes le filtrent ensuite — le mandat d'exposition, le coût de données, le signe du net — et une quatrième regroupe ce qui reste par famille.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 83</span> — Les quatre portes, et ce qui reste après chacune</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Porte</th><th>Candidats restants</th><th>Éliminés</th></tr></thead>
+        <tbody>
+          <tr><td>Documenté, taille d'effet publiée</td><td>9</td><td>—</td></tr>
+          <tr><td>Porte de mandat : sortie à la clôture</td><td>4</td><td>−5</td></tr>
+          <tr><td>Porte de coût : accessible au détail</td><td>3</td><td>−1</td></tr>
+          <tr><td>Porte du critère maître : net positif</td><td>3</td><td>—</td></tr>
+          <tr><td>Familles distinctes après regroupement</td><td>1</td><td>−2</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La dernière ligne est la seule qui compte : les trois entrées qui survivent sont **trois énoncés d'un même effet**, et la corrélation entre publications d'un même résultat vaut un. Le catalogue de la littérature ouverte offre à cette géométrie une pièce, et c'est celle que le document emprunte déjà.</p>
+    </figure>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point, et il est négatif — le catalogue ouvert offre une pièce.</strong> Sur neuf effets, 4 partagent le mandat d'ALP-2, 3 restent accessibles à un opérateur de détail, et ces trois-là sont <strong>trois énoncés d'un même effet</strong>. La corrélation entre deux publications d'un même résultat vaut un&nbsp;; l'empilement n'apporte rien. Ce que la littérature ouverte met à disposition de cette géométrie est la dérive que le document emprunte déjà.</p>
+
+  <p><strong>Deuxième point — les constantes de temps doivent s'apparier, et le document ne le disait pas.</strong> Une exposition plus longue n'achète de la dérive que sur un effet plus long qu'elle. Sur le momentum intraséance, dont l'horizon est de trente minutes, les 165,6&nbsp;minutes d'ALP-2 ne captent que 1,04 fois ce que captent les vingt-neuf d'ALP-1&nbsp;; sur un effet de trois heures, elles en captent 5,7 fois plus.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 84</span> — L'appariement des constantes de temps : ce que chaque géométrie capte du même effet</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Effet</th><th>Horizon de l'effet</th><th>Capté à 28,9 min (pdb)</th><th>Capté à 165,6 min (pdb)</th><th>Rapport</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Momentum intraséance, États-Unis</td><td>30 min</td><td>1,443</td><td>1,497</td><td>1,04</td></tr>
+          <tr><td class="wrap">Franchissement de la bande de bruit</td><td>195 min</td><td>0,222</td><td>1,272</td><td>5,73</td></tr>
+          <tr><td class="wrap">Dérive pré-annonce du comité de politique monétaire</td><td>1 440 min</td><td>0,146</td><td>0,836</td><td>5,73</td></tr>
+          <tr><td class="wrap">Contre-pied du talent négatif des diffuseurs</td><td>8 190 min</td><td>0,178</td><td>1,019</td><td>5,73</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le résultat n'était pas prévu par le document et corrige l'une de ses lectures. **Une exposition plus longue n'achète de la dérive que sur un effet plus long qu'elle.** Sur un effet de trente minutes, les 165 minutes d'ALP-2 ne captent rien de plus que les 29 d'ALP-1 ; sur un effet de trois heures, elles captent près de six fois plus. La géométrie et l'effet doivent avoir des constantes de temps appariées, et c'est un critère de compatibilité plus sévère que le mandat.</p>
+    </figure>
+
+  <p>C'est un critère de compatibilité plus sévère que le mandat, et il corrige une lecture du document&nbsp;: l'avantage d'exposition d'ALP-2, établi section&nbsp;<a href="#s-compare">23</a>, n'est pas acquis contre n'importe quelle dérive. Il l'est contre une dérive dont l'horizon dépasse l'exposition, et pas autrement.</p>
+
+  <p><strong>Troisième point — la convention de datation de la décote est un paramètre libre, et elle ne l'était pas déclarée.</strong> Un effet se déprécie à partir du jour où il est publié pour la première fois, non à chaque fois qu'il est republié&nbsp;: l'arbitrage répond à la première parution. Retenir l'autre convention multiplierait la dérive restante par 2,83 sur le même effet — davantage que la marge que la section&nbsp;28 conserve sur son point de rupture.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 85</span> — Ce que la convention de datation change à la dérive restante</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Travail</th><th>Année</th><th>Daté de sa parution (pdb)</th><th>Daté de la famille (pdb)</th><th>Rapport</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Gao et al.</td><td>2018</td><td>1,497</td><td>1,497</td><td>1,00</td></tr>
+          <tr><td class="wrap">Baltussen et al.</td><td>2021</td><td>2,520</td><td>1,497</td><td>1,68</td></tr>
+          <tr><td class="wrap">Zarattini et al.</td><td>2024</td><td>4,241</td><td>1,497</td><td>2,83</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La convention n'est pas un détail de présentation : elle fait varier la dérive restante d'un facteur 2,8 sur le même effet, davantage que la marge que le document conserve sur son point de rupture. La convention retenue ici est la plus sévère — l'arbitrage répond à la première parution — et c'est celle qui avance la date d'échéance.</p>
+    </figure>
+
+  <p><strong>Quatrième point — et il travaille pour une fois en faveur de la conclusion.</strong> Un travail publié en 2024 sur un échantillon qui court jusqu'en 2024 constitue, pour un effet paru en 2018, un test hors échantillon de l'hypothèse de décote. Le dépôt ne dispose pas du ratio de Sharpe scindé qui trancherait&nbsp;; il publie donc ce que chaque taux impliquerait, de sorte que le nombre, le jour où il est lu, décide sans qu'on puisse ajuster la théorie après coup.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 86</span> — Le prédicat de décote, publié avant d'être lu</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Hypothèse de décote</th><th>Taux annuel</th><th>Sharpe impliqué sur la fenêtre postérieure</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">aucune décote (Jacobs et Müller)</td><td>0,0 %/an</td><td>1,33</td></tr>
+          <tr><td class="wrap">seuil de détectabilité du protocole</td><td>6,1 %/an</td><td>1,11</td></tr>
+          <tr><td class="wrap">décote documentée, McLean et Pontiff</td><td>17,4 %/an</td><td>0,83</td></tr>
+          <tr><td class="wrap">borne haute de la boîte</td><td>29,0 %/an</td><td>0,63</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Un travail publié en 2024 sur un échantillon qui court jusqu'en 2024 constitue, pour un effet paru en 2018, un test hors échantillon de l'hypothèse de décote. Le dépôt ne dispose pas du Sharpe scindé qui trancherait ; il publie donc ce que chaque taux impliquerait sur les 6 années postérieures, à partir du Sharpe d'ensemble publié (1,33). Le nombre, le jour où il est lu, tranchera sans qu'on puisse ajuster la théorie après coup.</p>
+    </figure>
+
+  <h2 id="s-assemblage">L'assemblage, et son nombre optimal de pièces</h2>
+
+  <p>Reste la question que l'existence d'un catalogue appelle&nbsp;: combien de pièces peut-on empiler&nbsp;? L'intuition dit «&nbsp;le plus possible&nbsp;», et l'arithmétique de la sélection dit autre chose.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Combiner k signaux indépendants de ratio d'information i donne i·√k. Mais les poids de la combinaison sont estimés sur les mêmes données, et estimer un paramètre coûte, en ratio d'information au carré, environ 1/N. Le carré du ratio d'information hors échantillon vaut donc Σ i²&nbsp;−&nbsp;k/N, d'où un critère d'entrée d'une simplicité inattendue&nbsp;:</p>
+
+  <p class="eq">une pièce mérite sa place si et seulement si son ratio d'information dépasse 1/√N.</p>
+
+  <p>Le critère est frappant par ce qu'il ne contient pas&nbsp;: ni le nombre de pièces déjà retenues, ni leur qualité, ni leur corrélation. Chaque pièce est jugée seule, contre un seuil que seule la taille d'échantillon fixe.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 87</span> — Le seuil d'entrée d'une pièce, et ce que l'ajustement de son poids en consomme</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Échantillon</th><th>N</th><th>Seuil 1/√N</th><th>IR de la pièce</th><th>Admise</th><th>Information conservée</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">budget en séances du protocole</td><td>1 260</td><td>0,02817</td><td>0,01269</td><td>non</td><td>0,0 %</td></tr>
+          <tr><td class="wrap">trades du protocole scellé</td><td>7 012</td><td>0,01194</td><td>0,01269</td><td>oui</td><td>33,8 %</td></tr>
+          <tr><td class="wrap">vingt mille trades</td><td>20 000</td><td>0,00707</td><td>0,01269</td><td>oui</td><td>83,0 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le critère d'entrée est frappant par ce qu'il ne contient pas : ni le nombre de pièces déjà retenues, ni leur qualité, ni leur corrélation. **Une pièce mérite sa place si et seulement si son ratio d'information dépasse `1/√N`.** L'unique pièce compatible du catalogue franchit ce seuil d'un cheveu sur l'échantillon du protocole, et pas du tout sur le budget en séances.</p>
+    </figure>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — l'unique pièce compatible franchit le seuil d'un cheveu.</strong> Son ratio d'information vaut 0,01269 contre un seuil de 0,01194 sur les trades du protocole scellé. Sur le budget en séances, seuil 0,02817, elle ne le franchit pas. La différence entre les deux lignes n'est pas la qualité de la pièce&nbsp;: c'est la cadence du protocole, et c'est un choix de dispositif — le même levier que la section&nbsp;<a href="#s-borne">32</a>.</p>
+
+  <p><strong>Deuxième point — ajuster un seul poids consomme les deux tiers de l'information.</strong> Il reste 33,8&nbsp;% du ratio d'information de la pièce après estimation, soit 66,2&nbsp;% consommés par un unique paramètre. Le document avait chiffré le coût de la sélection&nbsp;; celui de l'ajustement ne l'était pas, et il est du même ordre.</p>
+
+  <p><strong>Troisième point — choisir coûte plus cher que le catalogue ne contient.</strong> Fouiller le catalogue pour en tirer le meilleur sous-ensemble impose un seuil de 0,0199 en ratio d'information, soit 1,6 fois ce que la meilleure pièce porte. Prendre tout, en revanche, ne coûte rien&nbsp;: prendre tout n'est pas un choix. <strong>Un jeu de pièces déclaré d'avance bat un jeu de pièces choisi, et l'écart est plus grand que ce qui sépare les pièces entre elles.</strong></p>
+
+      <figure>
+      <figcaption><span class="lab">Table 88</span> — Le bilan de l'assemblage sur les 7 012 trades du protocole scellé</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Pièces retenues</th><th>IR brut</th><th>Coût d'estimation (IR²)</th><th>Coût de fouille (IR)</th><th>IR net</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>0,01269</td><td>0,000143</td><td>0,01988</td><td>0,00000</td></tr>
+          <tr><td>2</td><td>0,01795</td><td>0,000285</td><td>0,02261</td><td>0,00000</td></tr>
+          <tr><td>3</td><td>0,02081</td><td>0,000428</td><td>0,01988</td><td>0,00000</td></tr>
+          <tr><td>4</td><td>0,02159</td><td>0,000570</td><td>0,00000</td><td>0,00000</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le coût d'estimation vaut `k/N` en IR au carré — une unité par poids ajusté. Le coût de fouille est celui de **choisir** le sous-ensemble en regardant les données, `√(2 ln C(m,k)/N)` ; il s'annule quand on prend tout, parce que prendre tout n'est pas un choix. Les deux lectures s'opposent proprement : sur un jeu déclaré d'avance, une seule pièce est optimale ; sur un jeu choisi, la fouille coûte plus que le catalogue entier ne contient.</p>
+    </figure>
+
+  <p>Le résultat est le même que celui de la section&nbsp;<a href="#s-surajustement">31</a>, obtenu sur un autre objet&nbsp;: à données identiques et procédure identique, l'ordre de lecture décide. Ce qui était vrai d'une famille de configurations l'est d'une famille de dérives publiées.</p>
+
+  <h2 id="s-operateur">L'opérateur discrétionnaire, rendu décidable</h2>
+
+  <p>Un opérateur affirme posséder un avantage qu'il ne sait pas formuler&nbsp;: une lecture, un tour de main, quelque chose qui se voit à l'écran et se perd à l'écrit. Tout ce qui précède est sans effet sur un signal qu'on ne code pas — et c'est précisément pourquoi la section ne demande pas qu'on le code.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Le théorème d'invariance interdit qu'une règle d'arrêt crée de l'espérance. Il ne dit rien de la <em>sélection des moments</em>. En reprenant le critère maître pour un opérateur dont la dérive locale au moment de l'entrée vaut µ<sub>t</sub> et l'exposition τ<sub>t</sub>&nbsp;:</p>
+
+  <p class="eq">E[R] = E[µ<sub>t</sub> · τ<sub>t</sub>] − c = E[µ]·E[τ] + Cov(µ, τ) − c</p>
+
+  <p>et le premier terme est ce que la règle scellée obtient déjà. <strong>Tout l'écart tient dans la covariance entre la dérive locale et l'exposition choisie.</strong> C'est l'énoncé exact de ce qu'un talent discrétionnaire peut être dans ce cadre&nbsp;: non pas une prévision de direction, mais une allocation d'exposition corrélée à la dérive.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 89</span> — Ce qu'un talent doit produire pour valoir ses allers-retours</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Cadence ajoutée à la règle</th><th>Entrées/séance</th><th>Covariance requise (pdb)</th><th>En multiples du risque</th><th>Par an</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">une entrée sur deux séances</td><td>0,5</td><td>0,542</td><td>0,00715 R</td><td>1,37 %</td></tr>
+          <tr><td class="wrap">une entrée par séance</td><td>1,0</td><td>1,083</td><td>0,01430 R</td><td>2,73 %</td></tr>
+          <tr><td class="wrap">trois entrées par séance</td><td>3,0</td><td>3,250</td><td>0,04290 R</td><td>8,19 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Dans ce cadre, un talent discrétionnaire est **exactement** la covariance entre la dérive locale et l'exposition choisie : `E[R] = E[µ]·E[τ] + Cov(µ, τ) − c`. Le premier terme est ce que la règle obtient déjà ; tout l'écart tient dans le second. La conséquence est double et il faut la dire entière : le talent se mesure **sans être décrit**, et il ne fabrique pas de dérive, il en répartit une.</p>
+    </figure>
+
+  <p>L'énoncé a deux conséquences, et elles sont opposées. D'un côté le talent est mesurable <strong>sans être décrit</strong>&nbsp;: on n'a pas besoin de savoir ce que l'opérateur regarde pour mesurer la covariance qu'il produit. De l'autre il est borné par ce que la dérive vaut&nbsp;: sous dérive nulle la covariance est nulle aussi, et un opérateur qui prend plus de positions que la règle perd exactement la friction supplémentaire. <strong>Un talent ne fabrique pas de dérive&nbsp;; il en répartit une.</strong></p>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — apparier au lieu de comparer.</strong> Mesurer un opérateur contre zéro exige l'échantillon que la section&nbsp;<a href="#s-horizon">8</a> chiffre en années. Le mesurer contre <em>la règle scellée, sur les mêmes séances</em>, est un autre problème&nbsp;: la différence D&nbsp;=&nbsp;R<sub>opérateur</sub>&nbsp;−&nbsp;R<sub>règle</sub> a pour variance 2σ²(1&nbsp;−&nbsp;ρ), et les deux bras affrontent le même marché aux mêmes heures. Le gain d'échantillon vaut 1/(1&nbsp;−&nbsp;ρ)&nbsp;: à ρ&nbsp;=&nbsp;0,80, cinq fois moins d'observations pour la même puissance.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 90</span> — Le dispositif apparié : ce que la variance commune fait gagner</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Corrélation des bras</th><th>Gain d'échantillon</th><th>Séances pour détecter 0,05 R</th><th>Durée</th><th>Écart détectable en 1 260 séances</th></tr></thead>
+        <tbody>
+          <tr><td>0,40</td><td>1,67</td><td>551</td><td>2,19 an</td><td>0,0331 R</td></tr>
+          <tr><td>0,70</td><td>3,33</td><td>276</td><td>1,09 an</td><td>0,0234 R</td></tr>
+          <tr><td>0,90</td><td>10,00</td><td>92</td><td>0,36 an</td><td>0,0135 R</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La dispersion par trade est celle de la géométrie ALP-2, déduite du couple publié par le document. Le gain vaut `1/(1 − ρ)`, et les deux bras affrontent la même séance aux mêmes heures : `ρ` est élevé par construction. Le second avantage ne se lit pas dans cette table et pèse davantage — **la dérive commune s'élimine dans la différence**, donc la question reste décidable après la péremption de la dérive empruntée.</p>
+    </figure>
+
+  <p><strong>Deuxième point, et il pèse davantage que le premier — la dérive commune s'élimine dans la différence.</strong> Le dispositif apparié ne repose sur aucune dérive publiée&nbsp;: quel que soit ce que le marché offre, il est commun aux deux bras et disparaît. La section&nbsp;28 date la péremption de la dérive empruntée entre 2027 et 2030&nbsp;; la question «&nbsp;cet opérateur fait-il mieux que sa règle&nbsp;?&nbsp;» n'a pas de date de péremption. <strong>C'est la seule question de ce document qui reste décidable après l'échéance.</strong></p>
+
+  <p><strong>Troisième point — le même geste, selon la date à laquelle il est déclaré.</strong> La section&nbsp;<a href="#s-discipline">37</a> montre qu'une dérogation prise en regardant le marché double la famille de configurations, et que quatre suffisent à détruire la valeur probante du protocole. Le même écart, déclaré d'avance comme un second bras, coûte une comparaison et une seule&nbsp;: un facteur 48 à quatre écarts. <strong>La différence entre un talent et une indiscipline n'est pas dans le geste&nbsp;: elle est dans la date à laquelle il a été déclaré.</strong></p>
+
+      <figure>
+      <figcaption><span class="lab">Table 91</span> — Le même geste, selon la date à laquelle il est déclaré</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Écarts à la règle</th><th>Famille si dérogation</th><th>Famille si bras déclaré</th><th>Rapport</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>6</td><td>1</td><td>6</td></tr>
+          <tr><td>2</td><td>12</td><td>1</td><td>12</td></tr>
+          <tr><td>4</td><td>48</td><td>1</td><td>48</td></tr>
+          <tr><td>8</td><td>768</td><td>1</td><td>768</td></tr>
+          <tr><td>16</td><td>196 608</td><td>1</td><td>196 608</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Une dérogation est un choix binaire pris en regardant le marché : la famille de configurations double à chaque fois. Le même écart, **déclaré d'avance comme un second bras**, coûte une comparaison et une seule. La différence entre un talent et une indiscipline n'est pas dans le geste : elle est dans la date à laquelle il a été déclaré.</p>
+    </figure>
+
+  <div class="keybox">
+    <span class="lab">Ce qui invalide un appariement, et se prévient à coût nul</span>
+    <p>Quatre défauts rendent un dispositif apparié non concluant, et aucun n'est réparable après la collecte. Le bras règle n'est joué que lorsque l'opérateur ne prend pas la main — les deux bras cessent d'affronter la même séance. L'opérateur voit l'entrée de la règle avant de décider — la différence mesure une réaction à la règle, pas une lecture du marché. La règle est modifiée pendant la collecte — le comparateur bouge. Les séances où l'opérateur ne se sent pas prêt sont retirées — la sélection porte sur l'issue par le canal de l'état de l'opérateur, ce que la section&nbsp;37 chiffrait déjà sous un autre nom.</p>
+  </div>
+
+  <p>Le protocole apparié est ainsi le seul de ce document qu'un opérateur seul peut conduire sans attendre cinq années de panel&nbsp;: 276&nbsp;séances à corrélation moyenne, soit 1,09&nbsp;an, pour trancher un écart de cinq centièmes de risque par trade. Il ne mesure pas un edge de marché&nbsp;; il mesure la seule chose que le théorème d'invariance laisse à l'opérateur.</p>
+
+  <div class="part">
     <span class="lab">Verdict</span>
     <h2>Ce que ce document établit, et ce qu'il n'établit pas</h2>
     <p>Les deux approches notées sur une grille commune fixée d'avance, puis l'énoncé de ce qui manque — une série de prix, et rien d'autre.</p>
@@ -7850,7 +8223,7 @@
   <p>La grille qui suit a été fixée avant d'être appliquée, et ne contient aucun critère taillé pour l'un des deux documents : douze critères, trois familles, des poids qui somment à cent, et une échelle d'ancrage commune de 0 à 5. Chaque score est accompagné du fait qui le justifie, de sorte qu'un score se conteste en contestant ce fait — la seule propriété qu'on demande à une note.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 77</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
+      <figcaption><span class="lab">Table 92</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Critère</th><th>Poids</th><th>ALP-1</th><th>ALP-2</th><th>Points ALP-1</th><th>Points ALP-2</th></tr></thead>
@@ -7875,7 +8248,7 @@
     </figure>
 
       <figure>
-      <figcaption><span class="lab">Table 78</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
+      <figcaption><span class="lab">Table 93</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Famille</th><th>Maximum</th><th>ALP-1</th><th>ALP-2</th><th>Écart</th></tr></thead>
@@ -7948,17 +8321,25 @@
       <li>Bailey, D. et López de Prado, M. «&nbsp;The Deflated Sharpe Ratio&nbsp;», <em>Journal of Portfolio Management</em>, 2014 — déflation du Sharpe sous tests multiples.</li>
       <li>Bailey, D., Borwein, J., López de Prado, M. et Zhu, Q. «&nbsp;The Probability of Backtest Overfitting&nbsp;», <em>Journal of Computational Finance</em>, 2016 — origine de la mesure de PBO employée.</li>
       <li>Baltussen, G., Da, Z., Lammers, S. et Martens, M. «&nbsp;Hedging Demand and Market Intraday Momentum&nbsp;», <em>Journal of Financial Economics</em>, 2021 — généralisation à plus de soixante contrats à terme, et rattachement du mécanisme à la couverture gamma.</li>
+      <li>Barber, B., Huang, X., Odean, T. et Schwarz, C. «&nbsp;Attention-Induced Trading and Returns&nbsp;: Evidence from Robinhood Users&nbsp;», <em>Journal of Finance</em>, 2022 — les épisodes d'attention de détail extrême sont suivis de rendements négatifs.</li>
       <li>Barbon, A. et Buraschi, A. «&nbsp;Gamma Fragility&nbsp;», document de travail, 2021 — effet du gamma des teneurs sur la volatilité réalisée.</li>
       <li>Borodin, A. et Salminen, P. <em>Handbook of Brownian Motion — Facts and Formulae</em>, Birkhäuser, 2002 — premiers passages et lois d'arrêt.</li>
+      <li>Boehmer, E., Jones, C., Zhang, X. et Zhu, X. «&nbsp;Tracking Retail Investor Activity&nbsp;», <em>Journal of Finance</em>, 2021 — identification du flux de détail et son contenu prédictif à horizon hebdomadaire.</li>
       <li>Bouchaud, J.-P., Bonart, J., Donier, J. et Gould, M. <em>Trades, Quotes and Prices</em>, Cambridge University Press, 2018 — impact de marché et formation des prix.</li>
       <li>Boyarchenko, N., Larsen, L. et Whelan, P. «&nbsp;The Overnight Drift&nbsp;», Federal Reserve Bank of New York — exemple documenté d'un effet éteint après publication.</li>
       <li>Cont, R., Kukanov, A. et Stoikov, S. «&nbsp;The Price Impact of Order Book Events&nbsp;», <em>Journal of Financial Econometrics</em>, 2014 — pouvoir prédictif du déséquilibre de carnet à horizon court.</li>
       <li>Dim, C., Eraker, B. et Vilkov, G. — travaux sur le gamma des teneurs de marché et les options du jour&nbsp;; fondement de la configuration C2 du protocole.</li>
       <li>Gao, L., Han, Y., Li, S. Z. et Zhou, G. «&nbsp;Market Intraday Momentum&nbsp;», <em>Journal of Financial Economics</em>, 2018 — socle empirique de l'effet retenu.</li>
       <li>Harvey, C., Liu, Y. et Zhu, H. «&nbsp;… and the Cross-Section of Expected Returns&nbsp;», <em>Review of Financial Studies</em>, 2016 — seuils de significativité sous tests multiples.</li>
+      <li>Heston, S., Korajczyk, R. et Sadka, R. «&nbsp;Intraday Patterns in the Cross-Section of Stock Returns&nbsp;», <em>Journal of Finance</em>, 2010 — périodicité intraséance de la section transversale.</li>
+      <li>Kakhbod, A., Kazempour, S. M., Livdan, D. et Schürhoff, N. «&nbsp;Finfluencers&nbsp;», <em>Swiss Finance Institute Research Paper</em> 23-30, 2023 — taux de base du talent et du talent négatif chez les diffuseurs financiers, et contre-pied du second.</li>
       <li>Karatzas, I. et Shreve, S. <em>Brownian Motion and Stochastic Calculus</em>, Springer, 1991 — théorème d'arrêt optionnel et identité de Wald.</li>
+      <li>Kelly, J. L. «&nbsp;A New Interpretation of Information Rate&nbsp;», <em>Bell System Technical Journal</em>, 1956 — égalité du taux de croissance maximal et de l'information mutuelle.</li>
       <li>Kyle, A. «&nbsp;Continuous Auctions and Insider Trading&nbsp;», <em>Econometrica</em>, 1985 — coefficient d'impact et information dans le carnet.</li>
       <li>Lo, A. et MacKinlay, A. «&nbsp;Stock Market Prices Do Not Follow Random Walks&nbsp;: Evidence from a Simple Specification Test&nbsp;», <em>Review of Financial Studies</em>, 1988 — ratio de variance et lois d'échelle.</li>
+      <li>Lou, D., Polk, C. et Skouras, S. «&nbsp;A Tug of War&nbsp;: Overnight Versus Intraday Expected Returns&nbsp;», <em>Journal of Financial Economics</em>, 2019 — séparation des rendements de nuit et de séance.</li>
+      <li>Lucca, D. et Moench, E. «&nbsp;The Pre-FOMC Announcement Drift&nbsp;», <em>Journal of Finance</em>, 2015 — dérive des vingt-quatre heures précédant l'annonce.</li>
+      <li>McLean, R. D. et Pontiff, J. «&nbsp;Does Academic Research Destroy Return Predictability&nbsp;?&nbsp;», <em>Journal of Finance</em>, 2016 — décote hors échantillon et décote post-publication sur 97 anomalies.</li>
       <li>Revuz, D. et Yor, M. <em>Continuous Martingales and Brownian Motion</em>, Springer, 1999 — temps locaux et martingales continues.</li>
       <li>Rhea, R. <em>The Dow Theory</em>, Barron's, 1932 — codification des éditoriaux de Charles Dow.</li>
       <li>Sheppard, W. F. «&nbsp;On the Application of the Theory of Error to Cases of Normal Distribution&nbsp;», <em>Philosophical Transactions</em>, 1899 — formule de l'orthant, employée pour la loi nulle de concordance.</li>
