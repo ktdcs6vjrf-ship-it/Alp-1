@@ -185,6 +185,12 @@ def haircut_sharpe(sharpe_hat: float, n_obs: int, n_tests: int,
     p_adj = adjusted_pvalue(max(p, 1e-300), n_tests, method)
     if p_adj >= 0.5:
         return 1.0
+    # Une p-valeur trop petite n'est pas représentable comme complément : à
+    # `p_adj` sous l'epsilon machine, `1 − p_adj` vaut exactement un et la
+    # fonction quantile n'est plus définie. Le plancher borne la décote au
+    # lieu de faire échouer le calcul, et il est atteint dès que le Sharpe
+    # est grand — ce qui est le cas sur une géométrie à stop serré.
+    p_adj = max(p_adj, 1e-15)
     t_adj = _norm_ppf(1.0 - p_adj)
     sharpe_adj = t_adj / math.sqrt(n_obs)
     return max(0.0, 1.0 - sharpe_adj / sharpe_hat)

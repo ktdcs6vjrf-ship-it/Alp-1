@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
-44 sections en sept parties, 93 tables, 40 figures.
+48 sections en huit parties, 103 tables, 46 figures.
 
 ## Ce que contient ce dépôt
 
@@ -20,7 +20,7 @@ déclenchée par le carnet. **ALP-2** est la géométrie que le diagnostic finit
 par désigner : aucun objectif, un stop posé sur la bande de bruit, une sortie
 au marché à la clôture.
 
-Le document se lit en six parties. La première définit les huit notions
+Le document se lit en sept parties. La première définit les huit notions
 nécessaires. La deuxième établit ce qu'une géométrie peut et ne peut pas. La
 troisième passe les sept instruments au crible de leur loi nulle — GEX, profil
 de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres. La quatrième
@@ -28,8 +28,12 @@ construit ALP-2 et la confronte à une dérive publiée et à une friction dédu
 du carnet. La cinquième va chercher hors de la finance les bornes que le
 théorème d'invariance laisse ouvertes. La sixième demande ce que le dehors
 offre — un signal diffusé en direct, un catalogue de dérives publiées, un
-opérateur discrétionnaire — et ce que chacun coûte. Le verdict note les deux
-approches sur une grille fixée d'avance, et énonce ce qui manque.
+opérateur discrétionnaire — et ce que chacun coûte. La septième refait tout
+le travail sur la géométrie que l'opérateur pratique réellement — un stop de
+cinq à dix millièmes de pour cent, une remontée au point mort, deux pour cent
+du capital par tentative, et une répétition de l'entrée jusqu'à ce qu'elle
+passe. Le verdict note les deux approches sur une grille fixée d'avance, et
+énonce ce qui manque.
 
 ## Le résultat structurant
 
@@ -53,11 +57,11 @@ décision de géométrie — largeur du stop, éloignement du target, remontée 
 stop, sortie à l'heure — n'agit que par l'exposition qu'elle produit. Il en
 découle trois seuils :
 
-| Grandeur | Forme fermée | Valeur au stop 0,050 % et R:R 1:20 |
+| Grandeur | Forme fermée | Valeur au stop 0,010 % et R:R 1:20 |
 |---|---|---|
-| Dérive minimale rentable | `µ* = c/E[τ]` | 0,685 point d'indice par heure |
-| Ratio d'information requis | `IR* = c/√(ab)` | 0,049 (0,086 en friction réaliste) |
-| Lift relatif requis | `Δp/p₀ = c/L` | 11,0 %, **quel que soit le ratio visé** |
+| Dérive minimale rentable | `µ* = c/E[τ]` | 8,189 points d'indice par heure |
+| Ratio d'information requis | `IR* = c/√(ab)` | 0,170 (0,298 en friction réaliste) |
+| Lift relatif requis | `Δp/p₀ = c/L` | 55,0 %, **quel que soit le ratio visé** |
 
 Un ratio gain/risque élevé n'assouplit pas l'exigence de qualité du signal : il
 la déplace vers un événement plus rare. Ce qui baisse réellement, c'est
@@ -66,22 +70,21 @@ longtemps pour une même friction.
 
 ## Ce que la séance change à un 1:20 – 1:30
 
-Un target à 1:20 sur un stop de 3 points est un déplacement de 60 points, soit
-1,00 % de l'indice. Son atteignabilité dépend d'une propriété mesurable du
+Un target à 1:20 sur un stop de 0,60 point est un déplacement de 12 points, soit
+0,20 % de l'indice. Son atteignabilité dépend d'une propriété mesurable du
 prix : la vitesse à laquelle sa dispersion croît avec l'horizon, `σ(T) = σ₁·T^H`.
 
-| Ratio | P(target) si `H = 0,50` | P(target) si `H = 0,65` | Exposition |
+| Ratio | Target | P(target) | Exposition |
 |---|---|---|---|
-| 1:20 | 0,76 % | 4,65 % | 28,9 min |
-| 1:30 | 0,02 % | 2,40 % | 35,0 min |
-| 1:50 | 0,00 % | 0,31 % | 38,2 min |
+| 1:20 | 12 pt | 4,76 % | 2,4 min |
+| 1:30 | 18 pt | 3,23 % | 3,1 min |
+| 1:50 | 30 pt | 1,96 % | 4,2 min |
 
-Sous la calibration retenue, 1:20 est à l'intérieur de la portée d'une séance,
-1:30 à sa limite. **C'est le paramètre le plus fragile du document** : si les
-60 points de dispersion de séance sont une amplitude haut-bas et non un
-écart-type de clôture, l'exposant tombe à 0,57 et P(1:30) est divisée par
-quatre. Le premier test du protocole porte donc sur la loi d'échelle, avant
-tout signal.
+À cette largeur de stop, la séance ne borne plus rien : le premier passage est
+atteint en quelques minutes, la contrainte d'horizon cesse de mordre, et la
+probabilité de touche rejoint sa valeur non contrainte `1/(R+1)`. C'est un
+changement de nature du problème, et il est développé dans la septième partie :
+ce n'est plus la durée de la séance qui limite, c'est la friction.
 
 ## La remontée du stop
 
@@ -119,9 +122,9 @@ observation de marché n'a pas d'unité de mesure.
 vitesse d'échange stable, une estimation de la densité d'occupation du prix. Or
 pour une diffusion, cette densité vaut `1/σ(x)²` : un LVN n'est pas un vide que
 le prix comble, c'est un intervalle de volatilité locale élevée. Un stop de
-0,050 % vaut donc 3,6 écarts-types locaux sur le POC et 2,3 sur un LVN, et la
-probabilité d'être sorti par le bruit seul en trente minutes passe de 51 % à
-67 %. La règle d'entrée de la pile privilégie précisément les LVN.
+0,010 % ne vaut que 0,7 écart-type local sur le POC et 0,5 sur un LVN, et la
+probabilité d'être sorti par le bruit seul en trente minutes passe de 90 % à
+93 %. La règle d'entrée de la pile privilégie précisément les LVN.
 
 **La grille de Fibonacci paie quand le signal ne vaut rien.** À exposition
 inchangée, l'écart d'espérance entre entrée en zone OTE et entrée au marché
@@ -130,9 +133,10 @@ signal *si et seulement si* le signal exécuté au marché est perdant. Même fo
 que le résultat sur la remontée du stop.
 
 **Un signal de carnet ne peut pas financer un aller-retour.** L'information
-d'un signal de flux a une demi-vie. Sur une exposition de 29 minutes, un signal
-de demi-vie trois secondes en conserve 0,2 % et exigerait 4,6 points de dérive
-par minute — 3,7 fois la volatilité — pour couvrir la friction. La couche relève
+d'un signal de flux a une demi-vie. Sur l'exposition de la géométrie retenue, un
+signal de demi-vie trois secondes n'en conserve presque rien et exigerait 4,6
+points de dérive par minute — 3,7 fois la volatilité — pour couvrir la
+friction. La couche relève
 de l'exécution, pas de la prédiction.
 
 ## Le régime de gamma, et ce que le contrôle de plausibilité révèle
@@ -173,14 +177,21 @@ Sur cette hypothèse, les seize instruments concordent.
 
 | Instrument | Résultat sur l'edge de référence |
 |---|---|
-| Sharpe annualisé | 0,50 |
-| Sortino / Sharpe | 4,54 — un facteur que la **géométrie** fabrique, pas le signal |
-| MinTRL | 4 905 trades, soit 9,7 ans, pour affirmer que le Sharpe est positif |
-| MinBTL après 100 essais | 12 659 trades, soit 25,1 ans |
-| Sharpe déflaté à 100 essais | 1,7 % |
-| E[drawdown max] sur 1 an | 103 R — **supérieur** au gain annuel espéré, 55 R |
+| Sharpe annualisé | 1,96 |
+| Sortino / Sharpe | 4,28 — un facteur que la **géométrie** fabrique, pas le signal |
+| MinTRL | 278 trades, soit 0,6 an, pour affirmer que le Sharpe est positif |
+| MinBTL après 100 essais | 840 trades, soit 1,7 an |
+| Sharpe déflaté à 100 essais | 25,9 % |
+| E[drawdown max] sur 1 an | 87 R, contre un gain annuel espéré de 277 R |
 | Monte-Carlo, 4 000 années | une stratégie sans edge bat, une année sur vingt, le Sharpe **vrai** de celle qui en a un |
-| Stress inversé | un choc de 2,82 % efface une année entière d'espérance |
+| Stress inversé | un choc de 2,78 % efface une année entière d'espérance |
+
+Ces valeurs sont celles de la géométrie que l'opérateur pratique, et elles
+**renversent** la conclusion que le document tirait d'un stop cinq fois plus
+large. L'avantage de référence y vaut 0,550 R par trade et se démontre en une
+demi-année ; le problème d'inférence disparaît presque entièrement. Ce qui le
+remplace n'est pas plus doux, et la septième partie le chiffre : l'avantage
+devenu facile à mesurer est devenu impossible à posséder.
 
 **Trois résultats structurent la partie.**
 
@@ -208,14 +219,17 @@ réponse en trois propositions.
 
 1. **Aucun instrument ne peut établir qu'un edge existe**, et ce n'est pas une
    limite des instruments : ce dépôt ne contient aucune donnée de marché.
-2. **L'edge supposé n'est pas mesurable par le dispositif ordinaire** — une
-   moyenne non pondérée de trades comptés un par un, sur un marché, seuil
-   corrigé de Bonferroni, décision unique : 9,7 ans sans sélection, 25,1 ans
-   après cent configurations essayées.
+2. **La difficulté change de face avec la largeur du stop, sans jamais
+   disparaître.** Sur un stop large, l'avantage requis est minuscule et donc
+   indiscernable du bruit avant une dizaine d'années. Sur le stop serré que
+   l'opérateur pratique, il se mesure en une demi-année — mais il exige un
+   ratio de Sharpe annualisé de 34, que personne ne possède. Le même mur, lu à
+   deux abscisses de la même courbe.
 3. **Il en découle une conclusion plus forte que la précaution habituelle sur le
-   surajustement.** Puisqu'aucun backtest d'un an ne distingue l'edge du bruit,
-   un bon backtest d'un an n'est pas une preuve faible : c'est une observation
-   dont l'explication par défaut est la sélection.
+   surajustement.** Là où l'avantage requis est petit, un bon backtest d'un an
+   n'est pas une preuve faible : c'est une observation dont l'explication par
+   défaut est la sélection. Là où il est grand, un bon backtest d'un an est une
+   affirmation extraordinaire, et se traite comme telle.
 
 La deuxième proposition porte sur un **instrument de mesure**, et c'est ce que
 la partie suivante exploite : la durée d'une vérification n'est pas une
@@ -223,9 +237,9 @@ propriété de la stratégie.
 
 | Levier | Effet |
 |---|---|
-| Fixer la configuration **avant** de regarder les données | 25,1 ans → 9,7 ans. Gratuit. |
-| Passer de 2 à 8 trades par séance | 25,1 ans → 6,3 ans, si la dérive survit à la multiplication des signaux |
-| Augmenter l'amplitude de l'edge | il faudrait `10,9 µ*` — un Sharpe annualisé de 3,8 — pour qu'une année suffise. Hors de portée. |
+| Fixer la configuration **avant** de regarder les données | gratuit, et le facteur reste le même quelle que soit la géométrie |
+| Passer de 2 à 8 trades par séance | divise la durée par quatre, si la dérive survit à la multiplication des signaux |
+| Augmenter l'amplitude de l'edge | à la géométrie serrée, `3,2 µ*` suffit à rendre l'edge déclarable en un an après cent essais |
 | **Changer de dispositif de mesure** | **4,8 ans → 0,91 an** à niveau, puissance et hypothèse d'edge inchangés (section suivante) |
 
 ## Le protocole à horizon borné : décider en cinq ans
@@ -463,21 +477,22 @@ les deux lois, et rien ne contourne ce prix.
 
 | Géométrie | Bits requis par trade | Trades pour décider |
 |---|---|---|
-| ALP-1, `c/L` = 11,0 % | 422 × 10⁻⁶ | 10 568 |
+| ALP-1, `c/L` = 55,0 % | 9 407 × 10⁻⁶ | 474 |
 | ALP-2, `c/L` = 1,43 % | **7 × 10⁻⁶** | 607 412 |
 
-La géométrie divise l'exigence par **57,5** — davantage que le facteur 5,69
-obtenu sur le ratio d'information, l'information croissant comme le *carré* de
-l'écart à financer. Mais le même facteur multiplie l'échantillon qui la
-décide : ce qu'elle rend facile à obtenir, elle le rend difficile à prouver.
+La géométrie divise l'exigence par **1 281**. Mais le même facteur multiplie
+l'échantillon qui la décide : ce qu'elle rend facile à obtenir, elle le rend
+difficile à prouver — et réciproquement, ce que le stop serré rend
+démontrable, il le rend inatteignable. C'est la même identité, lue dans les
+deux sens.
 
-**Trois routes, un seul mur.** Le test t sur l'espérance demande 17 434 trades,
-le seuil de sélection déflaté 1 993, le test de vraisemblance sur la direction
-10 568. Aucune prémisse commune, un rapport de deux à un : la marque d'une
+**Trois routes, un seul mur.** Le test t sur l'espérance demande 812 trades,
+le seuil de sélection déflaté 288, le test de vraisemblance sur la direction
+474. Aucune prémisse commune, un rapport de trois à un : la marque d'une
 limite structurelle plutôt que d'un artefact de méthode.
 
 **Le seul gain exploitable de tout ce travail** : lire la direction plutôt que
-l'espérance économise **39 % des trades** à décision égale. Le Test 2 moyenne
+l'espérance économise **42 % des trades** à décision égale. Le Test 2 moyenne
 des déplacements, donc paie le bruit d'amplitude ; un test sur le seul signe
 ne le paie pas.
 
@@ -524,16 +539,18 @@ aucune dérive de prix, et le document ne leur en fait pas dire.
 
 ### Le résultat qui unifie les trois
 
-| Instrument | Plancher de bruit | Rapport à l'exigence |
+| Instrument | Plancher de bruit | Rapport à l'exigence d'ALP-2 |
 |---|---|---|
 | Entropie de permutation, d = 3 | 17,5 × 10⁻⁶ | **2×** |
 | Entropie de permutation, d = 4 | 137 × 10⁻⁶ | **19×** |
 | Information mutuelle, 1 000 obs. | 864 × 10⁻⁶ | **118×** |
 
 Chaque plancher est ce que l'instrument affiche sur une série où il n'y a
-**rien**. Tous dépassent l'information que la stratégie réclame. Ce n'est pas
-que l'avantage recherché soit petit : **il est plus petit que le bruit propre
-des appareils censés le voir.** C'est l'explication du mur, et elle dit
+**rien**. Tous dépassent l'information qu'ALP-2 réclame. Ce n'est pas que
+l'avantage recherché y soit petit : **il est plus petit que le bruit propre
+des appareils censés le voir.** Sur la géométrie serrée, le rapport s'inverse
+et les instruments voient largement l'avantage requis — mais c'est parce que
+cet avantage est devenu si grand qu'il n'existe pas. C'est l'explication du mur, et elle dit
 pourquoi il est structurel.
 
 ## Ce que le dehors offre, et ce qu'il coûte
@@ -702,6 +719,178 @@ déclaré.
 python main.py --edge             # les trois bornes, en quinze tables
 ```
 
+## La géométrie réellement pratiquée
+
+Les parties qui précèdent raisonnaient sur un stop de cinq centièmes de pour
+cent. L'opérateur en déclare un de **cinq à dix millièmes**, une remontée au
+point mort, deux pour cent du capital par tentative, et une pratique de
+répétition de l'entrée jusqu'à ce qu'elle passe. Le dépôt refait sur cette
+géométrie tout ce qu'il faisait sur l'autre. Aucune conclusion qualitative ne
+change — c'est la marque d'un cadre qui tient — mais chaque quantité change
+d'ordre de grandeur, et trois résultats apparaissent qui n'existaient pas à
+l'ancienne largeur.
+
+### `alp1/forcing.py` — un stop se juge en ticks, jamais en pourcentage
+
+Sur un indice à 6 000 points, un stop de 0,010 % vaut 0,60 point, soit **2,4
+ticks** d'un contrat E-mini ; la friction d'un aller-retour en vaut 1,3. Le
+premier verdict ne porte donc sur aucun signal.
+
+| Contrat | Stop (ticks) | Friction (ticks) | `c/L` | Viable |
+|---|---|---|---|---|
+| ES | 2,40 | 1,32 | 0,550 | oui |
+| NQ | 8,80 | 1,80 | **0,205** | oui |
+| MES | 2,40 | 4,20 | 1,750 | **non** |
+| MNQ | 8,80 | 9,00 | 1,023 | **non** |
+
+Sur les deux contrats micro, l'aller-retour coûte plus cher que le risque
+nominal : la position est perdue à l'ouverture, avant que le marché n'ait
+bougé. Sur le contrat du Nasdaq, dont le tick est fin relativement au niveau
+auquel il cote, la même largeur laisse `c/L` à un cinquième. **À cette largeur
+de stop, le choix du contrat pèse plus lourd que le choix du signal**, et c'est
+une décision qui se prend une fois, gratuitement.
+
+**Le point mort n'est pas mort.** La friction est due dans toutes les issues,
+sortie au point mort comprise : une sortie à BE coûte exactement `c/L`, soit
+**−0,55 R** à 0,010 % et **−1,10 R** à 0,005 %. À la largeur la plus serrée,
+sortir au point mort coûte plus cher qu'un stop entier n'en coûtait à
+l'ancienne calibration. Et comme un journal de trading retire les sorties à BE
+du dénominateur du taux de réussite, c'est l'issue la plus fréquente et la plus
+coûteuse qui disparaît des statistiques tenues.
+
+**Le spread prend sa part avant que le prix ne bouge.** Dans le modèle de Roll
+(1984), le prix observé oscille entre bid et ask autour d'un prix efficient
+inchangé : on entre à l'ask, on est stoppé quand le bid touche le niveau, et le
+stop utile n'est donc pas `L` mais `L − s`.
+
+| Stop | Points | Stop utile | Part prise par le spread | Sorti par le bruit en 1 min |
+|---|---|---|---|---|
+| 0,005 % | 0,30 | 0,05 | 83 % | **96,8 %** |
+| 0,010 % | 0,60 | 0,35 | 42 % | **77,9 %** |
+| 0,050 % | 3,00 | 2,75 | 8 % | 2,8 % |
+
+Une série de cinq à six échecs consécutifs ne demande, à cette géométrie,
+aucune explication de marché : **elle est produite par le bruit de cotation
+seul.** Osler (2003, 2005) ajoute la conséquence pratique : les ordres stop se
+groupent juste au-delà des niveaux ronds et le prix y passe par cascades. Un
+stop de deux ticks posé sur un niveau visible est dans le bruit *à l'endroit
+précis où le marché va chercher de la liquidité*.
+
+### Le théorème du forçage
+
+Chaque tentative est un premier passage : stop `L`, target `R·L`, friction `c`.
+Sous un prix sans dérive, la probabilité de toucher le target vaut `1/(R+1)`,
+le nombre de tentatives jusqu'à la première réussite suit une loi géométrique
+de moyenne `R+1`, et le résultat total attendu vaut
+
+```
+E[forçage] = R·L − R·L − (R+1)·c = −(R+1)·c
+```
+
+Le gain de l'unique réussite et les `R` échecs qui l'ont précédée s'annulent
+**exactement**. Ce n'est pas un arrondi : c'est le théorème d'arrêt optionnel,
+appliqué à une règle d'arrêt posée sur la *suite des trades* plutôt que sur le
+trajet du prix. **Il n'y a donc rien à optimiser dans la façon de forcer** —
+attendre un retracement de plus, resserrer la troisième tentative, doubler sur
+la quatrième sont toutes des règles d'arrêt, et le théorème les couvre toutes.
+Ce qui reste est la friction, payée 21 fois pour un seul aboutissement : **−11,55 R**
+à 0,010 %, **−23,10 R** à 0,005 %.
+
+**La série d'échecs n'est pas de la malchance.** À un ratio de 1:20, six échecs
+consécutifs surviennent avec probabilité **74,6 %**. L'opérateur qui en observe
+cinq ou six n'a pas subi un accident : il a observé la médiane de sa propre
+géométrie. Sur deux cents tentatives, la plus longue série *attendue* vaut 46.
+
+**Et la persistance ne sauve pas le forçage — c'est une proposition, non une
+mesure.** Kaminski et Lo (2014) établissent que sous marche aléatoire une règle
+de stop simple *diminue toujours* l'espérance, et qu'en présence de momentum
+elle peut en ajouter. Il serait tentant d'en conclure qu'un exposant d'échelle
+supérieur à un demi suffirait. C'est faux : un changement d'exposant est un
+changement de temps déterministe, qui ne modifie pas le rapport des
+probabilités de premier passage. Celle-ci reste bornée par `1/(R+1)` à tout
+exposant, là où la rentabilité en exige davantage. Le momentum qui rend une
+règle de stop utile n'est pas une propriété d'échelle mais une dérive
+conditionnelle : **espérer que la persistance sauve le forçage revient à
+espérer la mauvaise grandeur.**
+
+### Le levier n'est pas un choix séparé
+
+Risquer 2 % du capital sur un déplacement de prix de 0,010 % **impose** une
+exposition notionnelle de 200 fois le capital ; à 0,005 %, de 400 fois. Le
+levier n'est pas une troisième décision : il est l'exacte conséquence
+arithmétique des deux autres, et il est fixé avant toute considération de
+signal. Or un stop ne franchit pas un trou de cotation — à ce levier, un écart
+d'ouverture de un demi pour cent emporte **100 % du capital**.
+
+La fraction de Kelly ferme la question. Elle vaut `(p(R+1) − 1)/R`, c'est-à-dire
+**exactement zéro** sous un prix sans dérive, quel que soit le ratio visé.
+Toute fraction positive engagée sur une géométrie sans dérive n'est pas un
+sur-engagement modéré : c'est un sur-engagement d'ampleur infinie en
+proportion, et la probabilité de perdre la moitié du capital en cent tentatives
+vaut 90,9 %.
+
+### Ce qu'il faudrait posséder, et le renversement que cela révèle
+
+Toutes les exigences se ramènent à une seule, lisible sur une échelle que tout
+le monde connaît.
+
+| Stop | `c/L` | `E[τ]` | `µ*` | Sharpe annualisé requis |
+|---|---|---|---|---|
+| 0,050 % | 0,110 | 28,91 min | 0,685 pt/h | 2,9 |
+| 0,010 % | 0,550 | 2,42 min | 8,189 pt/h | **34,2** |
+| 0,005 % | 1,100 | 0,89 min | 22,206 pt/h | **92,8** |
+
+L'exigence monte par **deux canaux à la fois** : la friction relative croît
+comme l'inverse de la largeur, et l'exposition s'effondre d'un facteur 12 parce
+qu'un stop proche est touché vite. Les deux effets se multiplient au lieu de se
+compenser. Le resserrement ne rend pas l'exigence un peu plus dure, il la
+**multiplie par 12** et la porte à un Sharpe annualisé de 34 — contre 3 pour
+les meilleurs résultats publiés de la gestion.
+
+C'est le résultat le plus important de cette partie, et il retourne la
+conclusion du reste du document sans la contredire. Sur un stop large,
+l'avantage requis est minuscule et donc indiscernable du bruit avant une
+dizaine d'années. Sur le stop serré, il se démontre en une demi-année — mais il
+exige un Sharpe que personne ne possède. **Les deux géométries butent sur le
+même mur par ses deux faces : l'une demande un avantage si petit qu'on ne peut
+pas le prouver, l'autre un avantage si grand qu'on ne peut pas l'avoir.** Le
+passage de l'une à l'autre est continu, et le point où les deux difficultés
+sont simultanément minimales n'est à aucune des deux extrémités.
+
+### Le diagnostic inverse, et il est gratuit
+
+Tout ce qui précède suppose un ratio visé. Deux chiffres que l'opérateur
+connaît déjà suffisent à savoir lequel il pratique réellement : le nombre de
+tentatives, et sa plus longue série d'échecs.
+
+| Plus longue série | 50 tentatives | 100 | 200 | 400 |
+|---|---|---|---|---|
+| 3 | 1:0,44 | 1:0,31 | 1:0,22 | 1:0,17 |
+| 5 | 1:1,14 | 1:0,81 | 1:0,62 | 1:0,48 |
+| 6 | 1:1,56 | 1:1,11 | **1:0,84** | 1:0,67 |
+| 12 | 1:5,31 | 1:3,35 | 1:2,49 | 1:1,98 |
+| 20 | — | 1:7,70 | 1:5,30 | 1:4,10 |
+
+La lecture est contre-intuitive et il faut la dire entière : **une série
+maximale courte n'est pas une bonne nouvelle.** Elle implique un taux de
+réussite élevé, donc — sous prix sans dérive, où taux de réussite et ratio sont
+le même paramètre écrit deux fois — un ratio bas. Cinq à six échecs au maximum
+sur deux cents tentatives implique un taux de réussite de 54,2 % et un ratio de
+**1:0,84**. Ce n'est pas un 1:20.
+
+Deux lectures s'offrent, et elles se distinguent par une observation faisable
+ce soir. Soit le ratio réellement pratiqué est proche de 1:1, et toutes les
+tables ci-dessus doivent être relues à cette ligne. Soit le ratio est bien de
+1:20 et les séries observées sont bien plus courtes que la loi nulle ne le
+prévoit — ce qui serait la **première indication positive** de tout le dépôt,
+puisqu'un taux de réussite significativement au-dessus de `1/(R+1)` est
+exactement ce que le protocole cherche à établir. La distinction ne demande
+qu'un registre honnête des tentatives.
+
+```bash
+python main.py --risque           # les six planches et les dix tables
+```
+
 ## Utilisation
 
 ```bash
@@ -715,12 +904,13 @@ python main.py --measure f.csv    # exécute le protocole sur un historique
 python main.py --hurst f.csv      # loi d'échelle mesurée, ratio de variance
 python main.py --bounds f.csv     # la mesure encadrée par les deux remplissages
 python main.py --edge             # témoin, catalogue de dérives, opérateur
+python main.py --risque           # géométrie serrée, spread, forçage, capital
 python main.py --tape <pseudo>    # enregistre un direct, une frappe par appel
 python main.py --diffuseur f.csv  # évalue un registre de diffuseur collecté
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 600 tests unitaires du noyau
+python main.py --tests            # 649 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -775,8 +965,11 @@ chiffre soit défendable plutôt que seulement juste :
 | `alp1/broadcast.py` | Latence d'un signal diffusé, loi nulle du classement, effacement, registre |
 | `alp1/litedge.py` | Catalogue des dérives publiées, portes de compatibilité, assemblage |
 | `alp1/discret.py` | Talent comme covariance, dispositif apparié, bras déclaré |
+| `alp1/forcing.py` | Géométrie en ticks, spread de Roll, théorème du forçage, séries, levier, ruine |
 | `alp1/report5.py` | Tables de la loi d'échelle mesurée et de l'encadrement du remplissage |
 | `alp1/report7.py` | Tables du témoin, du catalogue et de l'opérateur |
+| `alp1/report8.py` | Tables du risque réel, et glossaire en langue courante |
+| `alp1/figrisk.py` | Planches du mur de friction, du spread, du forçage et du capital |
 | `alp1/power.py` | Frontières séquentielles, information du panel, dérive minimale détectable |
 | `alp1/mcprotocol.py` | Monte-Carlo du protocole entier : taille, puissance, durée du verdict |
 
@@ -811,7 +1004,7 @@ La production du document :
 
 Le document est reconstruit à partir du gabarit : prose d'un côté, chiffres
 injectés par le code de l'autre. Un chiffre du texte et le point correspondant
-d'une figure ne peuvent pas diverger. Il compte 93 tables et 40 figures, toutes
+d'une figure ne peuvent pas diverger. Il compte 103 tables et 46 figures, toutes
 produites par le noyau. Les simulations sont ensemencées explicitement : deux
 exécutions du dépôt produisent le même document, au bit près.
 
@@ -880,7 +1073,13 @@ extérieures peuvent apporter — un diffuseur en direct, un catalogue de dériv
 publiées, un opérateur discrétionnaire —, et le dépôt fournit la chaîne de
 collecte prospective qu'elles supposent ; aucun registre de diffuseur n'a été
 collecté à ce jour, et aucun des neuf effets du catalogue n'a été ré-estimé
-ici. Le protocole de vérification est en revanche complet, scellé,
+ici. La septième partie recalibre l'ensemble sur la géométrie que l'opérateur
+déclare — stop de cinq à dix millièmes de pour cent, point mort, deux pour cent
+du capital par tentative, forçage — et y ajoute le théorème du forçage, le
+rebond de cotation de Roll et le diagnostic inverse par la longueur des séries.
+Aucune de ces grandeurs n'est mesurée sur un historique : toutes se déduisent
+de la géométrie déclarée, ce qui les rend vérifiables sans donnée mais ne les
+substitue à aucune mesure. Le protocole de vérification est en revanche complet, scellé,
 exécutable, et son Monte-Carlo établit qu'il rend un verdict sur cinq années de
 barres d'une minute au plus. Les instruments de la troisième partie sont appliqués à des lois
 déduites du modèle et à des séries synthétiques dont la vérité est connue

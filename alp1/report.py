@@ -47,9 +47,21 @@ SESSION_DISPERSION = 60.0    # points sur une séance complète, soit 1,00 % de 
 SESSION_MIN = 390.0
 HURST = hurst_from_dispersions(SIGMA_1MIN, SESSION_DISPERSION, SESSION_MIN)
 
-STOP_PCT = 0.050
+#: Largeur de stop de l'opérateur, en pourcentage du niveau d'indice.
+#: **Posée par l'opérateur, encadrée.** La boîte est celle qu'il déclare :
+#: cinq à dix millièmes de pour cent, soit un à deux ticks et demi sur un
+#: contrat E-mini. C'est cinq à dix fois plus serré que ce que le document
+#: retenait auparavant, et la conséquence n'est pas de degré : à cette
+#: largeur la friction cesse d'être un prélèvement sur le risque pour en
+#: devenir la moitié, puis la totalité.
+STOP_PCT = 0.010
+STOP_PCT_BOX = (0.005, 0.010)
 RR_GRID = (20.0, 30.0)
-RESIDUAL_PCT = 0.005         # risque résiduel après remontée du stop
+
+#: Risque résiduel après remontée du stop, en pourcentage. Un dixième du
+#: stop, comme auparavant : la remontée « au point mort » ne laisse jamais
+#: zéro, puisque la friction reste due dans toutes les issues.
+RESIDUAL_PCT = 0.001
 FRICTION = COST_BASE.friction_points(ES)
 TRADES_PER_DAY = 2.0
 

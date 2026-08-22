@@ -10,6 +10,7 @@
     python main.py --hurst [f.csv]    # loi d'échelle mesurée, ratio de variance
     python main.py --bounds [f.csv]   # la mesure encadrée par les deux remplissages
     python main.py --edge             # témoin, catalogue de dérives, opérateur
+    python main.py --risque           # géométrie serrée, spread, forçage, capital
     python main.py --tape <pseudo>    # enregistre un direct, une frappe par appel
     python main.py --diffuseur f.csv  # évalue un registre de diffuseur déjà collecté
     python main.py --paper            # reconstruit docs/alp1-paper.html
@@ -35,6 +36,12 @@ def main() -> int:
         suite = loader.discover("tests", top_level_dir=".")
         result = unittest.TextTestRunner(verbosity=2).run(suite)
         return 0 if result.wasSuccessful() else 1
+
+    if "--risque" in sys.argv:
+        from alp1.report8 import main as report8_main
+
+        report8_main()
+        return 0
 
     if "--edge" in sys.argv:
         from alp1.report7 import main as report7_main

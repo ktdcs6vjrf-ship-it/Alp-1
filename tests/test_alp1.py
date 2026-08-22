@@ -1408,15 +1408,36 @@ class TestQuantCalibration(unittest.TestCase):
         taus = [quant.geometry(rr).expected_time for rr in quant.RR_GRID]
         self.assertEqual(taus, sorted(taus))
 
-    def test_detectability_improves_with_exposure_but_never_enough(self):
-        best = min(overfit.minimum_backtest_length(
-            quant.edge_law(rr).sharpe_per_trade, quant.N_TRIALS_REF)
-            for rr in quant.RR_GRID)
-        self.assertGreater(best / quant.TRADES_PER_YEAR, 10.0)
+    def test_la_detectabilite_croit_avec_l_exposition(self):
+        """Le sens est invariant ; le niveau, non.
 
-    def test_required_multiple_is_far_above_the_reference(self):
+        Allonger le ratio visé allonge l'exposition, donc la dérive captée
+        pour une même friction, donc le Sharpe par trade : la longueur de
+        backtest minimale décroît. C'est la propriété que le document
+        invoque, et elle ne dépend pas de la largeur du stop. **Le niveau,
+        lui, en dépend entièrement** — sur un stop large il se compte en
+        dizaines d'années, sur le stop déclaré en fractions d'année — et
+        c'est le renversement que la septième partie exploite.
+        """
+        longueurs = [overfit.minimum_backtest_length(
+            quant.edge_law(rr).sharpe_per_trade, quant.N_TRIALS_REF)
+            for rr in quant.RR_GRID]
+        finies = [n for n in longueurs if n < math.inf]
+        self.assertGreaterEqual(len(finies), 3)
+        self.assertEqual(finies, sorted(finies, reverse=True))
+        self.assertGreater(min(finies), 100.0)
+
+    def test_le_multiple_requis_depasse_l_edge_de_reference(self):
+        """L'edge de référence ne se déclare pas en un an après cent essais.
+
+        Le facteur d'écart, lui, dépend de la géométrie : il vaut plusieurs
+        unités sur un stop large et se resserre quand le stop l'est aussi,
+        puisque `µ*` monte avec. Ce qui ne change pas est le sens de
+        l'inégalité, et c'est lui que le test fixe.
+        """
         k = quant.required_multiple(1.0, quant.N_TRIALS_REF)
-        self.assertGreater(k, 4.0 * quant.DRIFT_MULTIPLE)
+        self.assertLess(k, math.inf)
+        self.assertGreater(k, quant.DRIFT_MULTIPLE)
 
     def test_required_multiple_actually_reaches_the_confidence(self):
         k = quant.required_multiple(1.0, quant.N_TRIALS_REF)
@@ -1426,10 +1447,22 @@ class TestQuantCalibration(unittest.TestCase):
                                       law.excess_kurtosis)
         self.assertAlmostEqual(dsr, 0.95, places=4)
 
-    def test_expected_drawdown_exceeds_the_expected_annual_gain(self):
+    def test_le_drawdown_sous_derive_reste_sous_celui_sans_derive(self):
+        """L'écart entre les deux lois informe ; le niveau de l'une, non.
+
+        L'ordre du drawdown et du gain annuel **dépend de la largeur du
+        stop** : il s'inverse entre la géométrie large que le document
+        retenait d'abord et la géométrie serrée que l'opérateur pratique.
+        Ce test porte donc sur la propriété qui, elle, ne s'inverse pas —
+        `√N` sans dérive contre `ln N` avec — et sur le fait que le drawdown
+        reste une fraction matérielle du gain, jamais négligeable.
+        """
         law = quant.edge_law()
         n = int(quant.TRADES_PER_YEAR)
-        self.assertGreater(drawdown.expected_max_drawdown_drift(law, n), n * law.mean)
+        sans = drawdown.expected_max_drawdown_null(quant.null_law().sd, n)
+        avec = drawdown.expected_max_drawdown_drift(law, n)
+        self.assertGreater(sans, avec)
+        self.assertGreater(avec, 0.10 * n * law.mean)
 
     def test_simulations_are_cached_and_reproducible(self):
         self.assertIs(quant.mc_paths("null"), quant.mc_paths("null"))

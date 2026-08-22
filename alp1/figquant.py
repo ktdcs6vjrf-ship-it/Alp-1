@@ -227,10 +227,16 @@ def fig_ratios() -> str:
         ("Sortino", n0.sortino(), e0.sortino()),
         ("Omega − 1", n0.omega() - 1.0, e0.omega() - 1.0),
     ]
+    # L'échelle suit les données plutôt que d'être posée : une largeur de stop
+    # différente change les trois ratios d'un ordre de grandeur, et un domaine
+    # écrit en dur laisserait les barres sortir du cadre sans que rien ne le
+    # signale.
+    _amp = max(abs(v) for _, vn, ve in entries for v in (vn, ve))
+    _amp = max(_amp * 1.25, 0.02)
     p2 = Panel(b, 384, 74, 124, 168, title="Par trade", readout="R:R 1:20")
-    p2.domain(-0.5, len(entries) - 0.5, -0.16, 0.16)
+    p2.domain(-0.5, len(entries) - 0.5, -_amp, _amp)
     p2.frame()
-    p2.grid_y([-0.15, -0.10, -0.05, 0.0, 0.05, 0.10, 0.15], lambda v: _num(v, 2))
+    p2.grid_y([-_amp, -_amp / 2, 0.0, _amp / 2, _amp], lambda v: _num(v, 2))
     p2.hline(0.0, "zero")
     for i, (lab, vn, ve) in enumerate(entries):
         p2.vbar(i - 0.17, 0.0, vn, 15.0, "dn", f"{lab} · µ = 0 · {vn:+.3f}")
@@ -242,9 +248,10 @@ def fig_ratios() -> str:
     # --- P3 : dispersion totale contre dispersion à la baisse --------------
     p3 = Panel(b, 546, 74, 90, 168, title="Dispersion",
                readout=f"σ/DD = {_num(e0.sd / e0.downside_deviation(), 2)}")
-    p3.domain(-0.5, 1.5, 0.0, 6.0)
+    _hi = max(e0.sd, e0.downside_deviation()) * 1.18
+    p3.domain(-0.5, 1.5, 0.0, _hi)
     p3.frame()
-    p3.grid_y([0, 1, 2, 3, 4, 5, 6], lambda v: f"{v:g}")
+    p3.grid_y([_hi * i / 4.0 for i in range(5)], lambda v: _num(v, 1))
     p3.vbar(0.0, 0.0, e0.sd, 34.0, "s2f", f"écart-type total {e0.sd:.2f} R")
     p3.vbar(1.0, 0.0, e0.downside_deviation(), 34.0, "s3f",
             f"déviation à la baisse {e0.downside_deviation():.2f} R")

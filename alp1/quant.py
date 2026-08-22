@@ -837,8 +837,21 @@ def required_multiple(years: float = 1.0, n_trials: int = 1,
         return deflated_sharpe(law.sharpe_per_trade, n, n_trials,
                                law.skewness, law.excess_kurtosis)
 
-    lo, hi = 1.0, 64.0
-    if dsr(hi) < confidence:
+    # La borne haute n'est pas un réglage : elle est imposée par le support
+    # de la loi du trade. L'inclinaison d'Esscher ne déplace la moyenne qu'à
+    # l'intérieur des valeurs extrêmes du support, et la moyenne visée vaut
+    # `(k − 1)·c/L`. Poser une borne fixe supposerait la géométrie ; la
+    # déduire du support la rend valide à toute largeur de stop.
+    c_sur_l = FRICTION / STOP_PTS
+    plafond = max(null_law().values)
+    # Neuf dixièmes du plafond, et non le plafond : tout près du support la
+    # loi inclinée dégénère vers une masse ponctuelle, son aplatissement
+    # diverge, et le Sharpe déflaté cesse d'être calculable de façon fiable.
+    # La marge n'est pas cosmétique — sans elle la bissection lirait un faux
+    # échec dans un artefact numérique.
+    k_max = 1.0 + 0.90 * plafond / c_sur_l if c_sur_l > 0 else 64.0
+    lo, hi = 1.0, min(64.0, k_max)
+    if hi <= lo or dsr(hi) < confidence:
         return math.inf
     for _ in range(80):
         mid = 0.5 * (lo + hi)

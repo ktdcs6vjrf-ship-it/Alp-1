@@ -563,6 +563,8 @@
 
     <p>Aucune mesure sur historique n'est conduite ici. C'est la limite du document, énoncée plutôt que compensée. Le protocole qui la conduirait est en revanche écrit, scellé avant qu'aucune donnée n'existe sous l'empreinte <span class="v">{{seal}}</span>, et borné à {{budget}} configurations par le code lui-même. Il est surtout <strong>borné en temps</strong>&nbsp;: une statistique qui compte le temps d'exposition plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel de {{pw_markets}} contrats et une décision séquentielle jalonnée en information suffisent à rendre un verdict sur toute dérive captée supérieure à {{pw_mde_bps}} points de base en {{pw_horizon_years}} années de données au plus, et {{pw_median_ref}} en médiane sous l'hypothèse retenue — à niveau et puissance inchangés, la simulation de la procédure entière donnant une taille de {{pw_size}} pour {{pw_alpha}} nominal. Ce que ce dispositif n'absorbe pas est une décote supérieure à {{pw_decay_absorbed}}, et la décote documentée est plus forte&nbsp;: <strong>la question n'est pas seulement de savoir si l'avantage existe, mais s'il est encore décidable.</strong></p>
 
+    <p>Une septième partie refait enfin tout le travail sur la géométrie que l'opérateur pratique réellement&nbsp;: un stop de {{frc_stop_lo}} à {{frc_stop_hi}}&nbsp;% du prix — soit {{frc_ticks_lo}} à {{frc_ticks_hi}} ticks —, une remontée au point mort, {{frc_risque}}&nbsp;% du capital par tentative, et une répétition de l'entrée jusqu'à ce qu'elle passe. À cette largeur, la friction cesse d'être un prélèvement sur le risque pour en devenir la moitié puis la totalité&nbsp;; le spread consomme {{frc_part_spread_hi}}&nbsp;% du stop avant que le prix ne bouge, ce qui suffit à produire {{frc_bruit_hi}}&nbsp;% de sorties par le bruit seul en une minute&nbsp;; une sortie « au point mort » coûte {{frc_be_hi}}&nbsp;R&nbsp;; et le forçage, qui est une règle d'arrêt posée sur la suite des trades, laisse par le même théorème d'arrêt optionnel un brut exactement nul et une friction payée {{frc_tentatives}} fois. <strong>Le resserrement retourne le mur sans le supprimer</strong>&nbsp;: l'avantage requis, minuscule et donc indémontrable sur un stop large, y devient démontrable en une demi-année et impossible à posséder, puisqu'il exige un Sharpe annualisé de {{frc_sharpe_hi}}.</p>
+
     <p class="keywords"><span>Mots-clés —</span> théorème d'arrêt optionnel&nbsp;; identité de Wald&nbsp;; premier passage&nbsp;; exposition au marché&nbsp;; coûts de transaction endogènes&nbsp;; lois nulles&nbsp;; momentum intraday&nbsp;; gamma des teneurs de marché&nbsp;; Sharpe déflaté&nbsp;; pré-enregistrement&nbsp;; latence d'information&nbsp;; sélection de signaux&nbsp;; dispositif apparié.</p>
     <p class="jel"><span>Classification JEL —</span> C12, C58, G11, G13, G14</p>
   </div>
@@ -654,8 +656,17 @@
         </ol>
       </li>
       <li>
-        <span class="pt">Verdict</span>
+        <span class="pt">Septième partie — La géométrie réellement pratiquée</span>
         <ol start="43">
+          <li><a href="#s-reel">Ce qu'un stop d'un centième de pour cent coûte</a></li>
+          <li><a href="#s-spread">Ce que le spread prend avant que le prix ne bouge</a></li>
+          <li><a href="#s-forcage">Le forçage, et son théorème</a></li>
+          <li><a href="#s-capital">Le capital, le levier, et ce que la série révèle</a></li>
+        </ol>
+      </li>
+      <li>
+        <span class="pt">Verdict</span>
+        <ol start="47">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -672,6 +683,12 @@
     <p>Toutes les tables et figures sont produites par le code du dépôt et reconstruites à chaque assemblage&nbsp;: un chiffre du texte et le point correspondant d'une figure ne peuvent pas diverger. Le statut de chaque nombre est marqué — démontré, publié par un tiers, ou posé en hypothèse.</p>
   </div>
 
+  <h2 class="unnumbered">Glossaire</h2>
+
+  <p>Ce document emploie une quinzaine de termes techniques. Ils sont définis ici dans une langue qui ne suppose aucune familiarité avec les marchés, et dans l'ordre où le document les rencontre&nbsp;: chaque entrée n'emploie que les précédentes, de sorte que la table se lit de haut en bas comme une construction plutôt que comme un dictionnaire à consulter. Le lecteur qui connaît le vocabulaire peut passer directement à la première partie&nbsp;; la section&nbsp;<a href="#s-concepts">1</a> reprend les mêmes notions sous leur forme formelle.</p>
+
+  {{TABLE:frc_glossaire}}
+
   <div class="part">
     <span class="lab">Première partie</span>
     <h2>Le vocabulaire et le cadre</h2>
@@ -685,7 +702,7 @@
   <div class="concept">
     <h3>La friction</h3>
     <p class="plain">Ce qu'un aller-retour coûte, quoi qu'il arrive&nbsp;: commission, écart entre l'achat et la vente, et le déplacement du prix pendant qu'un ordre chemine. Elle se paie sur les trades gagnants comme sur les perdants.</p>
-    <p class="formal">Notée <span class="v">c</span>, en points d'indice. La grandeur qui décide n'est jamais la friction seule mais son rapport au risque pris, <span class="v">c/L</span>&nbsp;: un même coût de {{friction_ref}} point représente {{c_over_l_v1}} d'un stop de trois points et {{c_over_l}} d'un stop posé sur la bande de bruit. Ce rapport apparaît dans presque toutes les formules du document.</p>
+    <p class="formal">Notée <span class="v">c</span>, en points d'indice. La grandeur qui décide n'est jamais la friction seule mais son rapport au risque pris, <span class="v">c/L</span>&nbsp;: un même coût de {{friction_ref}} point représente {{c_over_l_v1}} d'un stop de {{stop_pts}} point et {{c_over_l}} d'un stop posé sur la bande de bruit. Ce rapport apparaît dans presque toutes les formules du document.</p>
     <p class="sym">c &nbsp;·&nbsp; c/L</p>
   </div>
 
@@ -1552,7 +1569,7 @@
     <div class="no">(32)</div>
   </div>
 
-  <p>Un écart d'ouverture de deux pour cent — un événement que l'histoire documente plusieurs fois par décennie — efface {{q_gap2_years}} année de gain espéré. Le krach de 1987 en efface {{q_1987_years}}. La stratégie n'est pas exposée à ces chocs parce qu'elle serait mal construite&nbsp;: elle y est exposée parce que son risque nominal, trois points, est deux ordres de grandeur sous l'amplitude d'un choc de séance, et qu'aucun stop ne franchit cet écart.</p>
+  <p>Un écart d'ouverture de deux pour cent — un événement que l'histoire documente plusieurs fois par décennie — efface {{q_gap2_years}} année de gain espéré. Le krach de 1987 en efface {{q_1987_years}}. La stratégie n'est pas exposée à ces chocs parce qu'elle serait mal construite&nbsp;: elle y est exposée parce que son risque nominal, {{stop_pts}} point, est plus de deux ordres de grandeur sous l'amplitude d'un choc de séance, et qu'aucun stop ne franchit cet écart.</p>
 
 {{TABLE:tails}}
 
@@ -1574,9 +1591,11 @@
 
   <p><strong>Premièrement, la boîte à outils ne peut pas établir qu'un edge existe, et ce n'est pas une limite des instruments.</strong> Aucun chiffre de ce dépôt ne provient d'un historique de marché. Les instruments transforment des hypothèses en conséquences&nbsp;; sans mesure de la dérive conditionnelle à l'entrée, la question de l'existence reste exactement où la seconde partie l'a laissée.</p>
 
-  <p><strong>Deuxièmement — et c'est le résultat de cette partie — l'edge supposé, s'il existe à l'amplitude retenue, n'est pas mesurable dans un échantillon que la stratégie possédera un jour.</strong> Sous <span class="v">µ</span>&nbsp;=&nbsp;{{q_mult}}&thinsp;<span class="v">µ</span>*, il faut {{q_mtrl_years}} années de trading pour affirmer que le Sharpe est positif, et {{q_mbtl_years}} années une fois {{q_trials}} configurations essayées prises en compte. Sur une seule année, une stratégie sans aucun edge produit une fois sur vingt un Sharpe supérieur au Sharpe vrai de celle qui en a un. Le drawdown maximal espéré d'une année, {{q_mdd_edge}}&nbsp;R, dépasse son gain annuel espéré, {{q_annual_gain}}&nbsp;R. Et un unique écart d'ouverture de {{q_reverse}}&nbsp;% suffit à effacer l'année entière.</p>
+  <p><strong>Deuxièmement — et c'est le résultat de cette partie — la difficulté ne disparaît jamais, elle change de face avec la largeur du stop.</strong> Sur la géométrie déclarée, sous <span class="v">µ</span>&nbsp;=&nbsp;{{q_mult}}&thinsp;<span class="v">µ</span>*, il ne faut que {{q_mtrl_years}} année de trading pour affirmer que le Sharpe est positif, et {{q_mbtl_years}} année une fois {{q_trials}} configurations essayées prises en compte. Le problème d'inférence, qui occupait tout le document sur un stop cinq fois plus large, a presque disparu&nbsp;: l'avantage de référence y vaut {{q_edge_r}}&nbsp;R par trade, et le drawdown maximal espéré d'une année, {{q_mdd_edge}}&nbsp;R, reste sous son gain annuel espéré, {{q_annual_gain}}&nbsp;R.</p>
 
-  <p><strong>Troisièmement, il en découle une conclusion sur le surajustement qui est plus forte que la précaution habituelle.</strong> Puisqu'aucun backtest d'un an ne peut distinguer l'edge du bruit, un bon backtest d'un an n'est pas une <em>preuve faible</em>&nbsp;: c'est une observation dont l'explication par défaut est la sélection. Le surajustement n'est pas ici un risque à surveiller, c'est l'hypothèse nulle qu'il faudrait réfuter — et les seuils ci-dessus disent exactement à quel prix.</p>
+  <p>Ce qui le remplace n'est pas plus doux, et la septième partie le chiffre&nbsp;: l'avantage devenu facile à mesurer est devenu impossible à posséder, puisqu'il exige un ratio de Sharpe annualisé de {{frc_sharpe_hi}}. Sur une seule année, une stratégie sans aucun edge produit toujours, une fois sur vingt, un Sharpe supérieur au Sharpe vrai de celle qui en a un&nbsp;; et un unique écart d'ouverture de {{q_reverse}}&nbsp;% suffit toujours à effacer l'année entière. <strong>Les deux géométries butent sur le même mur par ses deux faces</strong> — l'une demande un avantage si petit qu'on ne peut pas le prouver, l'autre un avantage si grand qu'on ne peut pas l'avoir.</p>
+
+  <p><strong>Troisièmement, il en découle une conclusion sur le surajustement qui est plus forte que la précaution habituelle, et elle vaut des deux côtés du mur.</strong> Là où l'avantage requis est petit, aucun backtest d'un an ne le distingue du bruit&nbsp;: un bon backtest d'un an n'y est pas une <em>preuve faible</em>, c'est une observation dont l'explication par défaut est la sélection. Là où il est grand — le cas de la géométrie déclarée —, un bon backtest d'un an affirme un Sharpe que la littérature ne documente pour aucun signal public, et se traite comme toute affirmation extraordinaire. Le surajustement n'est pas ici un risque à surveiller, c'est l'hypothèse nulle qu'il faudrait réfuter, et les seuils ci-dessus disent exactement à quel prix.</p>
 
   <p><strong>Ces trois propositions portent sur un dispositif de mesure, et il faut dire lequel.</strong> Le nombre d'années ci-dessus est celui d'une moyenne non pondérée de trades comptés un par un, sur un marché, avec un seuil corrigé de Bonferroni et une décision unique. C'est le dispositif implicite de la quasi-totalité des backtests publiés, et c'est à ce titre qu'il fixe la barre. Ce n'est pas le meilleur dispositif disponible&nbsp;: la section&nbsp;<a href="#s-borne">32</a> en construit un qui atteint le même niveau et la même puissance dans un horizon borné à cinq années, sans relever d'un point la dérive supposée. La deuxième proposition doit donc se lire dans sa forme exacte — l'edge supposé n'est pas mesurable <em>par le dispositif ordinaire</em> dans un échantillon réalisable —, et la troisième reste entière, puisqu'elle ne porte pas sur la durée mais sur ce qu'un bon backtest d'un an autorise à conclure.</p>
 
@@ -1587,7 +1606,7 @@
   <p>Trois lectures s'en déduisent, et elles sont opérationnelles.</p>
 
   <ul>
-    <li><strong>L'exigence d'amplitude est hors de portée.</strong> Pour qu'une année suffise après {{q_trials}} essais, il faudrait une dérive de {{q_k100}}&thinsp;<span class="v">µ</span>*, soit un Sharpe annualisé de {{q_k100_sharpe}} — {{q_k100_ratio}} fois l'hypothèse de référence, et un niveau que la littérature ne documente pour aucun signal public. Espérer valider la pile en un an par l'amplitude de son edge n'est pas un objectif ambitieux, c'est une impossibilité arithmétique.</li>
+    <li><strong>L'exigence d'amplitude est atteinte de justesse, et c'est un piège.</strong> Pour qu'une année suffise après {{q_trials}} essais, il faut une dérive de {{q_k100}}&thinsp;<span class="v">µ</span>*, soit {{q_k100_ratio}} fois l'hypothèse de référence, pour un Sharpe annualisé de {{q_k100_sharpe}}. Le chiffre paraît modeste&nbsp;; il ne l'est que parce que <span class="v">µ</span>* lui-même a été multiplié par douze par le resserrement du stop. Exprimée en dérive de prix, l'exigence est {{mu_star_h}} points par heure — et c'est là qu'elle devient hors de portée, non dans le multiple.</li>
     <li><strong>Le seul levier réel est le nombre d'essais, et il est gratuit.</strong> Le délai passe de {{q_mbtl_years}} à {{q_mtrl_years}} années en fixant la configuration <em>avant</em> de regarder les données. C'est la moitié du chemin, elle ne coûte rien, et elle est la seule décision de ce papier qui n'exige ni donnée ni capital&nbsp;: enregistrer les paramètres, dater l'enregistrement, ne plus y toucher.</li>
     <li><strong>La cadence est le second levier, et elle est mécanique.</strong> Le délai est un nombre de <em>trades</em>&nbsp;; le convertir en années est le seul endroit où la fréquence intervienne. À huit trades par séance plutôt que deux, les {{q_mbtl_years}} années deviennent {{q_freq8}}. Encore faut-il que la dérive conditionnelle survive à la multiplication des signaux — ce qui est, précisément, la question que le Test&nbsp;2 du protocole mesure.</li>
   </ul>
@@ -1782,7 +1801,7 @@
 
   {{TABLE:gaps}}
 
-  <p>Le saut ne déplace pas l'espérance — la sortie étant au marché, le dépassement entre dans <span class="v">X</span> et l'identité de Wald l'absorbe. Il déplace le dénominateur, et il le déplace d'autant plus que le stop est serré. Sur un stop de trois points, la perte réelle excède la perte nominale de 9,3&nbsp;% ; sur la bande de bruit, de 0,3&nbsp;%. C'est un rapport de trente entre les deux géométries devant le même marché, et il joue dans le même sens que tout le reste.</p>
+  <p>Le saut ne déplace pas l'espérance — la sortie étant au marché, le dépassement entre dans <span class="v">X</span> et l'identité de Wald l'absorbe. Il déplace le dénominateur, et il le déplace d'autant plus que le stop est serré. Sur un stop de {{stop_pts}} point, la perte réelle excède largement la perte nominale ; sur la bande de bruit, de 0,3&nbsp;%. L'écart entre les deux géométries devant le même marché se compte en ordres de grandeur, et il joue dans le même sens que tout le reste.</p>
 
   <h2 id="s-friction">La friction, déduite plutôt que posée</h2>
 
@@ -2336,6 +2355,146 @@
   </div>
 
   <p>Le protocole apparié est ainsi le seul de ce document qu'un opérateur seul peut conduire sans attendre cinq années de panel&nbsp;: {{ope_seances_07}}&nbsp;séances à corrélation moyenne, soit {{ope_annees_07}}&nbsp;an, pour trancher un écart de cinq centièmes de risque par trade. Il ne mesure pas un edge de marché&nbsp;; il mesure la seule chose que le théorème d'invariance laisse à l'opérateur.</p>
+
+  <div class="part">
+    <span class="lab">Septième partie</span>
+    <h2>La géométrie réellement pratiquée</h2>
+    <p>Les six parties qui précèdent raisonnent sur un stop de cinq centièmes de pour cent. L'opérateur en déclare un de <strong>cinq à dix millièmes</strong>, une remontée au point mort, deux pour cent du capital par tentative, et une pratique de répétition de l'entrée jusqu'à ce qu'elle passe. Cette partie refait sur cette géométrie tout ce que le document faisait sur l'autre. Aucune conclusion qualitative ne change — c'est la marque d'un cadre qui tient — mais chaque quantité change d'ordre de grandeur, et deux résultats nouveaux apparaissent, qui n'existaient pas à l'ancienne largeur.</p>
+  </div>
+
+  <h2 id="s-reel">Ce qu'un stop d'un centième de pour cent coûte</h2>
+
+  <p>Un stop se juge en ticks, jamais en pourcentage. Le pourcentage cache le pas de cotation, et c'est au pas de cotation que la friction se compte. Sur un indice à 6&nbsp;000 points, un stop de {{frc_stop_hi}}&nbsp;% vaut {{frc_pts_hi}} point, soit <strong>{{frc_ticks_hi}} ticks</strong> d'un contrat E-mini ; un stop de {{frc_stop_lo}}&nbsp;% en vaut {{frc_ticks_lo}}. La friction d'un aller-retour, elle, en vaut un et un tiers.</p>
+
+  {{TABLE:frc_geometrie}}
+
+  <p>La table rend un premier verdict, et il ne porte sur aucun signal&nbsp;: <strong>sur les deux contrats micro, l'aller-retour coûte plus cher que le risque nominal.</strong> Le rapport <span class="v">c/L</span> y vaut {{frc_mes_cl}} et {{frc_mnq_cl}}, c'est-à-dire que la position est perdue à l'ouverture, avant que le marché n'ait bougé, et qu'aucune qualité de lecture ne rattrape cela. Sur le contrat E-mini du Nasdaq, dont le tick est fin relativement au niveau auquel il cote, la même largeur en pourcentage laisse <span class="v">c/L</span> à {{frc_nq_cl}}. <strong>À cette largeur de stop, le choix du contrat pèse plus lourd que le choix du signal</strong> — et c'est une décision qui se prend une fois, gratuitement, avant d'ouvrir quoi que ce soit.</p>
+
+  {{FIGURE:riskwall|Friction rapportée au risque nominal selon la largeur du stop, en échelle logarithmique. La bande verticale marque la boîte déclarée par l'opérateur. La ligne d'unité est le mur&nbsp;: au-dessus, l'aller-retour coûte plus que le risque, et la position est perdue avant d'être ouverte. Le panneau inférieur compare stop et friction en ticks, contrat par contrat.}}
+
+  <h3>Le rapport qui décide, et ce qu'il devient</h3>
+
+  <p>Le document a établi dès la section&nbsp;<a href="#s-critere">5</a> que toute exigence de signal se ramène à <span class="v">c/L</span>, la friction rapportée au risque nominal, et que le lift relatif exigé vaut exactement ce rapport quel que soit le ratio visé. Le resserrement le fait passer de {{frc_cl_ancien}} à <strong>{{frc_cl_hi}}</strong> au scénario de référence, et à {{frc_cl_reel}} au scénario réaliste — c'est-à-dire à un cheveu de l'unité. À {{frc_stop_lo}}&nbsp;%, il vaut {{frc_cl_lo}}, et le mur est franchi.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que « c/L » veut dire, sans jargon</span>
+    <p>Vous risquez un euro pour en gagner vingt. Avant même que le marché ne bouge, l'aller-retour vous prélève une somme fixe&nbsp;: commission, écart entre le prix d'achat et le prix de vente, et le décalage entre le prix voulu et le prix obtenu. <span class="v">c/L</span> est cette somme, exprimée en fraction de l'euro risqué.</p>
+    <p>À {{frc_cl_ancien}}, vous partez avec onze centimes de retard sur un euro de risque. À {{frc_cl_hi}}, vous partez avec cinquante-cinq. À {{frc_cl_lo}}, vous devez déjà un euro dix avant d'avoir raison une seule fois. Le rapport ne dépend d'aucune opinion sur le marché&nbsp;: il se calcule à l'avance, et c'est le premier nombre à écrire.</p>
+  </div>
+
+  <h3>Le point mort n'est pas mort</h3>
+
+  <p>La remontée du stop au prix d'entrée est présentée partout comme une mise à l'abri&nbsp;: le trade ne peut plus rien coûter. C'est faux, et l'écart se chiffre. La friction est due dans <em>toutes</em> les issues, et une sortie au point mort n'en rembourse aucune part&nbsp;: elle coûte exactement <span class="v">c/L</span>, en multiples du risque.</p>
+
+  {{TABLE:frc_point_mort}}
+
+  <p>À l'ancienne calibration, sortir au point mort coûtait {{frc_be_ancien}}&nbsp;R — une nuisance. À {{frc_stop_hi}}&nbsp;%, cela coûte <strong>{{frc_be_hi}}&nbsp;R</strong>, soit plus de la moitié d'un stop plein. À {{frc_stop_lo}}&nbsp;%, {{frc_be_lo}}&nbsp;R&nbsp;: <strong>une sortie au point mort y coûte plus cher qu'un stop entier n'en coûtait à l'ancienne largeur.</strong></p>
+
+  <p>Le second effet est comptable et il est pire que le premier. Un journal de trading compte un trade sorti au point mort comme neutre, et le retire du dénominateur du taux de réussite — c'est la convention usuelle, et le dépôt la reproduit dans <code>apparent_hit_rate</code>. À cette géométrie, l'issue la plus fréquente et la plus coûteuse est donc <strong>exactement celle qui disparaît des statistiques tenues</strong>. Un opérateur peut afficher un taux de réussite stable pendant des mois tout en perdant un demi-risque par trade sur une ligne qu'il ne compte pas.</p>
+
+  <h2 id="s-spread">Ce que le spread prend avant que le prix ne bouge</h2>
+
+  <p>Le résultat qui suit n'existait pas à l'ancienne largeur, parce qu'il y était négligeable. Il devient dominant ici.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Roll établit en 1984 que le prix affiché d'un actif n'est pas son prix&nbsp;: c'est son prix plus ou moins un demi-écart, selon qu'une transaction s'est faite à l'achat ou à la vente. Le prix affiché oscille donc d'un écart complet <em>alors que rien ne se passe</em>. On entre à l'ask&nbsp;; on est stoppé quand le bid touche le niveau du stop. Entre les deux, il y a un spread entier de marge qu'on a déjà consommée.</p>
+
+  <p class="eq">stop utile = L − s</p>
+
+  <p>Un stop plus étroit que le spread est donc touché <strong>au premier rafraîchissement de cotation</strong>, sans qu'aucun prix n'ait bougé. Et un stop à peine plus large ne laisse que la différence.</p>
+
+  {{FIGURE:riskspread|À gauche, un prix efficient rigoureusement plat entouré de son bid et de son ask&nbsp;: rien ne bouge, et le prix observé oscille pourtant d'un tick complet. Les deux niveaux de stop déclarés y sont posés. Au centre, la part du stop que le spread consomme. En bas, la probabilité d'être sorti par ce seul bruit en une minute, selon la largeur.}}
+
+  {{TABLE:frc_spread}}
+
+  <h3>Où est le résultat</h3>
+
+  <p><strong>Premier point — le stop annoncé n'est pas le stop réel.</strong> À {{frc_stop_hi}}&nbsp;%, le spread prend {{frc_part_spread_hi}}&nbsp;% de la largeur&nbsp;: le déplacement de prix qui reste à parcourir avant d'être sorti n'est pas {{frc_pts_hi}} point mais {{frc_utile_hi}}. À {{frc_stop_lo}}&nbsp;%, il en prend {{frc_part_spread_lo}}&nbsp;% et il ne reste que {{frc_utile_lo}} point — deux dixièmes de tick.</p>
+
+  <p><strong>Deuxième point, et il explique l'observation de l'opérateur.</strong> La probabilité d'être sorti par le seul bruit, en une minute, sans aucune dérive et sans aucun mouvement adverse réel, vaut <strong>{{frc_bruit_hi}}&nbsp;%</strong> à {{frc_stop_hi}}&nbsp;% et {{frc_bruit_lo}}&nbsp;% à {{frc_stop_lo}}&nbsp;%. À l'ancienne largeur, elle valait {{frc_bruit_ancien}}&nbsp;%. Une série de cinq à six échecs consécutifs ne demande, à cette géométrie, aucune explication de marché&nbsp;: <strong>elle est produite par le bruit de cotation seul.</strong></p>
+
+  <p>Il y a une conséquence pratique immédiate, et elle est gratuite. Osler (2003, 2005) documente que les ordres stop se groupent juste au-delà des niveaux ronds, et que le prix traverse ces zones par cascades — un stop déclenché en déclenche un autre. Un stop de deux ticks posé sur un niveau visible n'est donc pas seulement dans le bruit&nbsp;: il est dans le bruit <em>à l'endroit précis où le marché va chercher de la liquidité</em>. Décaler le stop de quelques ticks hors des niveaux ronds ne coûte rien et retire cette exposition-là.</p>
+
+  <h2 id="s-forcage">Le forçage, et son théorème</h2>
+
+  <p>L'opérateur décrit sa pratique&nbsp;: il prend le signal, se fait sortir, le reprend, se fait sortir encore, et recommence jusqu'à ce que le mouvement parte. Le document possède déjà l'instrument qui tranche, et il n'a pas besoin d'être adapté.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Chaque tentative est un problème de premier passage&nbsp;: stop <span class="v">L</span>, target <span class="v">R·L</span>, friction <span class="v">c</span>. Sous un prix sans dérive, la probabilité d'atteindre le target avant le stop vaut <span class="v">p = 1/(R+1)</span>, et le nombre de tentatives jusqu'à la première réussite suit une loi géométrique de moyenne <span class="v">R+1</span>. Le résultat total attendu de la séquence vaut alors</p>
+
+  <p class="eq">E[forçage] = R·L − R·L − (R+1)·c = −(R+1)·c</p>
+
+  <p>Le premier terme est le gain de l'unique réussite&nbsp;; le deuxième, les <span class="v">R</span> échecs qui l'ont précédée en moyenne&nbsp;; et ils s'annulent <strong>exactement</strong>. Ce n'est pas un arrondi&nbsp;: c'est le théorème d'arrêt optionnel de la section&nbsp;<a href="#s-invariance">4</a>, appliqué à une règle d'arrêt posée sur la <em>suite des trades</em> plutôt que sur le trajet du prix. Le forçage est une règle d'arrêt comme une autre, et l'invariance ne fait pas de différence entre les deux.</p>
+
+  {{TABLE:frc_theoreme}}
+
+  {{FIGURE:riskforcing|À gauche, le résultat cumulé d'une séquence forcée jusqu'à la première réussite&nbsp;: le brut revient exactement à zéro à la tentative R+1, la friction ne revient jamais. Au centre, la probabilité d'observer au moins k échecs consécutifs, aux trois ratios, avec la bande de ce que l'opérateur observe. En bas, le coût du forçage par ratio visé et par largeur de stop.}}
+
+  <h3>Où est le résultat</h3>
+
+  <p><strong>Premier point — il n'y a rien à optimiser dans la façon de forcer.</strong> La colonne « brut » de la table vaut zéro à toutes les lignes. Aucune variante — attendre un retracement de plus, resserrer la troisième tentative, doubler la taille sur la quatrième — ne la déplace, parce que ce sont toutes des règles d'arrêt et que le théorème les couvre toutes. Ce qui reste est la friction, payée {{frc_tentatives}} fois pour un seul aboutissement&nbsp;: <strong>{{frc_net_hi}}&nbsp;R à {{frc_stop_hi}}&nbsp;%, {{frc_net_lo}}&nbsp;R à {{frc_stop_lo}}&nbsp;%.</strong></p>
+
+  <p><strong>Deuxième point — la série d'échecs n'est pas de la malchance.</strong> À un ratio de 1:20, six échecs consécutifs surviennent avec probabilité <strong>{{frc_serie6}}&nbsp;%</strong>, et cinq avec {{frc_serie5}}&nbsp;%. L'opérateur qui en observe cinq ou six n'a pas subi un accident&nbsp;: il a observé la médiane de sa propre géométrie. Sur deux cents tentatives, la plus longue série <em>attendue</em> vaut {{frc_serie_max}}.</p>
+
+  {{TABLE:frc_series}}
+
+  <p><strong>Troisième point — la persistance ne sauve pas le forçage, et c'est une proposition, non une mesure.</strong> Kaminski et Lo (2014) tranchent la question du stop sur données&nbsp;: sous marche aléatoire une règle de stop simple <em>diminue toujours</em> l'espérance, et en présence de momentum elle peut en ajouter. Il serait tentant d'en conclure qu'il suffit d'un exposant d'échelle supérieur à un demi. C'est faux, et la table le montre.</p>
+
+  {{TABLE:frc_regime}}
+
+  <p>La probabilité d'atteindre le target ne bouge pas d'un chiffre significatif quand l'exposant passe de un demi à 0,95, et ce n'est pas un défaut de la simulation&nbsp;: un changement d'exposant est un <strong>changement de temps déterministe</strong>, qui ne modifie pas le rapport des probabilités de premier passage. Elle reste bornée par {{frc_plafond}}&nbsp;%, là où la rentabilité en exige davantage. Le momentum qui rend une règle de stop utile chez Kaminski et Lo n'est donc pas une propriété d'échelle&nbsp;: c'est une dérive conditionnelle. <strong>Espérer que la persistance sauve le forçage revient à espérer la mauvaise grandeur</strong>, et le document a par ailleurs mesuré {{frc_hurst}} sur sa série de contrôle une fois l'estimateur corrigé de son propre biais.</p>
+
+  <h2 id="s-capital">Le capital, le levier, et ce que la série révèle</h2>
+
+  <h3>Le levier n'est pas un choix séparé</h3>
+
+  <p>Risquer {{frc_risque}}&nbsp;% du capital sur un déplacement de prix de {{frc_stop_hi}}&nbsp;% <strong>impose</strong> une exposition notionnelle de {{frc_levier}} fois le capital&nbsp;; à {{frc_stop_lo}}&nbsp;%, de {{frc_levier_lo}} fois. Le levier n'est pas une troisième décision que l'on prendrait après le stop et la taille&nbsp;: il est l'exacte conséquence arithmétique des deux autres, et il est fixé avant toute considération de signal.</p>
+
+  {{TABLE:frc_capital}}
+
+  <p>Or un stop ne franchit pas un trou de cotation. À ce levier, un écart d'ouverture de un demi pour cent — un événement ordinaire, plusieurs fois par an — n'emporte pas une position&nbsp;: il emporte <strong>{{frc_gap}}&nbsp;% du capital</strong>. C'est le même mécanisme que la section&nbsp;<a href="#s-outils">17</a> décrivait sur les chocs de séance, mais l'ancienne géométrie y était exposée à un cinquième de cette hauteur.</p>
+
+  {{FIGURE:riskcapital|En haut, le capital restant après k pertes consécutives, à trois fractions risquées&nbsp;: la composition, non la somme. La bande verticale marque la série observée par l'opérateur. En bas, le levier notionnel qu'impose la largeur du stop à deux pour cent de capital par tentative, et ce qu'un écart d'ouverture de un demi pour cent emporte.}}
+
+  <p>Une dernière grandeur ferme la question du dimensionnement, et elle est exacte. La fraction de Kelly — la part du capital qui maximise la croissance à long terme — vaut <span class="v">(p(R+1) − 1)/R</span>. Sous un prix sans dérive, elle vaut <strong>{{frc_kelly}}</strong>, c'est-à-dire exactement zéro, quel que soit le ratio visé. Toute fraction positive engagée sur une géométrie sans dérive n'est pas un sur-engagement modéré&nbsp;: c'est un sur-engagement d'ampleur infinie en proportion, et la probabilité de perdre la moitié du capital en cent tentatives vaut {{frc_ruine}}&nbsp;%.</p>
+
+  <h3>Ce qu'il faudrait posséder</h3>
+
+  <p>Toutes les exigences précédentes se ramènent à une seule, et elle se lit sur une échelle que tout le monde connaît. La dérive minimale rentable vaut <span class="v">µ* = c/E[τ]</span>&nbsp;; rapportée à la volatilité de la même minute et annualisée, elle donne le ratio de Sharpe que le signal doit produire.</p>
+
+  {{TABLE:frc_exigence}}
+
+  {{FIGURE:risksharpe|Ratio de Sharpe annualisé exigé du signal selon la largeur du stop, en double échelle logarithmique, avec deux repères de métier. Le panneau inférieur donne l'exposition moyenne correspondante&nbsp;: l'exigence monte par deux canaux à la fois, la friction relative qui croît et l'exposition qui s'effondre.}}
+
+  <p>Le resserrement de {{frc_stop_hi}}&nbsp;% à l'ancienne largeur ne rend pas l'exigence un peu plus dure&nbsp;: <strong>il la multiplie par {{frc_sharpe_facteur}}</strong>, et la porte à un Sharpe annualisé de {{frc_sharpe_hi}} — contre {{frc_sharpe_ancien}} auparavant, et contre 3 pour les meilleurs résultats publiés de la gestion. À {{frc_stop_lo}}&nbsp;%, elle atteint {{frc_sharpe_lo}}. La raison tient en une phrase&nbsp;: la friction relative croît comme l'inverse de la largeur, l'exposition s'effondre d'un facteur {{frc_expo_facteur}} — de {{frc_expo_ancien}} minutes à {{frc_expo_hi}} —, et les deux effets se multiplient au lieu de se compenser.</p>
+
+  <h3>Le diagnostic inverse, et il est gratuit</h3>
+
+  <p>Toutes les tables qui précèdent supposent un ratio visé. L'opérateur croit en pratiquer un&nbsp;; il en pratique peut-être un autre. Or deux chiffres qu'il connaît déjà suffisent à trancher, sans aucune donnée de marché&nbsp;: le nombre de tentatives qu'il a faites, et sa plus longue série d'échecs.</p>
+
+  {{TABLE:frc_diagnostic}}
+
+  {{FIGURE:riskstreak|Ratio gain/risque impliqué par le couple (nombre de tentatives, plus longue série d'échecs), sous prix sans dérive. La coupe du bas est prise à deux cents tentatives, avec les deux points que l'opérateur déclare.}}
+
+  <p>La lecture est contre-intuitive et il faut la dire entière&nbsp;: <strong>une série maximale courte n'est pas une bonne nouvelle.</strong> Elle implique un taux de réussite élevé, donc — sous prix sans dérive, où taux de réussite et ratio sont le même paramètre écrit deux fois — un ratio bas. Cinq à six échecs au maximum sur deux cents tentatives implique un taux de réussite de {{frc_diag_p}}&nbsp;% et un ratio de <strong>1:{{frc_diag_rr}}</strong>. Ce n'est pas un 1:20.</p>
+
+  <p>Deux lectures s'offrent, et elles se distinguent par une observation que l'opérateur peut faire ce soir. Soit le ratio réellement pratiqué est proche de 1:1, et toutes les tables de cette partie doivent être relues à cette ligne — l'exigence y est plus basse, mais la friction relative y pèse dans les mêmes proportions. Soit le ratio est bien de 1:20 et les séries observées sont bien plus courtes que la loi nulle ne le prévoit, ce qui serait la <em>première indication positive</em> de tout le document&nbsp;: un taux de réussite significativement au-dessus de <span class="v">1/(R+1)</span> est exactement ce que le protocole de la section&nbsp;<a href="#s-proto2">34</a> cherche à établir. La distinction ne demande qu'un registre honnête des tentatives, ce que la section&nbsp;<a href="#s-temoin">39</a> décrit déjà pour un tiers et qui vaut d'abord pour soi.</p>
+
+  <h3>Le renversement, et c'est le résultat le plus important de la partie</h3>
+
+  <p>Le document a construit, sur l'ancienne largeur, une conclusion qui portait sur la <strong>mesure</strong>&nbsp;: l'avantage requis y était minuscule — un lift relatif de {{c_over_l_v1}} — et par là même indiscernable du bruit sans une dizaine d'années de données. C'était le mur, et les sections&nbsp;<a href="#s-outils">17</a> à <a href="#s-borne">32</a> ne parlent que de lui.</p>
+
+  <p>Le resserrement retourne ce mur sans le supprimer. À la largeur déclarée, l'avantage de référence n'est plus minuscule&nbsp;: il vaut {{q_edge_r}}&nbsp;R par trade, et {{q_mtrl}} trades — {{q_mtrl_years}}&nbsp;an — suffisent à affirmer qu'il est positif, contre plusieurs milliers auparavant. <strong>Le problème d'inférence disparaît presque entièrement.</strong></p>
+
+  <p>Ce qui le remplace n'est pas plus doux. L'avantage devenu facile à mesurer est devenu impossible à posséder&nbsp;: il exige un ratio de Sharpe annualisé de {{frc_sharpe_hi}}. Les deux géométries butent donc sur le même mur par ses deux faces opposées — <strong>l'une demande un avantage si petit qu'on ne peut pas le prouver, l'autre un avantage si grand qu'on ne peut pas l'avoir</strong> — et le passage de l'une à l'autre est continu&nbsp;: c'est la même courbe, lue à deux abscisses. Le point où les deux difficultés sont simultanément minimales n'est à aucune des deux extrémités, et le déterminer est la seule optimisation de géométrie que ce document tienne pour légitime, puisqu'elle ne porte sur aucun paramètre de signal.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que cette partie recommande, et ce qu'elle ne recommande pas</span>
+    <p>Elle ne dit pas d'abandonner. Elle dit que trois décisions, prises avant tout signal et sans rien mesurer, déplacent l'exigence de plusieurs ordres de grandeur&nbsp;: <strong>changer de contrat</strong> — le tick du Nasdaq divise <span class="v">c/L</span> par près de trois à largeur égale&nbsp;; <strong>élargir le stop</strong> — chaque doublement divise l'exigence de Sharpe par plus de deux, par les deux canaux à la fois&nbsp;; <strong>cesser de compter les sorties au point mort comme neutres</strong>, puisqu'elles coûtent {{frc_be_hi}}&nbsp;R chacune.</p>
+    <p>Et elle dit qu'une quatrième décision ne se prend pas sans mesure&nbsp;: le forçage lui-même. Son coût est démontré sous prix sans dérive&nbsp;; sa valeur, s'il en a une, tient dans une dérive conditionnelle qui n'a pas été mesurée ici. Le dispositif apparié de la section&nbsp;<a href="#s-operateur">42</a> est exactement l'instrument qui trancherait, et il est le seul de ce document qu'un opérateur seul peut conduire.</p>
+  </div>
 
   <div class="part">
     <span class="lab">Verdict</span>

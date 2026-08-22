@@ -23,13 +23,23 @@ from .nonlinear import EMBED, dfa, null_dfa, null_permutation, permutation_entro
 from .report import Table, num
 from .report3 import year as _plain
 
-#: Les deux frictions relatives du document, en rapport c/L.
-C_OVER_L_V1 = 0.1100
+#: Les deux frictions relatives du document, en rapport c/L. Celle d'ALP-1 se
+#: **déduit** de la largeur de stop déclarée et de la friction de référence,
+#: plutôt que d'être écrite une seconde fois : sans quoi un resserrement du
+#: stop laisserait ce module citer l'ancienne valeur sans que rien ne le dise.
+def _c_over_l_v1() -> float:
+    from .report import FRICTION, STOP_PTS
+    return FRICTION / STOP_PTS
+
+
+C_OVER_L_V1 = _c_over_l_v1()
 C_OVER_L_V2 = 0.0143
 RR_REF = 20.0
 
-#: Espérance de l'edge de référence, en multiples du risque.
-EDGE_R = 0.110
+#: Espérance de l'edge de référence, en multiples du risque. Elle vaut `c/L`
+#: par construction — l'edge de référence est le double du seuil — et suit
+#: donc la géométrie.
+EDGE_R = C_OVER_L_V1
 
 #: Le protocole scellé : cinq marchés, 1 260 séances, 1,113 entrée par séance.
 SEALED_TRADES = 7012
@@ -91,16 +101,46 @@ def table_information() -> Table:
                "prouver.")
 
 
+def _route_t() -> float:
+    """Trades exigés par le test t sur l'espérance, à l'edge de référence.
+
+    Le nombre n'est pas posé : il sort de la loi du trade que `quant`
+    construit, par la taille d'échantillon du module de coûts. L'écrire à la
+    main le figerait à une géométrie donnée.
+    """
+    from .costs import trades_for_significance
+    from .quant import edge_law
+    law = edge_law()
+    return float(trades_for_significance(law.mean, law.sd))
+
+
+def _route_selection(n_trials: int = 3) -> float:
+    """Trades exigés pour franchir le seuil de sélection déflaté.
+
+    Plus petit `n` tel que le Sharpe par trade de l'edge de référence dépasse
+    `√(2 ln k / n)`, le maximum attendu de `k` essais sans avantage. La forme
+    s'inverse exactement : `n = 2 ln k / SR²`.
+    """
+    import math
+
+    from .quant import edge_law
+    sr = edge_law().sharpe_per_trade
+    if sr <= 0.0:
+        return math.inf
+    return 2.0 * math.log(n_trials) / (sr * sr)
+
+
 def table_three_routes() -> Table:
     bits = _edge_bits()
+    n_t, n_sel = _route_t(), _route_selection()
     rows = [
         ["Test t sur l'espérance par trade",
          "Statistique du résultat, loi supposée",
-         num(17434, 0),
+         num(n_t, 0),
          "Puissance 80 % à 5 %, seuil déflaté à trois essais"],
         ["Seuil de sélection déflaté",
          "Maximum de trois essais sous l'hypothèse nulle",
-         num(1993, 0),
+         num(n_sel, 0),
          "Franchissement du seuil, sans exigence de puissance"],
         ["Test du rapport de vraisemblance sur la direction",
          "Information mutuelle, aucune loi supposée",
@@ -122,8 +162,11 @@ def table_three_routes() -> Table:
              "à un, ce qui n'est pas une coïncidence mais la marque d'une "
              "limite structurelle. La route informationnelle est la plus "
              "économe — lire la direction coûte "
-             + num((1 - trades_for_information(bits) / 17434) * 100, 0)
-             + " % de trades en moins que lire l'espérance, à décision égale.")
+             + num(abs(1 - trades_for_information(bits) / n_t) * 100, 0)
+             + " % de trades "
+             + ("en moins" if trades_for_information(bits) < n_t
+                else "de plus")
+             + " que lire l'espérance, à décision égale.")
 
 
 def table_mi_bias() -> Table:
@@ -360,8 +403,11 @@ def values() -> dict[str, str]:
         "inf_factor": num(r1.bits / r2.bits, 1),
         "inf_edge_bits": num(bits * 1e6, 1),
         "inf_n_route": num(trades_for_information(bits), 0),
-        "inf_n_sharpe": num(17434, 0),
-        "inf_gain": num((1 - trades_for_information(bits) / 17434) * 100, 0),
+        "inf_n_sharpe": num(_route_t(), 0),
+        "inf_n_selection": num(_route_selection(), 0),
+        "inf_gain": num(abs(1 - trades_for_information(bits) / _route_t()) * 100, 0),
+        "inf_gain_sens": ("en moins" if trades_for_information(bits) < _route_t()
+                          else "de plus"),
         "inf_mi_bias": num(nul_mi.mean * 1e6, 1),
         "inf_hit_v2": num(r2.hit_needed * 100, 2),
         "inf_hit_null": num(r2.hit_null * 100, 2),
