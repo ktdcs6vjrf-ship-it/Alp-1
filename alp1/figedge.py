@@ -213,7 +213,7 @@ def fig_discipline() -> str:
     c.dot(kb, SEALED_SR, "s2",
           f"rupture à {kb:.1f} dérogations sur {SEALED_TRADES:,} trades")
     c.add(f'<text class="dl halo" x="{xb + 8:.1f}" y="{c.top + 14:.1f}">'
-          f'rupture&#8202;: {_esc(_num(kb, 1))} dérogations</text>')
+          f'rupture : {_esc(_num(kb, 1))} dérogations</text>')
 
     c.add(f'<text class="lg" x="{c.left + c.pw + 10:.1f}" y="{c.top + 22:.1f}">'
           f'soit une tous</text>')
