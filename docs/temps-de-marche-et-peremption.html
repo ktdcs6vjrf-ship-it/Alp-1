@@ -714,8 +714,17 @@
         </ol>
       </li>
       <li>
-        <span class="pt">Verdict</span>
+        <span class="pt">Cinquième partie — Les bornes venues d'ailleurs</span>
         <ol start="35">
+          <li><a href="#s-information">Le plafond d'information</a></li>
+          <li><a href="#s-nonlineaire">Deux mesures venues d'autres disciplines</a></li>
+          <li><a href="#s-discipline">La discipline, chiffrée en preuve</a></li>
+          <li><a href="#s-domaines">Ce que chaque domaine apporte, et ce qu'il coûte</a></li>
+        </ol>
+      </li>
+      <li>
+        <span class="pt">Verdict</span>
+        <ol start="39">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -7511,6 +7520,325 @@
   <p>Les tests sont ordonnés du moins coûteux au plus coûteux, et chacun peut interrompre la séquence. Le premier ne porte sur aucun signal : il vérifie que la règle se déclenche assez souvent pour être testable. Le second est décisif — si la dérive moyenne captée n'excède pas la friction déduite au quantile 90&nbsp;%, le reste est sans objet.</p>
 
 
+
+  <div class="part">
+    <span class="lab">Cinquième partie</span>
+    <h2>Les bornes venues d'ailleurs</h2>
+    <p>Le théorème d'invariance dit ce qu'une géométrie ne peut pas faire. Trois disciplines étrangères à la finance donnent les bornes symétriques&nbsp;: ce qu'un signal doit porter, ce qu'un instrument peut voir, et ce qu'une dérogation détruit. Aucune n'exige de données que le protocole n'ait déjà.</p>
+  </div>
+
+  <h2 id="s-information">Le plafond d'information</h2>
+
+  <p>Le document a établi qu'aucune règle d'arrêt ne crée d'espérance sur un prix sans dérive, et que tout se ramène au critère µ&thinsp;E[τ]&nbsp;−&nbsp;<span class="v">c</span>. Il reste une question qu'il n'a pas posée, et qui est la symétrique exacte de la première&nbsp;: un signal qui prétend prévoir cette dérive, de <em>combien d'information</em> a-t-il besoin&nbsp;?</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Kelly établit en 1956 un résultat qui n'a pas d'équivalent en finance et qui n'a jamais été affaibli depuis&nbsp;: le taux de croissance logarithmique maximal d'un pari répété vaut exactement l'information mutuelle entre le signal et l'issue. Pas «&nbsp;approximativement&nbsp;», pas «&nbsp;sous certaines conditions&nbsp;» — c'est une égalité. Aucun dimensionnement, aucune géométrie, aucune ingéniosité ne dépasse ce plafond, parce qu'il ne s'agit pas d'une limite d'habileté mais d'une limite d'information.</p>
+
+  <p>Le document exige déjà que le taux de réussite passe de sa valeur martingale — 4,76&nbsp;% à un ratio de 1:20, qui est simplement la probabilité de premier passage — à sa valeur rentable, 4,83&nbsp;%. Déplacer une loi de Bernoulli d'une valeur à l'autre a un prix en information, et ce prix est la divergence de Kullback-Leibler entre les deux. C'est donc l'information minimale que le signal doit porter, exprimée en bits par trade.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 70</span> — Information minimale qu'un signal doit porter pour rendre la géométrie rentable, et échantillon qu'il faut pour la décider.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Géométrie</th><th>c/L</th><th>Réussite sous martingale</th><th>Réussite requise</th><th>Bits requis (×10⁻⁶)</th><th>Trades pour décider</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">ALP-1, stop de trois points</td><td>11,00 %</td><td>4,76 %</td><td>5,29 %</td><td>422,0</td><td>10 568</td></tr>
+          <tr><td class="wrap">ALP-2, stop sur la bande</td><td>1,43 %</td><td>4,76 %</td><td>4,83 %</td><td>7,3</td><td>607 412</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> L'information se lit par l'identité de Kelly : le taux de croissance maximal d'un pari répété vaut l'information mutuelle entre signal et issue. Déplacer le taux de réussite de sa valeur martingale à sa valeur rentable coûte la divergence entre les deux lois de Bernoulli, et aucune géométrie ni aucun dimensionnement ne contourne ce prix. La géométrie d'ALP-2 divise l'exigence par 57,5, et multiplie par autant l'échantillon qui la décide : ce qu'elle rend facile à obtenir, elle le rend difficile à prouver.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 37</span> — Information par trade qu'un signal doit porter, selon le ratio visé et selon la friction relative de la géométrie. L'échelle est logarithmique&nbsp;: l'écart entre les deux courbes est un facteur, non une différence. L'horizontale marque ce que porte la dérive documentée.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 262" role="img" aria-label="Information par trade qu'un signal doit porter, selon le ratio visé et la friction relative de la géométrie" preserveAspectRatio="xMidYMid meet">
+<line class="gl" x1="62.0" y1="181.3" x2="508.0" y2="181.3"/>
+<text class="tk" x="56.0" y="184.3" text-anchor="end">10⁻⁵</text>
+<line class="gl" x1="62.0" y1="125.4" x2="508.0" y2="125.4"/>
+<text class="tk" x="56.0" y="128.4" text-anchor="end">10⁻⁴</text>
+<line class="gl" x1="62.0" y1="69.6" x2="508.0" y2="69.6"/>
+<text class="tk" x="56.0" y="72.6" text-anchor="end">10⁻³</text>
+<text class="ax" transform="translate(11,119.0) rotate(-90)" text-anchor="middle">bits par trade requis du signal</text>
+<line class="ba" x1="62.0" y1="218.0" x2="508.0" y2="218.0"/>
+<text class="tk" x="62.0" y="232.0" text-anchor="middle">1:2</text>
+<text class="tk" x="136.3" y="232.0" text-anchor="middle">1:10</text>
+<text class="tk" x="229.2" y="232.0" text-anchor="middle">1:20</text>
+<text class="tk" x="322.2" y="232.0" text-anchor="middle">1:30</text>
+<text class="tk" x="415.1" y="232.0" text-anchor="middle">1:40</text>
+<text class="tk" x="508.0" y="232.0" text-anchor="middle">1:50</text>
+<text class="ax" x="285.0" y="258.0" text-anchor="middle">ratio gain/risque visé</text>
+<path class="ln s2" d="M62.00,34.26 L66.65,39.76 L71.29,44.24 L75.94,48.03 L80.58,51.30 L85.23,54.18 L89.88,56.75 L94.52,59.08 L99.17,61.21 L103.81,63.16 L108.46,64.97 L113.10,66.65 L117.75,68.22 L122.40,69.70 L127.04,71.09 L131.69,72.41 L136.33,73.66 L140.98,74.84 L145.62,75.98 L150.27,77.06 L154.92,78.09 L159.56,79.09 L164.21,80.04 L168.85,80.96 L173.50,81.84 L178.15,82.70 L182.79,83.52 L187.44,84.32 L192.08,85.09 L196.73,85.84 L201.38,86.56 L206.02,87.27 L210.67,87.95 L215.31,88.62 L219.96,89.27 L224.60,89.90 L229.25,90.51 L233.90,91.11 L238.54,91.70 L243.19,92.27 L247.83,92.83 L252.48,93.38 L257.12,93.91 L261.77,94.43 L266.42,94.94 L271.06,95.45 L275.71,95.94 L280.35,96.42 L285.00,96.89 L289.65,97.35 L294.29,97.81 L298.94,98.25 L303.58,98.69 L308.23,99.12 L312.88,99.54 L317.52,99.96 L322.17,100.37 L326.81,100.77 L331.46,101.16 L336.10,101.55 L340.75,101.93 L345.40,102.31 L350.04,102.68 L354.69,103.04 L359.33,103.40 L363.98,103.76 L368.62,104.11 L373.27,104.45 L377.92,104.79 L382.56,105.13 L387.21,105.46 L391.85,105.78 L396.50,106.11 L401.15,106.42 L405.79,106.74 L410.44,107.05 L415.08,107.35 L419.73,107.65 L424.38,107.95 L429.02,108.24 L433.67,108.54 L438.31,108.82 L442.96,109.11 L447.60,109.39 L452.25,109.66 L456.90,109.94 L461.54,110.21 L466.19,110.48 L470.83,110.74 L475.48,111.01 L480.12,111.27 L484.77,111.52 L489.42,111.78 L494.06,112.03 L498.71,112.28 L503.35,112.52 L508.00,112.77"/>
+<circle class="pt s2" cx="229.25" cy="90.51" r="4"><title>ALP-1 · 1:20 · 422.0×10⁻⁶ bit par trade</title></circle>
+<path class="ln s1" d="M62.00,132.88 L66.65,138.31 L71.29,142.74 L75.94,146.48 L80.58,149.73 L85.23,152.59 L89.88,155.15 L94.52,157.46 L99.17,159.57 L103.81,161.52 L108.46,163.31 L113.10,164.99 L117.75,166.56 L122.40,168.03 L127.04,169.41 L131.69,170.73 L136.33,171.97 L140.98,173.16 L145.62,174.28 L150.27,175.36 L154.92,176.40 L159.56,177.39 L164.21,178.34 L168.85,179.25 L173.50,180.14 L178.15,180.99 L182.79,181.81 L187.44,182.61 L192.08,183.38 L196.73,184.12 L201.38,184.85 L206.02,185.55 L210.67,186.23 L215.31,186.90 L219.96,187.55 L224.60,188.18 L229.25,188.79 L233.90,189.39 L238.54,189.97 L243.19,190.55 L247.83,191.10 L252.48,191.65 L257.12,192.18 L261.77,192.70 L266.42,193.21 L271.06,193.71 L275.71,194.21 L280.35,194.69 L285.00,195.16 L289.65,195.62 L294.29,196.07 L298.94,196.52 L303.58,196.95 L308.23,197.38 L312.88,197.81 L317.52,198.22 L322.17,198.63 L326.81,199.03 L331.46,199.42 L336.10,199.81 L340.75,200.19 L345.40,200.57 L350.04,200.94 L354.69,201.31 L359.33,201.67 L363.98,202.02 L368.62,202.37 L373.27,202.71 L377.92,203.05 L382.56,203.39 L387.21,203.72 L391.85,204.04 L396.50,204.36 L401.15,204.68 L405.79,204.99 L410.44,205.30 L415.08,205.61 L419.73,205.91 L424.38,206.21 L429.02,206.50 L433.67,206.79 L438.31,207.08 L442.96,207.36 L447.60,207.64 L452.25,207.92 L456.90,208.19 L461.54,208.47 L466.19,208.73 L470.83,209.00 L475.48,209.26 L480.12,209.52 L484.77,209.78 L489.42,210.03 L494.06,210.28 L498.71,210.53 L503.35,210.78 L508.00,211.02"/>
+<circle class="pt s1" cx="229.25" cy="188.79" r="4"><title>ALP-2 · 1:20 · 7.3×10⁻⁶ bit par trade</title></circle>
+<line class="hl" x1="62.0" y1="90.5" x2="508.0" y2="90.5"/>
+<text class="dl halo" x="70.0" y="82.5">dérive documentée · 422,0×10⁻⁶</text>
+<line class="ln s2" x1="520.0" y1="40.0" x2="534.0" y2="40.0"/>
+<text class="lg" x="540.0" y="43.5">ALP-1, c/L = 11,0 %</text>
+<line class="ln s1" x1="520.0" y1="55.0" x2="534.0" y2="55.0"/>
+<text class="lg" x="540.0" y="58.5">ALP-2, c/L = 1,43 %</text>
+<text class="lg" x="520.0" y="86.0">écart 57,5×</text>
+</svg></div>
+    </figure>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — la géométrie divise l'exigence par 57,5.</strong> C'est davantage que le facteur 5,69 obtenu sur le ratio d'information, et pour une raison précise&nbsp;: l'information croît comme le carré de l'écart de probabilité à financer, là où le ratio d'information croît comme cet écart. Le même changement de stop, lu en bits, paraît donc presque dix fois plus favorable qu'il ne le paraissait en écarts-types.</p>
+
+  <p><strong>Deuxième point — l'exigence absolue est dérisoire.</strong> 7,3 millionièmes de bit par trade. Pour donner l'échelle&nbsp;: un signal qui ne se tromperait que d'un trade sur mille par rapport au hasard porterait déjà mille fois cette information. Ce n'est pas un avantage difficile à posséder.</p>
+
+  <p><strong>Troisième point, et il retourne les deux précédents — l'exigence est dérisoire, donc invérifiable.</strong> Le même facteur 57,5 qui divise ce qu'il faut multiplie ce qu'il faut pour le prouver. Une quantité plus petite se détecte dans un échantillon plus grand, et le rapport est le même. La géométrie d'ALP-2 rend la stratégie plus facile à rendre rentable et plus difficile à démontrer rentable, dans la même proportion et par le même mécanisme.</p>
+
+  <p><strong>Quatrième point — mais elle indique un test moins coûteux.</strong> Lire la direction plutôt que l'espérance économise 39&nbsp;% des trades à décision égale. Le Test&nbsp;2 du protocole moyenne des déplacements, donc paie le bruit d'amplitude&nbsp;; un test du rapport de vraisemblance sur le seul signe ne le paie pas. C'est le seul gain de cette section qui soit exploitable sans rien attendre.</p>
+
+  <h3>Trois routes, un seul mur</h3>
+
+  <p>L'intérêt de la borne informationnelle ne tient pas à sa valeur mais à son indépendance. Elle ne suppose ni la loi du résultat, ni la géométrie, ni le Sharpe&nbsp;; elle ne lit que le signe. Or elle tombe au même endroit que les deux routes que le document parcourait déjà.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 71</span> — Trois routes indépendantes vers le même mur : l'échantillon qu'exige la dérive de référence, selon ce qu'on accepte de supposer.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Route</th><th class="wrap">Ce qu'elle suppose</th><th>Trades requis</th><th class="wrap">Condition</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Test t sur l'espérance par trade</td><td class="wrap">Statistique du résultat, loi supposée</td><td>17 434</td><td class="wrap">Puissance 80 % à 5 %, seuil déflaté à trois essais</td></tr>
+          <tr><td class="wrap">Seuil de sélection déflaté</td><td class="wrap">Maximum de trois essais sous l'hypothèse nulle</td><td>1 993</td><td class="wrap">Franchissement du seuil, sans exigence de puissance</td></tr>
+          <tr><td class="wrap">Test du rapport de vraisemblance sur la direction</td><td class="wrap">Information mutuelle, aucune loi supposée</td><td>10 568</td><td class="wrap">Même niveau, même puissance, table 2 × 2</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Les trois calculs ne partagent aucune hypothèse. Le premier suppose la loi du résultat ; le deuxième ne regarde que le maximum de trois tirages ; le troisième ne suppose rien de la loi et ne lit que le signe. Ils tombent dans un rapport de deux à un, ce qui n'est pas une coïncidence mais la marque d'une limite structurelle. La route informationnelle est la plus économe — lire la direction coûte 39 % de trades en moins que lire l'espérance, à décision égale.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 38</span> — Échantillon exigé par trois méthodes qui ne partagent aucune hypothèse. Le trait vertical marque ce que le protocole scellé produit sur son horizon de cinq ans et cinq marchés.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 250" role="img" aria-label="Nombre de trades exigé par trois méthodes ne partageant aucune hypothèse, comparé à ce que le protocole scellé produit" preserveAspectRatio="xMidYMid meet">
+<line class="ba" x1="196.0" y1="204.0" x2="544.0" y2="204.0"/>
+<text class="tk" x="196.0" y="218.0" text-anchor="middle">0</text>
+<text class="tk" x="280.6" y="218.0" text-anchor="middle">5 000</text>
+<text class="tk" x="365.2" y="218.0" text-anchor="middle">10 000</text>
+<text class="tk" x="449.7" y="218.0" text-anchor="middle">15 000</text>
+<text class="ax" x="370.0" y="246.0" text-anchor="middle">trades nécessaires pour décider</text>
+<rect class="area ar2" x="196.0" y="38.4" width="33.7" height="31.2" rx="2"><title>Seuil de sélection déflaté · 1,993 trades</title></rect>
+<text class="lg" x="188.0" y="58.8" text-anchor="end">Seuil de sélection déflaté</text>
+<text class="dl halo" x="236.7" y="58.8">1 993</text>
+<rect class="area ar1" x="196.0" y="98.4" width="178.8" height="31.2" rx="2"><title>Direction · information mutuelle · 10,568 trades</title></rect>
+<text class="lg" x="188.0" y="118.8" text-anchor="end">Direction · information mutuelle</text>
+<text class="dl halo" x="381.8" y="118.8">10 568</text>
+<rect class="area ar3" x="196.0" y="158.4" width="294.9" height="31.2" rx="2"><title>Espérance · test t · 17,434 trades</title></rect>
+<text class="lg" x="188.0" y="178.8" text-anchor="end">Espérance · test t</text>
+<text class="dl halo" x="497.9" y="178.8">17 434</text>
+<line class="hl" x1="314.6" y1="24.0" x2="314.6" y2="204.0" stroke-dasharray="4 3"/>
+<text class="dl halo" x="321.6" y="36.0">protocole scellé · 7 012</text>
+</svg></div>
+    </figure>
+
+  <p>Trois calculs sans prémisse commune tombant dans un rapport de deux à un ne sont pas une coïncidence&nbsp;: c'est la signature d'une limite structurelle. Le mur n'est pas un artefact de la méthode retenue, et changer de méthode ne le déplacera pas.</p>
+
+  <div class="keybox">
+    <span class="lab">Le piège, et il est le même qu'à la section&nbsp;<a href="#s-exposant">29</a></span>
+    <p>Les estimateurs d'information mutuelle par comptage sont biaisés <strong>vers le haut</strong>&nbsp;: deux variables rigoureusement indépendantes en affichent. À mille observations, le biais vaut 864,0 millionièmes de bit — soit plus de cent fois ce que la stratégie réclame, et le double de ce que la dérive documentée porte.</p>
+    <p>C'est exactement ce qui s'est produit avec le ratio de variance, sur un instrument entièrement différent, construit par une autre discipline, à une autre époque. Deux occurrences du même piège dans deux appareils sans lien commun suggèrent qu'il ne s'agit pas d'un défaut d'implémentation mais d'une propriété des mesures faites sur peu d'échantillons&nbsp;: <strong>toute mesure de structure surestime la structure.</strong></p>
+  </div>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 72</span> — Information mutuelle mesurée entre deux variables **indépendantes**, selon la taille d'échantillon, comparée à celle de l'edge de référence.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Observations</th><th>Biais moyen (×10⁻⁶)</th><th>Quantile 95 % (×10⁻⁶)</th><th>Edge de référence (×10⁻⁶)</th><th>Discernable</th></tr></thead>
+        <tbody>
+          <tr><td>500</td><td>1 569,1</td><td>5 186,9</td><td>422,0</td><td>NON</td></tr>
+          <tr><td>1 000</td><td>864,0</td><td>2 987,5</td><td>422,0</td><td>NON</td></tr>
+          <tr><td>2 000</td><td>419,6</td><td>1 758,2</td><td>422,0</td><td>NON</td></tr>
+          <tr><td>5 000</td><td>140,6</td><td>588,2</td><td>422,0</td><td>NON</td></tr>
+          <tr><td>10 000</td><td>68,2</td><td>294,0</td><td>422,0</td><td>oui</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La vérité de chaque ligne est zéro : les deux variables sont tirées indépendamment. L'estimateur par comptage rend pourtant une valeur positive, et elle dépasse l'information de l'edge tant que l'échantillon reste petit. C'est le même piège que celui du ratio de variance, sur un instrument entièrement différent — et c'est la raison pour laquelle aucune de ces mesures ne se lit sans sa loi nulle.</p>
+    </figure>
+
+  <h2 id="s-nonlineaire">Deux mesures venues d'autres disciplines</h2>
+
+  <p>Le ratio de variance ne détecte qu'une chose&nbsp;: l'autocorrélation linéaire. Un prix peut être imprévisible au second ordre et structuré par ailleurs, et le ratio de variance ne le verrait pas. Deux instruments construits hors de la finance comblent cet angle mort, et tous deux tournent sur les barres d'une minute déjà nécessaires au protocole — coût de données nul.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p><strong>L'entropie de permutation</strong> vient de la dynamique non linéaire, où Bandt et Pompe l'ont introduite en 2002, et sert depuis en électroencéphalographie. Elle n'examine pas les valeurs mais leur ordre&nbsp;: dans chaque fenêtre de <span class="v">d</span> points consécutifs, elle note lequel est le plus grand, lequel vient ensuite, et ainsi de suite. Il y a <span class="v">d</span>&thinsp;! ordres possibles&nbsp;; leur entropie de Shannon, normalisée, vaut un si tous sont équiprobables et moins dès qu'un motif revient plus souvent que le hasard ne le voudrait.</p>
+
+  <p>Sa vertu est de ne rien supposer&nbsp;: ni loi, ni stationnarité, ni linéarité. Elle est invariante par toute transformation monotone du prix — le résultat ne change pas selon qu'on mesure en points, en pourcentage ou en logarithme. Ce qu'elle mesure est la question qui précède toute construction de signal&nbsp;: reste-t-il, dans cette série, une structure exploitable par quiconque&nbsp;?</p>
+
+  <p><strong>L'analyse des fluctuations redressées</strong> vient de la physiologie, où Peng et ses coauteurs l'ont conçue en 1994 pour mesurer la mémoire longue du rythme cardiaque et des séquences d'ADN. Elle estime le même exposant d'échelle que le ratio de variance, mais retranche la tendance locale de chaque fenêtre avant de mesurer la fluctuation résiduelle — ce qui la rend robuste à la non-stationnarité, précisément là où le ratio de variance se trompe.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 73</span> — Deux instruments venus d'autres disciplines, appliqués à une série sans structure, et ce que chacun y voit.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Instrument</th><th class="wrap">Discipline d'origine</th><th>Mesuré</th><th>Sous marche aléatoire</th><th>z</th><th>Plancher (bits ×10⁻⁶)</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Entropie de permutation, d = 3</td><td class="wrap">Dynamique non linéaire, électroencéphalographie</td><td>0,999997</td><td>0,999993</td><td>0,68</td><td>17,5</td></tr>
+          <tr><td class="wrap">Entropie de permutation, d = 4</td><td class="wrap">Dynamique non linéaire, électroencéphalographie</td><td>0,999977</td><td>0,999970</td><td>0,60</td><td>138,7</td></tr>
+          <tr class="sep"><td class="wrap">Fluctuations redressées (α)</td><td class="wrap">Physiologie, rythme cardiaque et séquences d'ADN</td><td>0,5052</td><td>0,5059</td><td>−0,37</td><td>—</td></tr>
+          <tr><td class="wrap">Ratio de variance (Ĥ), pour mémoire</td><td class="wrap">Économétrie financière</td><td>0,5208</td><td>0,5060</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La série est une marche aléatoire par construction : la réponse juste est « aucune structure », et les trois instruments la donnent une fois rapportés à leur loi nulle. L'écart entre les colonnes « mesuré » et « sous marche aléatoire » est le biais d'échantillon fini de chacun — et il est trois fois plus petit pour la méthode issue de la physiologie que pour celle issue de l'économétrie financière.</p>
+    </figure>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — la méthode issue de la physiologie bat celle issue de la finance sur le problème financier.</strong> Sur une série sans mémoire, le ratio de variance affiche un exposant de 0,5208 quand la vérité est un demi&nbsp;; les fluctuations redressées affichent 0,5052. Le biais passe de 0,0208 à 0,0059, soit un facteur 3,5. Le Test&nbsp;1 du protocole gagne à changer d'estimateur, et le changement ne coûte rien.</p>
+
+  <p><strong>Deuxième point — l'entropie de permutation donne un verdict avant qu'aucun signal n'existe.</strong> Elle répond à «&nbsp;y a-t-il quelque chose à prendre&nbsp;?&nbsp;» sans qu'il faille avoir construit ce qui le prendrait. C'est le seul instrument du document qui puisse invalider la démarche entière en quelques minutes de calcul, et c'est à ce titre qu'il mérite d'être conduit en premier.</p>
+
+  <p><strong>Troisième point, et il est le plus important — le plancher.</strong> Sur une série où il n'y a rien, l'entropie de permutation n'affiche pas un&nbsp;: elle affiche 0,999993, parce que les six motifs ne peuvent pas être équiprobables dans un échantillon fini. Ce déficit vaut 17,5 millionièmes de bit — soit 2,4 fois l'information que la stratégie réclame.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 39</span> — Plancher de bruit de trois instruments sur une série sans structure, comparé à l'information que la géométrie d'ALP-2 exige d'un signal. Le trait vertical est l'exigence&nbsp;; chaque point est ce que l'instrument affiche là où il n'y a rien.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 258" role="img" aria-label="Plancher de bruit de trois instruments sur une série sans structure, comparé à l'information que la stratégie exige" preserveAspectRatio="xMidYMid meet">
+<line class="ba" x1="214.0" y1="210.0" x2="564.0" y2="210.0"/>
+<text class="tk" x="265.6" y="224.0" text-anchor="middle">10</text>
+<text class="tk" x="396.5" y="224.0" text-anchor="middle">100</text>
+<text class="tk" x="527.5" y="224.0" text-anchor="middle">1 000</text>
+<text class="ax" x="389.0" y="254.0" text-anchor="middle">bits par trade  (×10⁻⁶), échelle logarithmique</text>
+<line class="ln s2" x1="248.0" y1="55.0" x2="297.5" y2="55.0" stroke-width="3" stroke-linecap="round" opacity="0.34"/>
+<circle class="pt s2" cx="297.46" cy="55.00" r="5"><title>Entropie de permutation, d = 3 · plancher 17.5×10⁻⁶ bit, 2 fois l'exigence</title></circle>
+<text class="lg" x="206.0" y="58.5" text-anchor="end">Entropie de permutation, d = 3</text>
+<text class="dl halo" x="307.5" y="58.5">2×</text>
+<line class="ln s2" x1="248.0" y1="117.0" x2="415.1" y2="117.0" stroke-width="3" stroke-linecap="round" opacity="0.34"/>
+<circle class="pt s2" cx="415.11" cy="117.00" r="5"><title>Entropie de permutation, d = 4 · plancher 138.7×10⁻⁶ bit, 19 fois l'exigence</title></circle>
+<text class="lg" x="206.0" y="120.5" text-anchor="end">Entropie de permutation, d = 4</text>
+<text class="dl halo" x="425.1" y="120.5">19×</text>
+<line class="ln s2" x1="248.0" y1="179.0" x2="519.2" y2="179.0" stroke-width="3" stroke-linecap="round" opacity="0.34"/>
+<circle class="pt s2" cx="519.16" cy="179.00" r="5"><title>Information mutuelle, 1 000 obs. · plancher 864.0×10⁻⁶ bit, 118 fois l'exigence</title></circle>
+<text class="lg" x="206.0" y="182.5" text-anchor="end">Information mutuelle, 1 000 obs.</text>
+<text class="dl halo" x="529.2" y="182.5">118×</text>
+<line class="hl" x1="248.0" y1="24.0" x2="248.0" y2="210.0"/>
+<text class="dl halo" x="255.0" y="36.0">requis par ALP-2</text>
+</svg></div>
+    </figure>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 74</span> — Le plancher de bruit de chaque instrument, comparé à l'information que la géométrie d'ALP-2 exige d'un signal.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Instrument</th><th>Plancher (bits ×10⁻⁶)</th><th>Requis (bits ×10⁻⁶)</th><th>Rapport</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Entropie de permutation, d = 3</td><td>17,5</td><td>7,3</td><td>2,4×</td></tr>
+          <tr><td class="wrap">Entropie de permutation, d = 4</td><td>138,7</td><td>7,3</td><td>18,9×</td></tr>
+          <tr><td class="wrap">Information mutuelle, 1 000 observations</td><td>864,0</td><td>7,3</td><td>117,7×</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Chaque plancher est ce que l'instrument affiche sur une série où il n'y a rien. Tous dépassent l'information que la stratégie réclame, d'un facteur de plusieurs dizaines. Ce n'est pas que l'avantage recherché soit petit : c'est qu'il est plus petit que le bruit propre des appareils qui devraient le voir. La conséquence est unique et elle vaut pour les trois — seul un échantillon très grand, ou une mesure agrégée sur beaucoup de trades, peut faire émerger le signal du plancher.</p>
+    </figure>
+
+  <div class="keybox">
+    <span class="lab">Le résultat unificateur des trois instruments</span>
+    <p>Le ratio de variance annonce de la persistance sur une martingale. L'information mutuelle annonce de la dépendance entre variables indépendantes. L'entropie de permutation annonce de la structure là où il n'y en a pas. Trois appareils, trois disciplines, trois époques, un seul comportement.</p>
+    <p><strong>Le plancher de bruit de chaque instrument dépasse l'information que la stratégie réclame.</strong> Ce n'est pas que l'avantage recherché soit petit&nbsp;: c'est qu'il est plus petit que le bruit propre des appareils censés le voir. C'est la formulation la plus économe du mur des trois routes, et elle explique pourquoi il est structurel — on ne mesure pas un signal sous le plancher de son instrument, on l'agrège jusqu'à ce qu'il en sorte.</p>
+  </div>
+
+  <h2 id="s-discipline">La discipline, chiffrée en preuve</h2>
+
+  <p>Un opérateur qui demande si son tempérament, son sommeil ou son entraînement lui procurent un avantage pose une question mal formée. La reformuler la rend décidable, et la réponse est un nombre.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Dans le cadre de ce document, rien de ce qu'un opérateur <em>est</em> ne crée de dérive. La dérive est une propriété du prix&nbsp;; le théorème d'invariance interdit qu'une décision de sortie en fabrique, et aucun état physiologique ne change cette algèbre. Ce que l'état de l'opérateur décide est autre chose, et c'est mesurable&nbsp;: exécute-t-il la règle scellée, ou en déroge-t-il&nbsp;?</p>
+
+  <p>Or une dérogation n'est pas une erreur de plus ou de moins dans un échantillon. C'est un <strong>choix binaire pris en regardant le marché</strong>, donc une configuration supplémentaire explorée. Un opérateur qui déroge <span class="v">k</span> fois n'a pas exécuté la stratégie scellée&nbsp;; il a exécuté l'une des 2<sup><span class="v">k</span></sup> stratégies que ces choix engendrent, et il a choisi laquelle en regardant le prix. Le seuil de sélection déflaté ne se calcule plus sur les 3 configurations du sceau mais sur ce nombre-là.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 75</span> — Ce qu'une dérogation à la règle scellée coûte au seuil de sélection, sur les 7 012 trades du protocole borné.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Taux de dérogation</th><th>Dérogations</th><th>Configurations explorées</th><th>Seuil de sélection</th><th>Inflation</th><th>Le résultat tient</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">0,000 %</td><td>0,0</td><td>3</td><td>0,0177</td><td>1,00×</td><td>oui</td></tr>
+          <tr><td class="wrap">0,050 %</td><td>3,5</td><td>34,1</td><td>0,0317</td><td>1,79×</td><td>oui</td></tr>
+          <tr><td class="wrap">0,100 %</td><td>7,0</td><td>387</td><td>0,0412</td><td>2,33×</td><td>NON</td></tr>
+          <tr><td class="wrap">0,200 %</td><td>14,0</td><td>5×10^04</td><td>0,0556</td><td>3,14×</td><td>NON</td></tr>
+          <tr><td class="wrap">0,500 %</td><td>35,1</td><td>1,07×10^11</td><td>0,0851</td><td>4,81×</td><td>NON</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Une dérogation n'est pas une erreur de plus dans l'échantillon : c'est un choix binaire pris en regardant le marché, donc une configuration supplémentaire explorée. La famille double à chaque fois, et le seuil de sélection croît comme la racine de son logarithme. Le point de rupture tombe à 4,0 dérogations, soit une tous les 1 757 trades. C'est le seul paramètre de tout le document qui soit entièrement sous le contrôle de l'opérateur.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 40</span> — Seuil de sélection déflaté selon le nombre de dérogations à la règle scellée, sur l'horizon du protocole. L'horizontale est le Sharpe qu'implique la dérive documentée&nbsp;; leur croisement est le point où cinq années de données cessent de valoir quelque chose.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 254" role="img" aria-label="Seuil de sélection déflaté selon le nombre de dérogations à la règle scellée, sur l'horizon du protocole" preserveAspectRatio="xMidYMid meet">
+<line class="gl" x1="58.0" y1="210.0" x2="516.0" y2="210.0"/>
+<text class="tk" x="52.0" y="213.0" text-anchor="end">0,00</text>
+<line class="gl" x1="58.0" y1="145.2" x2="516.0" y2="145.2"/>
+<text class="tk" x="52.0" y="148.2" text-anchor="end">0,02</text>
+<line class="gl" x1="58.0" y1="80.4" x2="516.0" y2="80.4"/>
+<text class="tk" x="52.0" y="83.4" text-anchor="end">0,04</text>
+<line class="gl" x1="58.0" y1="15.7" x2="516.0" y2="15.7"/>
+<text class="tk" x="52.0" y="18.7" text-anchor="end">0,06</text>
+<text class="ax" transform="translate(11,116.0) rotate(-90)" text-anchor="middle">seuil de sélection, Sharpe par trade</text>
+<line class="ba" x1="58.0" y1="210.0" x2="516.0" y2="210.0"/>
+<text class="tk" x="58.0" y="224.0" text-anchor="middle">0</text>
+<text class="tk" x="172.5" y="224.0" text-anchor="middle">3</text>
+<text class="tk" x="287.0" y="224.0" text-anchor="middle">6</text>
+<text class="tk" x="401.5" y="224.0" text-anchor="middle">9</text>
+<text class="tk" x="516.0" y="224.0" text-anchor="middle">12</text>
+<text class="ax" x="287.0" y="250.0" text-anchor="middle">dérogations à la règle scellée</text>
+<path class="ln s2" d="M58.00,152.66 L67.54,148.31 L77.08,144.24 L86.62,140.41 L96.17,136.78 L105.71,133.32 L115.25,130.01 L124.79,126.83 L134.33,123.77 L143.88,120.82 L153.42,117.95 L162.96,115.18 L172.50,112.48 L182.04,109.86 L191.58,107.30 L201.12,104.81 L210.67,102.37 L220.21,99.99 L229.75,97.66 L239.29,95.37 L248.83,93.13 L258.38,90.94 L267.92,88.78 L277.46,86.66 L287.00,84.57 L296.54,82.52 L306.08,80.51 L315.62,78.52 L325.17,76.56 L334.71,74.63 L344.25,72.73 L353.79,70.86 L363.33,69.00 L372.88,67.18 L382.42,65.37 L391.96,63.59 L401.50,61.83 L411.04,60.09 L420.58,58.37 L430.12,56.67 L439.67,54.99 L449.21,53.33 L458.75,51.68 L468.29,50.05 L477.83,48.44 L487.38,46.84 L496.92,45.26 L506.46,43.69 L516.00,42.14"/>
+<line class="hl" x1="58.0" y1="102.5" x2="516.0" y2="102.5"/>
+<text class="dl halo" x="66.0" y="94.5">Sharpe attendu de la dérive documentée</text>
+<line class="gl" x1="210.3" y1="22.0" x2="210.3" y2="210.0" stroke-dasharray="3 3"/>
+<circle class="pt s2" cx="210.30" cy="102.47" r="4"><title>rupture à 4.0 dérogations sur 7,012 trades</title></circle>
+<text class="dl halo" x="218.3" y="36.0">rupture&#8202;: 4,0 dérogations</text>
+<text class="lg" x="526.0" y="44.0">soit une tous</text>
+<text class="lg" x="526.0" y="58.0">les 1 757 trades</text>
+</svg></div>
+    </figure>
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — le point de rupture est bas, et il surprend.</strong> 4,0 dérogations suffisent à porter le seuil de sélection au-dessus du Sharpe attendu, sur les 7 012 trades du protocole. Une tous les 1 757 trades, soit environ une par an et demi. Ce n'est pas une marge de tolérance&nbsp;: c'est une contrainte plus serrée que tout ce que le document impose par ailleurs.</p>
+
+  <p><strong>Deuxième point — la croissance est exponentielle, donc la borne se franchit d'un coup.</strong> Le nombre de configurations double à chaque dérogation. Il n'y a pas de dégradation progressive qu'on pourrait surveiller&nbsp;: on est du bon côté, puis on n'y est plus. C'est la raison pour laquelle un journal de dérogations doit être tenu dès le premier trade, et non consulté après coup.</p>
+
+  <p><strong>Troisième point — c'est le seul paramètre du document entièrement sous contrôle.</strong> La dérive appartient au marché, la friction au courtier, l'exposant d'échelle à une propriété du prix qu'on ne fait que mesurer. Le taux de dérogation appartient à l'opérateur, et à lui seul. Sous cet angle, la discipline n'est pas une vertu&nbsp;: c'est la seule variable de décision qui reste après que le théorème d'invariance a retiré toutes les autres.</p>
+
+  <p><strong>Quatrième point — et c'est ici, et seulement ici, que le facteur humain entre.</strong> Lo et Repin mesurent les réponses physiologiques d'opérateurs professionnels et les relient à la volatilité&nbsp;; Coates et Herbert montrent que le cortisol d'opérateurs de salle suit la variance du marché et que la testostérone suit les gains. Ces travaux documentent ce qui <em>fait varier le taux de dérogation</em> — état physiologique, série de pertes récente, privation de sommeil. Ils ne documentent aucune dérive de prix, et ce document ne leur en fait pas dire. Le sommeil, l'exercice et le tempérament agissent sur un paramètre réel et décisif&nbsp;; ils n'agissent pas sur celui-là.</p>
+
+  <h2 id="s-domaines">Ce que chaque domaine apporte, et ce qu'il coûte</h2>
+
+  <p>Les trois sections précédentes ne sont pas un tour d'horizon. Elles résultent d'une sélection, et le critère de sélection mérite d'être explicite&nbsp;: un domaine n'entre dans ce document que s'il produit une <strong>borne</strong> — un énoncé de la forme «&nbsp;aucune stratégie ne peut dépasser ceci&nbsp;» — plutôt qu'un indicateur de plus. Un indicateur s'ajoute au budget de configurations et relève le seuil de sélection&nbsp;; une borne le contraint sans rien coûter.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 76</span> — Les domaines extérieurs à la finance évalués pour ce document, et ce que chacun apporte au critère maître.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Domaine</th><th class="wrap">Travaux</th><th class="wrap">Ce qu'il fournit</th><th>Coût des données</th><th>Délai</th><th class="wrap">Ce qu'il change ici</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Théorie de l'information</td><td class="wrap">Kelly, Shannon</td><td class="wrap">Plafond de croissance = information mutuelle</td><td>Nulle</td><td>Immédiat</td><td class="wrap">Borne dure ; convertit le seuil en bits et donne un test de direction plus économe que le test d'espérance</td></tr>
+          <tr><td class="wrap">Dynamique non linéaire</td><td class="wrap">Bandt et Pompe</td><td class="wrap">Entropie de permutation des motifs ordinaux</td><td>Nulle</td><td>Minutes</td><td class="wrap">Sans modèle ni hypothèse de loi ; dit s'il reste une structure avant qu'un signal ne soit construit</td></tr>
+          <tr><td class="wrap">Physiologie et biophysique</td><td class="wrap">Peng et al.</td><td class="wrap">Fluctuations redressées, exposant α</td><td>Nulle</td><td>Minutes</td><td class="wrap">Trois fois moins biaisé que le ratio de variance sur des séances courtes ; remplace l'estimateur d'exposant du protocole</td></tr>
+          <tr><td class="wrap">Économie du comportement</td><td class="wrap">Lo et Repin ; Coates et Herbert</td><td class="wrap">Déterminants du taux de dérogation</td><td>Nulle</td><td>Continu</td><td class="wrap">Ne crée aucune dérive ; agit sur le seul paramètre que l'opérateur contrôle, et le point de rupture est bas</td></tr>
+          <tr><td class="wrap">Microstructure statistique</td><td class="wrap">Bouchaud et al.</td><td class="wrap">Noyau d'impact et mémoire du flux</td><td>Élevée (carnet)</td><td>Semaines</td><td class="wrap">Déjà exploitée par le document ; ferme la persistance du prix plutôt qu'elle ne l'ouvre</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le classement est par rapport entre ce qu'un domaine décide et ce qu'il coûte. Les quatre premiers ne demandent aucune donnée que le protocole n'ait déjà, et les trois premiers tournent sur les mêmes barres d'une minute. Le cinquième est le seul à exiger une dépense, et il est aussi le seul dont la conclusion va contre la stratégie.</p>
+    </figure>
+
+  <p>Le classement met en tête ce qui décide le plus pour le moins cher. Les quatre premiers domaines n'exigent aucune donnée que le protocole n'ait déjà, et les trois premiers tournent sur les mêmes barres d'une minute. Le cinquième est le seul à demander une dépense, et il est aussi le seul dont la conclusion va contre la stratégie — ce qui n'est pas un argument pour l'écarter, mais pour ne pas le payer avant les autres.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que ces trois bornes changent au verdict</span>
+    <p>Aucune ne crée d'avantage, et il faut le dire avant tout le reste&nbsp;: elles ne mesurent rien du marché. Ce qu'elles font est plus modeste et plus utile — elles disent où il est inutile de chercher.</p>
+    <p>Elles resserrent la conclusion du document sur trois points. Le mur d'échantillon est <strong>structurel</strong>, trois routes indépendantes y menant. Il s'explique par le <strong>plancher de bruit</strong> des instruments, qui dépasse l'avantage cherché. Et la seule variable que l'opérateur contrôle est le <strong>taux de dérogation</strong>, dont le point de rupture est bien plus bas qu'on ne l'imagine.</p>
+    <p>Un gain exploitable en sort tout de même, et un seul&nbsp;: lire la direction plutôt que l'espérance économise 39&nbsp;% des trades nécessaires. Il est acquis, il ne coûte rien, et il ne demande aucune donnée supplémentaire.</p>
+  </div>
+
   <div class="part">
     <span class="lab">Verdict</span>
     <h2>Ce que ce document établit, et ce qu'il n'établit pas</h2>
@@ -7522,7 +7850,7 @@
   <p>La grille qui suit a été fixée avant d'être appliquée, et ne contient aucun critère taillé pour l'un des deux documents : douze critères, trois familles, des poids qui somment à cent, et une échelle d'ancrage commune de 0 à 5. Chaque score est accompagné du fait qui le justifie, de sorte qu'un score se conteste en contestant ce fait — la seule propriété qu'on demande à une note.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 70</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
+      <figcaption><span class="lab">Table 77</span> — La grille appliquée aux deux documents. Douze critères, poids fixés d'avance, même échelle d'ancrage de 0 à 5.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Critère</th><th>Poids</th><th>ALP-1</th><th>ALP-2</th><th>Points ALP-1</th><th>Points ALP-2</th></tr></thead>
@@ -7547,7 +7875,7 @@
     </figure>
 
       <figure>
-      <figcaption><span class="lab">Table 71</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
+      <figcaption><span class="lab">Table 78</span> — Note par famille de critères. L'écart ne porte pas sur la rigueur : il porte sur le contenu empirique et sur l'exploitabilité.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Famille</th><th>Maximum</th><th>ALP-1</th><th>ALP-2</th><th>Écart</th></tr></thead>

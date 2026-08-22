@@ -24,9 +24,10 @@ import re
 from pathlib import Path
 
 from . import (lexicon, paper, paper2, quant, report, report2, report3,
-               report4, report5)
+               report4, report5, report6)
 from .figalp2 import render_all as render_alp2_figures
 from .figdecay import render_all as render_decay_figures
+from .figedge import render_all as render_edge_figures
 from .figpower import render_all as render_power_figures
 from .figcss import FIGURE_CSS, FIGURE_TOKENS_DARK, FIGURE_TOKENS_LIGHT
 from .figquant import render_all as render_quant_figures
@@ -49,7 +50,7 @@ def values() -> dict[str, str]:
     v1, v2 = paper.values(), paper2.values()
     merged = dict(v1)
     for key, val in {**v2, **report3.values(), **report4.values(),
-                     **report5.values()}.items():
+                     **report5.values(), **report6.values()}.items():
         if key in COLLISIONS_VALEURS:
             merged[f"{key}_a2"] = val
         elif key in merged and merged[key] != val:
@@ -71,6 +72,7 @@ def tables() -> dict[str, report.Table]:
         **report3.all_tables(),
         **report4.all_tables(),
         **report5.all_tables(),
+        **report6.all_tables(),
     }
     for key, table in report2.all_tables().items():
         if key in COLLISIONS_TABLES:
@@ -87,7 +89,8 @@ def figures() -> dict[str, str]:
     merged: dict[str, str] = {}
     for render in (render_core_figures, render_terminal_figures,
                    render_quant_figures, render_alp2_figures,
-                   render_decay_figures, render_power_figures):
+                   render_decay_figures, render_power_figures,
+                   render_edge_figures):
         for key, svg in render().items():
             if key in merged:
                 raise KeyError(f"collision de figure : {key!r}")

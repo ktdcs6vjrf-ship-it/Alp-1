@@ -44,10 +44,12 @@ class TestFusion(unittest.TestCase):
         t = monograph.tables()
         # ALP-1 (report+lexicon+quant), ALP-2, les deux corrections, et le
         # protocole à horizon borné
-        self.assertEqual(len(t), 32 + 24 + 5 + 8 + 2)
+        # ALP-1, ALP-2, décote/exposant, horizon borné, instruments,
+        # puis les bornes venues d'ailleurs
+        self.assertEqual(len(t), 32 + 24 + 5 + 8 + 2 + 7)
 
     def test_toutes_les_figures_coexistent(self):
-        self.assertEqual(len(monograph.figures()), 36)
+        self.assertEqual(len(monograph.figures()), 40)
 
 
 class TestPiedsDeFigure(unittest.TestCase):
@@ -109,13 +111,13 @@ class TestStructure(unittest.TestCase):
     def test_aucune_balise_non_resolue(self):
         self.assertEqual(re.findall(r"\{\{[^}]+\}\}", self.html), [])
 
-    def test_cinq_parties(self):
-        self.assertEqual(self.corps.count('<div class="part">'), 5)
+    def test_les_parties_sont_toutes_ouvertes(self):
+        self.assertEqual(self.corps.count('<div class="part">'), 6)
 
     def test_les_sections_sont_numerotees_en_continu(self):
         ids = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)
-        self.assertEqual(len(ids), 36)
-        self.assertEqual(len(set(ids)), 36)
+        self.assertEqual(len(ids), 40)
+        self.assertEqual(len(set(ids)), 40)
 
     def test_le_sommaire_couvre_toutes_les_sections(self):
         ids = set(re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps))

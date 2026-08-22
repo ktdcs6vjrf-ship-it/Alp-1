@@ -634,8 +634,17 @@
         </ol>
       </li>
       <li>
-        <span class="pt">Verdict</span>
+        <span class="pt">Cinquième partie — Les bornes venues d'ailleurs</span>
         <ol start="35">
+          <li><a href="#s-information">Le plafond d'information</a></li>
+          <li><a href="#s-nonlineaire">Deux mesures venues d'autres disciplines</a></li>
+          <li><a href="#s-discipline">La discipline, chiffrée en preuve</a></li>
+          <li><a href="#s-domaines">Ce que chaque domaine apporte, et ce qu'il coûte</a></li>
+        </ol>
+      </li>
+      <li>
+        <span class="pt">Verdict</span>
+        <ol start="39">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -2052,6 +2061,126 @@
 
   <p>Les tests sont ordonnés du moins coûteux au plus coûteux, et chacun peut interrompre la séquence. Le premier ne porte sur aucun signal : il vérifie que la règle se déclenche assez souvent pour être testable. Le second est décisif — si la dérive moyenne captée n'excède pas la friction déduite au quantile 90&nbsp;%, le reste est sans objet.</p>
 
+
+
+  <div class="part">
+    <span class="lab">Cinquième partie</span>
+    <h2>Les bornes venues d'ailleurs</h2>
+    <p>Le théorème d'invariance dit ce qu'une géométrie ne peut pas faire. Trois disciplines étrangères à la finance donnent les bornes symétriques&nbsp;: ce qu'un signal doit porter, ce qu'un instrument peut voir, et ce qu'une dérogation détruit. Aucune n'exige de données que le protocole n'ait déjà.</p>
+  </div>
+
+  <h2 id="s-information">Le plafond d'information</h2>
+
+  <p>Le document a établi qu'aucune règle d'arrêt ne crée d'espérance sur un prix sans dérive, et que tout se ramène au critère µ&thinsp;E[τ]&nbsp;−&nbsp;<span class="v">c</span>. Il reste une question qu'il n'a pas posée, et qui est la symétrique exacte de la première&nbsp;: un signal qui prétend prévoir cette dérive, de <em>combien d'information</em> a-t-il besoin&nbsp;?</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Kelly établit en 1956 un résultat qui n'a pas d'équivalent en finance et qui n'a jamais été affaibli depuis&nbsp;: le taux de croissance logarithmique maximal d'un pari répété vaut exactement l'information mutuelle entre le signal et l'issue. Pas «&nbsp;approximativement&nbsp;», pas «&nbsp;sous certaines conditions&nbsp;» — c'est une égalité. Aucun dimensionnement, aucune géométrie, aucune ingéniosité ne dépasse ce plafond, parce qu'il ne s'agit pas d'une limite d'habileté mais d'une limite d'information.</p>
+
+  <p>Le document exige déjà que le taux de réussite passe de sa valeur martingale — {{inf_hit_null}}&nbsp;% à un ratio de 1:20, qui est simplement la probabilité de premier passage — à sa valeur rentable, {{inf_hit_v2}}&nbsp;%. Déplacer une loi de Bernoulli d'une valeur à l'autre a un prix en information, et ce prix est la divergence de Kullback-Leibler entre les deux. C'est donc l'information minimale que le signal doit porter, exprimée en bits par trade.</p>
+
+  {{TABLE:information}}
+
+  {{FIGURE:infceiling|Information par trade qu'un signal doit porter, selon le ratio visé et selon la friction relative de la géométrie. L'échelle est logarithmique&nbsp;: l'écart entre les deux courbes est un facteur, non une différence. L'horizontale marque ce que porte la dérive documentée.}}
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — la géométrie divise l'exigence par {{inf_factor}}.</strong> C'est davantage que le facteur {{ir_factor}} obtenu sur le ratio d'information, et pour une raison précise&nbsp;: l'information croît comme le carré de l'écart de probabilité à financer, là où le ratio d'information croît comme cet écart. Le même changement de stop, lu en bits, paraît donc presque dix fois plus favorable qu'il ne le paraissait en écarts-types.</p>
+
+  <p><strong>Deuxième point — l'exigence absolue est dérisoire.</strong> {{inf_bits_v2}} millionièmes de bit par trade. Pour donner l'échelle&nbsp;: un signal qui ne se tromperait que d'un trade sur mille par rapport au hasard porterait déjà mille fois cette information. Ce n'est pas un avantage difficile à posséder.</p>
+
+  <p><strong>Troisième point, et il retourne les deux précédents — l'exigence est dérisoire, donc invérifiable.</strong> Le même facteur {{inf_factor}} qui divise ce qu'il faut multiplie ce qu'il faut pour le prouver. Une quantité plus petite se détecte dans un échantillon plus grand, et le rapport est le même. La géométrie d'ALP-2 rend la stratégie plus facile à rendre rentable et plus difficile à démontrer rentable, dans la même proportion et par le même mécanisme.</p>
+
+  <p><strong>Quatrième point — mais elle indique un test moins coûteux.</strong> Lire la direction plutôt que l'espérance économise {{inf_gain}}&nbsp;% des trades à décision égale. Le Test&nbsp;2 du protocole moyenne des déplacements, donc paie le bruit d'amplitude&nbsp;; un test du rapport de vraisemblance sur le seul signe ne le paie pas. C'est le seul gain de cette section qui soit exploitable sans rien attendre.</p>
+
+  <h3>Trois routes, un seul mur</h3>
+
+  <p>L'intérêt de la borne informationnelle ne tient pas à sa valeur mais à son indépendance. Elle ne suppose ni la loi du résultat, ni la géométrie, ni le Sharpe&nbsp;; elle ne lit que le signe. Or elle tombe au même endroit que les deux routes que le document parcourait déjà.</p>
+
+  {{TABLE:three_routes}}
+
+  {{FIGURE:inforoutes|Échantillon exigé par trois méthodes qui ne partagent aucune hypothèse. Le trait vertical marque ce que le protocole scellé produit sur son horizon de cinq ans et cinq marchés.}}
+
+  <p>Trois calculs sans prémisse commune tombant dans un rapport de deux à un ne sont pas une coïncidence&nbsp;: c'est la signature d'une limite structurelle. Le mur n'est pas un artefact de la méthode retenue, et changer de méthode ne le déplacera pas.</p>
+
+  <div class="keybox">
+    <span class="lab">Le piège, et il est le même qu'à la section&nbsp;<a href="#s-exposant">29</a></span>
+    <p>Les estimateurs d'information mutuelle par comptage sont biaisés <strong>vers le haut</strong>&nbsp;: deux variables rigoureusement indépendantes en affichent. À mille observations, le biais vaut {{inf_mi_bias}} millionièmes de bit — soit plus de cent fois ce que la stratégie réclame, et le double de ce que la dérive documentée porte.</p>
+    <p>C'est exactement ce qui s'est produit avec le ratio de variance, sur un instrument entièrement différent, construit par une autre discipline, à une autre époque. Deux occurrences du même piège dans deux appareils sans lien commun suggèrent qu'il ne s'agit pas d'un défaut d'implémentation mais d'une propriété des mesures faites sur peu d'échantillons&nbsp;: <strong>toute mesure de structure surestime la structure.</strong></p>
+  </div>
+
+  {{TABLE:mi_bias}}
+
+  <h2 id="s-nonlineaire">Deux mesures venues d'autres disciplines</h2>
+
+  <p>Le ratio de variance ne détecte qu'une chose&nbsp;: l'autocorrélation linéaire. Un prix peut être imprévisible au second ordre et structuré par ailleurs, et le ratio de variance ne le verrait pas. Deux instruments construits hors de la finance comblent cet angle mort, et tous deux tournent sur les barres d'une minute déjà nécessaires au protocole — coût de données nul.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p><strong>L'entropie de permutation</strong> vient de la dynamique non linéaire, où Bandt et Pompe l'ont introduite en 2002, et sert depuis en électroencéphalographie. Elle n'examine pas les valeurs mais leur ordre&nbsp;: dans chaque fenêtre de <span class="v">d</span> points consécutifs, elle note lequel est le plus grand, lequel vient ensuite, et ainsi de suite. Il y a <span class="v">d</span>&thinsp;! ordres possibles&nbsp;; leur entropie de Shannon, normalisée, vaut un si tous sont équiprobables et moins dès qu'un motif revient plus souvent que le hasard ne le voudrait.</p>
+
+  <p>Sa vertu est de ne rien supposer&nbsp;: ni loi, ni stationnarité, ni linéarité. Elle est invariante par toute transformation monotone du prix — le résultat ne change pas selon qu'on mesure en points, en pourcentage ou en logarithme. Ce qu'elle mesure est la question qui précède toute construction de signal&nbsp;: reste-t-il, dans cette série, une structure exploitable par quiconque&nbsp;?</p>
+
+  <p><strong>L'analyse des fluctuations redressées</strong> vient de la physiologie, où Peng et ses coauteurs l'ont conçue en 1994 pour mesurer la mémoire longue du rythme cardiaque et des séquences d'ADN. Elle estime le même exposant d'échelle que le ratio de variance, mais retranche la tendance locale de chaque fenêtre avant de mesurer la fluctuation résiduelle — ce qui la rend robuste à la non-stationnarité, précisément là où le ratio de variance se trompe.</p>
+
+  {{TABLE:nonlinear}}
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — la méthode issue de la physiologie bat celle issue de la finance sur le problème financier.</strong> Sur une série sans mémoire, le ratio de variance affiche un exposant de 0,5208 quand la vérité est un demi&nbsp;; les fluctuations redressées affichent {{nl_dfa}}. Le biais passe de {{nl_vr_bias}} à {{nl_dfa_bias}}, soit un facteur {{nl_bias_factor}}. Le Test&nbsp;1 du protocole gagne à changer d'estimateur, et le changement ne coûte rien.</p>
+
+  <p><strong>Deuxième point — l'entropie de permutation donne un verdict avant qu'aucun signal n'existe.</strong> Elle répond à «&nbsp;y a-t-il quelque chose à prendre&nbsp;?&nbsp;» sans qu'il faille avoir construit ce qui le prendrait. C'est le seul instrument du document qui puisse invalider la démarche entière en quelques minutes de calcul, et c'est à ce titre qu'il mérite d'être conduit en premier.</p>
+
+  <p><strong>Troisième point, et il est le plus important — le plancher.</strong> Sur une série où il n'y a rien, l'entropie de permutation n'affiche pas un&nbsp;: elle affiche {{nl_pe3_null}}, parce que les six motifs ne peuvent pas être équiprobables dans un échantillon fini. Ce déficit vaut {{nl_pe3_floor}} millionièmes de bit — soit {{nl_pe3_ratio}} fois l'information que la stratégie réclame.</p>
+
+  {{FIGURE:inffloor|Plancher de bruit de trois instruments sur une série sans structure, comparé à l'information que la géométrie d'ALP-2 exige d'un signal. Le trait vertical est l'exigence&nbsp;; chaque point est ce que l'instrument affiche là où il n'y a rien.}}
+
+  {{TABLE:floor}}
+
+  <div class="keybox">
+    <span class="lab">Le résultat unificateur des trois instruments</span>
+    <p>Le ratio de variance annonce de la persistance sur une martingale. L'information mutuelle annonce de la dépendance entre variables indépendantes. L'entropie de permutation annonce de la structure là où il n'y en a pas. Trois appareils, trois disciplines, trois époques, un seul comportement.</p>
+    <p><strong>Le plancher de bruit de chaque instrument dépasse l'information que la stratégie réclame.</strong> Ce n'est pas que l'avantage recherché soit petit&nbsp;: c'est qu'il est plus petit que le bruit propre des appareils censés le voir. C'est la formulation la plus économe du mur des trois routes, et elle explique pourquoi il est structurel — on ne mesure pas un signal sous le plancher de son instrument, on l'agrège jusqu'à ce qu'il en sorte.</p>
+  </div>
+
+  <h2 id="s-discipline">La discipline, chiffrée en preuve</h2>
+
+  <p>Un opérateur qui demande si son tempérament, son sommeil ou son entraînement lui procurent un avantage pose une question mal formée. La reformuler la rend décidable, et la réponse est un nombre.</p>
+
+  <h3>Comment cela fonctionne</h3>
+
+  <p>Dans le cadre de ce document, rien de ce qu'un opérateur <em>est</em> ne crée de dérive. La dérive est une propriété du prix&nbsp;; le théorème d'invariance interdit qu'une décision de sortie en fabrique, et aucun état physiologique ne change cette algèbre. Ce que l'état de l'opérateur décide est autre chose, et c'est mesurable&nbsp;: exécute-t-il la règle scellée, ou en déroge-t-il&nbsp;?</p>
+
+  <p>Or une dérogation n'est pas une erreur de plus ou de moins dans un échantillon. C'est un <strong>choix binaire pris en regardant le marché</strong>, donc une configuration supplémentaire explorée. Un opérateur qui déroge <span class="v">k</span> fois n'a pas exécuté la stratégie scellée&nbsp;; il a exécuté l'une des 2<sup><span class="v">k</span></sup> stratégies que ces choix engendrent, et il a choisi laquelle en regardant le prix. Le seuil de sélection déflaté ne se calcule plus sur les {{disc_budget}} configurations du sceau mais sur ce nombre-là.</p>
+
+  {{TABLE:discipline}}
+
+  {{FIGURE:discipline|Seuil de sélection déflaté selon le nombre de dérogations à la règle scellée, sur l'horizon du protocole. L'horizontale est le Sharpe qu'implique la dérive documentée&nbsp;; leur croisement est le point où cinq années de données cessent de valoir quelque chose.}}
+
+  <h3>Où est l'avantage, point par point</h3>
+
+  <p><strong>Premier point — le point de rupture est bas, et il surprend.</strong> {{disc_break}} dérogations suffisent à porter le seuil de sélection au-dessus du Sharpe attendu, sur les {{disc_trades}} trades du protocole. Une tous les {{disc_break_every}} trades, soit environ une par an et demi. Ce n'est pas une marge de tolérance&nbsp;: c'est une contrainte plus serrée que tout ce que le document impose par ailleurs.</p>
+
+  <p><strong>Deuxième point — la croissance est exponentielle, donc la borne se franchit d'un coup.</strong> Le nombre de configurations double à chaque dérogation. Il n'y a pas de dégradation progressive qu'on pourrait surveiller&nbsp;: on est du bon côté, puis on n'y est plus. C'est la raison pour laquelle un journal de dérogations doit être tenu dès le premier trade, et non consulté après coup.</p>
+
+  <p><strong>Troisième point — c'est le seul paramètre du document entièrement sous contrôle.</strong> La dérive appartient au marché, la friction au courtier, l'exposant d'échelle à une propriété du prix qu'on ne fait que mesurer. Le taux de dérogation appartient à l'opérateur, et à lui seul. Sous cet angle, la discipline n'est pas une vertu&nbsp;: c'est la seule variable de décision qui reste après que le théorème d'invariance a retiré toutes les autres.</p>
+
+  <p><strong>Quatrième point — et c'est ici, et seulement ici, que le facteur humain entre.</strong> Lo et Repin mesurent les réponses physiologiques d'opérateurs professionnels et les relient à la volatilité&nbsp;; Coates et Herbert montrent que le cortisol d'opérateurs de salle suit la variance du marché et que la testostérone suit les gains. Ces travaux documentent ce qui <em>fait varier le taux de dérogation</em> — état physiologique, série de pertes récente, privation de sommeil. Ils ne documentent aucune dérive de prix, et ce document ne leur en fait pas dire. Le sommeil, l'exercice et le tempérament agissent sur un paramètre réel et décisif&nbsp;; ils n'agissent pas sur celui-là.</p>
+
+  <h2 id="s-domaines">Ce que chaque domaine apporte, et ce qu'il coûte</h2>
+
+  <p>Les trois sections précédentes ne sont pas un tour d'horizon. Elles résultent d'une sélection, et le critère de sélection mérite d'être explicite&nbsp;: un domaine n'entre dans ce document que s'il produit une <strong>borne</strong> — un énoncé de la forme «&nbsp;aucune stratégie ne peut dépasser ceci&nbsp;» — plutôt qu'un indicateur de plus. Un indicateur s'ajoute au budget de configurations et relève le seuil de sélection&nbsp;; une borne le contraint sans rien coûter.</p>
+
+  {{TABLE:domains}}
+
+  <p>Le classement met en tête ce qui décide le plus pour le moins cher. Les quatre premiers domaines n'exigent aucune donnée que le protocole n'ait déjà, et les trois premiers tournent sur les mêmes barres d'une minute. Le cinquième est le seul à demander une dépense, et il est aussi le seul dont la conclusion va contre la stratégie — ce qui n'est pas un argument pour l'écarter, mais pour ne pas le payer avant les autres.</p>
+
+  <div class="keybox">
+    <span class="lab">Ce que ces trois bornes changent au verdict</span>
+    <p>Aucune ne crée d'avantage, et il faut le dire avant tout le reste&nbsp;: elles ne mesurent rien du marché. Ce qu'elles font est plus modeste et plus utile — elles disent où il est inutile de chercher.</p>
+    <p>Elles resserrent la conclusion du document sur trois points. Le mur d'échantillon est <strong>structurel</strong>, trois routes indépendantes y menant. Il s'explique par le <strong>plancher de bruit</strong> des instruments, qui dépasse l'avantage cherché. Et la seule variable que l'opérateur contrôle est le <strong>taux de dérogation</strong>, dont le point de rupture est bien plus bas qu'on ne l'imagine.</p>
+    <p>Un gain exploitable en sort tout de même, et un seul&nbsp;: lire la direction plutôt que l'espérance économise {{inf_gain}}&nbsp;% des trades nécessaires. Il est acquis, il ne coûte rien, et il ne demande aucune donnée supplémentaire.</p>
+  </div>
 
   <div class="part">
     <span class="lab">Verdict</span>

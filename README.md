@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
-36 sections en cinq parties, 71 tables, 36 figures.
+40 sections en six parties, 78 tables, 40 figures.
 
 ## Ce que contient ce dépôt
 
@@ -441,6 +441,98 @@ tick.
 python main.py --bounds [f.csv]
 ```
 
+## Trois bornes venues d'ailleurs
+
+Le théorème d'invariance dit ce qu'une géométrie ne peut pas faire. Trois
+disciplines étrangères à la finance donnent les bornes symétriques. Le critère
+de sélection est strict : **un domaine n'entre que s'il produit une borne** —
+un énoncé de la forme « aucune stratégie ne dépasse ceci » — et non un
+indicateur de plus. Un indicateur s'ajoute au budget de configurations et
+relève le seuil de sélection ; une borne le contraint sans rien coûter.
+
+### `alp1/entropy.py` — le plafond d'information
+
+Kelly établit en 1956 que le taux de croissance logarithmique maximal d'un
+pari répété **vaut** l'information mutuelle entre signal et issue. Pas une
+approximation : une égalité. Déplacer le taux de réussite de sa valeur
+martingale à sa valeur rentable coûte la divergence de Kullback-Leibler entre
+les deux lois, et rien ne contourne ce prix.
+
+| Géométrie | Bits requis par trade | Trades pour décider |
+|---|---|---|
+| ALP-1, `c/L` = 11,0 % | 422 × 10⁻⁶ | 10 568 |
+| ALP-2, `c/L` = 1,43 % | **7 × 10⁻⁶** | 607 412 |
+
+La géométrie divise l'exigence par **57,5** — davantage que le facteur 5,69
+obtenu sur le ratio d'information, l'information croissant comme le *carré* de
+l'écart à financer. Mais le même facteur multiplie l'échantillon qui la
+décide : ce qu'elle rend facile à obtenir, elle le rend difficile à prouver.
+
+**Trois routes, un seul mur.** Le test t sur l'espérance demande 17 434 trades,
+le seuil de sélection déflaté 1 993, le test de vraisemblance sur la direction
+10 568. Aucune prémisse commune, un rapport de deux à un : la marque d'une
+limite structurelle plutôt que d'un artefact de méthode.
+
+**Le seul gain exploitable de tout ce travail** : lire la direction plutôt que
+l'espérance économise **39 % des trades** à décision égale. Le Test 2 moyenne
+des déplacements, donc paie le bruit d'amplitude ; un test sur le seul signe
+ne le paie pas.
+
+```bash
+python main.py --hurst f.csv   # loi d'échelle
+```
+
+### `alp1/nonlinear.py` — entropie de permutation et DFA
+
+Le ratio de variance ne détecte que l'autocorrélation linéaire. Deux
+instruments construits hors de la finance comblent l'angle mort, sur les
+**mêmes barres d'une minute** — coût de données nul.
+
+- **Entropie de permutation** (Bandt et Pompe, 2002 — dynamique non linéaire,
+  électroencéphalographie). N'examine pas les valeurs mais leur *ordre*.
+  Aucune loi, aucune stationnarité, invariante par transformation monotone.
+  Répond à « reste-t-il une structure exploitable ? » avant qu'aucun signal ne
+  soit construit.
+- **Fluctuations redressées** (Peng et al., 1994 — physiologie, rythme
+  cardiaque et séquences d'ADN). Retranche la tendance locale de chaque
+  fenêtre avant de mesurer.
+
+**La méthode issue de la physiologie bat celle issue de la finance sur le
+problème financier.** Sur une martingale, le ratio de variance affiche 0,5208
+quand la vérité est un demi ; les fluctuations redressées affichent 0,5052.
+Biais divisé par 3,5.
+
+### `alp1/discipline.py` — le facteur humain, rendu décidable
+
+Rien de ce qu'un opérateur *est* ne crée de dérive : le théorème d'invariance
+l'interdit. Ce que son état décide est s'il **exécute la règle scellée**.
+
+Or une dérogation n'est pas une erreur de plus dans l'échantillon : c'est un
+choix binaire pris en regardant le marché, donc une configuration explorée de
+plus. La famille double à chaque fois, et le seuil de sélection suit.
+
+> **Quatre dérogations suffisent à détruire la valeur probante des 7 012 trades
+> du protocole.** Une tous les 1 757 trades, soit environ une par an et demi.
+
+C'est le seul paramètre du document entièrement sous le contrôle de
+l'opérateur. Lo et Repin, Coates et Herbert documentent ce qui *fait varier ce
+taux* — cortisol, série de pertes, privation de sommeil. Ils ne documentent
+aucune dérive de prix, et le document ne leur en fait pas dire.
+
+### Le résultat qui unifie les trois
+
+| Instrument | Plancher de bruit | Rapport à l'exigence |
+|---|---|---|
+| Entropie de permutation, d = 3 | 17,5 × 10⁻⁶ | **2×** |
+| Entropie de permutation, d = 4 | 137 × 10⁻⁶ | **19×** |
+| Information mutuelle, 1 000 obs. | 864 × 10⁻⁶ | **118×** |
+
+Chaque plancher est ce que l'instrument affiche sur une série où il n'y a
+**rien**. Tous dépassent l'information que la stratégie réclame. Ce n'est pas
+que l'avantage recherché soit petit : **il est plus petit que le bruit propre
+des appareils censés le voir.** C'est l'explication du mur, et elle dit
+pourquoi il est structurel.
+
 ## Utilisation
 
 ```bash
@@ -456,7 +548,7 @@ python main.py --bounds f.csv     # la mesure encadrée par les deux remplissage
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 461 tests unitaires du noyau
+python main.py --tests            # 521 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -505,6 +597,9 @@ chiffre soit défendable plutôt que seulement juste :
 | `alp1/decay.py` | Décote post-publication de la dérive empruntée, durée de vie résiduelle |
 | `alp1/scaling.py` | Calibration sous exposant d'échelle imposé, géométrie au pire cas |
 | `alp1/varratio.py` | Loi d'échelle mesurée : ratio de variance, loi nulle de l'estimateur |
+| `alp1/entropy.py` | Plafond de Kelly, information requise, biais des estimateurs |
+| `alp1/nonlinear.py` | Entropie de permutation, fluctuations redressées, lois nulles |
+| `alp1/discipline.py` | Dérogation comme multiplicité, point de rupture |
 | `alp1/report5.py` | Tables de la loi d'échelle mesurée et de l'encadrement du remplissage |
 | `alp1/power.py` | Frontières séquentielles, information du panel, dérive minimale détectable |
 | `alp1/mcprotocol.py` | Monte-Carlo du protocole entier : taille, puissance, durée du verdict |
