@@ -7,6 +7,7 @@
     python main.py --prereg           # protocole scellé et son empreinte SHA-256
     python main.py --power            # protocole à horizon borné et son Monte-Carlo
     python main.py --measure [f.csv]  # exécute le protocole sur un historique
+    python main.py --strategy [f.csv] # rejoue la stratégie scellée et sa batterie
     python main.py --hurst [f.csv]    # loi d'échelle mesurée, ratio de variance
     python main.py --bounds [f.csv]   # la mesure encadrée par les deux remplissages
     python main.py --edge             # témoin, catalogue de dérives, opérateur
@@ -138,6 +139,14 @@ def main() -> int:
         print(f"  seuil {b.threshold:.4f} pt sur l'espérance nette "
               f"(la friction est déjà retranchée)")
         print(f"\n  {b.verdict}")
+        return 0
+
+    if "--strategy" in sys.argv:
+        from alp1.strategy import main as strategy_main
+
+        rest = sys.argv[sys.argv.index("--strategy") + 1:]
+        files = [a for a in rest if not a.startswith("--")]
+        strategy_main(files[0] if files else None)
         return 0
 
     if "--measure" in sys.argv:
