@@ -52,8 +52,23 @@ reactATR = input.float(1.5, "Reaction ≥ n × ATR", minval = 0.2, maxval = 20, 
 zoneATR  = input.float(0.30, "Epaisseur de zone (× ATR)", minval = 0.05, maxval = 5, step = 0.05, group = gZ)
 maxZones = input.int(8, "Zones conservees", minval = 1, maxval = 40, group = gZ)
 
-// ─── ⑤ Confluence ─────────────────────────────────────────────────────────
-gF = "⑤ Confluence"
+// ─── ⑤ Volatilite implicite ───────────────────────────────────────────────
+gI = "⑤ Volatilite implicite"
+showIV   = input.bool(true, "Bandes de mouvement attendu", group = gI)
+ivSym    = input.symbol("CBOE:VXN", "Source de la VI", group = gI,
+     tooltip = "CBOE:VXN pour le Nasdaq, CBOE:VIX pour le S&P, CBOE:RVX pour le Russell. Historique complet et gratuit.")
+ivFreeze = input.bool(true, "Figer sur la cloture precedente", group = gI,
+     tooltip = "Actif : la bande est connue des l'ouverture et ne se repeint jamais. Inactif : elle suit la VI du jour.")
+ivHoriz  = input.float(1.0, "Horizon (jours)", minval = 0.1, maxval = 60, step = 0.5, group = gI)
+ivBase   = input.string("252 (bourse)", "Base annuelle", options = ["252 (bourse)", "365 (calendaire)"], group = gI)
+kA = input.float(0.5, "Multiplicateurs", minval = 0.1, maxval = 6, step = 0.1, group = gI, inline = "iv")
+kB = input.float(1.0, "",                minval = 0.1, maxval = 6, step = 0.1, group = gI, inline = "iv")
+kC = input.float(2.0, "",                minval = 0.1, maxval = 6, step = 0.1, group = gI, inline = "iv")
+colIV    = input.color(#B9B9B9, "Couleur des bandes VI", group = gI)
+ivLook   = input.int(252, "Fenetre du rang de VI (jours)", minval = 20, maxval = 1000, group = gI)
+
+// ─── ⑥ Confluence ─────────────────────────────────────────────────────────
+gF = "⑥ Confluence"
 showConf  = input.bool(true, "Signaler la confluence", group = gF)
 tolATR    = input.float(0.25, "Tolerance (× ATR)", minval = 0.01, maxval = 5, step = 0.05, group = gF,
      tooltip = "Distance en dessous de laquelle une bande et une zone sont dits au meme niveau.")
@@ -144,6 +159,61 @@ fill(pDE, pDF, color.new(colFill, transpAt(6)), "−2.5 → −3σ")
 
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  2 bis. Mouvement attendu, lu dans la volatilite implicite
+//
+//  EM = P x VI x racine(horizon / base annuelle).  C'est la meme formule que
+//  celle du prix d'une option a la monnaie : la VI est deja annualisee, on la
+//  ramene a l'horizon voulu. A un ecart-type, le prix reste dans la bande
+//  environ deux fois sur trois.
+//
+//  Ce que cette bande dit, et ce qu'elle ne dit pas : elle borne l'AMPLITUDE
+//  attendue. Elle ne porte aucune information de SENS. Une VI elevee annonce
+//  un grand mouvement, pas un mouvement haussier.
+//
+//  Contrairement a un niveau gamma recupere en direct, VXN a un historique
+//  complet et gratuit : cette bande est la seule brique du dispositif qui soit
+//  rejouable sur des annees.
+// ═══════════════════════════════════════════════════════════════════════════
+
+ivRaw = request.security(ivSym, "D", ivFreeze ? close[1] : close,
+     lookahead = barmerge.lookahead_off)
+
+annualBase = ivBase == "252 (bourse)" ? 252.0 : 365.0
+
+var float anchorPx = na
+if newAnchor or na(anchorPx)
+    anchorPx := open
+
+ivOk = not na(ivRaw) and ivRaw > 0 and not na(anchorPx)
+em   = ivOk ? anchorPx * (ivRaw / 100.0) * math.sqrt(ivHoriz / annualBase) : na
+
+ivUA = ivOk ? anchorPx + kA * em : na
+ivUB = ivOk ? anchorPx + kB * em : na
+ivUC = ivOk ? anchorPx + kC * em : na
+ivDA = ivOk ? anchorPx - kA * em : na
+ivDB = ivOk ? anchorPx - kB * em : na
+ivDC = ivOk ? anchorPx - kC * em : na
+
+// Rang et percentile de la VI. Le percentile resiste aux pics aberrants que le
+// rang subit : un seul jour de panique etire le maximum et ecrase le rang des
+// mois durant. Les deux sont affiches, le percentile decide du regime.
+ivHi   = ta.highest(ivRaw, ivLook)
+ivLo   = ta.lowest(ivRaw,  ivLook)
+ivRank = ivOk and ivHi > ivLo ? (ivRaw - ivLo) / (ivHi - ivLo) * 100.0 : na
+ivPctR = ta.percentrank(ivRaw, ivLook)
+ivPct  = ivOk ? ivPctR : na
+
+ivRegime = na(ivPct) ? "—" : ivPct >= 70 ? "extreme" : ivPct >= 50 ? "eleve" : ivPct >= 30 ? "normal" : "bas"
+
+plot(showIV and ivOk ? ivUA : na, "VI +0.5", color = colIV, linewidth = 1, style = plot.style_stepline)
+plot(showIV and ivOk ? ivUB : na, "VI +1",   color = colIV, linewidth = 2, style = plot.style_stepline)
+plot(showIV and ivOk ? ivUC : na, "VI +2",   color = colIV, linewidth = 1, style = plot.style_stepline)
+plot(showIV and ivOk ? ivDA : na, "VI -0.5", color = colIV, linewidth = 1, style = plot.style_stepline)
+plot(showIV and ivOk ? ivDB : na, "VI -1",   color = colIV, linewidth = 2, style = plot.style_stepline)
+plot(showIV and ivOk ? ivDC : na, "VI -2",   color = colIV, linewidth = 1, style = plot.style_stepline)
+
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  3. Zones d'accumulation
 //
 //  Une zone n'est retenue que si les DEUX conditions tiennent :
@@ -211,8 +281,10 @@ if barstate.isconfirmed and not na(atrVal) and atrVal > 0
 //  niveau — designent le meme prix.
 // ═══════════════════════════════════════════════════════════════════════════
 
-var array<float>  lvlVal = array.new<float>(13, 0.0)
-var array<string> lvlNam = array.new<string>(13, "")
+var array<float>  lvlVal = array.new<float>(19, 0.0)
+var array<string> lvlNam = array.new<string>(19, "")
+// index 0 a 12  : bandes sigma du VWAP  (volatilite realisee intraday)
+// index 13 a 18 : bandes de mouvement attendu (volatilite implicite)
 
 if barstate.isfirst
     array.set(lvlNam, 0,  "VWAP")
@@ -228,6 +300,12 @@ if barstate.isfirst
     array.set(lvlNam, 10, "−" + str.tostring(mD, "#.##") + "σ")
     array.set(lvlNam, 11, "−" + str.tostring(mE, "#.##") + "σ")
     array.set(lvlNam, 12, "−" + str.tostring(mF, "#.##") + "σ")
+    array.set(lvlNam, 13, "VI +" + str.tostring(kA, "#.##"))
+    array.set(lvlNam, 14, "VI +" + str.tostring(kB, "#.##"))
+    array.set(lvlNam, 15, "VI +" + str.tostring(kC, "#.##"))
+    array.set(lvlNam, 16, "VI −" + str.tostring(kA, "#.##"))
+    array.set(lvlNam, 17, "VI −" + str.tostring(kB, "#.##"))
+    array.set(lvlNam, 18, "VI −" + str.tostring(kC, "#.##"))
 
 array.set(lvlVal, 0,  vwapVal)
 array.set(lvlVal, 1,  uA)
@@ -242,6 +320,12 @@ array.set(lvlVal, 9,  dC)
 array.set(lvlVal, 10, dD)
 array.set(lvlVal, 11, dE)
 array.set(lvlVal, 12, dF)
+array.set(lvlVal, 13, showIV ? ivUA : na)
+array.set(lvlVal, 14, showIV ? ivUB : na)
+array.set(lvlVal, 15, showIV ? ivUC : na)
+array.set(lvlVal, 16, showIV ? ivDA : na)
+array.set(lvlVal, 17, showIV ? ivDB : na)
+array.set(lvlVal, 18, showIV ? ivDC : na)
 
 var array<line>  cLine = array.new<line>()
 var array<label> cLab  = array.new<label>()
@@ -254,18 +338,39 @@ string confName  = ""
 bool   confIsSup = true
 float  confPow   = -1.0
 
-if showConf and sd > 0 and not na(tol) and array.size(zMid) > 0
+// (a) un niveau tombe sur une zone d'accumulation
+if showConf and not na(tol) and array.size(zMid) > 0
     for zi = 0 to array.size(zMid) - 1
         zc = array.get(zMid, zi)
-        for li = 0 to 12
+        for li = 0 to 18
             lv = array.get(lvlVal, li)
             if not na(lv) and math.abs(lv - zc) <= tol
                 pw = array.get(zPow, zi)
                 if pw > confPow
                     confNow   := true
                     confPrice := (lv + zc) / 2.0
-                    confName  := array.get(lvlNam, li)
+                    confName  := array.get(lvlNam, li) + " × zone"
                     confIsSup := array.get(zSup, zi)
+                    confPow   := pw
+
+// (b) une bande sigma tombe sur une bande de volatilite implicite.
+//     Les deux mesurent la meme grandeur — l'ecart-type du prix — par deux
+//     chemins independants : le volume ecoule depuis l'ouverture d'un cote,
+//     le prix paye pour les options de l'autre. Qu'elles designent le meme
+//     niveau n'a rien d'automatique : c'est le seul accord du dispositif qui
+//     ne soit pas une coincidence de trace.
+if showConf and showIV and ivOk and sd > 0 and not na(tol)
+    for si = 0 to 12
+        sv = array.get(lvlVal, si)
+        for vi = 13 to 18
+            vv = array.get(lvlVal, vi)
+            if not na(sv) and not na(vv) and math.abs(sv - vv) <= tol
+                pw = 1000.0                      // prioritaire sur (a)
+                if pw > confPow
+                    confNow   := true
+                    confPrice := (sv + vv) / 2.0
+                    confName  := array.get(lvlNam, si) + " × " + array.get(lvlNam, vi)
+                    confIsSup := (sv + vv) / 2.0 < close
                     confPow   := pw
 
 var float lastConf = na
@@ -302,7 +407,7 @@ alertcondition(confFresh, "Alp-0 · confluence",
 //  5. Tableau de lecture
 // ═══════════════════════════════════════════════════════════════════════════
 
-var table tb = table.new(position.top_right, 2, 4,
+var table tb = table.new(position.top_right, 2, 6,
      bgcolor = color.new(#202020, 12), border_color = color.new(#7A7A7A, 60), border_width = 1)
 
 if showTable and barstate.islast
@@ -316,6 +421,12 @@ if showTable and barstate.islast
     table.cell(tb, 0, 2, "Zones actives", text_color = colHalf, text_size = size.small, text_halign = text.align_left)
     table.cell(tb, 1, 2, str.tostring(array.size(zMid)),
          text_color = colVwap, text_size = size.small, text_halign = text.align_right)
-    table.cell(tb, 0, 3, "Confluence",    text_color = colHalf, text_size = size.small, text_halign = text.align_left)
-    table.cell(tb, 1, 3, confNow ? confName + " · " + (confIsSup ? "sup" : "res") : "—",
+    table.cell(tb, 0, 3, "VI · rang",     text_color = colHalf, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, 3, ivOk ? str.tostring(ivRaw, "0.0") + " · " + str.tostring(ivPct, "0") + "%" : "—",
+         text_color = colVwap, text_size = size.small, text_halign = text.align_right)
+    table.cell(tb, 0, 4, "Mvt attendu",    text_color = colHalf, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, 4, ivOk ? "±" + str.tostring(em, "0") + " pt · " + ivRegime : "—",
+         text_color = colVwap, text_size = size.small, text_halign = text.align_right)
+    table.cell(tb, 0, 5, "Confluence",     text_color = colHalf, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, 5, confNow ? confName : "—",
          text_color = confNow ? colConf : colHalf, text_size = size.small, text_halign = text.align_right)
