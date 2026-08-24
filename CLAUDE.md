@@ -73,6 +73,16 @@ déflaté : 1 993 ; test G informationnel : 10 568.
 - `workingpaper.py` — fusionne valeurs, tables et figures, et construit le
   document. Toute collision de clé lève une erreur.
 
+Hors du noyau Python :
+
+- `pine/alp0.pine` — **Alp-0**, indicateur TradingView (Pine v6) écrit pour
+  l'opérateur. VWAP ancré et bandes d'écart-type pondérées par le volume
+  (0,5 à 3 σ), zones d'accumulation retenues seulement si volume **et**
+  réaction tiennent, et signal de confluence quand une bande tombe sur une
+  zone. Signal calculé sur barre fermée, donc sans repeinture. Ce fichier ne
+  participe ni au document ni aux tests : il n'a pas de loi nulle et n'en
+  revendique aucune — c'est un outil de lecture, pas une mesure.
+
 ## Le point qui décide la conception de la stratégie
 
 Chaque porte de confluence ouverte **double** la famille de stratégies, donc
