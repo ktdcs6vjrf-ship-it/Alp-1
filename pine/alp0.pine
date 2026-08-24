@@ -5,12 +5,15 @@ indicator("Alp-0", "Alp-0", overlay = true,
 // ═══════════════════════════════════════════════════════════════════════════
 //  Alp-0
 //
-//  Trois objets, et un seul qui compte :
-//    1. VWAP ancre, avec ses bandes d'ecart-type ponderees par le volume.
-//    2. Les zones d'accumulation qui ont produit une reaction mesurable.
-//    3. Le moment ou une bande sigma tombe SUR une de ces zones.
+//  Quatre objets, et un seul qui compte :
+//    1. VWAP ancre, avec ses bandes d'ecart-type ponderees par le volume
+//       — la volatilite REALISEE depuis l'ouverture.
+//    2. Les bandes de mouvement attendu, lues dans la volatilite IMPLICITE
+//       des options (VXN, VIX, RVX).
+//    3. Les zones d'accumulation qui ont produit une reaction mesurable.
+//    4. Le moment ou deux de ces reperes designent le meme prix.
 //
-//  Le troisieme est la raison d'etre de l'indicateur. Les deux premiers ne
+//  Le quatrieme est la raison d'etre de l'indicateur. Les trois premiers ne
 //  sont la que pour le rendre calculable.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -273,7 +276,7 @@ if barstate.isconfirmed and not na(atrVal) and atrVal > 0
 
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  4. Confluence — une bande σ tombe sur une zone
+//  4. Confluence — deux reperes independants designent le meme prix
 //
 //  C'est le seul evenement que l'indicateur pretend signaler. Il ne dit pas
 //  d'acheter : il dit que deux reperes construits par des mecaniques
@@ -400,7 +403,7 @@ plotshape(confDraw ? confPrice : na, "Confluence", shape.diamond,
 bgcolor(confNow ? color.new(colConf, 95) : na, title = "Fond de confluence")
 
 alertcondition(confFresh, "Alp-0 · confluence",
-     "Alp-0 : une bande sigma tombe sur une zone d'accumulation.")
+     "Alp-0 : deux reperes independants designent le meme prix — bande sigma sur zone d'accumulation, ou volatilite realisee sur volatilite implicite.")
 
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -421,8 +424,8 @@ if showTable and barstate.islast
     table.cell(tb, 0, 2, "Zones actives", text_color = colHalf, text_size = size.small, text_halign = text.align_left)
     table.cell(tb, 1, 2, str.tostring(array.size(zMid)),
          text_color = colVwap, text_size = size.small, text_halign = text.align_right)
-    table.cell(tb, 0, 3, "VI · rang",     text_color = colHalf, text_size = size.small, text_halign = text.align_left)
-    table.cell(tb, 1, 3, ivOk ? str.tostring(ivRaw, "0.0") + " · " + str.tostring(ivPct, "0") + "%" : "—",
+    table.cell(tb, 0, 3, "VI · r / p",    text_color = colHalf, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, 3, ivOk ? str.tostring(ivRaw, "0.0") + " · " + str.tostring(ivRank, "0") + " / " + str.tostring(ivPct, "0") : "—",
          text_color = colVwap, text_size = size.small, text_halign = text.align_right)
     table.cell(tb, 0, 4, "Mvt attendu",    text_color = colHalf, text_size = size.small, text_halign = text.align_left)
     table.cell(tb, 1, 4, ivOk ? "±" + str.tostring(em, "0") + " pt · " + ivRegime : "—",
