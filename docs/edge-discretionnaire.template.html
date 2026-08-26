@@ -577,58 +577,65 @@
           <li><a href="#s-notions">Six notions, et ce qu'elles décident</a></li>
         </ol>
       </li>
-      <li><span class="pt">Deuxième partie — L'instrument</span>
+      <li><span class="pt">Deuxième partie — La stratégie évaluée</span>
         <ol start="6">
+          <li><a href="#s-strategie">Sept couches, et ce qu'elles produisent</a></li>
+          <li><a href="#s-couches">Ce que chaque couche observe</a></li>
+          <li><a href="#s-couches-leviers">Des couches aux leviers</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Troisième partie — L'instrument</span>
+        <ol start="9">
           <li><a href="#s-journal">Le journal de décision</a></li>
           <li><a href="#s-champs">Sept champs, et une frontière temporelle</a></li>
           <li><a href="#s-abstention">Les refus sont la moitié de l'information</a></li>
           <li><a href="#s-integrite">Ce qui invalide un registre avant tout calcul</a></li>
         </ol>
       </li>
-      <li><span class="pt">Troisième partie — La vérité de référence</span>
-        <ol start="10">
+      <li><span class="pt">Quatrième partie — La vérité de référence</span>
+        <ol start="13">
           <li><a href="#s-univers">L'univers des setups, sur un prix sans dérive</a></li>
           <li><a href="#s-invariance">L'invariance, transposée du choix des barrières au choix des trades</a></li>
           <li><a href="#s-plantee">Planter une compétence de taille connue</a></li>
         </ol>
       </li>
-      <li><span class="pt">Quatrième partie — Les cinq lois nulles</span>
-        <ol start="13">
+      <li><span class="pt">Cinquième partie — Les cinq lois nulles</span>
+        <ol start="16">
           <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
           <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
           <li><a href="#s-mecanique">La comparaison à la règle scellée</a></li>
           <li><a href="#s-calibration">Le niveau et la puissance</a></li>
         </ol>
       </li>
-      <li><span class="pt">Cinquième partie — La taxe du jugement</span>
-        <ol start="17">
+      <li><span class="pt">Sixième partie — La taxe du jugement</span>
+        <ol start="20">
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
           <li><a href="#s-concavite">La forme de la taxe en fonction du nombre de leviers</a></li>
         </ol>
       </li>
-      <li><span class="pt">Sixième partie — Le mur d'échantillon</span>
-        <ol start="20">
+      <li><span class="pt">Septième partie — Le mur d'échantillon</span>
+        <ol start="23">
           <li><a href="#s-routes">Trois routes indépendantes</a></li>
           <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
           <li><a href="#s-puissance">La puissance de détection</a></li>
         </ol>
       </li>
-      <li><span class="pt">Septième partie — Comparaison des deux régimes de preuve</span>
-        <ol start="23">
+      <li><span class="pt">Huitième partie — Comparaison des deux régimes de preuve</span>
+        <ol start="26">
           <li><a href="#s-versus">Pourquoi le jugement est prouvable là où la géométrie ne l'est pas</a></li>
           <li><a href="#s-consequence">Ce que cela change pour l'opérateur</a></li>
         </ol>
       </li>
-      <li><span class="pt">Huitième partie — Décomposer l'avantage</span>
-        <ol start="25">
+      <li><span class="pt">Neuvième partie — Décomposer l'avantage</span>
+        <ol start="28">
           <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
           <li><a href="#s-validation">Une décomposition réfutable</a></li>
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
-      <li><span class="pt">Neuvième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="28">
+      <li><span class="pt">Dixième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="31">
           <li><a href="#s-protocole">Le scellement</a></li>
           <li><a href="#s-arret">La règle d'arrêt</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -681,7 +688,7 @@
 
   <p><strong>L'étude construit un appareil de mesure et en établit la sensibilité.</strong> Elle spécifie cinq lois nulles et la prétention que chacune adresse, mesure le nombre de décisions requis pour les battre à un effet donné, et rapporte le taux de déclaration de l'appareil à compétence nulle. Ces résultats sont reproductibles par les modules du dépôt.</p>
 
-  <p><strong>L'étude ne porte sur aucun journal réel.</strong> Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l'appareil à une valeur connue. Un registre réel au format de la section&nbsp;<a href="#s-champs">7</a> est traité par les mêmes modules, sans modification du code.</p>
+  <p><strong>L'étude ne porte sur aucun journal réel.</strong> Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l'appareil à une valeur connue. Un registre réel au format de la section&nbsp;<a href="#s-champs">10</a> est traité par les mêmes modules, sans modification du code.</p>
 
 
   <h2 id="s-notions">Six notions, et ce qu'elles décident</h2>
@@ -724,8 +731,79 @@
     <p class="formal"><span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>², ou la forme informationnelle équivalente. Le budget entre par un logarithme, l'effet par un carré.</p>
   </div>
 
+
   <div class="part">
     <span class="lab">Deuxième partie</span>
+    <h2>La stratégie évaluée</h2>
+    <p>Le dispositif décrit dans ce document s'applique à un opérateur particulier, dont le processus repose sur sept couches d'analyse. Cette partie décrit chaque couche, puis situe les couches dans la décision.</p>
+  </div>
+
+  <h2 id="s-strategie">Sept couches, et ce qu'elles produisent</h2>
+
+  <p>La pile évaluée combine sept instruments d'analyse appliqués aux contrats à terme sur indice, en séance. Chacun produit une lecture du marché à un instant donné&nbsp;; aucun ne produit une décision. La décision est prise par l'opérateur au vu de l'ensemble, et c'est cette combinaison qui constitue les quatre leviers discrétionnaires recensés en partie&nbsp;VI.</p>
+
+  <p>Les sept couches et leurs lois nulles sont établies au document&nbsp;n<sup>o</sup>&nbsp;1 de cette série&nbsp;; elles sont reprises ici sans modification. Ce document ne les réévalue pas&nbsp;: il évalue la décision qui les agrège.</p>
+
+  {{TABLE:layers}}
+
+  <h2 id="s-couches">Ce que chaque couche observe</h2>
+
+  <p>Les définitions qui suivent donnent, pour chaque couche, l'objet observé et la forme sous laquelle il entre dans la décision.</p>
+
+  <div class="concept">
+    <h3>La théorie de Dow</h3>
+    <p class="plain">Une lecture de la tendance par la succession des sommets et des creux&nbsp;: des sommets croissants et des creux croissants définissent une phase haussière, la configuration inverse une phase baissière. La couche fournit un état de tendance à l'échelle journalière.</p>
+    <p class="formal">Prédicat binaire sur les extrêmes des <span class="v">n</span> séances précédentes. Sous un prix sans dérive, la configuration de continuation apparaît dans trois cas sur quatre.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Les supports et résistances</h3>
+    <p class="plain">Des niveaux de prix auxquels le marché a réagi par le passé, retenus comme susceptibles de provoquer une réaction à nouveau. La couche fournit une liste de niveaux et la distance du prix courant à chacun.</p>
+    <p class="formal">Ensemble de niveaux <span class="v">{L<sub>i</sub>}</span> extraits de l'historique. La loi nulle porte sur la sélection&nbsp;: tout niveau touché deux fois se qualifie a posteriori, ce qui impose de fixer les niveaux avant la séance pour que le test ait un sens.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Le profil de volume</h3>
+    <p class="plain">La répartition des échanges par niveau de prix sur une période. Le mode de cette répartition est le point de contrôle&nbsp;; les zones peu échangées sont les nœuds de faible volume. La couche fournit une carte de la densité d'échanges.</p>
+    <p class="formal">Densité d'occupation <span class="v">f</span>(<span class="v">p</span>). Sa lecture opératoire est que la volatilité locale varie comme l'inverse de la racine de la densité&nbsp;: un stop en pourcentage fixe n'est donc pas un risque fixe.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Les bandes VWAP</h3>
+    <p class="plain">Le prix moyen pondéré par les volumes depuis un point d'ancrage, entouré de bandes situées à un, deux et trois écarts-types pondérés. La couche fournit l'écart du prix courant à sa moyenne, exprimé en écarts-types.</p>
+    <p class="formal"><span class="v">z</span>(<span class="v">t</span>)&nbsp;=&nbsp;(<span class="v">p<sub>t</sub></span>&nbsp;−&nbsp;VWAP<sub><span class="v">t</span></sub>)&nbsp;/&nbsp;<span class="v">σ<sub>t</sub></span>. Sur un prix sans dérive, le temps passé au-delà de trois écarts-types vaut environ 1,1&nbsp;minute par séance.</p>
+  </div>
+
+  <div class="concept">
+    <h3>L'exposition gamma</h3>
+    <p class="plain">La position agrégée des teneurs de marché en options, qui détermine le sens de leur couverture. Une exposition négative les conduit à amplifier les mouvements, une exposition positive à les amortir. La couche fournit un régime, non une direction.</p>
+    <p class="formal">Somme pondérée des gammas par prix d'exercice. Le prédicat testable porte sur la <em>variance</em> conditionnelle au signe, non sur l'espérance&nbsp;: le signe du gamma contraint la dispersion et laisse la direction indéterminée.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Le carnet d'ordres</h3>
+    <p class="plain">Les tailles affichées à l'achat et à la vente aux niveaux immédiatement adjacents, et les exécutions qui les consomment. La couche fournit une lecture de la pression instantanée, dont la durée de vie se compte en secondes.</p>
+    <p class="formal">Rapport de persistance de la liquidité. Sa capacité de séparation est bornée par le recouvrement des comportements&nbsp;; sa demi-vie est très inférieure à la durée d'exposition d'une position en séance.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Fibonacci et l'entrée optimale</h3>
+    <p class="plain">Une grille de retracements tracée sur une impulsion, dont la zone comprise entre 0,618 et 0,79 est retenue comme zone d'entrée préférentielle. La couche fournit un intervalle de prix conditionnel à une impulsion identifiée.</p>
+    <p class="formal">Niveaux <span class="v">p<sub>haut</sub></span>&nbsp;−&nbsp;<span class="v">r</span>(<span class="v">p<sub>haut</sub></span>&nbsp;−&nbsp;<span class="v">p<sub>bas</sub></span>) pour <span class="v">r</span> dans la grille. Le taux de remplissage à la borne 0,618 vaut 14&nbsp;% sur un prix sans dérive.</p>
+  </div>
+
+  <h2 id="s-couches-leviers">Des couches aux leviers</h2>
+
+  <p>Les sept couches ne sont pas sept décisions. Elles alimentent les quatre leviers discrétionnaires, et la correspondance n'est pas de un à un&nbsp;: {{d_couches_entree}}&nbsp;couches sur {{d_couches}} interviennent au moment d'entrer ou de s'abstenir, les autres se répartissent entre le choix du moment, le dimensionnement et la gestion de la sortie.</p>
+
+  {{FIGURE:disclayers|Quelle couche d'analyse alimente quel levier discrétionnaire. Le chiffre au-dessus de chaque colonne est le nombre de couches concernées. La matrice situe les couches dans la décision&nbsp;; elle ne mesure pas leur apport, qui est l'objet de la partie&nbsp;IX.}}
+
+  <p>Cette correspondance a une conséquence directe sur le reste du document. Le nombre de configurations effectives est fixé par le nombre de <strong>leviers</strong>, non par le nombre de couches&nbsp;: sept instruments consultés pour prendre quatre décisions binaires engendrent 2<sup>4</sup> configurations, et non 2<sup>7</sup>. La consultation d'un instrument supplémentaire ne coûte rien tant qu'elle n'ouvre pas un nouveau choix.</p>
+
+  <p>Elle a aussi une conséquence sur l'interprétation de l'attribution. La décomposition de la partie&nbsp;IX porte sur les leviers et non sur les couches&nbsp;: elle indique à quel moment de la décision l'avantage se forme, sans distinguer laquelle des couches alimentant ce levier y contribue.</p>
+
+  <div class="part">
+    <span class="lab">Troisième partie</span>
     <h2>L'instrument</h2>
     <p>Si l'on ne teste pas la règle mais sa trace, alors la qualité de la trace décide de tout. Un journal mal conçu rend certaines questions définitivement insolubles, et aucune finesse statistique ultérieure ne les rouvre.</p>
   </div>
@@ -764,7 +842,7 @@
   <p>Les défauts recherchés sont concrets. Une abstention qui porte une direction ou une mise non nulle a été complétée après coup. Des rangs dupliqués ou non croissants signalent un registre édité. Une conviction constante rend le test de calibration sans objet — ce n'est pas une faute, mais il faut le dire plutôt que de laisser croire que le test a été passé. Et l'absence d'issue contrefactuelle sur les refus laisse la table incomplète.</p>
 
   <div class="part">
-    <span class="lab">Troisième partie</span>
+    <span class="lab">Quatrième partie</span>
     <h2>La vérité de référence</h2>
     <p>Pour vérifier qu'un appareil mesure, il faut lui présenter une quantité connue. C'est la fonction du prix sans dérive et de la compétence plantée&nbsp;: fabriquer un opérateur dont on sait exactement ce qu'il vaut.</p>
   </div>
@@ -792,7 +870,7 @@
   <p>La vérité plantée s'exprime en <strong>bits d'information mutuelle par décision</strong>, calculés en forme fermée sur la loi jointe — donc sans bruit d'estimation. C'est l'unité même dans laquelle le plafond informationnel de la série est exprimé, ce qui permet de comparer directement ce qu'un opérateur possède et ce qu'il faudrait posséder. À clairvoyance nulle, la quantité vaut exactement zéro&nbsp;: décision et issue sont indépendantes, et aucune quantité de décisions ne fera apparaître un avantage.</p>
 
   <div class="part">
-    <span class="lab">Quatrième partie</span>
+    <span class="lab">Cinquième partie</span>
     <h2>Les cinq lois nulles</h2>
     <p>Un opérateur qui bat « le hasard » n'a rien démontré tant qu'on n'a pas dit quel hasard. C'est la contribution méthodologique de ce document.</p>
   </div>
@@ -832,7 +910,7 @@
   {{FIGURE:disccalib|Le nombre de lois nulles battues selon l'information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l'appareil ne déclare rien. La bande centrale marque la zone où l'avantage existe sans être démontrable.}}
 
   <div class="part">
-    <span class="lab">Cinquième partie</span>
+    <span class="lab">Sixième partie</span>
     <h2>La taxe du jugement</h2>
     <p>Chaque liberté que s'accorde l'opérateur agrandit la famille des stratégies qu'il aurait pu suivre. Cette famille se paie en seuil de preuve, et il faut la chiffrer avant toute autre chose.</p>
   </div>
@@ -867,7 +945,7 @@
   <p>La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n'a presque rien à gagner à en fermer un&nbsp;; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.</p>
 
   <div class="part">
-    <span class="lab">Sixième partie</span>
+    <span class="lab">Septième partie</span>
     <h2>Le mur d'échantillon</h2>
     <p>Combien de décisions faut-il&nbsp;? Trois routes indépendantes répondent, et leur convergence est ce qui donne au nombre son autorité.</p>
   </div>
@@ -886,18 +964,24 @@
 
   {{FIGURE:disccloud|L'espérance cumulée décision après décision, sur {{d_chemins}}&nbsp;chemins rééchantillonnés d'un journal sans compétence. L'enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l'écart qu'un opérateur doit dépasser pour être distingué du hasard à ce stade.}}
 
+  {{FIGURE:discrolling|L'espérance mesurée sur une fenêtre glissante de 150 décisions, pour un opérateur sans compétence et pour un opérateur dont la clairvoyance est franche. La bande est l'intervalle à 95&nbsp;pour cent de la moyenne de fenêtre. Les deux bandes se recouvrent sur une partie de la période&nbsp;: à cette taille de fenêtre, les deux opérateurs ne sont pas séparés en permanence.}}
+
   {{FIGURE:discwall|La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.}}
 
   <p>La forme de la surface porte le message. L'axe des leviers est presque plat&nbsp;; l'axe du Sharpe est une falaise. Un opérateur qui hésite entre fermer des leviers et améliorer son signal a une réponse claire&nbsp;: le second effort domine le premier de très loin.</p>
 
   <h2 id="s-puissance">La puissance de détection</h2>
 
+  {{FIGURE:discpowermap|La puissance de détection à seuil de 5&nbsp;pour cent, par nombre de décisions et information par décision. Chaque case porte sa valeur en pour cent&nbsp;; la lecture d'une valeur précise, que le relief ne permet pas, est ici directe.}}
+
   {{FIGURE:discpower|La probabilité de détecter un avantage selon le nombre de décisions enregistrées et l'information portée par chacune. La teinte franche marque les combinaisons où la détection est acquise à 80&nbsp;%. En deçà, l'absence de preuve ne prouve rien.}}
 
   <p>Le relief a la forme d'une marche. Sous une certaine combinaison, la détection est un tirage à pile ou face&nbsp;; au-delà, elle est acquise. Situer l'opérateur sur cette marche est tout ce qu'un protocole préenregistré a besoin de savoir, et c'est aussi ce qui permet d'énoncer à l'avance la durée de la période d'observation plutôt que de l'arrêter quand le résultat plaît.</p>
 
+  {{FIGURE:discroc|Taux de détection contre taux de fausse déclaration, à trois tailles d'échantillon, pour une compétence de 0,005&nbsp;bit par décision. Le seuil de 5&nbsp;pour cent retenu dans tout le document est un point de ces courbes&nbsp;; les points marqués donnent la puissance correspondante. Le cadre de droite donne cette puissance en fonction du nombre de décisions.}}
+
   <div class="part">
-    <span class="lab">Septième partie</span>
+    <span class="lab">Huitième partie</span>
     <h2>Comparaison des deux régimes de preuve</h2>
     <p>Le résultat qui justifie ce document&nbsp;: l'opérateur discrétionnaire est dans une position épistémique meilleure que celui qui règle une géométrie.</p>
   </div>
@@ -928,7 +1012,7 @@
   <p>Enfin, <strong>les deux issues du protocole sont informatives</strong>. Un opérateur qui, au terme de la période préenregistrée, ne bat pas la loi mécanique dispose d'une mesure de l'apport net de son jugement sur la règle scellée, laquelle reste exécutable.</p>
 
   <div class="part">
-    <span class="lab">Huitième partie</span>
+    <span class="lab">Neuvième partie</span>
     <h2>Décomposer l'avantage</h2>
     <p>Savoir qu'un opérateur bat ses lois nulles ne dit pas <em>par où</em>. Or c'est cette question qui décide de ce qu'il faut garder.</p>
   </div>
@@ -952,6 +1036,8 @@
 
   {{TABLE:attribution}}
 
+  {{FIGURE:discwaterfall|La décomposition de Shapley en cascade, d'un opérateur dont la compétence est plantée dans l'entrée et dans la taille. Les deux colonnes pleines sont des niveaux — l'espérance de la règle scellée et celle de l'opérateur — et les marches intermédiaires sont les parts des quatre leviers. Leur somme est exacte par construction.}}
+
   {{FIGURE:discattrib|La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. La barre franche est le levier désigné&nbsp;; il est chaque fois celui où la compétence a été plantée.}}
 
   <p>Le levier désigné est chaque fois le bon, et le levier de sortie ressort à zéro exact — ce qui est la vérité, puisque le journal synthétique ne gère aucune sortie, et non une approximation bruitée. En revanche, le levier du chronométrage capte une part parasite qu'il faut nommer&nbsp;: fermer le chronométrage remplace l'issue obtenue par la moyenne de la séance, ce qui détruit aussi la sélection <em>intraséance</em>. Les deux leviers ne sont pas séparables. Shapley signale cette interaction au lieu de la masquer, et c'est une limite du dispositif, non un artefact à corriger.</p>
@@ -963,7 +1049,7 @@
   <p>Le critère de négligeabilité retenu est délibérément grossier — une part inférieure au dixième du total. Un critère fin donnerait l'illusion qu'on sait trancher là où l'échantillon ne le permet pas, et cette illusion est exactement ce que le reste du document s'emploie à dissiper.</p>
 
   <div class="part">
-    <span class="lab">Neuvième partie</span>
+    <span class="lab">Dixième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
@@ -986,7 +1072,7 @@
 
   <p><strong>Les chiffres rapportés sont des propriétés de l'appareil de mesure</strong>, établies sur journaux synthétiques. Ils ne constituent pas la mesure d'une compétence observée.</p>
 
-  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">26</a> l'établit. Sa part inclut une composante d'interaction que le contrefactuel retenu n'isole pas.</p>
+  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">29</a> l'établit. Sa part inclut une composante d'interaction que le contrefactuel retenu n'isole pas.</p>
 
   <p><strong>L'analyse suppose une compétence constante sur la période.</strong> Sous compétence variable — apprentissage, fatigue, changement de régime —, l'estimateur agrège des états distincts. Les méthodes de mesure à compétence variable dans le temps existent dans la littérature citée&nbsp;; elles ne sont pas mobilisées ici.</p>
 
@@ -1000,7 +1086,7 @@
 
   <p>L'exigence d'échantillon se chiffre&nbsp;: {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
 
-  <p>L'ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">7</a>, dont les champs antérieurs à l'issue ne sont pas reconstituables après coup. C'est la condition d'application du dispositif.</p>
+  <p>L'ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">10</a>, dont les champs antérieurs à l'issue ne sont pas reconstituables après coup. C'est la condition d'application du dispositif.</p>
 
   <hr class="rule">
 

@@ -692,58 +692,65 @@
           <li><a href="#s-notions">Six notions, et ce qu’elles décident</a></li>
         </ol>
       </li>
-      <li><span class="pt">Deuxième partie — L’instrument</span>
+      <li><span class="pt">Deuxième partie — La stratégie évaluée</span>
         <ol start="6">
+          <li><a href="#s-strategie">Sept couches, et ce qu’elles produisent</a></li>
+          <li><a href="#s-couches">Ce que chaque couche observe</a></li>
+          <li><a href="#s-couches-leviers">Des couches aux leviers</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Troisième partie — L’instrument</span>
+        <ol start="9">
           <li><a href="#s-journal">Le journal de décision</a></li>
           <li><a href="#s-champs">Sept champs, et une frontière temporelle</a></li>
           <li><a href="#s-abstention">Les refus sont la moitié de l’information</a></li>
           <li><a href="#s-integrite">Ce qui invalide un registre avant tout calcul</a></li>
         </ol>
       </li>
-      <li><span class="pt">Troisième partie — La vérité de référence</span>
-        <ol start="10">
+      <li><span class="pt">Quatrième partie — La vérité de référence</span>
+        <ol start="13">
           <li><a href="#s-univers">L’univers des setups, sur un prix sans dérive</a></li>
           <li><a href="#s-invariance">L’invariance, transposée du choix des barrières au choix des trades</a></li>
           <li><a href="#s-plantee">Planter une compétence de taille connue</a></li>
         </ol>
       </li>
-      <li><span class="pt">Quatrième partie — Les cinq lois nulles</span>
-        <ol start="13">
+      <li><span class="pt">Cinquième partie — Les cinq lois nulles</span>
+        <ol start="16">
           <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
           <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
           <li><a href="#s-mecanique">La comparaison à la règle scellée</a></li>
           <li><a href="#s-calibration">Le niveau et la puissance</a></li>
         </ol>
       </li>
-      <li><span class="pt">Cinquième partie — La taxe du jugement</span>
-        <ol start="17">
+      <li><span class="pt">Sixième partie — La taxe du jugement</span>
+        <ol start="20">
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d’un opérateur réel</a></li>
           <li><a href="#s-concavite">La forme de la taxe en fonction du nombre de leviers</a></li>
         </ol>
       </li>
-      <li><span class="pt">Sixième partie — Le mur d’échantillon</span>
-        <ol start="20">
+      <li><span class="pt">Septième partie — Le mur d’échantillon</span>
+        <ol start="23">
           <li><a href="#s-routes">Trois routes indépendantes</a></li>
           <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
           <li><a href="#s-puissance">La puissance de détection</a></li>
         </ol>
       </li>
-      <li><span class="pt">Septième partie — Comparaison des deux régimes de preuve</span>
-        <ol start="23">
+      <li><span class="pt">Huitième partie — Comparaison des deux régimes de preuve</span>
+        <ol start="26">
           <li><a href="#s-versus">Pourquoi le jugement est prouvable là où la géométrie ne l’est pas</a></li>
           <li><a href="#s-consequence">Ce que cela change pour l’opérateur</a></li>
         </ol>
       </li>
-      <li><span class="pt">Huitième partie — Décomposer l’avantage</span>
-        <ol start="25">
+      <li><span class="pt">Neuvième partie — Décomposer l’avantage</span>
+        <ol start="28">
           <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
           <li><a href="#s-validation">Une décomposition réfutable</a></li>
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
-      <li><span class="pt">Neuvième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="28">
+      <li><span class="pt">Dixième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="31">
           <li><a href="#s-protocole">Le scellement</a></li>
           <li><a href="#s-arret">La règle d’arrêt</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -796,7 +803,7 @@
 
   <p><strong>L’étude construit un appareil de mesure et en établit la sensibilité.</strong> Elle spécifie cinq lois nulles et la prétention que chacune adresse, mesure le nombre de décisions requis pour les battre à un effet donné, et rapporte le taux de déclaration de l’appareil à compétence nulle. Ces résultats sont reproductibles par les modules du dépôt.</p>
 
-  <p><strong>L’étude ne porte sur aucun journal réel.</strong> Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l’appareil à une valeur connue. Un registre réel au format de la section&nbsp;<a href="#s-champs">7</a> est traité par les mêmes modules, sans modification du code.</p>
+  <p><strong>L’étude ne porte sur aucun journal réel.</strong> Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l’appareil à une valeur connue. Un registre réel au format de la section&nbsp;<a href="#s-champs">10</a> est traité par les mêmes modules, sans modification du code.</p>
 
 
   <h2 id="s-notions">Six notions, et ce qu’elles décident</h2>
@@ -839,8 +846,155 @@
     <p class="formal"><span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>², ou la forme informationnelle équivalente. Le budget entre par un logarithme, l’effet par un carré.</p>
   </div>
 
+
   <div class="part">
     <span class="lab">Deuxième partie</span>
+    <h2>La stratégie évaluée</h2>
+    <p>Le dispositif décrit dans ce document s’applique à un opérateur particulier, dont le processus repose sur sept couches d’analyse. Cette partie décrit chaque couche, puis situe les couches dans la décision.</p>
+  </div>
+
+  <h2 id="s-strategie">Sept couches, et ce qu’elles produisent</h2>
+
+  <p>La pile évaluée combine sept instruments d’analyse appliqués aux contrats à terme sur indice, en séance. Chacun produit une lecture du marché à un instant donné&nbsp;; aucun ne produit une décision. La décision est prise par l’opérateur au vu de l’ensemble, et c’est cette combinaison qui constitue les quatre leviers discrétionnaires recensés en partie&nbsp;VI.</p>
+
+  <p>Les sept couches et leurs lois nulles sont établies au document&nbsp;n<sup>o</sup>&nbsp;1 de cette série&nbsp;; elles sont reprises ici sans modification. Ce document ne les réévalue pas&nbsp;: il évalue la décision qui les agrège.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 1</span> — Les sept couches de la stratégie évaluée, ce que chacune observe, et le levier discrétionnaire qu’elle alimente.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Couche</th><th class="wrap">Ce qu’elle observe</th><th>Levier alimenté</th><th class="wrap">Loi nulle établie au document nº 1</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Théorie de Dow</td><td class="wrap">la succession des sommets et des creux journaliers</td><td>Entrer ou s’abstenir</td><td class="wrap">trois jours sur quatre déclenchent par hasard</td></tr>
+          <tr><td class="wrap">Supports et résistances</td><td class="wrap">les niveaux touchés puis quittés</td><td>Entrer ou s’abstenir</td><td class="wrap">tout niveau touché deux fois se qualifie a posteriori</td></tr>
+          <tr><td class="wrap">Profil de volume</td><td class="wrap">la densité d’échanges par niveau de prix</td><td>La gestion de sortie</td><td class="wrap">densité d’occupation : le POC est le mode de la distribution</td></tr>
+          <tr><td class="wrap">Bandes VWAP</td><td class="wrap">l’écart au prix moyen pondéré, en écarts-types</td><td>Entrer ou s’abstenir</td><td class="wrap">1,1 minute de séance au-delà de trois écarts-types</td></tr>
+          <tr><td class="wrap">Exposition gamma</td><td class="wrap">la position des teneurs de marché en options</td><td>La taille de position</td><td class="wrap">le signe du gamma contraint la variance, non la direction</td></tr>
+          <tr><td class="wrap">Carnet d’ordres</td><td class="wrap">les tailles affichées et les exécutions agressives</td><td>Le moment exact dans la fenêtre</td><td class="wrap">recouvrement des comportements : aire sous la courbe plafonnée</td></tr>
+          <tr><td class="wrap">Fibonacci et OTE</td><td class="wrap">les retracements d’une impulsion</td><td>Le moment exact dans la fenêtre</td><td class="wrap">taux de remplissage de 14 % à la borne 0,618</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La colonne du levier situe la couche dans la décision : elle dit à quel moment l’opérateur la consulte, non ce que la couche apporte. Les lois nulles de la dernière colonne sont établies au document nº 1 de cette série et reprises ici sans modification.</p>
+    </figure>
+
+  <h2 id="s-couches">Ce que chaque couche observe</h2>
+
+  <p>Les définitions qui suivent donnent, pour chaque couche, l’objet observé et la forme sous laquelle il entre dans la décision.</p>
+
+  <div class="concept">
+    <h3>La théorie de Dow</h3>
+    <p class="plain">Une lecture de la tendance par la succession des sommets et des creux&nbsp;: des sommets croissants et des creux croissants définissent une phase haussière, la configuration inverse une phase baissière. La couche fournit un état de tendance à l’échelle journalière.</p>
+    <p class="formal">Prédicat binaire sur les extrêmes des <span class="v">n</span> séances précédentes. Sous un prix sans dérive, la configuration de continuation apparaît dans trois cas sur quatre.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Les supports et résistances</h3>
+    <p class="plain">Des niveaux de prix auxquels le marché a réagi par le passé, retenus comme susceptibles de provoquer une réaction à nouveau. La couche fournit une liste de niveaux et la distance du prix courant à chacun.</p>
+    <p class="formal">Ensemble de niveaux <span class="v">{L<sub>i</sub>}</span> extraits de l’historique. La loi nulle porte sur la sélection&nbsp;: tout niveau touché deux fois se qualifie a posteriori, ce qui impose de fixer les niveaux avant la séance pour que le test ait un sens.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Le profil de volume</h3>
+    <p class="plain">La répartition des échanges par niveau de prix sur une période. Le mode de cette répartition est le point de contrôle&nbsp;; les zones peu échangées sont les nœuds de faible volume. La couche fournit une carte de la densité d’échanges.</p>
+    <p class="formal">Densité d’occupation <span class="v">f</span>(<span class="v">p</span>). Sa lecture opératoire est que la volatilité locale varie comme l’inverse de la racine de la densité&nbsp;: un stop en pourcentage fixe n’est donc pas un risque fixe.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Les bandes VWAP</h3>
+    <p class="plain">Le prix moyen pondéré par les volumes depuis un point d’ancrage, entouré de bandes situées à un, deux et trois écarts-types pondérés. La couche fournit l’écart du prix courant à sa moyenne, exprimé en écarts-types.</p>
+    <p class="formal"><span class="v">z</span>(<span class="v">t</span>)&nbsp;=&nbsp;(<span class="v">p<sub>t</sub></span>&nbsp;−&nbsp;VWAP<sub><span class="v">t</span></sub>)&nbsp;/&nbsp;<span class="v">σ<sub>t</sub></span>. Sur un prix sans dérive, le temps passé au-delà de trois écarts-types vaut environ 1,1&nbsp;minute par séance.</p>
+  </div>
+
+  <div class="concept">
+    <h3>L’exposition gamma</h3>
+    <p class="plain">La position agrégée des teneurs de marché en options, qui détermine le sens de leur couverture. Une exposition négative les conduit à amplifier les mouvements, une exposition positive à les amortir. La couche fournit un régime, non une direction.</p>
+    <p class="formal">Somme pondérée des gammas par prix d’exercice. Le prédicat testable porte sur la <em>variance</em> conditionnelle au signe, non sur l’espérance&nbsp;: le signe du gamma contraint la dispersion et laisse la direction indéterminée.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Le carnet d’ordres</h3>
+    <p class="plain">Les tailles affichées à l’achat et à la vente aux niveaux immédiatement adjacents, et les exécutions qui les consomment. La couche fournit une lecture de la pression instantanée, dont la durée de vie se compte en secondes.</p>
+    <p class="formal">Rapport de persistance de la liquidité. Sa capacité de séparation est bornée par le recouvrement des comportements&nbsp;; sa demi-vie est très inférieure à la durée d’exposition d’une position en séance.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Fibonacci et l’entrée optimale</h3>
+    <p class="plain">Une grille de retracements tracée sur une impulsion, dont la zone comprise entre 0,618 et 0,79 est retenue comme zone d’entrée préférentielle. La couche fournit un intervalle de prix conditionnel à une impulsion identifiée.</p>
+    <p class="formal">Niveaux <span class="v">p<sub>haut</sub></span>&nbsp;−&nbsp;<span class="v">r</span>(<span class="v">p<sub>haut</sub></span>&nbsp;−&nbsp;<span class="v">p<sub>bas</sub></span>) pour <span class="v">r</span> dans la grille. Le taux de remplissage à la borne 0,618 vaut 14&nbsp;% sur un prix sans dérive.</p>
+  </div>
+
+  <h2 id="s-couches-leviers">Des couches aux leviers</h2>
+
+  <p>Les sept couches ne sont pas sept décisions. Elles alimentent les quatre leviers discrétionnaires, et la correspondance n’est pas de un à un&nbsp;: 3&nbsp;couches sur 7 interviennent au moment d’entrer ou de s’abstenir, les autres se répartissent entre le choix du moment, le dimensionnement et la gestion de la sortie.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 1</span> — Quelle couche d’analyse alimente quel levier discrétionnaire. Le chiffre au-dessus de chaque colonne est le nombre de couches concernées. La matrice situe les couches dans la décision&nbsp;; elle ne mesure pas leur apport, qui est l’objet de la partie&nbsp;IX.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 322" role="img" aria-label="Matrice des sept couches d analyse et des quatre leviers discrétionnaires qu elles alimentent" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ARCHITECTURE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Quelle couche alimente quel levier</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">7 couches, 4 leviers</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<text class="tk" x="200.0" y="88.4" text-anchor="end">Théorie de Dow</text>
+<rect class="s1f" x="212.0" y="76.0" width="103.5" height="17.7" rx="2"><title>Théorie de Dow — alimente le levier « entree »</title></rect>
+<rect class="wash" x="319.5" y="76.0" width="103.5" height="17.7" rx="2"><title>Théorie de Dow — n a pas d effet sur le levier « moment »</title></rect>
+<rect class="wash" x="427.0" y="76.0" width="103.5" height="17.7" rx="2"><title>Théorie de Dow — n a pas d effet sur le levier « taille »</title></rect>
+<rect class="wash" x="534.5" y="76.0" width="103.5" height="17.7" rx="2"><title>Théorie de Dow — n a pas d effet sur le levier « sortie »</title></rect>
+<text class="tk" x="200.0" y="110.1" text-anchor="end">Supports et résistances</text>
+<rect class="s1f" x="212.0" y="97.7" width="103.5" height="17.7" rx="2"><title>Supports et résistances — alimente le levier « entree »</title></rect>
+<rect class="wash" x="319.5" y="97.7" width="103.5" height="17.7" rx="2"><title>Supports et résistances — n a pas d effet sur le levier « moment »</title></rect>
+<rect class="wash" x="427.0" y="97.7" width="103.5" height="17.7" rx="2"><title>Supports et résistances — n a pas d effet sur le levier « taille »</title></rect>
+<rect class="wash" x="534.5" y="97.7" width="103.5" height="17.7" rx="2"><title>Supports et résistances — n a pas d effet sur le levier « sortie »</title></rect>
+<text class="tk" x="200.0" y="131.8" text-anchor="end">Profil de volume</text>
+<rect class="wash" x="212.0" y="119.4" width="103.5" height="17.7" rx="2"><title>Profil de volume — n a pas d effet sur le levier « entree »</title></rect>
+<rect class="wash" x="319.5" y="119.4" width="103.5" height="17.7" rx="2"><title>Profil de volume — n a pas d effet sur le levier « moment »</title></rect>
+<rect class="wash" x="427.0" y="119.4" width="103.5" height="17.7" rx="2"><title>Profil de volume — n a pas d effet sur le levier « taille »</title></rect>
+<rect class="s1f" x="534.5" y="119.4" width="103.5" height="17.7" rx="2"><title>Profil de volume — alimente le levier « sortie »</title></rect>
+<text class="tk" x="200.0" y="153.5" text-anchor="end">Bandes VWAP</text>
+<rect class="s1f" x="212.0" y="141.1" width="103.5" height="17.7" rx="2"><title>Bandes VWAP — alimente le levier « entree »</title></rect>
+<rect class="wash" x="319.5" y="141.1" width="103.5" height="17.7" rx="2"><title>Bandes VWAP — n a pas d effet sur le levier « moment »</title></rect>
+<rect class="wash" x="427.0" y="141.1" width="103.5" height="17.7" rx="2"><title>Bandes VWAP — n a pas d effet sur le levier « taille »</title></rect>
+<rect class="wash" x="534.5" y="141.1" width="103.5" height="17.7" rx="2"><title>Bandes VWAP — n a pas d effet sur le levier « sortie »</title></rect>
+<text class="tk" x="200.0" y="175.2" text-anchor="end">Exposition gamma</text>
+<rect class="wash" x="212.0" y="162.9" width="103.5" height="17.7" rx="2"><title>Exposition gamma — n a pas d effet sur le levier « entree »</title></rect>
+<rect class="wash" x="319.5" y="162.9" width="103.5" height="17.7" rx="2"><title>Exposition gamma — n a pas d effet sur le levier « moment »</title></rect>
+<rect class="s1f" x="427.0" y="162.9" width="103.5" height="17.7" rx="2"><title>Exposition gamma — alimente le levier « taille »</title></rect>
+<rect class="wash" x="534.5" y="162.9" width="103.5" height="17.7" rx="2"><title>Exposition gamma — n a pas d effet sur le levier « sortie »</title></rect>
+<text class="tk" x="200.0" y="196.9" text-anchor="end">Carnet d’ordres</text>
+<rect class="wash" x="212.0" y="184.6" width="103.5" height="17.7" rx="2"><title>Carnet d’ordres — n a pas d effet sur le levier « entree »</title></rect>
+<rect class="s1f" x="319.5" y="184.6" width="103.5" height="17.7" rx="2"><title>Carnet d’ordres — alimente le levier « moment »</title></rect>
+<rect class="wash" x="427.0" y="184.6" width="103.5" height="17.7" rx="2"><title>Carnet d’ordres — n a pas d effet sur le levier « taille »</title></rect>
+<rect class="wash" x="534.5" y="184.6" width="103.5" height="17.7" rx="2"><title>Carnet d’ordres — n a pas d effet sur le levier « sortie »</title></rect>
+<text class="tk" x="200.0" y="218.6" text-anchor="end">Fibonacci et OTE</text>
+<rect class="wash" x="212.0" y="206.3" width="103.5" height="17.7" rx="2"><title>Fibonacci et OTE — n a pas d effet sur le levier « entree »</title></rect>
+<rect class="s1f" x="319.5" y="206.3" width="103.5" height="17.7" rx="2"><title>Fibonacci et OTE — alimente le levier « moment »</title></rect>
+<rect class="wash" x="427.0" y="206.3" width="103.5" height="17.7" rx="2"><title>Fibonacci et OTE — n a pas d effet sur le levier « taille »</title></rect>
+<rect class="wash" x="534.5" y="206.3" width="103.5" height="17.7" rx="2"><title>Fibonacci et OTE — n a pas d effet sur le levier « sortie »</title></rect>
+<text class="tk" x="263.8" y="52.0" text-anchor="middle">entree</text>
+<text class="dl" x="263.8" y="65.0" text-anchor="middle">3</text>
+<text class="tk" x="371.2" y="52.0" text-anchor="middle">moment</text>
+<text class="dl" x="371.2" y="65.0" text-anchor="middle">2</text>
+<text class="tk" x="478.8" y="52.0" text-anchor="middle">taille</text>
+<text class="dl" x="478.8" y="65.0" text-anchor="middle">1</text>
+<text class="tk" x="586.2" y="52.0" text-anchor="middle">sortie</text>
+<text class="dl" x="586.2" y="65.0" text-anchor="middle">1</text>
+<line class="ba" x1="210.0" y1="69.0" x2="640.0" y2="69.0"/>
+<text class="ax" x="200.0" y="65.0" text-anchor="end">couches alimentant</text>
+<rect class="s1f" x="210.0" y="262.5" width="11" height="11" rx="2"/>
+<text class="lg" x="227.0" y="271.5">la couche alimente le levier</text>
+<rect class="wash" x="438.0" y="262.5" width="11" height="11" rx="2"/>
+<text class="lg" x="455.0" y="271.5">sans effet déclaré</text>
+
+</svg></div>
+      <p class="note">Le chiffre au-dessus de chaque colonne est le nombre de couches qui alimentent ce levier. La matrice situe les couches dans la décision ; elle ne mesure pas leur apport.</p>
+    </figure>
+
+  <p>Cette correspondance a une conséquence directe sur le reste du document. Le nombre de configurations effectives est fixé par le nombre de <strong>leviers</strong>, non par le nombre de couches&nbsp;: sept instruments consultés pour prendre quatre décisions binaires engendrent 2<sup>4</sup> configurations, et non 2<sup>7</sup>. La consultation d’un instrument supplémentaire ne coûte rien tant qu’elle n’ouvre pas un nouveau choix.</p>
+
+  <p>Elle a aussi une conséquence sur l’interprétation de l’attribution. La décomposition de la partie&nbsp;IX porte sur les leviers et non sur les couches&nbsp;: elle indique à quel moment de la décision l’avantage se forme, sans distinguer laquelle des couches alimentant ce levier y contribue.</p>
+
+  <div class="part">
+    <span class="lab">Troisième partie</span>
     <h2>L’instrument</h2>
     <p>Si l’on ne teste pas la règle mais sa trace, alors la qualité de la trace décide de tout. Un journal mal conçu rend certaines questions définitivement insolubles, et aucune finesse statistique ultérieure ne les rouvre.</p>
   </div>
@@ -856,7 +1010,7 @@
   <p>Les champs se lisent en deux blocs, séparés par une frontière qu’il ne faut jamais franchir à l’envers.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 1</span> — Ce qu’un journal de décision doit porter, et de quel côté de la frontière temporelle chaque champ se situe.</figcaption>
+      <figcaption><span class="lab">Table 2</span> — Ce qu’un journal de décision doit porter, et de quel côté de la frontière temporelle chaque champ se situe.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Champ</th><th>Connu</th><th class="wrap">Pourquoi il est indispensable</th></tr></thead>
@@ -896,7 +1050,7 @@
   <p>Les défauts recherchés sont concrets. Une abstention qui porte une direction ou une mise non nulle a été complétée après coup. Des rangs dupliqués ou non croissants signalent un registre édité. Une conviction constante rend le test de calibration sans objet — ce n’est pas une faute, mais il faut le dire plutôt que de laisser croire que le test a été passé. Et l’absence d’issue contrefactuelle sur les refus laisse la table incomplète.</p>
 
   <div class="part">
-    <span class="lab">Troisième partie</span>
+    <span class="lab">Quatrième partie</span>
     <h2>La vérité de référence</h2>
     <p>Pour vérifier qu’un appareil mesure, il faut lui présenter une quantité connue. C’est la fonction du prix sans dérive et de la compétence plantée&nbsp;: fabriquer un opérateur dont on sait exactement ce qu’il vaut.</p>
   </div>
@@ -916,7 +1070,7 @@
   <p>La transposition est directe et elle est instructive. Ce qui vaut pour le choix des <em>barrières</em> vaut pour le choix des <em>trades</em>&nbsp;: sélectionner un sous-ensemble de setups sans information ne déplace pas l’espérance, exactement comme déplacer un stop sans information ne la déplace pas. La sélectivité n’est pas une vertu en soi.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 1</span> — L’espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance. À gauche, l’opérateur sans information&nbsp;: la surface est <strong>plate</strong>, et plate en négatif — ni la sélectivité ni le dimensionnement ne la déforment. À droite, le même opérateur muni d’une clairvoyance de 0,2245&nbsp;bit&nbsp;: la surface s’incline, et elle s’incline selon l’axe de la sélectivité. C’est la figure qui dit où loge un avantage discrétionnaire, et où il ne loge pas.</figcaption>
+      <figcaption><span class="lab">Figure 2</span> — L’espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance. À gauche, l’opérateur sans information&nbsp;: la surface est <strong>plate</strong>, et plate en négatif — ni la sélectivité ni le dimensionnement ne la déforment. À droite, le même opérateur muni d’une clairvoyance de 0,2245&nbsp;bit&nbsp;: la surface s’incline, et elle s’incline selon l’axe de la sélectivité. C’est la figure qui dit où loge un avantage discrétionnaire, et où il ne loge pas.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 368" role="img" aria-label="Deux surfaces d espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">INVARIANCE</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Espérance selon la sélectivité et la mise</text>
@@ -1008,7 +1162,7 @@
   <p>La vérité plantée s’exprime en <strong>bits d’information mutuelle par décision</strong>, calculés en forme fermée sur la loi jointe — donc sans bruit d’estimation. C’est l’unité même dans laquelle le plafond informationnel de la série est exprimé, ce qui permet de comparer directement ce qu’un opérateur possède et ce qu’il faudrait posséder. À clairvoyance nulle, la quantité vaut exactement zéro&nbsp;: décision et issue sont indépendantes, et aucune quantité de décisions ne fera apparaître un avantage.</p>
 
   <div class="part">
-    <span class="lab">Quatrième partie</span>
+    <span class="lab">Cinquième partie</span>
     <h2>Les cinq lois nulles</h2>
     <p>Un opérateur qui bat « le hasard » n’a rien démontré tant qu’on n’a pas dit quel hasard. C’est la contribution méthodologique de ce document.</p>
   </div>
@@ -1022,7 +1176,7 @@
   <h2 id="s-catalogue">Le catalogue, et ce que chaque loi réfute</h2>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 2</span> — Les cinq lois nulles, ce que chacune réfute, et le verdict sur un opérateur dont la clairvoyance est connue.</figcaption>
+      <figcaption><span class="lab">Table 3</span> — Les cinq lois nulles, ce que chacune réfute, et le verdict sur un opérateur dont la clairvoyance est connue.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Loi nulle</th><th class="wrap">Ce qu’elle réfute si elle tient</th><th>Observé</th><th>Seuil 95 %</th><th>Verdict</th></tr></thead>
@@ -1041,7 +1195,7 @@
   <p>Deux constructions méritent d’être justifiées. La <strong>sélection au sort</strong> tire le <em>même nombre</em> de setups que l’opérateur, sans remise&nbsp;: tenir la cadence constante n’est pas un raffinement, car un adversaire prenant un nombre différent de setups changerait aussi la variance de la moyenne, et l’écart mesuré mêlerait sélectivité et compétence. Les <strong>issues permutées</strong> le sont <em>à l’intérieur de la séance</em> et non globalement&nbsp;: une permutation globale détruirait la structure de volatilité entre séances — la saisonnalité en U, les jours calmes et les jours agités — et confondrait compétence de chronométrage et simple exposition aux séances favorables.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 2</span> — L’observé posé sur chacune de ses cinq lois nulles, pour un opérateur sans clairvoyance puis pour un opérateur compétent. Une barre par loi&nbsp;: l’étendue de la loi nulle jusqu’à son quantile à 95&nbsp;%, et le trait fort de la statistique observée. La planche rend visible le fait qu’un opérateur peut battre trois lois et rester réfuté.</figcaption>
+      <figcaption><span class="lab">Figure 3</span> — L’observé posé sur chacune de ses cinq lois nulles, pour un opérateur sans clairvoyance puis pour un opérateur compétent. Une barre par loi&nbsp;: l’étendue de la loi nulle jusqu’à son quantile à 95&nbsp;%, et le trait fort de la statistique observée. La planche rend visible le fait qu’un opérateur peut battre trois lois et rester réfuté.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 392" role="img" aria-label="Cinq lois nulles et la statistique observée sur chacune, pour un opérateur sans clairvoyance puis avec" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LOIS NULLES</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Statistique observée et loi nulle, par test</text>
@@ -1113,7 +1267,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 3</span> — La loi de l’espérance mesurée en l’absence de compétence, en densité puis en répartition. Les quantiles P5 et P95 délimitent l’intervalle qui contient 90&nbsp;pour cent des tirages. La courbe de droite donne la probabilité qu’une espérance donnée soit atteinte sans aucune information sur l’issue.</figcaption>
+      <figcaption><span class="lab">Figure 4</span> — La loi de l’espérance mesurée en l’absence de compétence, en densité puis en répartition. Les quantiles P5 et P95 délimitent l’intervalle qui contient 90&nbsp;pour cent des tirages. La courbe de droite donne la probabilité qu’une espérance donnée soit atteinte sans aucune information sur l’issue.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 330" role="img" aria-label="Distribution et fonction de répartition de l espérance mesurée sous absence de compétence" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LOI DE L’ESTIMATEUR</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Densité et répartition, sans compétence</text>
@@ -1225,7 +1379,7 @@
   <p>Le contrôle qui autorise tous les autres ne consiste pas à vérifier qu’un opérateur compétent est détecté — n’importe quelle statistique complaisante y parvient. Il consiste à vérifier qu’un opérateur <strong>sans</strong> compétence ne l’est pas.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 3</span> — Ce que l’appareil déclare, selon la compétence qu’on lui a plantée.</figcaption>
+      <figcaption><span class="lab">Table 4</span> — Ce que l’appareil déclare, selon la compétence qu’on lui a plantée.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Clairvoyance</th><th>Bits par décision</th><th>E[R] par décision</th><th>Sharpe par décision</th><th>Lois battues</th><th>Verdict</th></tr></thead>
@@ -1245,7 +1399,7 @@
   <p>Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L’étendue de cette plage est fixée par la taille de l’échantillon&nbsp;: à 400&nbsp;séances, elle couvre les compétences inférieures à environ 0,05&nbsp;bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d’un taux de déclaration non nul sur la première ligne.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 4</span> — Le nombre de lois nulles battues selon l’information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l’appareil ne déclare rien. La bande centrale marque la zone où l’avantage existe sans être démontrable.</figcaption>
+      <figcaption><span class="lab">Figure 5</span> — Le nombre de lois nulles battues selon l’information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l’appareil ne déclare rien. La bande centrale marque la zone où l’avantage existe sans être démontrable.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 316" role="img" aria-label="Nombre de lois nulles battues selon l information plantée par décision, calibration de l appareil de mesure" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">CALIBRATION</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Lois battues selon l’information plantée</text>
@@ -1293,7 +1447,7 @@
     </figure>
 
   <div class="part">
-    <span class="lab">Cinquième partie</span>
+    <span class="lab">Sixième partie</span>
     <h2>La taxe du jugement</h2>
     <p>Chaque liberté que s’accorde l’opérateur agrandit la famille des stratégies qu’il aurait pu suivre. Cette famille se paie en seuil de preuve, et il faut la chiffrer avant toute autre chose.</p>
   </div>
@@ -1314,7 +1468,7 @@
   <p>Le recensement retenu ici comporte 4&nbsp;leviers, ce qui porte le budget à 16&nbsp;configurations effectives.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 4</span> — Les quatre leviers discrétionnaires recensés, et ce que chacun ajoute au seuil de preuve.</figcaption>
+      <figcaption><span class="lab">Table 5</span> — Les quatre leviers discrétionnaires recensés, et ce que chacun ajoute au seuil de preuve.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Levier</th><th>Clé</th><th>Configurations</th><th>Seuil déflaté</th><th>Ce que ce levier ajoute</th></tr></thead>
@@ -1338,7 +1492,7 @@
   <p>Concrètement&nbsp;: passer de zéro à quatre leviers fait passer le seuil de 0,0215 à 0,0430, soit un facteur&nbsp;2,00. Seize configurations ne coûtent pas seize fois plus cher qu’une seule — elles coûtent deux fois plus cher. En échantillon, cela signifie un facteur quatre, ce qui est considérable mais nullement rédhibitoire.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 5</span> — Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d’échantillon. La concavité est le résultat&nbsp;: passer de zéro à un levier coûte davantage que passer de quatre à huit. Le trait vertical marque le recensement de 4&nbsp;leviers retenu ici.</figcaption>
+      <figcaption><span class="lab">Figure 6</span> — Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d’échantillon. La concavité est le résultat&nbsp;: passer de zéro à un levier coûte davantage que passer de quatre à huit. Le trait vertical marque le recensement de 4&nbsp;leviers retenu ici.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 316" role="img" aria-label="Seuil de Sharpe déflaté selon le nombre de leviers discrétionnaires ouverts, pour trois tailles d échantillon" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">TAXE DE MULTIPLICITÉ</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Seuil déflaté selon le nombre de leviers ouverts</text>
@@ -1385,7 +1539,7 @@
   <p>La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n’a presque rien à gagner à en fermer un&nbsp;; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.</p>
 
   <div class="part">
-    <span class="lab">Sixième partie</span>
+    <span class="lab">Septième partie</span>
     <h2>Le mur d’échantillon</h2>
     <p>Combien de décisions faut-il&nbsp;? Trois routes indépendantes répondent, et leur convergence est ce qui donne au nombre son autorité.</p>
   </div>
@@ -1399,7 +1553,7 @@
   <h2 id="s-convergence">Le mur, en décisions puis en années</h2>
 
       <figure>
-      <figcaption><span class="lab">Table 5</span> — Le mur d’échantillon, à quatre leviers ouverts, en décisions puis en années de carrière.</figcaption>
+      <figcaption><span class="lab">Table 6</span> — Le mur d’échantillon, à quatre leviers ouverts, en décisions puis en années de carrière.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Sharpe par décision</th><th>Route 1 — test t</th><th>Route 2 — seuil déflaté</th><th>à 2 décisions/jour</th><th>à 3 décisions/jour</th></tr></thead>
@@ -1417,7 +1571,7 @@
   <p>Les deux premières routes s’accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de 0,10 par décision, il faut 555&nbsp;décisions, soit 1,1&nbsp;an à deux décisions par jour.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 6</span> — L’espérance cumulée décision après décision, sur 520&nbsp;chemins rééchantillonnés d’un journal sans compétence. L’enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l’écart qu’un opérateur doit dépasser pour être distingué du hasard à ce stade.</figcaption>
+      <figcaption><span class="lab">Figure 7</span> — L’espérance cumulée décision après décision, sur 520&nbsp;chemins rééchantillonnés d’un journal sans compétence. L’enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l’écart qu’un opérateur doit dépasser pour être distingué du hasard à ce stade.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 330" role="img" aria-label="Nuage de trajectoires de l espérance cumulée sous absence de compétence, avec ses quantiles" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">MONTE-CARLO</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Espérance cumulée sous absence de compétence</text>
@@ -1969,7 +2123,40 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 7</span> — La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.</figcaption>
+      <figcaption><span class="lab">Figure 8</span> — L’espérance mesurée sur une fenêtre glissante de 150 décisions, pour un opérateur sans compétence et pour un opérateur dont la clairvoyance est franche. La bande est l’intervalle à 95&nbsp;pour cent de la moyenne de fenêtre. Les deux bandes se recouvrent sur une partie de la période&nbsp;: à cette taille de fenêtre, les deux opérateurs ne sont pas séparés en permanence.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 320" role="img" aria-label="Espérance mesurée sur fenêtre glissante et son intervalle de confiance, pour deux opérateurs" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">FENÊTRE GLISSANTE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Espérance mesurée sur 150 décisions</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">intervalle à 95 %</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="gl" x1="66.0" y1="256.0" x2="608.0" y2="256.0"/>
+<text class="tk" x="61.0" y="259.0" text-anchor="end">-0,35</text>
+<line class="gl" x1="66.0" y1="159.0" x2="608.0" y2="159.0"/>
+<text class="tk" x="61.0" y="162.0" text-anchor="end">0,34</text>
+<line class="gl" x1="66.0" y1="62.0" x2="608.0" y2="62.0"/>
+<text class="tk" x="61.0" y="65.0" text-anchor="end">1,03</text>
+<text class="tk" x="66.0" y="269.0" text-anchor="middle">150</text>
+<text class="tk" x="167.6" y="269.0" text-anchor="middle">279</text>
+<text class="tk" x="387.4" y="269.0" text-anchor="middle">558</text>
+<text class="tk" x="608.0" y="269.0" text-anchor="middle">838</text>
+<line class="ba" x1="66.0" y1="256.0" x2="608.0" y2="256.0"/>
+<text class="ax" x="337.0" y="284.0" text-anchor="middle">décision courante</text>
+<path class="band-mc" d="M66.0,193.5 L69.2,193.2 L72.3,190.7 L75.5,187.6 L78.6,189.2 L81.8,186.9 L84.9,187.0 L88.1,196.7 L91.2,194.9 L94.4,193.6 L97.5,191.9 L100.7,193.3 L103.8,191.5 L107.0,193.7 L110.1,191.7 L113.3,197.7 L116.4,200.4 L119.6,199.6 L122.7,204.3 L125.9,202.0 L129.0,201.0 L132.2,194.0 L135.3,193.7 L138.5,195.2 L141.6,194.5 L144.8,196.3 L147.9,202.6 L151.1,203.6 L154.2,206.4 L157.4,201.2 L160.5,200.9 L163.7,197.5 L166.8,202.1 L170.0,198.3 L173.1,197.5 L176.3,199.8 L179.4,201.3 L182.6,197.8 L185.7,199.0 L188.9,200.5 L192.0,200.4 L195.2,206.7 L198.3,207.5 L201.5,208.5 L204.7,201.0 L207.8,203.5 L211.0,205.5 L214.1,209.7 L217.3,206.7 L220.4,206.5 L223.6,209.4 L226.7,212.5 L229.9,206.8 L233.0,207.4 L236.2,205.7 L239.3,202.9 L242.5,202.1 L245.6,200.3 L248.8,200.4 L251.9,199.4 L255.1,199.8 L258.2,201.8 L261.4,200.5 L264.5,197.7 L267.7,199.2 L270.8,191.1 L274.0,193.6 L277.1,192.1 L280.3,187.1 L283.4,186.9 L286.6,187.0 L289.7,189.7 L292.9,188.4 L296.0,187.9 L299.2,188.3 L302.3,188.9 L305.5,190.0 L308.6,191.8 L311.8,192.7 L314.9,188.8 L318.1,188.8 L321.2,192.6 L324.4,187.8 L327.5,189.8 L330.7,188.1 L333.8,192.1 L337.0,192.9 L340.2,193.1 L343.3,192.5 L346.5,189.2 L349.6,192.1 L352.8,192.8 L355.9,191.5 L359.1,192.1 L362.2,192.0 L365.4,192.8 L368.5,191.9 L371.7,196.7 L374.8,199.9 L378.0,200.4 L381.1,199.8 L384.3,200.1 L387.4,205.8 L390.6,192.8 L393.7,197.9 L396.9,199.7 L400.0,200.9 L403.2,199.3 L406.3,195.1 L409.5,192.7 L412.6,188.3 L415.8,178.5 L418.9,179.5 L422.1,180.4 L425.2,174.8 L428.4,172.7 L431.5,175.0 L434.7,179.7 L437.8,169.5 L441.0,169.5 L444.1,169.8 L447.3,165.1 L450.4,160.0 L453.6,157.0 L456.7,153.7 L459.9,151.5 L463.0,149.8 L466.2,153.8 L469.3,152.1 L472.5,151.9 L475.7,152.7 L478.8,153.0 L482.0,153.9 L485.1,150.3 L488.3,150.2 L491.4,150.5 L494.6,148.0 L497.7,149.5 L500.9,149.0 L504.0,150.0 L507.2,156.5 L510.3,159.1 L513.5,160.0 L516.6,158.1 L519.8,154.6 L522.9,157.9 L526.1,157.1 L529.2,159.2 L532.4,162.9 L535.5,165.9 L538.7,162.4 L541.8,168.4 L545.0,169.6 L548.1,169.7 L551.3,171.2 L554.4,170.3 L557.6,178.3 L560.7,180.0 L563.9,180.9 L567.0,186.1 L570.2,188.9 L573.3,195.3 L576.5,195.7 L579.6,190.5 L582.8,192.0 L585.9,191.0 L589.1,195.3 L592.2,194.8 L595.4,196.6 L598.5,184.0 L601.7,184.2 L604.8,190.3 L608.0,185.9 L608.0,247.8 L604.8,251.0 L601.7,246.2 L598.5,246.1 L595.4,249.6 L592.2,247.6 L589.1,248.7 L585.9,245.6 L582.8,245.7 L579.6,244.2 L576.5,247.1 L573.3,246.2 L570.2,240.5 L567.0,237.7 L563.9,233.7 L560.7,233.0 L557.6,230.9 L554.4,225.6 L551.3,226.5 L548.1,225.6 L545.0,225.5 L541.8,224.9 L538.7,220.0 L535.5,223.3 L532.4,220.3 L529.2,216.3 L526.1,215.6 L522.9,214.8 L519.8,211.6 L516.6,214.1 L513.5,216.2 L510.3,215.5 L507.2,212.6 L504.0,210.8 L500.9,209.5 L497.7,209.9 L494.6,208.8 L491.4,210.7 L488.3,210.6 L485.1,210.9 L482.0,214.1 L478.8,213.3 L475.7,213.1 L472.5,211.9 L469.3,211.3 L466.2,213.1 L463.0,209.7 L459.9,211.4 L456.7,213.3 L453.6,216.7 L450.4,219.4 L447.3,224.0 L444.1,227.8 L441.0,227.7 L437.8,227.8 L434.7,236.2 L431.5,232.7 L428.4,230.0 L425.2,231.7 L422.1,236.0 L418.9,235.1 L415.8,234.1 L412.6,240.6 L409.5,243.9 L406.3,245.5 L403.2,249.4 L400.0,251.0 L396.9,250.3 L393.7,249.0 L390.6,245.2 L387.4,250.4 L384.3,246.8 L381.1,246.6 L378.0,246.4 L374.8,246.0 L371.7,243.3 L368.5,241.1 L365.4,241.7 L362.2,240.1 L359.1,240.2 L355.9,239.7 L352.8,241.1 L349.6,240.6 L346.5,240.2 L343.3,242.9 L340.2,243.6 L337.0,243.5 L333.8,243.9 L330.7,239.9 L327.5,241.6 L324.4,239.9 L321.2,244.1 L318.1,241.8 L314.9,241.5 L311.8,243.8 L308.6,243.0 L305.5,241.1 L302.3,240.1 L299.2,239.9 L296.0,239.6 L292.9,239.6 L289.7,240.7 L286.6,238.4 L283.4,238.5 L280.3,238.8 L277.1,243.1 L274.0,243.2 L270.8,241.5 L267.7,247.6 L264.5,246.0 L261.4,249.0 L258.2,250.3 L255.1,247.8 L251.9,247.5 L248.8,247.2 L245.6,247.0 L242.5,249.1 L239.3,249.9 L236.2,252.8 L233.0,254.1 L229.9,253.5 L226.7,256.0 L223.6,254.0 L220.4,251.7 L217.3,251.8 L214.1,253.8 L211.0,249.9 L207.8,248.0 L204.7,245.6 L201.5,250.5 L198.3,249.5 L195.2,248.7 L192.0,244.2 L188.9,244.4 L185.7,244.6 L182.6,244.7 L179.4,248.0 L176.3,246.9 L173.1,244.7 L170.0,245.0 L166.8,248.8 L163.7,244.6 L160.5,247.7 L157.4,247.9 L154.2,252.4 L151.1,249.4 L147.9,248.6 L144.8,246.1 L141.6,244.2 L138.5,244.9 L135.3,243.5 L132.2,244.1 L129.0,249.6 L125.9,250.7 L122.7,252.2 L119.6,248.8 L116.4,249.3 L113.3,247.3 L110.1,242.2 L107.0,243.4 L103.8,241.7 L100.7,243.0 L97.5,241.5 L94.4,243.0 L91.2,244.1 L88.1,245.5 L84.9,239.1 L81.8,239.2 L78.6,241.4 L75.5,239.3 L72.3,241.6 L69.2,242.8 L66.0,242.0 Z"/>
+<path class="ln s3" d="M66.00,217.77 L69.15,217.99 L72.30,216.16 L75.45,213.44 L78.60,215.32 L81.76,213.07 L84.91,213.04 L88.06,221.10 L91.21,219.49 L94.36,218.32 L97.51,216.71 L100.66,218.18 L103.81,216.60 L106.97,218.55 L110.12,216.97 L113.27,222.48 L116.42,224.85 L119.57,224.22 L122.72,228.27 L125.87,226.37 L129.02,225.30 L132.17,219.06 L135.33,218.63 L138.48,220.04 L141.63,219.35 L144.78,221.21 L147.93,225.61 L151.08,226.50 L154.23,229.40 L157.38,224.51 L160.53,224.32 L163.69,221.05 L166.84,225.43 L169.99,221.62 L173.14,221.08 L176.29,223.31 L179.44,224.63 L182.59,221.24 L185.74,221.80 L188.90,222.43 L192.05,222.30 L195.20,227.70 L198.35,228.50 L201.50,229.52 L204.65,223.33 L207.80,225.72 L210.95,227.74 L214.10,231.75 L217.26,229.24 L220.41,229.11 L223.56,231.73 L226.71,234.23 L229.86,230.16 L233.01,230.75 L236.16,229.22 L239.31,226.43 L242.47,225.63 L245.62,223.67 L248.77,223.79 L251.92,223.41 L255.07,223.81 L258.22,226.06 L261.37,224.75 L264.52,221.89 L267.67,223.39 L270.83,216.26 L273.98,218.39 L277.13,217.61 L280.28,212.98 L283.43,212.72 L286.58,212.70 L289.73,215.23 L292.88,214.02 L296.03,213.75 L299.19,214.10 L302.34,214.51 L305.49,215.50 L308.64,217.43 L311.79,218.28 L314.94,215.15 L318.09,215.29 L321.24,218.33 L324.40,213.84 L327.55,215.73 L330.70,214.03 L333.85,218.01 L337.00,218.20 L340.15,218.33 L343.30,217.68 L346.45,214.72 L349.60,216.35 L352.76,216.93 L355.91,215.60 L359.06,216.15 L362.21,216.09 L365.36,217.25 L368.51,216.48 L371.66,220.01 L374.81,222.95 L377.97,223.41 L381.12,223.18 L384.27,223.44 L387.42,228.10 L390.57,218.97 L393.72,223.48 L396.87,225.02 L400.02,225.93 L403.17,224.39 L406.33,220.31 L409.48,218.32 L412.63,214.45 L415.78,206.30 L418.93,207.32 L422.08,208.19 L425.23,203.27 L428.38,201.35 L431.53,203.82 L434.69,207.95 L437.84,198.68 L440.99,198.60 L444.14,198.78 L447.29,194.55 L450.44,189.68 L453.59,186.86 L456.74,183.50 L459.90,181.45 L463.05,179.76 L466.20,183.48 L469.35,181.68 L472.50,181.89 L475.65,182.91 L478.80,183.14 L481.95,184.01 L485.10,180.60 L488.26,180.43 L491.41,180.61 L494.56,178.40 L497.71,179.71 L500.86,179.26 L504.01,180.38 L507.16,184.54 L510.31,187.27 L513.47,188.07 L516.62,186.11 L519.77,183.11 L522.92,186.37 L526.07,186.36 L529.22,187.75 L532.37,191.59 L535.52,194.58 L538.67,191.18 L541.83,196.66 L544.98,197.59 L548.13,197.64 L551.28,198.87 L554.43,197.98 L557.58,204.61 L560.73,206.50 L563.88,207.26 L567.03,211.91 L570.19,214.69 L573.34,220.75 L576.49,221.38 L579.64,217.31 L582.79,218.88 L585.94,218.33 L589.09,221.99 L592.24,221.23 L595.40,223.11 L598.55,215.08 L601.70,215.21 L604.85,220.65 L608.00,216.82"></path>
+<text class="tk halo" x="615.0" y="219.8" text-anchor="start">sans</text>
+<path class="band-mc" d="M66.0,104.5 L69.2,106.0 L72.3,108.6 L75.5,109.7 L78.6,107.6 L81.8,109.6 L84.9,112.7 L88.1,116.6 L91.2,117.1 L94.4,117.8 L97.5,117.1 L100.7,117.0 L103.8,116.5 L107.0,116.8 L110.1,116.4 L113.3,112.2 L116.4,116.0 L119.6,119.6 L122.7,127.8 L125.9,129.1 L129.0,130.8 L132.2,133.2 L135.3,128.9 L138.5,126.8 L141.6,128.3 L144.8,127.0 L147.9,135.3 L151.1,136.8 L154.2,134.7 L157.4,133.5 L160.5,131.8 L163.7,129.2 L166.8,132.4 L170.0,132.7 L173.1,134.9 L176.3,134.6 L179.4,131.6 L182.6,132.2 L185.7,139.4 L188.9,133.6 L192.0,132.5 L195.2,133.7 L198.3,130.5 L201.5,130.1 L204.7,129.8 L207.8,129.2 L211.0,130.8 L214.1,127.7 L217.3,129.6 L220.4,130.3 L223.6,125.0 L226.7,122.3 L229.9,127.2 L233.0,128.1 L236.2,127.1 L239.3,121.8 L242.5,118.4 L245.6,117.2 L248.8,113.7 L251.9,116.3 L255.1,116.6 L258.2,116.4 L261.4,116.8 L264.5,119.0 L267.7,121.8 L270.8,125.6 L274.0,121.3 L277.1,124.5 L280.3,122.3 L283.4,122.9 L286.6,121.6 L289.7,123.0 L292.9,118.7 L296.0,120.4 L299.2,118.6 L302.3,119.1 L305.5,121.3 L308.6,119.1 L311.8,122.8 L314.9,122.6 L318.1,119.1 L321.2,121.6 L324.4,111.4 L327.5,110.0 L330.7,111.5 L333.8,112.9 L337.0,102.6 L340.2,105.7 L343.3,104.4 L346.5,101.7 L349.6,99.1 L352.8,95.0 L355.9,95.4 L359.1,93.7 L362.2,99.3 L365.4,88.6 L368.5,88.2 L371.7,83.4 L374.8,77.2 L378.0,78.7 L381.1,73.7 L384.3,72.0 L387.4,72.2 L390.6,73.9 L393.7,73.7 L396.9,71.3 L400.0,75.0 L403.2,73.1 L406.3,72.2 L409.5,68.7 L412.6,66.3 L415.8,68.1 L418.9,69.6 L422.1,72.5 L425.2,74.3 L428.4,73.5 L431.5,62.0 L434.7,64.4 L437.8,66.3 L441.0,76.5 L444.1,75.9 L447.3,72.3 L450.4,70.9 L453.6,81.2 L456.7,79.8 L459.9,81.8 L463.0,82.5 L466.2,87.9 L469.3,98.1 L472.5,93.6 L475.7,96.0 L478.8,94.6 L482.0,94.2 L485.1,100.1 L488.3,97.0 L491.4,98.3 L494.6,101.6 L497.7,104.7 L500.9,105.3 L504.0,96.1 L507.2,93.6 L510.3,92.2 L513.5,91.4 L516.6,85.4 L516.6,151.4 L513.5,156.9 L510.3,158.3 L507.2,159.5 L504.0,162.4 L500.9,164.4 L497.7,163.6 L494.6,160.2 L491.4,156.9 L488.3,155.6 L485.1,157.9 L482.0,152.6 L478.8,153.2 L475.7,154.4 L472.5,152.7 L469.3,157.8 L466.2,149.2 L463.0,144.3 L459.9,143.7 L456.7,141.9 L453.6,140.7 L450.4,136.5 L447.3,138.2 L444.1,140.4 L441.0,140.5 L437.8,134.5 L434.7,132.6 L431.5,131.1 L428.4,139.7 L425.2,139.8 L422.1,138.4 L418.9,134.8 L415.8,134.9 L412.6,133.1 L409.5,135.6 L406.3,139.1 L403.2,140.3 L400.0,141.9 L396.9,138.2 L393.7,140.0 L390.6,140.6 L387.4,139.7 L384.3,139.5 L381.1,141.3 L378.0,146.5 L374.8,145.1 L371.7,150.6 L368.5,154.9 L365.4,155.8 L362.2,165.3 L359.1,160.0 L355.9,161.5 L352.8,161.4 L349.6,163.5 L346.5,166.3 L343.3,168.2 L340.2,169.2 L337.0,167.6 L333.8,171.5 L330.7,169.8 L327.5,168.5 L324.4,170.1 L321.2,174.8 L318.1,174.5 L314.9,177.9 L311.8,178.1 L308.6,174.7 L305.5,176.6 L302.3,175.1 L299.2,174.6 L296.0,175.2 L292.9,174.6 L289.7,178.6 L286.6,177.2 L283.4,177.1 L280.3,176.5 L277.1,178.9 L274.0,175.2 L270.8,178.5 L267.7,175.4 L264.5,172.4 L261.4,170.3 L258.2,170.1 L255.1,170.1 L251.9,169.7 L248.8,167.6 L245.6,171.3 L242.5,171.8 L239.3,174.3 L236.2,178.5 L233.0,179.4 L229.9,178.6 L226.7,174.4 L223.6,176.8 L220.4,180.5 L217.3,179.2 L214.1,178.2 L211.0,181.6 L207.8,180.6 L204.7,181.3 L201.5,182.1 L198.3,180.1 L195.2,182.2 L192.0,180.1 L188.9,181.5 L185.7,186.7 L182.6,180.1 L179.4,179.5 L176.3,182.3 L173.1,183.1 L170.0,180.5 L166.8,180.8 L163.7,178.5 L160.5,180.7 L157.4,183.0 L154.2,184.2 L151.1,185.3 L147.9,183.8 L144.8,178.7 L141.6,179.8 L138.5,178.1 L135.3,180.3 L132.2,184.7 L129.0,181.8 L125.9,180.1 L122.7,180.0 L119.6,173.2 L116.4,170.8 L113.3,167.7 L110.1,171.1 L107.0,172.2 L103.8,171.4 L100.7,171.8 L97.5,172.2 L94.4,172.3 L91.2,170.7 L88.1,169.7 L84.9,166.3 L81.8,165.4 L78.6,163.0 L75.5,165.1 L72.3,163.8 L69.2,161.6 L66.0,159.6 Z"/>
+<path class="ln s1" d="M66.00,132.04 L69.15,133.80 L72.30,136.19 L75.45,137.39 L78.60,135.33 L81.76,137.48 L84.91,139.49 L88.06,143.14 L91.21,143.90 L94.36,145.07 L97.51,144.68 L100.66,144.39 L103.81,143.93 L106.97,144.48 L110.12,143.74 L113.27,139.97 L116.42,143.40 L119.57,146.39 L122.72,153.92 L125.87,154.59 L129.02,156.29 L132.17,158.97 L135.33,154.60 L138.48,152.45 L141.63,154.03 L144.78,152.88 L147.93,159.54 L151.08,161.05 L154.23,159.44 L157.38,158.26 L160.53,156.25 L163.69,153.86 L166.84,156.61 L169.99,156.60 L173.14,159.02 L176.29,158.45 L179.44,155.54 L182.59,156.13 L185.74,163.06 L188.90,157.55 L192.05,156.29 L195.20,157.94 L198.35,155.28 L201.50,156.10 L204.65,155.56 L207.80,154.86 L210.95,156.18 L214.10,152.94 L217.26,154.40 L220.41,155.43 L223.56,150.92 L226.71,148.37 L229.86,152.91 L233.01,153.79 L236.16,152.79 L239.31,148.04 L242.47,145.08 L245.62,144.29 L248.77,140.64 L251.92,142.98 L255.07,143.32 L258.22,143.27 L261.37,143.58 L264.52,145.70 L267.67,148.60 L270.83,152.07 L273.98,148.27 L277.13,151.71 L280.28,149.39 L283.43,150.00 L286.58,149.43 L289.73,150.83 L292.88,146.65 L296.03,147.84 L299.19,146.62 L302.34,147.11 L305.49,148.97 L308.64,146.89 L311.79,150.43 L314.94,150.22 L318.09,146.83 L321.24,148.22 L324.40,140.79 L327.55,139.27 L330.70,140.61 L333.85,142.23 L337.00,135.07 L340.15,137.45 L343.30,136.27 L346.45,133.98 L349.60,131.31 L352.76,128.20 L355.91,128.45 L359.06,126.90 L362.21,132.32 L365.36,122.18 L368.51,121.54 L371.66,117.02 L374.81,111.11 L377.97,112.64 L381.12,107.48 L384.27,105.76 L387.42,105.98 L390.57,107.22 L393.72,106.86 L396.87,104.76 L400.02,108.45 L403.17,106.71 L406.33,105.63 L409.48,102.18 L412.63,99.70 L415.78,101.49 L418.93,102.22 L422.08,105.46 L425.23,107.05 L428.38,106.61 L431.53,96.57 L434.69,98.49 L437.84,100.41 L440.99,108.48 L444.14,108.18 L447.29,105.27 L450.44,103.70 L453.59,110.92 L456.74,110.88 L459.90,112.75 L463.05,113.42 L466.20,118.55 L469.35,127.97 L472.50,123.16 L475.65,125.23 L478.80,123.88 L481.95,123.41 L485.10,129.03 L488.26,126.27 L491.41,127.63 L494.56,130.90 L497.71,134.13 L500.86,134.85 L504.01,129.27 L507.16,126.56 L510.31,125.25 L513.47,124.15 L516.62,118.41"></path>
+<text class="tk halo" x="523.6" y="121.4" text-anchor="start">avec</text>
+<line class="lvl strong" x1="66.0" y1="207.4" x2="608.0" y2="207.4"/>
+<rect class="tag" x="68.0" y="200.4" width="100.0" height="14" rx="2"/>
+<text class="tagtx" x="118.0" y="210.9" text-anchor="middle">espérance nulle</text>
+
+</svg></div>
+      <p class="note">Abscisse : rang de la décision courante. Ordonnée : moyenne des 150 décisions précédentes. La bande est l’intervalle à 95 pour cent de cette moyenne.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 9</span> — La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 384" role="img" aria-label="Surface du nombre d années requises selon les leviers ouverts et le Sharpe revendiqué par décision" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">MUR D’ÉCHANTILLON</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Le mur, en années de carrière</text>
@@ -2034,7 +2221,116 @@
   <h2 id="s-puissance">La puissance de détection</h2>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 8</span> — La probabilité de détecter un avantage selon le nombre de décisions enregistrées et l’information portée par chacune. La teinte franche marque les combinaisons où la détection est acquise à 80&nbsp;%. En deçà, l’absence de preuve ne prouve rien.</figcaption>
+      <figcaption><span class="lab">Figure 10</span> — La puissance de détection à seuil de 5&nbsp;pour cent, par nombre de décisions et information par décision. Chaque case porte sa valeur en pour cent&nbsp;; la lecture d’une valeur précise, que le relief ne permet pas, est ici directe.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 340" role="img" aria-label="Carte de la puissance de détection par nombre de décisions et information par décision" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">PUISSANCE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Carte de puissance à seuil 5 %</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">test G informationnel</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<text class="tk" x="84.0" y="83.8" text-anchor="end">0,0800</text>
+<rect class="hm6" x="93.0" y="67.0" width="74.7" height="26.7"><title>125 décisions · 0,0800 bit · puissance 84%</title></rect>
+<text class="cell cl-hi" x="130.3" y="83.8" text-anchor="middle">84</text>
+<rect class="hm7" x="169.7" y="67.0" width="74.7" height="26.7"><title>250 décisions · 0,0800 bit · puissance 99%</title></rect>
+<text class="cell cl-hi" x="207.0" y="83.8" text-anchor="middle">99</text>
+<rect class="hm7" x="246.3" y="67.0" width="74.7" height="26.7"><title>500 décisions · 0,0800 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="283.7" y="83.8" text-anchor="middle">100</text>
+<rect class="hm7" x="323.0" y="67.0" width="74.7" height="26.7"><title>1000 décisions · 0,0800 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="360.3" y="83.8" text-anchor="middle">100</text>
+<rect class="hm7" x="399.7" y="67.0" width="74.7" height="26.7"><title>2000 décisions · 0,0800 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="437.0" y="83.8" text-anchor="middle">100</text>
+<rect class="hm7" x="476.3" y="67.0" width="74.7" height="26.7"><title>4000 décisions · 0,0800 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="513.7" y="83.8" text-anchor="middle">100</text>
+<text class="tk" x="84.0" y="112.5" text-anchor="end">0,0400</text>
+<rect class="hm4" x="93.0" y="95.7" width="74.7" height="26.7"><title>125 décisions · 0,0400 bit · puissance 55%</title></rect>
+<text class="cell cl-lo" x="130.3" y="112.5" text-anchor="middle">55</text>
+<rect class="hm6" x="169.7" y="95.7" width="74.7" height="26.7"><title>250 décisions · 0,0400 bit · puissance 84%</title></rect>
+<text class="cell cl-hi" x="207.0" y="112.5" text-anchor="middle">84</text>
+<rect class="hm7" x="246.3" y="95.7" width="74.7" height="26.7"><title>500 décisions · 0,0400 bit · puissance 99%</title></rect>
+<text class="cell cl-hi" x="283.7" y="112.5" text-anchor="middle">99</text>
+<rect class="hm7" x="323.0" y="95.7" width="74.7" height="26.7"><title>1000 décisions · 0,0400 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="360.3" y="112.5" text-anchor="middle">100</text>
+<rect class="hm7" x="399.7" y="95.7" width="74.7" height="26.7"><title>2000 décisions · 0,0400 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="437.0" y="112.5" text-anchor="middle">100</text>
+<rect class="hm7" x="476.3" y="95.7" width="74.7" height="26.7"><title>4000 décisions · 0,0400 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="513.7" y="112.5" text-anchor="middle">100</text>
+<text class="tk" x="84.0" y="141.2" text-anchor="end">0,0200</text>
+<rect class="hm2" x="93.0" y="124.3" width="74.7" height="26.7"><title>125 décisions · 0,0200 bit · puissance 31%</title></rect>
+<text class="cell cl-lo" x="130.3" y="141.2" text-anchor="middle">31</text>
+<rect class="hm4" x="169.7" y="124.3" width="74.7" height="26.7"><title>250 décisions · 0,0200 bit · puissance 55%</title></rect>
+<text class="cell cl-lo" x="207.0" y="141.2" text-anchor="middle">55</text>
+<rect class="hm6" x="246.3" y="124.3" width="74.7" height="26.7"><title>500 décisions · 0,0200 bit · puissance 84%</title></rect>
+<text class="cell cl-hi" x="283.7" y="141.2" text-anchor="middle">84</text>
+<rect class="hm7" x="323.0" y="124.3" width="74.7" height="26.7"><title>1000 décisions · 0,0200 bit · puissance 99%</title></rect>
+<text class="cell cl-hi" x="360.3" y="141.2" text-anchor="middle">99</text>
+<rect class="hm7" x="399.7" y="124.3" width="74.7" height="26.7"><title>2000 décisions · 0,0200 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="437.0" y="141.2" text-anchor="middle">100</text>
+<rect class="hm7" x="476.3" y="124.3" width="74.7" height="26.7"><title>4000 décisions · 0,0200 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="513.7" y="141.2" text-anchor="middle">100</text>
+<text class="tk" x="84.0" y="169.8" text-anchor="end">0,0100</text>
+<rect class="hm1" x="93.0" y="153.0" width="74.7" height="26.7"><title>125 décisions · 0,0100 bit · puissance 18%</title></rect>
+<text class="cell cl-lo" x="130.3" y="169.8" text-anchor="middle">18</text>
+<rect class="hm2" x="169.7" y="153.0" width="74.7" height="26.7"><title>250 décisions · 0,0100 bit · puissance 31%</title></rect>
+<text class="cell cl-lo" x="207.0" y="169.8" text-anchor="middle">31</text>
+<rect class="hm4" x="246.3" y="153.0" width="74.7" height="26.7"><title>500 décisions · 0,0100 bit · puissance 55%</title></rect>
+<text class="cell cl-lo" x="283.7" y="169.8" text-anchor="middle">55</text>
+<rect class="hm6" x="323.0" y="153.0" width="74.7" height="26.7"><title>1000 décisions · 0,0100 bit · puissance 84%</title></rect>
+<text class="cell cl-hi" x="360.3" y="169.8" text-anchor="middle">84</text>
+<rect class="hm7" x="399.7" y="153.0" width="74.7" height="26.7"><title>2000 décisions · 0,0100 bit · puissance 99%</title></rect>
+<text class="cell cl-hi" x="437.0" y="169.8" text-anchor="middle">99</text>
+<rect class="hm7" x="476.3" y="153.0" width="74.7" height="26.7"><title>4000 décisions · 0,0100 bit · puissance 100%</title></rect>
+<text class="cell cl-hi" x="513.7" y="169.8" text-anchor="middle">100</text>
+<text class="tk" x="84.0" y="198.5" text-anchor="end">0,0050</text>
+<rect class="hm1" x="93.0" y="181.7" width="74.7" height="26.7"><title>125 décisions · 0,0050 bit · puissance 11%</title></rect>
+<text class="cell cl-lo" x="130.3" y="198.5" text-anchor="middle">11</text>
+<rect class="hm1" x="169.7" y="181.7" width="74.7" height="26.7"><title>250 décisions · 0,0050 bit · puissance 18%</title></rect>
+<text class="cell cl-lo" x="207.0" y="198.5" text-anchor="middle">18</text>
+<rect class="hm2" x="246.3" y="181.7" width="74.7" height="26.7"><title>500 décisions · 0,0050 bit · puissance 31%</title></rect>
+<text class="cell cl-lo" x="283.7" y="198.5" text-anchor="middle">31</text>
+<rect class="hm4" x="323.0" y="181.7" width="74.7" height="26.7"><title>1000 décisions · 0,0050 bit · puissance 55%</title></rect>
+<text class="cell cl-lo" x="360.3" y="198.5" text-anchor="middle">55</text>
+<rect class="hm6" x="399.7" y="181.7" width="74.7" height="26.7"><title>2000 décisions · 0,0050 bit · puissance 84%</title></rect>
+<text class="cell cl-hi" x="437.0" y="198.5" text-anchor="middle">84</text>
+<rect class="hm7" x="476.3" y="181.7" width="74.7" height="26.7"><title>4000 décisions · 0,0050 bit · puissance 99%</title></rect>
+<text class="cell cl-hi" x="513.7" y="198.5" text-anchor="middle">99</text>
+<text class="tk" x="84.0" y="227.2" text-anchor="end">0,0025</text>
+<rect class="hm1" x="93.0" y="210.3" width="74.7" height="26.7"><title>125 décisions · 0,0025 bit · puissance 7%</title></rect>
+<text class="cell cl-lo" x="130.3" y="227.2" text-anchor="middle">7</text>
+<rect class="hm1" x="169.7" y="210.3" width="74.7" height="26.7"><title>250 décisions · 0,0025 bit · puissance 11%</title></rect>
+<text class="cell cl-lo" x="207.0" y="227.2" text-anchor="middle">11</text>
+<rect class="hm1" x="246.3" y="210.3" width="74.7" height="26.7"><title>500 décisions · 0,0025 bit · puissance 18%</title></rect>
+<text class="cell cl-lo" x="283.7" y="227.2" text-anchor="middle">18</text>
+<rect class="hm2" x="323.0" y="210.3" width="74.7" height="26.7"><title>1000 décisions · 0,0025 bit · puissance 31%</title></rect>
+<text class="cell cl-lo" x="360.3" y="227.2" text-anchor="middle">31</text>
+<rect class="hm4" x="399.7" y="210.3" width="74.7" height="26.7"><title>2000 décisions · 0,0025 bit · puissance 55%</title></rect>
+<text class="cell cl-lo" x="437.0" y="227.2" text-anchor="middle">55</text>
+<rect class="hm6" x="476.3" y="210.3" width="74.7" height="26.7"><title>4000 décisions · 0,0025 bit · puissance 84%</title></rect>
+<text class="cell cl-hi" x="513.7" y="227.2" text-anchor="middle">84</text>
+<text class="tk" x="130.3" y="253.0" text-anchor="middle">125</text>
+<text class="tk" x="207.0" y="253.0" text-anchor="middle">250</text>
+<text class="tk" x="283.7" y="253.0" text-anchor="middle">500</text>
+<text class="tk" x="360.3" y="253.0" text-anchor="middle">1000</text>
+<text class="tk" x="437.0" y="253.0" text-anchor="middle">2000</text>
+<text class="tk" x="513.7" y="253.0" text-anchor="middle">4000</text>
+<text class="ax" x="322.0" y="270.0" text-anchor="middle">décisions enregistrées</text>
+<text class="ax" x="20" y="152.0" transform="rotate(-90 20 152.0)" text-anchor="middle">bits par décision</text>
+<rect class="hm0" x="92.0" y="290.0" width="16.5" height="8"/>
+<rect class="hm1" x="108.5" y="290.0" width="16.5" height="8"/>
+<rect class="hm2" x="125.0" y="290.0" width="16.5" height="8"/>
+<rect class="hm3" x="141.5" y="290.0" width="16.5" height="8"/>
+<rect class="hm4" x="158.0" y="290.0" width="16.5" height="8"/>
+<rect class="hm5" x="174.5" y="290.0" width="16.5" height="8"/>
+<rect class="hm6" x="191.0" y="290.0" width="16.5" height="8"/>
+<rect class="hm7" x="207.5" y="290.0" width="16.5" height="8"/>
+<text class="tk" x="92.0" y="310.0">0 %</text>
+<text class="tk" x="224.0" y="310.0" text-anchor="end">100 %</text>
+<text class="lg" x="238.0" y="297.0">puissance de détection</text>
+
+</svg></div>
+      <p class="note">Chaque case porte sa puissance en pour cent. La détection est acquise au sens usuel à partir de 80.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 11</span> — La probabilité de détecter un avantage selon le nombre de décisions enregistrées et l’information portée par chacune. La teinte franche marque les combinaisons où la détection est acquise à 80&nbsp;%. En deçà, l’absence de preuve ne prouve rien.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 384" role="img" aria-label="Surface de la puissance de détection selon le nombre de décisions et l information portée par chacune" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">PUISSANCE</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">La puissance de détection</text>
@@ -2096,8 +2392,69 @@
 
   <p>Le relief a la forme d’une marche. Sous une certaine combinaison, la détection est un tirage à pile ou face&nbsp;; au-delà, elle est acquise. Situer l’opérateur sur cette marche est tout ce qu’un protocole préenregistré a besoin de savoir, et c’est aussi ce qui permet d’énoncer à l’avance la durée de la période d’observation plutôt que de l’arrêter quand le résultat plaît.</p>
 
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 12</span> — Taux de détection contre taux de fausse déclaration, à trois tailles d’échantillon, pour une compétence de 0,005&nbsp;bit par décision. Le seuil de 5&nbsp;pour cent retenu dans tout le document est un point de ces courbes&nbsp;; les points marqués donnent la puissance correspondante. Le cadre de droite donne cette puissance en fonction du nombre de décisions.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 322" role="img" aria-label="Caractéristique opérationnelle du test : taux de détection contre taux de fausse déclaration, à trois tailles d échantillon" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">CARACTÉRISTIQUE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Détection contre fausse déclaration</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">compétence de 0,005 bit par décision</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="gl" x1="66.0" y1="256.0" x2="366.0" y2="256.0"/>
+<text class="tk" x="61.0" y="259.0" text-anchor="end">0%</text>
+<line class="gl" x1="66.0" y1="207.5" x2="366.0" y2="207.5"/>
+<text class="tk" x="61.0" y="210.5" text-anchor="end">25%</text>
+<line class="gl" x1="66.0" y1="159.0" x2="366.0" y2="159.0"/>
+<text class="tk" x="61.0" y="162.0" text-anchor="end">50%</text>
+<line class="gl" x1="66.0" y1="110.5" x2="366.0" y2="110.5"/>
+<text class="tk" x="61.0" y="113.5" text-anchor="end">75%</text>
+<line class="gl" x1="66.0" y1="62.0" x2="366.0" y2="62.0"/>
+<text class="tk" x="61.0" y="65.0" text-anchor="end">100%</text>
+<text class="tk" x="66.0" y="269.0" text-anchor="middle">0%</text>
+<text class="tk" x="141.0" y="269.0" text-anchor="middle">25%</text>
+<text class="tk" x="216.0" y="269.0" text-anchor="middle">50%</text>
+<text class="tk" x="291.0" y="269.0" text-anchor="middle">75%</text>
+<text class="tk" x="366.0" y="269.0" text-anchor="middle">100%</text>
+<line class="ba" x1="66.0" y1="256.0" x2="366.0" y2="256.0"/>
+<text class="ax" x="216.0" y="284.0" text-anchor="middle">taux de fausse déclaration</text>
+<path class="ln s3" d="M66.00,256.00 L366.00,62.00" stroke-dasharray="3 3"></path>
+<text class="tk halo" x="250.0" y="134.6" text-anchor="start">aucune séparation</text>
+<path class="ln hm3" d="M69.00,236.84 L72.00,225.97 L75.00,217.28 L78.00,209.84 L81.00,203.26 L84.00,197.31 L87.00,191.85 L90.00,186.81 L93.00,182.10 L96.00,177.69 L99.00,173.53 L102.00,169.60 L105.00,165.86 L108.00,162.30 L111.00,158.91 L114.00,155.66 L117.00,152.55 L120.00,149.56 L123.00,146.69 L126.00,143.92 L129.00,141.26 L132.00,138.69 L135.00,136.21 L138.00,133.82 L141.00,131.50 L144.00,129.25 L147.00,127.08 L150.00,124.98 L153.00,122.93 L156.00,120.95 L159.00,119.03 L162.00,117.16 L165.00,115.35 L168.00,113.59 L171.00,111.88 L174.00,110.21 L177.00,108.59 L180.00,107.01 L183.00,105.48 L186.00,103.99 L189.00,102.53 L192.00,101.12 L195.00,99.74 L198.00,98.40 L201.00,97.09 L204.00,95.82 L207.00,94.58 L210.00,93.37 L213.00,92.19 L216.00,91.04 L219.00,89.93 L222.00,88.84 L225.00,87.78 L228.00,86.74 L231.00,85.74 L234.00,84.75 L237.00,83.80 L240.00,82.87 L243.00,81.96 L246.00,81.08 L249.00,80.22 L252.00,79.38 L255.00,78.57 L258.00,77.78 L261.00,77.01 L264.00,76.26 L267.00,75.53 L270.00,74.83 L273.00,74.14 L276.00,73.47 L279.00,72.83 L282.00,72.20 L285.00,71.59 L288.00,71.00 L291.00,70.43 L294.00,69.87 L297.00,69.34 L300.00,68.82 L303.00,68.32 L306.00,67.84 L309.00,67.38 L312.00,66.93 L315.00,66.50 L318.00,66.09 L321.00,65.69 L324.00,65.32 L327.00,64.95 L330.00,64.61 L333.00,64.29 L336.00,63.98 L339.00,63.69 L342.00,63.41 L345.00,63.16 L348.00,62.92 L351.00,62.71 L354.00,62.51 L357.00,62.34 L360.00,62.19 L363.00,62.07"></path>
+<text class="tk halo" x="102.0" y="181.7" text-anchor="start">250</text>
+<circle class="pt s1" cx="81.00" cy="221.43" r="4"><title>250 décisions · seuil 5 % · puissance 18%</title></circle>
+<path class="ln hm5" d="M69.00,178.23 L72.00,157.33 L75.00,144.04 L78.00,134.31 L81.00,126.69 L84.00,120.46 L87.00,115.24 L90.00,110.76 L93.00,106.87 L96.00,103.45 L99.00,100.41 L102.00,97.69 L105.00,95.24 L108.00,93.01 L111.00,90.99 L114.00,89.14 L117.00,87.44 L120.00,85.87 L123.00,84.42 L126.00,83.08 L129.00,81.83 L132.00,80.68 L135.00,79.60 L138.00,78.59 L141.00,77.64 L144.00,76.76 L147.00,75.93 L150.00,75.15 L153.00,74.42 L156.00,73.73 L159.00,73.08 L162.00,72.47 L165.00,71.89 L168.00,71.35 L171.00,70.83 L174.00,70.34 L177.00,69.88 L180.00,69.45 L183.00,69.03 L186.00,68.64 L189.00,68.27 L192.00,67.92 L195.00,67.58 L198.00,67.27 L201.00,66.97 L204.00,66.68 L207.00,66.41 L210.00,66.16 L213.00,65.91 L216.00,65.68 L219.00,65.46 L222.00,65.25 L225.00,65.06 L228.00,64.87 L231.00,64.69 L234.00,64.52 L237.00,64.36 L240.00,64.21 L243.00,64.06 L246.00,63.93 L249.00,63.80 L252.00,63.68 L255.00,63.56 L258.00,63.45 L261.00,63.35 L264.00,63.25 L267.00,63.15 L270.00,63.07 L273.00,62.98 L276.00,62.91 L279.00,62.83 L282.00,62.76 L285.00,62.70 L288.00,62.64 L291.00,62.58 L294.00,62.52 L297.00,62.47 L300.00,62.43 L303.00,62.38 L306.00,62.34 L309.00,62.31 L312.00,62.27 L315.00,62.24 L318.00,62.21 L321.00,62.18 L324.00,62.16 L327.00,62.13 L330.00,62.11 L333.00,62.09 L336.00,62.08 L339.00,62.06 L342.00,62.05 L345.00,62.04 L348.00,62.03 L351.00,62.02 L354.00,62.01 L357.00,62.01 L360.00,62.00 L363.00,62.00"></path>
+<text class="tk halo" x="102.0" y="107.5" text-anchor="start">1000</text>
+<circle class="pt s1" cx="81.00" cy="150.09" r="4"><title>1000 décisions · seuil 5 % · puissance 55%</title></circle>
+<path class="ln hm7" d="M69.00,68.61 L72.00,65.49 L75.00,64.25 L78.00,63.59 L81.00,63.19 L84.00,62.92 L87.00,62.73 L90.00,62.59 L93.00,62.48 L96.00,62.40 L99.00,62.34 L102.00,62.28 L105.00,62.24 L108.00,62.21 L111.00,62.18 L114.00,62.16 L117.00,62.13 L120.00,62.12 L123.00,62.10 L126.00,62.09 L129.00,62.08 L132.00,62.07 L135.00,62.06 L138.00,62.06 L141.00,62.05 L144.00,62.04 L147.00,62.04 L150.00,62.03 L153.00,62.03 L156.00,62.03 L159.00,62.02 L162.00,62.02 L165.00,62.02 L168.00,62.02 L171.00,62.02 L174.00,62.01 L177.00,62.01 L180.00,62.01 L183.00,62.01 L186.00,62.01 L189.00,62.01 L192.00,62.01 L195.00,62.01 L198.00,62.01 L201.00,62.01 L204.00,62.00 L207.00,62.00 L210.00,62.00 L213.00,62.00 L216.00,62.00 L219.00,62.00 L222.00,62.00 L225.00,62.00 L228.00,62.00 L231.00,62.00 L234.00,62.00 L237.00,62.00 L240.00,62.00 L243.00,62.00 L246.00,62.00 L249.00,62.00 L252.00,62.00 L255.00,62.00 L258.00,62.00 L261.00,62.00 L264.00,62.00 L267.00,62.00 L270.00,62.00 L273.00,62.00 L276.00,62.00 L279.00,62.00 L282.00,62.00 L285.00,62.00 L288.00,62.00 L291.00,62.00 L294.00,62.00 L297.00,62.00 L300.00,62.00 L303.00,62.00 L306.00,62.00 L309.00,62.00 L312.00,62.00 L315.00,62.00 L318.00,62.00 L321.00,62.00 L324.00,62.00 L327.00,62.00 L330.00,62.00 L333.00,62.00 L336.00,62.00 L339.00,62.00 L342.00,62.00 L345.00,62.00 L348.00,62.00 L351.00,62.00 L354.00,62.00 L357.00,62.00 L360.00,62.00 L363.00,62.00"></path>
+<text class="tk halo" x="102.0" y="66.4" text-anchor="start">4000</text>
+<circle class="pt s1" cx="81.00" cy="64.76" r="4"><title>4000 décisions · seuil 5 % · puissance 99%</title></circle>
+<line class="lvl strong" x1="81.0" y1="62.0" x2="81.0" y2="256.0"/>
+<text class="dl halo" x="88.0" y="247.4" text-anchor="start">seuil retenu : 5 %</text>
+<text class="hdr" x="424.0" y="50.0">Au seuil de 5 %</text>
+<line class="hsep" x1="424.0" y1="56.0" x2="624.0" y2="56.0"/>
+<line class="gl" x1="424.0" y1="256.0" x2="624.0" y2="256.0"/>
+<text class="tk" x="629.0" y="259.0">0%</text>
+<line class="gl" x1="424.0" y1="159.0" x2="624.0" y2="159.0"/>
+<text class="tk" x="629.0" y="162.0">50%</text>
+<line class="gl" x1="424.0" y1="100.8" x2="624.0" y2="100.8"/>
+<text class="tk" x="629.0" y="103.8">80%</text>
+<line class="gl" x1="424.0" y1="62.0" x2="624.0" y2="62.0"/>
+<text class="tk" x="629.0" y="65.0">100%</text>
+<text class="tk" x="454.5" y="269.0" text-anchor="middle">1000</text>
+<text class="tk" x="522.3" y="269.0" text-anchor="middle">3000</text>
+<text class="tk" x="590.1" y="269.0" text-anchor="middle">5000</text>
+<line class="ba" x1="424.0" y1="256.0" x2="624.0" y2="256.0"/>
+<text class="ax" x="524.0" y="284.0" text-anchor="middle">décisions</text>
+<path class="ln s1" d="M424.68,235.19 L426.03,230.92 L427.39,226.69 L428.75,222.48 L430.10,218.29 L431.46,214.11 L432.81,209.95 L434.17,205.82 L435.53,201.72 L436.88,197.65 L438.24,193.63 L439.59,189.65 L440.95,185.72 L442.31,181.86 L443.66,178.05 L445.02,174.30 L446.37,170.63 L447.73,167.02 L449.08,163.48 L450.44,160.02 L451.80,156.63 L453.15,153.33 L454.51,150.09 L455.86,146.94 L457.22,143.87 L458.58,140.88 L459.93,137.97 L461.29,135.14 L462.64,132.38 L464.00,129.71 L465.36,127.12 L466.71,124.60 L468.07,122.16 L469.42,119.80 L470.78,117.51 L472.14,115.29 L473.49,113.15 L474.85,111.08 L476.20,109.08 L477.56,107.15 L478.92,105.28 L480.27,103.48 L481.63,101.75 L482.98,100.07 L484.34,98.46 L485.69,96.91 L487.05,95.41 L488.41,93.97 L489.76,92.58 L491.12,91.25 L492.47,89.97 L493.83,88.74 L495.19,87.56 L496.54,86.42 L497.90,85.33 L499.25,84.28 L500.61,83.28 L501.97,82.32 L503.32,81.39 L504.68,80.51 L506.03,79.66 L507.39,78.85 L508.75,78.07 L510.10,77.32 L511.46,76.61 L512.81,75.92 L514.17,75.27 L515.53,74.65 L516.88,74.05 L518.24,73.48 L519.59,72.93 L520.95,72.41 L522.31,71.91 L523.66,71.43 L525.02,70.98 L526.37,70.54 L527.73,70.13 L529.08,69.73 L530.44,69.35 L531.80,68.99 L533.15,68.65 L534.51,68.32 L535.86,68.01 L537.22,67.71 L538.58,67.43 L539.93,67.16 L541.29,66.90 L542.64,66.65 L544.00,66.42 L545.36,66.20 L546.71,65.98 L548.07,65.78 L549.42,65.59 L550.78,65.41 L552.14,65.23 L553.49,65.07 L554.85,64.91 L556.20,64.76 L557.56,64.62 L558.92,64.49 L560.27,64.36 L561.63,64.23 L562.98,64.12 L564.34,64.01 L565.69,63.90 L567.05,63.80 L568.41,63.71 L569.76,63.62 L571.12,63.53 L572.47,63.45 L573.83,63.38 L575.19,63.30 L576.54,63.24 L577.90,63.17 L579.25,63.11 L580.61,63.05 L581.97,62.99 L583.32,62.94 L584.68,62.89 L586.03,62.84 L587.39,62.80 L588.75,62.75 L590.10,62.71 L591.46,62.67 L592.81,62.64 L594.17,62.60 L595.53,62.57 L596.88,62.54 L598.24,62.51 L599.59,62.48 L600.95,62.46 L602.31,62.43 L603.66,62.41 L605.02,62.39 L606.37,62.36 L607.73,62.34 L609.08,62.33 L610.44,62.31 L611.80,62.29 L613.15,62.27 L614.51,62.26 L615.86,62.24 L617.22,62.23 L618.58,62.22 L619.93,62.21 L621.29,62.19 L622.64,62.18 L624.00,62.17"></path>
+<line class="lvl strong" x1="424.0" y1="100.8" x2="624.0" y2="100.8"/>
+<rect class="tag" x="426.0" y="93.8" width="34.0" height="14" rx="2"/>
+<text class="tagtx" x="443.0" y="104.3" text-anchor="middle">80 %</text>
+
+</svg></div>
+      <p class="note">Cadre de gauche : chaque courbe est une taille d’échantillon. Cadre de droite : puissance au seuil retenu, en fonction du nombre de décisions.</p>
+    </figure>
+
   <div class="part">
-    <span class="lab">Septième partie</span>
+    <span class="lab">Huitième partie</span>
     <h2>Comparaison des deux régimes de preuve</h2>
     <p>Le résultat qui justifie ce document&nbsp;: l’opérateur discrétionnaire est dans une position épistémique meilleure que celui qui règle une géométrie.</p>
   </div>
@@ -2107,7 +2464,7 @@
   <p>Le document&nbsp;n<sup>o</sup>&nbsp;1 de cette série situe son mur à plusieurs dizaines de milliers de trades. La comparaison ci-dessous rapporte les deux exigences sur une base commune.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 6</span> — Pourquoi le jugement est prouvable là où la géométrie ne l’est pas.</figcaption>
+      <figcaption><span class="lab">Table 7</span> — Pourquoi le jugement est prouvable là où la géométrie ne l’est pas.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Objet du test</th><th>Sharpe revendiqué</th><th>Configurations</th><th>Seuil déflaté</th><th>Décisions requises</th><th>à 2 par jour</th></tr></thead>
@@ -2140,7 +2497,7 @@
   <p>Enfin, <strong>les deux issues du protocole sont informatives</strong>. Un opérateur qui, au terme de la période préenregistrée, ne bat pas la loi mécanique dispose d’une mesure de l’apport net de son jugement sur la règle scellée, laquelle reste exécutable.</p>
 
   <div class="part">
-    <span class="lab">Huitième partie</span>
+    <span class="lab">Neuvième partie</span>
     <h2>Décomposer l’avantage</h2>
     <p>Savoir qu’un opérateur bat ses lois nulles ne dit pas <em>par où</em>. Or c’est cette question qui décide de ce qu’il faut garder.</p>
   </div>
@@ -2163,7 +2520,7 @@
   <p>Une méthode d’attribution qu’on ne sait pas mettre en défaut ne mesure rien. Le contrôle appliqué ici est direct&nbsp;: on plante la compétence dans un levier connu, et la décomposition doit l’y désigner sans la répartir sur les autres.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 7</span> — La décomposition de Shapley retrouve-t-elle la compétence là où elle a été plantée ?</figcaption>
+      <figcaption><span class="lab">Table 8</span> — La décomposition de Shapley retrouve-t-elle la compétence là où elle a été plantée ?</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Compétence plantée dans</th><th>Avantage total</th><th>entrée</th><th>moment</th><th>taille</th><th>sortie</th><th>Levier désigné</th></tr></thead>
@@ -2178,7 +2535,54 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 9</span> — La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. La barre franche est le levier désigné&nbsp;; il est chaque fois celui où la compétence a été plantée.</figcaption>
+      <figcaption><span class="lab">Figure 13</span> — La décomposition de Shapley en cascade, d’un opérateur dont la compétence est plantée dans l’entrée et dans la taille. Les deux colonnes pleines sont des niveaux — l’espérance de la règle scellée et celle de l’opérateur — et les marches intermédiaires sont les parts des quatre leviers. Leur somme est exacte par construction.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 342" role="img" aria-label="Cascade de la valeur de Shapley, de la règle scellée à l espérance réalisée par l opérateur" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ATTRIBUTION</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">De la règle scellée à l’opérateur</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">valeur de Shapley</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="gl" x1="78.0" y1="242.0" x2="620.0" y2="242.0"/>
+<text class="tk" x="73.0" y="245.0" text-anchor="end">-0,06</text>
+<line class="gl" x1="78.0" y1="210.8" x2="620.0" y2="210.8"/>
+<text class="tk" x="73.0" y="213.8" text-anchor="end">0,00</text>
+<line class="gl" x1="78.0" y1="138.4" x2="620.0" y2="138.4"/>
+<text class="tk" x="73.0" y="141.4" text-anchor="end">0,14</text>
+<line class="gl" x1="78.0" y1="66.0" x2="620.0" y2="66.0"/>
+<text class="tk" x="73.0" y="69.0" text-anchor="end">0,27</text>
+<line class="ba" x1="78.0" y1="210.8" x2="620.0" y2="210.8"/>
+<rect class="s2f" x="112.45" y="210.79" width="36.00" height="20.68"><title>règle scellée — -0.0393 R par setup éligible</title></rect>
+<text class="dl halo" x="130.5" y="202.8" text-anchor="middle">-0,039</text>
+<text class="tk" x="130.5" y="258.0" text-anchor="middle">règle scellée</text>
+<rect class="s1f" x="199.87" y="128.67" width="36.00" height="102.80"><title>entree — +0.1952 R (+70% du total)</title></rect>
+<text class="dl halo" x="217.9" y="120.7" text-anchor="middle">+0,195</text>
+<line class="gl" x1="188.1" y1="231.5" x2="160.2" y2="231.5"/>
+<text class="tk" x="217.9" y="258.0" text-anchor="middle">entree</text>
+<rect class="s1f" x="287.29" y="115.58" width="36.00" height="13.09"><title>moment — +0.0249 R (+9% du total)</title></rect>
+<text class="dl halo" x="305.3" y="107.6" text-anchor="middle">+0,025</text>
+<line class="gl" x1="275.6" y1="128.7" x2="247.6" y2="128.7"/>
+<text class="tk" x="305.3" y="258.0" text-anchor="middle">moment</text>
+<rect class="s1f" x="374.71" y="83.78" width="36.00" height="31.80"><title>taille — +0.0604 R (+22% du total)</title></rect>
+<text class="dl halo" x="392.7" y="75.8" text-anchor="middle">+0,060</text>
+<line class="gl" x1="363.0" y1="115.6" x2="335.0" y2="115.6"/>
+<text class="tk" x="392.7" y="258.0" text-anchor="middle">taille</text>
+<rect class="negf" x="462.13" y="83.78" width="36.00" height="0.40"><title>sortie — +0.0000 R (+0% du total)</title></rect>
+<line class="gl" x1="450.4" y1="83.8" x2="422.4" y2="83.8"/>
+<text class="tk" x="480.1" y="258.0" text-anchor="middle">sortie</text>
+<rect class="s2f" x="549.55" y="83.78" width="36.00" height="127.01"><title>opérateur — +0.2412 R par setup éligible</title></rect>
+<text class="dl halo" x="567.5" y="75.8" text-anchor="middle">0,241</text>
+<text class="tk" x="567.5" y="258.0" text-anchor="middle">opérateur</text>
+<text class="ax" x="20" y="154.0" transform="rotate(-90 20 154.0)" text-anchor="middle">espérance par setup éligible</text>
+<rect class="s2f" x="78.0" y="312.5" width="11" height="11" rx="2"/>
+<text class="lg" x="95.0" y="321.5">niveau atteint</text>
+<rect class="s1f" x="256.0" y="312.5" width="11" height="11" rx="2"/>
+<text class="lg" x="273.0" y="321.5">part d’un levier</text>
+
+</svg></div>
+      <p class="note">Les deux colonnes pleines sont des niveaux ; les marches intermédiaires sont des contributions. Leur somme est exacte par construction.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 14</span> — La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. La barre franche est le levier désigné&nbsp;; il est chaque fois celui où la compétence a été plantée.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 292" role="img" aria-label="Décomposition de Shapley de l avantage sur les quatre leviers, pour trois emplacements de la compétence plantée" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">ATTRIBUTION</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Part de chaque levier selon l’emplacement de la compétence</text>
@@ -2239,7 +2643,7 @@
   <p>Le critère de négligeabilité retenu est délibérément grossier — une part inférieure au dixième du total. Un critère fin donnerait l’illusion qu’on sait trancher là où l’échantillon ne le permet pas, et cette illusion est exactement ce que le reste du document s’emploie à dissiper.</p>
 
   <div class="part">
-    <span class="lab">Neuvième partie</span>
+    <span class="lab">Dixième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n’est pas déclaré avant ne prouve rien après.</p>
   </div>
@@ -2262,7 +2666,7 @@
 
   <p><strong>Les chiffres rapportés sont des propriétés de l’appareil de mesure</strong>, établies sur journaux synthétiques. Ils ne constituent pas la mesure d’une compétence observée.</p>
 
-  <p><strong>Le levier de chronométrage n’est pas séparable du levier d’entrée</strong>, comme la section&nbsp;<a href="#s-validation">26</a> l’établit. Sa part inclut une composante d’interaction que le contrefactuel retenu n’isole pas.</p>
+  <p><strong>Le levier de chronométrage n’est pas séparable du levier d’entrée</strong>, comme la section&nbsp;<a href="#s-validation">29</a> l’établit. Sa part inclut une composante d’interaction que le contrefactuel retenu n’isole pas.</p>
 
   <p><strong>L’analyse suppose une compétence constante sur la période.</strong> Sous compétence variable — apprentissage, fatigue, changement de régime —, l’estimateur agrège des états distincts. Les méthodes de mesure à compétence variable dans le temps existent dans la littérature citée&nbsp;; elles ne sont pas mobilisées ici.</p>
 
@@ -2276,7 +2680,7 @@
 
   <p>L’exigence d’échantillon se chiffre&nbsp;: 555&nbsp;décisions, soit 1,1&nbsp;an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.</p>
 
-  <p>L’ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">7</a>, dont les champs antérieurs à l’issue ne sont pas reconstituables après coup. C’est la condition d’application du dispositif.</p>
+  <p>L’ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">10</a>, dont les champs antérieurs à l’issue ne sont pas reconstituables après coup. C’est la condition d’application du dispositif.</p>
 
   <hr class="rule">
 

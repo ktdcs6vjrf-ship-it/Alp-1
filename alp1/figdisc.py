@@ -25,7 +25,7 @@ from functools import lru_cache
 
 from .costs import deflated_threshold_sharpe
 from .entropy import trades_for_information
-from .figterm import Board, Panel, _esc, _num
+from .figterm import Board, Panel, _esc, _num, _signed
 from .journal import LEVERS, synthesise
 from .operator import evaluate
 
@@ -817,3 +817,335 @@ def fig_distribution() -> str:
 
 FIGURES["disccloud"] = fig_cloud
 FIGURES["discdist"] = fig_distribution
+
+
+# ---------------------------------------------------------------------------
+# Figure 10 — l'estimation glissante et sa bande
+# ---------------------------------------------------------------------------
+
+
+def fig_rolling() -> str:
+    """L'espérance mesurée sur fenêtre glissante, avec son intervalle.
+
+    L'estimation sur fenêtre fixe ne converge pas : elle oscille, et
+    l'amplitude de son oscillation est donnée par l'intervalle. La figure
+    compare deux opérateurs sur la même fenêtre, et montre à quelle taille de
+    fenêtre leurs intervalles cessent de se recouvrir.
+    """
+    #: Fenêtre et longueur du journal. Une fenêtre proche du nombre total de
+    #: décisions ne laisse qu'une poignée de positions : il faut un journal
+    #: nettement plus long que la fenêtre pour que la courbe existe.
+    FEN, SEANCES = 150, 1400
+
+    def serie(skill: float) -> list[tuple[int, float, float]]:
+        j = synthesise(skill=skill, n_sessions=SEANCES)
+        r = j.returns
+        out = []
+        for fin in range(FEN, len(r), 4):
+            f = r[fin - FEN:fin]
+            m = sum(f) / FEN
+            sd = math.sqrt(sum((x - m) ** 2 for x in f) / (FEN - 1))
+            out.append((fin, m, 1.96 * sd / math.sqrt(FEN)))
+        return out
+
+    sans, avec = serie(0.0), serie(0.55)
+    tout = sans + avec
+    lo = min(m - e for _, m, e in tout)
+    hi = max(m + e for _, m, e in tout)
+
+    b = _plate(320, "Fenêtre glissante",
+               f"Espérance mesurée sur {FEN} décisions",
+               "intervalle à 95 %")
+    p = Panel(b, 66, 62, W - 118, 194)
+    p.domain(sans[0][0], max(x for x, _, _ in tout), lo, hi)
+    p.grid_y([lo, (lo + hi) / 2.0, hi], lambda v: _num(v, 2))
+    dernier = max(x for x, _, _ in tout)
+    p.grid_x([FEN, dernier // 3, 2 * dernier // 3, dernier],
+             lambda v: f"{v:g}", label="décision courante")
+
+    for pts, cls, lab in ((sans, "s3", "sans"), (avec, "s1", "avec")):
+        haut = [(x, m + e) for x, m, e in pts]
+        bas = [(x, m - e) for x, m, e in pts]
+        d = " ".join(("M" if i == 0 else "L") + f"{p.sx(x):.1f},{p.sy(y):.1f}"
+                     for i, (x, y) in enumerate(haut))
+        d += " " + " ".join(f"L{p.sx(x):.1f},{p.sy(y):.1f}"
+                            for x, y in reversed(bas))
+        b.add(f'<path class="band-mc" d="{d} Z"/>')
+        p.path([(x, m) for x, m, _ in pts], cls)
+        p.label(pts[-1][0], pts[-1][1], lab, dx=7, cls="tk halo")
+
+    p.hline(0.0, "lvl strong")
+    p.tag(0.0, "espérance nulle", side="left")
+    _source(b, "Abscisse : rang de la décision courante. Ordonnée : moyenne des "
+               f"{FEN} décisions précédentes. La bande est l'intervalle à 95 pour "
+               "cent de cette moyenne.")
+    return b.render(
+        "Espérance mesurée sur fenêtre glissante et son intervalle de "
+        "confiance, pour deux opérateurs")
+
+
+# ---------------------------------------------------------------------------
+# Figure 11 — la carte de puissance
+# ---------------------------------------------------------------------------
+
+
+def _power(n: float, bits: float) -> float:
+    """Puissance du test G à seuil 5 %, par approximation normale."""
+    besoin = trades_for_information(max(bits, 1e-9))
+    if besoin <= 0.0 or not math.isfinite(besoin):
+        return 0.0
+    lam = 1.96 * math.sqrt(max(n, 1.0) / besoin)
+    return min(1.0, max(0.0, _norm_cdf(lam - 1.96)))
+
+
+def fig_powermap() -> str:
+    """La puissance en carte plane plutôt qu'en relief.
+
+    La surface isométrique donne la forme ; elle ne permet pas de lire une
+    valeur. La carte plane le permet : chaque case porte sa puissance, et la
+    ligne de niveau à 80 pour cent sépare le domaine où la détection est
+    acquise de celui où elle ne l'est pas.
+    """
+    ns = [125, 250, 500, 1000, 2000, 4000]
+    bits_grid = [0.0025, 0.005, 0.010, 0.020, 0.040, 0.080]
+
+    b = _plate(340, "Puissance", "Carte de puissance à seuil 5 %",
+               "test G informationnel")
+    gx, gy = 92.0, 66.0
+    cw = (W - gx - 108) / len(ns)
+    ch = 172.0 / len(bits_grid)
+
+    for j, bits in enumerate(reversed(bits_grid)):
+        y = gy + j * ch
+        b.add(f'<text class="tk" x="{gx - 8:.1f}" y="{y + ch / 2 + 3.5:.1f}" '
+              f'text-anchor="end">{_esc(_num(bits, 4))}</text>')
+        for i, n in enumerate(ns):
+            pw = _power(n, bits)
+            x = gx + i * cw
+            b.add(f'<rect class="{_ramp(pw)}" x="{x + 1:.1f}" y="{y + 1:.1f}" '
+                  f'width="{cw - 2:.1f}" height="{ch - 2:.1f}">'
+                  f'<title>{n} décisions · {_esc(_num(bits, 4))} bit · '
+                  f'puissance {pw:.0%}</title></rect>')
+            b.add(f'<text class="cell {"cl-hi" if pw > 0.55 else "cl-lo"}" '
+                  f'x="{x + cw / 2:.1f}" y="{y + ch / 2 + 3.5:.1f}" '
+                  f'text-anchor="middle">{pw * 100:.0f}</text>')
+    for i, n in enumerate(ns):
+        b.add(f'<text class="tk" x="{gx + i * cw + cw / 2:.1f}" '
+              f'y="{gy + len(bits_grid) * ch + 15:.1f}" text-anchor="middle">'
+              f'{n}</text>')
+    b.add(f'<text class="ax" x="{gx + (W - gx - 108) / 2:.1f}" '
+          f'y="{gy + len(bits_grid) * ch + 32:.1f}" text-anchor="middle">'
+          f'décisions enregistrées</text>')
+    b.add(f'<text class="ax" x="20" y="{gy + 86:.1f}" '
+          f'transform="rotate(-90 20 {gy + 86:.1f})" text-anchor="middle">'
+          f'bits par décision</text>')
+
+    _scale_legend(b, gx, 296, "0 %", "100 %", "puissance de détection")
+    _source(b, "Chaque case porte sa puissance en pour cent. La détection est "
+               "acquise au sens usuel à partir de 80.")
+    return b.render(
+        "Carte de la puissance de détection par nombre de décisions et "
+        "information par décision")
+
+
+# ---------------------------------------------------------------------------
+# Figure 12 — la caractéristique opérationnelle
+# ---------------------------------------------------------------------------
+
+
+def fig_roc() -> str:
+    """Ce que coûte un seuil plus permissif, en faux positifs.
+
+    Le seuil de 5 pour cent retenu partout ailleurs n'est qu'un point de
+    cette courbe. La caractéristique donne, pour chaque taux de fausse
+    déclaration accepté, le taux de détection correspondant, et elle le donne
+    à plusieurs tailles d'échantillon.
+    """
+    def norm_ppf(q: float) -> float:
+        from .costs import _norm_ppf
+        return _norm_ppf(q)
+
+    b = _plate(322, "Caractéristique",
+               "Détection contre fausse déclaration",
+               "compétence de 0,005 bit par décision")
+    p = Panel(b, 66, 62, 300, 194)
+    p.domain(0.0, 1.0, 0.0, 1.0)
+    p.grid_y([0, 0.25, 0.5, 0.75, 1.0], lambda v: f"{v:.0%}")
+    p.grid_x([0, 0.25, 0.5, 0.75, 1.0], lambda v: f"{v:.0%}",
+             label="taux de fausse déclaration")
+
+    # La diagonale : un appareil sans pouvoir de séparation.
+    p.path([(0.0, 0.0), (1.0, 1.0)], "s3", dash="3 3")
+    p.label(0.60, 0.60, "aucune séparation", dx=4, dy=-5, cls="tk halo")
+
+    besoin = trades_for_information(0.005)
+    for n, cls in ((250, "hm3"), (1000, "hm5"), (4000, "hm7")):
+        decalage = 1.96 * math.sqrt(n / besoin)
+        pts = []
+        for k in range(1, 100):
+            alpha = k / 100.0
+            t = norm_ppf(1.0 - alpha)
+            pts.append((alpha, min(1.0, max(0.0, _norm_cdf(decalage - t)))))
+        p.path(pts, cls)
+        # Étiquette au coude de la courbe, où les trois se séparent.
+        coude = pts[9]
+        p.label(coude[0], coude[1], f"{n}", dx=6, dy=4, cls="tk halo")
+        # Le point de fonctionnement retenu par le protocole.
+        pw = _power(n, 0.005)
+        p.dot(0.05, pw, "s1", f"{n} décisions · seuil 5 % · puissance {pw:.0%}")
+    p.vline(0.05, "lvl strong")
+    p.label(0.05, 0.06, "seuil retenu : 5 %", dx=7)
+
+    # Le second cadre : puissance au seuil retenu, en fonction de N.
+    q = Panel(b, 424, 62, W - 460, 194, title="Au seuil de 5 %")
+    q.domain(100, 6000, 0.0, 1.0)
+    q.grid_y([0, 0.5, 0.8, 1.0], lambda v: f"{v:.0%}", side="right")
+    q.grid_x([1000, 3000, 5000], lambda v: f"{v:g}", label="décisions")
+    q.path([(n, _power(n, 0.005)) for n in range(120, 6001, 40)], "s1")
+    q.hline(0.80, "lvl strong")
+    q.tag(0.80, "80 %", side="left")
+
+    _source(b, "Cadre de gauche : chaque courbe est une taille d'échantillon. "
+               "Cadre de droite : puissance au seuil retenu, en fonction du "
+               "nombre de décisions.")
+    return b.render(
+        "Caractéristique opérationnelle du test : taux de détection contre "
+        "taux de fausse déclaration, à trois tailles d échantillon")
+
+
+# ---------------------------------------------------------------------------
+# Figure 13 — la cascade de Shapley
+# ---------------------------------------------------------------------------
+
+
+def fig_waterfall() -> str:
+    """De la règle scellée à l'opérateur, levier par levier.
+
+    Les parts de Shapley somment exactement à l'écart total. La cascade rend
+    cette propriété visible : chaque marche est une part, et la dernière
+    colonne retombe sur l'espérance réalisée.
+    """
+    from .attribution import decompose
+
+    d = decompose(synthesise(skill=0.45, size_skill=0.30,
+                             n_sessions=SESSIONS))
+    b = _plate(342, "Attribution", "De la règle scellée à l'opérateur",
+               "valeur de Shapley")
+    p = Panel(b, 78, 66, W - 118, 176)
+
+    etapes = [("règle scellée", d.baseline, None)]
+    courant = d.baseline
+    for s in d.shares:
+        etapes.append((s.key, s.value, courant))
+        courant += s.value
+    etapes.append(("opérateur", courant, None))
+
+    lo = min(0.0, d.baseline) - 0.02
+    hi = courant * 1.14
+    p.domain(-0.6, len(etapes) - 0.4, lo, hi)
+    p.grid_y([lo, 0.0, hi / 2, hi], lambda v: _num(v, 2))
+    p.hline(0.0, "ba")
+
+    for i, (nom, val, base) in enumerate(etapes):
+        if base is None:                      # colonne pleine : un total
+            p.vbar(i, 0.0, val, 36.0, "s2f",
+                   f"{nom} — {val:+.4f} R par setup éligible")
+            p.label(i, max(val, 0.0), _num(val, 3), dx=0, dy=-8,
+                    anchor="middle")
+        else:                                  # marche : une contribution
+            haut, bas = base + val, base
+            cls = "s1f" if val > 1e-9 else "negf"
+            p.vbar(i, bas, haut, 36.0, cls,
+                   f"{nom} — {val:+.4f} R ({val / d.total:+.0%} du total)")
+            if abs(val) > 0.004:
+                p.label(i, max(haut, bas), _signed(val, 3), dx=0,
+                        dy=-8, anchor="middle")
+            # Le trait de liaison, qui rend la cascade lisible.
+            b.add(f'<line class="gl" x1="{p.sx(i - 0.34):.1f}" '
+                  f'y1="{p.sy(bas):.1f}" x2="{p.sx(i - 0.66):.1f}" '
+                  f'y2="{p.sy(bas):.1f}"/>')
+        b.add(f'<text class="tk" x="{p.sx(i):.1f}" '
+              f'y="{p.y + p.h + 16:.1f}" text-anchor="middle">'
+              f'{_esc(nom)}</text>')
+
+    b.add(f'<text class="ax" x="20" y="{p.y + 88:.1f}" '
+          f'transform="rotate(-90 20 {p.y + 88:.1f})" text-anchor="middle">'
+          f'espérance par setup éligible</text>')
+    b.legend(78, 318, [("s2f", "niveau atteint"),
+                       ("s1f", "part d'un levier")], step=178)
+    _source(b, "Les deux colonnes pleines sont des niveaux ; les marches "
+               "intermédiaires sont des contributions. Leur somme est exacte "
+               "par construction.")
+    return b.render(
+        "Cascade de la valeur de Shapley, de la règle scellée à l espérance "
+        "réalisée par l opérateur")
+
+
+FIGURES["discrolling"] = fig_rolling
+FIGURES["discpowermap"] = fig_powermap
+FIGURES["discroc"] = fig_roc
+FIGURES["discwaterfall"] = fig_waterfall
+
+
+# ---------------------------------------------------------------------------
+# Figure 14 — les sept couches et les quatre leviers
+# ---------------------------------------------------------------------------
+
+
+def fig_layers() -> str:
+    """Où chaque couche d'analyse intervient dans la décision.
+
+    La matrice ne dit pas ce qu'une couche vaut : elle dit à quel moment
+    l'opérateur la consulte. Un levier alimenté par plusieurs couches
+    concentre la charge de preuve ; un levier qu'aucune couche n'alimente est
+    exercé sans support déclaré.
+    """
+    from .report10 import COUCHES
+
+    leviers = [k for k, _ in LEVERS]
+    b = _plate(322, "Architecture",
+               "Quelle couche alimente quel levier",
+               f"{len(COUCHES)} couches, {len(leviers)} leviers")
+
+    gx, gy = 210.0, 74.0
+    cw = (W - gx - 20) / len(leviers)
+    ch = 152.0 / len(COUCHES)
+
+    for j, (nom, _, levier, _) in enumerate(COUCHES):
+        y = gy + j * ch
+        b.add(f'<text class="tk" x="{gx - 10:.1f}" y="{y + ch / 2 + 3.5:.1f}" '
+              f'text-anchor="end">{_esc(nom)}</text>')
+        for i, k in enumerate(leviers):
+            x = gx + i * cw
+            actif = k == levier
+            b.add(f'<rect class="{"s1f" if actif else "wash"}" '
+                  f'x="{x + 2:.1f}" y="{y + 2:.1f}" '
+                  f'width="{cw - 4:.1f}" height="{ch - 4:.1f}" rx="2">'
+                  f'<title>{_esc(nom)} — '
+                  f'{"alimente" if actif else "n a pas d effet sur"} '
+                  f'le levier « {k} »</title></rect>')
+
+    for i, k in enumerate(leviers):
+        n = sum(1 for c in COUCHES if c[2] == k)
+        x = gx + i * cw + cw / 2
+        b.add(f'<text class="tk" x="{x:.1f}" y="{gy - 22:.1f}" '
+              f'text-anchor="middle">{_esc(k)}</text>')
+        b.add(f'<text class="dl" x="{x:.1f}" y="{gy - 9:.1f}" '
+              f'text-anchor="middle">{n}</text>')
+
+    b.add(f'<line class="ba" x1="{gx:.1f}" y1="{gy - 5:.1f}" '
+          f'x2="{W - 20:.1f}" y2="{gy - 5:.1f}"/>')
+    b.add(f'<text class="ax" x="{gx - 10:.1f}" y="{gy - 9:.1f}" '
+          f'text-anchor="end">couches alimentant</text>')
+
+    b.legend(gx, 268, [("s1f", "la couche alimente le levier"),
+                       ("wash", "sans effet déclaré")], step=228)
+    _source(b, "Le chiffre au-dessus de chaque colonne est le nombre de couches "
+               "qui alimentent ce levier. La matrice situe les couches dans la "
+               "décision ; elle ne mesure pas leur apport.")
+    return b.render(
+        "Matrice des sept couches d analyse et des quatre leviers "
+        "discrétionnaires qu elles alimentent")
+
+
+FIGURES["disclayers"] = fig_layers

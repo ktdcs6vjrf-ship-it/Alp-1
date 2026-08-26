@@ -308,7 +308,54 @@ def table_fields() -> Table:
     )
 
 
-TABLES = (table_levers, table_nulls, table_calibration, table_attribution,
+# ---------------------------------------------------------------------------
+# Table 8 — les sept couches de la stratégie évaluée
+# ---------------------------------------------------------------------------
+
+#: Les sept couches de la pile d'origine, avec ce que chacune observe, le
+#: levier discrétionnaire qu'elle alimente, et sa loi nulle telle que le
+#: document nº 1 l'établit. La colonne « levier » est la lecture propre à ce
+#: document : elle dit où la couche intervient dans la décision, non ce
+#: qu'elle vaut.
+COUCHES: tuple[tuple[str, str, str, str], ...] = (
+    ("Théorie de Dow", "la succession des sommets et des creux journaliers",
+     "entree", "trois jours sur quatre déclenchent par hasard"),
+    ("Supports et résistances", "les niveaux touchés puis quittés",
+     "entree", "tout niveau touché deux fois se qualifie a posteriori"),
+    ("Profil de volume", "la densité d'échanges par niveau de prix",
+     "sortie", "densité d'occupation : le POC est le mode de la distribution"),
+    ("Bandes VWAP", "l'écart au prix moyen pondéré, en écarts-types",
+     "entree", "1,1 minute de séance au-delà de trois écarts-types"),
+    ("Exposition gamma", "la position des teneurs de marché en options",
+     "taille", "le signe du gamma contraint la variance, non la direction"),
+    ("Carnet d'ordres", "les tailles affichées et les exécutions agressives",
+     "moment", "recouvrement des comportements : aire sous la courbe plafonnée"),
+    ("Fibonacci et OTE", "les retracements d'une impulsion",
+     "moment", "taux de remplissage de 14 % à la borne 0,618"),
+)
+
+
+def table_layers() -> Table:
+    labels = dict(LEVERS)
+    rows = [[nom, observe, labels.get(levier, levier), loi]
+            for nom, observe, levier, loi in COUCHES]
+    return Table(
+        "layers",
+        "Les sept couches de la stratégie évaluée, ce que chacune observe, et "
+        "le levier discrétionnaire qu'elle alimente.",
+        ["Couche", "Ce qu'elle observe", "Levier alimenté",
+         "Loi nulle établie au document nº 1"],
+        rows,
+        wrap_cols=[0, 1, 3],
+        wide=True,
+        note="La colonne du levier situe la couche dans la décision : elle dit "
+             "à quel moment l'opérateur la consulte, non ce que la couche "
+             "apporte. Les lois nulles de la dernière colonne sont établies au "
+             "document nº 1 de cette série et reprises ici sans modification.",
+    )
+
+
+TABLES = (table_layers, table_levers, table_nulls, table_calibration, table_attribution,
           table_wall, table_versus, table_fields)
 
 
@@ -359,6 +406,11 @@ def values() -> dict[str, str]:
         "d_mur_sr15": num(_trades_for_threshold(0.15, budget), 0),
         "d_mur_geometrie": num(n_geo, 0),
         "d_sharpe_geometrie": num(SHARPE_GEOMETRIE, 4),
+
+        # La stratégie évaluée
+        "d_couches": num(len(COUCHES), 0),
+        "d_couches_entree": num(
+            sum(1 for c in COUCHES if c[2] == "entree"), 0),
 
         # Le nuage Monte-Carlo — cités par la légende de la figure, donc
         # produits ici plutôt qu'écrits à la main dans le gabarit.
