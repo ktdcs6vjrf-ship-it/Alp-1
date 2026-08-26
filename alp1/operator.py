@@ -64,6 +64,12 @@ class NullTest:
     draws: int
     applicable: bool = True
     note: str = ""
+    #: Un échantillon des tirages de la loi, sous-échantillonné pour rester
+    #: léger. Il permet de *montrer* la loi nulle plutôt que de la résumer :
+    #: une figure qui trace la distribution et y pose l'observé dit en une
+    #: image ce qu'un couple moyenne/quantile laisse à reconstituer. Vide
+    #: pour les lois dont l'adversaire est analytique.
+    sample: tuple[float, ...] = ()
 
     @property
     def z(self) -> float:
@@ -123,10 +129,14 @@ def _summarise(key: str, label: str, refutes: str, observed: float,
     1/601, et c'est la vérité.
     """
     hits = sum(1 for x in draw if x >= observed)
+    # Au-delà de quelques centaines de valeurs, l'histogramme ne change plus
+    # de forme ; on n'en garde donc qu'un sur `pas`.
+    pas = max(1, len(draw) // 400)
     return NullTest(
         key=key, label=label, refutes=refutes, observed=observed,
         null_mean=_mean(draw), null_sd=_sd(draw), q95=_quantile(draw, 0.95),
         p_value=(hits + 1) / (len(draw) + 1), draws=draws,
+        sample=tuple(draw[::pas]),
     )
 
 
@@ -339,11 +349,12 @@ def null_bootstrap(journal: Journal, draws: int = DRAWS,
     lo = _quantile(means, 0.025)
     # Ici l'observé est la borne basse, et le seuil est zéro : la loi nulle
     # n'est pas une distribution simulée mais la frontière économique.
+    pas = max(1, len(means) // 400)
     return NullTest("bootstrap", "Rééchantillonnage par blocs",
                     "que le résultat tienne à plus que quelques décisions",
                     lo, 0.0, _sd(means), 0.0,
                     sum(1 for m in means if m <= 0.0) / len(means),
-                    draws)
+                    draws, sample=tuple(means[::pas]))
 
 
 def _lag1(xs: list[float]) -> float:

@@ -748,49 +748,77 @@
 
   <h2 id="s-couches">Ce que chaque couche observe</h2>
 
-  <p>Les définitions qui suivent donnent, pour chaque couche, l'objet observé et la forme sous laquelle il entre dans la décision.</p>
+  <p>Les sept sections qui suivent décrivent chaque couche selon le même plan&nbsp;: l'objet observé, la grandeur produite, la loi nulle qui lui a été opposée au document&nbsp;n<sup>o</sup>&nbsp;1, et ce que cette loi laisse ou non subsister. Les figures sont celles des documents antérieurs, reprises sans modification.</p>
 
-  <div class="concept">
-    <h3>La théorie de Dow</h3>
-    <p class="plain">Une lecture de la tendance par la succession des sommets et des creux&nbsp;: des sommets croissants et des creux croissants définissent une phase haussière, la configuration inverse une phase baissière. La couche fournit un état de tendance à l'échelle journalière.</p>
-    <p class="formal">Prédicat binaire sur les extrêmes des <span class="v">n</span> séances précédentes. Sous un prix sans dérive, la configuration de continuation apparaît dans trois cas sur quatre.</p>
-  </div>
+  <h3>La théorie de Dow</h3>
 
-  <div class="concept">
-    <h3>Les supports et résistances</h3>
-    <p class="plain">Des niveaux de prix auxquels le marché a réagi par le passé, retenus comme susceptibles de provoquer une réaction à nouveau. La couche fournit une liste de niveaux et la distance du prix courant à chacun.</p>
-    <p class="formal">Ensemble de niveaux <span class="v">{L<sub>i</sub>}</span> extraits de l'historique. La loi nulle porte sur la sélection&nbsp;: tout niveau touché deux fois se qualifie a posteriori, ce qui impose de fixer les niveaux avant la séance pour que le test ait un sens.</p>
-  </div>
+  <p><strong>L'objet.</strong> La succession des sommets et des creux journaliers. Des sommets croissants accompagnés de creux croissants définissent une phase haussière&nbsp;; la configuration symétrique définit une phase baissière&nbsp;; toute autre combinaison est déclarée sans tendance. La couche produit donc un état à trois valeurs, mis à jour une fois par séance.</p>
 
-  <div class="concept">
-    <h3>Le profil de volume</h3>
-    <p class="plain">La répartition des échanges par niveau de prix sur une période. Le mode de cette répartition est le point de contrôle&nbsp;; les zones peu échangées sont les nœuds de faible volume. La couche fournit une carte de la densité d'échanges.</p>
-    <p class="formal">Densité d'occupation <span class="v">f</span>(<span class="v">p</span>). Sa lecture opératoire est que la volatilité locale varie comme l'inverse de la racine de la densité&nbsp;: un stop en pourcentage fixe n'est donc pas un risque fixe.</p>
-  </div>
+  <p><strong>Ce qu'elle produit dans la décision.</strong> Un filtre directionnel appliqué en amont&nbsp;: l'opérateur ne considère les entrées que dans le sens de l'état déclaré. La couche n'indique aucun niveau ni aucun instant.</p>
 
-  <div class="concept">
-    <h3>Les bandes VWAP</h3>
-    <p class="plain">Le prix moyen pondéré par les volumes depuis un point d'ancrage, entouré de bandes situées à un, deux et trois écarts-types pondérés. La couche fournit l'écart du prix courant à sa moyenne, exprimé en écarts-types.</p>
-    <p class="formal"><span class="v">z</span>(<span class="v">t</span>)&nbsp;=&nbsp;(<span class="v">p<sub>t</sub></span>&nbsp;−&nbsp;VWAP<sub><span class="v">t</span></sub>)&nbsp;/&nbsp;<span class="v">σ<sub>t</sub></span>. Sur un prix sans dérive, le temps passé au-delà de trois écarts-types vaut environ 1,1&nbsp;minute par séance.</p>
-  </div>
+  <p><strong>La loi nulle.</strong> Sur un prix sans dérive, la configuration de continuation apparaît environ trois jours sur quatre, et une mèche dominante un jour sur trois. Ces fréquences sont élevées&nbsp;: la question posée par le document&nbsp;n<sup>o</sup>&nbsp;1 n'est donc pas si le motif apparaît, mais si la dérive impliquée par sa présence dépasse le seuil que la friction impose.</p>
 
-  <div class="concept">
-    <h3>L'exposition gamma</h3>
-    <p class="plain">La position agrégée des teneurs de marché en options, qui détermine le sens de leur couverture. Une exposition négative les conduit à amplifier les mouvements, une exposition positive à les amortir. La couche fournit un régime, non une direction.</p>
-    <p class="formal">Somme pondérée des gammas par prix d'exercice. Le prédicat testable porte sur la <em>variance</em> conditionnelle au signe, non sur l'espérance&nbsp;: le signe du gamma contraint la dispersion et laisse la direction indéterminée.</p>
-  </div>
+  {{FIGURE:couche_dow|La fréquence des configurations de Dow sur un prix sans dérive, et la dérive qu'il faudrait pour que leur présence soit informative. Figure reprise du document&nbsp;n<sup>o</sup>&nbsp;1.}}
 
-  <div class="concept">
-    <h3>Le carnet d'ordres</h3>
-    <p class="plain">Les tailles affichées à l'achat et à la vente aux niveaux immédiatement adjacents, et les exécutions qui les consomment. La couche fournit une lecture de la pression instantanée, dont la durée de vie se compte en secondes.</p>
-    <p class="formal">Rapport de persistance de la liquidité. Sa capacité de séparation est bornée par le recouvrement des comportements&nbsp;; sa demi-vie est très inférieure à la durée d'exposition d'une position en séance.</p>
-  </div>
+  <h3>Les supports et résistances</h3>
 
-  <div class="concept">
-    <h3>Fibonacci et l'entrée optimale</h3>
-    <p class="plain">Une grille de retracements tracée sur une impulsion, dont la zone comprise entre 0,618 et 0,79 est retenue comme zone d'entrée préférentielle. La couche fournit un intervalle de prix conditionnel à une impulsion identifiée.</p>
-    <p class="formal">Niveaux <span class="v">p<sub>haut</sub></span>&nbsp;−&nbsp;<span class="v">r</span>(<span class="v">p<sub>haut</sub></span>&nbsp;−&nbsp;<span class="v">p<sub>bas</sub></span>) pour <span class="v">r</span> dans la grille. Le taux de remplissage à la borne 0,618 vaut 14&nbsp;% sur un prix sans dérive.</p>
-  </div>
+  <p><strong>L'objet.</strong> Des niveaux de prix auxquels le marché a réagi par le passé — extrêmes de séance, points de retournement, bornes d'un intervalle — retenus comme susceptibles de provoquer une réaction à nouveau.</p>
+
+  <p><strong>Ce qu'elle produit dans la décision.</strong> Une liste de niveaux et la distance du prix courant à chacun. Elle alimente le choix d'entrer, et sert accessoirement au placement du stop.</p>
+
+  <p><strong>La loi nulle.</strong> Elle porte sur la <em>sélection</em> plutôt que sur la réaction. Tout niveau touché deux fois se qualifie a posteriori comme support ou résistance, y compris sur un prix sans dérive&nbsp;: la méthode d'extraction garantit donc de trouver des niveaux, qu'il y ait quelque chose ou non. Le test n'a de sens que si les niveaux sont fixés <strong>avant</strong> la séance et comparés à des niveaux tirés au sort. C'est la seule des sept couches dont la loi nulle porte sur le protocole d'extraction et non sur le motif.</p>
+
+  <h3>Le profil de volume</h3>
+
+  <p><strong>L'objet.</strong> La répartition des quantités échangées par niveau de prix sur une période donnée. Le mode de cette répartition est le point de contrôle&nbsp;; l'intervalle qui contient environ 70&nbsp;pour cent des échanges est la zone de valeur&nbsp;; les niveaux peu échangés sont les nœuds de faible volume.</p>
+
+  <p><strong>Ce qu'elle produit dans la décision.</strong> Une carte de densité, utilisée pour placer le stop et pour anticiper la vitesse de traversée d'une zone.</p>
+
+  <p><strong>La loi nulle.</strong> Le profil est une densité d'occupation, et une densité d'occupation n'est pas une prévision&nbsp;: elle décrit où le prix a passé du temps, ce qui est mécaniquement lié à sa volatilité locale. Le document&nbsp;n<sup>o</sup>&nbsp;1 en tire un résultat opératoire indépendant de toute dérive&nbsp;: la volatilité locale varie comme l'inverse de la racine de la densité, donc <strong>un stop en pourcentage fixe n'est pas un risque fixe</strong>. La couche informe le dimensionnement du risque sans rien dire de la direction.</p>
+
+  {{FIGURE:couche_profil|Les niveaux du profil de volume et la vitesse de traversée qui leur est associée. Le point de contrôle est le mode de la distribution des échanges. Figure reprise du document&nbsp;n<sup>o</sup>&nbsp;1.}}
+
+  <h3>Les bandes VWAP</h3>
+
+  <p><strong>L'objet.</strong> Le prix moyen pondéré par les volumes depuis un point d'ancrage — l'ouverture de la séance, le plus souvent — entouré de bandes situées à un, deux et trois écarts-types pondérés.</p>
+
+  <p><strong>Ce qu'elle produit dans la décision.</strong> Un écart normalisé du prix courant à sa moyenne, exprimé en écarts-types. C'est le déclencheur principal de la stratégie scellée du document&nbsp;n<sup>o</sup>&nbsp;1, et la seule couche dont la loi nulle soit connue en forme fermée.</p>
+
+  <p><strong>La loi nulle.</strong> Sur un prix sans dérive, le temps passé au-delà de trois écarts-types vaut environ 1,1&nbsp;minute par séance de 390&nbsp;minutes. Le franchissement d'une bande lointaine est donc un événement rare par construction, ce qui le rend exploitable comme déclencheur&nbsp;: sa rareté est calculable, et l'espérance conditionnelle au franchissement peut être testée contre cette rareté.</p>
+
+  {{FIGURE:couche_vwap|Les bandes d'écart-type autour du prix moyen pondéré, et le temps passé au-delà de chacune sur un prix sans dérive. Figure reprise du document&nbsp;n<sup>o</sup>&nbsp;1.}}
+
+  <h3>L'exposition gamma</h3>
+
+  <p><strong>L'objet.</strong> La position agrégée des teneurs de marché en options, telle que la publication des positions ouvertes permet de l'estimer. Elle détermine le sens de leur couverture&nbsp;: une exposition négative les conduit à vendre en baisse et acheter en hausse, ce qui amplifie les mouvements&nbsp;; une exposition positive produit l'effet inverse.</p>
+
+  <p><strong>Ce qu'elle produit dans la décision.</strong> Un régime de volatilité attendu, et une liste de niveaux d'exercice où la couverture change de sens. Elle alimente le dimensionnement plutôt que l'entrée.</p>
+
+  <p><strong>La loi nulle.</strong> Le prédicat testable porte sur la <em>variance</em> conditionnelle au signe du gamma, non sur l'espérance. Le mécanisme de couverture contraint la dispersion et laisse la direction indéterminée&nbsp;: une exposition négative annonce des mouvements plus amples, pas des mouvements haussiers. C'est la couche dont la loi nulle est la plus nette, et le document&nbsp;n<sup>o</sup>&nbsp;1 la désigne comme la première à tester.</p>
+
+  {{FIGURE:couche_gamma|Les niveaux d'exposition gamma et le régime de volatilité associé au signe. La couche contraint la dispersion attendue, non la direction. Figure reprise du document&nbsp;n<sup>o</sup>&nbsp;1.}}
+
+  <h3>Le carnet d'ordres</h3>
+
+  <p><strong>L'objet.</strong> Les quantités affichées à l'achat et à la vente aux niveaux immédiatement adjacents au prix, et les exécutions qui les consomment. S'y ajoutent des grandeurs dérivées&nbsp;: l'absorption, le déséquilibre cumulé, la persistance des tailles affichées.</p>
+
+  <p><strong>Ce qu'elle produit dans la décision.</strong> Une lecture de la pression instantanée, qui alimente le choix du moment d'exécution à l'intérieur d'une fenêtre déjà retenue.</p>
+
+  <p><strong>La loi nulle.</strong> La capacité de séparation d'un indicateur de carnet est bornée par le recouvrement des comportements&nbsp;: une taille affichée sans intention d'exécution et une taille affichée avec intention produisent la même observation. Le document&nbsp;n<sup>o</sup>&nbsp;1 chiffre ce plafond et relève un second point, décisif pour l'usage&nbsp;: la demi-vie du signal se compte en secondes, alors que la durée d'exposition d'une position en séance se compte en heures. La couche relève donc de l'exécution, non de la sélection.</p>
+
+  {{FIGURE:couche_carnet|La carte de liquidité du carnet et la capacité de séparation qu'elle autorise. Figure reprise du document&nbsp;n<sup>o</sup>&nbsp;1.}}
+
+  {{FIGURE:couche_horizon|La demi-vie d'un signal de carnet comparée à la durée d'exposition d'une position en séance. L'écart d'ordre de grandeur situe la couche du côté de l'exécution. Figure reprise du document&nbsp;n<sup>o</sup>&nbsp;1.}}
+
+  <h3>Fibonacci et l'entrée optimale</h3>
+
+  <p><strong>L'objet.</strong> Une grille de retracements tracée sur une impulsion identifiée, aux proportions 0,382, 0,5, 0,618 et 0,79. L'intervalle compris entre 0,618 et 0,79 est retenu comme zone d'entrée préférentielle.</p>
+
+  <p><strong>Ce qu'elle produit dans la décision.</strong> Un intervalle de prix conditionnel à une impulsion, dans lequel l'opérateur place un ordre plutôt que d'entrer au marché. Elle alimente le moment, et non la direction.</p>
+
+  <p><strong>La loi nulle.</strong> Le taux de remplissage à la borne 0,618 vaut environ 14&nbsp;pour cent sur un prix sans dérive. Le document&nbsp;n<sup>o</sup>&nbsp;1 en tire une conséquence contre-intuitive et qui s'applique directement ici&nbsp;: attendre un retracement améliore l'espérance <em>si et seulement si</em> l'entrée au marché est perdante. Sur un signal dont l'espérance au marché est positive, l'attente coûte les remplissages manqués.</p>
+
+  {{FIGURE:couche_fib|Les niveaux de retracement et leur taux de remplissage sur un prix sans dérive. Figure reprise du document&nbsp;n<sup>o</sup>&nbsp;1.}}
 
   <h2 id="s-couches-leviers">Des couches aux leviers</h2>
 

@@ -392,64 +392,104 @@ def fig_plane() -> str:
 
 
 def fig_nulls() -> str:
-    """L'observé posé sur chacune de ses cinq lois nulles.
+    """Les cinq lois nulles, chacune montrée plutôt que résumée.
 
-    Une ligne par loi : l'étendue de la loi nulle jusqu'à son quantile à
-    95 %, et le trait de l'observé. Un avantage n'est déclaré que si les cinq
-    traits passent à droite de leur seuil ; la planche rend visible le fait
-    qu'un opérateur peut battre trois lois et rester réfuté.
+    Un cadre par loi. La forme grise est la distribution de la statistique
+    sous l'hypothèse que la loi décrit — ce que l'adversaire produit quand il
+    n'a aucune compétence. Le trait vertical est la valeur observée chez
+    l'opérateur, et le trait pointillé le quantile à 95 pour cent. Une loi est
+    battue quand l'observé passe à droite du pointillé.
+
+    Trois des cinq lois sont simulées et leur distribution est tracée à partir
+    de leurs tirages. Les deux autres ont un adversaire analytique&nbsp;: leur
+    densité est celle de la loi normale que le test emploie, et elle est
+    tracée comme telle plutôt que simulée pour l'occasion.
     """
-    #: Les intitulés complets des lois débordent la gouttière. On les abrège
-    #: ici, et la table du document porte l'énoncé entier — une figure n'a pas
-    #: à répéter ce qu'une table dit mieux.
     COURT = {"mecanique": "Règle scellée", "selection": "Sélection au sort",
              "timing": "Issues permutées", "abstention": "Indépendance",
              "bootstrap": "Bootstrap par blocs"}
 
-    cas = (("sans clairvoyance", 0.0), ("clairvoyance franche", 0.55))
-    b = _plate(392, "Lois nulles",
-               "Statistique observée et loi nulle, par test",
-               f"{SESSIONS} séances, seuil 95 %")
+    j = synthesise(skill=0.55, n_sessions=SESSIONS)
+    v = evaluate(j, draws=400)
 
-    gauche = 138.0
-    for idx, (titre, skill) in enumerate(cas):
-        j = synthesise(skill=skill, n_sessions=SESSIONS)
-        v = evaluate(j, draws=300)
-        y0 = 66 + idx * 150
-        p = Panel(b, gauche, y0, W - gauche, 112)
-        vals = [t.observed for t in v.tests] + [t.q95 for t in v.tests]
-        lo, hi = min(vals + [0.0]), max(vals + [0.0])
-        marge = 0.14 * (hi - lo) + 1e-6
-        p.domain(lo - marge, hi + marge, -0.65, len(v.tests) - 0.35)
+    b = _plate(404, "Lois nulles",
+               "Chaque statistique observée, posée sur sa loi",
+               f"{len(v.beaten)} loi(s) sur 5 battue(s)")
 
-        b.add(f'<text class="lg" x="0" y="{y0 - 6:.1f}">{_esc(titre)}</text>')
-        b.add(f'<text class="tk" x="{W:.1f}" y="{y0 - 6:.1f}" '
-              f'text-anchor="end">{len(v.beaten)} loi(s) sur 5 battue(s)</text>')
+    cols, larg, ecart = 3, 178.0, 42.0
+    for k, t in enumerate(v.tests):
+        col, lig = k % cols, k // cols
+        x0 = 20 + col * (larg + ecart)
+        y0 = 76 + lig * 152
 
-        p.grid_x([lo, (lo + hi) / 2.0, hi], lambda x: _num(x, 2))
-        p.vline(0.0, "zero")
+        # Domaine : la loi, l'observé et le seuil doivent tous tenir.
+        pts = list(t.sample) or [t.null_mean - 3 * t.null_sd,
+                                 t.null_mean + 3 * t.null_sd]
+        lo = min(min(pts), t.observed, t.q95)
+        hi = max(max(pts), t.observed, t.q95)
+        marge = 0.14 * (hi - lo) + 1e-9
+        lo, hi = lo - marge, hi + marge
 
-        for k, t in enumerate(v.tests):
-            row = len(v.tests) - 1 - k
-            p.hbar(row, t.null_mean, t.q95, 10.0, "wash",
-                   f"{t.label} — loi nulle jusqu'à {t.q95:+.4f}")
-            p.vbar(t.q95, row - 0.30, row + 0.30, 1.6, "negf",
-                   f"seuil 95 % : {t.q95:+.4f}")
-            p.vbar(t.observed, row - 0.32, row + 0.32, 3.6,
-                   "s1f" if t.beats else "wash",
-                   f"{t.label} — observé {t.observed:+.4f} · {t.reading}")
-            b.add(f'<text class="tk" x="{gauche - 12:.1f}" '
-                  f'y="{p.sy(row) + 3.5:.1f}" text-anchor="end">'
-                  f'{_esc(COURT.get(t.key, t.label))}</text>')
+        n_bins = 26
+        largeur = (hi - lo) / n_bins
+        bins = [0.0] * n_bins
+        if t.sample:
+            for val in t.sample:
+                bins[min(n_bins - 1, max(0, int((val - lo) / largeur)))] += 1.0
+        else:
+            # Adversaire analytique : on trace sa densité normale, mise à
+            # l'échelle du même cadre que les histogrammes voisins.
+            sd = t.null_sd or (hi - lo) / 6.0
+            for i in range(n_bins):
+                c = lo + (i + 0.5) * largeur
+                bins[i] = math.exp(-0.5 * ((c - t.null_mean) / sd) ** 2)
+        pic = max(bins) or 1.0
 
-    b.legend(gauche, 366, [("wash", "étendue de la loi nulle"),
-                           ("negf", "seuil 95 %"),
-                           ("s1f", "observé, loi battue")], step=160)
-    _source(b, "La statistique est l'espérance par décision, en unités de risque, "
-               "sauf pour l'abstention où elle est l'information mutuelle en bits.")
+        p = Panel(b, x0, y0, larg, 96, title=COURT.get(t.key, t.key))
+        p.domain(lo, hi, 0.0, pic * 1.18)
+        p.grid_x([t.null_mean, t.observed], lambda z: _num(z, 2))
+
+        if t.sample:
+            for i, c in enumerate(bins):
+                if c <= 0.0:
+                    continue
+                centre = lo + (i + 0.5) * largeur
+                p.vbar(centre, 0.0, c, (larg / n_bins) - 0.8,
+                       "barfill" if centre < t.q95 else "barfill inner",
+                       f"{_num(centre, 3)} — {int(c)} tirage(s)")
+        else:
+            # Aire sous la densité, échantillonnée finement : une loi étroite
+            # devant un domaine large reste visible en courbe là où des barres
+            # la réduiraient à un trait unique.
+            sd = t.null_sd or (hi - lo) / 6.0
+            fins = [(lo + k * (hi - lo) / 240.0,
+                     pic * math.exp(-0.5 * ((lo + k * (hi - lo) / 240.0
+                                             - t.null_mean) / sd) ** 2))
+                    for k in range(241)]
+            p.area(fins, 0.0, "barfill",
+                   f"densité analytique, écart-type {sd:.4f}")
+
+        p.vline(t.q95, "lvl")
+        p.vbar(t.observed, 0.0, pic * 1.10, 2.4,
+               "s1f" if t.beats else "negf",
+               f"observé {t.observed:+.4f} · {t.reading}")
+        # Une seule étiquette : le motif se répète d'un cadre à l'autre, et
+        # la répéter déborderait du dernier.
+        if k == 0:
+            p.label(t.observed, pic * 1.10, "observé", dx=5, dy=-1,
+                    cls="tk halo")
+        b.add(f'<text class="tk" x="{x0 + larg:.1f}" y="{y0 - 12:.1f}" '
+              f'text-anchor="end">{"battue" if t.beats else "non battue"}</text>')
+
+    b.legend(20, 372, [("barfill", "loi nulle"),
+                       ("s1f", "observé, loi battue"),
+                       ("negf", "observé, non battue")], step=196, kind="swatch")
+    _source(b, "Une loi est battue quand le trait de l'observé passe à droite du "
+               "seuil. Les deux dernières lois ont un adversaire analytique : "
+               "leur densité est tracée, non simulée.")
     return b.render(
-        "Cinq lois nulles et la statistique observée sur chacune, pour un "
-        "opérateur sans clairvoyance puis avec")
+        "Cinq lois nulles montrées comme distributions, avec la statistique "
+        "observée et le seuil à 95 pour cent posés sur chacune")
 
 
 # ---------------------------------------------------------------------------
@@ -1149,3 +1189,39 @@ def fig_layers() -> str:
 
 
 FIGURES["disclayers"] = fig_layers
+
+# ---------------------------------------------------------------------------
+# Les sept couches — figures reprises des documents antérieurs
+# ---------------------------------------------------------------------------
+
+# Ces figures existent déjà : elles ont été construites pour les documents
+# nº 1 et nº 2, où chaque couche est passée au crible de sa loi nulle. Les
+# refaire ici serait à la fois du travail perdu et une source de divergence —
+# deux figures du même objet finiraient par ne plus dire la même chose.
+#
+# Elles n'écrivent aucune couleur : elles posent des classes, et la feuille
+# du document décide. Reprises telles quelles, elles adoptent donc d'elles-
+# mêmes le jeu de jetons sombre de ce document.
+
+#: Les clés sont en minuscules et soulignés : c'est ce que le motif du
+#: gabarit accepte, et une clé capitalisée passerait simplement inaperçue.
+COUCHES_FIGURES = {
+    "couche_dow": "fig_dow_null",
+    "couche_profil": "fig_volume_profile",
+    "couche_vwap": "fig_vwap_bands",
+    "couche_gamma": "fig_gex_levels",
+    "couche_carnet": "fig_liquidity_map",
+    "couche_fib": "fig_fib_retracement",
+    "couche_horizon": "fig_signal_horizon",
+}
+
+
+def _couche(nom: str):
+    """Rend une figure de couche depuis `figterm`, sans la redéfinir."""
+    from . import figterm
+
+    return lambda: getattr(figterm, nom)()
+
+
+for _cle, _fn in COUCHES_FIGURES.items():
+    FIGURES[_cle] = _couche(_fn)
