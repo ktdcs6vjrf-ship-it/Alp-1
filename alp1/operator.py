@@ -13,7 +13,7 @@ Le tableau de correspondance est le suivant.
 |-----|--------------|--------------------------------------------|
 | A   | sélection au sort, même cadence | que le **choix** des setups porte de l'information |
 | B   | issues permutées dans la séance | que le **moment** porte de l'information |
-| C   | la règle scellée sur tout l'univers | que la discrétion ajoute quoi que ce soit à une règle bête |
+| C   | la règle scellée sur tout l'univers | que le jugement ajoute quoi que ce soit à une règle bête |
 | D   | indépendance décision/issue | que l'**abstention** soit informative |
 | E   | rééchantillonnage par blocs | que le résultat tienne à autre chose qu'à quelques décisions |
 
@@ -245,7 +245,7 @@ def null_mechanical(journal: Journal) -> NullTest:
     outcomes = [d.net_r for d in journal.decisions if d.net_r is not None]
     if journal.n_taken < 2 or len(outcomes) < 2:
         return NullTest("mecanique", "La règle scellée",
-                        "que la discrétion ajoute à la règle",
+                        "que le jugement ajoute à la règle",
                         0.0, 0.0, 0.0, 0.0, 1.0, 0,
                         applicable=False, note="échantillon insuffisant")
 
@@ -261,7 +261,7 @@ def null_mechanical(journal: Journal) -> NullTest:
     z = (observed - base) / se if se > 0.0 else 0.0
     p = 1.0 - _norm_cdf(z)
     return NullTest("mecanique", "La règle scellée",
-                    "que la discrétion ajoute à la règle",
+                    "que le jugement ajoute à la règle",
                     observed, base, se, q95, p, 0)
 
 

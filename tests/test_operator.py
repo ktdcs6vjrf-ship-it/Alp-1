@@ -99,7 +99,7 @@ class TestMonotonie(unittest.TestCase):
 
 
 class TestTaxeDeMultiplicite(unittest.TestCase):
-    """La discrétion se paie avant de rapporter."""
+    """Le jugement se paie avant de rapporter."""
 
     def test_seuil_croit_avec_les_leviers(self) -> None:
         """Chaque levier double la famille de stratégies, donc relève le

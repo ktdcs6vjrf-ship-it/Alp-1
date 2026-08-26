@@ -252,7 +252,7 @@ def table_versus() -> Table:
         ])
     return Table(
         "versus",
-        "Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas.",
+        "Pourquoi le jugement est prouvable là où la géométrie ne l'est pas.",
         ["Objet du test", "Sharpe revendiqué", "Configurations",
          "Seuil déflaté", "Décisions requises", "à 2 par jour"],
         rows,

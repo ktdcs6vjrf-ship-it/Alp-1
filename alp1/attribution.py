@@ -1,4 +1,4 @@
-"""Où loge l'avantage : la décomposition d'une discrétion en ses leviers.
+"""Où loge l'avantage : la décomposition d'un jugement en ses leviers.
 
 Un opérateur qui bat ses lois nulles a démontré quelque chose, mais pas
 encore quoi. Quatre leviers ont été actionnés — entrer ou s'abstenir, choisir

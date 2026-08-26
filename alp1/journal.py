@@ -1,4 +1,4 @@
-"""Le journal de décision — l'instrument qui rend une discrétion mesurable.
+"""Le journal de décision — l'instrument qui rend un jugement mesurable.
 
 Un opérateur discrétionnaire affirme que son avantage n'est pas codable. Pris
 au pied de la lettre, l'énoncé interdit toute évaluation : sans règle, pas de
@@ -35,7 +35,7 @@ sur un prix sans dérive. Ce choix n'est pas un détail de commodité : il pose
 la vérité de référence. Sous un prix sans dérive, tout sous-ensemble de
 setups choisi *sans clairvoyance* a pour espérance exactement `−c/L`, par le
 théorème d'arrêt optionnel. La seule façon de battre cette valeur est une
-information réelle sur l'issue. La discrétion simulée ici est donc paramétrée
+information réelle sur l'issue. Le jugement simulé ici est donc paramétré
 par cette information, et par rien d'autre.
 
 **La vérité plantée est une quantité d'information, en bits.** Le paramètre
@@ -157,7 +157,7 @@ class Journal:
     def budget(self) -> float:
         """Le nombre de configurations effectives : 2^k pour k leviers.
 
-        C'est la taxe de sélection que la discrétion doit financer avant de
+        C'est la taxe de sélection que le jugement doit financer avant de
         payer quoi que ce soit d'autre.
         """
         return 2.0 ** len(self.levers)
