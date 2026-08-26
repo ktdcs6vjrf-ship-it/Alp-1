@@ -1,4 +1,4 @@
-<title>Prouver un jugement</title>
+<title>Combien de décisions ?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -528,7 +528,7 @@
 
   <div class="titleblock">
     <div class="venue">Série de documents de travail ALP &nbsp;·&nbsp; n<sup>o</sup>&nbsp;3</div>
-    <h1>Prouver un jugement&nbsp;: lois nulles, taxe de multiplicité et mur d'échantillon pour un opérateur dont l'avantage n'est pas codable</h1>
+    <h1>Combien de décisions pour prouver un jugement&nbsp;? Lois nulles, taxe de multiplicité et mur d'échantillon chez l'opérateur discrétionnaire</h1>
     <p class="byline">Recherche ALP</p>
     <p class="affil">Évaluation de la décision discrétionnaire et théorie des tests multiples</p>
     <p class="dateline">Première version&nbsp;: août 2026 &nbsp;·&nbsp; Cette version&nbsp;: août 2026</p>
@@ -537,13 +537,15 @@
   <div class="abstract">
     <h2 class="unnumbered">Résumé</h2>
 
-    <p>Un opérateur discrétionnaire affirme que son avantage n'est pas codable&nbsp;: aucune règle écrite ne reproduirait ses décisions. Pris au pied de la lettre, l'énoncé s'auto-interdit. Sans règle, pas de rejeu&nbsp;; sans rejeu, pas de loi nulle&nbsp;; sans loi nulle, rien à opposer au hasard, et la prétention n'est plus réfutable. Ce document montre que la difficulté est apparente, et qu'elle se lève par une distinction que l'évaluation des gérants pratique depuis quarante ans sans jamais disposer de la règle qu'elle juge&nbsp;: <strong>répliquer n'est pas détecter</strong>. On ne teste pas la règle&nbsp;; on teste la trace qu'elle laisse.</p>
+    <p>Un opérateur qui décide au jugement peut établir la valeur de ce jugement en <strong>{{d_mur_sr10}}&nbsp;décisions</strong>, soit un peu plus d'un an à deux décisions par séance, taxe de sélection comprise. Ce document établit ce chiffre et l'appareil qui le produit.</p>
+
+    <p>L'obstacle apparent est que la règle n'existe pas sous forme écrite&nbsp;: sans règle, pas de rejeu&nbsp;; sans rejeu, pas de loi nulle&nbsp;; sans loi nulle, rien à opposer au hasard. Il se lève par une distinction que l'évaluation des gérants pratique depuis quarante ans sans jamais disposer de la règle qu'elle juge&nbsp;: <strong>répliquer n'est pas détecter</strong>. On ne teste pas la règle&nbsp;; on teste la trace qu'elle laisse.</p>
 
     <p>La trace est un journal de décision, dont ce document spécifie les sept champs et la frontière temporelle qui les sépare. Trois de ces champs manquent à la plupart des journaux et portent l'essentiel de l'information&nbsp;: le contexte au moment de la décision, la conviction annoncée avant l'issue, et surtout les <strong>abstentions</strong> — les setups vus et refusés. Sans elles, la moitié de la table de contingence reste vide et la compétence de refus n'est pas identifiable, alors que c'est souvent là que loge l'avantage d'un discrétionnaire.</p>
 
     <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l'indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l'abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l'opérateur gagne mais s'il fait mieux qu'une règle qu'on écrit en dix lignes. L'appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à {{d_bits_forte}}&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
 
-    <p>Le résultat principal porte sur l'ordre de grandeur. Le jugement discrétionnaire coûte une taxe de multiplicité — {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives — mais cette taxe croît en racine du logarithme, si bien que quatre leviers ne relèvent le seuil de preuve que d'un facteur&nbsp;{{d_facteur_taxe}}. Trois routes indépendantes convergent alors sur un nombre atteignable&nbsp;: un opérateur revendiquant un Sharpe de 0,10 par décision franchit le seuil déflaté en {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, taxe comprise. <strong>le jugement discrétionnaire est prouvable là où la géométrie de sortie ne l'est pas</strong> — non parce qu'elle serait meilleure, mais parce que l'effet qu'elle revendique est grand devant le bruit, alors que celui de la géométrie ne l'est pas.</p>
+    <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme, si bien que ces {{d_configs}}&nbsp;configurations ne coûtent qu'un facteur&nbsp;{{d_facteur_taxe}}. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur. <strong>L'exigence est inférieure à celle qui porte sur un avantage de géométrie</strong>, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
 
     <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d'arrêt optionnel</p>
     <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
@@ -559,7 +561,7 @@
 
   <div class="keybox">
     <span class="lab">Note de lecture</span>
-    <p>Le document se lit à trois profondeurs. <strong>La thèse</strong> tient dans le résumé et la section&nbsp;<a href="#s-detecter">2</a>&nbsp;: on ne teste pas la règle, on teste sa trace. <strong>L'appareil</strong> occupe les parties&nbsp;II à&nbsp;IV — le journal, la vérité de référence, les cinq lois nulles. <strong>Le résultat</strong> est aux parties&nbsp;V à&nbsp;VII&nbsp;: la taxe du jugement, le mur d'échantillon, et la comparaison des exigences de preuve entre jugement et géométrie.</p>
+    <p>Le document se lit à trois profondeurs. <strong>La thèse</strong> tient dans le résumé et la section&nbsp;<a href="#s-detecter">2</a>&nbsp;: on ne teste pas la règle, on teste sa trace. <strong>La stratégie évaluée</strong> est décrite en partie&nbsp;II, couche par couche. <strong>L'appareil</strong> occupe les parties&nbsp;III à&nbsp;V — le journal, la vérité de référence, les cinq lois nulles. <strong>Le résultat</strong> est aux parties&nbsp;VI à&nbsp;VIII&nbsp;: la taxe du jugement, le mur d'échantillon, et la comparaison des exigences de preuve entre jugement et géométrie.</p>
     <p>Aucun nombre de ce document n'est écrit à la main. Tous sont produits par les modules du dépôt et se recalculent&nbsp;; un lecteur qui doute d'un chiffre peut relancer le module qui l'établit.</p>
   </div>
 
@@ -603,22 +605,22 @@
         <ol start="16">
           <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
           <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
-          <li><a href="#s-mecanique">La comparaison à la règle scellée</a></li>
-          <li><a href="#s-calibration">Le niveau et la puissance</a></li>
+          <li><a href="#s-mecanique">Faire mieux que dix lignes de code</a></li>
+          <li><a href="#s-calibration">Ce que l'appareil déclare quand il n'y a rien</a></li>
         </ol>
       </li>
       <li><span class="pt">Sixième partie — La taxe du jugement</span>
         <ol start="20">
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
-          <li><a href="#s-concavite">La forme de la taxe en fonction du nombre de leviers</a></li>
+          <li><a href="#s-concavite">Le quatrième levier coûte moins cher que le premier</a></li>
         </ol>
       </li>
       <li><span class="pt">Septième partie — Le mur d'échantillon</span>
         <ol start="23">
           <li><a href="#s-routes">Trois routes indépendantes</a></li>
           <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
-          <li><a href="#s-puissance">La puissance de détection</a></li>
+          <li><a href="#s-puissance">Où la détection devient acquise</a></li>
         </ol>
       </li>
       <li><span class="pt">Huitième partie — Comparaison des deux régimes de preuve</span>
@@ -636,8 +638,8 @@
       </li>
       <li><span class="pt">Dixième partie — Protocole, limites, et ce qui reste ouvert</span>
         <ol start="31">
-          <li><a href="#s-protocole">Le scellement</a></li>
-          <li><a href="#s-arret">La règle d'arrêt</a></li>
+          <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
+          <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
           <li><a href="#s-conclusion">Conclusion</a></li>
         </ol>
@@ -881,7 +883,7 @@
 
   <p>Ce choix pose la vérité de référence, et ce n'est pas une commodité. Sous un prix sans dérive, tout sous-ensemble de setups choisi <em>sans clairvoyance</em> a pour espérance exactement <span class="v">−c/L</span>, par le théorème d'arrêt optionnel. La seule façon de battre cette valeur est une information réelle sur l'issue. Toute espérance mesurée au-dessus vient donc de la sélection, jamais du prix — ce qui fait de cet univers un banc d'essai et non un simple jeu de données.</p>
 
-  <p>L'espérance mécanique mesurée vaut {{d_esperance_mecanique}}&nbsp;R par setup. Elle est négative, comme la théorie l'exige. Mais il faut ajouter aussitôt un fait qui pèsera sur tout le reste du document&nbsp;: <strong>même à plusieurs milliers de setups, cette espérance reste à moins de deux erreurs types de zéro.</strong> L'instrument ne résout pas la valeur qu'il vise. En deçà d'environ quatre cents séances, son signe bascule d'un échantillon à l'autre. Cette propriété est mesurée ici sur le générateur, et elle est quantifiée en partie&nbsp;VI.</p>
+  <p>L'espérance mécanique mesurée vaut {{d_esperance_mecanique}}&nbsp;R par setup. Elle est négative, comme la théorie l'exige. Mais il faut ajouter aussitôt un fait qui pèsera sur tout le reste du document&nbsp;: <strong>même à plusieurs milliers de setups, cette espérance reste à moins de deux erreurs types de zéro.</strong> L'instrument ne résout pas la valeur qu'il vise. En deçà d'environ quatre cents séances, son signe bascule d'un échantillon à l'autre. Cette propriété est mesurée ici sur le générateur, et elle est quantifiée en partie&nbsp;VII.</p>
 
   <h2 id="s-invariance">L'invariance, transposée du choix des barrières au choix des trades</h2>
 
@@ -919,13 +921,13 @@
 
   {{FIGURE:discdist|La loi de l'espérance mesurée en l'absence de compétence, en densité puis en répartition. Les quantiles P5 et P95 délimitent l'intervalle qui contient 90&nbsp;pour cent des tirages. La courbe de droite donne la probabilité qu'une espérance donnée soit atteinte sans aucune information sur l'issue.}}
 
-  <h2 id="s-mecanique">La comparaison à la règle scellée</h2>
+  <h2 id="s-mecanique">Faire mieux que dix lignes de code</h2>
 
   <p>La troisième loi n'est pas simulée&nbsp;: son adversaire est déterministe, c'est la règle scellée exécutée sur l'univers entier. Elle ne demande pas si l'opérateur gagne. Elle demande s'il fait mieux que ce qu'on obtient <em>sans lui</em>.</p>
 
   <p>C'est la seule des cinq qui compare l'opérateur à une alternative disponible plutôt qu'à un tirage. Un opérateur qui bat la sélection au sort, le chronométrage et l'indépendance sans battre la règle scellée présente une compétence mesurable dont l'apport net sur la règle est nul. Les deux constats sont indépendants, et le dispositif les rapporte séparément.</p>
 
-  <h2 id="s-calibration">Le niveau et la puissance</h2>
+  <h2 id="s-calibration">Ce que l'appareil déclare quand il n'y a rien</h2>
 
   <p>Le contrôle qui autorise tous les autres ne consiste pas à vérifier qu'un opérateur compétent est détecté — n'importe quelle statistique complaisante y parvient. Il consiste à vérifier qu'un opérateur <strong>sans</strong> compétence ne l'est pas.</p>
 
@@ -962,7 +964,7 @@
 
   <p>Le recensement doit être fait honnêtement et <em>avant</em> de regarder les résultats. Un opérateur qui déclarerait deux leviers après en avoir actionné quatre ne se tromperait pas de peu&nbsp;: il diviserait son seuil par un facteur qui n'a aucune raison d'être petit.</p>
 
-  <h2 id="s-concavite">La forme de la taxe en fonction du nombre de leviers</h2>
+  <h2 id="s-concavite">Le quatrième levier coûte moins cher que le premier</h2>
 
   <p>Le seuil croît en <span class="v">√(k&nbsp;·&nbsp;ln&nbsp;2)</span>. La croissance est donc <strong>sous-linéaire en <span class="v">k</span></strong>, bien que le nombre de configurations, lui, croisse en 2<sup><span class="v">k</span></sup>.</p>
 
@@ -998,7 +1000,7 @@
 
   <p>La forme de la surface porte le message. L'axe des leviers est presque plat&nbsp;; l'axe du Sharpe est une falaise. Un opérateur qui hésite entre fermer des leviers et améliorer son signal a une réponse claire&nbsp;: le second effort domine le premier de très loin.</p>
 
-  <h2 id="s-puissance">La puissance de détection</h2>
+  <h2 id="s-puissance">Où la détection devient acquise</h2>
 
   {{FIGURE:discpowermap|La puissance de détection à seuil de 5&nbsp;pour cent, par nombre de décisions et information par décision. Chaque case porte sa valeur en pour cent&nbsp;; la lecture d'une valeur précise, que le relief ne permet pas, est ici directe.}}
 
@@ -1082,13 +1084,13 @@
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
 
-  <h2 id="s-protocole">Le scellement</h2>
+  <h2 id="s-protocole">Ce qu'il faut déclarer avant la première décision</h2>
 
   <p>Sans pré-enregistrement, tout ce qui précède est de la narration. Le protocole doit fixer, avant la première décision enregistrée&nbsp;: le recensement des leviers et donc le budget de configurations&nbsp;; le format exact du journal&nbsp;; les cinq lois nulles et leurs graines&nbsp;; le nombre de décisions à collecter&nbsp;; et le critère d'acceptation, à savoir les cinq lois battues et le seuil déflaté franchi.</p>
 
   <p>Le document dispose déjà d'un module de pré-enregistrement produisant une empreinte&nbsp;SHA-256 du protocole. Un opérateur qui scelle son protocole puis publie l'empreinte se prive de toute latitude ultérieure, et c'est précisément ce qui donne du prix à son résultat.</p>
 
-  <h2 id="s-arret">La règle d'arrêt</h2>
+  <h2 id="s-arret">Quand on a le droit de regarder ses résultats</h2>
 
   <p>La règle d'arrêt est le point où la plupart des évaluations discrétionnaires échouent, et elle échoue silencieusement. Un opérateur qui regarde ses statistiques chaque mois et s'arrête quand elles sont bonnes a conduit un test séquentiel sans en payer le prix&nbsp;: son niveau réel est très supérieur aux 5&nbsp;% affichés.</p>
 
