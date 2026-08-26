@@ -1,6 +1,6 @@
 """Construction du document sur l'edge discrétionnaire.
 
-Le document ne s'édite pas : on modifie `docs/edge-discretionnaire.template.html`
+Le document ne s'édite pas : on modifie `docs/prouver-un-jugement.template.html`
 puis on relance `python main.py --discpaper`. Éditer le HTML produit le
 mettrait en désaccord avec sa source au prochain build, et le désaccord ne se
 verrait pas.
@@ -24,8 +24,8 @@ from .report import Table
 from .workingpaper import extraire_pieds
 
 ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE = ROOT / "docs" / "edge-discretionnaire.template.html"
-OUTPUT = ROOT / "docs" / "edge-discretionnaire.html"
+TEMPLATE = ROOT / "docs" / "prouver-un-jugement.template.html"
+OUTPUT = ROOT / "docs" / "prouver-un-jugement.html"
 
 
 def values() -> dict[str, str]:

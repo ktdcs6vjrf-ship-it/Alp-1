@@ -18,7 +18,7 @@
     python main.py --paper2           # reconstruit docs/alp2-paper.html
     python main.py --wp               # reconstruit le document de travail complet
     python main.py --disc             # journal de décision, lois nulles, attribution
-    python main.py --discpaper        # reconstruit docs/edge-discretionnaire.html
+    python main.py --discpaper        # reconstruit docs/prouver-un-jugement.html
     python main.py --tests            # suite de tests du noyau
 
 Sans fichier, `--measure` fait tourner la chaîne de mesure sur une série
