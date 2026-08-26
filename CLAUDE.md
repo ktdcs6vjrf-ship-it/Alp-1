@@ -15,6 +15,12 @@ Livrable principal : `docs/temps-de-marche-et-peremption.html`
 (≈1,00 Mo — 49 sections en neuf parties, 107 tables, 48 figures).
 Il est publié comme artefact : https://claude.ai/code/artifact/1a195a2a-36ad-47df-9d1d-e44c43b4f982
 
+Second livrable : `docs/edge-discretionnaire.html` — **ALP nº 3**, sur
+l'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas codable
+(≈110 ko — 30 sections en neuf parties, 7 tables, 7 figures dont trois
+surfaces isométriques). Chaîne propre : `journal.py` → `operator.py` →
+`attribution.py` → `report10.py` + `figdisc.py` → `discpaper.py`.
+
 ## Règles du dépôt — à ne pas enfreindre
 
 1. **Stdlib uniquement.** Pas de numpy, pas de scipy, pas de pandas.
@@ -109,10 +115,12 @@ Deux pièges déjà tombés dedans, à ne pas refaire :
 ## Commandes
 
 ```
-python main.py --tests      # 732 tests (compter ~10 min, --wp et figures sont lents)
+python main.py --tests      # 761 tests (compter ~10 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit le document de travail
 python main.py --strategy   # rejoue la stratégie scellée et sa batterie
 python main.py --bounds     # la mesure encadrée par les deux remplissages
+python main.py --disc       # journal de décision, lois nulles, attribution
+python main.py --discpaper  # reconstruit docs/edge-discretionnaire.html
 ```
 
 ## Contraintes d'environnement

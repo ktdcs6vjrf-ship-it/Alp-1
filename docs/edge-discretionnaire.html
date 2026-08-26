@@ -1,0 +1,1530 @@
+<title>Prouver une discrétion — ALP nº 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:  #FFFFFF;
+    --ink:    #101010;
+    --soft:   #3A3A3A;
+    --muted:  #6A6A6A;
+    --rule:   #101010;
+    --hair:   #C9C9C9;
+    --wash:   #F4F4F2;
+
+    --serif: "Source Serif 4", "Times New Roman", Times, serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --measure: 46rem;
+    --plate:   58rem;
+
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+    --dv-neg: #e34948; --mid: #f0efec;
+    --hm0: #cde2fb; --hm1: #9ec5f4; --hm2: #6da7ec; --hm3: #3987e5;
+    --hm4: #2a78d6; --hm5: #256abf; --hm6: #184f95; --hm7: #0d366b;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12120F;
+      --ink:   #ECEAE4;
+      --soft:  #C4C1B9;
+      --muted: #8E8B84;
+      --rule:  #ECEAE4;
+      --hair:  #45433E;
+      --wash:  #1B1B17;
+
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+    --dv-neg: #e66767; --mid: #383835;
+    --hm0: #0d366b; --hm1: #184f95; --hm2: #256abf; --hm3: #2a78d6;
+    --hm4: #3987e5; --hm5: #6da7ec; --hm6: #9ec5f4; --hm7: #cde2fb;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12120F; --ink: #ECEAE4; --soft: #C4C1B9;
+    --muted: #8E8B84; --rule: #ECEAE4; --hair: #45433E; --wash: #1B1B17;
+
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+    --dv-neg: #e66767; --mid: #383835;
+    --hm0: #0d366b; --hm1: #184f95; --hm2: #256abf; --hm3: #2a78d6;
+    --hm4: #3987e5; --hm5: #6da7ec; --hm6: #9ec5f4; --hm7: #cde2fb;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.1875rem;
+    line-height: 1.66;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    -webkit-font-smoothing: antialiased;
+    counter-reset: section;
+  }
+
+  .sheet {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 3.2rem 1.6rem 5rem;
+  }
+
+  /* ---------- bloc de titre ---------- */
+
+  .titleblock { text-align: center; margin-bottom: 2.6rem; }
+
+  .venue {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.8rem;
+    font-variant-numeric: lining-nums;
+  }
+
+  h1 {
+    font-size: 2.05rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.008em;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+  }
+
+  .byline { font-size: 1.06rem; margin: 0 0 0.25rem; }
+  .affil  { font-size: 0.94rem; color: var(--muted); font-style: italic; margin: 0 0 0.2rem; }
+  .dateline { font-size: 0.94rem; color: var(--muted); font-variant-numeric: lining-nums; }
+
+  /* ---------- résumé ---------- */
+
+  .abstract {
+    margin: 2.4rem auto 2.8rem;
+    max-width: 40rem;
+    font-size: 1.06rem;
+    line-height: 1.62;
+    text-align: justify;
+    hyphens: auto;
+  }
+  .abstract h2 {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 0 0.9rem;
+    color: var(--soft);
+  }
+  .abstract h2::before { content: none; }
+  .abstract p { margin: 0 0 0.75rem; text-indent: 0; }
+  .keywords { font-size: 0.95rem; color: var(--soft); margin-top: 1.1rem; }
+  .keywords span { font-style: italic; }
+
+  hr.rule {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 2.2rem 0;
+  }
+
+  /* ---------- titres numérotés ---------- */
+
+  h2 {
+    counter-increment: section;
+    counter-reset: subsection;
+    font-size: 1.32rem;
+    font-weight: 600;
+    margin: 2.7rem 0 0.85rem;
+    line-height: 1.3;
+  }
+  h2::before {
+    content: counter(section) ".";
+    margin-right: 0.55em;
+    font-variant-numeric: lining-nums;
+  }
+
+  h3 {
+    counter-increment: subsection;
+    font-size: 1.14rem;
+    font-weight: 600;
+    font-style: italic;
+    margin: 1.9rem 0 0.55rem;
+    line-height: 1.35;
+  }
+  h3::before {
+    content: counter(section) "." counter(subsection);
+    margin-right: 0.55em;
+    font-style: normal;
+    font-variant-numeric: lining-nums;
+  }
+
+  .unnumbered { counter-increment: none; }
+  .unnumbered::before { content: none; }
+
+  /* Césure : les motifs suivent la langue du contenu, déclarée par le
+     `lang="fr"` porté par .sheet. Sans lui le navigateur coupe les mots
+     français sur des motifs anglais. Les limites interdisent les fragments
+     de moins de trois lettres. */
+  p, li, .abstract, .note, .prop {
+    hyphens: auto;
+    -webkit-hyphenate-limit-before: 3;
+    -webkit-hyphenate-limit-after: 3;
+    -webkit-hyphenate-limit-lines: 2;
+    hyphenate-limit-chars: 7 3 3;
+    hyphenate-limit-lines: 2;
+  }
+
+  p {
+    margin: 0 0 0.35rem;
+    text-align: justify;
+  }
+  p + p { text-indent: 1.4em; }
+  h2 + p, h3 + p, .eq + p, table + p, .prop + p, ul + p, ol + p, figure + p {
+    text-indent: 0;
+    margin-top: 0.35rem;
+  }
+
+  em { font-style: italic; }
+  strong { font-weight: 600; }
+
+  ul, ol { margin: 0.6rem 0 0.9rem; padding-left: 1.5rem; }
+  li { margin-bottom: 0.42rem; text-align: justify; hyphens: auto; }
+  li::marker { color: var(--soft); }
+
+  /* ---------- équations centrées et numérotées ---------- */
+
+  .eq {
+    display: grid;
+    grid-template-columns: 3rem 1fr 3rem;
+    align-items: center;
+    margin: 1.25rem 0;
+    gap: 0.5rem;
+  }
+  .eq > .body {
+    grid-column: 2;
+    text-align: center;
+    font-size: 1.12rem;
+    line-height: 1.72;
+    min-width: 0;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+  }
+  .eq > .no {
+    grid-column: 3;
+    text-align: right;
+    color: var(--soft);
+    font-size: 1rem;
+    font-variant-numeric: lining-nums;
+  }
+
+  .v { font-style: italic; }
+  .op { margin: 0 0.28em; }
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    /* La ligne de base d'une boîte inline-flex est celle de son premier
+       enfant — le numérateur. `middle` remet la barre de fraction sur l'axe
+       mathématique, à hauteur du signe d'égalité. */
+    vertical-align: middle;
+    text-align: center;
+    margin: 0 0.22em;
+    line-height: 1.18;
+    font-size: 0.94em;
+  }
+  .frac > span:first-child { border-bottom: 1px solid currentColor; padding: 0 0.3em 0.06em; }
+  .frac > span:last-child { padding: 0.06em 0.3em 0; }
+
+  /* ---------- propositions ---------- */
+
+  .prop {
+    margin: 1.3rem 0;
+    padding: 0.85rem 0 0.85rem 1rem;
+    border-left: 2px solid var(--rule);
+    font-size: 1.08rem;
+  }
+  .prop .lab {
+    font-weight: 600;
+    font-style: normal;
+    margin-right: 0.45em;
+  }
+  .prop p { font-style: italic; text-align: left; text-indent: 0; }
+  .prop p + p { margin-top: 0.5rem; }
+  .prop .proof {
+    font-style: normal;
+    font-size: 1rem;
+    color: var(--soft);
+    margin-top: 0.6rem;
+  }
+  .prop .proof .lab { font-style: italic; font-weight: 400; }
+
+  /* ---------- tableaux : filets noirs fins, sans réglure verticale ---------- */
+
+  figure { margin: 1.8rem 0; }
+
+  figcaption {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 0.55rem;
+    color: var(--ink);
+  }
+  figcaption .lab {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+  }
+
+  .scroll { overflow-x: auto; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+    font-variant-numeric: lining-nums tabular-nums;
+    line-height: 1.4;
+  }
+  thead th {
+    font-weight: 600;
+    text-align: right;
+    padding: 0.42rem 0.5rem;
+    border-top: 1.1px solid var(--rule);
+    border-bottom: 0.6px solid var(--rule);
+    white-space: nowrap;
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  tbody td {
+    padding: 0.34rem 0.5rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 1.1px solid var(--rule); }
+  tbody tr.sep td { border-top: 0.6px solid var(--hair); }
+  td.wrap, th.wrap { white-space: normal; min-width: 9rem; }
+  td.wrap { text-align: left; }
+
+  /* Tables larges : elles débordent la largeur de lecture, centrées. */
+  figure.wide { width: min(94vw, 66rem); margin-left: 50%; transform: translateX(-50%); }
+  figure.wide table { font-size: 0.88rem; }
+  figure.wide figcaption, figure.wide .note { max-width: 44rem; margin-left: auto;
+                                              margin-right: auto; }
+
+  /* Planches : une figure est dessinée sur une grille de 640 unités. Ramenée
+     à la colonne de lecture elle rendrait ses étiquettes sous les 10 px ; on
+     la laisse déborder, ce qui agrandit le dessin entier sans en déranger la
+     composition. */
+  figure.plate { width: min(94vw, var(--plate)); margin-left: 50%;
+                 transform: translateX(-50%); }
+  figure.plate figcaption, figure.plate .note { max-width: 44rem; margin-left: auto;
+                                                margin-right: auto; }
+
+  .note {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--soft);
+    margin-top: 0.55rem;
+    text-align: justify;
+    hyphens: auto;
+  }
+  .note .lab { font-style: italic; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    font-variant-numeric: lining-nums;
+  }
+
+  /* ---------- références ---------- */
+
+  .refs { font-size: 0.96rem; line-height: 1.55; }
+  .refs ol { padding-left: 1.6rem; }
+  .refs li { margin-bottom: 0.5rem; text-align: left; }
+
+  .colophon {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 0.6px solid var(--hair);
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--muted);
+    text-align: left;
+  }
+  .colophon p { text-align: left; text-indent: 0; }
+
+  /* ---------- impression ---------- */
+
+  @page { margin: 22mm 20mm; }
+
+  @media print {
+    :root { --paper: #FFF; --ink: #000; --rule: #000; --hair: #999; --soft: #333; --muted: #555; }
+    body { font-size: 10.5pt; }
+    .sheet { max-width: none; padding: 0; }
+    figure.wide { width: 100%; margin-left: 0; transform: none; }
+    h2, h3 { break-after: avoid; }
+    figure, .prop, .eq { break-inside: avoid; }
+    .fig .band, .fig .hm, .fig .area, .fig .mesh { -webkit-print-color-adjust: exact;
+      print-color-adjust: exact; }
+  }
+
+  /* ---------- figures ---------- */
+
+  figure svg.fig { display: block; width: 100%; height: auto; margin: 0 auto; }
+
+  .fig text { font-family: var(--mono); font-variant-numeric: lining-nums tabular-nums; }
+  .fig .tk   { font-size: 9.5px; fill: var(--muted); }
+  .fig .ax   { font-size: 10.5px; fill: var(--soft); font-family: var(--serif); }
+  .fig .lg   { font-size: 10px;   fill: var(--soft); font-family: var(--serif); }
+  .fig .dl   { font-size: 9.5px;  fill: var(--ink); }
+  .fig .cell { font-size: 10px;   font-variant-numeric: lining-nums tabular-nums; }
+  .fig .halo { paint-order: stroke; stroke: var(--paper); stroke-width: 3.4px;
+               stroke-linejoin: round; }
+
+  .fig .gl   { stroke: var(--hair); stroke-width: 1; fill: none; }
+  .fig .ba   { stroke: var(--hair); stroke-width: 1; }
+  .fig .mark { stroke: var(--hair); stroke-width: 1; }
+  .fig .zero { stroke: var(--soft); stroke-width: 1; }
+  .fig .band { fill: var(--wash); }
+  .fig .hl   { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+
+  .fig .ln   { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .fig .pt   { stroke: var(--paper); stroke-width: 2; }
+
+  .fig .s1 { stroke: var(--s1); }  .fig .pt.s1 { fill: var(--s1); }
+  .fig .s2 { stroke: var(--s2); }  .fig .pt.s2 { fill: var(--s2); }
+  .fig .s3 { stroke: var(--s3); }  .fig .pt.s3 { fill: var(--s3); }
+
+  .fig .area { stroke: var(--paper); stroke-width: 2; }
+  .fig .area.ar1 { fill: var(--s1); }
+  .fig .area.ar2 { fill: var(--s3); }
+  .fig .area.ar3 { fill: var(--s2); }
+  rect.area { stroke: none; }
+
+  .fig .mesh  { stroke: var(--paper); stroke-width: 1; }
+  .fig .up    { fill: var(--s1); }
+  .fig .dn    { fill: var(--dv-neg); }
+  .fig .ze    { fill: var(--mid); }
+  .fig .floor { fill: none; stroke: var(--hair); stroke-width: 1; }
+  .fig .post  { stroke: var(--hair); stroke-width: 1; }
+
+  /* --- chrome de panneau : figures en plusieurs cadres --- */
+
+  .fig .hdr {
+    font-family: var(--serif); font-size: 10px; font-weight: 600;
+    fill: var(--ink); letter-spacing: 0.09em; text-transform: uppercase;
+  }
+  .fig .sub   { font-size: 9.5px; fill: var(--muted); }
+  .fig .read  { font-size: 10px; fill: var(--ink); }
+  .fig .frame { fill: none; stroke: var(--hair); stroke-width: 1; }
+  .fig .hsep  { stroke: var(--hair); stroke-width: 1; }
+  .fig .lvl   { fill: none; stroke: var(--soft); stroke-width: 1; stroke-dasharray: 4 3; }
+  .fig .lvl.strong { stroke: var(--ink); stroke-dasharray: none; }
+  .fig .tag   { fill: var(--paper); stroke: var(--hair); stroke-width: 1; }
+  .fig .tagtx { font-size: 9px; fill: var(--ink); }
+  .fig .px    { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+  .fig .s1f { fill: var(--s1); }  .fig .s2f { fill: var(--s2); }  .fig .s3f { fill: var(--s3); }
+  .fig .negf { fill: var(--dv-neg); }
+  .fig .wash  { fill: var(--wash); }
+  .fig .swatch-wash { fill: var(--wash); stroke: var(--hair); stroke-width: 1; }
+
+  .fig .hm0 { fill: var(--hm0); }  .fig .hm4 { fill: var(--hm4); }
+  .fig .hm1 { fill: var(--hm1); }  .fig .hm5 { fill: var(--hm5); }
+  .fig .hm2 { fill: var(--hm2); }  .fig .hm6 { fill: var(--hm6); }
+  .fig .hm3 { fill: var(--hm3); }  .fig .hm7 { fill: var(--hm7); }
+  .fig .cl-lo { fill: var(--ink); }
+  .fig .cl-hi { fill: var(--paper); }
+  /* Le débordement se borne de lui-même à 94vw ; il ne reste qu'à le
+     supprimer sur les écrans où il n'y a plus de marge à prendre. */
+  @media (max-width: 50rem) {
+    figure.wide, figure.plate { width: 100%; margin-left: 0; transform: none; }
+  }
+
+  @media (max-width: 34rem) {
+    .sheet { padding: 2.2rem 1.1rem 4rem; }
+    h1 { font-size: 1.72rem; }
+    .eq { grid-template-columns: 0 1fr 2.4rem; }
+    p, li { text-align: left; }
+  }
+
+
+  /* ============================================================
+     Ajouts de la monographie : composition du texte, sommaire,
+     parties, et fiches de concepts. La charte d'ALP-1 est reprise
+     telle quelle ci-dessus ; ce bloc ne fait que l'étendre.
+     ============================================================ */
+
+  /* Composition. La césure française n'est pas disponible dans tous
+     les moteurs de rendu, et une justification sans césure creuse des
+     rivières de blanc dans un texte à mots longs. Le fer à gauche les
+     supprime toutes, et `text-wrap: pretty` équilibre les fins de
+     paragraphe là où il est implémenté. */
+  p, li, .abstract, .abstract p, .note, figcaption, .refs li {
+    text-align: left;
+    text-wrap: pretty;
+    hyphens: manual;
+  }
+  /* Le bloc de titre et les légendes gardent leur centrage : la règle
+     ci-dessus vise le corps du texte, pas les éléments composés. */
+  .titleblock p, .titleblock .venue, figcaption { text-align: center; }
+
+  p + p { text-indent: 0; margin-top: 0.62rem; }
+  h2 + p, h3 + p { margin-top: 0; }
+  p { margin-bottom: 0; }
+  li { margin-bottom: 0.5rem; }
+
+  /* Classification JEL : même registre que les mots-clés, un cran plus bas. */
+  .jel {
+    font-size: 0.88rem; color: var(--soft); margin-top: 0.35rem;
+    font-variant-numeric: lining-nums;
+  }
+  .jel span { font-style: italic; }
+
+  /* ---------- sommaire ---------- */
+
+  .toc { margin: 2.6rem 0 1rem; }
+  .toc h2 {
+    font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
+    text-align: center; font-weight: 600; margin: 0 0 1.4rem; color: var(--soft);
+  }
+  .toc h2::before { content: none; }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc > ol { counter-reset: toc; }
+  .toc > ol > li {
+    margin: 0 0 1.5rem;
+  }
+  .toc .pt {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem; border-bottom: 0.6px solid var(--hair);
+  }
+  .toc ol ol { margin: 0; padding: 0; }
+  .toc ol ol li {
+    counter-increment: toc;
+    display: flex; align-items: baseline; gap: 0.5em;
+    margin: 0 0 0.24rem; font-size: 0.95rem; line-height: 1.4;
+  }
+  .toc ol ol li::before {
+    content: counter(toc) ".";
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--muted); flex: none; min-width: 1.6em;
+  }
+  .toc a { color: inherit; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; text-underline-offset: 0.16em; }
+  .toc a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .toc .lead { color: var(--soft); font-style: italic; }
+
+  /* ---------- ouverture de partie ---------- */
+
+  .part {
+    margin: 4.4rem 0 2.6rem;
+    padding-top: 1.5rem;
+    border-top: 1.1px solid var(--rule);
+    break-before: page;
+  }
+  .part .lab {
+    font-size: 0.7rem; letter-spacing: 0.17em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 0.7rem;
+  }
+  .part h2 {
+    counter-increment: none;
+    font-size: 1.5rem; font-weight: 600; line-height: 1.2;
+    margin: 0 0 0.6rem; letter-spacing: -0.01em;
+  }
+  .part h2::before { content: none; }
+  .part p {
+    margin: 0; color: var(--soft); font-size: 1rem; max-width: 34rem;
+  }
+
+  /* ---------- fiche de concept ---------- */
+
+  .concept {
+    margin: 1.6rem 0;
+    padding: 0 0 0 1.1rem;
+    border-left: 2px solid var(--hair);
+  }
+  .concept > h3 {
+    margin: 0 0 0.45rem; font-style: normal; font-size: 1rem;
+    counter-increment: none;
+  }
+  .concept > h3::before { content: none; }
+  .concept .plain {
+    font-size: 1rem; color: var(--ink); margin: 0 0 0.55rem;
+  }
+  .concept .plain::before {
+    content: "En clair"; display: block;
+    font-size: 0.68rem; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.22rem;
+  }
+  .concept .formal { margin: 0.55rem 0 0; font-size: 0.97rem; }
+  .concept .formal::before {
+    content: "Dans le papier"; display: block;
+    font-size: 0.68rem; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.22rem;
+  }
+  .concept .sym {
+    font-family: var(--mono); font-size: 0.88rem;
+    font-variant-numeric: lining-nums;
+    color: var(--soft); margin-top: 0.5rem;
+  }
+
+  /* ---------- encadré de synthèse ---------- */
+
+  .keybox {
+    border: 1.1px solid var(--rule);
+    padding: 1.1rem 1.3rem;
+    margin: 1.8rem 0;
+    background: var(--wash);
+  }
+  .keybox .lab {
+    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 0.5rem;
+  }
+  .keybox p { margin: 0; }
+  .keybox p + p { margin-top: 0.5rem; }
+
+  /* ---------- repères chiffrés ---------- */
+
+  /* Les filets sont portés par les cellules, non par un fond que le gap
+     laisserait voir : une rangée incomplète afficherait sinon un pavé de
+     couleur là où il manque des cellules. Les ombres portées des cellules
+     voisines se superposent en un seul filet. */
+  .figures-cles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0.6px; background: var(--paper);
+    margin: 1.8rem 0;
+  }
+  .figures-cles div {
+    background: var(--paper); padding: 0.85rem 0.9rem;
+    box-shadow: 0 0 0 0.6px var(--hair);
+  }
+  .figures-cles .n {
+    font-family: var(--mono); font-size: 1.28rem; font-weight: 500;
+    font-variant-numeric: lining-nums tabular-nums;
+    display: block; line-height: 1.1; margin-bottom: 0.3rem;
+  }
+  .figures-cles .t {
+    font-size: 0.8rem; color: var(--soft); line-height: 1.35; display: block;
+  }
+
+  @media (max-width: 34rem) {
+    .part { margin-top: 3rem; }
+    .part h2 { font-size: 1.28rem; }
+  }
+</style>
+
+<div class="sheet" lang="fr">
+
+  <div class="titleblock">
+    <div class="venue">Série de documents de travail ALP &nbsp;·&nbsp; n<sup>o</sup>&nbsp;3</div>
+    <h1>Prouver une discrétion&nbsp;: lois nulles, taxe de multiplicité et mur d'échantillon pour un opérateur dont l'avantage n'est pas codable</h1>
+    <p class="byline">Recherche ALP</p>
+    <p class="affil">Évaluation de la décision discrétionnaire et théorie des tests multiples</p>
+    <p class="dateline">Première version&nbsp;: août 2026 &nbsp;·&nbsp; Cette version&nbsp;: août 2026</p>
+  </div>
+
+  <div class="abstract">
+    <h2 class="unnumbered">Résumé</h2>
+
+    <p>Un opérateur discrétionnaire affirme que son avantage n'est pas codable&nbsp;: aucune règle écrite ne reproduirait ses décisions. Pris au pied de la lettre, l'énoncé s'auto-interdit. Sans règle, pas de rejeu&nbsp;; sans rejeu, pas de loi nulle&nbsp;; sans loi nulle, rien à opposer au hasard, et la prétention n'est plus réfutable. Ce document montre que la difficulté est apparente, et qu'elle se lève par une distinction que l'évaluation des gérants pratique depuis quarante ans sans jamais disposer de la règle qu'elle juge&nbsp;: <strong>répliquer n'est pas détecter</strong>. On ne teste pas la règle&nbsp;; on teste la trace qu'elle laisse.</p>
+
+    <p>La trace est un journal de décision, dont ce document spécifie les sept champs et la frontière temporelle qui les sépare. Trois de ces champs manquent à la plupart des journaux et portent l'essentiel de l'information&nbsp;: le contexte au moment de la décision, la conviction annoncée avant l'issue, et surtout les <strong>abstentions</strong> — les setups vus et refusés. Sans elles, la moitié de la table de contingence reste vide et la compétence de refus n'est pas identifiable, alors que c'est souvent là que loge l'avantage d'un discrétionnaire.</p>
+
+    <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l'indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l'abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l'opérateur gagne mais s'il fait mieux qu'une règle qu'on écrit en dix lignes. L'appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à 0,2245&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
+
+    <p>Le résultat principal renverse l'attente. La discrétion coûte une taxe de multiplicité — 4&nbsp;leviers engendrent 16&nbsp;configurations effectives — mais cette taxe croît en racine du logarithme, si bien que quatre leviers ne relèvent le seuil de preuve que d'un facteur&nbsp;2,00. Trois routes indépendantes convergent alors sur un nombre atteignable&nbsp;: un opérateur revendiquant un Sharpe de 0,10 par décision franchit le seuil déflaté en 555&nbsp;décisions, soit 1,1&nbsp;an à deux décisions par jour, taxe comprise. <strong>La discrétion est prouvable là où la géométrie de sortie ne l'est pas</strong> — non parce qu'elle serait meilleure, mais parce que l'effet qu'elle revendique est grand devant le bruit, alors que celui de la géométrie ne l'est pas.</p>
+
+    <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d'arrêt optionnel</p>
+    <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
+  </div>
+
+  <div class="figures-cles">
+    <div><span class="n">16</span><span class="t">configurations effectives engendrées par 4 leviers discrétionnaires</span></div>
+    <div><span class="n">2,00&nbsp;×</span><span class="t">ce que ces 4 leviers coûtent réellement au seuil de preuve</span></div>
+    <div><span class="n">555</span><span class="t">décisions pour prouver un Sharpe de 0,10, taxe comprise</span></div>
+    <div><span class="n">1,1&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
+    <div><span class="n">91,7 %</span><span class="t">de l'avantage attribué au bon levier par la décomposition de Shapley</span></div>
+  </div>
+
+  <div class="keybox">
+    <span class="lab">Note de lecture</span>
+    <p>Le document se lit à trois profondeurs. <strong>La thèse</strong> tient dans le résumé et la section&nbsp;<a href="#s-detecter">2</a>&nbsp;: on ne teste pas la règle, on teste sa trace. <strong>L'appareil</strong> occupe les parties&nbsp;II à&nbsp;IV — le journal, la vérité de référence, les cinq lois nulles. <strong>Le résultat</strong> est aux parties&nbsp;V à&nbsp;VII&nbsp;: la taxe de discrétion, le mur d'échantillon, et le renversement qui rend la discrétion plus prouvable que la géométrie.</p>
+    <p>Aucun nombre de ce document n'est écrit à la main. Tous sont produits par les modules du dépôt et se recalculent&nbsp;; un lecteur qui doute d'un chiffre peut relancer le module qui l'établit.</p>
+  </div>
+
+  <hr class="rule">
+
+  <nav class="toc" aria-label="Sommaire">
+    <h2 class="unnumbered">Sommaire</h2>
+    <ol>
+      <li><span class="pt">Première partie — Le problème, et pourquoi il se lève</span>
+        <ol>
+          <li><a href="#s-position">Ce que « non codable » veut dire</a></li>
+          <li><a href="#s-detecter">Répliquer n'est pas détecter</a></li>
+          <li><a href="#s-litterature">Ce que l'évaluation des gérants sait faire sans la règle</a></li>
+          <li><a href="#s-contrat">Le contrat épistémique de ce document</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Deuxième partie — L'instrument</span>
+        <ol start="5">
+          <li><a href="#s-journal">Le journal de décision</a></li>
+          <li><a href="#s-champs">Sept champs, et une frontière temporelle</a></li>
+          <li><a href="#s-abstention">Les refus sont la moitié de l'information</a></li>
+          <li><a href="#s-integrite">Ce qui invalide un registre avant tout calcul</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Troisième partie — La vérité de référence</span>
+        <ol start="9">
+          <li><a href="#s-univers">L'univers des setups, sur un prix sans dérive</a></li>
+          <li><a href="#s-invariance">L'invariance, transposée du choix des barrières au choix des trades</a></li>
+          <li><a href="#s-plantee">Planter une compétence de taille connue</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Quatrième partie — Les cinq lois nulles</span>
+        <ol start="12">
+          <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
+          <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
+          <li><a href="#s-mecanique">La loi qui fait mal</a></li>
+          <li><a href="#s-calibration">Le niveau et la puissance</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Cinquième partie — La taxe de discrétion</span>
+        <ol start="16">
+          <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
+          <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
+          <li><a href="#s-concavite">La taxe est concave, et c'est tout l'argument</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Sixième partie — Le mur d'échantillon</span>
+        <ol start="19">
+          <li><a href="#s-routes">Trois routes indépendantes</a></li>
+          <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
+          <li><a href="#s-puissance">La puissance de détection</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Septième partie — Le renversement</span>
+        <ol start="22">
+          <li><a href="#s-versus">Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas</a></li>
+          <li><a href="#s-consequence">Ce que cela change pour l'opérateur</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Huitième partie — Décomposer l'avantage</span>
+        <ol start="24">
+          <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
+          <li><a href="#s-validation">Une décomposition réfutable</a></li>
+          <li><a href="#s-fermer">Quels leviers fermer</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Neuvième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="27">
+          <li><a href="#s-protocole">Le scellement</a></li>
+          <li><a href="#s-arret">La règle d'arrêt</a></li>
+          <li><a href="#s-limites">Ce que ce document ne prouve pas</a></li>
+          <li><a href="#s-conclusion">Conclusion</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+
+  <hr class="rule">
+
+  <div class="part">
+    <span class="lab">Première partie</span>
+    <h2>Le problème, et pourquoi il se lève</h2>
+    <p>La prétention d'un opérateur discrétionnaire paraît invérifiable par construction. Elle ne l'est pas, mais la sortie n'est pas celle qu'on attend&nbsp;: elle ne consiste pas à coder la règle, elle consiste à cesser de vouloir la coder.</p>
+  </div>
+
+  <h2 id="s-position">Ce que « non codable » veut dire</h2>
+
+  <p>L'énoncé que ce document prend au sérieux est le suivant&nbsp;: <em>il existe un avantage dans mes décisions, et aucun programme ne saurait les reproduire.</em> Il faut d'abord reconnaître qu'il n'est pas absurde. Un opérateur intègre des éléments hétérogènes — la forme d'un mouvement, la densité du carnet, ce qu'il sait du calendrier, ce qu'il a vu les jours précédents — selon une pondération qu'il ne sait pas énoncer et qui varie avec le contexte. L'incapacité à écrire la règle est un fait d'introspection ordinaire, pas une échappatoire.</p>
+
+  <p>Mais l'énoncé, tel quel, s'auto-interdit. Il s'enchaîne ainsi&nbsp;: sans règle écrite, aucun rejeu sur données historiques&nbsp;; sans rejeu, aucune loi nulle à laquelle comparer la performance&nbsp;; sans loi nulle, rien ne distingue un avantage d'une série de chance. La prétention devient irréfutable, et une prétention irréfutable n'est pas une prétention forte&nbsp;: c'est une prétention vide. C'est exactement le motif pour lequel la méthodologie de cette série refuse l'entrée à tout estimateur qu'on ne sait pas calibrer contre son bruit.</p>
+
+  <p>Le piège se referme d'autant plus vite que l'opérateur a raison sur le premier point. Plus son processus est réellement irréductible à une règle, moins il peut en établir la valeur — et c'est précisément quand la valeur est grande que l'impossibilité de la montrer coûte cher.</p>
+
+  <h2 id="s-detecter">Répliquer n'est pas détecter</h2>
+
+  <p>La sortie tient dans une distinction que la chaîne d'implication ci-dessus escamote. Elle suppose que tester une stratégie exige de l'exécuter. C'est vrai pour un backtest&nbsp;; c'est faux pour un test.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 1.</span> La détection d'un avantage ne requiert pas la connaissance de la règle qui le produit. Elle requiert seulement l'observation des décisions et de leurs issues, et une loi nulle sur cette même paire.</p>
+    <p class="proof"><span class="lab">Justification.</span> Soit <span class="v">D</span> la suite des décisions et <span class="v">Y</span> celle des issues. Toute statistique de la forme <span class="v">T</span>(<span class="v">D</span>,&nbsp;<span class="v">Y</span>) est calculable sans connaître l'application qui engendre <span class="v">D</span>. Sa loi sous l'hypothèse d'indépendance entre <span class="v">D</span> et <span class="v">Y</span> l'est également, par permutation ou par simulation. Le test compare l'une à l'autre. La règle n'intervient à aucun des trois moments. ∎</p>
+  </div>
+
+  <p>Autrement dit&nbsp;: on n'a jamais eu besoin de la règle. On croyait en avoir besoin parce qu'on confondait deux opérations que le vocabulaire courant réunit sous le mot « tester ». <strong>Répliquer</strong> exige la règle&nbsp;; <strong>détecter</strong> exige seulement la trace.</p>
+
+  <p>La conséquence pratique est immédiate et elle déplace tout le travail. Le problème cesse d'être « comment coder mon jugement » — question sans réponse — pour devenir « comment enregistrer mes décisions de façon que leur trace soit exploitable ». Cette seconde question a une réponse, et c'est la deuxième partie de ce document.</p>
+
+  <h2 id="s-litterature">Ce que l'évaluation des gérants sait faire sans la règle</h2>
+
+  <p>La proposition&nbsp;1 n'est pas une trouvaille&nbsp;: c'est la pratique établie d'un champ entier. Aucune des références ci-dessous ne dispose de la stratégie des gérants qu'elle évalue, et toutes concluent.</p>
+
+  <p>Fama et French (2010) départagent chance et compétence sur la coupe transversale des fonds américains par un bootstrap qui ne suppose rien de leurs processus. Kacperczyk, Van Nieuwerburgh et Veldkamp (2014) vont plus loin et mesurent une compétence <em>variable dans le temps</em> — sélection de titres en expansion, chronométrage du marché en récession — à partir des seuls portefeuilles publiés. Berk et Green (2004) montrent que la compétence peut exister tout en étant intégralement absorbée par les frais et la taille, ce qui met en garde contre l'inférence inverse&nbsp;: une performance nette nulle ne réfute pas la compétence.</p>
+
+  <p>Deux travaux touchent de plus près l'opérateur individuel. Locke et Mann (2005) étudient des opérateurs de parquet sur futures et trouvent que le trait persistant n'est pas la capacité de prévision mais la <strong>discipline</strong> — la propension à ne pas laisser courir les perdants. Coval, Hirshleifer et Shumway (2005) établissent une persistance de performance chez une minorité d'investisseurs individuels, incompatible avec le pur hasard. À l'inverse, Barber et Odean (2000) documentent la destruction de valeur du plus grand nombre. L'ensemble ne dit pas que la discrétion paie&nbsp;; il dit qu'elle est <em>mesurable</em>, et que la mesure sépare.</p>
+
+  <h2 id="s-contrat">Le contrat épistémique de ce document</h2>
+
+  <p>Il vaut mieux énoncer d'emblée ce qui sera établi et ce qui ne le sera jamais, car la seconde liste est celle qui protège l'auteur d'une prétention qu'il ne pourrait pas tenir.</p>
+
+  <p><strong>Ce document construit un appareil de mesure et en établit la sensibilité.</strong> Il dit&nbsp;: voici cinq adversaires, voici ce que chacun réfute, voici combien de décisions il faut pour les battre, et voici la preuve que l'appareil ne déclare rien quand il n'y a rien. C'est un résultat de méthode, complet et vérifiable.</p>
+
+  <p><strong>Ce document n'établit l'avantage d'aucun opérateur réel</strong>, pour la raison suffisante qu'aucun journal réel n'y est analysé. Les journaux exploités ici sont synthétiques, et c'est un choix, non un pis-aller&nbsp;: seule une vérité plantée permet de vérifier que l'appareil retrouve ce qu'on y a mis et ne trouve rien quand on n'y a rien mis. Un opérateur qui fournirait son registre au format de la section&nbsp;<a href="#s-champs">6</a> obtiendrait ses propres chiffres par les mêmes modules, sans qu'une ligne de code change.</p>
+
+  <div class="part">
+    <span class="lab">Deuxième partie</span>
+    <h2>L'instrument</h2>
+    <p>Si l'on ne teste pas la règle mais sa trace, alors la qualité de la trace décide de tout. Un journal mal conçu rend certaines questions définitivement insolubles, et aucune finesse statistique ultérieure ne les rouvre.</p>
+  </div>
+
+  <h2 id="s-journal">Le journal de décision</h2>
+
+  <p>L'instrument de ce document est un registre où chaque <em>setup éligible</em> laisse une ligne — qu'il ait été pris ou refusé. Ce point sépare le journal de décision du journal de trades ordinaire, qui n'enregistre que les positions ouvertes et perd, ce faisant, la moitié du signal.</p>
+
+  <p>La règle reste dans la tête de l'opérateur&nbsp;; ce qui sort du dispositif, ce sont des décisions horodatées. On ne lui demande jamais d'expliquer pourquoi il a pris ou refusé — l'explication serait une reconstruction, et une reconstruction n'est pas une donnée. On lui demande seulement de consigner, avant de connaître l'issue, ce qu'il a décidé et dans quel état du monde.</p>
+
+  <h2 id="s-champs">Sept champs, et une frontière temporelle</h2>
+
+  <p>Les champs se lisent en deux blocs, séparés par une frontière qu'il ne faut jamais franchir à l'envers.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 1</span> — Ce qu'un journal de décision doit porter, et de quel côté de la frontière temporelle chaque champ se situe.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Champ</th><th>Connu</th><th class="wrap">Pourquoi il est indispensable</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Horodatage de la décision</td><td>avant l'issue</td><td class="wrap">sans lui, un journal est un souvenir et non une donnée</td></tr>
+          <tr><td class="wrap">Contexte au moment de la décision</td><td>avant l'issue</td><td class="wrap">c'est l'état du monde que l'opérateur a réellement vu</td></tr>
+          <tr><td class="wrap">Abstentions — les setups refusés</td><td>avant l'issue</td><td class="wrap">sans elles la loi nulle D est intestable et la moitié de la table de contingence reste vide</td></tr>
+          <tr><td class="wrap">Conviction annoncée</td><td>avant l'issue</td><td class="wrap">elle autorise le test de calibration, qu'aucun autre champ ne permet</td></tr>
+          <tr><td class="wrap">Direction, mise, moment retenu</td><td>avant l'issue</td><td class="wrap">les quatre leviers doivent être séparables pour être décomposés</td></tr>
+          <tr><td class="wrap">Issue effective</td><td>après l'issue</td><td class="wrap">le résultat net, friction comprise</td></tr>
+          <tr><td class="wrap">Issue contrefactuelle des refus</td><td>après l'issue</td><td class="wrap">ce que le setup refusé aurait donné — c'est ce qui rend l'abstention mesurable</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La frontière n'est pas une commodité de présentation. Un champ du bloc supérieur qui serait rempli après coup contamine tout ce qui en dépend, et aucun test ne rattrape cette contamination.</p>
+    </figure>
+
+  <p>La frontière n'est pas une commodité de présentation. Un champ du bloc supérieur rempli après coup contamine tout ce qui en dépend, et aucun test ne rattrape cette contamination — car le test ne peut pas distinguer une décision prise à 10&nbsp;h&nbsp;12 d'une décision inscrite à 18&nbsp;h en se souvenant de 10&nbsp;h&nbsp;12. C'est pourquoi un journal rempli le soir est un souvenir et non une donnée&nbsp;: non parce que l'opérateur mentirait, mais parce que la mémoire d'une décision est systématiquement révisée par son issue.</p>
+
+  <p>Trois de ces champs manquent à la quasi-totalité des journaux existants. Le <strong>contexte au moment de la décision</strong> permet seul de vérifier plus tard qu'un motif invoqué était réellement présent. La <strong>conviction annoncée</strong> autorise un test qu'aucun autre champ ne permet — la calibration&nbsp;: un opérateur dont les décisions à forte conviction battent ses décisions à faible conviction démontre une compétence <em>même si son espérance moyenne est nulle</em>, ce qui est un résultat considérable et fréquemment inaccessible faute du champ. Et les <strong>abstentions</strong>, qui méritent leur propre section.</p>
+
+  <h2 id="s-abstention">Les refus sont la moitié de l'information</h2>
+
+  <p>Chez un opérateur discrétionnaire, l'avantage loge très souvent dans ce qu'il ne fait pas. C'est le point que la littérature sur l'allocation d'attention formalise&nbsp;: la compétence se manifeste autant par le renoncement que par la sélection.</p>
+
+  <p>Or la mesure de l'abstention exige une table de contingence complète — décision <span class="op">×</span> issue — dont deux cases sur quatre concernent des setups refusés. Il faut donc leur associer une <strong>issue contrefactuelle</strong>&nbsp;: ce que le setup aurait donné s'il avait été pris. C'est possible dès lors que les setups sont définis mécaniquement, puisqu'on peut alors les rejouer intégralement.</p>
+
+  <div class="keybox">
+    <span class="lab">La conséquence à retenir</span>
+    <p>Un journal sans abstentions ne remplit que la moitié de la table. La loi nulle&nbsp;D devient intestable, et la compétence de refus — souvent la principale — <strong>n'est pas identifiable</strong>, quelle que soit la taille de l'échantillon. Aucune quantité de décisions prises ne compense l'absence des décisions refusées.</p>
+  </div>
+
+  <h2 id="s-integrite">Ce qui invalide un registre avant tout calcul</h2>
+
+  <p>Avant de mesurer, on audite. Le module d'audit refuse un journal sur des défauts ordonnés par gravité, et un journal qui déclenche le premier n'est pas dégradé&nbsp;: il est inexploitable, parce que la quantité qu'on voudrait mesurer n'y est pas identifiable.</p>
+
+  <p>Les défauts recherchés sont concrets. Une abstention qui porte une direction ou une mise non nulle a été complétée après coup. Des rangs dupliqués ou non croissants signalent un registre édité. Une conviction constante rend le test de calibration sans objet — ce n'est pas une faute, mais il faut le dire plutôt que de laisser croire que le test a été passé. Et l'absence d'issue contrefactuelle sur les refus laisse la table incomplète.</p>
+
+  <div class="part">
+    <span class="lab">Troisième partie</span>
+    <h2>La vérité de référence</h2>
+    <p>Pour vérifier qu'un appareil mesure, il faut lui présenter une quantité connue. C'est la fonction du prix sans dérive et de la compétence plantée&nbsp;: fabriquer un opérateur dont on sait exactement ce qu'il vaut.</p>
+  </div>
+
+  <h2 id="s-univers">L'univers des setups, sur un prix sans dérive</h2>
+
+  <p>L'univers des setups éligibles est produit par la règle scellée de la série ALP, exécutée sur des séances synthétiques dont les deux paramètres de dérive valent zéro. Sur 400&nbsp;séances, cela donne 448&nbsp;setups.</p>
+
+  <p>Ce choix pose la vérité de référence, et ce n'est pas une commodité. Sous un prix sans dérive, tout sous-ensemble de setups choisi <em>sans clairvoyance</em> a pour espérance exactement <span class="v">−c/L</span>, par le théorème d'arrêt optionnel. La seule façon de battre cette valeur est une information réelle sur l'issue. Toute espérance mesurée au-dessus vient donc de la sélection, jamais du prix — ce qui fait de cet univers un banc d'essai et non un simple jeu de données.</p>
+
+  <p>L'espérance mécanique mesurée vaut −0,0393&nbsp;R par setup. Elle est négative, comme la théorie l'exige. Mais il faut ajouter aussitôt un fait qui pèsera sur tout le reste du document&nbsp;: <strong>même à plusieurs milliers de setups, cette espérance reste à moins de deux erreurs types de zéro.</strong> L'instrument ne résout pas la valeur qu'il vise. En deçà d'environ quatre cents séances, son signe bascule d'un échantillon à l'autre. Ce n'est pas un défaut du générateur&nbsp;: c'est le sujet du document, rencontré dès sa première mesure.</p>
+
+  <h2 id="s-invariance">L'invariance, transposée du choix des barrières au choix des trades</h2>
+
+  <p>Le résultat structurant de cette série est que sous un prix sans dérive, l'espérance nette d'un trade vaut <span class="v">−c/L</span> quels que soient le placement des barrières et la règle de gestion du stop. Aucune géométrie ne crée d'espérance&nbsp;; elle n'achète que du temps de marché.</p>
+
+  <p>La transposition est directe et elle est instructive. Ce qui vaut pour le choix des <em>barrières</em> vaut pour le choix des <em>trades</em>&nbsp;: sélectionner un sous-ensemble de setups sans information ne déplace pas l'espérance, exactement comme déplacer un stop sans information ne la déplace pas. La sélectivité n'est pas une vertu en soi.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 1</span> — L'espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance. À gauche, l'opérateur sans information&nbsp;: la surface est <strong>plate</strong>, et plate en négatif — ni la sélectivité ni le dimensionnement ne la déforment. À droite, le même opérateur muni d'une clairvoyance de 0,2245&nbsp;bit&nbsp;: la surface s'incline, et elle s'incline selon l'axe de la sélectivité. C'est la figure qui dit où loge un avantage discrétionnaire, et où il ne loge pas.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 680 372" role="img" aria-label="Deux surfaces d espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="28.0" y="32.0">Sans clairvoyance</text>
+<text class="sub" x="324.0" y="19.0" text-anchor="end">aucune information sur l'issue</text>
+<line class="hsep" x1="28.0" y1="38.0" x2="324.0" y2="38.0"/>
+<polygon class="floor" points="176.0,175.0 266.0,217.0 176.0,259.0 86.0,217.0"></polygon>
+<line class="post" x1="176.0" y1="175.0" x2="176.0" y2="176.3"/>
+<line class="post" x1="266.0" y1="217.0" x2="266.0" y2="216.3"/>
+<line class="post" x1="176.0" y1="259.0" x2="176.0" y2="256.0"/>
+<line class="post" x1="86.0" y1="217.0" x2="86.0" y2="222.2"/>
+<polygon class="mesh dn" points="176.0,237.2 206.0,242.8 176.0,256.0 146.0,253.3"><title>-0.035 R</title></polygon>
+<polygon class="mesh dn" points="146.0,217.7 176.0,237.2 146.0,253.3 116.0,231.9"><title>-0.060 R</title></polygon>
+<polygon class="mesh dn" points="206.0,221.2 236.0,229.5 206.0,242.8 176.0,237.2"><title>-0.025 R</title></polygon>
+<polygon class="mesh dn" points="116.0,206.9 146.0,217.7 116.0,231.9 86.0,222.2"><title>-0.040 R</title></polygon>
+<polygon class="mesh dn" points="176.0,203.5 206.0,221.2 176.0,237.2 146.0,217.7"><title>-0.043 R</title></polygon>
+<polygon class="mesh dn" points="236.0,205.1 266.0,216.3 236.0,229.5 206.0,221.2"><title>-0.015 R</title></polygon>
+<polygon class="mesh dn" points="146.0,191.6 176.0,203.5 146.0,217.7 116.0,206.9"><title>-0.029 R</title></polygon>
+<polygon class="mesh dn" points="206.0,189.2 236.0,205.1 206.0,221.2 176.0,203.5"><title>-0.026 R</title></polygon>
+<polygon class="mesh dn" points="176.0,176.3 206.0,189.2 176.0,203.5 146.0,191.6"><title>-0.017 R</title></polygon>
+<text class="tk halo" x="79.0" y="229.0" text-anchor="end">100%</text>
+<text class="tk halo" x="109.0" y="243.0" text-anchor="end">75%</text>
+<text class="tk halo" x="139.0" y="257.0" text-anchor="end">50%</text>
+<text class="tk halo" x="169.0" y="271.0" text-anchor="end">25%</text>
+<text class="tk halo" x="273.0" y="228.0">0.5 R</text>
+<text class="tk halo" x="243.0" y="242.0">1 R</text>
+<text class="tk halo" x="213.0" y="256.0">1.5 R</text>
+<text class="tk halo" x="183.0" y="270.0">2 R</text>
+<text class="tk" x="46.0" y="220.0" text-anchor="end">0</text>
+<line class="gl" x1="51.0" y1="217.0" x2="62.0" y2="217.0"/>
+<text class="hdr" x="364.0" y="32.0">Avec clairvoyance</text>
+<text class="read" x="660.0" y="32.0" text-anchor="end">0,15 bit par décision</text>
+<line class="hsep" x1="364.0" y1="38.0" x2="660.0" y2="38.0"/>
+<polygon class="floor" points="512.0,175.0 602.0,217.0 512.0,259.0 422.0,217.0"></polygon>
+<line class="post" x1="512.0" y1="175.0" x2="512.0" y2="176.3"/>
+<line class="post" x1="602.0" y1="217.0" x2="602.0" y2="198.2"/>
+<line class="post" x1="512.0" y1="259.0" x2="512.0" y2="184.0"/>
+<line class="post" x1="422.0" y1="217.0" x2="422.0" y2="222.2"/>
+<polygon class="mesh up" points="512.0,192.1 542.0,188.8 512.0,184.0 482.0,193.1"><title>+0.831 R</title></polygon>
+<polygon class="mesh up" points="482.0,203.2 512.0,192.1 482.0,193.1 452.0,212.7"><title>+0.460 R</title></polygon>
+<polygon class="mesh up" points="542.0,191.0 572.0,193.5 542.0,188.8 512.0,192.1"><title>+0.594 R</title></polygon>
+<polygon class="mesh up" points="452.0,206.9 482.0,203.2 452.0,212.7 422.0,222.2"><title>+0.086 R</title></polygon>
+<polygon class="mesh up" points="512.0,193.8 542.0,191.0 512.0,192.1 482.0,203.2"><title>+0.329 R</title></polygon>
+<polygon class="mesh up" points="572.0,190.0 602.0,198.2 572.0,193.5 542.0,191.0"><title>+0.356 R</title></polygon>
+<polygon class="mesh up" points="482.0,191.6 512.0,193.8 482.0,203.2 452.0,206.9"><title>+0.061 R</title></polygon>
+<polygon class="mesh up" points="542.0,184.4 572.0,190.0 542.0,191.0 512.0,193.8"><title>+0.197 R</title></polygon>
+<polygon class="mesh up" points="512.0,176.3 542.0,184.4 512.0,193.8 482.0,191.6"><title>+0.037 R</title></polygon>
+<text class="tk halo" x="415.0" y="229.0" text-anchor="end">100%</text>
+<text class="tk halo" x="445.0" y="243.0" text-anchor="end">75%</text>
+<text class="tk halo" x="475.0" y="257.0" text-anchor="end">50%</text>
+<text class="tk halo" x="505.0" y="271.0" text-anchor="end">25%</text>
+<text class="tk halo" x="609.0" y="228.0">0.5 R</text>
+<text class="tk halo" x="579.0" y="242.0">1 R</text>
+<text class="tk halo" x="549.0" y="256.0">1.5 R</text>
+<text class="tk halo" x="519.0" y="270.0">2 R</text>
+
+</svg></div>
+      <p class="note">axe gauche : part des setups retenus · axe droit : mise en unités de risque. Sans information, la surface est plate en négatif.</p>
+    </figure>
+
+  <h2 id="s-plantee">Planter une compétence de taille connue</h2>
+
+  <p>L'opérateur synthétique reçoit une clairvoyance partielle sur l'issue de la barrière, paramétrée de façon que le <strong>taux de prise global reste constant</strong> quelle que soit la compétence. Sans cette précaution, un opérateur compétent prendrait aussi mécaniquement moins de trades, et l'on ne saurait plus démêler la compétence de la simple sélectivité.</p>
+
+  <p>La vérité plantée s'exprime en <strong>bits d'information mutuelle par décision</strong>, calculés en forme fermée sur la loi jointe — donc sans bruit d'estimation. C'est l'unité même dans laquelle le plafond informationnel de la série est exprimé, ce qui permet de comparer directement ce qu'un opérateur possède et ce qu'il faudrait posséder. À clairvoyance nulle, la quantité vaut exactement zéro&nbsp;: décision et issue sont indépendantes, et aucune quantité de décisions ne fera apparaître un avantage.</p>
+
+  <div class="part">
+    <span class="lab">Quatrième partie</span>
+    <h2>Les cinq lois nulles</h2>
+    <p>Un opérateur qui bat « le hasard » n'a rien démontré tant qu'on n'a pas dit quel hasard. C'est la contribution méthodologique de ce document.</p>
+  </div>
+
+  <h2 id="s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</h2>
+
+  <p>Chaque loi nulle est un adversaire particulier, et battre un adversaire ne dit rien des autres. Un opérateur peut très bien choisir remarquablement ses setups tout en n'apportant rien par sa gestion de sortie&nbsp;; un autre peut apporter par sa gestion tout en sélectionnant au hasard. Une statistique globale confond les deux, et pire, elle laisse croire qu'un avantage établi sur un axe vaut sur tous.</p>
+
+  <p>Le principe retenu ici est donc&nbsp;: <strong>une loi nulle par prétention</strong>. Chacune est construite pour tenir constant tout ce que l'opérateur ne revendique pas, et ne faire varier que ce qu'il revendique.</p>
+
+  <h2 id="s-catalogue">Le catalogue, et ce que chaque loi réfute</h2>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 2</span> — Les cinq lois nulles, ce que chacune réfute, et le verdict sur un opérateur dont la clairvoyance est connue.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Loi nulle</th><th class="wrap">Ce qu'elle réfute si elle tient</th><th>Observé</th><th>Seuil 95 %</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">La règle scellée</td><td class="wrap">que la discrétion ajoute à la règle</td><td>+0,4785</td><td>+0,0961</td><td>battue</td></tr>
+          <tr><td class="wrap">Sélection au sort</td><td class="wrap">que le choix des setups porte de l'information</td><td>+0,4785</td><td>+0,0552</td><td>battue</td></tr>
+          <tr><td class="wrap">Issues permutées dans la séance</td><td class="wrap">que le moment choisi porte de l'information</td><td>+0,4785</td><td>+0,4125</td><td>battue</td></tr>
+          <tr><td class="wrap">Décision indépendante de l'issue</td><td class="wrap">que l'abstention soit informative</td><td>+0,2396</td><td>+0,0065</td><td>battue</td></tr>
+          <tr><td class="wrap">Rééchantillonnage par blocs</td><td class="wrap">que le résultat tienne à plus que quelques décisions</td><td>+0,3350</td><td>+0,0000</td><td>battue</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Un avantage n'est déclaré que si les cinq lois tombent. Une loi sans objet — un journal sans abstentions, par exemple — compte comme non battue : l'absence de test n'est pas une réussite au test.</p>
+    </figure>
+
+  <p>Deux constructions méritent d'être justifiées. La <strong>sélection au sort</strong> tire le <em>même nombre</em> de setups que l'opérateur, sans remise&nbsp;: tenir la cadence constante n'est pas un raffinement, car un adversaire prenant un nombre différent de setups changerait aussi la variance de la moyenne, et l'écart mesuré mêlerait sélectivité et compétence. Les <strong>issues permutées</strong> le sont <em>à l'intérieur de la séance</em> et non globalement&nbsp;: une permutation globale détruirait la structure de volatilité entre séances — la saisonnalité en U, les jours calmes et les jours agités — et confondrait compétence de chronométrage et simple exposition aux séances favorables.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 2</span> — L'observé posé sur chacune de ses cinq lois nulles, pour un opérateur sans clairvoyance puis pour un opérateur compétent. Une barre par loi&nbsp;: l'étendue de la loi nulle jusqu'à son quantile à 95&nbsp;%, et le trait fort de la statistique observée. La planche rend visible le fait qu'un opérateur peut battre trois lois et rester réfuté.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 672 392" role="img" aria-label="Cinq lois nulles et la statistique observée sur chacune, pour un opérateur sans clairvoyance puis avec" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="150.0" y="40.0">sans clairvoyance</text>
+<text class="read" x="610.0" y="40.0" text-anchor="end">0 loi(s) sur 5 battue(s)</text>
+<line class="hsep" x1="150.0" y1="46.0" x2="610.0" y2="46.0"/>
+<rect class="frame" x="150.0" y="52.0" width="460.0" height="140.0"/>
+<text class="tk" x="205.8" y="205.0" text-anchor="middle">-0,19</text>
+<text class="tk" x="380.0" y="205.0" text-anchor="middle">-0,06</text>
+<text class="tk" x="554.2" y="205.0" text-anchor="middle">0,08</text>
+<line class="ba" x1="150.0" y1="192.0" x2="610.0" y2="192.0"/>
+<line class="zero" x1="454.5" y1="52.0" x2="454.5" y2="192.0"/>
+<rect class="wash" x="404.34" y="63.65" width="149.91" height="9.00"><title>La règle scellée — loi nulle jusqu'à +0.0782</title></rect>
+<circle class="pt s3" cx="554.24" cy="68.15" r="3"><title>seuil 95 % : +0.0782</title></circle>
+<rect class="negf" x="370.72" y="60.08" width="3.40" height="16.15"><title>La règle scellée — observé -0.0643 · non battue · z = -0.35 · p = 0.637</title></rect>
+<text class="tk" x="146" y="71.7" text-anchor="end">La règle scellée</text>
+<rect class="wash" x="408.46" y="90.58" width="113.67" height="9.00"><title>Sélection au sort — loi nulle jusqu'à +0.0530</title></rect>
+<circle class="pt s3" cx="522.13" cy="95.08" r="3"><title>seuil 95 % : +0.0530</title></circle>
+<rect class="negf" x="370.72" y="87.00" width="3.40" height="16.15"><title>Sélection au sort — observé -0.0643 · non battue · z = -0.52 · p = 0.714</title></rect>
+<text class="tk" x="146" y="98.6" text-anchor="end">Sélection au sort</text>
+<rect class="wash" x="357.03" y="117.50" width="31.26" height="9.00"><title>Issues permutées dans la séance — loi nulle jusqu'à -0.0518</title></rect>
+<circle class="pt s3" cx="388.29" cy="122.00" r="3"><title>seuil 95 % : -0.0518</title></circle>
+<rect class="negf" x="370.72" y="113.92" width="3.40" height="16.15"><title>Issues permutées dans la séance — observé -0.0643 · non battue · z = +0.73 · p = 0.246</title></rect>
+<text class="tk" x="146" y="125.5" text-anchor="end">Issues permutées dans la séance</text>
+<rect class="wash" x="456.63" y="144.42" width="6.08" height="9.00"><title>Décision indépendante de l'issue — loi nulle jusqu'à +0.0065</title></rect>
+<circle class="pt s3" cx="462.71" cy="148.92" r="3"><title>seuil 95 % : +0.0065</title></circle>
+<rect class="negf" x="453.52" y="140.85" width="3.40" height="16.15"><title>Décision indépendante de l'issue — observé +0.0006 · non battue · z = -0.50 · p = 0.693</title></rect>
+<text class="tk" x="146" y="152.4" text-anchor="end">Décision indépendante de l'issue</text>
+<rect class="wash" x="454.46" y="171.35" width="0.40" height="9.00"><title>Rééchantillonnage par blocs — loi nulle jusqu'à +0.0000</title></rect>
+<circle class="pt s3" cx="454.46" cy="175.85" r="3"><title>seuil 95 % : +0.0000</title></circle>
+<rect class="negf" x="204.06" y="167.77" width="3.40" height="16.15"><title>Rééchantillonnage par blocs — observé -0.1949 · non battue · z = -2.83 · p = 0.833</title></rect>
+<text class="tk" x="146" y="179.3" text-anchor="end">Rééchantillonnage par blocs</text>
+<text class="hdr" x="150.0" y="230.0">clairvoyance franche</text>
+<text class="read" x="610.0" y="230.0" text-anchor="end">5 loi(s) sur 5 battue(s)</text>
+<line class="hsep" x1="150.0" y1="236.0" x2="610.0" y2="236.0"/>
+<rect class="frame" x="150.0" y="242.0" width="460.0" height="140.0"/>
+<text class="tk" x="205.8" y="395.0" text-anchor="middle">0,00</text>
+<text class="tk" x="380.0" y="395.0" text-anchor="middle">0,24</text>
+<text class="tk" x="554.2" y="395.0" text-anchor="middle">0,48</text>
+<line class="ba" x1="150.0" y1="382.0" x2="610.0" y2="382.0"/>
+<text class="ax" x="380.0" y="410.0" text-anchor="middle">statistique, en R par décision</text>
+<line class="zero" x1="205.8" y1="242.0" x2="205.8" y2="382.0"/>
+<rect class="wash" x="177.16" y="253.65" width="98.60" height="9.00"><title>La règle scellée — loi nulle jusqu'à +0.0961</title></rect>
+<circle class="pt s3" cx="275.76" cy="258.15" r="3"><title>seuil 95 % : +0.0961</title></circle>
+<rect class="s1f" x="552.54" y="250.08" width="3.40" height="16.15"><title>La règle scellée — observé +0.4785 · battue · z = +6.29 · p = 0.000</title></rect>
+<text class="tk" x="146" y="261.7" text-anchor="end">La règle scellée</text>
+<rect class="wash" x="176.48" y="280.58" width="69.51" height="9.00"><title>Sélection au sort — loi nulle jusqu'à +0.0552</title></rect>
+<circle class="pt s3" cx="245.99" cy="285.08" r="3"><title>seuil 95 % : +0.0552</title></circle>
+<rect class="s1f" x="552.54" y="277.00" width="3.40" height="16.15"><title>Sélection au sort — observé +0.4785 · battue · z = +8.88 · p = 0.003</title></rect>
+<text class="tk" x="146" y="288.6" text-anchor="end">Sélection au sort</text>
+<rect class="wash" x="477.74" y="307.50" width="28.44" height="9.00"><title>Issues permutées dans la séance — loi nulle jusqu'à +0.4125</title></rect>
+<circle class="pt s3" cx="506.18" cy="312.00" r="3"><title>seuil 95 % : +0.4125</title></circle>
+<rect class="s1f" x="552.54" y="303.92" width="3.40" height="16.15"><title>Issues permutées dans la séance — observé +0.4785 · battue · z = +4.40 · p = 0.003</title></rect>
+<text class="tk" x="146" y="315.5" text-anchor="end">Issues permutées dans la séance</text>
+<rect class="wash" x="207.00" y="334.42" width="3.47" height="9.00"><title>Décision indépendante de l'issue — loi nulle jusqu'à +0.0065</title></rect>
+<circle class="pt s3" cx="210.47" cy="338.92" r="3"><title>seuil 95 % : +0.0065</title></circle>
+<rect class="s1f" x="378.53" y="330.85" width="3.40" height="16.15"><title>Décision indépendante de l'issue — observé +0.2396 · battue · z = +108.03 · p = 0.000</title></rect>
+<text class="tk" x="146" y="342.4" text-anchor="end">Décision indépendante de l'issue</text>
+<rect class="wash" x="205.76" y="361.35" width="0.40" height="9.00"><title>Rééchantillonnage par blocs — loi nulle jusqu'à +0.0000</title></rect>
+<circle class="pt s3" cx="205.76" cy="365.85" r="3"><title>seuil 95 % : +0.0000</title></circle>
+<rect class="s1f" x="448.01" y="357.77" width="3.40" height="16.15"><title>Rééchantillonnage par blocs — observé +0.3350 · battue · z = +4.31 · p = 0.000</title></rect>
+<text class="tk" x="146" y="369.3" text-anchor="end">Rééchantillonnage par blocs</text>
+<rect class="wash" x="150.0" y="372.5" width="11" height="11" rx="2"/>
+<text class="lg" x="167.0" y="381.5">étendue de la loi nulle</text>
+<rect class="s1f" x="342.0" y="372.5" width="11" height="11" rx="2"/>
+<text class="lg" x="359.0" y="381.5">observé, loi battue</text>
+<rect class="negf" x="534.0" y="372.5" width="11" height="11" rx="2"/>
+<text class="lg" x="551.0" y="381.5">observé, loi non battue</text>
+</svg></div>
+    </figure>
+
+  <h2 id="s-mecanique">La loi qui fait mal</h2>
+
+  <p>La troisième loi n'est pas simulée&nbsp;: son adversaire est déterministe, c'est la règle scellée exécutée sur l'univers entier. Elle ne demande pas si l'opérateur gagne. Elle demande s'il fait mieux que ce qu'on obtient <em>sans lui</em>.</p>
+
+  <p>C'est la seule des cinq qui pose la question économique, et c'est pourquoi elle est décisive. Un opérateur qui bat la sélection au sort, le chronométrage et l'indépendance, mais pas la règle scellée, a démontré une compétence réelle — et démontré du même coup qu'elle ne vaut pas son coût. Le résultat est désagréable, il est fréquent, et un dispositif honnête doit pouvoir le produire.</p>
+
+  <h2 id="s-calibration">Le niveau et la puissance</h2>
+
+  <p>Le contrôle qui autorise tous les autres ne consiste pas à vérifier qu'un opérateur compétent est détecté — n'importe quelle statistique complaisante y parvient. Il consiste à vérifier qu'un opérateur <strong>sans</strong> compétence ne l'est pas.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 3</span> — Ce que l'appareil déclare, selon la compétence qu'on lui a plantée.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Clairvoyance</th><th>Bits par décision</th><th>E[R] par décision</th><th>Sharpe par décision</th><th>Lois battues</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>0,00</td><td>0,0000</td><td>−0,0643</td><td>−0,0592</td><td>0 / 5</td><td>refusé</td></tr>
+          <tr><td>0,20</td><td>0,0282</td><td>+0,0891</td><td>+0,0798</td><td>4 / 5</td><td>refusé</td></tr>
+          <tr><td>0,35</td><td>0,0877</td><td>+0,2972</td><td>+0,2492</td><td>5 / 5</td><td>déclaré</td></tr>
+          <tr><td>0,55</td><td>0,2245</td><td>+0,4785</td><td>+0,4061</td><td>5 / 5</td><td>déclaré</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La première ligne est le contrôle qui autorise toutes les autres : sans compétence, l'appareil ne déclare rien. La ligne médiane est le sujet du papier — un avantage qui existe sans être démontrable.</p>
+    </figure>
+
+  <p>La première ligne est ce contrôle&nbsp;: à clairvoyance nulle, 0&nbsp;loi battue sur cinq, verdict refusé, malgré un Sharpe observé de −0,0592 qui aurait pu tromper un examen naïf. La dernière ligne établit la puissance&nbsp;: à 0,2245&nbsp;bit par décision, les cinq lois tombent et l'avantage est déclaré.</p>
+
+  <p>Entre les deux se trouve le résultat le plus important du document. Il existe une zone où l'avantage est <em>réel</em> — la vérité plantée n'est pas nulle — et où l'appareil refuse néanmoins de le déclarer. Cette zone n'est pas un défaut à corriger&nbsp;: c'est la traduction exacte du fait que l'échantillon ne porte pas l'information nécessaire. Un appareil qui déclarerait dans cette zone serait un appareil qui déclare aussi dans la première ligne.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 3</span> — Le nombre de lois nulles battues selon l'information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l'appareil ne déclare rien. La bande centrale marque la zone où l'avantage existe sans être démontrable.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 320" role="img" aria-label="Nombre de lois nulles battues selon l information plantée par décision, calibration de l appareil de mesure" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="74.0" y="44.0">Calibration contre la vérité plantée</text>
+<text class="read" x="574.0" y="44.0" text-anchor="end">400 séances, seuil 95 %</text>
+<line class="hsep" x1="74.0" y1="50.0" x2="574.0" y2="50.0"/>
+<rect class="frame" x="74.0" y="56.0" width="500.0" height="196.0"/>
+<line class="gl" x1="74.0" y1="252.0" x2="574.0" y2="252.0"/>
+<text class="tk" x="69.0" y="255.0" text-anchor="end">0</text>
+<line class="gl" x1="74.0" y1="215.7" x2="574.0" y2="215.7"/>
+<text class="tk" x="69.0" y="218.7" text-anchor="end">1</text>
+<line class="gl" x1="74.0" y1="179.4" x2="574.0" y2="179.4"/>
+<text class="tk" x="69.0" y="182.4" text-anchor="end">2</text>
+<line class="gl" x1="74.0" y1="143.1" x2="574.0" y2="143.1"/>
+<text class="tk" x="69.0" y="146.1" text-anchor="end">3</text>
+<line class="gl" x1="74.0" y1="106.8" x2="574.0" y2="106.8"/>
+<text class="tk" x="69.0" y="109.8" text-anchor="end">4</text>
+<line class="gl" x1="74.0" y1="70.5" x2="574.0" y2="70.5"/>
+<text class="tk" x="69.0" y="73.5" text-anchor="end">5</text>
+<text class="ax" transform="translate(40.0,154.0) rotate(-90)" text-anchor="middle">lois nulles battues sur cinq</text>
+<text class="tk" x="74.0" y="265.0" text-anchor="middle">0,00</text>
+<text class="tk" x="159.5" y="265.0" text-anchor="middle">0,05</text>
+<text class="tk" x="245.1" y="265.0" text-anchor="middle">0,10</text>
+<text class="tk" x="330.6" y="265.0" text-anchor="middle">0,15</text>
+<text class="tk" x="416.2" y="265.0" text-anchor="middle">0,20</text>
+<line class="ba" x1="74.0" y1="252.0" x2="574.0" y2="252.0"/>
+<text class="ax" x="324.0" y="280.0" text-anchor="middle">information plantée, en bits par décision</text>
+<path class="ln s1" d="M74.00,252.00 L86.01,215.70 L122.28,106.81 L183.61,70.52 L325.93,70.52 L536.96,70.52"></path>
+<circle class="pt s1" cx="74.00" cy="252.00" r="4"><title>clairvoyance 0.00 · 0.0000 bit · 0/5 lois battues · Sharpe -0.0592</title></circle>
+<circle class="pt s1" cx="86.01" cy="215.70" r="4"><title>clairvoyance 0.10 · 0.0070 bit · 1/5 lois battues · Sharpe -0.0015</title></circle>
+<circle class="pt s1" cx="122.28" cy="106.81" r="4"><title>clairvoyance 0.20 · 0.0282 bit · 4/5 lois battues · Sharpe +0.0798</title></circle>
+<circle class="pt s1" cx="183.61" cy="70.52" r="4"><title>clairvoyance 0.30 · 0.0641 bit · 5/5 lois battues · Sharpe +0.1819</title></circle>
+<circle class="pt s1" cx="325.93" cy="70.52" r="4"><title>clairvoyance 0.45 · 0.1472 bit · 5/5 lois battues · Sharpe +0.3081</title></circle>
+<circle class="pt s1" cx="536.96" cy="70.52" r="4"><title>clairvoyance 0.60 · 0.2706 bit · 5/5 lois battues · Sharpe +0.4159</title></circle>
+<line class="lvl strong" x1="74.0" y1="70.5" x2="574.0" y2="70.5"/>
+<rect class="tag" x="448.0" y="63.5" width="124.0" height="14" rx="2"/>
+<text class="tagtx" x="510.0" y="74.0" text-anchor="middle">avantage déclarable</text>
+<rect class="wash" x="86.0" y="56.0" width="36.3" height="196.0"/>
+<text class="dl halo" x="92.0" y="204.2" text-anchor="start">l'avantage existe mais ne se démontre pas</text>
+
+</svg></div>
+      <p class="note">Le point à zéro bit est le contrôle qui autorise tous les autres : sans compétence, l'appareil ne déclare rien.</p>
+    </figure>
+
+  <div class="part">
+    <span class="lab">Cinquième partie</span>
+    <h2>La taxe de discrétion</h2>
+    <p>Chaque liberté que s'accorde l'opérateur agrandit la famille des stratégies qu'il aurait pu suivre. Cette famille se paie en seuil de preuve, et il faut la chiffrer avant toute autre chose.</p>
+  </div>
+
+  <h2 id="s-multiplicite">k leviers, 2<sup>k</sup> configurations</h2>
+
+  <p>Un opérateur qui, sur chaque setup, décide en regardant le marché s'il entre, quand il entre, combien il met et comment il sort, n'a pas exécuté <em>une</em> stratégie. Il a exécuté l'une des <span class="v">2<sup>k</sup></span> stratégies que ces <span class="v">k</span> choix binaires engendrent, et il a choisi laquelle en regardant le marché. Le seuil de sélection déflaté ne se calcule donc pas sur une configuration mais sur ce nombre-là.</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">SR</span><sub>seuil</sub><span class="op">=</span>√<span class="op">(</span>2&nbsp;ln&nbsp;<span class="v">B</span><span class="op">/</span><span class="v">N</span><span class="op">)</span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">B</span><span class="op">=</span>2<sup><span class="v">k</span></sup></div>
+    <div class="no">(1)</div>
+  </div>
+
+  <p>C'est l'approximation de Bailey et López de Prado du Sharpe attendu du meilleur de <span class="v">B</span> essais en l'absence de tout avantage. Un opérateur dont le Sharpe observé ne dépasse pas ce seuil n'a pas montré un avantage faible&nbsp;: il a montré ce que le hasard produit quand on lui donne <span class="v">B</span> occasions.</p>
+
+  <h2 id="s-recensement">Le recensement d'un opérateur réel</h2>
+
+  <p>Le recensement retenu ici comporte 4&nbsp;leviers, ce qui porte le budget à 16&nbsp;configurations effectives.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 4</span> — Les quatre leviers discrétionnaires recensés, et ce que chacun ajoute au seuil de preuve.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Levier</th><th>Clé</th><th>Configurations</th><th>Seuil déflaté</th><th>Ce que ce levier ajoute</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Entrer ou s'abstenir</td><td>entree</td><td>2</td><td>0,0215</td><td>+0,0000</td></tr>
+          <tr><td class="wrap">Le moment exact dans la fenêtre</td><td>moment</td><td>4</td><td>0,0304</td><td>+0,0089</td></tr>
+          <tr><td class="wrap">La taille de position</td><td>taille</td><td>8</td><td>0,0372</td><td>+0,0068</td></tr>
+          <tr><td class="wrap">La gestion de sortie</td><td>sortie</td><td>16</td><td>0,0430</td><td>+0,0058</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le seuil est calculé sur 3 000 décisions. Chaque levier double la famille des stratégies effectivement explorées, mais le seuil ne croît qu'en racine du logarithme : le premier levier coûte plus cher que le quatrième.</p>
+    </figure>
+
+  <p>Le recensement doit être fait honnêtement et <em>avant</em> de regarder les résultats. Un opérateur qui déclarerait deux leviers après en avoir actionné quatre ne se tromperait pas de peu&nbsp;: il diviserait son seuil par un facteur qui n'a aucune raison d'être petit.</p>
+
+  <h2 id="s-concavite">La taxe est concave, et c'est tout l'argument</h2>
+
+  <p>Le seuil croît en <span class="v">√(k&nbsp;·&nbsp;ln&nbsp;2)</span>. La croissance est donc <strong>sous-linéaire en <span class="v">k</span></strong>, et cela change entièrement la conclusion qu'on serait tenté de tirer de l'exponentielle 2<sup><span class="v">k</span></sup>.</p>
+
+  <p>Concrètement&nbsp;: passer de zéro à quatre leviers fait passer le seuil de 0,0215 à 0,0430, soit un facteur&nbsp;2,00. Seize configurations ne coûtent pas seize fois plus cher qu'une seule — elles coûtent deux fois plus cher. En échantillon, cela signifie un facteur quatre, ce qui est considérable mais nullement rédhibitoire.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 4</span> — Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d'échantillon. La concavité est le résultat&nbsp;: passer de zéro à un levier coûte davantage que passer de quatre à huit. Le trait vertical marque le recensement de 4&nbsp;leviers retenu ici.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 320" role="img" aria-label="Seuil de Sharpe déflaté selon le nombre de leviers discrétionnaires ouverts, pour trois tailles d échantillon" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="74.0" y="44.0">Le seuil déflaté à franchir</text>
+<text class="read" x="574.0" y="44.0" text-anchor="end">Bailey et López de Prado</text>
+<line class="hsep" x1="74.0" y1="50.0" x2="574.0" y2="50.0"/>
+<rect class="frame" x="74.0" y="56.0" width="500.0" height="196.0"/>
+<line class="gl" x1="74.0" y1="252.0" x2="574.0" y2="252.0"/>
+<text class="tk" x="69.0" y="255.0" text-anchor="end">0,000</text>
+<line class="gl" x1="74.0" y1="203.0" x2="574.0" y2="203.0"/>
+<text class="tk" x="69.0" y="206.0" text-anchor="end">0,025</text>
+<line class="gl" x1="74.0" y1="154.0" x2="574.0" y2="154.0"/>
+<text class="tk" x="69.0" y="157.0" text-anchor="end">0,050</text>
+<line class="gl" x1="74.0" y1="105.0" x2="574.0" y2="105.0"/>
+<text class="tk" x="69.0" y="108.0" text-anchor="end">0,075</text>
+<line class="gl" x1="74.0" y1="56.0" x2="574.0" y2="56.0"/>
+<text class="tk" x="69.0" y="59.0" text-anchor="end">0,100</text>
+<text class="ax" transform="translate(40.0,154.0) rotate(-90)" text-anchor="middle">Sharpe par décision requis</text>
+<text class="tk" x="74.0" y="265.0" text-anchor="middle">0</text>
+<text class="tk" x="136.5" y="265.0" text-anchor="middle">1</text>
+<text class="tk" x="199.0" y="265.0" text-anchor="middle">2</text>
+<text class="tk" x="261.5" y="265.0" text-anchor="middle">3</text>
+<text class="tk" x="324.0" y="265.0" text-anchor="middle">4</text>
+<text class="tk" x="386.5" y="265.0" text-anchor="middle">5</text>
+<text class="tk" x="449.0" y="265.0" text-anchor="middle">6</text>
+<text class="tk" x="511.5" y="265.0" text-anchor="middle">7</text>
+<text class="tk" x="574.0" y="265.0" text-anchor="middle">8</text>
+<line class="ba" x1="74.0" y1="252.0" x2="574.0" y2="252.0"/>
+<text class="ax" x="324.0" y="280.0" text-anchor="middle">leviers discrétionnaires ouverts</text>
+<path class="ln s1" d="M74.00,179.02 L136.50,179.02 L199.00,148.80 L261.50,125.60 L324.00,106.05 L386.50,88.82 L449.00,73.24 L511.50,58.92"></path>
+<circle class="pt s1" cx="74.00" cy="179.02" r="3.2"><title>0 levier(s) · 1000 décisions · seuil 0.0372</title></circle>
+<circle class="pt s1" cx="324.00" cy="106.05" r="3.2"><title>4 levier(s) · 1000 décisions · seuil 0.0745</title></circle>
+<circle class="pt s1" cx="574.00" cy="45.59" r="3.2"><title>8 levier(s) · 1000 décisions · seuil 0.1053</title></circle>
+<path class="ln s2" d="M74.00,209.87 L136.50,209.87 L199.00,192.41 L261.50,179.02 L324.00,167.73 L386.50,157.79 L449.00,148.80 L511.50,140.53 L574.00,132.83"></path>
+<circle class="pt s2" cx="74.00" cy="209.87" r="3.2"><title>0 levier(s) · 3000 décisions · seuil 0.0215</title></circle>
+<circle class="pt s2" cx="324.00" cy="167.73" r="3.2"><title>4 levier(s) · 3000 décisions · seuil 0.0430</title></circle>
+<circle class="pt s2" cx="574.00" cy="132.83" r="3.2"><title>8 levier(s) · 3000 décisions · seuil 0.0608</title></circle>
+<path class="ln s3" d="M74.00,228.92 L136.50,228.92 L199.00,219.36 L261.50,212.03 L324.00,205.85 L386.50,200.40 L449.00,195.47 L511.50,190.94 L574.00,186.73"></path>
+<circle class="pt s3" cx="74.00" cy="228.92" r="3.2"><title>0 levier(s) · 10000 décisions · seuil 0.0118</title></circle>
+<circle class="pt s3" cx="324.00" cy="205.85" r="3.2"><title>4 levier(s) · 10000 décisions · seuil 0.0235</title></circle>
+<circle class="pt s3" cx="574.00" cy="186.73" r="3.2"><title>8 levier(s) · 10000 décisions · seuil 0.0333</title></circle>
+<line class="lvl strong" x1="324.0" y1="56.0" x2="324.0" y2="252.0"/>
+<text class="dl halo" x="331.0" y="72.7" text-anchor="start">4 leviers recensés</text>
+<line class="ln s1" x1="74.0" y1="296.0" x2="88.0" y2="296.0"/>
+<text class="lg" x="94.0" y="299.5">1000 décisions</text>
+<line class="ln s2" x1="224.0" y1="296.0" x2="238.0" y2="296.0"/>
+<text class="lg" x="244.0" y="299.5">3000 décisions</text>
+<line class="ln s3" x1="374.0" y1="296.0" x2="388.0" y2="296.0"/>
+<text class="lg" x="394.0" y="299.5">10000 décisions</text>
+
+</svg></div>
+      <p class="note">La concavité est le résultat : passer de zéro à un levier coûte davantage que passer de quatre à huit.</p>
+    </figure>
+
+  <p>La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n'a presque rien à gagner à en fermer un&nbsp;; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.</p>
+
+  <div class="part">
+    <span class="lab">Sixième partie</span>
+    <h2>Le mur d'échantillon</h2>
+    <p>Combien de décisions faut-il&nbsp;? Trois routes indépendantes répondent, et leur convergence est ce qui donne au nombre son autorité.</p>
+  </div>
+
+  <h2 id="s-routes">Trois routes indépendantes</h2>
+
+  <p>La <strong>première route</strong> est le test&nbsp;t sur l'espérance par décision&nbsp;: elle ne connaît que la moyenne et la variance des résultats. La <strong>deuxième</strong> est le seuil déflaté de l'équation&nbsp;(1)&nbsp;: elle ne connaît que le nombre de configurations et ignore tout de la loi des résultats. La <strong>troisième</strong> est le test&nbsp;G informationnel, qui passe par la non-centralité d'un khi-deux sur la table de contingence&nbsp;: ni la loi du résultat, ni la géométrie, ni le Sharpe n'entrent dans son calcul.</p>
+
+  <p>Ces trois chemins ne partagent aucune hypothèse. S'ils butent au même endroit, ce n'est pas une coïncidence de modélisation&nbsp;: c'est que le mur est structurel.</p>
+
+  <h2 id="s-convergence">Le mur, en décisions puis en années</h2>
+
+      <figure>
+      <figcaption><span class="lab">Table 5</span> — Le mur d'échantillon, à quatre leviers ouverts, en décisions puis en années de carrière.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Sharpe par décision</th><th>Route 1 — test t</th><th>Route 2 — seuil déflaté</th><th>à 2 décisions/jour</th><th>à 3 décisions/jour</th></tr></thead>
+        <tbody>
+          <tr><td>0,050</td><td>2 474</td><td>2 218</td><td>4,4 an</td><td>2,9 an</td></tr>
+          <tr><td>0,075</td><td>1 100</td><td>986</td><td>2,0 an</td><td>1,3 an</td></tr>
+          <tr><td>0,100</td><td>619</td><td>555</td><td>1,1 an</td><td>0,7 an</td></tr>
+          <tr><td>0,150</td><td>275</td><td>246</td><td>0,5 an</td><td>0,3 an</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Les deux routes convergent sans partager aucune hypothèse : la première ne connaît que la moyenne et la variance, la seconde ne connaît que le nombre de configurations. Deux chemins séparés qui butent au même endroit disent que le mur est structurel.</p>
+    </figure>
+
+  <p>Les deux premières routes s'accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de 0,10 par décision, il faut 555&nbsp;décisions, soit 1,1&nbsp;an à deux décisions par jour.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 5</span> — La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 350" role="img" aria-label="Surface du nombre d années requises selon les leviers ouverts et le Sharpe revendiqué par décision" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="40.0" y="32.0">Le mur, en années de carrière</text>
+<text class="read" x="620.0" y="32.0" text-anchor="end">deux décisions par jour, 252 séances par an</text>
+<line class="hsep" x1="40.0" y1="38.0" x2="620.0" y2="38.0"/>
+<polygon class="floor" points="330.0,250.0 462.0,310.0 330.0,370.0 198.0,310.0"></polygon>
+<line class="post" x1="330.0" y1="250.0" x2="330.0" y2="217.7"/>
+<line class="post" x1="462.0" y1="310.0" x2="462.0" y2="134.0"/>
+<line class="post" x1="330.0" y1="370.0" x2="330.0" y2="348.5"/>
+<line class="post" x1="198.0" y1="310.0" x2="198.0" y2="306.4"/>
+<polygon class="mesh up" points="330.0,297.7 374.0,301.6 330.0,348.5 286.0,335.7"><title>1.0 an(s)</title></polygon>
+<polygon class="mesh up" points="286.0,293.9 330.0,297.7 286.0,335.7 242.0,322.8"><title>0.6 an(s)</title></polygon>
+<polygon class="mesh up" points="374.0,252.6 418.0,243.9 374.0,301.6 330.0,297.7"><title>1.9 an(s)</title></polygon>
+<polygon class="mesh up" points="242.0,281.9 286.0,293.9 242.0,322.8 198.0,306.4"><title>0.3 an(s)</title></polygon>
+<polygon class="mesh up" points="330.0,261.3 374.0,252.6 330.0,297.7 286.0,293.9"><title>1.1 an(s)</title></polygon>
+<polygon class="mesh up" points="418.0,160.9 462.0,134.0 418.0,243.9 374.0,252.6"><title>3.8 an(s)</title></polygon>
+<polygon class="mesh up" points="286.0,255.7 330.0,261.3 286.0,293.9 242.0,281.9"><title>0.6 an(s)</title></polygon>
+<polygon class="mesh up" points="374.0,205.5 418.0,160.9 374.0,252.6 330.0,261.3"><title>2.4 an(s)</title></polygon>
+<polygon class="mesh up" points="330.0,217.7 374.0,205.5 330.0,261.3 286.0,255.7"><title>1.2 an(s)</title></polygon>
+<text class="tk halo" x="191.0" y="322.0" text-anchor="end">k = 0</text>
+<text class="tk halo" x="235.0" y="342.0" text-anchor="end">k = 2</text>
+<text class="tk halo" x="279.0" y="362.0" text-anchor="end">k = 4</text>
+<text class="tk halo" x="323.0" y="382.0" text-anchor="end">k = 6</text>
+<text class="tk halo" x="469.0" y="321.0">SR 0,050</text>
+<text class="tk halo" x="425.0" y="341.0">SR 0,075</text>
+<text class="tk halo" x="381.0" y="361.0">SR 0,100</text>
+<text class="tk halo" x="337.0" y="381.0">SR 0,150</text>
+<text class="tk" x="158.0" y="313.0" text-anchor="end">0</text>
+<line class="gl" x1="163.0" y1="310.0" x2="174.0" y2="310.0"/>
+<text class="tk" x="158.0" y="283.7" text-anchor="end">1 an</text>
+<line class="gl" x1="163.0" y1="280.7" x2="174.0" y2="280.7"/>
+<text class="tk" x="158.0" y="225.0" text-anchor="end">3 ans</text>
+<line class="gl" x1="163.0" y1="222.0" x2="174.0" y2="222.0"/>
+<text class="tk" x="158.0" y="137.0" text-anchor="end">6 ans</text>
+<line class="gl" x1="163.0" y1="134.0" x2="174.0" y2="134.0"/>
+
+
+</svg></div>
+      <p class="note">axe gauche : leviers discrétionnaires ouverts · axe droit : Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers : quatre leviers coûtent un facteur deux sur le seuil, jamais seize.</p>
+    </figure>
+
+  <p>La forme de la surface porte le message. L'axe des leviers est presque plat&nbsp;; l'axe du Sharpe est une falaise. Un opérateur qui hésite entre fermer des leviers et améliorer son signal a une réponse claire&nbsp;: le second effort domine le premier de très loin.</p>
+
+  <h2 id="s-puissance">La puissance de détection</h2>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 6</span> — La probabilité de détecter un avantage selon le nombre de décisions enregistrées et l'information portée par chacune. La teinte franche marque les combinaisons où la détection est acquise à 80&nbsp;%. En deçà, l'absence de preuve ne prouve rien.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 350" role="img" aria-label="Surface de la puissance de détection selon le nombre de décisions et l information portée par chacune" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="40.0" y="32.0">La puissance de détection</text>
+<text class="read" x="620.0" y="32.0" text-anchor="end">test G informationnel, seuil 5 %</text>
+<line class="hsep" x1="40.0" y1="38.0" x2="620.0" y2="38.0"/>
+<polygon class="floor" points="330.0,250.0 462.0,310.0 330.0,370.0 198.0,310.0"></polygon>
+<line class="post" x1="330.0" y1="250.0" x2="330.0" y2="218.6"/>
+<line class="post" x1="462.0" y1="310.0" x2="462.0" y2="163.0"/>
+<line class="post" x1="330.0" y1="370.0" x2="330.0" y2="194.0"/>
+<line class="post" x1="198.0" y1="310.0" x2="198.0" y2="163.0"/>
+<polygon class="mesh up" points="330.0,156.5 374.0,174.0 330.0,194.0 286.0,174.0"><title>puissance 100%</title></polygon>
+<polygon class="mesh up" points="286.0,163.0 330.0,156.5 286.0,174.0 242.0,156.5"><title>puissance 95%</title></polygon>
+<polygon class="mesh up" points="374.0,163.0 418.0,156.5 374.0,174.0 330.0,156.5"><title>puissance 95%</title></polygon>
+<polygon class="mesh up" points="242.0,193.9 286.0,163.0 242.0,156.5 198.0,163.0"><title>puissance 80%</title></polygon>
+<polygon class="mesh up" points="330.0,193.9 374.0,163.0 330.0,156.5 286.0,163.0"><title>puissance 80%</title></polygon>
+<polygon class="mesh up" points="418.0,193.9 462.0,163.0 418.0,156.5 374.0,163.0"><title>puissance 80%</title></polygon>
+<polygon class="mesh ze" points="286.0,215.2 330.0,193.9 286.0,163.0 242.0,193.9"><title>puissance 56%</title></polygon>
+<polygon class="mesh ze" points="374.0,215.2 418.0,193.9 374.0,163.0 330.0,193.9"><title>puissance 56%</title></polygon>
+<polygon class="mesh dn" points="330.0,218.6 374.0,215.2 330.0,193.9 286.0,215.2"><title>puissance 34%</title></polygon>
+<text class="tk halo" x="191.0" y="322.0" text-anchor="end">250</text>
+<text class="tk halo" x="235.0" y="342.0" text-anchor="end">500</text>
+<text class="tk halo" x="279.0" y="362.0" text-anchor="end">1000</text>
+<text class="tk halo" x="323.0" y="382.0" text-anchor="end">2000</text>
+<text class="tk halo" x="469.0" y="321.0">0,005</text>
+<text class="tk halo" x="425.0" y="341.0">0,010</text>
+<text class="tk halo" x="381.0" y="361.0">0,020</text>
+<text class="tk halo" x="337.0" y="381.0">0,040</text>
+<text class="tk" x="158.0" y="313.0" text-anchor="end">0 %</text>
+<line class="gl" x1="163.0" y1="310.0" x2="174.0" y2="310.0"/>
+<text class="tk" x="158.0" y="225.0" text-anchor="end">50 %</text>
+<line class="gl" x1="163.0" y1="222.0" x2="174.0" y2="222.0"/>
+<text class="tk" x="158.0" y="172.2" text-anchor="end">80 %</text>
+<line class="gl" x1="163.0" y1="169.2" x2="174.0" y2="169.2"/>
+<text class="tk" x="158.0" y="137.0" text-anchor="end">100 %</text>
+<line class="gl" x1="163.0" y1="134.0" x2="174.0" y2="134.0"/>
+
+
+</svg></div>
+      <p class="note">axe gauche : décisions enregistrées · axe droit : information par décision, en bits. La teinte franche marque les combinaisons où la détection est acquise à 80 %. En deçà, l'absence de preuve ne prouve rien.</p>
+    </figure>
+
+  <p>Le relief a la forme d'une marche. Sous une certaine combinaison, la détection est un tirage à pile ou face&nbsp;; au-delà, elle est acquise. Situer l'opérateur sur cette marche est tout ce qu'un protocole préenregistré a besoin de savoir, et c'est aussi ce qui permet d'énoncer à l'avance la durée de la période d'observation plutôt que de l'arrêter quand le résultat plaît.</p>
+
+  <div class="part">
+    <span class="lab">Septième partie</span>
+    <h2>Le renversement</h2>
+    <p>Le résultat qui justifie ce document&nbsp;: l'opérateur discrétionnaire est dans une position épistémique meilleure que celui qui règle une géométrie.</p>
+  </div>
+
+  <h2 id="s-versus">Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas</h2>
+
+  <p>Le document&nbsp;n<sup>o</sup>&nbsp;1 de cette série bute sur un mur situé à plusieurs dizaines de milliers de trades. On pourrait en conclure que rien n'est prouvable en intraday indiciel. La comparaison ci-dessous montre que la conclusion serait fausse, et pourquoi.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 6</span> — Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Objet du test</th><th>Sharpe revendiqué</th><th>Configurations</th><th>Seuil déflaté</th><th>Décisions requises</th><th>à 2 par jour</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Géométrie de sortie (ALP-1)</td><td>0,0332</td><td>1</td><td>0,0215</td><td>1 258</td><td>2,5 an</td></tr>
+          <tr><td class="wrap">Opérateur discrétionnaire</td><td>0,1000</td><td>16</td><td>0,0430</td><td>555</td><td>1,1 an</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> L'opérateur paie seize fois plus de configurations et franchit pourtant le mur bien plus tôt. La raison n'est pas qu'il serait meilleur : c'est que l'effet qu'il revendique est grand devant le bruit, alors que celui de la géométrie ne l'est pas.</p>
+    </figure>
+
+  <p>L'opérateur discrétionnaire paie 16&nbsp;fois plus de configurations que la géométrie scellée, et franchit pourtant le mur bien plus tôt. La raison n'est pas qu'il serait meilleur.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 2.</span> Le mur d'échantillon est gouverné par le rapport de l'effet revendiqué au bruit, et non par le nombre de configurations. La taxe de multiplicité entre par un logarithme&nbsp;; l'effet entre par un carré.</p>
+    <p class="proof"><span class="lab">Justification.</span> Le nombre de décisions requis vaut <span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>². Doubler le nombre de leviers multiplie <span class="v">B</span> par&nbsp;2 et <span class="v">N</span> par un facteur qui tend vers&nbsp;1&nbsp;; doubler le Sharpe divise <span class="v">N</span> par&nbsp;4. ∎</p>
+  </div>
+
+  <p>C'est là tout le renversement. Une stratégie de géométrie revendique un avantage structurellement minuscule, parce que le théorème d'invariance lui interdit d'en revendiquer un grand. Un opérateur discrétionnaire ne revendique pas cela&nbsp;: il revendique un jugement, dont l'effet est d'un autre ordre de grandeur. <strong>Son avantage est plus grand devant le bruit, et c'est cela — non sa qualité — qui le rend démontrable.</strong></p>
+
+  <h2 id="s-consequence">Ce que cela change pour l'opérateur</h2>
+
+  <p>Trois conséquences pratiques suivent, et elles sont inhabituellement encourageantes pour un document de cette série.</p>
+
+  <p>D'abord, <strong>l'horizon de preuve est une durée de carrière ordinaire</strong>, pas une impossibilité. Un opérateur qui commence aujourd'hui un journal correct saura dans un peu plus d'un an ce que vaut son processus, à condition que le Sharpe revendiqué soit de l'ordre de 0,10 par décision.</p>
+
+  <p>Ensuite, <strong>la discipline du journal domine la discipline du processus</strong>. Fermer des leviers rapporte peu&nbsp;; enregistrer correctement rapporte beaucoup, puisqu'un journal sans abstentions rend une partie du test définitivement inaccessible quel que soit le nombre d'années accumulées.</p>
+
+  <p>Enfin, <strong>l'échec est informatif</strong>. Un opérateur qui, au terme de la période préenregistrée, ne bat pas la loi mécanique a appris quelque chose de précis et d'utile&nbsp;: son jugement ne bat pas une règle simple, donc autant exécuter la règle simple.</p>
+
+  <div class="part">
+    <span class="lab">Huitième partie</span>
+    <h2>Décomposer l'avantage</h2>
+    <p>Savoir qu'un opérateur bat ses lois nulles ne dit pas <em>par où</em>. Or c'est cette question qui décide de ce qu'il faut garder.</p>
+  </div>
+
+  <h2 id="s-shapley">Shapley, et les seize coalitions</h2>
+
+  <p>On serait tenté de neutraliser un levier à la fois et d'attribuer à chacun la chute observée. Le procédé est faux dès que les leviers interagissent, et il l'est de façon dirigée&nbsp;: la somme des chutes ne fait pas le total, et l'ordre de neutralisation change le résultat.</p>
+
+  <p>La valeur de Shapley (1953) est l'unique attribution simultanément exhaustive — les parts somment au total —, symétrique, et nulle pour un levier sans effet. Elle exige d'évaluer toutes les coalitions.</p>
+
+  <div class="keybox">
+    <span class="lab">Une coïncidence qui n'en est pas une</span>
+    <p>Quatre leviers engendrent 16&nbsp;sous-ensembles. C'est le même 16 que la taxe de multiplicité fait payer au seuil déflaté. <strong>La multiplicité qu'on paie en preuve est exactement la multiplicité qu'on décompose en attribution</strong>&nbsp;: les configurations qu'un opérateur explore en décidant sont les coalitions dont on lui attribue le mérite.</p>
+  </div>
+
+  <p>Le coût de calcul est négligeable&nbsp;: seize évaluations linéaires en nombre de décisions, soit moins qu'une seule loi nulle simulée. Il n'y a donc aucune raison de se contenter d'une ablation approchée.</p>
+
+  <h2 id="s-validation">Une décomposition réfutable</h2>
+
+  <p>Une méthode d'attribution qu'on ne sait pas mettre en défaut ne mesure rien. Le contrôle appliqué ici est direct&nbsp;: on plante la compétence dans un levier connu, et la décomposition doit l'y désigner sans la répartir sur les autres.</p>
+
+      <figure>
+      <figcaption><span class="lab">Table 7</span> — La décomposition de Shapley retrouve-t-elle la compétence là où elle a été plantée ?</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Compétence plantée dans</th><th>Avantage total</th><th>entrée</th><th>moment</th><th>taille</th><th>sortie</th><th>Levier désigné</th></tr></thead>
+        <tbody>
+          <tr><td>entrée</td><td>+0,2130</td><td>91,7 %</td><td>8,3 %</td><td>0,0 %</td><td>0,0 %</td><td>entree</td></tr>
+          <tr><td>taille</td><td>+0,1047</td><td>2,7 %</td><td>14,5 %</td><td>82,9 %</td><td>0,0 %</td><td>taille</td></tr>
+          <tr><td>les deux</td><td>+0,3142</td><td>62,1 %</td><td>9,0 %</td><td>28,8 %</td><td>0,0 %</td><td>entree</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le levier désigné est chaque fois celui où la compétence a été plantée : la méthode est réfutable, et elle passe. Le levier du moment capte une part parasite parce qu'il n'est pas séparable de l'entrée — fermer le moment détruit aussi la sélection intraséance. Shapley signale cette interaction au lieu de la masquer.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 7</span> — La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. La barre franche est le levier désigné&nbsp;; il est chaque fois celui où la compétence a été plantée.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 672 300" role="img" aria-label="Décomposition de Shapley de l avantage sur les quatre leviers, pour trois emplacements de la compétence plantée" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="44.0" y="46.0">plantée dans l'entrée</text>
+<text class="sub" x="212.0" y="33.0" text-anchor="end">entree</text>
+<line class="hsep" x1="44.0" y1="52.0" x2="212.0" y2="52.0"/>
+<rect class="frame" x="44.0" y="58.0" width="168.0" height="150.0"/>
+<text class="tk" x="44.0" y="221.0" text-anchor="middle">0,0</text>
+<text class="tk" x="92.0" y="221.0" text-anchor="middle">0,1</text>
+<text class="tk" x="140.0" y="221.0" text-anchor="middle">0,2</text>
+<text class="tk" x="188.0" y="221.0" text-anchor="middle">0,3</text>
+<line class="ba" x1="44.0" y1="208.0" x2="212.0" y2="208.0"/>
+<rect class="s1f" x="44.00" y="72.93" width="93.70" height="13.00"><title>Entrer ou s'abstenir — +0.1952 R (+91.7%)</title></rect>
+<text class="tk" x="40.0" y="82.9" text-anchor="end">entree</text>
+<text class="dl halo" x="142.7" y="82.4" text-anchor="start">92%</text>
+<rect class="s3f" x="44.00" y="108.64" width="8.53" height="13.00"><title>Le moment exact dans la fenêtre — +0.0178 R (+8.3%)</title></rect>
+<text class="tk" x="40.0" y="118.6" text-anchor="end">moment</text>
+<text class="dl halo" x="57.5" y="118.1" text-anchor="start">8%</text>
+<rect class="s3f" x="44.00" y="144.36" width="0.40" height="13.00"><title>La taille de position — +0.0000 R (+0.0%)</title></rect>
+<text class="tk" x="40.0" y="154.4" text-anchor="end">taille</text>
+<rect class="s3f" x="44.00" y="180.07" width="0.40" height="13.00"><title>La gestion de sortie — +0.0000 R (+0.0%)</title></rect>
+<text class="tk" x="40.0" y="190.1" text-anchor="end">sortie</text>
+<text class="hdr" x="256.0" y="46.0">plantée dans la taille</text>
+<text class="sub" x="424.0" y="33.0" text-anchor="end">taille</text>
+<line class="hsep" x1="256.0" y1="52.0" x2="424.0" y2="52.0"/>
+<rect class="frame" x="256.0" y="58.0" width="168.0" height="150.0"/>
+<text class="tk" x="256.0" y="221.0" text-anchor="middle">0,0</text>
+<text class="tk" x="304.0" y="221.0" text-anchor="middle">0,1</text>
+<text class="tk" x="352.0" y="221.0" text-anchor="middle">0,2</text>
+<text class="tk" x="400.0" y="221.0" text-anchor="middle">0,3</text>
+<line class="ba" x1="256.0" y1="208.0" x2="424.0" y2="208.0"/>
+<text class="ax" x="340.0" y="236.0" text-anchor="middle">part de Shapley, en R</text>
+<rect class="s3f" x="256.00" y="72.93" width="1.34" height="13.00"><title>Entrer ou s'abstenir — +0.0028 R (+2.7%)</title></rect>
+<rect class="s3f" x="256.00" y="108.64" width="7.27" height="13.00"><title>Le moment exact dans la fenêtre — +0.0151 R (+14.5%)</title></rect>
+<text class="dl halo" x="268.3" y="118.1" text-anchor="start">14%</text>
+<rect class="s1f" x="256.00" y="144.36" width="41.64" height="13.00"><title>La taille de position — +0.0867 R (+82.9%)</title></rect>
+<text class="dl halo" x="302.6" y="153.9" text-anchor="start">83%</text>
+<rect class="s3f" x="256.00" y="180.07" width="0.40" height="13.00"><title>La gestion de sortie — +0.0000 R (+0.0%)</title></rect>
+<text class="hdr" x="468.0" y="46.0">plantée dans les deux</text>
+<text class="sub" x="636.0" y="33.0" text-anchor="end">entree</text>
+<line class="hsep" x1="468.0" y1="52.0" x2="636.0" y2="52.0"/>
+<rect class="frame" x="468.0" y="58.0" width="168.0" height="150.0"/>
+<text class="tk" x="468.0" y="221.0" text-anchor="middle">0,0</text>
+<text class="tk" x="516.0" y="221.0" text-anchor="middle">0,1</text>
+<text class="tk" x="564.0" y="221.0" text-anchor="middle">0,2</text>
+<text class="tk" x="612.0" y="221.0" text-anchor="middle">0,3</text>
+<line class="ba" x1="468.0" y1="208.0" x2="636.0" y2="208.0"/>
+<rect class="s1f" x="468.00" y="72.93" width="93.70" height="13.00"><title>Entrer ou s'abstenir — +0.1952 R (+62.1%)</title></rect>
+<text class="dl halo" x="566.7" y="82.4" text-anchor="start">62%</text>
+<rect class="s3f" x="468.00" y="108.64" width="13.63" height="13.00"><title>Le moment exact dans la fenêtre — +0.0284 R (+9.0%)</title></rect>
+<text class="dl halo" x="486.6" y="118.1" text-anchor="start">9%</text>
+<rect class="s3f" x="468.00" y="144.36" width="43.48" height="13.00"><title>La taille de position — +0.0906 R (+28.8%)</title></rect>
+<text class="dl halo" x="516.5" y="153.9" text-anchor="start">29%</text>
+<rect class="s3f" x="468.00" y="180.07" width="0.40" height="13.00"><title>La gestion de sortie — +0.0000 R (+0.0%)</title></rect>
+
+</svg></div>
+      <p class="note">La barre franche est le levier porteur. Il est chaque fois celui où la compétence a été plantée : la décomposition est réfutable, et elle passe.</p>
+    </figure>
+
+  <p>Le levier désigné est chaque fois le bon, et le levier de sortie ressort à zéro exact — ce qui est la vérité, puisque le journal synthétique ne gère aucune sortie, et non une approximation bruitée. En revanche, le levier du chronométrage capte une part parasite qu'il faut nommer&nbsp;: fermer le chronométrage remplace l'issue obtenue par la moyenne de la séance, ce qui détruit aussi la sélection <em>intraséance</em>. Les deux leviers ne sont pas séparables. Shapley signale cette interaction au lieu de la masquer, et c'est une limite du dispositif, non un artefact à corriger.</p>
+
+  <h2 id="s-fermer">Quels leviers fermer</h2>
+
+  <p>La décomposition donne le critère. Un levier dont la part est négligeable coûte un doublement de la famille de stratégies sans rien financer&nbsp;: il doit être scellé. Un levier porteur doit être conservé et, si possible, explicité — car un levier qu'on parvient à énoncer cesse d'être discrétionnaire et sort du décompte.</p>
+
+  <p>Le critère de négligeabilité retenu est délibérément grossier — une part inférieure au dixième du total. Un critère fin donnerait l'illusion qu'on sait trancher là où l'échantillon ne le permet pas, et cette illusion est exactement ce que le reste du document s'emploie à dissiper.</p>
+
+  <div class="part">
+    <span class="lab">Neuvième partie</span>
+    <h2>Protocole, limites, et ce qui reste ouvert</h2>
+    <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
+  </div>
+
+  <h2 id="s-protocole">Le scellement</h2>
+
+  <p>Sans pré-enregistrement, tout ce qui précède est de la narration. Le protocole doit fixer, avant la première décision enregistrée&nbsp;: le recensement des leviers et donc le budget de configurations&nbsp;; le format exact du journal&nbsp;; les cinq lois nulles et leurs graines&nbsp;; le nombre de décisions à collecter&nbsp;; et le critère d'acceptation, à savoir les cinq lois battues et le seuil déflaté franchi.</p>
+
+  <p>Le document dispose déjà d'un module de pré-enregistrement produisant une empreinte&nbsp;SHA-256 du protocole. Un opérateur qui scelle son protocole puis publie l'empreinte se prive de toute latitude ultérieure, et c'est précisément ce qui donne du prix à son résultat.</p>
+
+  <h2 id="s-arret">La règle d'arrêt</h2>
+
+  <p>La règle d'arrêt est le point où la plupart des évaluations discrétionnaires échouent, et elle échoue silencieusement. Un opérateur qui regarde ses statistiques chaque mois et s'arrête quand elles sont bonnes a conduit un test séquentiel sans en payer le prix&nbsp;: son niveau réel est très supérieur aux 5&nbsp;% affichés.</p>
+
+  <p>Deux issues acceptables existent. Fixer <span class="v">N</span> à l'avance et ne rien regarder avant — c'est le plus simple et le plus sûr. Ou bien déclarer des paliers d'examen et dépenser le niveau selon une fonction de dépense, ce que le module de puissance de la série sait faire. Ce qui n'est pas acceptable, c'est de regarder sans avoir déclaré.</p>
+
+  <h2 id="s-limites">Ce que ce document ne prouve pas</h2>
+
+  <p>La liste est courte mais elle est ferme.</p>
+
+  <p><strong>Aucun opérateur réel n'est évalué ici.</strong> Les journaux sont synthétiques, par nécessité méthodologique — seule une vérité plantée permet de calibrer. Les chiffres du mur sont des propriétés de l'appareil, pas des mesures d'une compétence existante.</p>
+
+  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">25</a> l'établit. Sa part est surestimée d'une quantité que le dispositif actuel ne sait pas isoler.</p>
+
+  <p><strong>L'opérateur humain n'est pas stationnaire.</strong> Toute l'analyse suppose une compétence constante sur la période. Si elle varie — apprentissage, fatigue, changement de régime de marché —, l'estimation moyenne mélange des états différents. La littérature sur la compétence variable dans le temps offre des outils, ils ne sont pas mobilisés ici.</p>
+
+  <p><strong>Le survivant biaise le témoignage.</strong> Un opérateur qui construit ce dispositif est un opérateur encore en activité. Ceux dont le processus a échoué ne publient pas de journal, et la distribution des compétences observée par cette voie n'est pas la distribution des compétences.</p>
+
+  <h2 id="s-conclusion">Conclusion</h2>
+
+  <p>La prétention d'un avantage non codable n'est pas invérifiable&nbsp;: elle est mal formulée. Reformulée en termes de trace plutôt que de règle, elle devient un problème de mesure ordinaire, avec un instrument, des lois nulles, une puissance et un horizon.</p>
+
+  <p>L'instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l'opérateur gagne mais s'il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: 4&nbsp;leviers ne coûtent qu'un facteur&nbsp;2,00 sur le seuil de preuve.</p>
+
+  <p>Et le mur, contre toute attente, est franchissable. 555&nbsp;décisions — 1,1&nbsp;an à deux décisions par jour — suffisent à établir un Sharpe de 0,10, taxe comprise. La discrétion est prouvable là où la géométrie de sortie ne l'est pas, parce que l'effet qu'elle revendique est grand devant le bruit alors que celui de la géométrie ne l'est pas.</p>
+
+  <p>Il reste que rien de tout cela ne s'obtient sans le journal, et que le journal ne se reconstitue pas. C'est la seule exigence véritablement contraignante de ce document, et elle porte sur la discipline d'enregistrement, non sur la discipline d'exécution.</p>
+
+  <hr class="rule">
+
+  <h2 class="unnumbered">Références</h2>
+
+  <div class="refs">
+    <ol>
+      <li>Bailey, D. et López de Prado, M. «&nbsp;The Deflated Sharpe Ratio&nbsp;», <em>Journal of Portfolio Management</em>, 2014 — déflation du Sharpe sous tests multiples.</li>
+      <li>Bailey, D., Borwein, J., López de Prado, M. et Zhu, Q. «&nbsp;The Probability of Backtest Overfitting&nbsp;», <em>Journal of Computational Finance</em>, 2016 — CSCV et probabilité de surajustement.</li>
+      <li>Barber, B. et Odean, T. «&nbsp;Trading Is Hazardous to Your Wealth&nbsp;», <em>Journal of Finance</em>, 2000 — destruction de valeur chez l'investisseur individuel.</li>
+      <li>Berk, J. et Green, R. «&nbsp;Mutual Fund Flows and Performance in Rational Markets&nbsp;», <em>Journal of Political Economy</em>, 2004 — compétence réelle intégralement absorbée par frais et taille.</li>
+      <li>Coval, J., Hirshleifer, D. et Shumway, T. «&nbsp;Can Individual Investors Beat the Market&nbsp;?&nbsp;», <em>Harvard NOM Working Paper</em>, 2005 — persistance chez une minorité d'individuels.</li>
+      <li>Fama, E. et French, K. «&nbsp;Luck versus Skill in the Cross-Section of Mutual Fund Returns&nbsp;», <em>Journal of Finance</em>, 2010 — bootstrap pour départager chance et compétence.</li>
+      <li>Harvey, C., Liu, Y. et Zhu, H. «&nbsp;… and the Cross-Section of Expected Returns&nbsp;», <em>Review of Financial Studies</em>, 2016 — décote de Sharpe sous tests multiples.</li>
+      <li>Kacperczyk, M., Van Nieuwerburgh, S. et Veldkamp, L. «&nbsp;Time-Varying Fund Manager Skill&nbsp;», <em>Journal of Finance</em>, 2014 — allocation d'attention et compétence variable.</li>
+      <li>Locke, P. et Mann, S. «&nbsp;Professional Trader Discipline and Trade Disposition&nbsp;», <em>Journal of Financial Economics</em>, 2005 — la discipline comme trait persistant.</li>
+      <li>Miller, G. «&nbsp;Note on the Bias of Information Estimates&nbsp;», <em>Information Theory in Psychology</em>, 1955 — correction du biais d'information mutuelle.</li>
+      <li>Politis, D. et Romano, J. «&nbsp;The Stationary Bootstrap&nbsp;», <em>Journal of the American Statistical Association</em>, 1994 — rééchantillonnage par blocs de longueur aléatoire.</li>
+      <li>Shapley, L. «&nbsp;A Value for n-Person Games&nbsp;», <em>Contributions to the Theory of Games</em>, 1953 — l'attribution exhaustive et symétrique.</li>
+    </ol>
+  </div>
+
+  <div class="colophon">
+    <p><strong>Avertissement.</strong> Ce document est un travail de recherche méthodologique. Il ne constitue ni un conseil en investissement, ni une recommandation d'opérer, et ne comporte aucune affirmation de performance. Aucun opérateur réel n'y est évalué&nbsp;; les journaux analysés sont synthétiques et servent à calibrer un appareil de mesure, non à établir un avantage.</p>
+    <p><strong>Reproductibilité.</strong> Tous les nombres cités sont produits par les modules du dépôt et se recalculent par <code>python main.py --disc</code>. Le document lui-même se reconstruit par <code>python main.py --discpaper</code> à partir de son gabarit&nbsp;; il ne s'édite pas à la main. Tout aléa est déterministe et amorcé par une graine explicite.</p>
+  </div>
+
+</div>

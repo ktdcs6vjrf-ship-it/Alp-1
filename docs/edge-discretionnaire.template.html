@@ -1,0 +1,993 @@
+<title>Prouver une discrétion — ALP nº 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:  #FFFFFF;
+    --ink:    #101010;
+    --soft:   #3A3A3A;
+    --muted:  #6A6A6A;
+    --rule:   #101010;
+    --hair:   #C9C9C9;
+    --wash:   #F4F4F2;
+
+    --serif: "Source Serif 4", "Times New Roman", Times, serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --measure: 46rem;
+    --plate:   58rem;
+{{TOKENS_LIGHT}}  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12120F;
+      --ink:   #ECEAE4;
+      --soft:  #C4C1B9;
+      --muted: #8E8B84;
+      --rule:  #ECEAE4;
+      --hair:  #45433E;
+      --wash:  #1B1B17;
+{{TOKENS_DARK}}    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12120F; --ink: #ECEAE4; --soft: #C4C1B9;
+    --muted: #8E8B84; --rule: #ECEAE4; --hair: #45433E; --wash: #1B1B17;
+{{TOKENS_DARK}}  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.1875rem;
+    line-height: 1.66;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    -webkit-font-smoothing: antialiased;
+    counter-reset: section;
+  }
+
+  .sheet {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 3.2rem 1.6rem 5rem;
+  }
+
+  /* ---------- bloc de titre ---------- */
+
+  .titleblock { text-align: center; margin-bottom: 2.6rem; }
+
+  .venue {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.8rem;
+    font-variant-numeric: lining-nums;
+  }
+
+  h1 {
+    font-size: 2.05rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.008em;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+  }
+
+  .byline { font-size: 1.06rem; margin: 0 0 0.25rem; }
+  .affil  { font-size: 0.94rem; color: var(--muted); font-style: italic; margin: 0 0 0.2rem; }
+  .dateline { font-size: 0.94rem; color: var(--muted); font-variant-numeric: lining-nums; }
+
+  /* ---------- résumé ---------- */
+
+  .abstract {
+    margin: 2.4rem auto 2.8rem;
+    max-width: 40rem;
+    font-size: 1.06rem;
+    line-height: 1.62;
+    text-align: justify;
+    hyphens: auto;
+  }
+  .abstract h2 {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 0 0.9rem;
+    color: var(--soft);
+  }
+  .abstract h2::before { content: none; }
+  .abstract p { margin: 0 0 0.75rem; text-indent: 0; }
+  .keywords { font-size: 0.95rem; color: var(--soft); margin-top: 1.1rem; }
+  .keywords span { font-style: italic; }
+
+  hr.rule {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 2.2rem 0;
+  }
+
+  /* ---------- titres numérotés ---------- */
+
+  h2 {
+    counter-increment: section;
+    counter-reset: subsection;
+    font-size: 1.32rem;
+    font-weight: 600;
+    margin: 2.7rem 0 0.85rem;
+    line-height: 1.3;
+  }
+  h2::before {
+    content: counter(section) ".";
+    margin-right: 0.55em;
+    font-variant-numeric: lining-nums;
+  }
+
+  h3 {
+    counter-increment: subsection;
+    font-size: 1.14rem;
+    font-weight: 600;
+    font-style: italic;
+    margin: 1.9rem 0 0.55rem;
+    line-height: 1.35;
+  }
+  h3::before {
+    content: counter(section) "." counter(subsection);
+    margin-right: 0.55em;
+    font-style: normal;
+    font-variant-numeric: lining-nums;
+  }
+
+  .unnumbered { counter-increment: none; }
+  .unnumbered::before { content: none; }
+
+  /* Césure : les motifs suivent la langue du contenu, déclarée par le
+     `lang="fr"` porté par .sheet. Sans lui le navigateur coupe les mots
+     français sur des motifs anglais. Les limites interdisent les fragments
+     de moins de trois lettres. */
+  p, li, .abstract, .note, .prop {
+    hyphens: auto;
+    -webkit-hyphenate-limit-before: 3;
+    -webkit-hyphenate-limit-after: 3;
+    -webkit-hyphenate-limit-lines: 2;
+    hyphenate-limit-chars: 7 3 3;
+    hyphenate-limit-lines: 2;
+  }
+
+  p {
+    margin: 0 0 0.35rem;
+    text-align: justify;
+  }
+  p + p { text-indent: 1.4em; }
+  h2 + p, h3 + p, .eq + p, table + p, .prop + p, ul + p, ol + p, figure + p {
+    text-indent: 0;
+    margin-top: 0.35rem;
+  }
+
+  em { font-style: italic; }
+  strong { font-weight: 600; }
+
+  ul, ol { margin: 0.6rem 0 0.9rem; padding-left: 1.5rem; }
+  li { margin-bottom: 0.42rem; text-align: justify; hyphens: auto; }
+  li::marker { color: var(--soft); }
+
+  /* ---------- équations centrées et numérotées ---------- */
+
+  .eq {
+    display: grid;
+    grid-template-columns: 3rem 1fr 3rem;
+    align-items: center;
+    margin: 1.25rem 0;
+    gap: 0.5rem;
+  }
+  .eq > .body {
+    grid-column: 2;
+    text-align: center;
+    font-size: 1.12rem;
+    line-height: 1.72;
+    min-width: 0;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+  }
+  .eq > .no {
+    grid-column: 3;
+    text-align: right;
+    color: var(--soft);
+    font-size: 1rem;
+    font-variant-numeric: lining-nums;
+  }
+
+  .v { font-style: italic; }
+  .op { margin: 0 0.28em; }
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    /* La ligne de base d'une boîte inline-flex est celle de son premier
+       enfant — le numérateur. `middle` remet la barre de fraction sur l'axe
+       mathématique, à hauteur du signe d'égalité. */
+    vertical-align: middle;
+    text-align: center;
+    margin: 0 0.22em;
+    line-height: 1.18;
+    font-size: 0.94em;
+  }
+  .frac > span:first-child { border-bottom: 1px solid currentColor; padding: 0 0.3em 0.06em; }
+  .frac > span:last-child { padding: 0.06em 0.3em 0; }
+
+  /* ---------- propositions ---------- */
+
+  .prop {
+    margin: 1.3rem 0;
+    padding: 0.85rem 0 0.85rem 1rem;
+    border-left: 2px solid var(--rule);
+    font-size: 1.08rem;
+  }
+  .prop .lab {
+    font-weight: 600;
+    font-style: normal;
+    margin-right: 0.45em;
+  }
+  .prop p { font-style: italic; text-align: left; text-indent: 0; }
+  .prop p + p { margin-top: 0.5rem; }
+  .prop .proof {
+    font-style: normal;
+    font-size: 1rem;
+    color: var(--soft);
+    margin-top: 0.6rem;
+  }
+  .prop .proof .lab { font-style: italic; font-weight: 400; }
+
+  /* ---------- tableaux : filets noirs fins, sans réglure verticale ---------- */
+
+  figure { margin: 1.8rem 0; }
+
+  figcaption {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 0.55rem;
+    color: var(--ink);
+  }
+  figcaption .lab {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+  }
+
+  .scroll { overflow-x: auto; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+    font-variant-numeric: lining-nums tabular-nums;
+    line-height: 1.4;
+  }
+  thead th {
+    font-weight: 600;
+    text-align: right;
+    padding: 0.42rem 0.5rem;
+    border-top: 1.1px solid var(--rule);
+    border-bottom: 0.6px solid var(--rule);
+    white-space: nowrap;
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  tbody td {
+    padding: 0.34rem 0.5rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 1.1px solid var(--rule); }
+  tbody tr.sep td { border-top: 0.6px solid var(--hair); }
+  td.wrap, th.wrap { white-space: normal; min-width: 9rem; }
+  td.wrap { text-align: left; }
+
+  /* Tables larges : elles débordent la largeur de lecture, centrées. */
+  figure.wide { width: min(94vw, 66rem); margin-left: 50%; transform: translateX(-50%); }
+  figure.wide table { font-size: 0.88rem; }
+  figure.wide figcaption, figure.wide .note { max-width: 44rem; margin-left: auto;
+                                              margin-right: auto; }
+
+  /* Planches : une figure est dessinée sur une grille de 640 unités. Ramenée
+     à la colonne de lecture elle rendrait ses étiquettes sous les 10 px ; on
+     la laisse déborder, ce qui agrandit le dessin entier sans en déranger la
+     composition. */
+  figure.plate { width: min(94vw, var(--plate)); margin-left: 50%;
+                 transform: translateX(-50%); }
+  figure.plate figcaption, figure.plate .note { max-width: 44rem; margin-left: auto;
+                                                margin-right: auto; }
+
+  .note {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--soft);
+    margin-top: 0.55rem;
+    text-align: justify;
+    hyphens: auto;
+  }
+  .note .lab { font-style: italic; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    font-variant-numeric: lining-nums;
+  }
+
+  /* ---------- références ---------- */
+
+  .refs { font-size: 0.96rem; line-height: 1.55; }
+  .refs ol { padding-left: 1.6rem; }
+  .refs li { margin-bottom: 0.5rem; text-align: left; }
+
+  .colophon {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 0.6px solid var(--hair);
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--muted);
+    text-align: left;
+  }
+  .colophon p { text-align: left; text-indent: 0; }
+
+  /* ---------- impression ---------- */
+
+  @page { margin: 22mm 20mm; }
+
+  @media print {
+    :root { --paper: #FFF; --ink: #000; --rule: #000; --hair: #999; --soft: #333; --muted: #555; }
+    body { font-size: 10.5pt; }
+    .sheet { max-width: none; padding: 0; }
+    figure.wide { width: 100%; margin-left: 0; transform: none; }
+    h2, h3 { break-after: avoid; }
+    figure, .prop, .eq { break-inside: avoid; }
+    .fig .band, .fig .hm, .fig .area, .fig .mesh { -webkit-print-color-adjust: exact;
+      print-color-adjust: exact; }
+  }
+
+{{FIGURE_CSS}}
+  /* Le débordement se borne de lui-même à 94vw ; il ne reste qu'à le
+     supprimer sur les écrans où il n'y a plus de marge à prendre. */
+  @media (max-width: 50rem) {
+    figure.wide, figure.plate { width: 100%; margin-left: 0; transform: none; }
+  }
+
+  @media (max-width: 34rem) {
+    .sheet { padding: 2.2rem 1.1rem 4rem; }
+    h1 { font-size: 1.72rem; }
+    .eq { grid-template-columns: 0 1fr 2.4rem; }
+    p, li { text-align: left; }
+  }
+
+
+  /* ============================================================
+     Ajouts de la monographie : composition du texte, sommaire,
+     parties, et fiches de concepts. La charte d'ALP-1 est reprise
+     telle quelle ci-dessus ; ce bloc ne fait que l'étendre.
+     ============================================================ */
+
+  /* Composition. La césure française n'est pas disponible dans tous
+     les moteurs de rendu, et une justification sans césure creuse des
+     rivières de blanc dans un texte à mots longs. Le fer à gauche les
+     supprime toutes, et `text-wrap: pretty` équilibre les fins de
+     paragraphe là où il est implémenté. */
+  p, li, .abstract, .abstract p, .note, figcaption, .refs li {
+    text-align: left;
+    text-wrap: pretty;
+    hyphens: manual;
+  }
+  /* Le bloc de titre et les légendes gardent leur centrage : la règle
+     ci-dessus vise le corps du texte, pas les éléments composés. */
+  .titleblock p, .titleblock .venue, figcaption { text-align: center; }
+
+  p + p { text-indent: 0; margin-top: 0.62rem; }
+  h2 + p, h3 + p { margin-top: 0; }
+  p { margin-bottom: 0; }
+  li { margin-bottom: 0.5rem; }
+
+  /* Classification JEL : même registre que les mots-clés, un cran plus bas. */
+  .jel {
+    font-size: 0.88rem; color: var(--soft); margin-top: 0.35rem;
+    font-variant-numeric: lining-nums;
+  }
+  .jel span { font-style: italic; }
+
+  /* ---------- sommaire ---------- */
+
+  .toc { margin: 2.6rem 0 1rem; }
+  .toc h2 {
+    font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
+    text-align: center; font-weight: 600; margin: 0 0 1.4rem; color: var(--soft);
+  }
+  .toc h2::before { content: none; }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc > ol { counter-reset: toc; }
+  .toc > ol > li {
+    margin: 0 0 1.5rem;
+  }
+  .toc .pt {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem; border-bottom: 0.6px solid var(--hair);
+  }
+  .toc ol ol { margin: 0; padding: 0; }
+  .toc ol ol li {
+    counter-increment: toc;
+    display: flex; align-items: baseline; gap: 0.5em;
+    margin: 0 0 0.24rem; font-size: 0.95rem; line-height: 1.4;
+  }
+  .toc ol ol li::before {
+    content: counter(toc) ".";
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--muted); flex: none; min-width: 1.6em;
+  }
+  .toc a { color: inherit; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; text-underline-offset: 0.16em; }
+  .toc a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .toc .lead { color: var(--soft); font-style: italic; }
+
+  /* ---------- ouverture de partie ---------- */
+
+  .part {
+    margin: 4.4rem 0 2.6rem;
+    padding-top: 1.5rem;
+    border-top: 1.1px solid var(--rule);
+    break-before: page;
+  }
+  .part .lab {
+    font-size: 0.7rem; letter-spacing: 0.17em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 0.7rem;
+  }
+  .part h2 {
+    counter-increment: none;
+    font-size: 1.5rem; font-weight: 600; line-height: 1.2;
+    margin: 0 0 0.6rem; letter-spacing: -0.01em;
+  }
+  .part h2::before { content: none; }
+  .part p {
+    margin: 0; color: var(--soft); font-size: 1rem; max-width: 34rem;
+  }
+
+  /* ---------- fiche de concept ---------- */
+
+  .concept {
+    margin: 1.6rem 0;
+    padding: 0 0 0 1.1rem;
+    border-left: 2px solid var(--hair);
+  }
+  .concept > h3 {
+    margin: 0 0 0.45rem; font-style: normal; font-size: 1rem;
+    counter-increment: none;
+  }
+  .concept > h3::before { content: none; }
+  .concept .plain {
+    font-size: 1rem; color: var(--ink); margin: 0 0 0.55rem;
+  }
+  .concept .plain::before {
+    content: "En clair"; display: block;
+    font-size: 0.68rem; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.22rem;
+  }
+  .concept .formal { margin: 0.55rem 0 0; font-size: 0.97rem; }
+  .concept .formal::before {
+    content: "Dans le papier"; display: block;
+    font-size: 0.68rem; letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.22rem;
+  }
+  .concept .sym {
+    font-family: var(--mono); font-size: 0.88rem;
+    font-variant-numeric: lining-nums;
+    color: var(--soft); margin-top: 0.5rem;
+  }
+
+  /* ---------- encadré de synthèse ---------- */
+
+  .keybox {
+    border: 1.1px solid var(--rule);
+    padding: 1.1rem 1.3rem;
+    margin: 1.8rem 0;
+    background: var(--wash);
+  }
+  .keybox .lab {
+    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 0.5rem;
+  }
+  .keybox p { margin: 0; }
+  .keybox p + p { margin-top: 0.5rem; }
+
+  /* ---------- repères chiffrés ---------- */
+
+  /* Les filets sont portés par les cellules, non par un fond que le gap
+     laisserait voir : une rangée incomplète afficherait sinon un pavé de
+     couleur là où il manque des cellules. Les ombres portées des cellules
+     voisines se superposent en un seul filet. */
+  .figures-cles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0.6px; background: var(--paper);
+    margin: 1.8rem 0;
+  }
+  .figures-cles div {
+    background: var(--paper); padding: 0.85rem 0.9rem;
+    box-shadow: 0 0 0 0.6px var(--hair);
+  }
+  .figures-cles .n {
+    font-family: var(--mono); font-size: 1.28rem; font-weight: 500;
+    font-variant-numeric: lining-nums tabular-nums;
+    display: block; line-height: 1.1; margin-bottom: 0.3rem;
+  }
+  .figures-cles .t {
+    font-size: 0.8rem; color: var(--soft); line-height: 1.35; display: block;
+  }
+
+  @media (max-width: 34rem) {
+    .part { margin-top: 3rem; }
+    .part h2 { font-size: 1.28rem; }
+  }
+</style>
+
+<div class="sheet" lang="fr">
+
+  <div class="titleblock">
+    <div class="venue">Série de documents de travail ALP &nbsp;·&nbsp; n<sup>o</sup>&nbsp;3</div>
+    <h1>Prouver une discrétion&nbsp;: lois nulles, taxe de multiplicité et mur d'échantillon pour un opérateur dont l'avantage n'est pas codable</h1>
+    <p class="byline">Recherche ALP</p>
+    <p class="affil">Évaluation de la décision discrétionnaire et théorie des tests multiples</p>
+    <p class="dateline">Première version&nbsp;: août 2026 &nbsp;·&nbsp; Cette version&nbsp;: août 2026</p>
+  </div>
+
+  <div class="abstract">
+    <h2 class="unnumbered">Résumé</h2>
+
+    <p>Un opérateur discrétionnaire affirme que son avantage n'est pas codable&nbsp;: aucune règle écrite ne reproduirait ses décisions. Pris au pied de la lettre, l'énoncé s'auto-interdit. Sans règle, pas de rejeu&nbsp;; sans rejeu, pas de loi nulle&nbsp;; sans loi nulle, rien à opposer au hasard, et la prétention n'est plus réfutable. Ce document montre que la difficulté est apparente, et qu'elle se lève par une distinction que l'évaluation des gérants pratique depuis quarante ans sans jamais disposer de la règle qu'elle juge&nbsp;: <strong>répliquer n'est pas détecter</strong>. On ne teste pas la règle&nbsp;; on teste la trace qu'elle laisse.</p>
+
+    <p>La trace est un journal de décision, dont ce document spécifie les sept champs et la frontière temporelle qui les sépare. Trois de ces champs manquent à la plupart des journaux et portent l'essentiel de l'information&nbsp;: le contexte au moment de la décision, la conviction annoncée avant l'issue, et surtout les <strong>abstentions</strong> — les setups vus et refusés. Sans elles, la moitié de la table de contingence reste vide et la compétence de refus n'est pas identifiable, alors que c'est souvent là que loge l'avantage d'un discrétionnaire.</p>
+
+    <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l'indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l'abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l'opérateur gagne mais s'il fait mieux qu'une règle qu'on écrit en dix lignes. L'appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à {{d_bits_forte}}&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
+
+    <p>Le résultat principal renverse l'attente. La discrétion coûte une taxe de multiplicité — {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives — mais cette taxe croît en racine du logarithme, si bien que quatre leviers ne relèvent le seuil de preuve que d'un facteur&nbsp;{{d_facteur_taxe}}. Trois routes indépendantes convergent alors sur un nombre atteignable&nbsp;: un opérateur revendiquant un Sharpe de 0,10 par décision franchit le seuil déflaté en {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, taxe comprise. <strong>La discrétion est prouvable là où la géométrie de sortie ne l'est pas</strong> — non parce qu'elle serait meilleure, mais parce que l'effet qu'elle revendique est grand devant le bruit, alors que celui de la géométrie ne l'est pas.</p>
+
+    <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d'arrêt optionnel</p>
+    <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
+  </div>
+
+  <div class="figures-cles">
+    <div><span class="n">{{d_configs}}</span><span class="t">configurations effectives engendrées par {{d_leviers}} leviers discrétionnaires</span></div>
+    <div><span class="n">{{d_facteur_taxe}}&nbsp;×</span><span class="t">ce que ces {{d_leviers}} leviers coûtent réellement au seuil de preuve</span></div>
+    <div><span class="n">{{d_mur_sr10}}</span><span class="t">décisions pour prouver un Sharpe de 0,10, taxe comprise</span></div>
+    <div><span class="n">{{d_mur_ans10}}&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
+    <div><span class="n">{{d_part_entree}}</span><span class="t">de l'avantage attribué au bon levier par la décomposition de Shapley</span></div>
+  </div>
+
+  <div class="keybox">
+    <span class="lab">Note de lecture</span>
+    <p>Le document se lit à trois profondeurs. <strong>La thèse</strong> tient dans le résumé et la section&nbsp;<a href="#s-detecter">2</a>&nbsp;: on ne teste pas la règle, on teste sa trace. <strong>L'appareil</strong> occupe les parties&nbsp;II à&nbsp;IV — le journal, la vérité de référence, les cinq lois nulles. <strong>Le résultat</strong> est aux parties&nbsp;V à&nbsp;VII&nbsp;: la taxe de discrétion, le mur d'échantillon, et le renversement qui rend la discrétion plus prouvable que la géométrie.</p>
+    <p>Aucun nombre de ce document n'est écrit à la main. Tous sont produits par les modules du dépôt et se recalculent&nbsp;; un lecteur qui doute d'un chiffre peut relancer le module qui l'établit.</p>
+  </div>
+
+  <hr class="rule">
+
+  <nav class="toc" aria-label="Sommaire">
+    <h2 class="unnumbered">Sommaire</h2>
+    <ol>
+      <li><span class="pt">Première partie — Le problème, et pourquoi il se lève</span>
+        <ol>
+          <li><a href="#s-position">Ce que « non codable » veut dire</a></li>
+          <li><a href="#s-detecter">Répliquer n'est pas détecter</a></li>
+          <li><a href="#s-litterature">Ce que l'évaluation des gérants sait faire sans la règle</a></li>
+          <li><a href="#s-contrat">Le contrat épistémique de ce document</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Deuxième partie — L'instrument</span>
+        <ol start="5">
+          <li><a href="#s-journal">Le journal de décision</a></li>
+          <li><a href="#s-champs">Sept champs, et une frontière temporelle</a></li>
+          <li><a href="#s-abstention">Les refus sont la moitié de l'information</a></li>
+          <li><a href="#s-integrite">Ce qui invalide un registre avant tout calcul</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Troisième partie — La vérité de référence</span>
+        <ol start="9">
+          <li><a href="#s-univers">L'univers des setups, sur un prix sans dérive</a></li>
+          <li><a href="#s-invariance">L'invariance, transposée du choix des barrières au choix des trades</a></li>
+          <li><a href="#s-plantee">Planter une compétence de taille connue</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Quatrième partie — Les cinq lois nulles</span>
+        <ol start="12">
+          <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
+          <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
+          <li><a href="#s-mecanique">La loi qui fait mal</a></li>
+          <li><a href="#s-calibration">Le niveau et la puissance</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Cinquième partie — La taxe de discrétion</span>
+        <ol start="16">
+          <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
+          <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
+          <li><a href="#s-concavite">La taxe est concave, et c'est tout l'argument</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Sixième partie — Le mur d'échantillon</span>
+        <ol start="19">
+          <li><a href="#s-routes">Trois routes indépendantes</a></li>
+          <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
+          <li><a href="#s-puissance">La puissance de détection</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Septième partie — Le renversement</span>
+        <ol start="22">
+          <li><a href="#s-versus">Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas</a></li>
+          <li><a href="#s-consequence">Ce que cela change pour l'opérateur</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Huitième partie — Décomposer l'avantage</span>
+        <ol start="24">
+          <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
+          <li><a href="#s-validation">Une décomposition réfutable</a></li>
+          <li><a href="#s-fermer">Quels leviers fermer</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Neuvième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="27">
+          <li><a href="#s-protocole">Le scellement</a></li>
+          <li><a href="#s-arret">La règle d'arrêt</a></li>
+          <li><a href="#s-limites">Ce que ce document ne prouve pas</a></li>
+          <li><a href="#s-conclusion">Conclusion</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+
+  <hr class="rule">
+
+  <div class="part">
+    <span class="lab">Première partie</span>
+    <h2>Le problème, et pourquoi il se lève</h2>
+    <p>La prétention d'un opérateur discrétionnaire paraît invérifiable par construction. Elle ne l'est pas, mais la sortie n'est pas celle qu'on attend&nbsp;: elle ne consiste pas à coder la règle, elle consiste à cesser de vouloir la coder.</p>
+  </div>
+
+  <h2 id="s-position">Ce que « non codable » veut dire</h2>
+
+  <p>L'énoncé que ce document prend au sérieux est le suivant&nbsp;: <em>il existe un avantage dans mes décisions, et aucun programme ne saurait les reproduire.</em> Il faut d'abord reconnaître qu'il n'est pas absurde. Un opérateur intègre des éléments hétérogènes — la forme d'un mouvement, la densité du carnet, ce qu'il sait du calendrier, ce qu'il a vu les jours précédents — selon une pondération qu'il ne sait pas énoncer et qui varie avec le contexte. L'incapacité à écrire la règle est un fait d'introspection ordinaire, pas une échappatoire.</p>
+
+  <p>Mais l'énoncé, tel quel, s'auto-interdit. Il s'enchaîne ainsi&nbsp;: sans règle écrite, aucun rejeu sur données historiques&nbsp;; sans rejeu, aucune loi nulle à laquelle comparer la performance&nbsp;; sans loi nulle, rien ne distingue un avantage d'une série de chance. La prétention devient irréfutable, et une prétention irréfutable n'est pas une prétention forte&nbsp;: c'est une prétention vide. C'est exactement le motif pour lequel la méthodologie de cette série refuse l'entrée à tout estimateur qu'on ne sait pas calibrer contre son bruit.</p>
+
+  <p>Le piège se referme d'autant plus vite que l'opérateur a raison sur le premier point. Plus son processus est réellement irréductible à une règle, moins il peut en établir la valeur — et c'est précisément quand la valeur est grande que l'impossibilité de la montrer coûte cher.</p>
+
+  <h2 id="s-detecter">Répliquer n'est pas détecter</h2>
+
+  <p>La sortie tient dans une distinction que la chaîne d'implication ci-dessus escamote. Elle suppose que tester une stratégie exige de l'exécuter. C'est vrai pour un backtest&nbsp;; c'est faux pour un test.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 1.</span> La détection d'un avantage ne requiert pas la connaissance de la règle qui le produit. Elle requiert seulement l'observation des décisions et de leurs issues, et une loi nulle sur cette même paire.</p>
+    <p class="proof"><span class="lab">Justification.</span> Soit <span class="v">D</span> la suite des décisions et <span class="v">Y</span> celle des issues. Toute statistique de la forme <span class="v">T</span>(<span class="v">D</span>,&nbsp;<span class="v">Y</span>) est calculable sans connaître l'application qui engendre <span class="v">D</span>. Sa loi sous l'hypothèse d'indépendance entre <span class="v">D</span> et <span class="v">Y</span> l'est également, par permutation ou par simulation. Le test compare l'une à l'autre. La règle n'intervient à aucun des trois moments. ∎</p>
+  </div>
+
+  <p>Autrement dit&nbsp;: on n'a jamais eu besoin de la règle. On croyait en avoir besoin parce qu'on confondait deux opérations que le vocabulaire courant réunit sous le mot « tester ». <strong>Répliquer</strong> exige la règle&nbsp;; <strong>détecter</strong> exige seulement la trace.</p>
+
+  <p>La conséquence pratique est immédiate et elle déplace tout le travail. Le problème cesse d'être « comment coder mon jugement » — question sans réponse — pour devenir « comment enregistrer mes décisions de façon que leur trace soit exploitable ». Cette seconde question a une réponse, et c'est la deuxième partie de ce document.</p>
+
+  <h2 id="s-litterature">Ce que l'évaluation des gérants sait faire sans la règle</h2>
+
+  <p>La proposition&nbsp;1 n'est pas une trouvaille&nbsp;: c'est la pratique établie d'un champ entier. Aucune des références ci-dessous ne dispose de la stratégie des gérants qu'elle évalue, et toutes concluent.</p>
+
+  <p>Fama et French (2010) départagent chance et compétence sur la coupe transversale des fonds américains par un bootstrap qui ne suppose rien de leurs processus. Kacperczyk, Van Nieuwerburgh et Veldkamp (2014) vont plus loin et mesurent une compétence <em>variable dans le temps</em> — sélection de titres en expansion, chronométrage du marché en récession — à partir des seuls portefeuilles publiés. Berk et Green (2004) montrent que la compétence peut exister tout en étant intégralement absorbée par les frais et la taille, ce qui met en garde contre l'inférence inverse&nbsp;: une performance nette nulle ne réfute pas la compétence.</p>
+
+  <p>Deux travaux touchent de plus près l'opérateur individuel. Locke et Mann (2005) étudient des opérateurs de parquet sur futures et trouvent que le trait persistant n'est pas la capacité de prévision mais la <strong>discipline</strong> — la propension à ne pas laisser courir les perdants. Coval, Hirshleifer et Shumway (2005) établissent une persistance de performance chez une minorité d'investisseurs individuels, incompatible avec le pur hasard. À l'inverse, Barber et Odean (2000) documentent la destruction de valeur du plus grand nombre. L'ensemble ne dit pas que la discrétion paie&nbsp;; il dit qu'elle est <em>mesurable</em>, et que la mesure sépare.</p>
+
+  <h2 id="s-contrat">Le contrat épistémique de ce document</h2>
+
+  <p>Il vaut mieux énoncer d'emblée ce qui sera établi et ce qui ne le sera jamais, car la seconde liste est celle qui protège l'auteur d'une prétention qu'il ne pourrait pas tenir.</p>
+
+  <p><strong>Ce document construit un appareil de mesure et en établit la sensibilité.</strong> Il dit&nbsp;: voici cinq adversaires, voici ce que chacun réfute, voici combien de décisions il faut pour les battre, et voici la preuve que l'appareil ne déclare rien quand il n'y a rien. C'est un résultat de méthode, complet et vérifiable.</p>
+
+  <p><strong>Ce document n'établit l'avantage d'aucun opérateur réel</strong>, pour la raison suffisante qu'aucun journal réel n'y est analysé. Les journaux exploités ici sont synthétiques, et c'est un choix, non un pis-aller&nbsp;: seule une vérité plantée permet de vérifier que l'appareil retrouve ce qu'on y a mis et ne trouve rien quand on n'y a rien mis. Un opérateur qui fournirait son registre au format de la section&nbsp;<a href="#s-champs">6</a> obtiendrait ses propres chiffres par les mêmes modules, sans qu'une ligne de code change.</p>
+
+  <div class="part">
+    <span class="lab">Deuxième partie</span>
+    <h2>L'instrument</h2>
+    <p>Si l'on ne teste pas la règle mais sa trace, alors la qualité de la trace décide de tout. Un journal mal conçu rend certaines questions définitivement insolubles, et aucune finesse statistique ultérieure ne les rouvre.</p>
+  </div>
+
+  <h2 id="s-journal">Le journal de décision</h2>
+
+  <p>L'instrument de ce document est un registre où chaque <em>setup éligible</em> laisse une ligne — qu'il ait été pris ou refusé. Ce point sépare le journal de décision du journal de trades ordinaire, qui n'enregistre que les positions ouvertes et perd, ce faisant, la moitié du signal.</p>
+
+  <p>La règle reste dans la tête de l'opérateur&nbsp;; ce qui sort du dispositif, ce sont des décisions horodatées. On ne lui demande jamais d'expliquer pourquoi il a pris ou refusé — l'explication serait une reconstruction, et une reconstruction n'est pas une donnée. On lui demande seulement de consigner, avant de connaître l'issue, ce qu'il a décidé et dans quel état du monde.</p>
+
+  <h2 id="s-champs">Sept champs, et une frontière temporelle</h2>
+
+  <p>Les champs se lisent en deux blocs, séparés par une frontière qu'il ne faut jamais franchir à l'envers.</p>
+
+  {{TABLE:fields}}
+
+  <p>La frontière n'est pas une commodité de présentation. Un champ du bloc supérieur rempli après coup contamine tout ce qui en dépend, et aucun test ne rattrape cette contamination — car le test ne peut pas distinguer une décision prise à 10&nbsp;h&nbsp;12 d'une décision inscrite à 18&nbsp;h en se souvenant de 10&nbsp;h&nbsp;12. C'est pourquoi un journal rempli le soir est un souvenir et non une donnée&nbsp;: non parce que l'opérateur mentirait, mais parce que la mémoire d'une décision est systématiquement révisée par son issue.</p>
+
+  <p>Trois de ces champs manquent à la quasi-totalité des journaux existants. Le <strong>contexte au moment de la décision</strong> permet seul de vérifier plus tard qu'un motif invoqué était réellement présent. La <strong>conviction annoncée</strong> autorise un test qu'aucun autre champ ne permet — la calibration&nbsp;: un opérateur dont les décisions à forte conviction battent ses décisions à faible conviction démontre une compétence <em>même si son espérance moyenne est nulle</em>, ce qui est un résultat considérable et fréquemment inaccessible faute du champ. Et les <strong>abstentions</strong>, qui méritent leur propre section.</p>
+
+  <h2 id="s-abstention">Les refus sont la moitié de l'information</h2>
+
+  <p>Chez un opérateur discrétionnaire, l'avantage loge très souvent dans ce qu'il ne fait pas. C'est le point que la littérature sur l'allocation d'attention formalise&nbsp;: la compétence se manifeste autant par le renoncement que par la sélection.</p>
+
+  <p>Or la mesure de l'abstention exige une table de contingence complète — décision <span class="op">×</span> issue — dont deux cases sur quatre concernent des setups refusés. Il faut donc leur associer une <strong>issue contrefactuelle</strong>&nbsp;: ce que le setup aurait donné s'il avait été pris. C'est possible dès lors que les setups sont définis mécaniquement, puisqu'on peut alors les rejouer intégralement.</p>
+
+  <div class="keybox">
+    <span class="lab">La conséquence à retenir</span>
+    <p>Un journal sans abstentions ne remplit que la moitié de la table. La loi nulle&nbsp;D devient intestable, et la compétence de refus — souvent la principale — <strong>n'est pas identifiable</strong>, quelle que soit la taille de l'échantillon. Aucune quantité de décisions prises ne compense l'absence des décisions refusées.</p>
+  </div>
+
+  <h2 id="s-integrite">Ce qui invalide un registre avant tout calcul</h2>
+
+  <p>Avant de mesurer, on audite. Le module d'audit refuse un journal sur des défauts ordonnés par gravité, et un journal qui déclenche le premier n'est pas dégradé&nbsp;: il est inexploitable, parce que la quantité qu'on voudrait mesurer n'y est pas identifiable.</p>
+
+  <p>Les défauts recherchés sont concrets. Une abstention qui porte une direction ou une mise non nulle a été complétée après coup. Des rangs dupliqués ou non croissants signalent un registre édité. Une conviction constante rend le test de calibration sans objet — ce n'est pas une faute, mais il faut le dire plutôt que de laisser croire que le test a été passé. Et l'absence d'issue contrefactuelle sur les refus laisse la table incomplète.</p>
+
+  <div class="part">
+    <span class="lab">Troisième partie</span>
+    <h2>La vérité de référence</h2>
+    <p>Pour vérifier qu'un appareil mesure, il faut lui présenter une quantité connue. C'est la fonction du prix sans dérive et de la compétence plantée&nbsp;: fabriquer un opérateur dont on sait exactement ce qu'il vaut.</p>
+  </div>
+
+  <h2 id="s-univers">L'univers des setups, sur un prix sans dérive</h2>
+
+  <p>L'univers des setups éligibles est produit par la règle scellée de la série ALP, exécutée sur des séances synthétiques dont les deux paramètres de dérive valent zéro. Sur {{d_seances}}&nbsp;séances, cela donne {{d_setups}}&nbsp;setups.</p>
+
+  <p>Ce choix pose la vérité de référence, et ce n'est pas une commodité. Sous un prix sans dérive, tout sous-ensemble de setups choisi <em>sans clairvoyance</em> a pour espérance exactement <span class="v">−c/L</span>, par le théorème d'arrêt optionnel. La seule façon de battre cette valeur est une information réelle sur l'issue. Toute espérance mesurée au-dessus vient donc de la sélection, jamais du prix — ce qui fait de cet univers un banc d'essai et non un simple jeu de données.</p>
+
+  <p>L'espérance mécanique mesurée vaut {{d_esperance_mecanique}}&nbsp;R par setup. Elle est négative, comme la théorie l'exige. Mais il faut ajouter aussitôt un fait qui pèsera sur tout le reste du document&nbsp;: <strong>même à plusieurs milliers de setups, cette espérance reste à moins de deux erreurs types de zéro.</strong> L'instrument ne résout pas la valeur qu'il vise. En deçà d'environ quatre cents séances, son signe bascule d'un échantillon à l'autre. Ce n'est pas un défaut du générateur&nbsp;: c'est le sujet du document, rencontré dès sa première mesure.</p>
+
+  <h2 id="s-invariance">L'invariance, transposée du choix des barrières au choix des trades</h2>
+
+  <p>Le résultat structurant de cette série est que sous un prix sans dérive, l'espérance nette d'un trade vaut <span class="v">−c/L</span> quels que soient le placement des barrières et la règle de gestion du stop. Aucune géométrie ne crée d'espérance&nbsp;; elle n'achète que du temps de marché.</p>
+
+  <p>La transposition est directe et elle est instructive. Ce qui vaut pour le choix des <em>barrières</em> vaut pour le choix des <em>trades</em>&nbsp;: sélectionner un sous-ensemble de setups sans information ne déplace pas l'espérance, exactement comme déplacer un stop sans information ne la déplace pas. La sélectivité n'est pas une vertu en soi.</p>
+
+  {{FIGURE:discplane|L'espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance. À gauche, l'opérateur sans information&nbsp;: la surface est <strong>plate</strong>, et plate en négatif — ni la sélectivité ni le dimensionnement ne la déforment. À droite, le même opérateur muni d'une clairvoyance de {{d_bits_forte}}&nbsp;bit&nbsp;: la surface s'incline, et elle s'incline selon l'axe de la sélectivité. C'est la figure qui dit où loge un avantage discrétionnaire, et où il ne loge pas.}}
+
+  <h2 id="s-plantee">Planter une compétence de taille connue</h2>
+
+  <p>L'opérateur synthétique reçoit une clairvoyance partielle sur l'issue de la barrière, paramétrée de façon que le <strong>taux de prise global reste constant</strong> quelle que soit la compétence. Sans cette précaution, un opérateur compétent prendrait aussi mécaniquement moins de trades, et l'on ne saurait plus démêler la compétence de la simple sélectivité.</p>
+
+  <p>La vérité plantée s'exprime en <strong>bits d'information mutuelle par décision</strong>, calculés en forme fermée sur la loi jointe — donc sans bruit d'estimation. C'est l'unité même dans laquelle le plafond informationnel de la série est exprimé, ce qui permet de comparer directement ce qu'un opérateur possède et ce qu'il faudrait posséder. À clairvoyance nulle, la quantité vaut exactement zéro&nbsp;: décision et issue sont indépendantes, et aucune quantité de décisions ne fera apparaître un avantage.</p>
+
+  <div class="part">
+    <span class="lab">Quatrième partie</span>
+    <h2>Les cinq lois nulles</h2>
+    <p>Un opérateur qui bat « le hasard » n'a rien démontré tant qu'on n'a pas dit quel hasard. C'est la contribution méthodologique de ce document.</p>
+  </div>
+
+  <h2 id="s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</h2>
+
+  <p>Chaque loi nulle est un adversaire particulier, et battre un adversaire ne dit rien des autres. Un opérateur peut très bien choisir remarquablement ses setups tout en n'apportant rien par sa gestion de sortie&nbsp;; un autre peut apporter par sa gestion tout en sélectionnant au hasard. Une statistique globale confond les deux, et pire, elle laisse croire qu'un avantage établi sur un axe vaut sur tous.</p>
+
+  <p>Le principe retenu ici est donc&nbsp;: <strong>une loi nulle par prétention</strong>. Chacune est construite pour tenir constant tout ce que l'opérateur ne revendique pas, et ne faire varier que ce qu'il revendique.</p>
+
+  <h2 id="s-catalogue">Le catalogue, et ce que chaque loi réfute</h2>
+
+  {{TABLE:nulls}}
+
+  <p>Deux constructions méritent d'être justifiées. La <strong>sélection au sort</strong> tire le <em>même nombre</em> de setups que l'opérateur, sans remise&nbsp;: tenir la cadence constante n'est pas un raffinement, car un adversaire prenant un nombre différent de setups changerait aussi la variance de la moyenne, et l'écart mesuré mêlerait sélectivité et compétence. Les <strong>issues permutées</strong> le sont <em>à l'intérieur de la séance</em> et non globalement&nbsp;: une permutation globale détruirait la structure de volatilité entre séances — la saisonnalité en U, les jours calmes et les jours agités — et confondrait compétence de chronométrage et simple exposition aux séances favorables.</p>
+
+  {{FIGURE:discnulls|L'observé posé sur chacune de ses cinq lois nulles, pour un opérateur sans clairvoyance puis pour un opérateur compétent. Une barre par loi&nbsp;: l'étendue de la loi nulle jusqu'à son quantile à 95&nbsp;%, et le trait fort de la statistique observée. La planche rend visible le fait qu'un opérateur peut battre trois lois et rester réfuté.}}
+
+  <h2 id="s-mecanique">La loi qui fait mal</h2>
+
+  <p>La troisième loi n'est pas simulée&nbsp;: son adversaire est déterministe, c'est la règle scellée exécutée sur l'univers entier. Elle ne demande pas si l'opérateur gagne. Elle demande s'il fait mieux que ce qu'on obtient <em>sans lui</em>.</p>
+
+  <p>C'est la seule des cinq qui pose la question économique, et c'est pourquoi elle est décisive. Un opérateur qui bat la sélection au sort, le chronométrage et l'indépendance, mais pas la règle scellée, a démontré une compétence réelle — et démontré du même coup qu'elle ne vaut pas son coût. Le résultat est désagréable, il est fréquent, et un dispositif honnête doit pouvoir le produire.</p>
+
+  <h2 id="s-calibration">Le niveau et la puissance</h2>
+
+  <p>Le contrôle qui autorise tous les autres ne consiste pas à vérifier qu'un opérateur compétent est détecté — n'importe quelle statistique complaisante y parvient. Il consiste à vérifier qu'un opérateur <strong>sans</strong> compétence ne l'est pas.</p>
+
+  {{TABLE:calibration}}
+
+  <p>La première ligne est ce contrôle&nbsp;: à clairvoyance nulle, {{d_lois_nulle}}&nbsp;loi battue sur cinq, verdict refusé, malgré un Sharpe observé de {{d_sharpe_nulle}} qui aurait pu tromper un examen naïf. La dernière ligne établit la puissance&nbsp;: à {{d_bits_forte}}&nbsp;bit par décision, les cinq lois tombent et l'avantage est déclaré.</p>
+
+  <p>Entre les deux se trouve le résultat le plus important du document. Il existe une zone où l'avantage est <em>réel</em> — la vérité plantée n'est pas nulle — et où l'appareil refuse néanmoins de le déclarer. Cette zone n'est pas un défaut à corriger&nbsp;: c'est la traduction exacte du fait que l'échantillon ne porte pas l'information nécessaire. Un appareil qui déclarerait dans cette zone serait un appareil qui déclare aussi dans la première ligne.</p>
+
+  {{FIGURE:disccalib|Le nombre de lois nulles battues selon l'information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l'appareil ne déclare rien. La bande centrale marque la zone où l'avantage existe sans être démontrable.}}
+
+  <div class="part">
+    <span class="lab">Cinquième partie</span>
+    <h2>La taxe de discrétion</h2>
+    <p>Chaque liberté que s'accorde l'opérateur agrandit la famille des stratégies qu'il aurait pu suivre. Cette famille se paie en seuil de preuve, et il faut la chiffrer avant toute autre chose.</p>
+  </div>
+
+  <h2 id="s-multiplicite">k leviers, 2<sup>k</sup> configurations</h2>
+
+  <p>Un opérateur qui, sur chaque setup, décide en regardant le marché s'il entre, quand il entre, combien il met et comment il sort, n'a pas exécuté <em>une</em> stratégie. Il a exécuté l'une des <span class="v">2<sup>k</sup></span> stratégies que ces <span class="v">k</span> choix binaires engendrent, et il a choisi laquelle en regardant le marché. Le seuil de sélection déflaté ne se calcule donc pas sur une configuration mais sur ce nombre-là.</p>
+
+  <div class="eq">
+    <div class="body"><span class="v">SR</span><sub>seuil</sub><span class="op">=</span>√<span class="op">(</span>2&nbsp;ln&nbsp;<span class="v">B</span><span class="op">/</span><span class="v">N</span><span class="op">)</span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">B</span><span class="op">=</span>2<sup><span class="v">k</span></sup></div>
+    <div class="no">(1)</div>
+  </div>
+
+  <p>C'est l'approximation de Bailey et López de Prado du Sharpe attendu du meilleur de <span class="v">B</span> essais en l'absence de tout avantage. Un opérateur dont le Sharpe observé ne dépasse pas ce seuil n'a pas montré un avantage faible&nbsp;: il a montré ce que le hasard produit quand on lui donne <span class="v">B</span> occasions.</p>
+
+  <h2 id="s-recensement">Le recensement d'un opérateur réel</h2>
+
+  <p>Le recensement retenu ici comporte {{d_leviers}}&nbsp;leviers, ce qui porte le budget à {{d_configs}}&nbsp;configurations effectives.</p>
+
+  {{TABLE:levers}}
+
+  <p>Le recensement doit être fait honnêtement et <em>avant</em> de regarder les résultats. Un opérateur qui déclarerait deux leviers après en avoir actionné quatre ne se tromperait pas de peu&nbsp;: il diviserait son seuil par un facteur qui n'a aucune raison d'être petit.</p>
+
+  <h2 id="s-concavite">La taxe est concave, et c'est tout l'argument</h2>
+
+  <p>Le seuil croît en <span class="v">√(k&nbsp;·&nbsp;ln&nbsp;2)</span>. La croissance est donc <strong>sous-linéaire en <span class="v">k</span></strong>, et cela change entièrement la conclusion qu'on serait tenté de tirer de l'exponentielle 2<sup><span class="v">k</span></sup>.</p>
+
+  <p>Concrètement&nbsp;: passer de zéro à quatre leviers fait passer le seuil de {{d_seuil_k0}} à {{d_seuil_k4}}, soit un facteur&nbsp;{{d_facteur_taxe}}. Seize configurations ne coûtent pas seize fois plus cher qu'une seule — elles coûtent deux fois plus cher. En échantillon, cela signifie un facteur quatre, ce qui est considérable mais nullement rédhibitoire.</p>
+
+  {{FIGURE:disctax|Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d'échantillon. La concavité est le résultat&nbsp;: passer de zéro à un levier coûte davantage que passer de quatre à huit. Le trait vertical marque le recensement de {{d_leviers}}&nbsp;leviers retenu ici.}}
+
+  <p>La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n'a presque rien à gagner à en fermer un&nbsp;; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.</p>
+
+  <div class="part">
+    <span class="lab">Sixième partie</span>
+    <h2>Le mur d'échantillon</h2>
+    <p>Combien de décisions faut-il&nbsp;? Trois routes indépendantes répondent, et leur convergence est ce qui donne au nombre son autorité.</p>
+  </div>
+
+  <h2 id="s-routes">Trois routes indépendantes</h2>
+
+  <p>La <strong>première route</strong> est le test&nbsp;t sur l'espérance par décision&nbsp;: elle ne connaît que la moyenne et la variance des résultats. La <strong>deuxième</strong> est le seuil déflaté de l'équation&nbsp;(1)&nbsp;: elle ne connaît que le nombre de configurations et ignore tout de la loi des résultats. La <strong>troisième</strong> est le test&nbsp;G informationnel, qui passe par la non-centralité d'un khi-deux sur la table de contingence&nbsp;: ni la loi du résultat, ni la géométrie, ni le Sharpe n'entrent dans son calcul.</p>
+
+  <p>Ces trois chemins ne partagent aucune hypothèse. S'ils butent au même endroit, ce n'est pas une coïncidence de modélisation&nbsp;: c'est que le mur est structurel.</p>
+
+  <h2 id="s-convergence">Le mur, en décisions puis en années</h2>
+
+  {{TABLE:wall}}
+
+  <p>Les deux premières routes s'accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de 0,10 par décision, il faut {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour.</p>
+
+  {{FIGURE:discwall|La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.}}
+
+  <p>La forme de la surface porte le message. L'axe des leviers est presque plat&nbsp;; l'axe du Sharpe est une falaise. Un opérateur qui hésite entre fermer des leviers et améliorer son signal a une réponse claire&nbsp;: le second effort domine le premier de très loin.</p>
+
+  <h2 id="s-puissance">La puissance de détection</h2>
+
+  {{FIGURE:discpower|La probabilité de détecter un avantage selon le nombre de décisions enregistrées et l'information portée par chacune. La teinte franche marque les combinaisons où la détection est acquise à 80&nbsp;%. En deçà, l'absence de preuve ne prouve rien.}}
+
+  <p>Le relief a la forme d'une marche. Sous une certaine combinaison, la détection est un tirage à pile ou face&nbsp;; au-delà, elle est acquise. Situer l'opérateur sur cette marche est tout ce qu'un protocole préenregistré a besoin de savoir, et c'est aussi ce qui permet d'énoncer à l'avance la durée de la période d'observation plutôt que de l'arrêter quand le résultat plaît.</p>
+
+  <div class="part">
+    <span class="lab">Septième partie</span>
+    <h2>Le renversement</h2>
+    <p>Le résultat qui justifie ce document&nbsp;: l'opérateur discrétionnaire est dans une position épistémique meilleure que celui qui règle une géométrie.</p>
+  </div>
+
+  <h2 id="s-versus">Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas</h2>
+
+  <p>Le document&nbsp;n<sup>o</sup>&nbsp;1 de cette série bute sur un mur situé à plusieurs dizaines de milliers de trades. On pourrait en conclure que rien n'est prouvable en intraday indiciel. La comparaison ci-dessous montre que la conclusion serait fausse, et pourquoi.</p>
+
+  {{TABLE:versus}}
+
+  <p>L'opérateur discrétionnaire paie {{d_configs}}&nbsp;fois plus de configurations que la géométrie scellée, et franchit pourtant le mur bien plus tôt. La raison n'est pas qu'il serait meilleur.</p>
+
+  <div class="prop">
+    <p><span class="lab">Proposition 2.</span> Le mur d'échantillon est gouverné par le rapport de l'effet revendiqué au bruit, et non par le nombre de configurations. La taxe de multiplicité entre par un logarithme&nbsp;; l'effet entre par un carré.</p>
+    <p class="proof"><span class="lab">Justification.</span> Le nombre de décisions requis vaut <span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>². Doubler le nombre de leviers multiplie <span class="v">B</span> par&nbsp;2 et <span class="v">N</span> par un facteur qui tend vers&nbsp;1&nbsp;; doubler le Sharpe divise <span class="v">N</span> par&nbsp;4. ∎</p>
+  </div>
+
+  <p>C'est là tout le renversement. Une stratégie de géométrie revendique un avantage structurellement minuscule, parce que le théorème d'invariance lui interdit d'en revendiquer un grand. Un opérateur discrétionnaire ne revendique pas cela&nbsp;: il revendique un jugement, dont l'effet est d'un autre ordre de grandeur. <strong>Son avantage est plus grand devant le bruit, et c'est cela — non sa qualité — qui le rend démontrable.</strong></p>
+
+  <h2 id="s-consequence">Ce que cela change pour l'opérateur</h2>
+
+  <p>Trois conséquences pratiques suivent, et elles sont inhabituellement encourageantes pour un document de cette série.</p>
+
+  <p>D'abord, <strong>l'horizon de preuve est une durée de carrière ordinaire</strong>, pas une impossibilité. Un opérateur qui commence aujourd'hui un journal correct saura dans un peu plus d'un an ce que vaut son processus, à condition que le Sharpe revendiqué soit de l'ordre de 0,10 par décision.</p>
+
+  <p>Ensuite, <strong>la discipline du journal domine la discipline du processus</strong>. Fermer des leviers rapporte peu&nbsp;; enregistrer correctement rapporte beaucoup, puisqu'un journal sans abstentions rend une partie du test définitivement inaccessible quel que soit le nombre d'années accumulées.</p>
+
+  <p>Enfin, <strong>l'échec est informatif</strong>. Un opérateur qui, au terme de la période préenregistrée, ne bat pas la loi mécanique a appris quelque chose de précis et d'utile&nbsp;: son jugement ne bat pas une règle simple, donc autant exécuter la règle simple.</p>
+
+  <div class="part">
+    <span class="lab">Huitième partie</span>
+    <h2>Décomposer l'avantage</h2>
+    <p>Savoir qu'un opérateur bat ses lois nulles ne dit pas <em>par où</em>. Or c'est cette question qui décide de ce qu'il faut garder.</p>
+  </div>
+
+  <h2 id="s-shapley">Shapley, et les seize coalitions</h2>
+
+  <p>On serait tenté de neutraliser un levier à la fois et d'attribuer à chacun la chute observée. Le procédé est faux dès que les leviers interagissent, et il l'est de façon dirigée&nbsp;: la somme des chutes ne fait pas le total, et l'ordre de neutralisation change le résultat.</p>
+
+  <p>La valeur de Shapley (1953) est l'unique attribution simultanément exhaustive — les parts somment au total —, symétrique, et nulle pour un levier sans effet. Elle exige d'évaluer toutes les coalitions.</p>
+
+  <div class="keybox">
+    <span class="lab">Une coïncidence qui n'en est pas une</span>
+    <p>Quatre leviers engendrent {{d_configs}}&nbsp;sous-ensembles. C'est le même {{d_configs}} que la taxe de multiplicité fait payer au seuil déflaté. <strong>La multiplicité qu'on paie en preuve est exactement la multiplicité qu'on décompose en attribution</strong>&nbsp;: les configurations qu'un opérateur explore en décidant sont les coalitions dont on lui attribue le mérite.</p>
+  </div>
+
+  <p>Le coût de calcul est négligeable&nbsp;: seize évaluations linéaires en nombre de décisions, soit moins qu'une seule loi nulle simulée. Il n'y a donc aucune raison de se contenter d'une ablation approchée.</p>
+
+  <h2 id="s-validation">Une décomposition réfutable</h2>
+
+  <p>Une méthode d'attribution qu'on ne sait pas mettre en défaut ne mesure rien. Le contrôle appliqué ici est direct&nbsp;: on plante la compétence dans un levier connu, et la décomposition doit l'y désigner sans la répartir sur les autres.</p>
+
+  {{TABLE:attribution}}
+
+  {{FIGURE:discattrib|La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. La barre franche est le levier désigné&nbsp;; il est chaque fois celui où la compétence a été plantée.}}
+
+  <p>Le levier désigné est chaque fois le bon, et le levier de sortie ressort à zéro exact — ce qui est la vérité, puisque le journal synthétique ne gère aucune sortie, et non une approximation bruitée. En revanche, le levier du chronométrage capte une part parasite qu'il faut nommer&nbsp;: fermer le chronométrage remplace l'issue obtenue par la moyenne de la séance, ce qui détruit aussi la sélection <em>intraséance</em>. Les deux leviers ne sont pas séparables. Shapley signale cette interaction au lieu de la masquer, et c'est une limite du dispositif, non un artefact à corriger.</p>
+
+  <h2 id="s-fermer">Quels leviers fermer</h2>
+
+  <p>La décomposition donne le critère. Un levier dont la part est négligeable coûte un doublement de la famille de stratégies sans rien financer&nbsp;: il doit être scellé. Un levier porteur doit être conservé et, si possible, explicité — car un levier qu'on parvient à énoncer cesse d'être discrétionnaire et sort du décompte.</p>
+
+  <p>Le critère de négligeabilité retenu est délibérément grossier — une part inférieure au dixième du total. Un critère fin donnerait l'illusion qu'on sait trancher là où l'échantillon ne le permet pas, et cette illusion est exactement ce que le reste du document s'emploie à dissiper.</p>
+
+  <div class="part">
+    <span class="lab">Neuvième partie</span>
+    <h2>Protocole, limites, et ce qui reste ouvert</h2>
+    <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
+  </div>
+
+  <h2 id="s-protocole">Le scellement</h2>
+
+  <p>Sans pré-enregistrement, tout ce qui précède est de la narration. Le protocole doit fixer, avant la première décision enregistrée&nbsp;: le recensement des leviers et donc le budget de configurations&nbsp;; le format exact du journal&nbsp;; les cinq lois nulles et leurs graines&nbsp;; le nombre de décisions à collecter&nbsp;; et le critère d'acceptation, à savoir les cinq lois battues et le seuil déflaté franchi.</p>
+
+  <p>Le document dispose déjà d'un module de pré-enregistrement produisant une empreinte&nbsp;SHA-256 du protocole. Un opérateur qui scelle son protocole puis publie l'empreinte se prive de toute latitude ultérieure, et c'est précisément ce qui donne du prix à son résultat.</p>
+
+  <h2 id="s-arret">La règle d'arrêt</h2>
+
+  <p>La règle d'arrêt est le point où la plupart des évaluations discrétionnaires échouent, et elle échoue silencieusement. Un opérateur qui regarde ses statistiques chaque mois et s'arrête quand elles sont bonnes a conduit un test séquentiel sans en payer le prix&nbsp;: son niveau réel est très supérieur aux 5&nbsp;% affichés.</p>
+
+  <p>Deux issues acceptables existent. Fixer <span class="v">N</span> à l'avance et ne rien regarder avant — c'est le plus simple et le plus sûr. Ou bien déclarer des paliers d'examen et dépenser le niveau selon une fonction de dépense, ce que le module de puissance de la série sait faire. Ce qui n'est pas acceptable, c'est de regarder sans avoir déclaré.</p>
+
+  <h2 id="s-limites">Ce que ce document ne prouve pas</h2>
+
+  <p>La liste est courte mais elle est ferme.</p>
+
+  <p><strong>Aucun opérateur réel n'est évalué ici.</strong> Les journaux sont synthétiques, par nécessité méthodologique — seule une vérité plantée permet de calibrer. Les chiffres du mur sont des propriétés de l'appareil, pas des mesures d'une compétence existante.</p>
+
+  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">25</a> l'établit. Sa part est surestimée d'une quantité que le dispositif actuel ne sait pas isoler.</p>
+
+  <p><strong>L'opérateur humain n'est pas stationnaire.</strong> Toute l'analyse suppose une compétence constante sur la période. Si elle varie — apprentissage, fatigue, changement de régime de marché —, l'estimation moyenne mélange des états différents. La littérature sur la compétence variable dans le temps offre des outils, ils ne sont pas mobilisés ici.</p>
+
+  <p><strong>Le survivant biaise le témoignage.</strong> Un opérateur qui construit ce dispositif est un opérateur encore en activité. Ceux dont le processus a échoué ne publient pas de journal, et la distribution des compétences observée par cette voie n'est pas la distribution des compétences.</p>
+
+  <h2 id="s-conclusion">Conclusion</h2>
+
+  <p>La prétention d'un avantage non codable n'est pas invérifiable&nbsp;: elle est mal formulée. Reformulée en termes de trace plutôt que de règle, elle devient un problème de mesure ordinaire, avec un instrument, des lois nulles, une puissance et un horizon.</p>
+
+  <p>L'instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l'opérateur gagne mais s'il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: {{d_leviers}}&nbsp;leviers ne coûtent qu'un facteur&nbsp;{{d_facteur_taxe}} sur le seuil de preuve.</p>
+
+  <p>Et le mur, contre toute attente, est franchissable. {{d_mur_sr10}}&nbsp;décisions — {{d_mur_ans10}}&nbsp;an à deux décisions par jour — suffisent à établir un Sharpe de 0,10, taxe comprise. La discrétion est prouvable là où la géométrie de sortie ne l'est pas, parce que l'effet qu'elle revendique est grand devant le bruit alors que celui de la géométrie ne l'est pas.</p>
+
+  <p>Il reste que rien de tout cela ne s'obtient sans le journal, et que le journal ne se reconstitue pas. C'est la seule exigence véritablement contraignante de ce document, et elle porte sur la discipline d'enregistrement, non sur la discipline d'exécution.</p>
+
+  <hr class="rule">
+
+  <h2 class="unnumbered">Références</h2>
+
+  <div class="refs">
+    <ol>
+      <li>Bailey, D. et López de Prado, M. «&nbsp;The Deflated Sharpe Ratio&nbsp;», <em>Journal of Portfolio Management</em>, 2014 — déflation du Sharpe sous tests multiples.</li>
+      <li>Bailey, D., Borwein, J., López de Prado, M. et Zhu, Q. «&nbsp;The Probability of Backtest Overfitting&nbsp;», <em>Journal of Computational Finance</em>, 2016 — CSCV et probabilité de surajustement.</li>
+      <li>Barber, B. et Odean, T. «&nbsp;Trading Is Hazardous to Your Wealth&nbsp;», <em>Journal of Finance</em>, 2000 — destruction de valeur chez l'investisseur individuel.</li>
+      <li>Berk, J. et Green, R. «&nbsp;Mutual Fund Flows and Performance in Rational Markets&nbsp;», <em>Journal of Political Economy</em>, 2004 — compétence réelle intégralement absorbée par frais et taille.</li>
+      <li>Coval, J., Hirshleifer, D. et Shumway, T. «&nbsp;Can Individual Investors Beat the Market&nbsp;?&nbsp;», <em>Harvard NOM Working Paper</em>, 2005 — persistance chez une minorité d'individuels.</li>
+      <li>Fama, E. et French, K. «&nbsp;Luck versus Skill in the Cross-Section of Mutual Fund Returns&nbsp;», <em>Journal of Finance</em>, 2010 — bootstrap pour départager chance et compétence.</li>
+      <li>Harvey, C., Liu, Y. et Zhu, H. «&nbsp;… and the Cross-Section of Expected Returns&nbsp;», <em>Review of Financial Studies</em>, 2016 — décote de Sharpe sous tests multiples.</li>
+      <li>Kacperczyk, M., Van Nieuwerburgh, S. et Veldkamp, L. «&nbsp;Time-Varying Fund Manager Skill&nbsp;», <em>Journal of Finance</em>, 2014 — allocation d'attention et compétence variable.</li>
+      <li>Locke, P. et Mann, S. «&nbsp;Professional Trader Discipline and Trade Disposition&nbsp;», <em>Journal of Financial Economics</em>, 2005 — la discipline comme trait persistant.</li>
+      <li>Miller, G. «&nbsp;Note on the Bias of Information Estimates&nbsp;», <em>Information Theory in Psychology</em>, 1955 — correction du biais d'information mutuelle.</li>
+      <li>Politis, D. et Romano, J. «&nbsp;The Stationary Bootstrap&nbsp;», <em>Journal of the American Statistical Association</em>, 1994 — rééchantillonnage par blocs de longueur aléatoire.</li>
+      <li>Shapley, L. «&nbsp;A Value for n-Person Games&nbsp;», <em>Contributions to the Theory of Games</em>, 1953 — l'attribution exhaustive et symétrique.</li>
+    </ol>
+  </div>
+
+  <div class="colophon">
+    <p><strong>Avertissement.</strong> Ce document est un travail de recherche méthodologique. Il ne constitue ni un conseil en investissement, ni une recommandation d'opérer, et ne comporte aucune affirmation de performance. Aucun opérateur réel n'y est évalué&nbsp;; les journaux analysés sont synthétiques et servent à calibrer un appareil de mesure, non à établir un avantage.</p>
+    <p><strong>Reproductibilité.</strong> Tous les nombres cités sont produits par les modules du dépôt et se recalculent par <code>python main.py --disc</code>. Le document lui-même se reconstruit par <code>python main.py --discpaper</code> à partir de son gabarit&nbsp;; il ne s'édite pas à la main. Tout aléa est déterministe et amorcé par une graine explicite.</p>
+  </div>
+
+</div>

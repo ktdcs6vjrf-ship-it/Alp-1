@@ -1,0 +1,375 @@
+"""Tables et valeurs du papier sur l'edge discrétionnaire.
+
+Aucun nombre du document n'est écrit à la main : tout passe par ici, et tout
+se recalcule. C'est la règle 4 du dépôt, et c'est aussi ce qui rend le papier
+réfutable — un lecteur qui doute d'un chiffre peut relancer le module qui le
+produit.
+"""
+
+from __future__ import annotations
+
+import math
+
+from .attribution import decompose
+from .costs import deflated_threshold_sharpe, trades_for_significance
+from .entropy import trades_for_information
+from .journal import LEVERS, audit, planted_bits, synthesise, universe
+from .operator import evaluate
+from .report import Table, num
+
+#: Séances simulées. Assez pour que le signe de l'espérance mécanique soit
+#: stable — en deçà de 400, il bascule, et le papier en fait un résultat.
+N_SESSIONS = 400
+
+#: Clairvoyance franche : celle qui doit faire tomber les cinq lois.
+SKILL_FORTE = 0.55
+
+#: Séances de bourse par an.
+SESSIONS_PER_YEAR = 252
+
+#: Nombre de leviers recensés chez l'opérateur.
+K_LEVERS = len(LEVERS)
+
+#: Cadences de décision envisagées, en décisions par séance.
+CADENCES = (1, 2, 3, 5)
+
+#: Sharpe par décision revendiqués, pour la traduction en temps calendaire.
+SHARPES = (0.05, 0.075, 0.10, 0.15)
+
+#: Le Sharpe de référence du papier phare — l'avantage de géométrie. Il sert
+#: de point de comparaison : c'est lui qui bute sur 17 434 trades.
+SHARPE_GEOMETRIE = 0.0332
+
+
+def _trades_for_threshold(sharpe: float, budget: float) -> float:
+    """Décisions requises pour franchir le seuil déflaté à `budget` essais."""
+    if sharpe <= 0.0:
+        return math.inf
+    return 2.0 * math.log(max(budget, 2.0)) / (sharpe ** 2)
+
+
+_CACHE: dict[str, object] = {}
+
+
+def _journal(skill: float):
+    key = f"j{skill}"
+    if key not in _CACHE:
+        _CACHE[key] = synthesise(skill=skill, n_sessions=N_SESSIONS)
+    return _CACHE[key]
+
+
+def _verdict(skill: float):
+    key = f"v{skill}"
+    if key not in _CACHE:
+        _CACHE[key] = evaluate(_journal(skill), draws=300)
+    return _CACHE[key]
+
+
+# ---------------------------------------------------------------------------
+# Table 1 — les leviers recensés et ce qu'ils coûtent
+# ---------------------------------------------------------------------------
+
+
+def table_levers() -> Table:
+    rows = []
+    for k, (key, label) in enumerate(LEVERS, start=1):
+        budget = 2.0 ** k
+        seuil = deflated_threshold_sharpe(max(2.0, budget), 3000)
+        avant = deflated_threshold_sharpe(max(2.0, 2.0 ** (k - 1)), 3000)
+        rows.append([
+            label,
+            key,
+            num(budget, 0),
+            num(seuil, 4),
+            num(seuil - avant, 4, signed=True),
+        ])
+    return Table(
+        "levers",
+        "Les quatre leviers discrétionnaires recensés, et ce que chacun ajoute "
+        "au seuil de preuve.",
+        ["Levier", "Clé", "Configurations", "Seuil déflaté",
+         "Ce que ce levier ajoute"],
+        rows,
+        wrap_cols=[0],
+        note="Le seuil est calculé sur 3 000 décisions. Chaque levier double la "
+             "famille des stratégies effectivement explorées, mais le seuil ne "
+             "croît qu'en racine du logarithme : le premier levier coûte plus "
+             "cher que le quatrième.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Table 2 — la table de correspondance des cinq lois nulles
+# ---------------------------------------------------------------------------
+
+
+def table_nulls() -> Table:
+    v = _verdict(SKILL_FORTE)
+    rows = []
+    for t in v.tests:
+        rows.append([
+            t.label,
+            t.refutes,
+            num(t.observed, 4, signed=True),
+            num(t.q95, 4, signed=True),
+            "battue" if t.beats else "non battue",
+        ])
+    return Table(
+        "nulls",
+        "Les cinq lois nulles, ce que chacune réfute, et le verdict sur un "
+        "opérateur dont la clairvoyance est connue.",
+        ["Loi nulle", "Ce qu'elle réfute si elle tient", "Observé",
+         "Seuil 95 %", "Verdict"],
+        rows,
+        wrap_cols=[0, 1],
+        wide=True,
+        note="Un avantage n'est déclaré que si les cinq lois tombent. Une loi "
+             "sans objet — un journal sans abstentions, par exemple — compte "
+             "comme non battue : l'absence de test n'est pas une réussite au "
+             "test.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Table 3 — la calibration contre la vérité plantée
+# ---------------------------------------------------------------------------
+
+
+def table_calibration() -> Table:
+    rows = []
+    for skill in (0.0, 0.20, 0.35, SKILL_FORTE):
+        j = _journal(skill)
+        v = _verdict(skill)
+        rows.append([
+            num(skill, 2),
+            num(j.skill_bits or 0.0, 4),
+            num(j.mean_r, 4, signed=True),
+            num(v.sharpe_trade, 4, signed=True),
+            f"{len(v.beaten)} / 5",
+            "déclaré" if v.accepted else "refusé",
+        ])
+    return Table(
+        "calibration",
+        "Ce que l'appareil déclare, selon la compétence qu'on lui a plantée.",
+        ["Clairvoyance", "Bits par décision", "E[R] par décision",
+         "Sharpe par décision", "Lois battues", "Verdict"],
+        rows,
+        note="La première ligne est le contrôle qui autorise toutes les autres : "
+             "sans compétence, l'appareil ne déclare rien. La ligne médiane est "
+             "le sujet du papier — un avantage qui existe sans être démontrable.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Table 4 — la décomposition de Shapley
+# ---------------------------------------------------------------------------
+
+
+def table_attribution() -> Table:
+    cas = (("entrée", 0.45, 0.0), ("taille", 0.0, 0.45),
+           ("les deux", 0.45, 0.45))
+    rows = []
+    for label, skill, size_skill in cas:
+        d = decompose(synthesise(skill=skill, size_skill=size_skill,
+                                 n_sessions=N_SESSIONS))
+        parts = {s.key: s.fraction for s in d.shares}
+        rows.append([
+            label,
+            num(d.total, 4, signed=True),
+            num(parts.get("entree", 0.0) * 100, 1, unit="%"),
+            num(parts.get("moment", 0.0) * 100, 1, unit="%"),
+            num(parts.get("taille", 0.0) * 100, 1, unit="%"),
+            num(parts.get("sortie", 0.0) * 100, 1, unit="%"),
+            d.carrier.key,
+        ])
+    return Table(
+        "attribution",
+        "La décomposition de Shapley retrouve-t-elle la compétence là où elle "
+        "a été plantée ?",
+        ["Compétence plantée dans", "Avantage total", "entrée", "moment",
+         "taille", "sortie", "Levier désigné"],
+        rows,
+        note="Le levier désigné est chaque fois celui où la compétence a été "
+             "plantée : la méthode est réfutable, et elle passe. Le levier du "
+             "moment capte une part parasite parce qu'il n'est pas séparable "
+             "de l'entrée — fermer le moment détruit aussi la sélection "
+             "intraséance. Shapley signale cette interaction au lieu de la "
+             "masquer.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Table 5 — le mur, en décisions puis en années
+# ---------------------------------------------------------------------------
+
+
+def table_wall() -> Table:
+    budget = 2.0 ** K_LEVERS
+    rows = []
+    for sr in SHARPES:
+        n = _trades_for_threshold(sr, budget)
+        rows.append([
+            num(sr, 3),
+            num(trades_for_significance(sr, 1.0), 0),
+            num(n, 0),
+            num(n / (2 * SESSIONS_PER_YEAR), 1, unit="an"),
+            num(n / (3 * SESSIONS_PER_YEAR), 1, unit="an"),
+        ])
+    return Table(
+        "wall",
+        "Le mur d'échantillon, à quatre leviers ouverts, en décisions puis en "
+        "années de carrière.",
+        ["Sharpe par décision", "Route 1 — test t",
+         "Route 2 — seuil déflaté", "à 2 décisions/jour",
+         "à 3 décisions/jour"],
+        rows,
+        note="Les deux routes convergent sans partager aucune hypothèse : la "
+             "première ne connaît que la moyenne et la variance, la seconde ne "
+             "connaît que le nombre de configurations. Deux chemins séparés qui "
+             "butent au même endroit disent que le mur est structurel.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Table 6 — la comparaison avec l'avantage de géométrie
+# ---------------------------------------------------------------------------
+
+
+def table_versus() -> Table:
+    budget = 2.0 ** K_LEVERS
+    rows = []
+    for label, sr, k in (
+            ("Géométrie de sortie (ALP-1)", SHARPE_GEOMETRIE, 0),
+            ("Opérateur discrétionnaire", 0.10, K_LEVERS)):
+        b = 2.0 ** k
+        n = _trades_for_threshold(sr, b)
+        rows.append([
+            label,
+            num(sr, 4),
+            num(b, 0),
+            num(deflated_threshold_sharpe(max(2.0, b), 3000), 4),
+            num(n, 0),
+            num(n / (2 * SESSIONS_PER_YEAR), 1, unit="an"),
+        ])
+    return Table(
+        "versus",
+        "Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas.",
+        ["Objet du test", "Sharpe revendiqué", "Configurations",
+         "Seuil déflaté", "Décisions requises", "à 2 par jour"],
+        rows,
+        wrap_cols=[0],
+        note="L'opérateur paie seize fois plus de configurations et franchit "
+             "pourtant le mur bien plus tôt. La raison n'est pas qu'il serait "
+             "meilleur : c'est que l'effet qu'il revendique est grand devant le "
+             "bruit, alors que celui de la géométrie ne l'est pas.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Table 7 — ce qu'un journal doit porter
+# ---------------------------------------------------------------------------
+
+
+def table_fields() -> Table:
+    rows = [
+        ["Horodatage de la décision", "avant l'issue",
+         "sans lui, un journal est un souvenir et non une donnée"],
+        ["Contexte au moment de la décision", "avant l'issue",
+         "c'est l'état du monde que l'opérateur a réellement vu"],
+        ["Abstentions — les setups refusés", "avant l'issue",
+         "sans elles la loi nulle D est intestable et la moitié de la table de "
+         "contingence reste vide"],
+        ["Conviction annoncée", "avant l'issue",
+         "elle autorise le test de calibration, qu'aucun autre champ ne permet"],
+        ["Direction, mise, moment retenu", "avant l'issue",
+         "les quatre leviers doivent être séparables pour être décomposés"],
+        ["Issue effective", "après l'issue",
+         "le résultat net, friction comprise"],
+        ["Issue contrefactuelle des refus", "après l'issue",
+         "ce que le setup refusé aurait donné — c'est ce qui rend l'abstention "
+         "mesurable"],
+    ]
+    return Table(
+        "fields",
+        "Ce qu'un journal de décision doit porter, et de quel côté de la "
+        "frontière temporelle chaque champ se situe.",
+        ["Champ", "Connu", "Pourquoi il est indispensable"],
+        rows,
+        wrap_cols=[0, 2],
+        wide=True,
+        note="La frontière n'est pas une commodité de présentation. Un champ du "
+             "bloc supérieur qui serait rempli après coup contamine tout ce qui "
+             "en dépend, et aucun test ne rattrape cette contamination.",
+    )
+
+
+TABLES = (table_levers, table_nulls, table_calibration, table_attribution,
+          table_wall, table_versus, table_fields)
+
+
+def all_tables() -> dict[str, Table]:
+    return {fn().key: fn() for fn in TABLES}
+
+
+def values() -> dict[str, str]:
+    """Les scalaires que le document cite dans son texte."""
+    j0, jf = _journal(0.0), _journal(SKILL_FORTE)
+    v0, vf = _verdict(0.0), _verdict(SKILL_FORTE)
+    budget = 2.0 ** K_LEVERS
+    u = universe(N_SESSIONS)
+    mec = sum(t.net_r for t in u) / len(u)
+
+    n10 = _trades_for_threshold(0.10, budget)
+    n_geo = _trades_for_threshold(SHARPE_GEOMETRIE, 1.0)
+
+    return {
+        # Le recensement
+        "d_leviers": num(K_LEVERS, 0),
+        "d_configs": num(budget, 0),
+        "d_seuil_k0": num(deflated_threshold_sharpe(2.0, 3000), 4),
+        "d_seuil_k4": num(deflated_threshold_sharpe(budget, 3000), 4),
+        "d_facteur_taxe": num(
+            deflated_threshold_sharpe(budget, 3000)
+            / max(deflated_threshold_sharpe(2.0, 3000), 1e-12), 2),
+
+        # L'univers et sa vérité de référence
+        "d_seances": num(N_SESSIONS, 0),
+        "d_setups": num(len(u), 0),
+        "d_esperance_mecanique": num(mec, 4, signed=True),
+
+        # La calibration
+        "d_bits_forte": num(jf.skill_bits or 0.0, 4),
+        "d_lois_nulle": num(len(v0.beaten), 0),
+        "d_lois_forte": num(len(vf.beaten), 0),
+        "d_sharpe_forte": num(vf.sharpe_trade, 4, signed=True),
+        "d_sharpe_nulle": num(v0.sharpe_trade, 4, signed=True),
+        "d_prises_forte": num(jf.n_taken, 0),
+        "d_eligibles": num(jf.n_eligible, 0),
+        "d_taux_prise": num(jf.take_rate * 100, 0, unit="%"),
+
+        # Le mur
+        "d_mur_sr10": num(n10, 0),
+        "d_mur_ans10": num(n10 / (2 * SESSIONS_PER_YEAR), 1),
+        "d_mur_sr05": num(_trades_for_threshold(0.05, budget), 0),
+        "d_mur_sr15": num(_trades_for_threshold(0.15, budget), 0),
+        "d_mur_geometrie": num(n_geo, 0),
+        "d_sharpe_geometrie": num(SHARPE_GEOMETRIE, 4),
+
+        # L'attribution
+        "d_part_entree": num(
+            next(s.fraction for s in decompose(
+                synthesise(skill=0.45, n_sessions=N_SESSIONS)).shares
+                if s.key == "entree") * 100, 1, unit="%"),
+    }
+
+
+def main() -> None:
+    print("Le journal de décision et les lois nulles de l'opérateur\n")
+    for fn in TABLES:
+        print(fn().to_text())
+        print()
+    print("Valeurs cyclées dans le document :")
+    for k, v in sorted(values().items()):
+        print(f"  {k:26s} {v}")
+    print("\nAudit du journal synthétique :",
+          audit(_journal(SKILL_FORTE)) or "aucun défaut")

@@ -17,6 +17,8 @@
     python main.py --paper            # reconstruit docs/alp1-paper.html
     python main.py --paper2           # reconstruit docs/alp2-paper.html
     python main.py --wp               # reconstruit le document de travail complet
+    python main.py --disc             # journal de décision, lois nulles, attribution
+    python main.py --discpaper        # reconstruit docs/edge-discretionnaire.html
     python main.py --tests            # suite de tests du noyau
 
 Sans fichier, `--measure` fait tourner la chaîne de mesure sur une série
@@ -162,6 +164,18 @@ def main() -> int:
         from alp1.quant import main as quant_main
 
         quant_main()
+        return 0
+
+    if "--discpaper" in sys.argv:
+        from alp1.discpaper import main as discpaper_main
+
+        discpaper_main()
+        return 0
+
+    if "--disc" in sys.argv:
+        from alp1.report10 import main as report10_main
+
+        report10_main()
         return 0
 
     if "--wp" in sys.argv:

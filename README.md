@@ -912,7 +912,9 @@ python main.py --diffuseur f.csv  # évalue un registre de diffuseur collecté
 python main.py --wp               # reconstruit le document de travail
 python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
-python main.py --tests            # 732 tests unitaires du noyau
+python main.py --disc             # journal de décision, lois nulles, attribution
+python main.py --discpaper        # reconstruit docs/edge-discretionnaire.html
+python main.py --tests            # 761 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
