@@ -582,10 +582,11 @@
           <li><a href="#s-detecter">Répliquer n'est pas détecter</a></li>
           <li><a href="#s-litterature">Ce que l'évaluation des gérants sait faire sans la règle</a></li>
           <li><a href="#s-contrat">Le contrat épistémique de ce document</a></li>
+          <li><a href="#s-notions">Six notions, et ce qu'elles décident</a></li>
         </ol>
       </li>
       <li><span class="pt">Deuxième partie — L'instrument</span>
-        <ol start="5">
+        <ol start="6">
           <li><a href="#s-journal">Le journal de décision</a></li>
           <li><a href="#s-champs">Sept champs, et une frontière temporelle</a></li>
           <li><a href="#s-abstention">Les refus sont la moitié de l'information</a></li>
@@ -593,14 +594,14 @@
         </ol>
       </li>
       <li><span class="pt">Troisième partie — La vérité de référence</span>
-        <ol start="9">
+        <ol start="10">
           <li><a href="#s-univers">L'univers des setups, sur un prix sans dérive</a></li>
           <li><a href="#s-invariance">L'invariance, transposée du choix des barrières au choix des trades</a></li>
           <li><a href="#s-plantee">Planter une compétence de taille connue</a></li>
         </ol>
       </li>
       <li><span class="pt">Quatrième partie — Les cinq lois nulles</span>
-        <ol start="12">
+        <ol start="13">
           <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
           <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
           <li><a href="#s-mecanique">La loi qui fait mal</a></li>
@@ -608,34 +609,34 @@
         </ol>
       </li>
       <li><span class="pt">Cinquième partie — La taxe de discrétion</span>
-        <ol start="16">
+        <ol start="17">
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
           <li><a href="#s-concavite">La taxe est concave, et c'est tout l'argument</a></li>
         </ol>
       </li>
       <li><span class="pt">Sixième partie — Le mur d'échantillon</span>
-        <ol start="19">
+        <ol start="20">
           <li><a href="#s-routes">Trois routes indépendantes</a></li>
           <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
           <li><a href="#s-puissance">La puissance de détection</a></li>
         </ol>
       </li>
       <li><span class="pt">Septième partie — Le renversement</span>
-        <ol start="22">
+        <ol start="23">
           <li><a href="#s-versus">Pourquoi la discrétion est prouvable là où la géométrie ne l'est pas</a></li>
           <li><a href="#s-consequence">Ce que cela change pour l'opérateur</a></li>
         </ol>
       </li>
       <li><span class="pt">Huitième partie — Décomposer l'avantage</span>
-        <ol start="24">
+        <ol start="25">
           <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
           <li><a href="#s-validation">Une décomposition réfutable</a></li>
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
       <li><span class="pt">Neuvième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="27">
+        <ol start="28">
           <li><a href="#s-protocole">Le scellement</a></li>
           <li><a href="#s-arret">La règle d'arrêt</a></li>
           <li><a href="#s-limites">Ce que ce document ne prouve pas</a></li>
@@ -688,7 +689,48 @@
 
   <p><strong>Ce document construit un appareil de mesure et en établit la sensibilité.</strong> Il dit&nbsp;: voici cinq adversaires, voici ce que chacun réfute, voici combien de décisions il faut pour les battre, et voici la preuve que l'appareil ne déclare rien quand il n'y a rien. C'est un résultat de méthode, complet et vérifiable.</p>
 
-  <p><strong>Ce document n'établit l'avantage d'aucun opérateur réel</strong>, pour la raison suffisante qu'aucun journal réel n'y est analysé. Les journaux exploités ici sont synthétiques, et c'est un choix, non un pis-aller&nbsp;: seule une vérité plantée permet de vérifier que l'appareil retrouve ce qu'on y a mis et ne trouve rien quand on n'y a rien mis. Un opérateur qui fournirait son registre au format de la section&nbsp;<a href="#s-champs">6</a> obtiendrait ses propres chiffres par les mêmes modules, sans qu'une ligne de code change.</p>
+  <p><strong>Ce document n'établit l'avantage d'aucun opérateur réel</strong>, pour la raison suffisante qu'aucun journal réel n'y est analysé. Les journaux exploités ici sont synthétiques, et c'est un choix, non un pis-aller&nbsp;: seule une vérité plantée permet de vérifier que l'appareil retrouve ce qu'on y a mis et ne trouve rien quand on n'y a rien mis. Un opérateur qui fournirait son registre au format de la section&nbsp;<a href="#s-champs">7</a> obtiendrait ses propres chiffres par les mêmes modules, sans qu'une ligne de code change.</p>
+
+
+  <h2 id="s-notions">Six notions, et ce qu'elles décident</h2>
+
+  <p>Les six termes qui suivent reviennent dans tout le document. Chacun est donné deux fois&nbsp;: en langue ordinaire, puis dans la forme qui sert au calcul. Le lecteur qui n'a pas lu les précédents documents de la série y trouvera tout ce qui lui est nécessaire.</p>
+
+  <div class="concept">
+    <h3>La trace</h3>
+    <p class="plain">Ce qu'une décision laisse derrière elle une fois prise&nbsp;: un instant, un sens, une mise, une issue. La trace existe même quand la règle qui l'a produite reste inconnue, et c'est cette dissociation qui rend ce document possible.</p>
+    <p class="formal">Le couple <span class="v">(D, Y)</span> des décisions et des issues. Toute statistique <span class="v">T</span>(<span class="v">D</span>,&nbsp;<span class="v">Y</span>) est calculable sans connaître l'application qui engendre <span class="v">D</span>.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Le levier</h3>
+    <p class="plain">Une liberté que l'opérateur s'accorde et qu'il exerce en regardant le marché&nbsp;: entrer ou non, choisir l'instant, dimensionner, gérer la sortie. Un levier n'est pas une opinion, c'est un choix effectivement réalisé, et il se compte.</p>
+    <p class="formal">Un choix binaire répété. <span class="v">k</span> leviers engendrent <span class="v">2<sup>k</sup></span> stratégies réalisables, dont l'opérateur choisit une en observant le prix.</p>
+  </div>
+
+  <div class="concept">
+    <h3>La taxe de multiplicité</h3>
+    <p class="plain">Ce qu'il en coûte, en exigence de preuve, d'avoir eu le choix. Plus on a pu essayer de configurations, plus le meilleur résultat obtenu s'explique par le nombre d'essais plutôt que par la compétence.</p>
+    <p class="formal">Le seuil déflaté <span class="v">√(2&nbsp;ln&nbsp;B&nbsp;/&nbsp;N)</span>, avec <span class="v">B</span>&nbsp;=&nbsp;<span class="v">2<sup>k</sup></span>. Il croît en racine de <span class="v">k</span>, donc les premiers leviers coûtent davantage que les suivants.</p>
+  </div>
+
+  <div class="concept">
+    <h3>La loi nulle</h3>
+    <p class="plain">Un adversaire construit exprès pour n'avoir aucune compétence, mais pour ressembler à l'opérateur sur tout le reste&nbsp;: même cadence, même période, même loi des résultats. Un avantage n'existe que s'il bat cet adversaire-là.</p>
+    <p class="formal">La loi de <span class="v">T</span>(<span class="v">D</span>,&nbsp;<span class="v">Y</span>) sous une hypothèse d'indépendance déclarée, obtenue par permutation ou par simulation à graine fixée.</p>
+  </div>
+
+  <div class="concept">
+    <h3>La clairvoyance</h3>
+    <p class="plain">La part d'information que l'opérateur possède réellement sur l'issue, avant de décider. Elle ne se mesure pas en pourcentage de réussite mais en quantité d'information, ce qui la rend comparable à ce que l'échantillon peut porter.</p>
+    <p class="formal">L'information mutuelle <span class="v">I</span>(<span class="v">D</span>&nbsp;;&nbsp;<span class="v">Y</span>) en bits par décision, estimée sur la table de contingence et corrigée du biais de Miller-Madow.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Le mur d'échantillon</h3>
+    <p class="plain">Le nombre de décisions en deçà duquel aucun avantage, même réel, ne peut être établi. Ce n'est pas une limite de la méthode mais une propriété du rapport entre l'effet et le bruit.</p>
+    <p class="formal"><span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>², ou la forme informationnelle équivalente. Le budget entre par un logarithme, l'effet par un carré.</p>
+  </div>
 
   <div class="part">
     <span class="lab">Deuxième partie</span>
@@ -948,7 +990,7 @@
 
   <p><strong>Aucun opérateur réel n'est évalué ici.</strong> Les journaux sont synthétiques, par nécessité méthodologique — seule une vérité plantée permet de calibrer. Les chiffres du mur sont des propriétés de l'appareil, pas des mesures d'une compétence existante.</p>
 
-  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">25</a> l'établit. Sa part est surestimée d'une quantité que le dispositif actuel ne sait pas isoler.</p>
+  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">26</a> l'établit. Sa part est surestimée d'une quantité que le dispositif actuel ne sait pas isoler.</p>
 
   <p><strong>L'opérateur humain n'est pas stationnaire.</strong> Toute l'analyse suppose une compétence constante sur la période. Si elle varie — apprentissage, fatigue, changement de régime de marché —, l'estimation moyenne mélange des états différents. La littérature sur la compétence variable dans le temps offre des outils, ils ne sont pas mobilisés ici.</p>
 

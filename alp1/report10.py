@@ -189,12 +189,11 @@ def table_attribution() -> Table:
         ["Compétence plantée dans", "Avantage total", "entrée", "moment",
          "taille", "sortie", "Levier désigné"],
         rows,
-        note="Le levier désigné est chaque fois celui où la compétence a été "
-             "plantée : la méthode est réfutable, et elle passe. Le levier du "
-             "moment capte une part parasite parce qu'il n'est pas séparable "
-             "de l'entrée — fermer le moment détruit aussi la sélection "
-             "intraséance. Shapley signale cette interaction au lieu de la "
-             "masquer.",
+        note="Chaque ligne somme à cent pour cent, propriété qui définit la "
+             "valeur de Shapley et qui sert ici de contrôle d'implémentation. "
+             "La colonne « sortie » vaut zéro exact et non zéro approché : le "
+             "journal synthétique ne gère aucune sortie, et la décomposition "
+             "l'énonce au lieu de la bruiter.",
     )
 
 
@@ -258,10 +257,10 @@ def table_versus() -> Table:
          "Seuil déflaté", "Décisions requises", "à 2 par jour"],
         rows,
         wrap_cols=[0],
-        note="L'opérateur paie seize fois plus de configurations et franchit "
-             "pourtant le mur bien plus tôt. La raison n'est pas qu'il serait "
-             "meilleur : c'est que l'effet qu'il revendique est grand devant le "
-             "bruit, alors que celui de la géométrie ne l'est pas.",
+        note="L'arithmétique est celle de la proposition 2 : le budget de "
+             "configurations entre dans l'exigence par un logarithme, l'effet "
+             "revendiqué par un carré. Multiplier le premier par seize coûte "
+             "moins que diviser le second par trois.",
     )
 
 
@@ -297,9 +296,11 @@ def table_fields() -> Table:
         rows,
         wrap_cols=[0, 2],
         wide=True,
-        note="La frontière n'est pas une commodité de présentation. Un champ du "
-             "bloc supérieur qui serait rempli après coup contamine tout ce qui "
-             "en dépend, et aucun test ne rattrape cette contamination.",
+        note="Les cinq premiers champs sont scellés à l'instant de la décision, "
+             "les deux derniers ne sont connus qu'après. Un registre qui "
+             "n'enregistre que les lignes du bas n'est pas un journal de "
+             "décision mais un journal de trades, et aucun des tests de ce "
+             "document ne s'y applique.",
     )
 
 

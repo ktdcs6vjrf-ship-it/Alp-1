@@ -17,7 +17,7 @@ Il est publié comme artefact : https://claude.ai/code/artifact/1a195a2a-36ad-47
 
 Second livrable : `docs/edge-discretionnaire.html` — **ALP nº 3**, sur
 l'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas codable
-(≈110 ko — 30 sections en neuf parties, 7 tables, 7 figures dont trois
+(≈110 ko — 31 sections en neuf parties, 7 tables, 7 figures dont trois
 surfaces isométriques). Chaîne propre : `journal.py` → `operator.py` →
 `attribution.py` → `report10.py` + `figdisc.py` → `discpaper.py`.
 
@@ -115,7 +115,7 @@ Deux pièges déjà tombés dedans, à ne pas refaire :
 ## Commandes
 
 ```
-python main.py --tests      # 761 tests (compter ~10 min, --wp et figures sont lents)
+python main.py --tests      # 767 tests (compter ~10 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit le document de travail
 python main.py --strategy   # rejoue la stratégie scellée et sa batterie
 python main.py --bounds     # la mesure encadrée par les deux remplissages

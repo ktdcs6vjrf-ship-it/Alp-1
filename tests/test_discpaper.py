@@ -13,7 +13,7 @@ import unittest
 from alp1 import discpaper
 
 #: Ce que le gabarit déclare. Toute modification de structure passe par ici.
-N_SECTIONS = 30
+N_SECTIONS = 31
 N_PARTIES = 9
 N_TABLES = 7
 N_FIGURES = 7
@@ -106,6 +106,69 @@ class TestSommaire(unittest.TestCase):
             rangs.append(self.ids.index(premiere.group(1)) + 1)
             vu += 1
         self.assertEqual(starts, rangs)
+
+
+class TestRenvois(unittest.TestCase):
+    """Un renvoi qui cite un rang doit citer le bon.
+
+    C'est la garde qui manque le plus souvent : insérer une section décale
+    toute la numérotation, les `start=` du sommaire sont corrigés parce qu'ils
+    sautent aux yeux, et les renvois en toutes lettres au fil du texte restent
+    faux sans que rien ne le signale.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.corps = discpaper.build().split("</style>", 1)[1]
+        cls.rangs = {i: n for n, i in enumerate(
+            re.findall(r'<h2 id="([a-z0-9-]+)"', cls.corps), start=1)}
+
+    def test_les_renvois_citent_le_bon_rang(self) -> None:
+        renvois = re.findall(r'<a href="#(s-[a-z0-9-]+)">(\d+)</a>', self.corps)
+        self.assertTrue(renvois, "aucun renvoi numéroté à vérifier")
+        for ancre, cite in renvois:
+            self.assertIn(ancre, self.rangs, f"ancre morte : {ancre}")
+            self.assertEqual(int(cite), self.rangs[ancre],
+                             f"le renvoi vers {ancre} annonce {cite}, "
+                             f"or la section est la {self.rangs[ancre]}e")
+
+
+class TestTypographie(unittest.TestCase):
+    """La passe typographique française, et ce qu'elle doit épargner."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.html = discpaper.build()
+        cls.corps = cls.html.split("</style>", 1)[1]
+        cls.style = cls.html.split("<style>", 1)[1].split("</style>", 1)[0]
+
+    def test_aucune_apostrophe_droite(self) -> None:
+        """L'apostrophe française est courbe. La droite est une servitude de
+        clavier, pas une convention typographique."""
+        self.assertEqual(self.corps.count("'"), 0)
+        self.assertGreater(self.corps.count("\u2019"), 100)
+
+    def test_le_bloc_de_style_est_epargne(self) -> None:
+        """Le style porte des noms de police entre apostrophes ; les courber
+        casserait la déclaration."""
+        self.assertIn('"Source Serif 4"', self.style)
+        self.assertEqual(self.style.count("\u2019"), 0)
+
+    def test_les_attributs_sont_epargnes(self) -> None:
+        """Une apostrophe courbe dans un href ou une classe casserait le lien
+        ou la règle. La passe ne visite jamais l'intérieur d'une balise."""
+        import re
+        for balise in re.findall(r"<[^>]+>", self.corps):
+            self.assertNotIn("\u2019", balise, balise[:80])
+
+    def test_ponctuation_double_insecable(self) -> None:
+        """Aucun deux-points ne doit rester collé à un mot."""
+        import re
+        colles = re.findall(r"\w:(?:\s|<)", self.corps)
+        self.assertEqual(colles, [])
+
+    def test_les_url_survivent(self) -> None:
+        self.assertIn("https://", self.html)
 
 
 class TestValeurs(unittest.TestCase):

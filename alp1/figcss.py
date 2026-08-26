@@ -67,6 +67,25 @@ FIGURE_CSS = """
   .fig .hm3 { fill: var(--hm3); }  .fig .hm7 { fill: var(--hm7); }
   .fig .cl-lo { fill: var(--ink); }
   .fig .cl-hi { fill: var(--paper); }
+
+  /* --- rampe séquentielle en trait --------------------------------------
+     Les classes `hm*` posent un remplissage. Une polyligne qui les porterait
+     seule verrait ce remplissage écraser le `fill: none` de `.ln`, la règle
+     venant plus loin dans la feuille à spécificité égale — et la courbe se
+     refermerait en coin plein. Ces règles à deux classes tranchent, et
+     redonnent le trait. */
+
+  .fig .ln.hm0 { stroke: var(--hm0); fill: none; }
+  .fig .ln.hm1 { stroke: var(--hm1); fill: none; }
+  .fig .ln.hm2 { stroke: var(--hm2); fill: none; }
+  .fig .ln.hm3 { stroke: var(--hm3); fill: none; }
+  .fig .ln.hm4 { stroke: var(--hm4); fill: none; }
+  .fig .ln.hm5 { stroke: var(--hm5); fill: none; }
+  .fig .ln.hm6 { stroke: var(--hm6); fill: none; }
+  .fig .ln.hm7 { stroke: var(--hm7); fill: none; }
+  .fig .pt.hm3 { fill: var(--hm3); }
+  .fig .pt.hm5 { fill: var(--hm5); }
+  .fig .pt.hm7 { fill: var(--hm7); }
 """
 
 # Jetons de couleur des figures. Palette catégorielle validée (séparation CVD

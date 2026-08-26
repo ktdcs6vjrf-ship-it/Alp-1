@@ -46,6 +46,68 @@ def figures() -> dict[str, str]:
     return figdisc.render_all()
 
 
+#: Ponctuation double française : elle veut une espace insécable devant. Le
+#: deux-points prend l'espace pleine, les trois autres l'espace fine, selon
+#: l'usage de l'Imprimerie nationale.
+_INSECABLE = {":": "\u00a0", ";": "\u202f", "!": "\u202f", "?": "\u202f"}
+
+
+def typographie(html: str) -> str:
+    """Passe typographique française sur le document rendu.
+
+    Elle fait deux choses : l'apostrophe droite devient l'apostrophe courbe,
+    et la ponctuation double reçoit son espace insécable.
+
+    **Pourquoi à la construction et non dans les sources.** L'apostrophe
+    droite est aussi le délimiteur de chaîne de Python ; une substitution dans
+    les modules détruirait les f-chaînes qui bâtissent les figures. Faite ici,
+    la passe couvre d'un coup le gabarit, les tables et les figures, et ne
+    peut rien casser en amont.
+
+    Elle ne touche qu'au **texte** : le contenu des balises `<style>` est mis
+    de côté, et l'intérieur des balises — donc tout attribut — n'est jamais
+    visité, ce qui protège les URL, les classes et les valeurs numériques.
+    """
+    # Le bloc de style est retiré puis remis : il contient des apostrophes de
+    # nom de police qu'il ne faut surtout pas courber.
+    avant, sep, reste = html.partition("<style>")
+    style, sep2, apres = reste.partition("</style>")
+
+    def texte_seul(fragment: str) -> str:
+        out, i = [], 0
+        while i < len(fragment):
+            ouvre = fragment.find("<", i)
+            if ouvre == -1:
+                out.append(_corriger(fragment[i:]))
+                break
+            out.append(_corriger(fragment[i:ouvre]))
+            ferme = fragment.find(">", ouvre)
+            if ferme == -1:
+                out.append(fragment[ouvre:])
+                break
+            out.append(fragment[ouvre:ferme + 1])
+            i = ferme + 1
+        return "".join(out)
+
+    return texte_seul(avant) + sep + style + sep2 + texte_seul(apres)
+
+
+def _corriger(txt: str) -> str:
+    """Corrige un nœud de texte, jamais du balisage."""
+    txt = txt.replace("'", "\u2019")
+    out = []
+    for i, ch in enumerate(txt):
+        espace = _INSECABLE.get(ch)
+        # On n'insère l'espace que derrière un mot déjà collé à la ponctuation :
+        # une ponctuation déjà espacée, ou ouvrant un fragment, est laissée.
+        if espace and i > 0 and (txt[i - 1].isalnum() or txt[i - 1] == "\u2019"):
+            suivant = txt[i + 1] if i + 1 < len(txt) else " "
+            if suivant in " \n\t<" or i + 1 == len(txt):
+                out.append(espace)
+        out.append(ch)
+    return "".join(out)
+
+
 def build() -> str:
     text = TEMPLATE.read_text(encoding="utf-8")
 
@@ -100,7 +162,7 @@ def build() -> str:
     leftovers = re.findall(r"\{\{[^}]+\}\}", text)
     if leftovers:
         raise KeyError(f"balises non résolues : {sorted(set(leftovers))}")
-    return text
+    return typographie(text)
 
 
 def main() -> None:
