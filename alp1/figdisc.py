@@ -362,7 +362,7 @@ def fig_plane() -> str:
         return _ramp(0.45 + 0.55 * min(1.0, v / span))
 
     b = _plate(368, "Invariance",
-               "L'espérance ne s'incline que par l'information",
+               "Espérance selon la sélectivité et la mise",
                "sélectivité × mise")
     for idx, (sub, z) in enumerate((("sans clairvoyance", z_null),
                                     ("avec clairvoyance", z_edge))):
@@ -408,7 +408,7 @@ def fig_nulls() -> str:
 
     cas = (("sans clairvoyance", 0.0), ("clairvoyance franche", 0.55))
     b = _plate(392, "Lois nulles",
-               "Cinq adversaires, cinq prétentions distinctes",
+               "Statistique observée et loi nulle, par test",
                f"{SESSIONS} séances, seuil 95 %")
 
     gauche = 138.0
@@ -471,7 +471,7 @@ def fig_attribution() -> str:
            ("plantée dans la taille", 0.0, 0.45),
            ("plantée dans les deux", 0.45, 0.45))
     b = _plate(292, "Attribution",
-               "La décomposition retrouve-t-elle ce qu'on y a mis ?",
+               "Part de chaque levier selon l'emplacement de la compétence",
                "valeur de Shapley, 16 coalitions")
 
     gauche, largeur, ecart = 70.0, 158.0, 30.0
@@ -538,7 +538,7 @@ def fig_tax() -> str:
     """
     ns = ((1000, "hm7"), (3000, "hm5"), (10000, "hm3"))
     b = _plate(316, "Taxe de multiplicité",
-               "Ce que chaque levier ajoute au seuil de preuve",
+               "Seuil déflaté selon le nombre de leviers ouverts",
                "Bailey et López de Prado")
     p = Panel(b, 62, 62, W - 62, 186)
     p.domain(0, 8, 0.0, 0.105)
@@ -587,7 +587,7 @@ def fig_calibration() -> str:
     """
     data = _calibration()
     b = _plate(316, "Calibration",
-               "Ce que l'appareil déclare, selon ce qu'on y a mis",
+               "Lois battues selon l'information plantée",
                f"{SESSIONS} séances, seuil 95 %")
     p = Panel(b, 62, 62, W - 92, 186)
     p.domain(0.0, max(d[1] for d in data) * 1.08, -0.25, 5.5)
@@ -647,3 +647,173 @@ FIGURES = {
 
 def render_all() -> dict[str, str]:
     return {k: fn() for k, fn in FIGURES.items()}
+
+
+# ---------------------------------------------------------------------------
+# Figure 8 — le nuage Monte-Carlo de l'estimateur
+# ---------------------------------------------------------------------------
+
+
+@lru_cache(maxsize=1)
+def _paths(n_paths: int = 520, horizon: int = 1400) -> tuple:
+    """Trajectoires de l'espérance cumulée, sous absence de compétence.
+
+    Chaque chemin rééchantillonne le journal sans compétence par blocs, puis
+    trace la moyenne courante décision après décision. L'ensemble dessine
+    l'entonnoir dans lequel un estimateur sans avantage évolue, et sa largeur
+    à chaque abscisse est le bruit que l'opérateur doit dépasser.
+    """
+    from .mc import Rng, block_length_for_autocorrelation, stationary_bootstrap
+
+    j = synthesise(skill=0.0, n_sessions=SESSIONS)
+    base = j.returns
+    rng = Rng(20260823)
+    bloc = block_length_for_autocorrelation(0.0)
+
+    paths, finaux = [], []
+    for _ in range(n_paths):
+        tirage = stationary_bootstrap(base, rng, bloc, n=horizon)
+        cum, total = [], 0.0
+        for k, v in enumerate(tirage, start=1):
+            total += v
+            if k % 40 == 0:
+                cum.append((k, total / k))
+        paths.append(tuple(cum))
+        finaux.append(total / horizon)
+    return tuple(paths), tuple(sorted(finaux)), horizon
+
+
+def fig_cloud() -> str:
+    """L'entonnoir de l'estimateur en l'absence de compétence.
+
+    L'abscisse est le nombre de décisions accumulées, l'ordonnée l'espérance
+    mesurée depuis le début. Les quantiles marquent l'enveloppe dans laquelle
+    un opérateur sans avantage se trouve, et son resserrement en racine du
+    nombre de décisions donne la lecture directe du mur d'échantillon.
+    """
+    paths, finaux, horizon = _paths()
+
+    def quantile(xs, q: float) -> float:
+        s = sorted(xs)
+        pos = q * (len(s) - 1)
+        lo = int(math.floor(pos))
+        return s[lo] + (s[min(lo + 1, len(s) - 1)] - s[lo]) * (pos - lo)
+
+    ks = [k for k, _ in paths[0]]
+    par_k = {k: [] for k in ks}
+    for chemin in paths:
+        for k, v in chemin:
+            par_k[k].append(v)
+
+    lo = min(quantile(par_k[k], 0.01) for k in ks[3:])
+    hi = max(quantile(par_k[k], 0.99) for k in ks[3:])
+    marge = 0.12 * (hi - lo)
+
+    b = _plate(330, "Monte-Carlo", "Espérance cumulée sous absence de compétence",
+               f"{len(paths)} chemins, bootstrap par blocs")
+    p = Panel(b, 66, 62, W - 138, 200)
+    p.domain(ks[3], horizon, lo - marge, hi + marge)
+    p.grid_y([lo, (lo + hi) / 2.0, hi], lambda v: _num(v, 2))
+    p.grid_x([250, 500, 1000, horizon], lambda v: f"{v:g}",
+             label="décisions accumulées")
+
+    # La bande interquantile, posée avant les chemins pour rester au fond.
+    haut = [(k, quantile(par_k[k], 0.95)) for k in ks[3:]]
+    bas = [(k, quantile(par_k[k], 0.05)) for k in ks[3:]]
+    d = " ".join(("M" if i == 0 else "L") + f"{p.sx(x):.1f},{p.sy(y):.1f}"
+                 for i, (x, y) in enumerate(haut))
+    d += " " + " ".join(f"L{p.sx(x):.1f},{p.sy(y):.1f}" for x, y in reversed(bas))
+    b.add(f'<path class="band-mc" d="{d} Z"/>')
+
+    for chemin in paths:
+        pts = [(k, v) for k, v in chemin if k >= ks[3]]
+        b.add('<path class="path-mc" d="' + " ".join(
+            ("M" if i == 0 else "L") + f"{p.sx(x):.0f},{p.sy(y):.1f}"
+            for i, (x, y) in enumerate(pts)) + '"/>')
+
+    for q, cls, lab in ((0.95, "quant dash", "P95"), (0.50, "quant", "médiane"),
+                        (0.05, "quant dash", "P5")):
+        pts = [(k, quantile(par_k[k], q)) for k in ks[3:]]
+        b.add('<path class="' + cls + '" d="' + " ".join(
+            ("M" if i == 0 else "L") + f"{p.sx(x):.1f},{p.sy(y):.1f}"
+            for i, (x, y) in enumerate(pts)) + '"/>')
+        p.label(horizon, pts[-1][1], lab, dx=6, cls="tk halo")
+
+    p.hline(0.0, "lvl strong")
+    _source(b, "Abscisse : décisions accumulées. Ordonnée : espérance mesurée depuis "
+               "le début, en unités de risque. La bande couvre 90 pour cent des "
+               "chemins.")
+    return b.render(
+        "Nuage de trajectoires de l espérance cumulée sous absence de "
+        "compétence, avec ses quantiles")
+
+
+# ---------------------------------------------------------------------------
+# Figure 9 — histogramme et fonction de répartition
+# ---------------------------------------------------------------------------
+
+
+def fig_distribution() -> str:
+    """La loi de l'estimateur, en densité puis en répartition.
+
+    À gauche, la distribution des espérances obtenues sans compétence, avec
+    ses quantiles. À droite, la même information en cumulé : elle donne
+    directement la probabilité qu'un opérateur sans avantage atteigne une
+    espérance donnée.
+    """
+    _, finaux, horizon = _paths()
+    n = len(finaux)
+
+    def q(x: float) -> float:
+        pos = x * (n - 1)
+        lo = int(math.floor(pos))
+        return finaux[lo] + (finaux[min(lo + 1, n - 1)] - finaux[lo]) * (pos - lo)
+
+    p05, p25, p50, p75, p95 = (q(v) for v in (0.05, 0.25, 0.50, 0.75, 0.95))
+    lo, hi = finaux[0], finaux[-1]
+    n_bins = 46
+    largeur = (hi - lo) / n_bins
+    bins = [0] * n_bins
+    for v in finaux:
+        bins[min(n_bins - 1, int((v - lo) / largeur))] += 1
+    pic = max(bins)
+
+    b = _plate(330, "Loi de l'estimateur",
+               "Densité et répartition, sans compétence",
+               f"{n} tirages, {horizon} décisions")
+
+    g = Panel(b, 60, 66, 250, 186, title="Distribution")
+    g.domain(lo, hi, 0, pic * 1.08)
+    g.grid_y([0, pic // 2, pic], lambda v: f"{v:g}")
+    g.grid_x([lo, p50, hi], lambda v: _num(v, 2), label="espérance par décision")
+    for k, c in enumerate(bins):
+        centre = lo + (k + 0.5) * largeur
+        dedans = p05 <= centre <= p95
+        g.vbar(centre, 0, c, (g.w / n_bins) - 1.2,
+               "barfill inner" if dedans else "barfill",
+               f"{_num(centre, 3)} R — {c} tirage(s)")
+    for v, lab in ((p05, "P5"), (p25, "P25"), (p75, "P75"), (p95, "P95")):
+        g.vline(v, "lvl")
+    g.vline(p50, "lvl strong")
+    g.label(p50, pic * 1.0, "médiane", dx=5, cls="tk halo")
+
+    d = Panel(b, 372, 66, W - 372, 186, title="Répartition")
+    d.domain(lo, hi, 0.0, 1.0)
+    d.grid_y([0.0, 0.25, 0.5, 0.75, 1.0], lambda v: f"{v:.0%}")
+    d.grid_x([lo, p50, hi], lambda v: _num(v, 2), label="espérance par décision")
+    d.path([(v, (i + 1) / n) for i, v in enumerate(finaux)], "s2")
+    for v, part in ((p05, 0.05), (p50, 0.50), (p95, 0.95)):
+        d.vline(v, "lvl")
+        d.dot(v, part, "s1", f"{_num(v, 3)} R atteint dans {1 - part:.0%} des cas")
+    d.label(p95, 0.95, "P95", dx=7, dy=-4, cls="tk halo")
+
+    _source(b, "La bande claire de l'histogramme couvre 90 pour cent des tirages. "
+               "La répartition donne la probabilité qu'une espérance soit "
+               "atteinte sans compétence.")
+    return b.render(
+        "Distribution et fonction de répartition de l espérance mesurée sous "
+        "absence de compétence")
+
+
+FIGURES["disccloud"] = fig_cloud
+FIGURES["discdist"] = fig_distribution

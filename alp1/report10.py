@@ -40,6 +40,11 @@ SHARPES = (0.05, 0.075, 0.10, 0.15)
 #: de point de comparaison : c'est lui qui bute sur 17 434 trades.
 SHARPE_GEOMETRIE = 0.0332
 
+#: Paramètres du nuage Monte-Carlo, tenus ici pour que la légende de la figure
+#: cite le nombre réellement tracé. Ils doivent suivre `figdisc._paths`.
+_CHEMINS = 520
+_HORIZON = 1400
+
 
 def _trades_for_threshold(sharpe: float, budget: float) -> float:
     """Décisions requises pour franchir le seuil déflaté à `budget` essais."""
@@ -91,10 +96,9 @@ def table_levers() -> Table:
          "Ce que ce levier ajoute"],
         rows,
         wrap_cols=[0],
-        note="Le seuil est calculé sur 3 000 décisions. Chaque levier double la "
-             "famille des stratégies effectivement explorées, mais le seuil ne "
-             "croît qu'en racine du logarithme : le premier levier coûte plus "
-             "cher que le quatrième.",
+        note="Le seuil est calculé sur 3 000 décisions. Chaque levier double le "
+             "nombre de configurations ; le seuil croît en racine du logarithme "
+             "de ce nombre, d'où un incrément décroissant.",
     )
 
 
@@ -123,10 +127,9 @@ def table_nulls() -> Table:
         rows,
         wrap_cols=[0, 1],
         wide=True,
-        note="Un avantage n'est déclaré que si les cinq lois tombent. Une loi "
-             "sans objet — un journal sans abstentions, par exemple — compte "
-             "comme non battue : l'absence de test n'est pas une réussite au "
-             "test.",
+        note="Le verdict est positif si et seulement si les cinq lois sont battues. "
+             "Une loi inapplicable — un journal sans abstentions, par exemple — "
+             "est comptée comme non battue.",
     )
 
 
@@ -154,9 +157,10 @@ def table_calibration() -> Table:
         ["Clairvoyance", "Bits par décision", "E[R] par décision",
          "Sharpe par décision", "Lois battues", "Verdict"],
         rows,
-        note="La première ligne est le contrôle qui autorise toutes les autres : "
-             "sans compétence, l'appareil ne déclare rien. La ligne médiane est "
-             "le sujet du papier — un avantage qui existe sans être démontrable.",
+        note="La première ligne mesure le niveau du test : à compétence nulle, le "
+             "nombre de lois battues est nul. La dernière mesure la puissance. "
+             "Les lignes intermédiaires situent la plage où la compétence est "
+             "non nulle et le verdict négatif.",
     )
 
 
@@ -355,6 +359,11 @@ def values() -> dict[str, str]:
         "d_mur_sr15": num(_trades_for_threshold(0.15, budget), 0),
         "d_mur_geometrie": num(n_geo, 0),
         "d_sharpe_geometrie": num(SHARPE_GEOMETRIE, 4),
+
+        # Le nuage Monte-Carlo — cités par la légende de la figure, donc
+        # produits ici plutôt qu'écrits à la main dans le gabarit.
+        "d_chemins": num(_CHEMINS, 0),
+        "d_horizon": num(_HORIZON, 0),
 
         # L'attribution
         "d_part_entree": num(

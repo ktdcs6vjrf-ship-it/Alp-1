@@ -19,7 +19,7 @@ import re
 from pathlib import Path
 
 from . import figdisc, report10
-from .figcss import FIGURE_CSS, FIGURE_TOKENS_DARK, FIGURE_TOKENS_LIGHT
+from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .report import Table
 from .workingpaper import extraire_pieds
 
@@ -92,6 +92,21 @@ def typographie(html: str) -> str:
     return texte_seul(avant) + sep + style + sep2 + texte_seul(apres)
 
 
+def _fin_d_entite(txt: str, i: int) -> bool:
+    """Le point-virgule en `i` termine-t-il une entité HTML ?
+
+    Une entité s'écrit `&nom;` ou `&#nnn;`. Insérer une espace devant son
+    point-virgule la casse&nbsp;: `&nbsp;` devient une suite de caractères que
+    le navigateur affiche telle quelle, et le document se met à porter des
+    « ; » parasites. Le contrôle remonte donc jusqu'à une esperluette, à
+    travers les seuls caractères qu'une entité admet.
+    """
+    j = i - 1
+    while j >= 0 and i - j <= 10 and (txt[j].isalnum() or txt[j] == "#"):
+        j -= 1
+    return j >= 0 and txt[j] == "&" and j < i - 1
+
+
 def _corriger(txt: str) -> str:
     """Corrige un nœud de texte, jamais du balisage."""
     txt = txt.replace("'", "\u2019")
@@ -100,7 +115,10 @@ def _corriger(txt: str) -> str:
         espace = _INSECABLE.get(ch)
         # On n'insère l'espace que derrière un mot déjà collé à la ponctuation :
         # une ponctuation déjà espacée, ou ouvrant un fragment, est laissée.
-        if espace and i > 0 and (txt[i - 1].isalnum() or txt[i - 1] == "\u2019"):
+        # Et jamais derrière le point-virgule qui ferme une entité.
+        if (espace and i > 0
+                and (txt[i - 1].isalnum() or txt[i - 1] == "\u2019")
+                and not (ch == ";" and _fin_d_entite(txt, i))):
             suivant = txt[i + 1] if i + 1 < len(txt) else " "
             if suivant in " \n\t<" or i + 1 == len(txt):
                 out.append(espace)
@@ -111,9 +129,10 @@ def _corriger(txt: str) -> str:
 def build() -> str:
     text = TEMPLATE.read_text(encoding="utf-8")
 
-    text = text.replace("{{TOKENS_LIGHT}}", FIGURE_TOKENS_LIGHT.rstrip("\n") + "\n")
-    text = text.replace("{{TOKENS_DARK}}", FIGURE_TOKENS_DARK.rstrip("\n") + "\n")
+    text = text.replace("{{TOKENS_TERMINAL}}",
+                        FIGURE_TOKENS_TERMINAL.rstrip("\n") + "\n")
     text = text.replace("{{FIGURE_CSS}}", FIGURE_CSS.strip("\n"))
+    text = text.replace("{{FIGURE_CSS_TERMINAL}}", FIGURE_CSS_TERMINAL.strip("\n"))
 
     # Les clés longues d'abord : sans cela une clé qui préfixe une autre
     # mangerait le début de sa voisine et laisserait un suffixe orphelin.

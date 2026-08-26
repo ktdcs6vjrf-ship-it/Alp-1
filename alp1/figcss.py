@@ -104,3 +104,55 @@ FIGURE_TOKENS_DARK = """
     --hm0: #0d366b; --hm1: #184f95; --hm2: #256abf; --hm3: #2a78d6;
     --hm4: #3987e5; --hm5: #6da7ec; --hm6: #9ec5f4; --hm7: #cde2fb;
 """
+
+# ---------------------------------------------------------------------------
+# Jeu « terminal » — fond sombre engagé
+# ---------------------------------------------------------------------------
+
+# Le document nº 3 ne suit pas le thème du lecteur : il s'engage sur un fond
+# sombre unique. Ce jeu lui est propre et laisse les trois autres papiers
+# intacts. La rampe séquentielle est une rampe de **luminance sur une seule
+# teinte** : sur fond sombre, « fort » doit être lumineux, faute de quoi la
+# valeur haute disparaît dans le fond.
+
+FIGURE_TOKENS_TERMINAL = """
+    --s1: #9b8cff; --s2: #e4e6ea; --s3: #6e757d;
+    --dv-neg: #e0625c; --mid: #22262c;
+    --hm0: #23203a; --hm1: #322c55; --hm2: #453b76; --hm3: #5a4d99;
+    --hm4: #7263bd; --hm5: #8d7cdc; --hm6: #ab9df0; --hm7: #cdc3ff;
+"""
+
+# Réglages de trait propres au fond sombre. Les épaisseurs de la feuille
+# commune sont calibrées pour de l'encre sur du blanc ; sur fond sombre, un
+# trait clair paraît plus épais qu'il n'est, et il faut l'affiner pour
+# retrouver le même poids optique.
+
+FIGURE_CSS_TERMINAL = """
+  /* ---------- fond sombre : réglages de trait ---------- */
+
+  .fig text { font-family: var(--mono); }
+  .fig .ax, .fig .lg { font-family: var(--mono); font-size: 9.5px; }
+  .fig .hdr { font-family: var(--mono); letter-spacing: 0.12em; }
+
+  .fig .gl    { stroke: var(--hair); stroke-width: 0.8; }
+  .fig .ba    { stroke: var(--muted); stroke-width: 0.8; }
+  .fig .floor { stroke: var(--hair); stroke-width: 0.7; }
+  .fig .post  { stroke: var(--hair); stroke-width: 0.7; }
+  .fig .mesh  { stroke: var(--paper); stroke-width: 0.6; }
+  .fig .ln    { stroke-width: 1.4; }
+  .fig .frame { stroke: var(--hair); stroke-width: 0.8; }
+  .fig .hsep  { stroke: var(--hair); stroke-width: 0.8; }
+  .fig .lvl   { stroke: var(--muted); stroke-width: 0.8; }
+  .fig .lvl.strong { stroke: var(--soft); }
+  .fig .pt    { stroke: var(--paper); stroke-width: 1.4; }
+
+  /* Nuage de trajectoires : chaque chemin est presque invisible, et c'est
+     leur superposition qui dessine la densité. */
+  .fig .path-mc { fill: none; stroke: var(--s2); stroke-width: 0.5;
+                  stroke-opacity: 0.055; }
+  .fig .band-mc { fill: var(--s1); fill-opacity: 0.14; stroke: none; }
+  .fig .quant   { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+  .fig .quant.dash { stroke-dasharray: 3 3; stroke: var(--soft); }
+  .fig .barfill { fill: var(--s3); }
+  .fig .barfill.inner { fill: var(--s2); }
+"""

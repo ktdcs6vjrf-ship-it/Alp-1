@@ -16,7 +16,7 @@ from alp1 import discpaper
 N_SECTIONS = 31
 N_PARTIES = 9
 N_TABLES = 7
-N_FIGURES = 7
+N_FIGURES = 9
 
 
 class TestConstruction(unittest.TestCase):
@@ -166,6 +166,18 @@ class TestTypographie(unittest.TestCase):
         import re
         colles = re.findall(r"\w:(?:\s|<)", self.corps)
         self.assertEqual(colles, [])
+
+    def test_les_entites_html_survivent(self) -> None:
+        """Le point-virgule d'une entité ne prend pas l'espace insécable.
+
+        `&nbsp;` coupée par une espace cesse d'être une entité : le navigateur
+        affiche la suite telle quelle, et le document porte des « ; »
+        parasites au milieu du texte.
+        """
+        import re
+        cassees = re.findall(r"&[a-zA-Z#0-9]{2,8}[\u202f\u00a0];", self.html)
+        self.assertEqual(cassees, [])
+        self.assertIn("&nbsp;", self.html)
 
     def test_les_url_survivent(self) -> None:
         self.assertIn("https://", self.html)

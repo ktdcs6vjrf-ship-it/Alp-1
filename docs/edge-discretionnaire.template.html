@@ -4,37 +4,28 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 
 <style>
+  /* Ce document s'engage sur un fond sombre unique et ne suit pas le réglage
+     du lecteur. Le choix est celui de la série d'origine des figures : un
+     rendu de terminal, où la donnée est claire sur un fond neutre. Un seul
+     jeu de jetons est donc défini, et toute couleur en découle. */
+
   :root {
-    --paper:  #FFFFFF;
-    --ink:    #101010;
-    --soft:   #3A3A3A;
-    --muted:  #6A6A6A;
-    --rule:   #101010;
-    --hair:   #C9C9C9;
-    --wash:   #F4F4F2;
+    --paper:  #0A0B0D;
+    --ink:    #E6E8EA;
+    --soft:   #A8ADB4;
+    --muted:  #6E757D;
+    --rule:   #E6E8EA;
+    --hair:   #23272C;
+    --wash:   #121519;
 
     --serif: "Source Serif 4", "Times New Roman", Times, serif;
     --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
     --measure: 46rem;
     --plate:   58rem;
-{{TOKENS_LIGHT}}  }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper: #12120F;
-      --ink:   #ECEAE4;
-      --soft:  #C4C1B9;
-      --muted: #8E8B84;
-      --rule:  #ECEAE4;
-      --hair:  #45433E;
-      --wash:  #1B1B17;
-{{TOKENS_DARK}}    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #12120F; --ink: #ECEAE4; --soft: #C4C1B9;
-    --muted: #8E8B84; --rule: #ECEAE4; --hair: #45433E; --wash: #1B1B17;
-{{TOKENS_DARK}}  }
+    color-scheme: dark;
+{{TOKENS_TERMINAL}}  }
 
   * { box-sizing: border-box; }
 
@@ -352,6 +343,7 @@
   }
 
 {{FIGURE_CSS}}
+{{FIGURE_CSS_TERMINAL}}
   /* Le débordement se borne de lui-même à 94vw ; il ne reste qu'à le
      supprimer sur les écrans où il n'y a plus de marge à prendre. */
   @media (max-width: 50rem) {
@@ -551,7 +543,7 @@
 
     <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l'indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l'abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l'opérateur gagne mais s'il fait mieux qu'une règle qu'on écrit en dix lignes. L'appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à {{d_bits_forte}}&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
 
-    <p>Le résultat principal renverse l'attente. Le jugement discrétionnaire coûte une taxe de multiplicité — {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives — mais cette taxe croît en racine du logarithme, si bien que quatre leviers ne relèvent le seuil de preuve que d'un facteur&nbsp;{{d_facteur_taxe}}. Trois routes indépendantes convergent alors sur un nombre atteignable&nbsp;: un opérateur revendiquant un Sharpe de 0,10 par décision franchit le seuil déflaté en {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, taxe comprise. <strong>le jugement discrétionnaire est prouvable là où la géométrie de sortie ne l'est pas</strong> — non parce qu'elle serait meilleure, mais parce que l'effet qu'elle revendique est grand devant le bruit, alors que celui de la géométrie ne l'est pas.</p>
+    <p>Le résultat principal porte sur l'ordre de grandeur. Le jugement discrétionnaire coûte une taxe de multiplicité — {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives — mais cette taxe croît en racine du logarithme, si bien que quatre leviers ne relèvent le seuil de preuve que d'un facteur&nbsp;{{d_facteur_taxe}}. Trois routes indépendantes convergent alors sur un nombre atteignable&nbsp;: un opérateur revendiquant un Sharpe de 0,10 par décision franchit le seuil déflaté en {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, taxe comprise. <strong>le jugement discrétionnaire est prouvable là où la géométrie de sortie ne l'est pas</strong> — non parce qu'elle serait meilleure, mais parce que l'effet qu'elle revendique est grand devant le bruit, alors que celui de la géométrie ne l'est pas.</p>
 
     <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d'arrêt optionnel</p>
     <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
@@ -567,7 +559,7 @@
 
   <div class="keybox">
     <span class="lab">Note de lecture</span>
-    <p>Le document se lit à trois profondeurs. <strong>La thèse</strong> tient dans le résumé et la section&nbsp;<a href="#s-detecter">2</a>&nbsp;: on ne teste pas la règle, on teste sa trace. <strong>L'appareil</strong> occupe les parties&nbsp;II à&nbsp;IV — le journal, la vérité de référence, les cinq lois nulles. <strong>Le résultat</strong> est aux parties&nbsp;V à&nbsp;VII&nbsp;: la taxe du jugement, le mur d'échantillon, et le renversement qui rend le jugement plus prouvable que la géométrie.</p>
+    <p>Le document se lit à trois profondeurs. <strong>La thèse</strong> tient dans le résumé et la section&nbsp;<a href="#s-detecter">2</a>&nbsp;: on ne teste pas la règle, on teste sa trace. <strong>L'appareil</strong> occupe les parties&nbsp;II à&nbsp;IV — le journal, la vérité de référence, les cinq lois nulles. <strong>Le résultat</strong> est aux parties&nbsp;V à&nbsp;VII&nbsp;: la taxe du jugement, le mur d'échantillon, et la comparaison des exigences de preuve entre jugement et géométrie.</p>
     <p>Aucun nombre de ce document n'est écrit à la main. Tous sont produits par les modules du dépôt et se recalculent&nbsp;; un lecteur qui doute d'un chiffre peut relancer le module qui l'établit.</p>
   </div>
 
@@ -581,7 +573,7 @@
           <li><a href="#s-position">Ce que « non codable » veut dire</a></li>
           <li><a href="#s-detecter">Répliquer n'est pas détecter</a></li>
           <li><a href="#s-litterature">Ce que l'évaluation des gérants sait faire sans la règle</a></li>
-          <li><a href="#s-contrat">Le contrat épistémique de ce document</a></li>
+          <li><a href="#s-contrat">Portée de l'étude</a></li>
           <li><a href="#s-notions">Six notions, et ce qu'elles décident</a></li>
         </ol>
       </li>
@@ -604,7 +596,7 @@
         <ol start="13">
           <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
           <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
-          <li><a href="#s-mecanique">La loi qui fait mal</a></li>
+          <li><a href="#s-mecanique">La comparaison à la règle scellée</a></li>
           <li><a href="#s-calibration">Le niveau et la puissance</a></li>
         </ol>
       </li>
@@ -612,7 +604,7 @@
         <ol start="17">
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
-          <li><a href="#s-concavite">La taxe est concave, et c'est tout l'argument</a></li>
+          <li><a href="#s-concavite">La forme de la taxe en fonction du nombre de leviers</a></li>
         </ol>
       </li>
       <li><span class="pt">Sixième partie — Le mur d'échantillon</span>
@@ -622,7 +614,7 @@
           <li><a href="#s-puissance">La puissance de détection</a></li>
         </ol>
       </li>
-      <li><span class="pt">Septième partie — Le renversement</span>
+      <li><span class="pt">Septième partie — Comparaison des deux régimes de preuve</span>
         <ol start="23">
           <li><a href="#s-versus">Pourquoi le jugement est prouvable là où la géométrie ne l'est pas</a></li>
           <li><a href="#s-consequence">Ce que cela change pour l'opérateur</a></li>
@@ -639,7 +631,7 @@
         <ol start="28">
           <li><a href="#s-protocole">Le scellement</a></li>
           <li><a href="#s-arret">La règle d'arrêt</a></li>
-          <li><a href="#s-limites">Ce que ce document ne prouve pas</a></li>
+          <li><a href="#s-limites">Limites</a></li>
           <li><a href="#s-conclusion">Conclusion</a></li>
         </ol>
       </li>
@@ -660,7 +652,7 @@
 
   <p>Mais l'énoncé, tel quel, s'auto-interdit. Il s'enchaîne ainsi&nbsp;: sans règle écrite, aucun rejeu sur données historiques&nbsp;; sans rejeu, aucune loi nulle à laquelle comparer la performance&nbsp;; sans loi nulle, rien ne distingue un avantage d'une série de chance. La prétention devient irréfutable, et une prétention irréfutable n'est pas une prétention forte&nbsp;: c'est une prétention vide. C'est exactement le motif pour lequel la méthodologie de cette série refuse l'entrée à tout estimateur qu'on ne sait pas calibrer contre son bruit.</p>
 
-  <p>Le piège se referme d'autant plus vite que l'opérateur a raison sur le premier point. Plus son processus est réellement irréductible à une règle, moins il peut en établir la valeur — et c'est précisément quand la valeur est grande que l'impossibilité de la montrer coûte cher.</p>
+  <p>Les deux propositions sont liées&nbsp;: plus le processus est irréductible à une règle, moins la voie du rejeu est disponible pour en établir la valeur. La suite de ce document décrit une voie qui ne passe pas par le rejeu.</p>
 
   <h2 id="s-detecter">Répliquer n'est pas détecter</h2>
 
@@ -683,13 +675,13 @@
 
   <p>Deux travaux touchent de plus près l'opérateur individuel. Locke et Mann (2005) étudient des opérateurs de parquet sur futures et trouvent que le trait persistant n'est pas la capacité de prévision mais la <strong>discipline</strong> — la propension à ne pas laisser courir les perdants. Coval, Hirshleifer et Shumway (2005) établissent une persistance de performance chez une minorité d'investisseurs individuels, incompatible avec le pur hasard. À l'inverse, Barber et Odean (2000) documentent la destruction de valeur du plus grand nombre. L'ensemble ne dit pas que le jugement discrétionnaire paie&nbsp;; il dit qu'elle est <em>mesurable</em>, et que la mesure sépare.</p>
 
-  <h2 id="s-contrat">Le contrat épistémique de ce document</h2>
+  <h2 id="s-contrat">Portée de l'étude</h2>
 
-  <p>Il vaut mieux énoncer d'emblée ce qui sera établi et ce qui ne le sera jamais, car la seconde liste est celle qui protège l'auteur d'une prétention qu'il ne pourrait pas tenir.</p>
+  <p>Cette section délimite ce que l'étude établit et ce qu'elle laisse hors de son champ.</p>
 
-  <p><strong>Ce document construit un appareil de mesure et en établit la sensibilité.</strong> Il dit&nbsp;: voici cinq adversaires, voici ce que chacun réfute, voici combien de décisions il faut pour les battre, et voici la preuve que l'appareil ne déclare rien quand il n'y a rien. C'est un résultat de méthode, complet et vérifiable.</p>
+  <p><strong>L'étude construit un appareil de mesure et en établit la sensibilité.</strong> Elle spécifie cinq lois nulles et la prétention que chacune adresse, mesure le nombre de décisions requis pour les battre à un effet donné, et rapporte le taux de déclaration de l'appareil à compétence nulle. Ces résultats sont reproductibles par les modules du dépôt.</p>
 
-  <p><strong>Ce document n'établit l'avantage d'aucun opérateur réel</strong>, pour la raison suffisante qu'aucun journal réel n'y est analysé. Les journaux exploités ici sont synthétiques, et c'est un choix, non un pis-aller&nbsp;: seule une vérité plantée permet de vérifier que l'appareil retrouve ce qu'on y a mis et ne trouve rien quand on n'y a rien mis. Un opérateur qui fournirait son registre au format de la section&nbsp;<a href="#s-champs">7</a> obtiendrait ses propres chiffres par les mêmes modules, sans qu'une ligne de code change.</p>
+  <p><strong>L'étude ne porte sur aucun journal réel.</strong> Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l'appareil à une valeur connue. Un registre réel au format de la section&nbsp;<a href="#s-champs">7</a> est traité par les mêmes modules, sans modification du code.</p>
 
 
   <h2 id="s-notions">Six notions, et ce qu'elles décident</h2>
@@ -783,7 +775,7 @@
 
   <p>Ce choix pose la vérité de référence, et ce n'est pas une commodité. Sous un prix sans dérive, tout sous-ensemble de setups choisi <em>sans clairvoyance</em> a pour espérance exactement <span class="v">−c/L</span>, par le théorème d'arrêt optionnel. La seule façon de battre cette valeur est une information réelle sur l'issue. Toute espérance mesurée au-dessus vient donc de la sélection, jamais du prix — ce qui fait de cet univers un banc d'essai et non un simple jeu de données.</p>
 
-  <p>L'espérance mécanique mesurée vaut {{d_esperance_mecanique}}&nbsp;R par setup. Elle est négative, comme la théorie l'exige. Mais il faut ajouter aussitôt un fait qui pèsera sur tout le reste du document&nbsp;: <strong>même à plusieurs milliers de setups, cette espérance reste à moins de deux erreurs types de zéro.</strong> L'instrument ne résout pas la valeur qu'il vise. En deçà d'environ quatre cents séances, son signe bascule d'un échantillon à l'autre. Ce n'est pas un défaut du générateur&nbsp;: c'est le sujet du document, rencontré dès sa première mesure.</p>
+  <p>L'espérance mécanique mesurée vaut {{d_esperance_mecanique}}&nbsp;R par setup. Elle est négative, comme la théorie l'exige. Mais il faut ajouter aussitôt un fait qui pèsera sur tout le reste du document&nbsp;: <strong>même à plusieurs milliers de setups, cette espérance reste à moins de deux erreurs types de zéro.</strong> L'instrument ne résout pas la valeur qu'il vise. En deçà d'environ quatre cents séances, son signe bascule d'un échantillon à l'autre. Cette propriété est mesurée ici sur le générateur, et elle est quantifiée en partie&nbsp;VI.</p>
 
   <h2 id="s-invariance">L'invariance, transposée du choix des barrières au choix des trades</h2>
 
@@ -819,11 +811,13 @@
 
   {{FIGURE:discnulls|L'observé posé sur chacune de ses cinq lois nulles, pour un opérateur sans clairvoyance puis pour un opérateur compétent. Une barre par loi&nbsp;: l'étendue de la loi nulle jusqu'à son quantile à 95&nbsp;%, et le trait fort de la statistique observée. La planche rend visible le fait qu'un opérateur peut battre trois lois et rester réfuté.}}
 
-  <h2 id="s-mecanique">La loi qui fait mal</h2>
+  {{FIGURE:discdist|La loi de l'espérance mesurée en l'absence de compétence, en densité puis en répartition. Les quantiles P5 et P95 délimitent l'intervalle qui contient 90&nbsp;pour cent des tirages. La courbe de droite donne la probabilité qu'une espérance donnée soit atteinte sans aucune information sur l'issue.}}
+
+  <h2 id="s-mecanique">La comparaison à la règle scellée</h2>
 
   <p>La troisième loi n'est pas simulée&nbsp;: son adversaire est déterministe, c'est la règle scellée exécutée sur l'univers entier. Elle ne demande pas si l'opérateur gagne. Elle demande s'il fait mieux que ce qu'on obtient <em>sans lui</em>.</p>
 
-  <p>C'est la seule des cinq qui pose la question économique, et c'est pourquoi elle est décisive. Un opérateur qui bat la sélection au sort, le chronométrage et l'indépendance, mais pas la règle scellée, a démontré une compétence réelle — et démontré du même coup qu'elle ne vaut pas son coût. Le résultat est désagréable, il est fréquent, et un dispositif honnête doit pouvoir le produire.</p>
+  <p>C'est la seule des cinq qui compare l'opérateur à une alternative disponible plutôt qu'à un tirage. Un opérateur qui bat la sélection au sort, le chronométrage et l'indépendance sans battre la règle scellée présente une compétence mesurable dont l'apport net sur la règle est nul. Les deux constats sont indépendants, et le dispositif les rapporte séparément.</p>
 
   <h2 id="s-calibration">Le niveau et la puissance</h2>
 
@@ -833,7 +827,7 @@
 
   <p>La première ligne est ce contrôle&nbsp;: à clairvoyance nulle, {{d_lois_nulle}}&nbsp;loi battue sur cinq, verdict refusé, malgré un Sharpe observé de {{d_sharpe_nulle}} qui aurait pu tromper un examen naïf. La dernière ligne établit la puissance&nbsp;: à {{d_bits_forte}}&nbsp;bit par décision, les cinq lois tombent et l'avantage est déclaré.</p>
 
-  <p>Entre les deux se trouve le résultat le plus important du document. Il existe une zone où l'avantage est <em>réel</em> — la vérité plantée n'est pas nulle — et où l'appareil refuse néanmoins de le déclarer. Cette zone n'est pas un défaut à corriger&nbsp;: c'est la traduction exacte du fait que l'échantillon ne porte pas l'information nécessaire. Un appareil qui déclarerait dans cette zone serait un appareil qui déclare aussi dans la première ligne.</p>
+  <p>Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L'étendue de cette plage est fixée par la taille de l'échantillon&nbsp;: à {{d_seances}}&nbsp;séances, elle couvre les compétences inférieures à environ 0,05&nbsp;bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d'un taux de déclaration non nul sur la première ligne.</p>
 
   {{FIGURE:disccalib|Le nombre de lois nulles battues selon l'information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l'appareil ne déclare rien. La bande centrale marque la zone où l'avantage existe sans être démontrable.}}
 
@@ -862,9 +856,9 @@
 
   <p>Le recensement doit être fait honnêtement et <em>avant</em> de regarder les résultats. Un opérateur qui déclarerait deux leviers après en avoir actionné quatre ne se tromperait pas de peu&nbsp;: il diviserait son seuil par un facteur qui n'a aucune raison d'être petit.</p>
 
-  <h2 id="s-concavite">La taxe est concave, et c'est tout l'argument</h2>
+  <h2 id="s-concavite">La forme de la taxe en fonction du nombre de leviers</h2>
 
-  <p>Le seuil croît en <span class="v">√(k&nbsp;·&nbsp;ln&nbsp;2)</span>. La croissance est donc <strong>sous-linéaire en <span class="v">k</span></strong>, et cela change entièrement la conclusion qu'on serait tenté de tirer de l'exponentielle 2<sup><span class="v">k</span></sup>.</p>
+  <p>Le seuil croît en <span class="v">√(k&nbsp;·&nbsp;ln&nbsp;2)</span>. La croissance est donc <strong>sous-linéaire en <span class="v">k</span></strong>, bien que le nombre de configurations, lui, croisse en 2<sup><span class="v">k</span></sup>.</p>
 
   <p>Concrètement&nbsp;: passer de zéro à quatre leviers fait passer le seuil de {{d_seuil_k0}} à {{d_seuil_k4}}, soit un facteur&nbsp;{{d_facteur_taxe}}. Seize configurations ne coûtent pas seize fois plus cher qu'une seule — elles coûtent deux fois plus cher. En échantillon, cela signifie un facteur quatre, ce qui est considérable mais nullement rédhibitoire.</p>
 
@@ -890,6 +884,8 @@
 
   <p>Les deux premières routes s'accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de 0,10 par décision, il faut {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour.</p>
 
+  {{FIGURE:disccloud|L'espérance cumulée décision après décision, sur {{d_chemins}}&nbsp;chemins rééchantillonnés d'un journal sans compétence. L'enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l'écart qu'un opérateur doit dépasser pour être distingué du hasard à ce stade.}}
+
   {{FIGURE:discwall|La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.}}
 
   <p>La forme de la surface porte le message. L'axe des leviers est presque plat&nbsp;; l'axe du Sharpe est une falaise. Un opérateur qui hésite entre fermer des leviers et améliorer son signal a une réponse claire&nbsp;: le second effort domine le premier de très loin.</p>
@@ -902,13 +898,13 @@
 
   <div class="part">
     <span class="lab">Septième partie</span>
-    <h2>Le renversement</h2>
+    <h2>Comparaison des deux régimes de preuve</h2>
     <p>Le résultat qui justifie ce document&nbsp;: l'opérateur discrétionnaire est dans une position épistémique meilleure que celui qui règle une géométrie.</p>
   </div>
 
   <h2 id="s-versus">Pourquoi le jugement est prouvable là où la géométrie ne l'est pas</h2>
 
-  <p>Le document&nbsp;n<sup>o</sup>&nbsp;1 de cette série bute sur un mur situé à plusieurs dizaines de milliers de trades. On pourrait en conclure que rien n'est prouvable en intraday indiciel. La comparaison ci-dessous montre que la conclusion serait fausse, et pourquoi.</p>
+  <p>Le document&nbsp;n<sup>o</sup>&nbsp;1 de cette série situe son mur à plusieurs dizaines de milliers de trades. La comparaison ci-dessous rapporte les deux exigences sur une base commune.</p>
 
   {{TABLE:versus}}
 
@@ -919,17 +915,17 @@
     <p class="proof"><span class="lab">Justification.</span> Le nombre de décisions requis vaut <span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>². Doubler le nombre de leviers multiplie <span class="v">B</span> par&nbsp;2 et <span class="v">N</span> par un facteur qui tend vers&nbsp;1&nbsp;; doubler le Sharpe divise <span class="v">N</span> par&nbsp;4. ∎</p>
   </div>
 
-  <p>C'est là tout le renversement. Une stratégie de géométrie revendique un avantage structurellement minuscule, parce que le théorème d'invariance lui interdit d'en revendiquer un grand. Un opérateur discrétionnaire ne revendique pas cela&nbsp;: il revendique un jugement, dont l'effet est d'un autre ordre de grandeur. <strong>Son avantage est plus grand devant le bruit, et c'est cela — non sa qualité — qui le rend démontrable.</strong></p>
+  <p>Les deux objets ne revendiquent pas le même ordre de grandeur. Une stratégie de géométrie revendique un effet borné par le théorème d'invariance. Un opérateur discrétionnaire revendique un effet de jugement, dont l'amplitude n'est pas bornée par ce théorème. <strong>C'est le rapport de l'effet revendiqué au bruit, et non la qualité de l'un ou de l'autre, qui fixe l'exigence d'échantillon.</strong></p>
 
   <h2 id="s-consequence">Ce que cela change pour l'opérateur</h2>
 
-  <p>Trois conséquences pratiques suivent, et elles sont inhabituellement encourageantes pour un document de cette série.</p>
+  <p>Trois conséquences opérationnelles découlent des chiffres ci-dessus.</p>
 
-  <p>D'abord, <strong>l'horizon de preuve est une durée de carrière ordinaire</strong>, pas une impossibilité. Un opérateur qui commence aujourd'hui un journal correct saura dans un peu plus d'un an ce que vaut son processus, à condition que le Sharpe revendiqué soit de l'ordre de 0,10 par décision.</p>
+  <p>D'abord, <strong>l'horizon de preuve est de l'ordre de l'année</strong> aux cadences retenues. Un opérateur qui commence aujourd'hui un journal correct saura dans un peu plus d'un an ce que vaut son processus, à condition que le Sharpe revendiqué soit de l'ordre de 0,10 par décision.</p>
 
-  <p>Ensuite, <strong>la discipline du journal domine la discipline du processus</strong>. Fermer des leviers rapporte peu&nbsp;; enregistrer correctement rapporte beaucoup, puisqu'un journal sans abstentions rend une partie du test définitivement inaccessible quel que soit le nombre d'années accumulées.</p>
+  <p>Ensuite, <strong>l'effet du format d'enregistrement dépasse celui du nombre de leviers</strong>. Fermer un levier abaisse le seuil d'un facteur faible&nbsp;; un journal sans abstentions rend la loi&nbsp;D inapplicable quel que soit le nombre d'années accumulées.</p>
 
-  <p>Enfin, <strong>l'échec est informatif</strong>. Un opérateur qui, au terme de la période préenregistrée, ne bat pas la loi mécanique a appris quelque chose de précis et d'utile&nbsp;: son jugement ne bat pas une règle simple, donc autant exécuter la règle simple.</p>
+  <p>Enfin, <strong>les deux issues du protocole sont informatives</strong>. Un opérateur qui, au terme de la période préenregistrée, ne bat pas la loi mécanique dispose d'une mesure de l'apport net de son jugement sur la règle scellée, laquelle reste exécutable.</p>
 
   <div class="part">
     <span class="lab">Huitième partie</span>
@@ -984,27 +980,27 @@
 
   <p>Deux issues acceptables existent. Fixer <span class="v">N</span> à l'avance et ne rien regarder avant — c'est le plus simple et le plus sûr. Ou bien déclarer des paliers d'examen et dépenser le niveau selon une fonction de dépense, ce que le module de puissance de la série sait faire. Ce qui n'est pas acceptable, c'est de regarder sans avoir déclaré.</p>
 
-  <h2 id="s-limites">Ce que ce document ne prouve pas</h2>
+  <h2 id="s-limites">Limites</h2>
 
-  <p>La liste est courte mais elle est ferme.</p>
+  <p>Quatre limites bornent la portée des résultats.</p>
 
-  <p><strong>Aucun opérateur réel n'est évalué ici.</strong> Les journaux sont synthétiques, par nécessité méthodologique — seule une vérité plantée permet de calibrer. Les chiffres du mur sont des propriétés de l'appareil, pas des mesures d'une compétence existante.</p>
+  <p><strong>Les chiffres rapportés sont des propriétés de l'appareil de mesure</strong>, établies sur journaux synthétiques. Ils ne constituent pas la mesure d'une compétence observée.</p>
 
-  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">26</a> l'établit. Sa part est surestimée d'une quantité que le dispositif actuel ne sait pas isoler.</p>
+  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">26</a> l'établit. Sa part inclut une composante d'interaction que le contrefactuel retenu n'isole pas.</p>
 
-  <p><strong>L'opérateur humain n'est pas stationnaire.</strong> Toute l'analyse suppose une compétence constante sur la période. Si elle varie — apprentissage, fatigue, changement de régime de marché —, l'estimation moyenne mélange des états différents. La littérature sur la compétence variable dans le temps offre des outils, ils ne sont pas mobilisés ici.</p>
+  <p><strong>L'analyse suppose une compétence constante sur la période.</strong> Sous compétence variable — apprentissage, fatigue, changement de régime —, l'estimateur agrège des états distincts. Les méthodes de mesure à compétence variable dans le temps existent dans la littérature citée&nbsp;; elles ne sont pas mobilisées ici.</p>
 
-  <p><strong>Le survivant biaise le témoignage.</strong> Un opérateur qui construit ce dispositif est un opérateur encore en activité. Ceux dont le processus a échoué ne publient pas de journal, et la distribution des compétences observée par cette voie n'est pas la distribution des compétences.</p>
+  <p><strong>La sélection des registres analysés est non aléatoire.</strong> Les journaux disponibles proviennent d'opérateurs en activité. La distribution des compétences observée par cette voie diffère de la distribution des compétences dans la population de départ.</p>
 
   <h2 id="s-conclusion">Conclusion</h2>
 
-  <p>La prétention d'un avantage non codable n'est pas invérifiable&nbsp;: elle est mal formulée. Reformulée en termes de trace plutôt que de règle, elle devient un problème de mesure ordinaire, avec un instrument, des lois nulles, une puissance et un horizon.</p>
+  <p>La prétention d'un avantage non codable devient testable dès lors qu'elle est formulée en termes de trace plutôt que de règle. Elle relève alors d'un problème de mesure ordinaire, avec un instrument, des lois nulles, une puissance et un horizon.</p>
 
   <p>L'instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l'opérateur gagne mais s'il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: {{d_leviers}}&nbsp;leviers ne coûtent qu'un facteur&nbsp;{{d_facteur_taxe}} sur le seuil de preuve.</p>
 
-  <p>Et le mur, contre toute attente, est franchissable. {{d_mur_sr10}}&nbsp;décisions — {{d_mur_ans10}}&nbsp;an à deux décisions par jour — suffisent à établir un Sharpe de 0,10, taxe comprise. Le jugement discrétionnaire est prouvable là où la géométrie de sortie ne l'est pas, parce que l'effet qu'elle revendique est grand devant le bruit alors que celui de la géométrie ne l'est pas.</p>
+  <p>L'exigence d'échantillon se chiffre&nbsp;: {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
 
-  <p>Il reste que rien de tout cela ne s'obtient sans le journal, et que le journal ne se reconstitue pas. C'est la seule exigence véritablement contraignante de ce document, et elle porte sur la discipline d'enregistrement, non sur la discipline d'exécution.</p>
+  <p>L'ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">7</a>, dont les champs antérieurs à l'issue ne sont pas reconstituables après coup. C'est la condition d'application du dispositif.</p>
 
   <hr class="rule">
 
