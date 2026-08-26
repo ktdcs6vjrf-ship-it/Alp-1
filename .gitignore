@@ -7,3 +7,4 @@ venv/
 # Données de marché — non versionnées
 data/*
 !data/.gitkeep
+.env
