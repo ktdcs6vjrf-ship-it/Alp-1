@@ -413,37 +413,36 @@ def fig_nulls() -> str:
             for val in t.sample:
                 bins[min(n_bins - 1, max(0, int((val - lo) / largeur)))] += 1.0
         else:
-            # Adversaire analytique : on trace sa densité normale, mise à
-            # l'échelle du même cadre que les histogrammes voisins.
+            # Adversaire analytique : on classe sa loi exactement, avec les
+            # mêmes bornes de classe que les histogrammes voisins. La hauteur
+            # d'une barre est la probabilité que la loi tombe dans la classe,
+            # et non un comptage de tirages — mais le langage visuel est le
+            # même, ce qui est le point : cinq cadres, une seule lecture.
             sd = t.null_sd or (hi - lo) / 6.0
             for i in range(n_bins):
-                c = lo + (i + 0.5) * largeur
-                bins[i] = math.exp(-0.5 * ((c - t.null_mean) / sd) ** 2)
+                a = lo + i * largeur
+                bins[i] = (_norm_cdf((a + largeur - t.null_mean) / sd)
+                           - _norm_cdf((a - t.null_mean) / sd))
         pic = max(bins) or 1.0
 
         p = Panel(b, x0, y0, larg, 96, title=COURT.get(t.key, t.key))
         p.domain(lo, hi, 0.0, pic * 1.18)
         p.grid_x([t.null_mean, t.observed], lambda z: _num(z, 2))
 
-        if t.sample:
-            for i, c in enumerate(bins):
-                if c <= 0.0:
-                    continue
-                centre = lo + (i + 0.5) * largeur
-                p.vbar(centre, 0.0, c, (larg / n_bins) - 0.8,
-                       "barfill" if centre < t.q95 else "barfill inner",
-                       f"{_num(centre, 3)} — {int(c)} tirage(s)")
-        else:
-            # Aire sous la densité, échantillonnée finement : une loi étroite
-            # devant un domaine large reste visible en courbe là où des barres
-            # la réduiraient à un trait unique.
-            sd = t.null_sd or (hi - lo) / 6.0
-            fins = [(lo + k * (hi - lo) / 240.0,
-                     pic * math.exp(-0.5 * ((lo + k * (hi - lo) / 240.0
-                                             - t.null_mean) / sd) ** 2))
-                    for k in range(241)]
-            p.area(fins, 0.0, "barfill",
-                   f"densité analytique, écart-type {sd:.4f}")
+        # Un seul tracé pour les cinq cadres. La densité continue réservée
+        # aux deux lois analytiques leur donnait une allure à part, alors que
+        # la planche existe pour qu'on les compare : cinq lois, cinq cadres,
+        # une seule grammaire. Une loi très concentrée devant son domaine —
+        # l'indépendance en est une — se réduit à une ou deux classes, et
+        # c'est exactement ce que montrerait l'histogramme de ses tirages.
+        for i, c in enumerate(bins):
+            if c <= 0.0:
+                continue
+            centre = lo + (i + 0.5) * largeur
+            p.vbar(centre, 0.0, c, (larg / n_bins) - 0.8,
+                   "barfill" if centre < t.q95 else "barfill inner",
+                   f"{_num(centre, 3)} — {int(c)} tirage(s)" if t.sample
+                   else f"{_num(centre, 3)} — {c:.1%} de la loi")
 
         p.vline(t.q95, "lvl")
         p.vbar(t.observed, 0.0, pic * 1.10, 2.4,
@@ -473,7 +472,8 @@ def fig_nulls() -> str:
     if analytiques:
         note += ("Adversaire analytique pour "
                  + " et ".join(analytiques)
-                 + " : leur densité est tracée, non simulée. ")
+                 + " : la hauteur d'une barre y est la probabilité exacte de "
+                   "la classe, là où les trois autres comptent des tirages. ")
     if boot is not None:
         note += ("Le bootstrap se lit autrement : la forme grise y est la "
                  "distribution de l'espérance rééchantillonnée, l'observé sa "
