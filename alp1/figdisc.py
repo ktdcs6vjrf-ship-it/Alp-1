@@ -192,7 +192,7 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
     # garde porte sur ce bloc seul — les libellés d'arêtes qui suivent sont
     # rendus dans tous les cas.
     if z_ticks:
-        edge = ox - (nj - 1) * cx - 26.0
+        edge = ox - (nj - 1) * cx - 34.0
         top = proj(0, nj - 1, zhi)[1]
         bot = proj(0, nj - 1, zlo)[1]
         board.add(f'<line class="ba" x1="{edge:.1f}" y1="{top:.1f}" '
@@ -213,7 +213,7 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
         if not lab:
             continue
         x, y = proj(k, nj - 1, floor_z)
-        board.add(f'<text class="tk halo" x="{x - 11:.1f}" y="{y + 12:.1f}" '
+        board.add(f'<text class="tk halo" x="{x - 11:.1f}" y="{y + 15:.1f}" '
                   f'text-anchor="end">{_esc(lab)}</text>')
     for k, lab in enumerate(col_labels):
         if not lab:
@@ -871,7 +871,9 @@ def fig_distribution() -> str:
         # chevauchaient.
         g.label(v, pic * 1.03, lab, dx=5, cls="tk halo")
 
-    d = Panel(b, 372, 66, W - 372, 186, title="Répartition")
+    # Dix-huit points de marge à droite : la dernière graduation est
+    # centrée sur le bord du cadre et déborderait de la planche sans eux.
+    d = Panel(b, 372, 66, W - 390, 186, title="Répartition")
     d.domain(lo, hi, 0.0, 1.0)
     d.grid_y([0.0, 0.25, 0.5, 0.75, 1.0], lambda v: f"{v:.0%}")
     d.grid_x([lo, p50, hi], lambda v: _num(v, 2),

@@ -199,7 +199,9 @@ class Panel:
                                f'y="{yy + 3:.1f}">{_esc(fmt(v))}</text>')
         if label:
             cy = self.y + self.h / 2
-            dx = self.x - 34 if side == "left" else self.x + self.w + 32
+            # Quarante-deux points, non trente-quatre : à trente-quatre, le
+            # libellé pivoté venait toucher les graduations les plus larges.
+            dx = self.x - 42 if side == "left" else self.x + self.w + 40
             self.board.add(f'<text class="ax" transform="translate({dx:.1f},{cy:.1f}) '
                            f'rotate(-90)" text-anchor="middle">{_esc(label)}</text>')
 
@@ -548,10 +550,22 @@ def fig_volume_profile() -> str:
                readout="stop 3 pts · 30 min")
     risks = [(100.0 * prob_touch_single_barrier(STOP_PTS, s, 30.0), pr)
              for s, pr in zip(sig, prof.prices)]
-    p3.domain(48.0, 86.0, lo, hi)
+    # Le domaine se déduit des probabilités calculées. Fixé à 48-86 %, il
+    # tombait entièrement à côté : les risques valent 90 à 93 %, la courbe
+    # était découpée aux bords du cadre — donc absente — et les points, qui ne
+    # se découpent pas, se posaient hors du cadre, sur les graduations de prix
+    # portées à droite. Le cadre était vide et personne ne le voyait.
+    r_lo = min(r for r, _ in risks)
+    r_hi = max(r for r, _ in risks)
+    marge = max(0.8, 0.16 * (r_hi - r_lo))
+    x0 = math.floor(r_lo - marge)
+    x1 = math.ceil(r_hi + marge)
+    p3.domain(x0, x1, lo, hi)
     p3.frame()
     p3.grid_y(ticks, lambda v: f"{v:g}", side="right")
-    p3.grid_x([50, 60, 70, 80], lambda v: f"{v:g}", "P(stop touché en 30 min), %")
+    pas_x = max(1, round((x1 - x0) / 4))
+    p3.grid_x([v for v in range(x0, x1 + 1) if v % pas_x == 0],
+              lambda v: f"{v:g}", "P(stop touché en 30 min), %")
     p3.path(risks, "s1")
     r_poc = 100.0 * prob_touch_single_barrier(STOP_PTS, prof.sigma_at(poc, SIGMA_1MIN), 30.0)
     p3.dot(r_poc, poc, "s3f", f"POC · {r_poc:.0f} %")
@@ -559,9 +573,10 @@ def fig_volume_profile() -> str:
     for lvl in lvn:
         r = 100.0 * prob_touch_single_barrier(STOP_PTS, prof.sigma_at(lvl, SIGMA_1MIN), 30.0)
         p3.dot(r, lvl, "s2f", f"LVN {lvl:g} · {r:.0f} %")
-        # Posée à gauche du point : à droite, elle sortirait du cadre, le
-        # point se trouvant déjà près du bord.
-        p3.label(r, lvl, "LVN", dx=-7, dy=3.5, anchor="end", cls="dl halo")
+        # Posée à gauche du point et une ligne plus bas : à droite elle
+        # sortirait du cadre, et à la hauteur du point elle tombait sur la
+        # graduation de prix, portée ici du côté droit.
+        p3.label(r, lvl, "LVN", dx=-9, dy=14.0, anchor="end", cls="dl halo")
     p3.hline(poc, "lvl strong")
 
     b.legend(56, 344, [("s3f", "haut volume (HVN)"),
