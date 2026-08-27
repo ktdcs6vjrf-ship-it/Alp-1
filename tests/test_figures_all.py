@@ -86,6 +86,31 @@ class TestToutesLesFigures(unittest.TestCase):
             with self.subTest(figure=cle):
                 self.assertRegex(svg, r'viewBox="0 0 [\d.]+ [\d.]+"')
 
+    def test_aucun_pied_ne_reste_dans_le_svg(self):
+        """Le pied de figure part en entier, ou il ne part pas du tout.
+
+        `extraire_pieds` sortait les lignes de pied une à une, sur un critère
+        de longueur. Une phrase dont la dernière ligne tombait sous le seuil
+        se retrouvait coupée en deux : le début rendu sous la figure, la fin
+        restée dans le SVG. Trois figures ont vécu ainsi, dont une dont la
+        note se terminait sur une virgule.
+
+        La marque `cap` a remplacé le critère de longueur. Ce test vérifie
+        qu'aucune ligne ainsi marquée ne survit à l'extraction.
+        """
+        from alp1.workingpaper import extraire_pieds
+
+        for cle, svg in self.figs.items():
+            with self.subTest(figure=cle):
+                reste, pieds = extraire_pieds(svg)
+                self.assertNotIn('class="lg cap"', reste,
+                                 "une ligne de pied est restée dans le SVG")
+                if pieds:
+                    self.assertFalse(
+                        pieds[-1].rstrip().endswith(","),
+                        f"la note de {cle} se termine sur une virgule : "
+                        f"sa dernière ligne manque")
+
     def test_aucune_cle_de_figure_n_est_dupliquee(self):
         vues: dict[str, str] = {}
         for cle in self.figs:

@@ -125,13 +125,42 @@ class Canvas:
             self.add(f'<text class="ax" x="{self.left + self.pw / 2:.1f}" '
                      f'y="{self.height - 4:.1f}" text-anchor="middle">{_esc(label)}</text>')
 
+    def in_domain(self, x: float, y: float) -> bool:
+        xlo, xhi = sorted((self.x0, self.x1))
+        ylo, yhi = sorted((self.y0, self.y1))
+        return xlo <= x <= xhi and ylo <= y <= yhi
+
     def path(self, pts, cls: str, dash: str = "") -> None:
-        d = " ".join(("M" if i == 0 else "L") + f"{self.sx(x):.2f},{self.sy(y):.2f}"
-                     for i, (x, y) in enumerate(pts))
+        """Polyligne, découpée aux bords du domaine.
+
+        Sans ce découpage, une courbe qui sort du domaine sort de la planche
+        et va se poser sur la légende, sur le titre, ou sur la figure
+        suivante. C'est arrivé : la figure 5 traçait deux courbes allant de
+        −576 à +475 dans un cadre de 272 points de haut. Le découpage est un
+        filet ; il ne dispense pas de donner à la figure un domaine qui
+        couvre ses données.
+        """
+        segments: list[list[tuple[float, float]]] = []
+        courant: list[tuple[float, float]] = []
+        for x, y in pts:
+            if self.in_domain(x, y):
+                courant.append((x, y))
+            elif courant:
+                segments.append(courant)
+                courant = []
+        if courant:
+            segments.append(courant)
         extra = f' stroke-dasharray="{dash}"' if dash else ""
-        self.add(f'<path class="ln {cls}" d="{d}"{extra}/>')
+        for seg in segments:
+            if len(seg) < 2:
+                continue
+            d = " ".join(("M" if i == 0 else "L") + f"{self.sx(x):.2f},{self.sy(y):.2f}"
+                         for i, (x, y) in enumerate(seg))
+            self.add(f'<path class="ln {cls}" d="{d}"{extra}/>')
 
     def dot(self, x: float, y: float, cls: str, title: str = "") -> None:
+        if not self.in_domain(x, y):
+            return
         t = f"<title>{_esc(title)}</title>" if title else ""
         self.add(f'<circle class="pt {cls}" cx="{self.sx(x):.2f}" cy="{self.sy(y):.2f}" '
                  f'r="4">{t}</circle>')
@@ -190,7 +219,17 @@ def fig_expectancy_plane() -> str:
 
     panels = [("µ = 0", "aucune dérive à l'entrée", surface(0.0)),
               ("µ = 1,5 µ*", "dérive supérieure au seuil d'équilibre", surface(1.5 * mu_edge))]
-    zlo, zhi = -0.13, 0.10
+
+    # L'échelle de hauteur se déduit des deux surfaces, et elle leur est
+    # commune : c'est ce partage qui rend la comparaison légitime. Fixée à
+    # −0,13…0,10, elle laissait dehors sept des dix valeurs de maille — de
+    # −0,550 à +0,484 — et la projection, qui ne borne pas, les envoyait à
+    # quatre hauteurs de cadre au-dessus et au-dessous. La planche montrait
+    # des échardes verticales au lieu d'une surface.
+    _plat = [v for _, _, z in panels for ligne in z for v in ligne]
+    _pas = 0.05
+    zlo = _pas * math.floor(min(_plat + [-FRICTION / a, 0.0]) / _pas)
+    zhi = _pas * math.ceil(max(_plat + [0.0]) / _pas)
     ni, nj = len(rr_grid), len(trig)
     w, h = 640.0, 286.0
     parts = [f'<svg class="fig" viewBox="0 0 {w:g} {h:g}" role="img" '
@@ -202,6 +241,9 @@ def fig_expectancy_plane() -> str:
         cx, cy, cz = 23.0, 12.5, 190.0
 
         def proj(i: float, j: float, val: float) -> tuple[float, float]:
+            # Le bornage est une ceinture : le domaine couvre les données, mais
+            # une valeur nouvelle ne doit jamais pouvoir sortir de la planche.
+            val = min(max(val, zlo), zhi)
             return (ox + (i - j) * cx, oy + (i + j) * cy - (val - zlo) * cz / (zhi - zlo))
 
         def poly(points, cls, tip=""):
@@ -442,11 +484,27 @@ def fig_be_cost() -> str:
     a = stop_points(INDEX_LEVEL, STOP_PCT)
     b = 20.0 * a
     mu_eq = required_drift(a, b, SIGMA_1MIN, FRICTION)
-    c = Canvas(640, 272, left=58, right=72, top=20, bottom=42).domain(-2, 3, -0.06, 0.18)
+    # Le domaine en ordonnée se déduit des deux courbes. Fixé à −0,06…0,18, il
+    # n'en montrait qu'un ruban : elles vont de −0,34 à +0,86, et le tracé,
+    # qui ne se découpait pas alors, sortait de la planche par le haut et par
+    # le bas jusqu'à recouvrir la légende et le libellé d'abscisse.
+    def _cout(trig: float, k: float) -> float:
+        return be_expectancy_cost_r(TradeGeometry(a, b, FRICTION, trig * a),
+                                    mu_eq, SIGMA_1MIN, k * mu_eq)
+
+    _ks = [-2.0 + 5.0 * i / 100.0 for i in range(101)]
+    _plat = [_cout(t, k) for t in (1.0, 4.0) for k in _ks]
+    _pas = 0.1
+    _y0 = _pas * math.floor(min(_plat) / _pas)
+    _y1 = _pas * math.ceil(max(_plat) / _pas)
+    c = Canvas(640, 272, left=58, right=72, top=20, bottom=42).domain(-2, 3, _y0, _y1)
 
     c.add(f'<rect class="band" x="{c.sx(-2):.1f}" y="{c.top:.1f}" '
           f'width="{c.sx(0) - c.sx(-2):.1f}" height="{c.ph:.1f}"/>')
-    c.grid_y([-0.05, 0.0, 0.05, 0.10, 0.15], lambda v: _num(v, 2), "coût de la règle (R)")
+    # Une graduation tous les deux dixièmes : au pas du domaine, quatorze
+    # filets se serraient sur deux cent dix points de haut.
+    c.grid_y([0.2 * k for k in range(math.ceil(_y0 / 0.2), math.floor(_y1 / 0.2) + 1)],
+             lambda v: _num(v, 2), "coût de la règle (R)")
     c.ticks_x([-2, -1, 0, 1, 2, 3], lambda v: f"{v:g}",
               "dérive post-confirmation µ₂, en multiples de la dérive d'équilibre")
     c.add(f'<line class="zero" x1="{c.left:.1f}" y1="{c.sy(0):.1f}" '
@@ -455,11 +513,7 @@ def fig_be_cost() -> str:
           f'x2="{c.sx(0):.1f}" y2="{c.top + c.ph:.1f}"/>')
 
     for trig, cls, name in ((1.0, "s1", "BE à +1 R"), (4.0, "s3", "BE à +4 R")):
-        geom = TradeGeometry(a, b, FRICTION, trig * a)
-        pts = []
-        for i in range(101):
-            k = -2.0 + 5.0 * i / 100.0
-            pts.append((k, be_expectancy_cost_r(geom, mu_eq, SIGMA_1MIN, k * mu_eq)))
+        pts = [(k, _cout(trig, k)) for k in _ks]
         c.path(pts, cls)
         c.dot(3.0, pts[-1][1], cls, f"{name} · coût {pts[-1][1]:+.3f} R")
         c.label(3.0, pts[-1][1], name, dx=9, dy=3)
@@ -510,12 +564,30 @@ def fig_sample_size() -> str:
             anchor_pt = min(pts, key=lambda q: abs(q[1] - anchor))
             c.label(anchor_pt[0], anchor_pt[1], f"1:{r}", dx=9, dy=-6)
 
+    # Les trois seuils d'équilibre tombent à droite du cadre — 6,4, 8,2 et
+    # 20,3 points par heure contre un domaine qui s'arrête à 3,2. Les traits
+    # étaient tout de même émis, à quelques milliers de points hors de la
+    # planche, et la légende annonçait des traits verticaux que le lecteur ne
+    # pouvait pas voir. Ce n'est pas un détail de rendu : que le domaine
+    # entier de la figure soit sous le seuil d'équilibre est le fait que la
+    # figure doit énoncer.
+    dedans, dehors = [], []
     for r, cls, _ in geoms:
         mu_star_h = FRICTION / data[r].expected_time * 60.0
-        c.add(f'<line class="mark" x1="{c.sx(mu_star_h):.1f}" y1="{c.top:.1f}" '
-              f'x2="{c.sx(mu_star_h):.1f}" y2="{c.top + c.ph:.1f}"/>')
+        if c.x0 <= mu_star_h <= c.x1:
+            dedans.append(mu_star_h)
+            c.add(f'<line class="mark" x1="{c.sx(mu_star_h):.1f}" y1="{c.top:.1f}" '
+                  f'x2="{c.sx(mu_star_h):.1f}" y2="{c.top + c.ph:.1f}"/>')
+        else:
+            dehors.append((r, mu_star_h))
+    if dedans:
+        note = "traits verticaux : seuils d'équilibre µ*"
+    else:
+        note = ("seuils d'équilibre µ* tous hors cadre : "
+                + " · ".join(f"1:{r} à {_num(m, 1)}" for r, m in dehors)
+                + " pt/h")
     c.add(f'<text class="lg" x="{c.sx(3.15):.1f}" y="{c.top + 13:.1f}" '
-          f'text-anchor="end">traits verticaux : seuils d\'équilibre µ*</text>')
+          f'text-anchor="end">{_esc(note)}</text>')
 
     # Repère de faisabilité : 2 trades par séance pendant deux ans.
     c.add(f'<line class="zero" x1="{c.left:.1f}" y1="{c.sy(1000):.1f}" '

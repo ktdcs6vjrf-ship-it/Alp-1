@@ -80,6 +80,51 @@ class TestPiedsDeFigure(unittest.TestCase):
         self.assertEqual(pieds, [])
         self.assertIn("libelle de panneau", propre)
 
+    def test_une_ligne_qui_continue_garde_sa_virgule(self):
+        """Une virgule finale annonce une suite : la ponctuer coupe la phrase.
+
+        Le raccord posait un point à chaque ligne dépourvue de ponctuation
+        finale, virgule comprise. Le pied de la grille de Fibonacci se lisait
+        « … au-delà du seuil. les signaux manqués sont ceux qui partaient. »
+        """
+        recompose = monograph.joindre_pieds(
+            ["première ligne", "deuxième ligne, qui continue,", "et sa suite"])
+        self.assertEqual(
+            recompose,
+            "première ligne. deuxième ligne, qui continue, et sa suite.")
+
+    def test_une_virgule_finale_sur_la_derniere_ligne_devient_un_point(self):
+        """Rien ne suit : la virgule n'annonce plus rien."""
+        self.assertEqual(monograph.joindre_pieds(["une ligne seule,"]),
+                         "une ligne seule.")
+
+    def test_une_ligne_courte_marquee_cap_est_extraite(self):
+        """La marque prime sur la longueur.
+
+        Une phrase de pied peut finir sur une ligne courte. Le critère de
+        longueur, appliqué ligne à ligne, la laissait dans le SVG et coupait
+        la phrase en deux — moitié sous la figure, moitié dedans. La classe
+        `cap`, posée par `Board.caption`, déclare l'intention.
+        """
+        svg = ('<svg class="fig" viewBox="0 0 640 300">'
+               '<text class="lg cap" x="320" y="292">et la fin, courte</text>'
+               '</svg>')
+        propre, pieds = monograph.extraire_pieds(svg)
+        self.assertEqual(pieds, ["et la fin, courte"])
+        self.assertNotIn("et la fin", propre)
+
+    def test_une_annotation_courte_reste_dans_le_graphique(self):
+        """Sans la marque, une ligne courte de la bande basse reste en place.
+
+        C'est ce qui distingue une annotation — posée dans la figure parce
+        qu'elle commente un tracé précis — d'une ligne de pied.
+        """
+        svg = ('<svg class="fig" viewBox="0 0 640 300">'
+               '<text class="lg" x="320" y="292">trois courbes</text></svg>')
+        propre, pieds = monograph.extraire_pieds(svg)
+        self.assertEqual(pieds, [])
+        self.assertIn("trois courbes", propre)
+
     def test_un_texte_haut_dans_le_cadre_reste_dans_le_graphique(self):
         svg = ('<svg class="fig" viewBox="0 0 640 300"><text class="lg" x="10" y="40">'
                'un commentaire pose en haut du cadre, donc pas un pied de figure</text></svg>')

@@ -20,6 +20,7 @@ from pathlib import Path
 
 from . import figdisc, report10
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
+from .workingpaper import joindre_pieds
 from .report import Table
 from .workingpaper import extraire_pieds
 
@@ -163,9 +164,7 @@ def build() -> str:
         svg, pieds = extraire_pieds(figs[key])
         note = ""
         if pieds:
-            corps = " ".join(
-                p.rstrip(" ,;") + "." if not p.rstrip().endswith((".", "?", "!"))
-                else p for p in pieds)
+            corps = joindre_pieds(pieds)
             note = f'\n      <p class="note">{corps}</p>'
         return (
             '    <figure class="plate">\n'

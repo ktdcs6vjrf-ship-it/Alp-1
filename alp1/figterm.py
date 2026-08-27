@@ -94,6 +94,26 @@ class Board:
         self.parts.append(markup)
 
     def caption(self, x: float, y: float, text: str, anchor: str = "middle") -> None:
+        """Une ligne de pied de figure.
+
+        La classe `cap` la déclare comme telle : c'est ce que
+        `workingpaper.extraire_pieds` lit pour la sortir du SVG et la rendre
+        sous la légende. Sans marque explicite, l'extraction devait deviner à
+        la longueur du texte, et coupait en deux toute phrase dont la
+        dernière ligne était courte.
+        """
+        self.add(f'<text class="lg cap" x="{x:.1f}" y="{y:.1f}" '
+                 f'text-anchor="{anchor}">{_esc(text)}</text>')
+
+    def annotation(self, x: float, y: float, text: str,
+                   anchor: str = "start") -> None:
+        """Une phrase posée *dans* la figure, et qui doit y rester.
+
+        Elle se distingue de `caption` par ce qui lui arrive à la
+        construction : une légende de pied est sortie du SVG et rendue sous
+        la figure, une annotation reste où l'auteur l'a mise parce qu'elle
+        commente un élément précis du tracé.
+        """
         self.add(f'<text class="lg" x="{x:.1f}" y="{y:.1f}" '
                  f'text-anchor="{anchor}">{_esc(text)}</text>')
 
@@ -641,11 +661,13 @@ def fig_dow_null() -> str:
     p2.label(1.0, 0.5, "repli = δ → ½", dx=9, dy=-7, cls="dl halo")
     b.legend(376, 300, [("s1", "µ = 0"), ("s2", "µ = µ*"), ("s3", "µ = 3 µ*")],
              step=76.0, kind="line")
-    # Ligne trop longue pour la place restante à droite de la légende : elle
-    # se rognait au bord du cadre. Coupée en deux, elle tient.
-    b.caption(376, 324, "trois dérives, trois courbes", anchor="start")
-    b.caption(376, 338, "presque confondues : la géométrie", anchor="start")
-    b.caption(376, 352, "du repli décide, non le signal", anchor="start")
+    # Annotation et non légende de pied : elle commente les trois courbes
+    # posées juste au-dessus, et doit rester dans la figure. Ligne trop longue
+    # pour la place restante à droite de la légende ; coupée en trois, elle
+    # tient.
+    b.annotation(376, 324, "trois dérives, trois courbes")
+    b.annotation(376, 338, "presque confondues : la géométrie")
+    b.annotation(376, 352, "du repli décide, non le signal")
 
     up, down, inside = dow.p_close_beyond_body()
     strip_y = 300.0

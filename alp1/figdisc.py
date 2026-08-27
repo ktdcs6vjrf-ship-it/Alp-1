@@ -96,12 +96,12 @@ def _plate(height: float, eyebrow: str, title: str, readout: str = "",
 def _source(board: Board, text: str) -> None:
     """Pose la ligne de lecture dans la bande de pied.
 
-    Elle porte la classe `lg` et dépasse cinquante-cinq caractères, ce qui la
-    fait extraire du SVG et rendre en texte sous la légende quand le document
-    est construit. Dans un aperçu isolé, elle reste à sa place et ne heurte
+    Elle porte la classe `cap`, qui la déclare comme pied de figure : c'est
+    ce qui la fait extraire du SVG et rendre en texte sous la légende quand
+    le document est construit. Dans un aperçu isolé, elle reste à sa place et ne heurte
     rien, la bande lui étant réservée.
     """
-    board.add(f'<text class="lg" x="0" y="{board.height - 8:.1f}">'
+    board.add(f'<text class="lg cap" x="0" y="{board.height - 8:.1f}">'
               f'{_esc(text)}</text>')
 
 
@@ -509,7 +509,11 @@ def fig_attribution() -> str:
            ("plantée dans la taille", 0.0, 0.45, ("taille",)),
            ("plantée dans les deux", 0.45, 0.45, ("entree", "taille")))
 
-    b = _plate(292, "Attribution",
+    # Bandeau « Contrôle » et non « Attribution » : la planche précédente
+    # décompose un opérateur, celle-ci vérifie que la décomposition retrouve
+    # la compétence là où on l'a plantée. Deux bandeaux identiques côte à côte
+    # se lisaient comme une redite.
+    b = _plate(292, "Contrôle de l'attribution",
                "Part de chaque levier selon l'emplacement de la compétence",
                "valeur de Shapley, 16 coalitions")
 

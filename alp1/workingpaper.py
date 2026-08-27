@@ -133,7 +133,12 @@ def extraire_pieds(svg: str) -> tuple[str, list[str]]:
         texte = re.sub(r"<[^>]+>", "", corps).strip()
         if not ({"lg", "ax"} & set(classes)) or "sub" in classes:
             return m.group(0)
-        if len(texte) <= _LONGUEUR_PROSE:
+        # `cap` déclare un pied de figure. La longueur ne sert plus que de
+        # secours, pour les figures qui posent leur prose sans passer par
+        # `Board.caption` : elle coupait en deux toute phrase dont la dernière
+        # ligne tombait sous le seuil, laissant une moitié dans la note du
+        # document et l'autre orpheline sous la figure.
+        if "cap" not in classes and len(texte) <= _LONGUEUR_PROSE:
             return m.group(0)
         y = re.search(r'y="(-?[\d.]+)"', attrs)
         if not y or float(y.group(1)) < hauteur - _MARGE_PIED:
@@ -142,6 +147,26 @@ def extraire_pieds(svg: str) -> tuple[str, list[str]]:
         return ""
 
     return _TEXTE_SVG.sub(remplacer, svg), pieds
+
+
+def joindre_pieds(pieds: list[str]) -> str:
+    """Recompose les lignes de pied en phrases.
+
+    Chaque ligne reçoit son point final, sauf celle qui se termine par une
+    virgule ou un point-virgule et qu'une autre suit : celle-là se poursuit,
+    et la ponctuer la couperait en deux phrases dont la seconde commencerait
+    en minuscule. Le cas s'est produit : « … au-delà du seuil. les signaux
+    manqués sont ceux qui partaient. »
+    """
+    sortie = []
+    for i, ligne in enumerate(pieds):
+        ligne = ligne.rstrip()
+        continue_ = ligne.endswith((",", ";")) and i + 1 < len(pieds)
+        if continue_ or ligne.endswith((".", "?", "!")):
+            sortie.append(ligne)
+        else:
+            sortie.append(ligne.rstrip(" ,;") + ".")
+    return " ".join(sortie)
 
 
 def build() -> str:
@@ -180,8 +205,7 @@ def build() -> str:
         svg, pieds = extraire_pieds(figs[key])
         note = ""
         if pieds:
-            corps = " ".join(p.rstrip(" ,;") + "." if not p.rstrip().endswith((".", "?", "!"))
-                             else p for p in pieds)
+            corps = joindre_pieds(pieds)
             note = f'\n      <p class="note">{corps}</p>'
         return (
             '    <figure class="plate">\n'

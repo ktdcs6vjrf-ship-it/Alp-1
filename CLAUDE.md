@@ -120,6 +120,38 @@ Deux pièges déjà tombés dedans, à ne pas refaire :
   il n'y a qu'une configuration, donc rien à sélectionner et rien à déflater ;
   le premier levier fait un saut depuis zéro qu'aucun facteur ne mesure.
 
+## Les figures se regardent, elles ne se relisent pas
+
+Le code d'une figure peut être juste et la figure fausse. Trois défauts n'ont
+été trouvés qu'en rendant la page dans un navigateur et en la regardant :
+
+- **Un cadre entièrement vide.** Le troisième cadre de `couche_profil` avait
+  un domaine fixé à 48-86 % alors que les probabilités calculées valaient 90 à
+  93 %. `Panel.path` découpe au domaine : la courbe disparaissait sans erreur,
+  et les points, qui ne se découpent pas, se posaient hors du cadre. Le cadre
+  s'affichait vide dans les deux documents depuis sa création. **Un domaine se
+  déduit des données, jamais l'inverse.**
+- **Un tracé coupé en deux.** Même cause, effet plus discret : la trajectoire
+  de `couche_carnet` sortait par le bas et le tracé perdait un morceau au
+  milieu, ce qui se lit comme une interruption de la donnée.
+- **Une phrase coupée en deux.** `extraire_pieds` sortait du SVG les lignes de
+  pied une à une, sur un critère de longueur. Une phrase dont la dernière
+  ligne tombait sous cinquante-cinq caractères se retrouvait moitié sous la
+  figure, moitié dedans. La marque `cap`, posée par `Board.caption`, a
+  remplacé le critère ; `Board.annotation` sert aux phrases qui doivent rester
+  dans la figure.
+
+Deux balayages automatiques valent d'être rejoués après toute retouche de
+figure ; ils tiennent en une trentaine de lignes chacun :
+
+1. dans le navigateur, comparer la boîte rendue de chaque `text`/`rect`/`path`
+   à celle du `<svg>` — cela attrape les débordements de viewBox — puis
+   croiser les boîtes des `text` entre elles, ce qui attrape les étiquettes
+   qui se recouvrent ;
+2. en Python, envelopper `Panel.path` et `Panel.dot` pour signaler un tracé
+   que le découpage réduit à moins de deux points, et une marque posée hors
+   du cadre.
+
 ## Commandes
 
 ```

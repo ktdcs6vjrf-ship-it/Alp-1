@@ -432,6 +432,25 @@
   .fig .hm3 { fill: var(--hm3); }  .fig .hm7 { fill: var(--hm7); }
   .fig .cl-lo { fill: var(--ink); }
   .fig .cl-hi { fill: var(--paper); }
+
+  /* --- rampe séquentielle en trait --------------------------------------
+     Les classes `hm*` posent un remplissage. Une polyligne qui les porterait
+     seule verrait ce remplissage écraser le `fill: none` de `.ln`, la règle
+     venant plus loin dans la feuille à spécificité égale — et la courbe se
+     refermerait en coin plein. Ces règles à deux classes tranchent, et
+     redonnent le trait. */
+
+  .fig .ln.hm0 { stroke: var(--hm0); fill: none; }
+  .fig .ln.hm1 { stroke: var(--hm1); fill: none; }
+  .fig .ln.hm2 { stroke: var(--hm2); fill: none; }
+  .fig .ln.hm3 { stroke: var(--hm3); fill: none; }
+  .fig .ln.hm4 { stroke: var(--hm4); fill: none; }
+  .fig .ln.hm5 { stroke: var(--hm5); fill: none; }
+  .fig .ln.hm6 { stroke: var(--hm6); fill: none; }
+  .fig .ln.hm7 { stroke: var(--hm7); fill: none; }
+  .fig .pt.hm3 { fill: var(--hm3); }
+  .fig .pt.hm5 { fill: var(--hm5); }
+  .fig .pt.hm7 { fill: var(--hm7); }
   /* Le débordement se borne de lui-même à 94vw ; il ne reste qu'à le
      supprimer sur les écrans où il n'y a plus de marge à prendre. */
   @media (max-width: 50rem) {
@@ -1004,56 +1023,56 @@
     <figure class="plate">
       <figcaption><span class="lab">Figure 1</span> — Surface d'espérance par trade sur le plan (ratio gain/risque, niveau de remontée du stop), stop 0,010 %. Sans dérive, la surface est un plan horizontal à −c/L. Sous une dérive supérieure au seuil d'équilibre, elle s'incline&nbsp;: l'espérance croît avec le ratio et avec la tardiveté de la remontée du stop.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 640 286" role="img" aria-label="Surface d espérance par trade selon le ratio gain risque et le niveau de mise à breakeven" preserveAspectRatio="xMidYMid meet">
-<polygon class="floor" points="150.0,80.6 219.0,118.1 150.0,155.6 81.0,118.1"></polygon>
-<line class="post" x1="150.0" y1="80.6" x2="150.0" y2="535.0"/>
-<line class="post" x1="219.0" y1="118.1" x2="219.0" y2="572.5"/>
-<line class="post" x1="150.0" y1="155.6" x2="150.0" y2="610.0"/>
-<line class="post" x1="81.0" y1="118.1" x2="81.0" y2="572.5"/>
-<polygon class="mesh dn" points="150.0,585.0 173.0,597.5 150.0,610.0 127.0,597.5"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="127.0,572.5 150.0,585.0 127.0,597.5 104.0,585.0"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="173.0,572.5 196.0,585.0 173.0,597.5 150.0,585.0"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="104.0,560.0 127.0,572.5 104.0,585.0 81.0,572.5"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="150.0,560.0 173.0,572.5 150.0,585.0 127.0,572.5"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="196.0,560.0 219.0,572.5 196.0,585.0 173.0,572.5"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="127.0,547.5 150.0,560.0 127.0,572.5 104.0,560.0"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="173.0,547.5 196.0,560.0 173.0,572.5 150.0,560.0"><title>E[R] = -0.550 R</title></polygon>
-<polygon class="mesh dn" points="150.0,535.0 173.0,547.5 150.0,560.0 127.0,547.5"><title>E[R] = -0.550 R</title></polygon>
-<text class="tk halo" x="65.0" y="133.1" text-anchor="end">1:5</text>
-<text class="tk halo" x="88.0" y="145.6" text-anchor="end">1:10</text>
-<text class="tk halo" x="111.0" y="158.1" text-anchor="end">1:20</text>
-<text class="tk halo" x="134.0" y="170.6" text-anchor="end">1:30</text>
-<text class="tk halo" x="235.0" y="132.1">BE 0.5 R</text>
-<text class="tk halo" x="166.0" y="169.6">BE 4 R</text>
-<text class="tk" x="35.0" y="121.1" text-anchor="end">0</text>
-<line class="gl" x1="40.0" y1="118.1" x2="53.0" y2="118.1"/>
-<text class="tk" x="35.0" y="575.5" text-anchor="end">−c/L</text>
-<line class="gl" x1="40.0" y1="572.5" x2="53.0" y2="572.5"/>
+<polygon class="floor" points="150.0,109.4 219.0,146.9 150.0,184.4 81.0,146.9"></polygon>
+<line class="post" x1="150.0" y1="109.4" x2="150.0" y2="181.4"/>
+<line class="post" x1="219.0" y1="146.9" x2="219.0" y2="218.9"/>
+<line class="post" x1="150.0" y1="184.4" x2="150.0" y2="256.4"/>
+<line class="post" x1="81.0" y1="146.9" x2="81.0" y2="218.9"/>
+<polygon class="mesh dn" points="150.0,231.4 173.0,243.9 150.0,256.4 127.0,243.9"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="127.0,218.9 150.0,231.4 127.0,243.9 104.0,231.4"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="173.0,218.9 196.0,231.4 173.0,243.9 150.0,231.4"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="104.0,206.4 127.0,218.9 104.0,231.4 81.0,218.9"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="150.0,206.4 173.0,218.9 150.0,231.4 127.0,218.9"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="196.0,206.4 219.0,218.9 196.0,231.4 173.0,218.9"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="127.0,193.9 150.0,206.4 127.0,218.9 104.0,206.4"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="173.0,193.9 196.0,206.4 173.0,218.9 150.0,206.4"><title>E[R] = -0.550 R</title></polygon>
+<polygon class="mesh dn" points="150.0,181.4 173.0,193.9 150.0,206.4 127.0,193.9"><title>E[R] = -0.550 R</title></polygon>
+<text class="tk halo" x="65.0" y="161.9" text-anchor="end">1:5</text>
+<text class="tk halo" x="88.0" y="174.4" text-anchor="end">1:10</text>
+<text class="tk halo" x="111.0" y="186.9" text-anchor="end">1:20</text>
+<text class="tk halo" x="134.0" y="199.4" text-anchor="end">1:30</text>
+<text class="tk halo" x="235.0" y="160.9">BE 0.5 R</text>
+<text class="tk halo" x="166.0" y="198.4">BE 4 R</text>
+<text class="tk" x="35.0" y="149.9" text-anchor="end">0</text>
+<line class="gl" x1="40.0" y1="146.9" x2="53.0" y2="146.9"/>
+<text class="tk" x="35.0" y="221.9" text-anchor="end">−c/L</text>
+<line class="gl" x1="40.0" y1="218.9" x2="53.0" y2="218.9"/>
 <text class="ax" x="150.0" y="16" text-anchor="middle">µ = 0</text>
 <text class="lg" x="150.0" y="31" text-anchor="middle">aucune dérive à l'entrée</text>
-<polygon class="floor" points="450.0,80.6 519.0,118.1 450.0,155.6 381.0,118.1"></polygon>
-<line class="post" x1="450.0" y1="80.6" x2="450.0" y2="463.1"/>
-<line class="post" x1="519.0" y1="118.1" x2="519.0" y2="92.6"/>
-<line class="post" x1="450.0" y1="155.6" x2="450.0" y2="-539.4"/>
-<line class="post" x1="381.0" y1="118.1" x2="381.0" y2="400.3"/>
-<polygon class="mesh up" points="450.0,-10.7 473.0,-361.4 450.0,-539.4 427.0,-116.6"><title>E[R] = +0.484 R</title></polygon>
-<polygon class="mesh up" points="427.0,292.3 450.0,-10.7 427.0,-116.6 404.0,249.2"><title>E[R] = +0.033 R</title></polygon>
-<polygon class="mesh up" points="473.0,125.4 496.0,-134.6 473.0,-361.4 450.0,-10.7"><title>E[R] = +0.274 R</title></polygon>
-<polygon class="mesh dn" points="404.0,416.3 427.0,292.3 404.0,249.2 381.0,400.3"><title>E[R] = -0.268 R</title></polygon>
-<polygon class="mesh dn" points="450.0,349.7 473.0,125.4 450.0,-10.7 427.0,292.3"><title>E[R] = -0.086 R</title></polygon>
-<polygon class="mesh up" points="496.0,261.9 519.0,92.6 496.0,-134.6 473.0,125.4"><title>E[R] = +0.038 R</title></polygon>
-<polygon class="mesh dn" points="427.0,439.7 450.0,349.7 427.0,292.3 404.0,416.3"><title>E[R] = -0.326 R</title></polygon>
-<polygon class="mesh dn" points="473.0,407.3 496.0,261.9 473.0,125.4 450.0,349.7"><title>E[R] = -0.218 R</title></polygon>
-<polygon class="mesh dn" points="450.0,463.1 473.0,407.3 450.0,349.7 427.0,439.7"><title>E[R] = -0.390 R</title></polygon>
-<text class="tk halo" x="365.0" y="133.1" text-anchor="end">1:5</text>
-<text class="tk halo" x="388.0" y="145.6" text-anchor="end">1:10</text>
-<text class="tk halo" x="411.0" y="158.1" text-anchor="end">1:20</text>
-<text class="tk halo" x="434.0" y="170.6" text-anchor="end">1:30</text>
-<text class="tk halo" x="535.0" y="132.1">BE 0.5 R</text>
-<text class="tk halo" x="466.0" y="169.6">BE 4 R</text>
-<text class="tk" x="335.0" y="121.1" text-anchor="end">0</text>
-<line class="gl" x1="340.0" y1="118.1" x2="353.0" y2="118.1"/>
-<text class="tk" x="335.0" y="575.5" text-anchor="end">−c/L</text>
-<line class="gl" x1="340.0" y1="572.5" x2="353.0" y2="572.5"/>
+<polygon class="floor" points="450.0,109.4 519.0,146.9 450.0,184.4 381.0,146.9"></polygon>
+<line class="post" x1="450.0" y1="109.4" x2="450.0" y2="170.0"/>
+<line class="post" x1="519.0" y1="146.9" x2="519.0" y2="142.8"/>
+<line class="post" x1="450.0" y1="184.4" x2="450.0" y2="74.1"/>
+<line class="post" x1="381.0" y1="146.9" x2="381.0" y2="191.6"/>
+<polygon class="mesh up" points="450.0,137.0 473.0,91.8 450.0,74.1 427.0,130.7"><title>E[R] = +0.484 R</title></polygon>
+<polygon class="mesh up" points="427.0,174.5 450.0,137.0 427.0,130.7 404.0,178.2"><title>E[R] = +0.033 R</title></polygon>
+<polygon class="mesh up" points="473.0,148.0 496.0,117.3 473.0,91.8 450.0,137.0"><title>E[R] = +0.274 R</title></polygon>
+<polygon class="mesh dn" points="404.0,183.7 427.0,174.5 404.0,178.2 381.0,191.6"><title>E[R] = -0.268 R</title></polygon>
+<polygon class="mesh dn" points="450.0,173.1 473.0,148.0 450.0,137.0 427.0,174.5"><title>E[R] = -0.086 R</title></polygon>
+<polygon class="mesh up" points="496.0,159.2 519.0,142.8 496.0,117.3 473.0,148.0"><title>E[R] = +0.038 R</title></polygon>
+<polygon class="mesh dn" points="427.0,176.9 450.0,173.1 427.0,174.5 404.0,183.7"><title>E[R] = -0.326 R</title></polygon>
+<polygon class="mesh dn" points="473.0,171.7 496.0,159.2 473.0,148.0 450.0,173.1"><title>E[R] = -0.218 R</title></polygon>
+<polygon class="mesh dn" points="450.0,170.0 473.0,171.7 450.0,173.1 427.0,176.9"><title>E[R] = -0.390 R</title></polygon>
+<text class="tk halo" x="365.0" y="161.9" text-anchor="end">1:5</text>
+<text class="tk halo" x="388.0" y="174.4" text-anchor="end">1:10</text>
+<text class="tk halo" x="411.0" y="186.9" text-anchor="end">1:20</text>
+<text class="tk halo" x="434.0" y="199.4" text-anchor="end">1:30</text>
+<text class="tk halo" x="535.0" y="160.9">BE 0.5 R</text>
+<text class="tk halo" x="466.0" y="198.4">BE 4 R</text>
+<text class="tk" x="335.0" y="149.9" text-anchor="end">0</text>
+<line class="gl" x1="340.0" y1="146.9" x2="353.0" y2="146.9"/>
+<text class="tk" x="335.0" y="221.9" text-anchor="end">−c/L</text>
+<line class="gl" x1="340.0" y1="218.9" x2="353.0" y2="218.9"/>
 <text class="ax" x="450.0" y="16" text-anchor="middle">µ = 1,5 µ*</text>
 <text class="lg" x="450.0" y="31" text-anchor="middle">dérive supérieure au seuil d'équilibre</text>
 
@@ -1686,7 +1705,7 @@
 <text class="tk" x="87.0" y="259.6" text-anchor="end">0,4</text>
 <line class="gl" x1="92.0" y1="233.9" x2="548.0" y2="233.9"/>
 <text class="tk" x="87.0" y="236.9" text-anchor="end">0,8</text>
-<text class="ax" transform="translate(58.0,266.0) rotate(-90)" text-anchor="middle">points</text>
+<text class="ax" transform="translate(50.0,266.0) rotate(-90)" text-anchor="middle">points</text>
 <line class="zero" x1="92.0" y1="279.4" x2="548.0" y2="279.4"/>
 <text class="tk" x="168.0" y="331.0" text-anchor="middle">µ = 0</text>
 <text class="tk" x="244.0" y="331.0" text-anchor="middle">µ = ½ µ*</text>
@@ -1919,9 +1938,9 @@
 <line class="lvl strong" x1="438.0" y1="162.0" x2="606.0" y2="162.0"/>
 <circle class="pt s1" cx="570.86" cy="162.00" r="4"><title>spot 6000 · GEX net +15.9 Md$ / 1 %</title></circle>
 
-<text class="lg" x="320.0" y="336.0" text-anchor="middle">chaîne 0DTE synthétique — aucune donnée de marché</text>
+
 </svg></div>
-      <p class="note">concentration potentielle : chaque strike évalué à la monnaie · gamma net : la chaîne évaluée au spot du jour.</p>
+      <p class="note">concentration potentielle : chaque strike évalué à la monnaie · gamma net : la chaîne évaluée au spot du jour. chaîne 0DTE synthétique — aucune donnée de marché.</p>
     </figure>
 
     <figure class="wide">
@@ -2001,7 +2020,7 @@
 <text class="tk" x="53.0" y="92.3" text-anchor="end">0,65</text>
 <line class="gl" x1="58.0" y1="46.0" x2="298.0" y2="46.0"/>
 <text class="tk" x="53.0" y="49.0" text-anchor="end">0,70</text>
-<text class="ax" transform="translate(24.0,150.0) rotate(-90)" text-anchor="middle">exposant d'échelle H</text>
+<text class="ax" transform="translate(16.0,150.0) rotate(-90)" text-anchor="middle">exposant d'échelle H</text>
 <text class="tk" x="58.0" y="267.0" text-anchor="middle">-2</text>
 <text class="tk" x="138.0" y="267.0" text-anchor="middle">-1</text>
 <text class="tk" x="218.0" y="267.0" text-anchor="middle">0</text>
@@ -2031,7 +2050,7 @@
 <text class="tk" x="603.0" y="101.0">6</text>
 <line class="gl" x1="372.0" y1="46.0" x2="598.0" y2="46.0"/>
 <text class="tk" x="603.0" y="49.0">8</text>
-<text class="ax" transform="translate(630.0,150.0) rotate(-90)" text-anchor="middle">P(target atteint) en %</text>
+<text class="ax" transform="translate(638.0,150.0) rotate(-90)" text-anchor="middle">P(target atteint) en %</text>
 <text class="tk" x="372.0" y="267.0" text-anchor="middle">0,50</text>
 <text class="tk" x="428.5" y="267.0" text-anchor="middle">0,55</text>
 <text class="tk" x="485.0" y="267.0" text-anchor="middle">0,60</text>
@@ -2252,18 +2271,19 @@
 <text class="tk" x="601.0" y="121.3">6020</text>
 <line class="gl" x1="428.0" y1="68.0" x2="596.0" y2="68.0"/>
 <text class="tk" x="601.0" y="71.0">6040</text>
-<text class="tk" x="436.8" y="307.0" text-anchor="middle">50</text>
-<text class="tk" x="481.1" y="307.0" text-anchor="middle">60</text>
-<text class="tk" x="525.3" y="307.0" text-anchor="middle">70</text>
-<text class="tk" x="569.5" y="307.0" text-anchor="middle">80</text>
+<text class="tk" x="456.0" y="307.0" text-anchor="middle">90</text>
+<text class="tk" x="498.0" y="307.0" text-anchor="middle">93</text>
+<text class="tk" x="540.0" y="307.0" text-anchor="middle">96</text>
+<text class="tk" x="582.0" y="307.0" text-anchor="middle">99</text>
 <line class="ba" x1="428.0" y1="294.0" x2="596.0" y2="294.0"/>
 <text class="ax" x="512.0" y="322.0" text-anchor="middle">P(stop touché en 30 min), %</text>
-<circle class="pt s3f" cx="611.96" cy="173.49" r="4"><title>POC · 90 %</title></circle>
-<line class="lvl" x1="612.0" y1="58.0" x2="612.0" y2="294.0"/>
-<circle class="pt s2f" cx="624.94" cy="223.70" r="4"><title>LVN 5978 · 93 %</title></circle>
-<text class="dl halo" x="630.9" y="227.2" text-anchor="start">LVN</text>
-<circle class="pt s2f" cx="628.21" cy="123.28" r="4"><title>LVN 6018 · 93 %</title></circle>
-<text class="dl halo" x="634.2" y="126.8" text-anchor="start">LVN</text>
+<path class="ln s1" d="M540.49,294.00 L530.59,288.98 L520.21,283.96 L509.89,278.94 L500.21,273.91 L491.76,268.89 L485.04,263.87 L480.47,258.85 L478.19,253.83 L478.17,248.81 L480.07,243.79 L483.26,238.77 L486.91,233.74 L490.02,228.72 L491.64,223.70 L491.11,218.68 L488.27,213.66 L483.43,208.64 L477.28,203.62 L470.60,198.60 L464.14,193.57 L458.50,188.55 L454.15,183.53 L451.44,178.51 L450.54,173.49 L451.55,168.47 L454.42,163.45 L459.03,158.43 L465.11,153.40 L472.29,148.38 L480.05,143.36 L487.72,138.34 L494.47,133.32 L499.45,128.30 L501.99,123.28 L501.90,118.26 L499.67,113.23 L496.35,108.21 L493.13,103.19 L491.15,98.17 L491.21,93.15 L493.74,88.13 L498.79,83.11 L506.07,78.09 L515.06,73.06 L525.05,68.04 L535.30,63.02 L545.10,58.00"></path>
+<circle class="pt s3f" cx="450.54" cy="173.49" r="4"><title>POC · 90 %</title></circle>
+<line class="lvl" x1="450.5" y1="58.0" x2="450.5" y2="294.0"/>
+<circle class="pt s2f" cx="491.64" cy="223.70" r="4"><title>LVN 5978 · 93 %</title></circle>
+<text class="dl halo" x="482.6" y="237.7" text-anchor="end">LVN</text>
+<circle class="pt s2f" cx="501.99" cy="123.28" r="4"><title>LVN 6018 · 93 %</title></circle>
+<text class="dl halo" x="493.0" y="137.3" text-anchor="end">LVN</text>
 <line class="lvl strong" x1="428.0" y1="173.5" x2="596.0" y2="173.5"/>
 <rect class="s3f" x="56.0" y="338.5" width="11" height="11" rx="2"/>
 <text class="lg" x="73.0" y="347.5">haut volume (HVN)</text>
@@ -2324,7 +2344,7 @@
 <text class="tk" x="53.0" y="112.4" text-anchor="end">+20</text>
 <line class="gl" x1="58.0" y1="61.9" x2="378.0" y2="61.9"/>
 <text class="tk" x="53.0" y="64.9" text-anchor="end">+40</text>
-<text class="ax" transform="translate(24.0,157.0) rotate(-90)" text-anchor="middle">points depuis le VWAP</text>
+<text class="ax" transform="translate(16.0,157.0) rotate(-90)" text-anchor="middle">points depuis le VWAP</text>
 <text class="tk" x="58.0" y="277.0" text-anchor="middle">0</text>
 <text class="tk" x="140.1" y="277.0" text-anchor="middle">100</text>
 <text class="tk" x="222.1" y="277.0" text-anchor="middle">200</text>
@@ -2355,7 +2375,7 @@
 <text class="tk" x="603.0" y="151.3">80</text>
 <line class="gl" x1="434.0" y1="90.5" x2="598.0" y2="90.5"/>
 <text class="tk" x="603.0" y="93.5">120</text>
-<text class="ax" transform="translate(630.0,157.0) rotate(-90)" text-anchor="middle">minutes de séance par jour</text>
+<text class="ax" transform="translate(638.0,157.0) rotate(-90)" text-anchor="middle">minutes de séance par jour</text>
 <text class="tk" x="450.4" y="277.0" text-anchor="middle">1,0</text>
 <text class="tk" x="483.2" y="277.0" text-anchor="middle">1,5</text>
 <text class="tk" x="516.0" y="277.0" text-anchor="middle">2,0</text>
@@ -2375,9 +2395,9 @@
 <text class="tk halo" x="581.6" y="256.5" text-anchor="middle">1,1</text>
 
 
-<text class="lg" x="320.0" y="338.0" text-anchor="middle">et son échantillon croît d'autant plus lentement</text>
+
 </svg></div>
-      <p class="note">trajectoire simulée de façon déterministe — aucune donnée de marché. la bande 3 σ est dépassée environ une minute par séance : toute règle qui s'y accroche est rare par construction.</p>
+      <p class="note">trajectoire simulée de façon déterministe — aucune donnée de marché. la bande 3 σ est dépassée environ une minute par séance : toute règle qui s'y accroche est rare par construction, et son échantillon croît d'autant plus lentement.</p>
     </figure>
 
   <h2 id="s-dow">La théorie de Dow et sa loi nulle</h2>
@@ -2445,7 +2465,7 @@
 <text class="tk" x="53.0" y="99.0" text-anchor="end">0,75</text>
 <line class="gl" x1="58.0" y1="50.0" x2="294.0" y2="50.0"/>
 <text class="tk" x="53.0" y="53.0" text-anchor="end">1,00</text>
-<text class="ax" transform="translate(24.0,142.0) rotate(-90)" text-anchor="middle">part des journées sans dérive</text>
+<text class="ax" transform="translate(16.0,142.0) rotate(-90)" text-anchor="middle">part des journées sans dérive</text>
 <text class="tk" x="58.0" y="247.0" text-anchor="middle">0</text>
 <text class="tk" x="105.2" y="247.0" text-anchor="middle">1</text>
 <text class="tk" x="152.4" y="247.0" text-anchor="middle">2</text>
@@ -2476,7 +2496,7 @@
 <text class="tk" x="603.0" y="99.0">0,6</text>
 <line class="gl" x1="372.0" y1="50.0" x2="598.0" y2="50.0"/>
 <text class="tk" x="603.0" y="53.0">0,8</text>
-<text class="ax" transform="translate(630.0,142.0) rotate(-90)" text-anchor="middle">P(nouveau sommet avant nouveau creux)</text>
+<text class="ax" transform="translate(638.0,142.0) rotate(-90)" text-anchor="middle">P(nouveau sommet avant nouveau creux)</text>
 <text class="tk" x="372.0" y="247.0" text-anchor="middle">0,5</text>
 <text class="tk" x="404.3" y="247.0" text-anchor="middle">1,0</text>
 <text class="tk" x="468.9" y="247.0" text-anchor="middle">2,0</text>
@@ -2495,8 +2515,9 @@
 <text class="lg" x="472.0" y="303.5">µ = µ*</text>
 <line class="ln s3" x1="528.0" y1="300.0" x2="542.0" y2="300.0"/>
 <text class="lg" x="548.0" y="303.5">µ = 3 µ*</text>
-<text class="lg" x="376.0" y="324.0" text-anchor="start">trois dérives, trois courbes presque confondues :</text>
-<text class="lg" x="376.0" y="338.0" text-anchor="start">la géométrie du repli décide, non le signal</text>
+<text class="lg" x="376.0" y="324.0" text-anchor="start">trois dérives, trois courbes</text>
+<text class="lg" x="376.0" y="338.0" text-anchor="start">presque confondues : la géométrie</text>
+<text class="lg" x="376.0" y="352.0" text-anchor="start">du repli décide, non le signal</text>
 <text class="hdr" x="58" y="292">Clôture au-delà du corps de la veille</text>
 <rect class="up" x="58.0" y="300" width="86.5" height="14" rx="2"><title>hausse · 37.5 %</title></rect>
 <text class="lg" x="102.2" y="326" text-anchor="middle">hausse</text>
@@ -2618,7 +2639,7 @@
 <path class="ln s1" d="M58.00,230.59 L88.00,199.19 L108.00,210.96 L143.00,128.52 L158.00,148.15 L183.00,73.56"></path>
 <path class="ln s1" d="M183.00,73.56 L208.00,128.52 L228.00,114.39 L248.00,183.48 L268.00,148.93 L308.00,57.85" stroke-dasharray="5 3"></path>
 <circle class="pt s2" cx="248.00" cy="183.48" r="4"><title>ordre limite touché dans la zone OTE</title></circle>
-<text class="dl halo" x="240.0" y="175.5" text-anchor="end">ordre rempli</text>
+<text class="dl halo" x="240.0" y="167.5" text-anchor="end">ordre rempli</text>
 <text class="hdr" x="380.0" y="38.0">Écart d'espérance par signal</text>
 <text class="sub" x="598.0" y="25.0" text-anchor="end">Δ = E(OTE) − E(marché)</text>
 <line class="hsep" x1="380.0" y1="44.0" x2="598.0" y2="44.0"/>
@@ -2631,7 +2652,7 @@
 <text class="tk" x="603.0" y="118.2">0,0</text>
 <line class="gl" x1="380.0" y1="50.0" x2="598.0" y2="50.0"/>
 <text class="tk" x="603.0" y="53.0">0,4</text>
-<text class="ax" transform="translate(630.0,156.0) rotate(-90)" text-anchor="middle">Δ en points d'indice par signal</text>
+<text class="ax" transform="translate(638.0,156.0) rotate(-90)" text-anchor="middle">Δ en points d'indice par signal</text>
 <text class="tk" x="380.0" y="275.0" text-anchor="middle">0,0</text>
 <text class="tk" x="452.7" y="275.0" text-anchor="middle">1,0</text>
 <text class="tk" x="525.3" y="275.0" text-anchor="middle">2,0</text>
@@ -2640,16 +2661,15 @@
 <text class="ax" x="489.0" y="290.0" text-anchor="middle">dérive captée (points par heure)</text>
 <path class="ln s1" d="M380.00,68.91 L381.82,68.98 L383.63,69.05 L385.45,69.12 L387.27,69.20 L389.08,69.27 L390.90,69.34 L392.72,69.42 L394.53,69.49 L396.35,69.57 L398.17,69.65 L399.98,69.73 L401.80,69.80 L403.62,69.88 L405.43,69.96 L407.25,70.04 L409.07,70.13 L410.88,70.21 L412.70,70.29 L414.52,70.37 L416.33,70.46 L418.15,70.54 L419.97,70.63 L421.78,70.72 L423.60,70.80 L425.42,70.89 L427.23,70.98 L429.05,71.07 L430.87,71.16 L432.68,71.25 L434.50,71.34 L436.32,71.43 L438.13,71.53 L439.95,71.62 L441.77,71.71 L443.58,71.81 L445.40,71.91 L447.22,72.00 L449.03,72.10 L450.85,72.20 L452.67,72.29 L454.48,72.39 L456.30,72.49 L458.12,72.59 L459.93,72.69 L461.75,72.79 L463.57,72.90 L465.38,73.00 L467.20,73.10 L469.02,73.21 L470.83,73.31 L472.65,73.42 L474.47,73.52 L476.28,73.63 L478.10,73.74 L479.92,73.84 L481.73,73.95 L483.55,74.06 L485.37,74.17 L487.18,74.28 L489.00,74.39 L490.82,74.50 L492.63,74.61 L494.45,74.73 L496.27,74.84 L498.08,74.95 L499.90,75.07 L501.72,75.18 L503.53,75.30 L505.35,75.41 L507.17,75.53 L508.98,75.64 L510.80,75.76 L512.62,75.88 L514.43,76.00 L516.25,76.12 L518.07,76.24 L519.88,76.36 L521.70,76.48 L523.52,76.60 L525.33,76.72 L527.15,76.84 L528.97,76.96 L530.78,77.09 L532.60,77.21 L534.42,77.33 L536.23,77.46 L538.05,77.58 L539.87,77.71 L541.68,77.84 L543.50,77.96 L545.32,78.09 L547.13,78.22 L548.95,78.34 L550.77,78.47 L552.58,78.60 L554.40,78.73 L556.22,78.86 L558.03,78.99 L559.85,79.12 L561.67,79.25 L563.48,79.38 L565.30,79.51 L567.12,79.65 L568.93,79.78 L570.75,79.91 L572.57,80.05 L574.38,80.18 L576.20,80.31 L578.02,80.45 L579.83,80.58 L581.65,80.72 L583.47,80.86 L585.28,80.99 L587.10,81.13 L588.92,81.27 L590.73,81.40 L592.55,81.54 L594.37,81.68 L596.18,81.82 L598.00,81.96"></path>
 <line class="zero" x1="380.0" y1="115.2" x2="598.0" y2="115.2"/>
-<line class="lvl" x1="979.1" y1="50.0" x2="979.1" y2="262.0"/>
-<circle class="pt s2" cx="979.09" cy="115.23" r="4"><title>changement de signe · 8.24 point par heure</title></circle>
-<text class="dl halo" x="984.1" y="66.3" text-anchor="start">µ*</text>
+<rect class="tag" x="436.0" y="59.3" width="160.0" height="14" rx="2"/>
+<text class="tagtx" x="516.0" y="69.8" text-anchor="middle">µ* = 8.2 pt/h, hors cadre</text>
 <text class="lg halo" x="592.0" y="89.1" text-anchor="end">Δ &gt; 0 : la grille paie</text>
 <text class="lg halo" x="592.0" y="138.1" text-anchor="end">Δ &lt; 0 : la grille coûte</text>
 
 
-<text class="lg" x="320.0" y="332.0" text-anchor="middle">les signaux manqués sont ceux qui partaient</text>
+
 </svg></div>
-      <p class="note">trait plein : impulsion · pointillé : retracement · à gauche le ratio, à droite sa probabilité nulle d'atteinte. sous un prix sans dérive, attendre épargne une friction par signal non exécuté ; au-delà du seuil.</p>
+      <p class="note">trait plein : impulsion · pointillé : retracement · à gauche le ratio, à droite sa probabilité nulle d'atteinte. sous un prix sans dérive, attendre épargne une friction par signal non exécuté ; au-delà du seuil, les signaux manqués sont ceux qui partaient.</p>
     </figure>
 
     <figure>
@@ -2709,7 +2729,7 @@
 <text class="tk" x="57.0" y="106.0" text-anchor="end">0,75</text>
 <line class="gl" x1="62.0" y1="50.0" x2="294.0" y2="50.0"/>
 <text class="tk" x="57.0" y="53.0" text-anchor="end">1,00</text>
-<text class="ax" transform="translate(28.0,156.0) rotate(-90)" text-anchor="middle">part de la dérive captée</text>
+<text class="ax" transform="translate(20.0,156.0) rotate(-90)" text-anchor="middle">part de la dérive captée</text>
 <text class="tk" x="92.0" y="275.0" text-anchor="middle">6 s</text>
 <text class="tk" x="135.0" y="275.0" text-anchor="middle">1 min</text>
 <text class="tk" x="178.0" y="275.0" text-anchor="middle">10 min</text>
@@ -2740,7 +2760,7 @@
 <text class="tk" x="603.0" y="127.6">1</text>
 <line class="gl" x1="372.0" y1="67.3" x2="598.0" y2="67.3"/>
 <text class="tk" x="603.0" y="70.3">10</text>
-<text class="ax" transform="translate(630.0,156.0) rotate(-90)" text-anchor="middle">points par minute</text>
+<text class="ax" transform="translate(638.0,156.0) rotate(-90)" text-anchor="middle">points par minute</text>
 <text class="tk" x="401.3" y="275.0" text-anchor="middle">6 s</text>
 <text class="tk" x="443.1" y="275.0" text-anchor="middle">1 min</text>
 <text class="tk" x="485.0" y="275.0" text-anchor="middle">10 min</text>
@@ -2817,7 +2837,7 @@
 <text class="tk" x="53.0" y="105.0" text-anchor="end">0,75</text>
 <line class="gl" x1="58.0" y1="50.0" x2="294.0" y2="50.0"/>
 <text class="tk" x="53.0" y="53.0" text-anchor="end">1,00</text>
-<text class="ax" transform="translate(24.0,154.0) rotate(-90)" text-anchor="middle">fraction restante</text>
+<text class="ax" transform="translate(16.0,154.0) rotate(-90)" text-anchor="middle">fraction restante</text>
 <text class="tk" x="58.0" y="271.0" text-anchor="middle">0,0</text>
 <text class="tk" x="136.7" y="271.0" text-anchor="middle">0,5</text>
 <text class="tk" x="215.3" y="271.0" text-anchor="middle">1,0</text>
@@ -2846,7 +2866,7 @@
 <text class="tk" x="585.0" y="105.0">0,75</text>
 <line class="gl" x1="372.0" y1="50.0" x2="580.0" y2="50.0"/>
 <text class="tk" x="585.0" y="53.0">1,00</text>
-<text class="ax" transform="translate(612.0,154.0) rotate(-90)" text-anchor="middle">vrais positifs</text>
+<text class="ax" transform="translate(620.0,154.0) rotate(-90)" text-anchor="middle">vrais positifs</text>
 <text class="tk" x="372.0" y="271.0" text-anchor="middle">0,0</text>
 <text class="tk" x="476.0" y="271.0" text-anchor="middle">0,5</text>
 <text class="tk" x="580.0" y="271.0" text-anchor="middle">1,0</text>
@@ -2897,9 +2917,9 @@
 <rect class="hm0" x="58.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="58.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="58.00" y="205.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="58.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="58.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="58.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="58.00" y="197.25" width="8.73" height="8.24"/>
+<rect class="hm1" x="58.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="58.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm6" x="58.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="58.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="58.00" y="156.41" width="8.73" height="8.24"/>
@@ -2908,10 +2928,10 @@
 <rect class="hm1" x="58.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="58.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="58.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="58.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm6" x="58.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm6" x="58.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="58.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="58.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="58.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="58.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="58.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="58.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="58.00" y="58.41" width="8.73" height="8.24"/>
@@ -2921,10 +2941,10 @@
 <rect class="hm0" x="66.33" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="66.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="66.33" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="66.33" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm0" x="66.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="66.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="66.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="66.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="66.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="66.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="66.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="66.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="66.33" y="156.41" width="8.73" height="8.24"/>
@@ -2933,110 +2953,110 @@
 <rect class="hm1" x="66.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="66.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="66.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="66.33" y="107.41" width="8.73" height="8.24"/>
-<rect class="hm6" x="66.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="66.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="66.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm6" x="66.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="66.33" y="99.25" width="8.73" height="8.24"/>
+<rect class="hm0" x="66.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="66.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="66.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="66.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="66.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="66.33" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="66.33" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="74.67" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="74.67" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="74.67" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="74.67" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="74.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="74.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="74.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="74.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="74.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="74.67" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="74.67" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm2" x="74.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="74.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="74.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="74.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="74.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="74.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="74.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="74.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="74.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="74.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="74.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="74.67" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="74.67" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="74.67" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="83.00" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="83.00" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="83.00" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="83.00" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="83.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="83.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="83.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="83.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="83.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="83.00" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="83.00" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm2" x="83.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="83.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="83.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="83.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="83.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="83.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="83.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="83.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="83.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="83.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="83.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="83.00" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="83.00" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="83.00" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="91.33" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="91.33" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="91.33" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="91.33" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="91.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="91.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="91.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="91.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="91.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="91.33" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="91.33" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm2" x="91.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="91.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="91.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="91.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="91.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="91.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="91.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="91.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="91.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="91.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="91.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="91.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="91.33" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="91.33" y="42.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="99.67" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="99.67" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="99.67" y="238.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="99.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="99.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="99.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="99.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="99.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="99.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="99.67" y="131.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="99.67" y="123.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="99.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="99.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="99.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="99.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="99.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="99.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="99.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="99.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="99.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="99.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="99.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="99.67" y="58.41" width="8.73" height="8.24"/>
@@ -3046,10 +3066,10 @@
 <rect class="hm1" x="108.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="108.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="108.00" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm2" x="108.00" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm1" x="108.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="108.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="108.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="108.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="108.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="108.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="108.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="108.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="108.00" y="156.41" width="8.73" height="8.24"/>
@@ -3058,10 +3078,10 @@
 <rect class="hm0" x="108.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="108.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="108.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="108.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="108.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="108.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="108.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="108.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="108.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="108.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="108.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="108.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="108.00" y="58.41" width="8.73" height="8.24"/>
@@ -3073,8 +3093,8 @@
 <rect class="hm1" x="116.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="116.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="116.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="116.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="116.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="116.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="116.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="116.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="116.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="116.33" y="156.41" width="8.73" height="8.24"/>
@@ -3083,10 +3103,10 @@
 <rect class="hm0" x="116.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="116.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="116.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="116.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="116.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="116.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="116.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="116.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="116.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="116.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="116.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="116.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="116.33" y="58.41" width="8.73" height="8.24"/>
@@ -3095,11 +3115,11 @@
 <rect class="hm1" x="124.67" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="124.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="124.67" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="124.67" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="124.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="124.67" y="205.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="124.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="124.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="124.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="124.67" y="197.25" width="8.73" height="8.24"/>
+<rect class="hm1" x="124.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="124.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="124.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="124.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="124.67" y="156.41" width="8.73" height="8.24"/>
@@ -3108,10 +3128,10 @@
 <rect class="hm0" x="124.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="124.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="124.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="124.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="124.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="124.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="124.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="124.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="124.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="124.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="124.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="124.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="124.67" y="58.41" width="8.73" height="8.24"/>
@@ -3123,8 +3143,8 @@
 <rect class="hm1" x="133.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="133.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="133.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="133.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="133.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="133.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="133.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="133.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="133.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="133.00" y="156.41" width="8.73" height="8.24"/>
@@ -3133,10 +3153,10 @@
 <rect class="hm0" x="133.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="133.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="133.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="133.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="133.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="133.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="133.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="133.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="133.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="133.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="133.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="133.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="133.00" y="58.41" width="8.73" height="8.24"/>
@@ -3146,10 +3166,10 @@
 <rect class="hm1" x="141.33" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="141.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="141.33" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm2" x="141.33" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm1" x="141.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="141.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="141.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="141.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="141.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="141.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="141.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="141.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="141.33" y="156.41" width="8.73" height="8.24"/>
@@ -3158,10 +3178,10 @@
 <rect class="hm0" x="141.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="141.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="141.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="141.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="141.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="141.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="141.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="141.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="141.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="141.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="141.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="141.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="141.33" y="58.41" width="8.73" height="8.24"/>
@@ -3173,8 +3193,8 @@
 <rect class="hm1" x="149.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="149.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="149.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="149.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="149.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="149.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="149.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="149.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="149.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="149.67" y="156.41" width="8.73" height="8.24"/>
@@ -3183,10 +3203,10 @@
 <rect class="hm0" x="149.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="149.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="149.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="149.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="149.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="149.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="149.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="149.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="149.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="149.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="149.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="149.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="149.67" y="58.41" width="8.73" height="8.24"/>
@@ -3196,10 +3216,10 @@
 <rect class="hm1" x="158.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="158.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="158.00" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm2" x="158.00" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm1" x="158.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="158.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="158.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="158.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="158.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="158.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="158.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="158.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="158.00" y="156.41" width="8.73" height="8.24"/>
@@ -3208,10 +3228,10 @@
 <rect class="hm0" x="158.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="158.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="158.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="158.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="158.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="158.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="158.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="158.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="158.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="158.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="158.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="158.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="158.00" y="58.41" width="8.73" height="8.24"/>
@@ -3223,8 +3243,8 @@
 <rect class="hm1" x="166.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="166.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="166.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="166.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="166.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="166.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="166.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="166.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="166.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="166.33" y="156.41" width="8.73" height="8.24"/>
@@ -3233,10 +3253,10 @@
 <rect class="hm0" x="166.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="166.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="166.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="166.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="166.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="166.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="166.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="166.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="166.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="166.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="166.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="166.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="166.33" y="58.41" width="8.73" height="8.24"/>
@@ -3246,10 +3266,10 @@
 <rect class="hm1" x="174.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="174.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="174.67" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm2" x="174.67" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm1" x="174.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="174.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="174.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="174.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="174.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="174.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="174.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="174.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="174.67" y="156.41" width="8.73" height="8.24"/>
@@ -3258,10 +3278,10 @@
 <rect class="hm0" x="174.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="174.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="174.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="174.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="174.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="174.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="174.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="174.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="174.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="174.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="174.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="174.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="174.67" y="58.41" width="8.73" height="8.24"/>
@@ -3272,9 +3292,9 @@
 <rect class="hm1" x="183.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="183.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="183.00" y="205.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="183.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="183.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="183.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="183.00" y="197.25" width="8.73" height="8.24"/>
+<rect class="hm1" x="183.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="183.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="183.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="183.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="183.00" y="156.41" width="8.73" height="8.24"/>
@@ -3283,10 +3303,10 @@
 <rect class="hm0" x="183.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="183.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="183.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="183.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="183.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="183.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="183.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="183.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="183.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="183.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="183.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="183.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="183.00" y="58.41" width="8.73" height="8.24"/>
@@ -3298,9 +3318,9 @@
 <rect class="hm1" x="191.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="191.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="191.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="191.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="191.33" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm4" x="191.33" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="191.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="191.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm5" x="191.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="191.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="191.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="191.33" y="148.25" width="8.73" height="8.24"/>
@@ -3308,10 +3328,10 @@
 <rect class="hm0" x="191.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="191.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="191.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="191.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="191.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="191.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="191.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="191.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="191.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="191.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="191.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="191.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="191.33" y="58.41" width="8.73" height="8.24"/>
@@ -3323,8 +3343,8 @@
 <rect class="hm1" x="199.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="199.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="199.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="199.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="199.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="199.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="199.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="199.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="199.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="199.67" y="156.41" width="8.73" height="8.24"/>
@@ -3333,10 +3353,10 @@
 <rect class="hm0" x="199.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="199.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="199.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="199.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="199.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="199.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="199.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="199.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="199.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="199.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="199.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="199.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="199.67" y="58.41" width="8.73" height="8.24"/>
@@ -3345,23 +3365,23 @@
 <rect class="hm1" x="208.00" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="208.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="208.00" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="208.00" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="208.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="208.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="208.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="208.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="208.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="208.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="208.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="208.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="208.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="208.00" y="156.41" width="8.73" height="8.24"/>
-<rect class="hm0" x="208.00" y="148.25" width="8.73" height="8.24"/>
+<rect class="hm1" x="208.00" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="208.00" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="208.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="208.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="208.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="208.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="208.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="208.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="208.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="208.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="208.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="208.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="208.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="208.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="208.00" y="58.41" width="8.73" height="8.24"/>
@@ -3369,24 +3389,24 @@
 <rect class="hm0" x="208.00" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="216.33" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="216.33" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm2" x="216.33" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="216.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="216.33" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="216.33" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm2" x="216.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="216.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="216.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="216.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="216.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="216.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm6" x="216.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="216.33" y="164.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="216.33" y="156.41" width="8.73" height="8.24"/>
+<rect class="hm1" x="216.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="216.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="216.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="216.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="216.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="216.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="216.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="216.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="216.33" y="58.41" width="8.73" height="8.24"/>
@@ -3394,12 +3414,12 @@
 <rect class="hm0" x="216.33" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="224.67" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="224.67" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm2" x="224.67" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="224.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="224.67" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="224.67" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm2" x="224.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="224.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="224.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="224.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="224.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="224.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="224.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="224.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="224.67" y="156.41" width="8.73" height="8.24"/>
@@ -3408,23 +3428,23 @@
 <rect class="hm0" x="224.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="224.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="224.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="224.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="224.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="224.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="224.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="224.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="224.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="224.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="224.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="224.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="224.67" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="224.67" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="224.67" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="233.00" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="233.00" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="233.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="233.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="233.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="233.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="233.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="233.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="233.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="233.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="233.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm6" x="233.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="233.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="233.00" y="156.41" width="8.73" height="8.24"/>
@@ -3433,10 +3453,10 @@
 <rect class="hm0" x="233.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="233.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="233.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="233.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="233.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="233.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="233.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="233.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="233.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="233.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="233.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="233.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="233.00" y="58.41" width="8.73" height="8.24"/>
@@ -3444,12 +3464,12 @@
 <rect class="hm0" x="233.00" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="241.33" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="241.33" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm2" x="241.33" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="241.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="241.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="241.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="241.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="241.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="241.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="241.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="241.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="241.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="241.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="241.33" y="156.41" width="8.73" height="8.24"/>
@@ -3458,10 +3478,10 @@
 <rect class="hm0" x="241.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="241.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="241.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="241.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="241.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="241.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="241.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="241.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="241.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="241.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="241.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="241.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="241.33" y="58.41" width="8.73" height="8.24"/>
@@ -3470,11 +3490,11 @@
 <rect class="hm1" x="249.67" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="249.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="249.67" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="249.67" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="249.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="249.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="249.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="249.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="249.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="249.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="249.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="249.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="249.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="249.67" y="156.41" width="8.73" height="8.24"/>
@@ -3483,10 +3503,10 @@
 <rect class="hm0" x="249.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="249.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="249.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="249.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="249.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="249.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="249.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="249.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="249.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="249.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="249.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="249.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="249.67" y="58.41" width="8.73" height="8.24"/>
@@ -3498,9 +3518,9 @@
 <rect class="hm1" x="258.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="258.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="258.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="258.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="258.00" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm4" x="258.00" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="258.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="258.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm5" x="258.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="258.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="258.00" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="258.00" y="148.25" width="8.73" height="8.24"/>
@@ -3508,10 +3528,10 @@
 <rect class="hm0" x="258.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="258.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="258.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="258.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="258.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="258.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="258.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="258.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="258.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="258.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="258.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="258.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="258.00" y="58.41" width="8.73" height="8.24"/>
@@ -3520,11 +3540,11 @@
 <rect class="hm1" x="266.33" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="266.33" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="266.33" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="266.33" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="266.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="266.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="266.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="266.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="266.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="266.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="266.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="266.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="266.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="266.33" y="156.41" width="8.73" height="8.24"/>
@@ -3533,35 +3553,35 @@
 <rect class="hm0" x="266.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="266.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="266.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="266.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="266.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="266.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="266.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="266.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="266.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="266.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="266.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="266.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="266.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="266.33" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="266.33" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="274.67" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="274.67" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="274.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="274.67" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="274.67" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm2" x="274.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="274.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="274.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="274.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="274.67" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm5" x="274.67" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm0" x="274.67" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="274.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="274.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm6" x="274.67" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="274.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="274.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="274.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="274.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="274.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="274.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="274.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="274.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="274.67" y="58.41" width="8.73" height="8.24"/>
@@ -3573,8 +3593,8 @@
 <rect class="hm1" x="283.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="283.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="283.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="283.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="283.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="283.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="283.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="283.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="283.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="283.00" y="156.41" width="8.73" height="8.24"/>
@@ -3583,10 +3603,10 @@
 <rect class="hm0" x="283.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="283.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="283.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="283.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="283.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="283.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="283.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="283.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="283.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="283.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="283.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="283.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="283.00" y="58.41" width="8.73" height="8.24"/>
@@ -3598,8 +3618,8 @@
 <rect class="hm1" x="291.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="291.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="291.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="291.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="291.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="291.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="291.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="291.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="291.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="291.33" y="156.41" width="8.73" height="8.24"/>
@@ -3608,10 +3628,10 @@
 <rect class="hm0" x="291.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="291.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="291.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="291.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="291.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="291.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="291.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="291.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="291.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="291.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="291.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="291.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="291.33" y="58.41" width="8.73" height="8.24"/>
@@ -3623,8 +3643,8 @@
 <rect class="hm1" x="299.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="299.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="299.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="299.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="299.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="299.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="299.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="299.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="299.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="299.67" y="156.41" width="8.73" height="8.24"/>
@@ -3633,10 +3653,10 @@
 <rect class="hm0" x="299.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="299.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="299.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="299.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="299.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="299.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="299.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="299.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="299.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="299.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="299.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="299.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="299.67" y="58.41" width="8.73" height="8.24"/>
@@ -3648,8 +3668,8 @@
 <rect class="hm1" x="308.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="308.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="308.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="308.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="308.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="308.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="308.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="308.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="308.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="308.00" y="156.41" width="8.73" height="8.24"/>
@@ -3658,10 +3678,10 @@
 <rect class="hm0" x="308.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="308.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="308.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="308.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="308.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="308.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="308.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="308.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="308.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="308.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="308.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="308.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="308.00" y="58.41" width="8.73" height="8.24"/>
@@ -3669,12 +3689,12 @@
 <rect class="hm0" x="308.00" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="316.33" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="316.33" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="316.33" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm2" x="316.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="316.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="316.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="316.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="316.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="316.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="316.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="316.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="316.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="156.41" width="8.73" height="8.24"/>
@@ -3683,23 +3703,23 @@
 <rect class="hm0" x="316.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="316.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="316.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="316.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="316.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="316.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="316.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="316.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="316.33" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="324.67" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="324.67" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="324.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="324.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="324.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="324.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="324.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="324.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="324.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="324.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="324.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="324.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="324.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="324.67" y="156.41" width="8.73" height="8.24"/>
@@ -3708,10 +3728,10 @@
 <rect class="hm0" x="324.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="324.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="324.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="324.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="324.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="324.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="324.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="324.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="324.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="324.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="324.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="324.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="324.67" y="58.41" width="8.73" height="8.24"/>
@@ -3723,8 +3743,8 @@
 <rect class="hm1" x="333.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="333.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="333.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="333.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="333.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="333.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="333.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm5" x="333.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="156.41" width="8.73" height="8.24"/>
@@ -3733,24 +3753,24 @@
 <rect class="hm0" x="333.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="333.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="333.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="333.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="333.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="333.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="333.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="333.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="333.00" y="42.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="341.33" y="238.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="341.33" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="341.33" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="341.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="341.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="341.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="341.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="341.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="341.33" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm5" x="341.33" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="341.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="341.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm6" x="341.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="148.25" width="8.73" height="8.24"/>
@@ -3758,10 +3778,10 @@
 <rect class="hm0" x="341.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="341.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="341.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="341.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="341.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="341.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="341.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="341.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="341.33" y="58.41" width="8.73" height="8.24"/>
@@ -3770,23 +3790,23 @@
 <rect class="hm1" x="349.67" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="349.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="349.67" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="349.67" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm2" x="349.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="349.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="349.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="349.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="349.67" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm5" x="349.67" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm0" x="349.67" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="349.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="349.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm6" x="349.67" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="349.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="349.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="349.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="349.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="349.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="349.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="349.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="349.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="349.67" y="58.41" width="8.73" height="8.24"/>
@@ -3798,9 +3818,9 @@
 <rect class="hm1" x="358.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="358.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="358.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="358.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="358.00" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm4" x="358.00" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="358.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="358.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm5" x="358.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="358.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="358.00" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="358.00" y="148.25" width="8.73" height="8.24"/>
@@ -3808,10 +3828,10 @@
 <rect class="hm0" x="358.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="358.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="358.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="358.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="358.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="358.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="358.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="358.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="358.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="358.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="358.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="358.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="358.00" y="58.41" width="8.73" height="8.24"/>
@@ -3823,8 +3843,8 @@
 <rect class="hm1" x="366.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="366.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="366.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="366.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="366.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="366.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="366.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="366.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="366.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="366.33" y="156.41" width="8.73" height="8.24"/>
@@ -3833,10 +3853,10 @@
 <rect class="hm0" x="366.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="366.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="366.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="366.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="366.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="366.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="366.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="366.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="366.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="366.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="366.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="366.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="366.33" y="58.41" width="8.73" height="8.24"/>
@@ -3848,8 +3868,8 @@
 <rect class="hm1" x="374.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="374.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="374.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="374.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="374.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="374.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="374.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="374.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="374.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="374.67" y="156.41" width="8.73" height="8.24"/>
@@ -3858,10 +3878,10 @@
 <rect class="hm0" x="374.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="374.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="374.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="374.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="374.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="374.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="374.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="374.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="374.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="374.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="374.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="374.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="374.67" y="58.41" width="8.73" height="8.24"/>
@@ -3870,11 +3890,11 @@
 <rect class="hm1" x="383.00" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="383.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="383.00" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="383.00" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="383.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="383.00" y="205.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="383.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="383.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="383.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="383.00" y="197.25" width="8.73" height="8.24"/>
+<rect class="hm1" x="383.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="383.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="383.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="383.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="383.00" y="156.41" width="8.73" height="8.24"/>
@@ -3883,10 +3903,10 @@
 <rect class="hm0" x="383.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="383.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="383.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="383.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="383.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="383.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="383.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="383.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="383.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="383.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="383.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="383.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="383.00" y="58.41" width="8.73" height="8.24"/>
@@ -3896,10 +3916,10 @@
 <rect class="hm1" x="391.33" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="391.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="391.33" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm2" x="391.33" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm1" x="391.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="391.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="391.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="391.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="391.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="391.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="391.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="391.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="391.33" y="156.41" width="8.73" height="8.24"/>
@@ -3908,10 +3928,10 @@
 <rect class="hm0" x="391.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="391.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="391.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="391.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="391.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="391.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="391.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="391.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="391.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="391.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="391.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="391.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="391.33" y="58.41" width="8.73" height="8.24"/>
@@ -3923,8 +3943,8 @@
 <rect class="hm1" x="399.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="399.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="399.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="399.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="399.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="399.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="399.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="399.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="399.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="399.67" y="156.41" width="8.73" height="8.24"/>
@@ -3933,10 +3953,10 @@
 <rect class="hm0" x="399.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="399.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="399.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="399.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="399.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="399.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="399.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="399.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="399.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="399.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="399.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="399.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="399.67" y="58.41" width="8.73" height="8.24"/>
@@ -3945,11 +3965,11 @@
 <rect class="hm1" x="408.00" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="408.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="408.00" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="408.00" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="408.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="408.00" y="205.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="408.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="408.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="408.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="408.00" y="197.25" width="8.73" height="8.24"/>
+<rect class="hm1" x="408.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="408.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="408.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="408.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="408.00" y="156.41" width="8.73" height="8.24"/>
@@ -3958,10 +3978,10 @@
 <rect class="hm0" x="408.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="408.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="408.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="408.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="408.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="408.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="408.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="408.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="408.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="408.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="408.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="408.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="408.00" y="58.41" width="8.73" height="8.24"/>
@@ -3973,8 +3993,8 @@
 <rect class="hm1" x="416.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="416.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="416.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="416.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="416.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="416.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="416.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="416.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="416.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="416.33" y="156.41" width="8.73" height="8.24"/>
@@ -3983,98 +4003,98 @@
 <rect class="hm0" x="416.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="416.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="416.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="416.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="416.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="416.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="416.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="416.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="416.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="416.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="416.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="416.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="416.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="416.33" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="416.33" y="42.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="424.67" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="424.67" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="424.67" y="238.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="424.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="424.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="424.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="424.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="424.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="424.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="424.67" y="131.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="424.67" y="123.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="424.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="424.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="424.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="424.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="424.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="424.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="424.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="424.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="424.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="424.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="424.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="424.67" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="424.67" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="424.67" y="42.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="433.00" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="433.00" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="433.00" y="238.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="433.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="433.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="433.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="433.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="433.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="433.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="433.00" y="131.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="433.00" y="123.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="433.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="433.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="433.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="433.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="433.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="433.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="433.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="433.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="433.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="433.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="433.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="433.00" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="433.00" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="433.00" y="42.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="441.33" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="441.33" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="441.33" y="238.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="441.33" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="197.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="441.33" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="441.33" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="441.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="441.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="441.33" y="123.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="441.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="441.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm0" x="441.33" y="115.58" width="8.73" height="8.24"/>
+<rect class="hm5" x="441.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="441.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="441.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="441.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="441.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="441.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="441.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="441.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="441.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="441.33" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="441.33" y="42.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="449.67" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="449.67" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="449.67" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="449.67" y="238.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="449.67" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="449.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="449.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="449.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="449.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="449.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="449.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="449.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="449.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="449.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="449.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="449.67" y="156.41" width="8.73" height="8.24"/>
@@ -4083,60 +4103,60 @@
 <rect class="hm1" x="449.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="449.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="449.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm0" x="449.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="449.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="449.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="449.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="449.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="449.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="449.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="449.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="449.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="449.67" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="449.67" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="449.67" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="458.00" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="458.00" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="458.00" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="458.00" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="458.00" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="458.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="458.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="458.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="458.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="458.00" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="458.00" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm2" x="458.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="458.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="458.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="458.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="458.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="458.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="458.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="458.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="458.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="458.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="458.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="458.00" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="458.00" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="458.00" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="466.33" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="466.33" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="466.33" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="466.33" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="466.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="466.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="466.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="466.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="466.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="466.33" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="466.33" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm2" x="466.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="466.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="466.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="466.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="466.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="466.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="466.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="466.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="466.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="466.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="466.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="466.33" y="58.41" width="8.73" height="8.24"/>
@@ -4145,23 +4165,23 @@
 <rect class="hm0" x="474.67" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="474.67" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="474.67" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="474.67" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="474.67" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm0" x="474.67" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm0" x="474.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="474.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="474.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="474.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="474.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="474.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="474.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="474.67" y="164.58" width="8.73" height="8.24"/>
-<rect class="hm2" x="474.67" y="156.41" width="8.73" height="8.24"/>
+<rect class="hm1" x="474.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="474.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="474.67" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="474.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="474.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="474.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="474.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="474.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="474.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="474.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="474.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="474.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="474.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="474.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="474.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="474.67" y="58.41" width="8.73" height="8.24"/>
@@ -4170,12 +4190,12 @@
 <rect class="hm0" x="483.00" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="483.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="483.00" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="483.00" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="483.00" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm0" x="483.00" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm0" x="483.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="483.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="483.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="483.00" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm4" x="483.00" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="483.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="483.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm3" x="483.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="483.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="483.00" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="483.00" y="148.25" width="8.73" height="8.24"/>
@@ -4183,10 +4203,10 @@
 <rect class="hm1" x="483.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="483.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="483.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="483.00" y="107.41" width="8.73" height="8.24"/>
-<rect class="hm6" x="483.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="483.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="483.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm6" x="483.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="483.00" y="99.25" width="8.73" height="8.24"/>
+<rect class="hm0" x="483.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="483.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="483.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="483.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="483.00" y="58.41" width="8.73" height="8.24"/>
@@ -4197,22 +4217,22 @@
 <rect class="hm0" x="491.33" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="491.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="491.33" y="205.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="491.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="491.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="491.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="491.33" y="197.25" width="8.73" height="8.24"/>
+<rect class="hm0" x="491.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="491.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm6" x="491.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="491.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="491.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="491.33" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="491.33" y="140.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="491.33" y="131.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="491.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="491.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="491.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="491.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm6" x="491.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm6" x="491.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="491.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="491.33" y="82.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="491.33" y="74.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="491.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="491.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="491.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="491.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="491.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="491.33" y="50.25" width="8.73" height="8.24"/>
@@ -4222,22 +4242,22 @@
 <rect class="hm0" x="499.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="499.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="499.67" y="205.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="499.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="499.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="499.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="499.67" y="197.25" width="8.73" height="8.24"/>
+<rect class="hm0" x="499.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="499.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm6" x="499.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="499.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="499.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="499.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="499.67" y="140.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="499.67" y="131.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="499.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="499.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="499.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="499.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm6" x="499.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm6" x="499.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm6" x="499.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm6" x="499.67" y="82.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="499.67" y="74.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="499.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="499.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="499.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="499.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="499.67" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="499.67" y="50.25" width="8.73" height="8.24"/>
@@ -4245,23 +4265,23 @@
 <rect class="hm0" x="508.00" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="508.00" y="229.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="508.00" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="508.00" y="213.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="508.00" y="205.41" width="8.73" height="8.24"/>
+<rect class="hm0" x="508.00" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm0" x="508.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="508.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm4" x="508.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm4" x="508.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="508.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="508.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm4" x="508.00" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="508.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="508.00" y="156.41" width="8.73" height="8.24"/>
-<rect class="hm1" x="508.00" y="148.25" width="8.73" height="8.24"/>
+<rect class="hm2" x="508.00" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="508.00" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="508.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="508.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="508.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="508.00" y="107.41" width="8.73" height="8.24"/>
-<rect class="hm6" x="508.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="508.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="508.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm6" x="508.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="508.00" y="99.25" width="8.73" height="8.24"/>
+<rect class="hm0" x="508.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="508.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="508.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="508.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="508.00" y="58.41" width="8.73" height="8.24"/>
@@ -4269,24 +4289,24 @@
 <rect class="hm0" x="508.00" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="516.33" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="516.33" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="516.33" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="516.33" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm0" x="516.33" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="516.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm3" x="516.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="516.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="516.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="516.33" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="516.33" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="164.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="516.33" y="156.41" width="8.73" height="8.24"/>
+<rect class="hm2" x="516.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="516.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="516.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="516.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="516.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="516.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="516.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="516.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="516.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="516.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="516.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="516.33" y="58.41" width="8.73" height="8.24"/>
@@ -4294,24 +4314,24 @@
 <rect class="hm0" x="516.33" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="524.67" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="524.67" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="524.67" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="524.67" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm0" x="524.67" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="524.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="524.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="524.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="524.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="524.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="524.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="164.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="524.67" y="156.41" width="8.73" height="8.24"/>
+<rect class="hm2" x="524.67" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="524.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="524.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="524.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="524.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="524.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="524.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="524.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="524.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="524.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="524.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="524.67" y="58.41" width="8.73" height="8.24"/>
@@ -4319,62 +4339,62 @@
 <rect class="hm0" x="524.67" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="533.00" y="238.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="533.00" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="533.00" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="533.00" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm0" x="533.00" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="533.00" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="533.00" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm3" x="533.00" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="533.00" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="533.00" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm3" x="533.00" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="533.00" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="533.00" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="533.00" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="533.00" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="533.00" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="533.00" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="533.00" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="533.00" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="533.00" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="533.00" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="533.00" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="533.00" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="533.00" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="533.00" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="533.00" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="541.33" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="541.33" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="541.33" y="221.75" width="8.73" height="8.24"/>
-<rect class="hm1" x="541.33" y="213.58" width="8.73" height="8.24"/>
+<rect class="hm0" x="541.33" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="541.33" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="541.33" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="541.33" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="541.33" y="180.91" width="8.73" height="8.24"/>
-<rect class="hm3" x="541.33" y="172.75" width="8.73" height="8.24"/>
-<rect class="hm2" x="541.33" y="164.58" width="8.73" height="8.24"/>
+<rect class="hm1" x="541.33" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="541.33" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm2" x="541.33" y="172.75" width="8.73" height="8.24"/>
+<rect class="hm1" x="541.33" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="156.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="148.25" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="140.08" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="541.33" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="541.33" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="541.33" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="541.33" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="541.33" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="541.33" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="541.33" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="541.33" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="541.33" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="541.33" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="541.33" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="541.33" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="541.33" y="42.08" width="8.73" height="8.24"/>
 <rect class="hm0" x="549.67" y="238.08" width="8.73" height="8.24"/>
-<rect class="hm1" x="549.67" y="229.91" width="8.73" height="8.24"/>
-<rect class="hm1" x="549.67" y="221.75" width="8.73" height="8.24"/>
+<rect class="hm0" x="549.67" y="229.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="549.67" y="221.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="549.67" y="213.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="549.67" y="205.41" width="8.73" height="8.24"/>
 <rect class="hm1" x="549.67" y="197.25" width="8.73" height="8.24"/>
-<rect class="hm2" x="549.67" y="189.08" width="8.73" height="8.24"/>
-<rect class="hm2" x="549.67" y="180.91" width="8.73" height="8.24"/>
+<rect class="hm1" x="549.67" y="189.08" width="8.73" height="8.24"/>
+<rect class="hm1" x="549.67" y="180.91" width="8.73" height="8.24"/>
 <rect class="hm2" x="549.67" y="172.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="549.67" y="164.58" width="8.73" height="8.24"/>
 <rect class="hm1" x="549.67" y="156.41" width="8.73" height="8.24"/>
@@ -4383,37 +4403,36 @@
 <rect class="hm1" x="549.67" y="131.91" width="8.73" height="8.24"/>
 <rect class="hm1" x="549.67" y="123.75" width="8.73" height="8.24"/>
 <rect class="hm1" x="549.67" y="115.58" width="8.73" height="8.24"/>
-<rect class="hm1" x="549.67" y="107.41" width="8.73" height="8.24"/>
+<rect class="hm5" x="549.67" y="107.41" width="8.73" height="8.24"/>
 <rect class="hm5" x="549.67" y="99.25" width="8.73" height="8.24"/>
-<rect class="hm5" x="549.67" y="91.08" width="8.73" height="8.24"/>
-<rect class="hm5" x="549.67" y="82.91" width="8.73" height="8.24"/>
+<rect class="hm0" x="549.67" y="91.08" width="8.73" height="8.24"/>
+<rect class="hm0" x="549.67" y="82.91" width="8.73" height="8.24"/>
 <rect class="hm0" x="549.67" y="74.75" width="8.73" height="8.24"/>
 <rect class="hm0" x="549.67" y="66.58" width="8.73" height="8.24"/>
 <rect class="hm0" x="549.67" y="58.41" width="8.73" height="8.24"/>
 <rect class="hm0" x="549.67" y="50.25" width="8.73" height="8.24"/>
 <rect class="hm0" x="549.67" y="42.08" width="8.73" height="8.24"/>
-<line class="gl" x1="58.0" y1="225.7" x2="558.0" y2="225.7"/>
-<text class="tk" x="53.0" y="228.7" text-anchor="end">−10</text>
-<line class="gl" x1="58.0" y1="184.8" x2="558.0" y2="184.8"/>
-<text class="tk" x="53.0" y="187.8" text-anchor="end">−5</text>
+<line class="gl" x1="58.0" y1="208.9" x2="558.0" y2="208.9"/>
+<text class="tk" x="53.0" y="211.9" text-anchor="end">−10</text>
+<line class="gl" x1="58.0" y1="176.4" x2="558.0" y2="176.4"/>
+<text class="tk" x="53.0" y="179.4" text-anchor="end">−5</text>
 <line class="gl" x1="58.0" y1="144.0" x2="558.0" y2="144.0"/>
 <text class="tk" x="53.0" y="147.0" text-anchor="end">+0</text>
-<line class="gl" x1="58.0" y1="103.2" x2="558.0" y2="103.2"/>
-<text class="tk" x="53.0" y="106.2" text-anchor="end">+5</text>
-<line class="gl" x1="58.0" y1="62.3" x2="558.0" y2="62.3"/>
-<text class="tk" x="53.0" y="65.3" text-anchor="end">+10</text>
-<text class="ax" transform="translate(24.0,144.0) rotate(-90)" text-anchor="middle">points depuis l'entrée</text>
+<line class="gl" x1="58.0" y1="111.6" x2="558.0" y2="111.6"/>
+<text class="tk" x="53.0" y="114.6" text-anchor="end">+5</text>
+<line class="gl" x1="58.0" y1="79.1" x2="558.0" y2="79.1"/>
+<text class="tk" x="53.0" y="82.1" text-anchor="end">+10</text>
+<text class="ax" transform="translate(16.0,144.0) rotate(-90)" text-anchor="middle">points depuis l'entrée</text>
 <text class="tk" x="58.0" y="255.0" text-anchor="middle">0</text>
 <text class="tk" x="224.7" y="255.0" text-anchor="middle">10</text>
 <text class="tk" x="391.3" y="255.0" text-anchor="middle">20</text>
 <text class="tk" x="558.0" y="255.0" text-anchor="middle">30</text>
 <line class="ba" x1="58.0" y1="242.0" x2="558.0" y2="242.0"/>
-<path class="ln px" d="M58.00,144.00 L66.47,152.32 L74.95,173.69 L83.42,176.45 L91.90,176.87 L100.37,190.53 L108.85,211.01 L117.32,220.22 L125.80,215.86 L134.27,205.08 L142.75,210.32 L151.22,211.60 L159.69,210.88 L168.17,212.05 L176.64,210.54 L185.12,215.37 L193.59,222.02 L202.07,220.98 L210.54,218.37 L219.02,227.64 L227.49,224.48 L235.97,232.57 L244.44,223.69 L252.92,219.50 L261.39,221.94 L269.86,219.51 L278.34,234.72"></path>
-<path class="ln px" d="M346.14,241.02 L354.61,237.67 L363.08,221.83 L371.56,213.04 L380.03,220.43 L388.51,215.46 L396.98,209.98 L405.46,212.29 L413.93,216.55 L422.41,206.47 L430.88,189.66 L439.36,191.59 L447.83,183.28 L456.31,177.98 L464.78,174.40 L473.25,173.71 L481.73,160.56 L490.20,156.84 L498.68,136.71 L507.15,136.75 L515.63,154.68 L524.10,165.93 L532.58,166.07 L541.05,167.40 L549.53,169.82 L558.00,171.68"></path>
-<rect class="tag" x="432.0" y="88.0" width="124.0" height="14" rx="2"/>
-<text class="tagtx" x="494.0" y="98.5" text-anchor="middle">mur tenu — LPR 0,91</text>
-<rect class="tag" x="420.0" y="177.8" width="136.0" height="14" rx="2"/>
-<text class="tagtx" x="488.0" y="188.3" text-anchor="middle">mur retiré — LPR 0,05</text>
+<path class="ln px" d="M58.00,144.00 L66.47,150.61 L74.95,167.58 L83.42,169.77 L91.90,170.11 L100.37,180.96 L108.85,197.22 L117.32,204.54 L125.80,201.08 L134.27,192.52 L142.75,196.68 L151.22,197.70 L159.69,197.12 L168.17,198.05 L176.64,196.85 L185.12,200.69 L193.59,205.97 L202.07,205.15 L210.54,203.07 L219.02,210.44 L227.49,207.93 L235.97,214.35 L244.44,207.30 L252.92,203.97 L261.39,205.91 L269.86,203.98 L278.34,216.06 L286.81,223.66 L295.29,229.16 L303.76,232.11 L312.24,230.75 L320.71,226.85 L329.19,233.09 L337.66,232.07 L346.14,221.06 L354.61,218.40 L363.08,205.82 L371.56,198.84 L380.03,204.71 L388.51,200.76 L396.98,196.41 L405.46,198.24 L413.93,201.63 L422.41,193.62 L430.88,180.27 L439.36,181.80 L447.83,175.20 L456.31,170.99 L464.78,168.15 L473.25,167.60 L481.73,157.16 L490.20,154.19 L498.68,138.21 L507.15,138.24 L515.63,152.48 L524.10,161.42 L532.58,161.53 L541.05,162.59 L549.53,164.51 L558.00,165.99"></path>
+<rect class="tag" x="432.0" y="98.1" width="124.0" height="14" rx="2"/>
+<text class="tagtx" x="494.0" y="108.6" text-anchor="middle">mur tenu — LPR 0,91</text>
+<rect class="tag" x="420.0" y="169.4" width="136.0" height="14" rx="2"/>
+<text class="tagtx" x="488.0" y="179.9" text-anchor="middle">mur retiré — LPR 0,05</text>
 <rect class="frame" x="58.0" y="46.0" width="500.0" height="196.0"/>
 <text class="hdr" x="58.0" y="284.0">Delta de volume cumulé (CVD)</text>
 <text class="read" x="558.0" y="284.0" text-anchor="end">contrats agressifs nets</text>
@@ -4425,8 +4444,8 @@
 <text class="tk" x="558.0" y="365.0" text-anchor="middle">30</text>
 <line class="ba" x1="58.0" y1="352.0" x2="558.0" y2="352.0"/>
 <text class="ax" x="308.0" y="380.0" text-anchor="middle">minutes</text>
-<line class="zero" x1="58.0" y1="296.0" x2="558.0" y2="296.0"/>
-<path class="ln s1" d="M58.00,296.00 L66.47,297.36 L74.95,306.96 L83.42,307.19 L91.90,311.58 L100.37,315.12 L108.85,324.85 L117.32,325.91 L125.80,325.71 L134.27,318.33 L142.75,319.53 L151.22,313.62 L159.69,313.01 L168.17,315.59 L176.64,318.63 L185.12,322.83 L193.59,321.87 L202.07,322.51 L210.54,324.79 L219.02,327.71 L227.49,327.99 L235.97,332.85 L244.44,324.67 L252.92,323.17 L261.39,324.19 L269.86,321.38 L278.34,329.55 L286.81,332.02 L295.29,333.33 L303.76,334.38 L312.24,333.05 L320.71,335.66 L329.19,340.49 L337.66,344.70 L346.14,340.50 L354.61,340.90 L363.08,335.77 L371.56,330.81 L380.03,330.95 L388.51,330.13 L396.98,329.31 L405.46,326.13 L413.93,328.61 L422.41,326.57 L430.88,318.69 L439.36,319.03 L447.83,316.05 L456.31,317.06 L464.78,315.57 L473.25,314.87 L481.73,311.35 L490.20,312.09 L498.68,302.10 L507.15,301.99 L515.63,309.22 L524.10,311.61 L532.58,312.74 L541.05,313.91 L549.53,313.25 L558.00,314.89"></path>
+<line class="zero" x1="58.0" y1="324.0" x2="558.0" y2="324.0"/>
+<path class="ln s1" d="M58.00,324.00 L66.47,324.68 L74.95,329.48 L83.42,329.59 L91.90,331.79 L100.37,333.56 L108.85,338.43 L117.32,338.96 L125.80,338.86 L134.27,335.17 L142.75,335.77 L151.22,332.81 L159.69,332.50 L168.17,333.79 L176.64,335.31 L185.12,337.41 L193.59,336.93 L202.07,337.26 L210.54,338.40 L219.02,339.86 L227.49,339.99 L235.97,342.42 L244.44,338.34 L252.92,337.58 L261.39,338.10 L269.86,336.69 L278.34,340.78 L286.81,342.01 L295.29,342.66 L303.76,343.19 L312.24,342.53 L320.71,343.83 L329.19,346.25 L337.66,348.35 L346.14,346.25 L354.61,346.45 L363.08,343.88 L371.56,341.40 L380.03,341.47 L388.51,341.06 L396.98,340.66 L405.46,339.07 L413.93,340.30 L422.41,339.28 L430.88,335.35 L439.36,335.51 L447.83,334.02 L456.31,334.53 L464.78,333.79 L473.25,333.44 L481.73,331.68 L490.20,332.04 L498.68,327.05 L507.15,326.99 L515.63,330.61 L524.10,331.81 L532.58,332.37 L541.05,332.96 L549.53,332.63 L558.00,333.44"></path>
 <rect class="hm0" x="58.0" y="265.0" width="15" height="9"/>
 <rect class="hm1" x="73.0" y="265.0" width="15" height="9"/>
 <rect class="hm2" x="88.0" y="265.0" width="15" height="9"/>
@@ -4897,7 +4916,7 @@
 <text class="tk" x="51.0" y="112.0" text-anchor="end">200</text>
 <line class="gl" x1="56.0" y1="89.3" x2="252.0" y2="89.3"/>
 <text class="tk" x="51.0" y="92.3" text-anchor="end">300</text>
-<text class="ax" transform="translate(22.0,139.0) rotate(-90)" text-anchor="middle">R cumulés</text>
+<text class="ax" transform="translate(14.0,139.0) rotate(-90)" text-anchor="middle">R cumulés</text>
 <text class="tk" x="56.0" y="245.0" text-anchor="middle">0</text>
 <text class="tk" x="105.0" y="245.0" text-anchor="middle">126</text>
 <text class="tk" x="154.0" y="245.0" text-anchor="middle">252</text>
@@ -5859,7 +5878,7 @@
 <text class="tk" x="87.0" y="97.7" text-anchor="end">0</text>
 <line class="gl" x1="92.0" y1="46.0" x2="316.0" y2="46.0"/>
 <text class="tk" x="87.0" y="49.0" text-anchor="end">2</text>
-<text class="ax" transform="translate(58.0,119.0) rotate(-90)" text-anchor="middle">‰ par trade</text>
+<text class="ax" transform="translate(50.0,119.0) rotate(-90)" text-anchor="middle">‰ par trade</text>
 <text class="tk" x="92.0" y="205.0" text-anchor="middle">0,0 %</text>
 <text class="tk" x="166.7" y="205.0" text-anchor="middle">1,8 %</text>
 <text class="tk" x="241.3" y="205.0" text-anchor="middle">3,6 %</text>
@@ -7430,9 +7449,10 @@
 <rect class="area ar3" x="555.05" y="183.57" width="40.00" height="76.43"><title>nominal : 0,050</title></rect>
 <text class="tk halo" x="575.0" y="176.6" text-anchor="middle">0,050</text>
 <text class="lg" x="575.0" y="275.0" text-anchor="middle">nominal</text>
-<text class="lg" x="509.0" y="300.0" text-anchor="middle">Mêmes données, même procédure :</text>
-<text class="lg" x="509.0" y="318.0" text-anchor="middle">seul l'ordre de lecture change.</text>
+
+
 </svg></div>
+      <p class="note">Mêmes données, même procédure :. seul l'ordre de lecture change.</p>
     </figure>
 
   <h3>La corrélation ne déplace que la durée</h3>
@@ -8274,7 +8294,7 @@
 <text class="tk" x="57.0" y="70.3" text-anchor="end">2,00</text>
 <line class="gl" x1="62.0" y1="44.0" x2="558.0" y2="44.0"/>
 <text class="tk" x="57.0" y="47.0" text-anchor="end">4,00</text>
-<text class="ax" transform="translate(28.0,133.0) rotate(-90)" text-anchor="middle">c / L</text>
+<text class="ax" transform="translate(20.0,133.0) rotate(-90)" text-anchor="middle">c / L</text>
 <text class="tk" x="84.9" y="235.0" text-anchor="middle">0,003</text>
 <text class="tk" x="156.1" y="235.0" text-anchor="middle">0,005</text>
 <text class="tk" x="227.3" y="235.0" text-anchor="middle">0,010</text>
@@ -8317,7 +8337,7 @@
 <text class="tk" x="57.0" y="327.4" text-anchor="end">8</text>
 <line class="gl" x1="62.0" y1="300.0" x2="558.0" y2="300.0"/>
 <text class="tk" x="57.0" y="303.0" text-anchor="end">10</text>
-<text class="ax" transform="translate(28.0,361.0) rotate(-90)" text-anchor="middle">ticks</text>
+<text class="ax" transform="translate(20.0,361.0) rotate(-90)" text-anchor="middle">ticks</text>
 <text class="tk" x="124.0" y="435.0" text-anchor="middle">ES</text>
 <text class="tk" x="248.0" y="435.0" text-anchor="middle">NQ</text>
 <text class="tk" x="372.0" y="435.0" text-anchor="middle">MES</text>
@@ -8405,7 +8425,7 @@
 <text class="tk" x="57.0" y="122.0" text-anchor="end">+0,00</text>
 <line class="gl" x1="62.0" y1="69.0" x2="362.0" y2="69.0"/>
 <text class="tk" x="57.0" y="72.0" text-anchor="end">+0,30</text>
-<text class="ax" transform="translate(28.0,144.0) rotate(-90)" text-anchor="middle">points depuis l'entrée</text>
+<text class="ax" transform="translate(20.0,144.0) rotate(-90)" text-anchor="middle">points depuis l'entrée</text>
 <text class="tk" x="62.0" y="257.0" text-anchor="middle">0</text>
 <text class="tk" x="162.0" y="257.0" text-anchor="middle">15</text>
 <text class="tk" x="262.0" y="257.0" text-anchor="middle">30</text>
@@ -8547,7 +8567,7 @@
 <text class="tk" x="57.0" y="119.0" text-anchor="end">−6</text>
 <line class="gl" x1="62.0" y1="74.0" x2="362.0" y2="74.0"/>
 <text class="tk" x="57.0" y="77.0" text-anchor="end">+0</text>
-<text class="ax" transform="translate(28.0,144.0) rotate(-90)" text-anchor="middle">multiples du risque</text>
+<text class="ax" transform="translate(20.0,144.0) rotate(-90)" text-anchor="middle">multiples du risque</text>
 <text class="tk" x="62.0" y="255.0" text-anchor="middle">0</text>
 <text class="tk" x="146.0" y="255.0" text-anchor="middle">7</text>
 <text class="tk" x="230.0" y="255.0" text-anchor="middle">14</text>
@@ -8713,7 +8733,7 @@
 <text class="tk" x="57.0" y="73.6" text-anchor="end">90 %</text>
 <line class="gl" x1="62.0" y1="46.0" x2="558.0" y2="46.0"/>
 <text class="tk" x="57.0" y="49.0" text-anchor="end">100 %</text>
-<text class="ax" transform="translate(28.0,132.0) rotate(-90)" text-anchor="middle">capital restant</text>
+<text class="ax" transform="translate(20.0,132.0) rotate(-90)" text-anchor="middle">capital restant</text>
 <text class="tk" x="62.0" y="231.0" text-anchor="middle">0</text>
 <text class="tk" x="149.5" y="231.0" text-anchor="middle">6</text>
 <text class="tk" x="237.1" y="231.0" text-anchor="middle">12</text>
@@ -8753,7 +8773,7 @@
 <text class="tk" x="57.0" y="315.5" text-anchor="end">400×</text>
 <line class="gl" x1="62.0" y1="296.0" x2="558.0" y2="296.0"/>
 <text class="tk" x="57.0" y="299.0" text-anchor="end">900×</text>
-<text class="ax" transform="translate(28.0,344.0) rotate(-90)" text-anchor="middle">levier</text>
+<text class="ax" transform="translate(20.0,344.0) rotate(-90)" text-anchor="middle">levier</text>
 <text class="tk" x="84.9" y="405.0" text-anchor="middle">0,003</text>
 <text class="tk" x="156.1" y="405.0" text-anchor="middle">0,005</text>
 <text class="tk" x="227.3" y="405.0" text-anchor="middle">0,010</text>
@@ -8818,7 +8838,7 @@
 <text class="tk" x="61.0" y="76.9" text-anchor="end">100,0</text>
 <line class="gl" x1="66.0" y1="48.0" x2="558.0" y2="48.0"/>
 <text class="tk" x="61.0" y="51.0" text-anchor="end">200,0</text>
-<text class="ax" transform="translate(32.0,164.0) rotate(-90)" text-anchor="middle">Sharpe annualisé requis</text>
+<text class="ax" transform="translate(24.0,164.0) rotate(-90)" text-anchor="middle">Sharpe annualisé requis</text>
 <text class="tk" x="88.7" y="293.0" text-anchor="middle">0,003</text>
 <text class="tk" x="159.4" y="293.0" text-anchor="middle">0,005</text>
 <text class="tk" x="230.0" y="293.0" text-anchor="middle">0,010</text>
@@ -9009,7 +9029,7 @@
 <text class="tk" x="69.0" y="151.8" text-anchor="end">15</text>
 <line class="gl" x1="74.0" y1="95.7" x2="454.0" y2="95.7"/>
 <text class="tk" x="69.0" y="98.7" text-anchor="end">20</text>
-<text class="ax" transform="translate(40.0,170.0) rotate(-90)" text-anchor="middle">plus longue série d'échecs</text>
+<text class="ax" transform="translate(32.0,170.0) rotate(-90)" text-anchor="middle">plus longue série d'échecs</text>
 <text class="tk" x="112.0" y="305.0" text-anchor="middle">50</text>
 <text class="tk" x="188.0" y="305.0" text-anchor="middle">100</text>
 <text class="tk" x="264.0" y="305.0" text-anchor="middle">200</text>
