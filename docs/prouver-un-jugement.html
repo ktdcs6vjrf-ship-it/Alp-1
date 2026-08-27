@@ -5044,7 +5044,25 @@
 
   <p>La conséquence pour l’opérateur discrétionnaire est directe, et elle contredit l’usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c’est le seul terme de l’équation&nbsp;(1) qui exige un échantillon que l’opérateur n’aura jamais&nbsp;: 555&nbsp;décisions pour établir un Sharpe de 0,10 par décision.</p>
 
-  <p>Les deux autres termes ne demandent aucun échantillon. La friction se lit sur un relevé de courtage&nbsp;; l’exposition se lit sur un journal. Un opérateur qui déplace son jugement de la direction vers l’exécution et la géométrie échange un pari statistique contre un calcul, et c’est un très bon échange.</p>
+  <p>Les deux autres termes ne demandent presque rien. La friction se lit sur un relevé de courtage&nbsp;; l’exposition se calcule. La table ci-dessous chiffre l’écart.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 13</span> — Les trois termes de l’équation (1), et le nombre de décisions qu’il faut pour établir un progrès sur chacun.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Levier</th><th>Terme</th><th>Décisions pour t = 2</th><th>Rapport</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Direction — la dérive µ</td><td>µ</td><td>10 568</td><td>1×</td></tr>
+          <tr class="sep"><td class="wrap">Exécution — entrer à la limite</td><td>c</td><td>9</td><td>1 151× moins</td></tr>
+          <tr><td class="wrap">Contrat — ES plutôt qu’un micro</td><td>c</td><td>aucun</td><td>arithmétique</td></tr>
+          <tr><td class="wrap">Géométrie — la largeur du stop</td><td>E[τ∧T]</td><td>aucun</td><td>arithmétique</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le premier levier est celui sur lequel le jugement se dépense presque toujours, et c’est le seul qui exige un échantillon hors de portée. Le deuxième se mesure sur le relevé de courtage&nbsp;: on compare le prix obtenu au milieu de fourchette, et l’écart-type de cette différence est petit — d’où un échantillon de l’ordre de la dizaine, sous un glissement déclaré de 1,0 tick. Les deux derniers n’exigent aucun échantillon supplémentaire parce qu’ils ne s’estiment pas&nbsp;: ils se calculent à partir de paramètres déjà calibrés. Un opérateur qui déplace son jugement du premier vers les trois autres échange un pari statistique contre un calcul.</p>
+    </figure>
+
+  <p>Établir un progrès d’exécution demande 9&nbsp;décisions, sous un glissement déclaré de 1,0&nbsp;tick — parce qu’on ne mesure pas un avantage noyé dans le bruit du marché, mais un écart entre le prix obtenu et le milieu de fourchette, dont la dispersion est petite. Le contrat et la géométrie n’en demandent aucune&nbsp;: ils ne s’estiment pas, ils se calculent. Un opérateur qui déplace son jugement de la direction vers ces trois-là échange un pari statistique contre une arithmétique, et l’échange se fait à plus de mille contre un.</p>
 
   <p>Trois décisions épuisent l’essentiel. Le <strong>contrat</strong>&nbsp;: sur les deux micro-contrats, la friction dépasse le risque nominal, et la position est perdue avant d’être ouverte. L’<strong>exécution</strong>&nbsp;: entrer à la limite plutôt qu’au marché divise la friction par deux, ce qui divise le seuil par deux. La <strong>géométrie</strong>&nbsp;: c’est le levier quadratique, et c’est de loin le plus puissant — un facteur 329 sépare le pire choix du meilleur.</p>
 

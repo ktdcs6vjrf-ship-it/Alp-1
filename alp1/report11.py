@@ -13,6 +13,12 @@ from . import seuil
 from .costs import COST_BASE, COST_OPTIMISTIC, COST_REALISTIC, ES, MES, NQ
 from .report import Table, num
 
+#: Écart-type du glissement d'exécution, en ticks, par trade. **Déclaré** :
+#: il dépend du carnet et de l'heure, et le document ne le mesure pas. Il ne
+#: sert qu'à chiffrer un ordre de grandeur d'échantillon, et la conclusion
+#: survit à un facteur deux dans un sens comme dans l'autre.
+SD_GLISSEMENT_TICK = 1.0
+
 #: La dérive de travail. Elle est **déclarée**, jamais dérivée de la friction,
 #: et elle est prise au milieu du domaine que le document nº 1 appelle
 #: plausible. C'est tout l'objet de ce chapitre : sortir de la circularité.
@@ -118,7 +124,66 @@ def table_circularite() -> Table:
              "chapitre-ci déclare la sienne et ne la dérive de rien.")
 
 
-TABLES = (table_seuil, table_ecart, table_circularite)
+def table_leviers() -> Table:
+    """Les trois termes de l'équation, et ce que chacun coûte à établir.
+
+    C'est la table qui décide de l'emploi du jugement discrétionnaire. Les
+    trois leviers ne se valent pas par leur effet — ils se valent encore moins
+    par l'échantillon qu'ils réclament.
+    """
+    from .entropy import trades_for_information
+    from .strategy import REFERENCE_BITS
+
+    tick = ES.tick_size
+    gain = COST_BASE.friction_points(ES) - COST_OPTIMISTIC.friction_points(ES)
+    sd = SD_GLISSEMENT_TICK * tick
+    n_exec = (2.0 * sd / gain) ** 2
+    n_dir = trades_for_information(REFERENCE_BITS)
+
+    declare = geometry_or_none = seuil.geometry(0.010)
+    optimum = seuil.best(DERIVE_TRAVAIL)
+    rows = [
+        ["Direction — la dérive µ",
+         "µ",
+         num(n_dir, 0),
+         "1×"],
+        ["Exécution — entrer à la limite",
+         "c",
+         num(n_exec, 0),
+         num(n_dir / n_exec, 0) + "× moins"],
+        ["Contrat — ES plutôt qu'un micro",
+         "c",
+         "aucun",
+         "arithmétique"],
+        ["Géométrie — la largeur du stop",
+         "E[τ∧T]",
+         "aucun",
+         "arithmétique"],
+    ]
+    return Table(
+        "leviers",
+        "Les trois termes de l'équation (1), et le nombre de décisions qu'il "
+        "faut pour établir un progrès sur chacun.",
+        ["Levier", "Terme", "Décisions pour t = 2", "Rapport"],
+        rows,
+        wrap_cols=[0],
+        wide=True,
+        rules_after=[1],
+        note="Le premier levier est celui sur lequel le jugement se dépense "
+             "presque toujours, et c'est le seul qui exige un échantillon "
+             "hors de portée. Le deuxième se mesure sur le relevé de "
+             "courtage&nbsp;: on compare le prix obtenu au milieu de "
+             "fourchette, et l'écart-type de cette différence est petit — "
+             "d'où un échantillon de l'ordre de la dizaine, sous un "
+             "glissement déclaré de " + num(SD_GLISSEMENT_TICK, 1) + " tick. "
+             "Les deux derniers n'exigent aucun échantillon supplémentaire "
+             "parce qu'ils ne s'estiment pas&nbsp;: ils se calculent à partir "
+             "de paramètres déjà calibrés. Un opérateur qui déplace son "
+             "jugement du premier vers les trois autres échange un pari "
+             "statistique contre un calcul.")
+
+
+TABLES = (table_seuil, table_ecart, table_circularite, table_leviers)
 
 
 def all_tables() -> dict[str, Table]:
@@ -149,6 +214,10 @@ def values() -> dict[str, str]:
                              / seuil.PLAUSIBLE_DRIFT_PER_HOUR[1], 1),
         "s_stop_declare": num(declare.stop_pct, 3),
         "s_cl_declare": num(declare.friction_ratio * 100.0, 0) + " %",
+        "s_n_exec": num((2.0 * SD_GLISSEMENT_TICK * ES.tick_size
+                         / (COST_BASE.friction_points(ES)
+                            - COST_OPTIMISTIC.friction_points(ES))) ** 2, 0),
+        "s_sd_glissement": num(SD_GLISSEMENT_TICK, 1),
     }
 
 
