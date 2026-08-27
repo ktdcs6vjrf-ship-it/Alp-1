@@ -63,7 +63,7 @@ def fig_friction_wall() -> str:
     compare, contrat par contrat, la largeur du stop et celle de la friction,
     toutes deux en ticks : c'est la seule unité dans laquelle un stop se juge.
     """
-    b = Board(640, 470)
+    b = Board(640, 486)
 
     p1 = Panel(b, 62, 44, 496, 178,
                title="Friction rapportée au risque nominal",
@@ -103,7 +103,10 @@ def fig_friction_wall() -> str:
     b.legend(62, 268, [("s3", "friction optimiste"), ("s1", "référence"),
                        ("s2", "réaliste")], step=132, kind="line")
 
-    p2 = Panel(b, 62, 300, 496, 122, title="Stop et friction, en ticks du contrat",
+    # Seize points plus bas : la lecture de ce cadre, reportée au-dessus de
+    # son titre faute de place à côté de lui, tombait sur la légende du cadre
+    # du haut — elle aussi alignée sur la droite de la planche.
+    p2 = Panel(b, 62, 316, 496, 122, title="Stop et friction, en ticks du contrat",
                readout="stop 0,010 % · barre pleine = friction")
     contrats = (ES, NQ, MES, MNQ)
     p2.domain(-0.5, len(contrats) - 0.5, 0.0, 10.0)
@@ -120,10 +123,13 @@ def fig_friction_wall() -> str:
                 tip=f"{c.symbol} — friction {_num(fr, 2)} ticks")
         if fr >= st:
             p2.label(i, max(st, fr), "c/L > 1", dx=0, dy=-8, anchor="middle")
-    b.legend(62, 446, [("hm2", "largeur du stop"),
+    # Légende et pied suivent le cadre de seize points : tout ce qui est
+    # ancré sous un cadre déplacé doit se déplacer avec lui, sans quoi les
+    # graduations d'abscisse viennent s'y poser.
+    b.legend(62, 462, [("hm2", "largeur du stop"),
                        ("hm6", "friction aller-retour"),
                        ("negf", "friction supérieure au stop")], step=180)
-    b.caption(320, 464, "friction du scénario de référence — commission plus "
+    b.caption(320, 478, "friction du scénario de référence — commission plus "
                         "un tick de sortie, aucune donnée de marché")
     return b.render("Friction rapportée au risque selon la largeur du stop, "
                     "et comparaison en ticks par contrat")
@@ -205,7 +211,9 @@ def fig_spread_bite() -> str:
         v = F.noise_stop_probability(stop_points(INDEX_LEVEL, x),
                                      SPREAD_TICKS * tick, SIGMA_1MIN)
         p3.dot(x, v, "s2", tip=f"{v * 100:.1f} %")
-        p3.label(x, v, f"{v * 100:.0f} %", dx=8, dy=-6)
+        # Sous le point quand celui-ci frôle le haut du cadre : au-dessus,
+        # l'étiquette sortait du cadre et venait sur le titre.
+        p3.label(x, v, f"{v * 100:.0f} %", dx=8, dy=-6 if v < 0.85 else 15)
     b.caption(320, 448, "trajectoire de cotation simulée de façon déterministe "
                         "— le prix efficient n'y bouge pas d'un point")
     return b.render("Rebond de cotation, part du stop consommée par le spread, "
@@ -407,7 +415,11 @@ def fig_sharpe_requirement() -> str:
         p1.label(x, v, f"{_num(x, 3)} % → {_num(v, 1)}", dx=8,
                  dy=13 if x > 0.02 else -7)
 
-    p2 = Panel(b, 66, 328, 492, 34, title="Exposition moyenne d'une tentative",
+    # Vingt points plus bas : le libellé d'abscisse du cadre du haut, posé à
+    # 302, partageait sa ligne avec l'en-tête du cadre du bas — titre et
+    # lecture, cette dernière reportée au-dessus du titre faute de place à
+    # côté de lui.
+    p2 = Panel(b, 66, 348, 492, 34, title="Exposition moyenne d'une tentative",
                readout="minutes, sous contrainte de séance")
     p2.domain(0.0020, 0.25, 0.0, 32.0, xlog=True)
     p2.frame()
@@ -415,7 +427,7 @@ def fig_sharpe_requirement() -> str:
     p2.band_x(STOP_PCT_BOX[0], STOP_PCT_BOX[1])
     p2.path([(x, _exposure(x)) for x in
              [0.0020 * (1.0233 ** i) for i in range(210)]], "s1")
-    b.caption(320, 388, "l'exigence monte par deux canaux à la fois — la "
+    b.caption(320, 408, "l'exigence monte par deux canaux à la fois — la "
                         "friction relative croît, l'exposition s'effondre")
     return b.render("Ratio de Sharpe annualisé exigé selon la largeur du stop, "
                     "et exposition moyenne correspondante")
@@ -434,7 +446,7 @@ def fig_streak_diagnostic() -> str:
     dérive. C'est le seul instrument du document qui ne demande aucune donnée
     de marché et rende pourtant une propriété de la pratique.
     """
-    b = Board(640, 400)
+    b = Board(640, 412)
     series = list(range(2, 25))
     tailles = [50, 100, 200, 400, 800]
 
@@ -498,7 +510,7 @@ def fig_streak_diagnostic() -> str:
     for k in F.OBSERVED_STREAK:
         rr = F.implied_reward_risk(F.implied_hit_rate(k, 200))
         p3.dot(float(k), rr, "s2", tip=f"série de {k} → 1:{_num(rr, 2)}")
-    b.caption(320, 392, "une série maximale courte n'est pas une bonne "
+    b.caption(320, 404, "une série maximale courte n'est pas une bonne "
                         "nouvelle : elle implique un ratio bas — les cases "
                         "hachurées sont hors domaine")
     return b.render("Ratio gain/risque impliqué par la plus longue série "

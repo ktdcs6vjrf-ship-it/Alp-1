@@ -488,7 +488,9 @@ def fig_resampling() -> str:
     p2.domain(plo, phi, 0.0, 3.0)
     p2.frame()
     p2.grid_y([1.0, 2.0, 3.0], lambda v: _num(v, 0))
-    p2.grid_x([-0.4, -0.2, 0.0, 0.2, 0.4], lambda v: _num(v, 1),
+    # Cinq graduations ne tiennent pas sur la largeur de ce cadre : « −0,4 »
+    # et « −0,2 » se touchaient. Trois suffisent, les extrêmes et le zéro.
+    p2.grid_x([-0.4, 0.0, 0.4], lambda v: _num(v, 1),
               label="E[R] sous signes aléatoires")
     histogram(p2, perm, 32, "area ar2", plo, phi, width_frac=0.96)
     p2.vline(observed, "lvl strong")

@@ -756,7 +756,10 @@ def fig_fib_retracement() -> str:
     oo = outcome_scaled(a, target + gain, SESSION_MIN, SIGMA_1MIN, HURST)
     mu_star = FRICTION / om.expected_time
 
-    p2 = Panel(b, 380, 50, 218, 212, title="Écart d'espérance par signal",
+    # Six points plus étroit : le libellé d'ordonnée pivoté, porté à droite,
+    # est plaqué contre le bord de la planche par le bornage et venait
+    # effleurer les graduations. Rendre la place au cadre les sépare.
+    p2 = Panel(b, 380, 50, 212, 212, title="Écart d'espérance par signal",
                readout="Δ = E(OTE) − E(marché)")
     p2.domain(0.0, 3.0, -0.9, 0.4)
     p2.frame()
