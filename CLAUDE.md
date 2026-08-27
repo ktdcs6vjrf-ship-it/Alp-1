@@ -141,6 +141,21 @@ Le code d'une figure peut être juste et la figure fausse. Trois défauts n'ont
   remplacé le critère ; `Board.annotation` sert aux phrases qui doivent rester
   dans la figure.
 
+Le même défaut a été retrouvé six fois, dont quatre dans ALP nº 1 : un
+domaine écrit à la main, plus étroit que ce que la figure calcule. La surface
+d'espérance de la figure 1 montrait des échardes verticales ; le sommet de
+Kelly, seul objet du cadre qui le porte, était au-dessus du cadre ; les deux
+mesures gaussiennes de la queue débordaient jusqu'à la ligne de lecture. La
+cause commune était que `figures.Canvas` ne découpait pas au domaine, à la
+différence de `figterm.Panel`. Il le fait maintenant — mais **le découpage est
+un filet, pas une dispense : un domaine se déduit des données.**
+
+Corollaire qui a mordu deux fois : **une légende écrite devant un cadre borné
+décrit le bornage, pas la donnée.** « La surface est presque plate le long de
+l'axe de l'edge » et « la surface change de signe dans les deux directions »
+étaient toutes deux fausses, et toutes deux vraies de ce que la fenêtre
+laissait voir. Élargir une fenêtre oblige à relire sa légende.
+
 Deux balayages automatiques valent d'être rejoués après toute retouche de
 figure ; ils tiennent en une trentaine de lignes chacun :
 

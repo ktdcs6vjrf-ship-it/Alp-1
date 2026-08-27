@@ -221,9 +221,13 @@ class Panel:
             cy = self.y + self.h / 2
             # À gauche, quarante-deux points et non trente-quatre : le libellé
             # pivoté venait toucher les graduations les plus larges. À droite,
-            # trente et non trente-deux : le texte, pivoté, dépasse de sa
-            # demi-hauteur et sortait de la planche d'un point.
-            dx = self.x - 42 if side == "left" else self.x + self.w + 30
+            # le même écart, mais ramené dans la planche : le texte pivoté
+            # déborde de sa demi-hauteur, et l'y coller de force le faisait
+            # revenir sur les graduations. Le maximum plutôt qu'un compromis.
+            demi = 6.0
+            dx = (self.x - 42 if side == "left"
+                  else min(self.x + self.w + 42,
+                           self.board.width - demi))
             self.board.add(f'<text class="ax" transform="translate({dx:.1f},{cy:.1f}) '
                            f'rotate(-90)" text-anchor="middle">{_esc(label)}</text>')
 

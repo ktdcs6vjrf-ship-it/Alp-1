@@ -887,9 +887,15 @@ def fig_stress() -> str:
     p2.grid_y([4.0 * k for k in range(int(haut // 4) + 1)], lambda v: f"{v:g}")
     for i, (lab, v, cls) in enumerate(tail):
         p2.vbar(i, 0.0, v, 26.0, cls, f"{lab} · {v:.2f} R")
-        p2.board.add(f'<text class="tk" transform="translate({p2.sx(i):.1f},'
-                     f'{p2.y + p2.h + 32:.1f}) rotate(-32)" text-anchor="middle">'
-                     f'{_esc(lab)}</text>')
+        # Sur deux lignes horizontales plutôt qu'en oblique : à −32°, les
+        # quatre libellés se chevauchaient sur cinquante-cinq points de haut,
+        # et un texte pivoté se lit moins vite qu'un texte droit. « VaR » puis
+        # « exacte » tiennent chacun dans la largeur d'une colonne.
+        mesure, loi = lab.split(" ", 1)
+        for k, ligne in enumerate((mesure, loi)):
+            p2.board.add(f'<text class="tk" x="{p2.sx(i):.1f}" '
+                         f'y="{p2.y + p2.h + 14 + 12 * k:.1f}" '
+                         f'text-anchor="middle">{_esc(ligne)}</text>')
     p2.hline(1.0, "lvl strong")
     p2.label(0.0, 1.0, "le stop", dx=0, dy=-9, anchor="middle", cls="lg halo")
 
