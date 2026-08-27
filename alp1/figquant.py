@@ -872,10 +872,16 @@ def fig_stress() -> str:
         ("ES exacte", es_from_law(e0, 0.99), "s1f"),
         ("ES gauss.", es_gaussian(e0.mean, e0.sd, 0.99), "dn"),
     ]
+    # Le haut du cadre se déduit des mesures. Fixé à 14, il coupait les deux
+    # barres gaussiennes — 14,11 et 16,24 R — qui débordaient du cadre
+    # jusqu'à la ligne de lecture. Or l'écart entre la loi exacte et son
+    # approximation gaussienne est tout l'argument du cadre : le tronquer le
+    # supprime.
+    haut = 2.0 * math.ceil(max(v for _, v, _ in tail) * 1.06 / 2.0)
     p2 = Panel(b, 448, 46, 188, 168, title="Queue d'un trade", readout="99 %, en R")
-    p2.domain(-0.6, len(tail) - 0.4, 0.0, 14.0)
+    p2.domain(-0.6, len(tail) - 0.4, 0.0, haut)
     p2.frame()
-    p2.grid_y([0, 4, 8, 12], lambda v: f"{v:g}")
+    p2.grid_y([4.0 * k for k in range(int(haut // 4) + 1)], lambda v: f"{v:g}")
     for i, (lab, v, cls) in enumerate(tail):
         p2.vbar(i, 0.0, v, 26.0, cls, f"{lab} · {v:.2f} R")
         p2.board.add(f'<text class="tk" transform="translate({p2.sx(i):.1f},'
@@ -944,20 +950,29 @@ def fig_sizing() -> str:
     p1 = Panel(b, 92, 46, 224, 146, title="Croissance par trade",
                readout=f"f* = {_num(100 * f_star, 2)} %")
     fmax = 3.0 * f_star
-    p1.domain(0.0, fmax, -0.004, 0.002)
+    # Le domaine se déduit de la courbe. Fixé à −0,004…0,002, il laissait le
+    # sommet de Kelly — +0,00455, c'est-à-dire le point que le cadre existe
+    # pour montrer — au-dessus du cadre, avec son marqueur et son étiquette.
+    # La courbe y entrait et en ressortait, et se lisait comme deux morceaux.
+    _xs = [fmax * k / 200.0 for k in range(201)]
+    _ys = [e0.growth_rate(x) for x in _xs]
+    _pas = 0.002
+    _lo = _pas * math.floor(min(_ys) / _pas)
+    _hi = _pas * math.ceil(max(_ys) / _pas)
+    p1.domain(0.0, fmax, _lo, _hi)
     p1.frame()
-    p1.grid_y([-0.004, -0.002, 0.0, 0.002], lambda v: _num(v * 1000, 0),
-              label="‰ par trade")
+    p1.grid_y([_pas * k for k in range(round(_lo / _pas), round(_hi / _pas) + 1)],
+              lambda v: _num(v * 1000, 0), label="‰ par trade")
     p1.grid_x([0, f_star, 2 * f_star, 3 * f_star],
               lambda v: _num(100 * v, 1) + " %", label="fraction misée")
     p1.hline(0.0, "zero")
-    xs = [fmax * k / 200.0 for k in range(0, 201)]
-    p1.path([(x, e0.growth_rate(x)) for x in xs], "s1")
+    p1.path(list(zip(_xs, _ys)), "s1")
     p1.vline(f_star, "lvl strong")
     p1.dot(f_star, e0.growth_rate(f_star), "s1", f"optimum f* = {f_star:.4f}")
     p1.label(f_star, e0.growth_rate(f_star), "Kelly", dx=7, dy=-6, cls="dl halo")
     p1.vline(2 * f_star, "lvl")
-    p1.label(2 * f_star, -0.0032, "2× Kelly", dx=-6, dy=0, anchor="end", cls="lg halo")
+    p1.label(2 * f_star, _lo + 0.15 * (_hi - _lo), "2× Kelly", dx=-6, dy=0,
+             anchor="end", cls="lg halo")
 
     theta = adjustment_coefficient(e0)
     p2 = Panel(b, 380, 46, 192, 146, title="Ruine de Lundberg",
@@ -984,11 +999,23 @@ def fig_sizing() -> str:
         target = (k * mu_star * o20.expected_time - q.FRICTION) / q.STOP_PTS
         law = base.tilted_to_mean(target)
         z.append([law.growth_rate(fr) for fr in fracs])
+    # Même correction sur la surface : les seize hauteurs vont de −0,0286 à
+    # +0,0566, et la fenêtre déclarée n'en couvrait que sept pour cent.
+    # Quatorze sommets sur seize se retrouvaient bornés, écrasés contre le
+    # haut ou le bas, et la surface se réduisait à deux nappes reliées par
+    # des pans verticaux. On ne pouvait pas y vérifier ce que la légende
+    # affirme, à savoir qu'elle est presque plate selon l'axe de l'edge.
+    _splat = [v for ligne in z for v in ligne]
+    _spas = 0.02
+    _slo = _spas * math.floor(min(_splat) / _spas)
+    _shi = _spas * math.ceil(max(_splat) / _spas)
     surface(
-        b, 330.0, 412.0, z, -0.0022, 0.0038, cx=25.0, cy=11.0, cz=118.0,
+        b, 330.0, 412.0, z, _slo, _shi, cx=25.0, cy=11.0, cz=118.0,
         row_labels=["edge µ*", "", "", "5 µ*"],
         col_labels=["", "", "", "3 f*"],
-        z_ticks=[(-0.002, "−2"), (0.0, "0"), (0.002, "+2")],
+        z_ticks=[(v, _signed(v * 1000, 0) if v else "0")
+                 for v in (_spas * k for k in range(round(_slo / _spas),
+                                                    round(_shi / _spas) + 1))],
         tip="croissance = {v:+.5f} par trade",
     )
     b.add('<text class="hdr" x="56" y="248">Croissance (‰ par trade)</text>')

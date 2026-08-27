@@ -84,7 +84,10 @@ def fig_friction_wall() -> str:
         p1.path(pts, cls, tip=f"friction {nom}")
 
     p1.hline(1.0, "lvl strong")
-    p1.label(0.0022, 1.28, "mur : la friction égale le risque", cls="dl halo")
+    # Sous la ligne d'unité, non au-dessus : au-dessus, l'étiquette venait se
+    # poser sur celle du premier point, qui annonce précisément un c/L de
+    # 1,100 et se place elle aussi juste au-dessus de la ligne.
+    p1.label(0.0022, 0.72, "mur : la friction égale le risque", cls="dl halo")
     for x in STOP_PCT_BOX:
         v = _cl(x)
         p1.dot(x, v, "s1", tip=f"stop {_num(x, 3)} % — c/L = {_num(v, 3)}")
@@ -92,7 +95,9 @@ def fig_friction_wall() -> str:
     v50 = _cl(0.050)
     p1.dot(0.050, v50, "s1", tip="ancienne calibration")
     p1.label(0.050, v50, f"0,050 % → {_num(v50, 3)}", dx=8, dy=13)
-    b.legend(62, 246, [("s3", "friction optimiste"), ("s1", "référence"),
+    # Seize points plus bas : à 246, la légende partageait sa ligne avec le
+    # libellé d'abscisse du cadre, posé à 250.
+    b.legend(62, 264, [("s3", "friction optimiste"), ("s1", "référence"),
                        ("s2", "réaliste")], step=150, kind="line")
 
     p2 = Panel(b, 62, 300, 496, 122, title="Stop et friction, en ticks du contrat",
@@ -237,7 +242,9 @@ def fig_forcing_ladder() -> str:
     p1.dot(1.0 / p, fin, "s2", tip=f"{_signed(fin, 2)} R")
     p1.label(1.0 / p, fin, f"{_signed(fin, 1)} R", dx=-8, dy=14, anchor="end")
     p1.label(2.0, 1.6, "brut : revient exactement à zéro")
-    b.legend(62, 262, [("s3", "avant friction"), ("s2", "après friction")],
+    # Dix points plus haut : à 262, la légende partageait sa ligne avec les
+    # libellés d'abscisse des deux cadres, posés à 270.
+    b.legend(62, 252, [("s3", "avant friction"), ("s2", "après friction")],
              step=160, kind="line")
 
     p2 = Panel(b, 404, 46, 154, 196, title="Séries d'échecs",
@@ -256,13 +263,19 @@ def fig_forcing_ladder() -> str:
     v = F.streak_probability(p, F.OBSERVED_STREAK[1])
     p2.dot(float(F.OBSERVED_STREAK[1]), v, "s2")
 
+    # La lecture longue passait sur deux lignes — c'est ce que fait `Panel`
+    # quand titre et lecture ne tiennent pas côte à côte — et la ligne du
+    # dessus tombait sur les libellés d'abscisse des cadres du haut. L'unité
+    # part sur l'axe, où elle a sa place, et la lecture se réduit à ce que le
+    # titre ne dit pas.
     p3 = Panel(b, 62, 300, 496, 68,
                title="Ce que le forçage coûte, par ratio visé",
-               readout="multiples du risque, jusqu'à la première réussite")
+               readout="par largeur de stop")
     ratios = (5.0, 10.0, 20.0, 30.0)
     p3.domain(-0.5, len(ratios) - 0.5, -36.0, 0.0)
     p3.frame()
-    p3.grid_y([-36, -24, -12, 0], lambda v: _signed(v, 0))
+    p3.grid_y([-36, -24, -12, 0], lambda v: _signed(v, 0),
+              "multiples du risque")
     p3.grid_x(list(range(len(ratios))), lambda v: f"1:{ratios[int(v)]:.0f}")
     for i, rr in enumerate(ratios):
         for j, (pct, cls) in enumerate(((0.010, "hm3"), (0.005, "hm6"))):
@@ -308,9 +321,16 @@ def fig_capital_path() -> str:
         p1.dot(float(k), v, "s2", tip=f"{k} pertes — {_num((1 - v) * 100, 1)} % effacés")
     n50 = F.losses_to_drawdown(0.02, 0.5)
     p1.vline(n50, "lvl")
-    p1.label(n50, 0.92, f"−50 % à {_num(n50, 0)} pertes", dx=6, dy=0)
-    b.legend(62, 240, [("s3", "0,5 % par tentative"), ("s1", "1 %"),
-                       ("s2", "2 %")], step=170, kind="line")
+    # Ancrée à gauche du trait : le trait tombe sur le bord droit du cadre —
+    # la moitié du capital part à la trente-quatrième perte, dernière abscisse
+    # du domaine — et l'étiquette posée à sa droite sortait de la planche.
+    p1.label(n50, 0.92, f"−50 % à {_num(n50, 0)} pertes", dx=-6, dy=0,
+             anchor="end", cls="dl halo")
+    # La légende descend dans le tiers bas du cadre, que les trois courbes
+    # laissent vide : posée sous le cadre, elle partageait sa ligne avec le
+    # libellé d'abscisse.
+    b.legend(76, p1.sy(0.40), [("s3", "0,5 % par tentative"), ("s1", "1 %"),
+                               ("s2", "2 %")], step=150, kind="line")
 
     p2 = Panel(b, 62, 296, 496, 96,
                title="Levier notionnel imposé, et ce qu'un écart emporte",
