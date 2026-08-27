@@ -339,15 +339,20 @@ def fig_plane() -> str:
         _surface(b, ox, 224, z, -span, span, cx=32.0, cy=10.0, cz=134.0,
                  row_labels=[f"{p:.0%}" for p in selectivity],
                  col_labels=[f"{s:g} R" for s in sizing],
-                 z_ticks=([(-span, _num(-span, 2)), (0.0, "0"),
-                           (span, _num(span, 2))] if idx == 0 else []),
+                 # L'échine n'est tracée qu'une fois : les deux surfaces
+                 # partagent la même échelle, et c'est ce partage qui rend la
+                 # comparaison légitime. La note de lecture le dit.
+                 z_ticks=([(-span, _num(-span, 2) + " R"), (0.0, "0"),
+                           (span, _num(span, 2) + " R")] if idx == 0 else []),
                  tip="{v:+.3f} R", classify=diverging)
     b.legend(0, 322, [("negf", "espérance négative"),
                       ("wash", "neutre, sous 0,02 R"),
                       ("hm6", "espérance positive")], step=178)
     _source(b, "Arête gauche : part des setups retenus. Arête droite : mise en "
-               "unités de risque. Sans information, aucun réglage ne déforme "
-               "la surface.")
+               "unités de risque. Les deux surfaces partagent la même échelle "
+               "de hauteur, graduée à gauche : c'est ce partage qui autorise à "
+               "les comparer. Sans information, aucun réglage ne déforme la "
+               "surface.")
     return b.render(
         "Deux surfaces d espérance par décision selon la sélectivité et la "
         "mise, sans puis avec clairvoyance")
@@ -766,10 +771,18 @@ def fig_cloud() -> str:
     b = _plate(330, "Monte-Carlo", "Espérance cumulée sous absence de compétence",
                f"{len(paths)} chemins, bootstrap par blocs")
     p = Panel(b, 66, 62, W - 138, 200)
-    p.domain(ks[3], horizon, lo - marge, hi + marge)
-    p.grid_y([lo, (lo + hi) / 2.0, hi], lambda v: _num(v, 2))
-    p.grid_x([250, 500, 1000, horizon], lambda v: f"{v:g}",
-             label="décisions accumulées")
+    # Grille ronde en ordonnée, et le zéro en fait partie : la ligne
+    # d'espérance nulle tracée plus bas restait sans graduation, donc sans
+    # nom. En abscisse, un pas régulier plutôt que 250-500-1000-1400.
+    cran, pas = 0.05, 0.10
+    y0 = cran * math.floor((lo - marge) / cran)
+    y1 = cran * math.ceil((hi + marge) / cran)
+    p.domain(ks[3], horizon, y0, y1)
+    p.grid_y([pas * k for k in range(math.ceil(y0 / pas),
+                                     math.floor(y1 / pas) + 1)],
+             lambda v: _num(v, 2))
+    p.grid_x([t for t in range(250, horizon, 250) if horizon - t >= 150]
+             + [horizon], lambda v: f"{v:g}", label="décisions accumulées")
 
     # La bande interquantile, posée avant les chemins pour rester au fond.
     haut = [(k, quantile(par_k[k], 0.95)) for k in ks[3:]]
@@ -926,11 +939,19 @@ def fig_rolling() -> str:
                f"Espérance mesurée sur {FEN} décisions",
                "intervalle à 95 %")
     p = Panel(b, 66, 62, W - 118, 194)
+    # Bornes et graduations sur une grille ronde. Calées au plus juste, elles
+    # donnaient « 1,03 » et « −0,35 » en ordonnée et « 279 » en abscisse :
+    # des repères qu'aucun lecteur n'interpole de tête.
+    pas = 0.25
+    lo = pas * math.floor(lo / pas)
+    hi = pas * math.ceil(hi / pas)
     p.domain(sans[0][0], max(x for x, _, _ in tout), lo, hi)
-    p.grid_y([lo, (lo + hi) / 2.0, hi], lambda v: _num(v, 2))
+    p.grid_y([pas * k for k in range(round(lo / pas), round(hi / pas) + 1)],
+             lambda v: _num(v, 2))
     dernier = max(x for x, _, _ in tout)
-    p.grid_x([FEN, dernier // 3, 2 * dernier // 3, dernier],
-             lambda v: f"{v:g}", label="décision courante")
+    ticks = [FEN] + [t for t in range(200, dernier + 1, 200)
+                     if t > FEN + 80]
+    p.grid_x(ticks, lambda v: f"{v:g}", label="décision courante")
 
     for pts, cls, lab in ((sans, "s3", "sans"), (avec, "s1", "avec")):
         haut = [(x, m + e) for x, m, e in pts]
@@ -945,9 +966,16 @@ def fig_rolling() -> str:
 
     p.hline(0.0, "lvl strong")
     p.tag(0.0, "espérance nulle", side="left")
+    # Les deux courbes n'ont pas la même longueur, et il faut le dire : sur le
+    # même nombre de séances l'opérateur clairvoyant s'abstient davantage, donc
+    # enregistre moins de décisions. Sans cette phrase, sa courbe passe pour
+    # tronquée.
     _source(b, "Abscisse : rang de la décision courante. Ordonnée : moyenne des "
                f"{FEN} décisions précédentes. La bande est l'intervalle à 95 pour "
-               "cent de cette moyenne.")
+               f"cent de cette moyenne. Les deux séries couvrent {SEANCES} séances "
+               f"chacune : l'opérateur clairvoyant s'abstient davantage et en tire "
+               f"{avec[-1][0]} décisions contre {sans[-1][0]}, d'où une courbe plus "
+               "courte.")
     return b.render(
         "Espérance mesurée sur fenêtre glissante et son intervalle de "
         "confiance, pour deux opérateurs")
@@ -1204,13 +1232,13 @@ def fig_layers() -> str:
                   f'width="{cw - 4:.1f}" height="{ch - 4:.1f}" rx="2">'
                   f'<title>{_esc(nom)} — '
                   f'{"alimente" if actif else "n a pas d effet sur"} '
-                  f'le levier « {k} »</title></rect>')
+                  f'le levier « {NOMS_LEVIERS[k]} »</title></rect>')
 
     for i, k in enumerate(leviers):
         n = sum(1 for c in COUCHES if c[2] == k)
         x = gx + i * cw + cw / 2
         b.add(f'<text class="tk" x="{x:.1f}" y="{gy - 22:.1f}" '
-              f'text-anchor="middle">{_esc(k)}</text>')
+              f'text-anchor="middle">{_esc(NOMS_LEVIERS[k])}</text>')
         b.add(f'<text class="dl" x="{x:.1f}" y="{gy - 9:.1f}" '
               f'text-anchor="middle">{n}</text>')
 

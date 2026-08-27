@@ -768,14 +768,20 @@ def fig_liquidity_map() -> str:
     que le LPR mesure — deux comportements opposés au moment du contact.
     """
     n_t, n_p = 60, 25
-    t_max, half = 30.0, 12.0
-    prices = [(-half + 2.0 * half * j / (n_p - 1)) for j in range(n_p)]
+    t_max = 30.0
 
     noise = _Noise(4242)
     path = [0.0]
     for i in range(1, n_t):
         pull_down = -0.42 if i < 34 else 0.55
         path.append(path[-1] + pull_down + 1.05 * noise.gauss())
+
+    # L'étendue du cadre se déduit de la trajectoire, jamais l'inverse. Fixée
+    # à douze points, elle laissait la trajectoire sortir par le bas : le
+    # tracé, découpé aux bords du domaine, y perdait un morceau et la courbe
+    # semblait interrompue entre la treizième et la dix-septième minute.
+    half = max(12.0, max(abs(v) for v in path) * 1.10)
+    prices = [(-half + 2.0 * half * j / (n_p - 1)) for j in range(n_p)]
 
     wall_hold, wall_pull = 6.0, -5.0
 
@@ -818,7 +824,11 @@ def fig_liquidity_map() -> str:
         cvd.append(cvd[-1] + (path[i] - path[i - 1]) * 0.8 + 0.55 * noise.gauss())
     p2 = Panel(b, 58, 296, 500, 56, title="Delta de volume cumulé (CVD)",
                readout="contrats agressifs nets")
-    p2.domain(0.0, t_max, min(cvd) * 1.15, max(cvd) * 1.15)
+    # Domaine symétrique : le delta cumulé est une grandeur signée, et un
+    # cadre calé sur ses extrêmes posait le zéro sur la bordure haute, où il
+    # cessait de se voir. Le signe est ce que la courbe doit donner à lire.
+    ampl = max(abs(min(cvd)), abs(max(cvd))) * 1.15 or 1.0
+    p2.domain(0.0, t_max, -ampl, ampl)
     p2.frame()
     p2.grid_x([0, 10, 20, 30], lambda v: f"{v:g}", "minutes")
     p2.hline(0.0, "zero")

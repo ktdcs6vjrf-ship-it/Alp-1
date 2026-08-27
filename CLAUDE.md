@@ -123,7 +123,7 @@ Deux pièges déjà tombés dedans, à ne pas refaire :
 ## Commandes
 
 ```
-python main.py --tests      # 768 tests (compter ~10 min, --wp et figures sont lents)
+python main.py --tests      # 770 tests (compter ~20 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit le document de travail
 python main.py --strategy   # rejoue la stratégie scellée et sa batterie
 python main.py --bounds     # la mesure encadrée par les deux remplissages
