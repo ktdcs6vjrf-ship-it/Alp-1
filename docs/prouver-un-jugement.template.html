@@ -557,7 +557,7 @@
   <div class="figures-cles">
     <div><span class="n">{{d_configs}}</span><span class="t">configurations effectives engendrées par {{d_leviers}} leviers discrétionnaires</span></div>
     <div><span class="n">{{d_facteur_1_4}}&nbsp;×</span><span class="t">ce que les trois leviers suivant le premier ajoutent au seuil</span></div>
-    <div><span class="n">{{d_mur_sr10}}</span><span class="t">décisions pour prouver un Sharpe de 0,10, taxe comprise</span></div>
+    <div><span class="n">{{d_mur_sr10}}</span><span class="t">décisions pour prouver un Sharpe de {{d_sharpe_cite}}, taxe comprise</span></div>
     <div><span class="n">{{d_mur_ans10}}&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
     <div><span class="n">{{d_part_entree}}</span><span class="t">de l'avantage attribué au bon levier par la décomposition de Shapley</span></div>
   </div>
@@ -1038,7 +1038,7 @@
 
   <p>Trois conséquences opérationnelles découlent des chiffres ci-dessus.</p>
 
-  <p>D'abord, <strong>l'horizon de preuve est de l'ordre de l'année</strong> aux cadences retenues. Un opérateur qui commence aujourd'hui un journal correct saura dans un peu plus d'un an ce que vaut son processus, à condition que le Sharpe revendiqué soit de l'ordre de 0,10 par décision.</p>
+  <p>D'abord, <strong>l'horizon de preuve est de l'ordre de l'année</strong> aux cadences retenues. Un opérateur qui commence aujourd'hui un journal correct saura dans un peu plus d'un an ce que vaut son processus, à condition que le Sharpe revendiqué soit de l'ordre de {{d_sharpe_cite}} par décision.</p>
 
   <p>Ensuite, <strong>l'effet du format d'enregistrement dépasse celui du nombre de leviers</strong>. Fermer un levier abaisse le seuil d'un facteur faible&nbsp;; un journal sans abstentions rend la loi&nbsp;D inapplicable quel que soit le nombre d'années accumulées.</p>
 

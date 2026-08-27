@@ -219,9 +219,11 @@ class Panel:
                                f'y="{yy + 3:.1f}">{_esc(fmt(v))}</text>')
         if label:
             cy = self.y + self.h / 2
-            # Quarante-deux points, non trente-quatre : à trente-quatre, le
-            # libellé pivoté venait toucher les graduations les plus larges.
-            dx = self.x - 42 if side == "left" else self.x + self.w + 40
+            # À gauche, quarante-deux points et non trente-quatre : le libellé
+            # pivoté venait toucher les graduations les plus larges. À droite,
+            # trente et non trente-deux : le texte, pivoté, dépasse de sa
+            # demi-hauteur et sortait de la planche d'un point.
+            dx = self.x - 42 if side == "left" else self.x + self.w + 30
             self.board.add(f'<text class="ax" transform="translate({dx:.1f},{cy:.1f}) '
                            f'rotate(-90)" text-anchor="middle">{_esc(label)}</text>')
 

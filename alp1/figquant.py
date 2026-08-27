@@ -95,7 +95,10 @@ def surface(
             if not lab:
                 continue
             x, y = proj(k, nj - 1, floor_z)
-            board.add(f'<text class="tk halo" x="{x - 7:.1f}" y="{y + 12:.1f}" '
+            # Trois points plus bas et quatre plus à gauche : le premier
+            # libellé d'arête heurtait la graduation zéro de l'échine, qui
+            # tombe à la même hauteur quand le sol est le plan z = 0.
+            board.add(f'<text class="tk halo" x="{x - 11:.1f}" y="{y + 15:.1f}" '
                       f'text-anchor="end">{_esc(lab)}</text>')
     if col_labels:
         for k, lab in enumerate(col_labels):
@@ -106,7 +109,7 @@ def surface(
                       f'{_esc(lab)}</text>')
 
     if z_ticks:
-        edge = ox - (nj - 1) * cx
+        edge = ox - (nj - 1) * cx - 8.0
         for val, lab in z_ticks:
             _, yy = proj(0, nj - 1, val)
             board.add(f'<text class="tk" x="{edge - 40:.1f}" y="{yy + 3:.1f}" '
@@ -907,11 +910,22 @@ def fig_stress() -> str:
             row.append(jump_adjusted_expectancy(law, model, a, o.expected_time,
                                                 q.SESSION_MIN))
         z.append(row)
+    # Sous la dérive de référence, les seize espérances valent de +1,54 à
+    # +3,12 R. La fenêtre déclarée — −0,15 à +0,25 — les bornait toutes au
+    # plafond : la surface s'affichait comme un plan bleu plat, et sa légende
+    # annonçait un changement de signe dans les deux directions qu'on ne
+    # pouvait ni voir ni obtenir, puisque aucune valeur n'est négative.
+    _jplat = [v for ligne in z for v in ligne]
+    _jpas = 0.5
+    _jlo = _jpas * math.floor(min(_jplat) / _jpas)
+    _jhi = _jpas * math.ceil(max(_jplat) / _jpas)
     surface(
-        b, 330.0, 424.0, z, -0.15, 0.25, cx=25.0, cy=11.0, cz=118.0,
+        b, 330.0, 424.0, z, _jlo, _jhi, cx=25.0, cy=11.0, cz=118.0,
         row_labels=["stop 0,025 %", "0,050 %", "0,100 %", ""],
         col_labels=["", "", "", "λ = 0,40"],
-        z_ticks=[(-0.15, "−0,15"), (0.0, "0"), (0.20, "+0,20")],
+        z_ticks=[(v, _signed(v, 1))
+                 for v in (_jlo + _jpas * k
+                           for k in range(round((_jhi - _jlo) / _jpas) + 1))],
         tip="E[R] corrigée = {v:+.3f} R",
     )
     b.add('<text class="hdr" x="56" y="266">Espérance après correction de saut</text>')
@@ -920,8 +934,17 @@ def fig_stress() -> str:
 
     b.legend(148, 236, [("s1f", "loi exacte"), ("dn", "approximation gaussienne")],
              step=160)
-    b.caption(330, 500, "un stop plus large coûte plus par trade mais encaisse le "
-                        "saut : la surface change de signe dans les deux directions")
+    # La légende disait « la surface change de signe dans les deux
+    # directions ». Aucune des seize valeurs n'est négative ; c'était une
+    # lecture de la fenêtre bornée. Ce que la surface montre est plus net :
+    # un optimum intérieur sur la largeur du stop, et une correction de saut
+    # d'un ordre de grandeur plus petite, qui décroît quand le stop s'élargit.
+    b.caption(330, 494, "l'espérance passe par un maximum en largeur de stop, "
+                        "à 0,100 % ; l'axe du saut la corrige d'au plus "
+                        "sept centièmes de R")
+    b.caption(330, 508, "un stop plus large encaisse mieux le saut : la "
+                        "correction tombe de sept à deux centièmes entre "
+                        "0,050 % et 0,200 %")
     return b.render("Échelle des scénarios de choc, mesures de queue d un trade, et "
                     "espérance corrigée du risque de saut")
 
@@ -938,7 +961,10 @@ def fig_sizing() -> str:
     croissance sans rien ajouter au rendement espéré. La surface du bas
     montre la même chose sur le plan (edge supposé, fraction misée), et son
     message est le seul qui compte en pratique : **l'erreur d'estimation de
-    l'edge se paie sur l'axe de la mise**, pas sur celui du rendement.
+    l'edge se paie sur l'axe de la mise**, pas sur celui du rendement. Le
+    signe de la pente selon la mise y change avec l'edge — négatif à
+    l'équilibre, positif à cinq fois le seuil — ce qui est la forme précise
+    de cette phrase.
     """
     from . import quant as q
     from .drawdown import adjustment_coefficient, risk_of_ruin
@@ -1021,8 +1047,15 @@ def fig_sizing() -> str:
     b.add('<text class="hdr" x="56" y="248">Croissance (‰ par trade)</text>')
     b.add('<text class="sub" x="56" y="263">axe gauche : edge supposé (µ*, 2 µ*, '
           '3 µ*, 5 µ*) · axe droit : fraction misée (½ f*, f*, 2 f*, 3 f*)</text>')
-    b.caption(330, 484, "la surface est presque plate le long de l'axe de l'edge et "
-                        "abrupte le long de celui de la mise")
+    # La légende disait la surface « presque plate le long de l'axe de l'edge
+    # et abrupte le long de celui de la mise ». C'était une lecture de la
+    # fenêtre bornée, qui écrasait quatorze sommets sur seize : une fois la
+    # surface rendue à son étendue, la pente sur l'axe de l'edge va de +19 à
+    # +85 ‰ et domine partout celle sur l'axe de la mise. Ce que la surface
+    # montre vraiment est un changement de signe, et il est plus utile.
+    b.caption(330, 484, "le signe de la pente sur l'axe de la mise est décidé "
+                        "par l'edge : miser plus détruit à l'équilibre, paie "
+                        "à cinq fois le seuil")
     b.caption(330, 498, "surmiser un edge correct ruine plus vite que sous-miser un "
                         "edge fort n'appauvrit")
     return b.render("Croissance logarithmique et fraction de Kelly, probabilité de "

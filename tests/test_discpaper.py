@@ -151,9 +151,23 @@ class TestParametresCentralises(unittest.TestCase):
         cls.corps = cls.gabarit.split("</style>", 1)[1]
 
     def test_aucun_parametre_ecrit_en_clair(self) -> None:
+        """La recherche porte sur la prose entière, non sur le début d'un nœud.
+
+        La première version ne cherchait que `>0,10` — la forme prise par un
+        paramètre placé juste après une balise. Deux occurrences de `0,10`
+        vivaient au milieu de phrases, hors de portée du contrôle : « pour
+        prouver un Sharpe de 0,10 » et « de l'ordre de 0,10 par décision ».
+        On balaie maintenant le texte débarrassé de ses balises, en ignorant
+        ce qui vient des clés — puisque c'est précisément ce qu'on veut.
+        """
+        import re
+
         from alp1 import report10
         from alp1.report import num
 
+        # Le gabarit sans ses balises ni ses clés : il ne reste que ce qu'un
+        # rédacteur a tapé lui-même.
+        prose = re.sub(r"<[^>]+>", " ", re.sub(r"\{\{[^}]*\}\}", " ", self.corps))
         for cle in self.CLES:
             valeur = getattr(report10, cle)
             # On cherche la forme exacte que `num` produirait : c'est celle
@@ -162,10 +176,24 @@ class TestParametresCentralises(unittest.TestCase):
                 litteral = num(valeur, nd)
                 if len(litteral) < 3:
                     continue
-                self.assertNotIn(
-                    f">{litteral}", self.corps,
-                    f"{cle} = {litteral} est écrit en clair dans le gabarit ; "
-                    f"il doit venir de report10.values()")
+                # Les bornes rejettent un chiffre voisin — pour ne pas
+                # confondre « 0,10 » avec « 0,105 » — et rien d'autre : une
+                # virgule de phrase suit très bien un nombre, et l'exclure
+                # rendait le contrôle aveugle au cas même qu'il vise.
+                #
+                # La recherche est explicite et non `assertNotRegex` : celui-ci
+                # déverse la botte de foin entière dans le message, soit
+                # cinquante kilo-octets de gabarit pour une aiguille de quatre
+                # caractères.
+                motif = re.compile(r"(?<![\d.,])" + re.escape(litteral)
+                                   + r"(?!\d)")
+                trouve = motif.search(prose)
+                if trouve is not None:
+                    a = max(0, trouve.start() - 60)
+                    autour = " ".join(prose[a:trouve.end() + 60].split())
+                    self.fail(f"{cle} = {litteral} est écrit en clair dans le "
+                              f"gabarit ; il doit venir de report10.values(). "
+                              f"Contexte : …{autour}…")
 
     def test_les_cles_correspondantes_existent(self) -> None:
         """Les clés qui portent ces paramètres sont bien publiées.
