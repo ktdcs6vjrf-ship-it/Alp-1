@@ -451,9 +451,25 @@ def fig_nulls() -> str:
     b.legend(20, 372, [("barfill", "loi nulle"),
                        ("s1f", "observé, loi battue"),
                        ("negf", "observé, non battue")], step=196, kind="swatch")
-    _source(b, "Une loi est battue quand le trait de l'observé passe à droite du "
-               "seuil. Les deux dernières lois ont un adversaire analytique : "
-               "leur densité est tracée, non simulée.")
+    # Le texte de lecture se déduit des tests plutôt que d'être recopié : une
+    # loi qui changerait d'adversaire renommerait la note toute seule. La
+    # version écrite à la main désignait « les deux dernières », or ce sont
+    # la première et la quatrième.
+    analytiques = [COURT.get(t.key, t.key).lower()
+                   for t in v.tests if not t.sample]
+    boot = next((t for t in v.tests if t.key == "bootstrap"), None)
+    note = ("Les deux graduations d'un cadre sont la moyenne de la loi et "
+            "l'observé. Une loi est battue quand le trait fort passe à droite "
+            "du pointillé. ")
+    if analytiques:
+        note += ("Adversaire analytique pour "
+                 + " et ".join(analytiques)
+                 + " : leur densité est tracée, non simulée. ")
+    if boot is not None:
+        note += ("Le bootstrap se lit autrement : la forme grise y est la "
+                 "distribution de l'espérance rééchantillonnée, l'observé sa "
+                 "borne basse à 2,5 %, et le seuil est zéro.")
+    _source(b, note)
     return b.render(
         "Cinq lois nulles montrées comme distributions, avec la statistique "
         "observée et le seuil à 95 pour cent posés sur chacune")
@@ -462,6 +478,13 @@ def fig_nulls() -> str:
 # ---------------------------------------------------------------------------
 # Figure 5 — la décomposition de Shapley
 # ---------------------------------------------------------------------------
+
+
+#: Les clés des leviers sont des identifiants sans accent ; l'axe d'une figure
+#: française porte des mots français. Le libellé complet de `LEVERS` est une
+#: phrase, trop longue pour une étiquette de ligne ou de colonne.
+NOMS_LEVIERS = {"entree": "entrée", "moment": "moment",
+                "taille": "taille", "sortie": "sortie"}
 
 
 def fig_attribution() -> str:
@@ -474,20 +497,24 @@ def fig_attribution() -> str:
     """
     from .attribution import decompose
 
-    cas = (("plantée dans l'entrée", 0.45, 0.0),
-           ("plantée dans la taille", 0.0, 0.45),
-           ("plantée dans les deux", 0.45, 0.45))
+    # Chaque cas déclare *où* la compétence a été plantée. Le troisième en
+    # plante deux : la figure doit alors désigner les deux, sans quoi elle
+    # laisserait croire que la décomposition n'en trouve qu'un.
+    cas = (("plantée dans l'entrée", 0.45, 0.0, ("entree",)),
+           ("plantée dans la taille", 0.0, 0.45, ("taille",)),
+           ("plantée dans les deux", 0.45, 0.45, ("entree", "taille")))
+
     b = _plate(292, "Attribution",
                "Part de chaque levier selon l'emplacement de la compétence",
                "valeur de Shapley, 16 coalitions")
 
     gauche, largeur, ecart = 70.0, 158.0, 30.0
     haut = 1.05 * max(
-        s.value for _, sk, sz in cas
+        s.value for _, sk, sz, _ in cas
         for s in decompose(synthesise(skill=sk, size_skill=sz,
                                       n_sessions=SESSIONS)).shares)
 
-    for idx, (titre, skill, size_skill) in enumerate(cas):
+    for idx, (titre, skill, size_skill, plantes) in enumerate(cas):
         d = decompose(synthesise(skill=skill, size_skill=size_skill,
                                  n_sessions=SESSIONS))
         x0 = gauche + idx * (largeur + ecart)
@@ -499,7 +526,7 @@ def fig_attribution() -> str:
 
         for k, s in enumerate(d.shares):
             row = len(d.shares) - 1 - k
-            porteur = s.key == d.carrier.key
+            porteur = s.key in plantes
             if s.value > 1e-9:
                 p.hbar(row, 0.0, s.value, 13.0,
                        "s1f" if porteur else "hm2",
@@ -510,14 +537,15 @@ def fig_attribution() -> str:
             if idx == 0:
                 b.add(f'<text class="tk" x="{x0 - 10:.1f}" '
                       f'y="{p.sy(row) + 3.5:.1f}" text-anchor="end">'
-                      f'{_esc(s.key)}</text>')
-            # Étiquette directe sur le seul levier porteur : le reste se lit
-            # à l'axe, et une valeur sur chaque barre serait du bruit.
-            if porteur:
+                      f'{_esc(NOMS_LEVIERS[s.key])}</text>')
+            # Étiquette directe sur les leviers où la compétence a été
+            # plantée : le reste se lit à l'axe, et une valeur sur chaque
+            # barre serait du bruit.
+            if porteur and s.value > 1e-9:
                 p.label(s.value, row, f"{s.fraction:.0%}", dx=6)
 
-    b.legend(gauche, 266, [("s1f", "levier désigné porteur"),
-                           ("hm2", "autres leviers")], step=182)
+    b.legend(gauche, 266, [("s1f", "levier où la compétence est plantée"),
+                           ("hm2", "autres leviers")], step=250)
     _source(b, "Abscisse : part de Shapley, en unités de risque par setup "
                "éligible. Les quatre parts d'un panneau somment à l'avantage total "
                "de ce panneau. Un point marque une part exactement nulle.")
@@ -543,15 +571,17 @@ def fig_tax() -> str:
     catégorielles, qui prétendraient à une identité là où il n'y a qu'un
     rang.
     """
-    ns = ((1000, "hm7"), (3000, "hm5"), (10000, "hm3"))
+    ns = ((1000, "hm7"), (3000, "hm5"), (10000, "hm2"))
     b = _plate(316, "Taxe de multiplicité",
                "Seuil déflaté selon le nombre de leviers ouverts",
                "Bailey et López de Prado")
     p = Panel(b, 62, 62, W - 62, 186)
-    p.domain(0, 8, 0.0, 0.105)
+    # Le domaine va au-delà de la dernière graduation : la marge ainsi
+    # réservée à droite accueille les étiquettes de bout de courbe. Sans
+    # elle, l'étiquette se posait *sur* le trait qu'elle nomme, et un moignon
+    # de ligne dépassait derrière le texte.
+    p.domain(0, 9.7, 0.0, 0.105)
     p.grid_y([0.0, 0.025, 0.05, 0.075, 0.10], lambda v: _num(v, 3))
-    # La dernière graduation tombait sur le bord du cadre et s'y trouvait
-    # rognée ; on arrête la grille un cran avant.
     p.grid_x([0, 1, 2, 3, 4, 5, 6, 7], lambda v: f"{v:g}",
              label="leviers discrétionnaires ouverts")
 
@@ -560,20 +590,25 @@ def fig_tax() -> str:
         # seuil est nul. Le borner à deux ferait démarrer la courbe au niveau
         # d'un levier et masquerait le saut initial, qui est le fait le plus
         # marquant de la figure.
-        pts = [(k, deflated_threshold_sharpe(2 ** k, n)) for k in range(9)]
+        pts = [(k, deflated_threshold_sharpe(2 ** k, n)) for k in range(8)]
         p.path(pts, cls)
-        # Étiquette directe au bout de la courbe : pas de boîte de légende à
-        # traverser des yeux pour identifier trois traits.
-        p.label(8, pts[-1][1], f"{n:,}".replace(",", " ") + " décisions",
-                dx=-4, anchor="end", cls="dl halo")
+        # Étiquette directe au bout de la courbe, posée dans la marge : pas de
+        # boîte de légende à traverser des yeux pour trois traits.
+        p.dot(7, pts[-1][1], cls, r=2.4)
+        p.label(7, pts[-1][1], f"{n:,}".replace(",", " ") + " décisions",
+                dx=8, cls="dl halo")
 
     p.vline(K_LEVERS, "lvl strong")
     p.label(K_LEVERS, 0.099, f"{K_LEVERS} leviers recensés", dx=7)
-    p.label(0, 0.004, "aucune taxe", dx=6)
+    # L'annotation la plus importante de la figure : à budget d'une
+    # configuration, il n'y a rien à sélectionner, donc rien à déflater.
+    # Posée au-dessus de l'origine, elle ne heurte plus la graduation.
+    p.label(0.25, 0.0115, "aucune taxe à zéro levier", dx=0)
     for n, cls in ns:
         val = deflated_threshold_sharpe(2 ** K_LEVERS, n)
-        p.dot(K_LEVERS, val, cls.replace("hm", "s") if False else "s1",
-              f"{K_LEVERS} leviers · {n} décisions · seuil {val:.4f}", r=3.4)
+        p.dot(K_LEVERS, val, cls,
+              f"{K_LEVERS} leviers · " + f"{n:,}".replace(",", "\u202f")
+              + f" décisions · seuil {_num(val, 4)}", r=3.4)
 
     b.add('<text class="ax" x="14" y="155" transform="rotate(-90 14 155)" '
           'text-anchor="middle">Sharpe par décision requis</text>')
@@ -614,7 +649,11 @@ def fig_calibration() -> str:
     p.grid_x([0.0, 0.05, 0.10, 0.15, 0.20], lambda v: _num(v, 2),
              label="information plantée, en bits par décision")
     p.hline(5.0, "lvl strong")
-    p.tag(5.0, "avantage déclarable", side="left")
+    # Le niveau se nomme à droite, là où la courbe est déjà plate. La version
+    # encadrée posée à gauche recouvrait la graduation « 5 » et la bande
+    # d'indécision, c'est-à-dire les deux choses que la figure doit montrer.
+    p.label(p.x1, 5.0, "avantage déclarable", dx=-4, dy=-7, anchor="end",
+            cls="tk halo")
 
     p.path([(bits, n) for _, bits, n, _ in data], "s1")
     for skill, bits, n, sr in data:
@@ -634,8 +673,11 @@ def fig_calibration() -> str:
         haut = max(flous)
         p.label(0.108, 2.30, "l'avantage existe,", dx=0)
         p.label(0.108, 2.30, "mais ne se démontre pas", dx=0, dy=16)
+        # Le trait de rappel entre dans la bande au lieu de s'arrêter à son
+        # bord : posé sur la bordure, il se confondait avec une graduation.
+        centre = 0.5 * (min(flous) + haut)
         b.add(f'<line class="ba" x1="{p.sx(0.104):.1f}" y1="{p.sy(2.30):.1f}" '
-              f'x2="{p.sx(haut):.1f}" y2="{p.sy(2.30):.1f}"/>')
+              f'x2="{p.sx(centre):.1f}" y2="{p.sy(2.30):.1f}"/>')
 
     b.add('<text class="ax" x="14" y="155" transform="rotate(-90 14 155)" '
           'text-anchor="middle">lois nulles battues sur cinq</text>')
@@ -781,7 +823,7 @@ def fig_distribution() -> str:
         lo = int(math.floor(pos))
         return finaux[lo] + (finaux[min(lo + 1, n - 1)] - finaux[lo]) * (pos - lo)
 
-    p05, p25, p50, p75, p95 = (q(v) for v in (0.05, 0.25, 0.50, 0.75, 0.95))
+    p05, p50, p95 = (q(v) for v in (0.05, 0.50, 0.95))
     lo, hi = finaux[0], finaux[-1]
     n_bins = 46
     largeur = (hi - lo) / n_bins
@@ -804,20 +846,32 @@ def fig_distribution() -> str:
         g.vbar(centre, 0, c, (g.w / n_bins) - 1.2,
                "barfill inner" if dedans else "barfill",
                f"{_num(centre, 3)} R — {c} tirage(s)")
-    for v, lab in ((p05, "P5"), (p25, "P25"), (p75, "P75"), (p95, "P95")):
-        g.vline(v, "lvl")
-    g.vline(p50, "lvl strong")
-    g.label(p50, pic * 1.0, "médiane", dx=5, cls="tk halo")
+    # Trois repères seulement, et chacun nommé. Les quartiers P25 et P75
+    # tracés sans étiquette laissaient cinq pointillés dont le lecteur ne
+    # pouvait dire lequel était lequel — cinq traits pour une seule légende.
+    for v, lab, cls in ((p05, "P5", "lvl"),
+                        (p50, "médiane", "lvl strong"),
+                        (p95, "P95", "lvl")):
+        g.vline(v, cls)
+        # Toutes les étiquettes partent à droite de leur trait. Ancrer la
+        # dernière à gauche la ramenait sur « médiane », et les deux mots se
+        # chevauchaient.
+        g.label(v, pic * 1.03, lab, dx=5, cls="tk halo")
 
     d = Panel(b, 372, 66, W - 372, 186, title="Répartition")
     d.domain(lo, hi, 0.0, 1.0)
     d.grid_y([0.0, 0.25, 0.5, 0.75, 1.0], lambda v: f"{v:.0%}")
-    d.grid_x([lo, p50], lambda v: _num(v, 2), label="espérance par décision")
+    d.grid_x([lo, p50, hi], lambda v: _num(v, 2),
+             label="espérance par décision")
     d.path([(v, (i + 1) / n) for i, v in enumerate(finaux)], "s2")
     for v, part in ((p05, 0.05), (p50, 0.50), (p95, 0.95)):
         d.vline(v, "lvl")
         d.dot(v, part, "s1", f"{_num(v, 3)} R atteint dans {1 - part:.0%} des cas")
-    d.label(p95, 0.95, "P95", dx=7, dy=-4, cls="tk halo")
+    # Les trois repères portent le même nom que dans le cadre de gauche, et
+    # se posent sous la courbe : au-dessus, « P95 » tombait dessus.
+    for v, part, lab in ((p05, 0.05, "P5"), (p50, 0.50, "médiane"),
+                         (p95, 0.95, "P95")):
+        d.label(v, part, lab, dx=7, dy=13, cls="tk halo")
 
     _source(b, "La bande claire de l'histogramme couvre 90 pour cent des tirages. "
                "La répartition donne la probabilité qu'une espérance soit "
@@ -1053,14 +1107,21 @@ def fig_waterfall() -> str:
     etapes = [("règle scellée", d.baseline, None)]
     courant = d.baseline
     for s in d.shares:
-        etapes.append((s.key, s.value, courant))
+        etapes.append((NOMS_LEVIERS[s.key], s.value, courant))
         courant += s.value
     etapes.append(("opérateur", courant, None))
 
-    lo = min(0.0, d.baseline) - 0.02
-    hi = courant * 1.14
+    # Les bornes se calent sur une grille ronde, et les graduations sur des
+    # multiples de cinq centièmes. Des bornes calculées au plus juste
+    # donnaient des graduations arbitraires — 0,27 et 0,14 — qu'aucun lecteur
+    # ne peut interpoler de tête.
+    pas, cran = 0.05, 0.025
+    lo = cran * math.floor((min(0.0, d.baseline) - 0.015) / cran)
+    hi = cran * math.ceil((courant * 1.10) / cran)
     p.domain(-0.6, len(etapes) - 0.4, lo, hi)
-    p.grid_y([lo, 0.0, hi / 2, hi], lambda v: _num(v, 2))
+    p.grid_y([pas * k for k in range(math.ceil(lo / pas),
+                                     math.floor(hi / pas) + 1)],
+             lambda v: _num(v, 2))
     p.hline(0.0, "ba")
 
     for i, (nom, val, base) in enumerate(etapes):
@@ -1074,9 +1135,11 @@ def fig_waterfall() -> str:
             cls = "s1f" if val > 1e-9 else "negf"
             p.vbar(i, bas, haut, 36.0, cls,
                    f"{nom} — {val:+.4f} R ({val / d.total:+.0%} du total)")
-            if abs(val) > 0.004:
-                p.label(i, max(haut, bas), _signed(val, 3), dx=0,
-                        dy=-8, anchor="middle")
+            # Une marche trop courte pour se voir reste une marche : sans
+            # étiquette, elle passe pour un défaut de tracé. On l'annonce
+            # comme négligeable plutôt que de l'arrondir à « −0,000 ».
+            texte = _signed(val, 3) if abs(val) >= 0.001 else "≈ 0"
+            p.label(i, max(haut, bas), texte, dx=0, dy=-8, anchor="middle")
             # Le trait de liaison, qui rend la cascade lisible.
             b.add(f'<line class="gl" x1="{p.sx(i - 0.34):.1f}" '
                   f'y1="{p.sy(bas):.1f}" x2="{p.sx(i - 0.66):.1f}" '
@@ -1089,7 +1152,8 @@ def fig_waterfall() -> str:
           f'transform="rotate(-90 20 {p.y + 88:.1f})" text-anchor="middle">'
           f'espérance par setup éligible</text>')
     b.legend(78, 318, [("s2f", "niveau atteint"),
-                       ("s1f", "part d'un levier")], step=178)
+                       ("s1f", "part positive"),
+                       ("negf", "part négative")], step=152)
     _source(b, "Les deux colonnes pleines sont des niveaux ; les marches "
                "intermédiaires sont des contributions. Leur somme est exacte "
                "par construction.")

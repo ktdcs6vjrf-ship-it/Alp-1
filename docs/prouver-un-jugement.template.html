@@ -920,7 +920,7 @@
 
   <p>Deux constructions méritent d'être justifiées. La <strong>sélection au sort</strong> tire le <em>même nombre</em> de setups que l'opérateur, sans remise&nbsp;: tenir la cadence constante n'est pas un raffinement, car un adversaire prenant un nombre différent de setups changerait aussi la variance de la moyenne, et l'écart mesuré mêlerait sélectivité et compétence. Les <strong>issues permutées</strong> le sont <em>à l'intérieur de la séance</em> et non globalement&nbsp;: une permutation globale détruirait la structure de volatilité entre séances — la saisonnalité en U, les jours calmes et les jours agités — et confondrait compétence de chronométrage et simple exposition aux séances favorables.</p>
 
-  {{FIGURE:discnulls|L'observé posé sur chacune de ses cinq lois nulles, pour un opérateur sans clairvoyance puis pour un opérateur compétent. Une barre par loi&nbsp;: l'étendue de la loi nulle jusqu'à son quantile à 95&nbsp;%, et le trait fort de la statistique observée. La planche rend visible le fait qu'un opérateur peut battre trois lois et rester réfuté.}}
+  {{FIGURE:discnulls|L'observé posé sur chacune de ses cinq lois nulles, pour un opérateur dont la clairvoyance est franche. Un cadre par loi&nbsp;: la forme grise est la distribution de la statistique sous cette loi, le pointillé le seuil qu'il faut dépasser, le trait fort la valeur observée. Les cinq seuils doivent tomber du bon côté&nbsp;; une seule loi non battue suffit à refuser.}}
 
   {{FIGURE:discdist|La loi de l'espérance mesurée en l'absence de compétence, en densité puis en répartition. Les quantiles P5 et P95 délimitent l'intervalle qui contient 90&nbsp;pour cent des tirages. La courbe de droite donne la probabilité qu'une espérance donnée soit atteinte sans aucune information sur l'issue.}}
 
@@ -940,7 +940,7 @@
 
   <p>Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L'étendue de cette plage est fixée par la taille de l'échantillon&nbsp;: à {{d_seances}}&nbsp;séances, la transition se situe entre {{d_bits_refuse}} et {{d_bits_declare}}&nbsp;bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d'un taux de déclaration non nul sur la première ligne.</p>
 
-  {{FIGURE:disccalib|Le nombre de lois nulles battues selon l'information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l'appareil ne déclare rien. La bande centrale marque la zone où l'avantage existe sans être démontrable.}}
+  {{FIGURE:disccalib|Le nombre de lois nulles battues selon l'information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l'appareil ne déclare rien. La bande grisée marque la zone où l'avantage existe sans être démontrable.}}
 
   <div class="part">
     <span class="lab">Sixième partie</span>
@@ -975,7 +975,7 @@
 
   <p>C'est la forme de cette progression qui compte&nbsp;: {{d_configs}}&nbsp;configurations ne coûtent pas {{d_configs}}&nbsp;fois plus qu'une seule, ni même quatre fois plus que deux. En exigence d'échantillon, le facteur&nbsp;{{d_facteur_1_4}} sur le seuil se traduit par un facteur quatre sur le nombre de décisions — considérable, et sans commune mesure avec l'exponentielle du nombre de configurations.</p>
 
-  {{FIGURE:disctax|Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d'échantillon. La concavité est le résultat&nbsp;: passer de zéro à un levier coûte davantage que passer de quatre à huit. Le trait vertical marque le recensement de {{d_leviers}}&nbsp;leviers retenu ici.}}
+  {{FIGURE:disctax|Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d'échantillon. La concavité est le résultat&nbsp;: passer de zéro à un levier coûte davantage que passer de quatre à sept. Le trait vertical marque le recensement de {{d_leviers}}&nbsp;leviers retenu ici.}}
 
   <p>La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n'a presque rien à gagner à en fermer un&nbsp;; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.</p>
 
@@ -1071,7 +1071,7 @@
 
   {{FIGURE:discwaterfall|La décomposition de Shapley en cascade, d'un opérateur dont la compétence est plantée dans l'entrée et dans la taille. Les deux colonnes pleines sont des niveaux — l'espérance de la règle scellée et celle de l'opérateur — et les marches intermédiaires sont les parts des quatre leviers. Leur somme est exacte par construction.}}
 
-  {{FIGURE:discattrib|La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. La barre franche est le levier désigné&nbsp;; il est chaque fois celui où la compétence a été plantée.}}
+  {{FIGURE:discattrib|La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. Les barres franches marquent les leviers où la compétence a été plantée&nbsp;; ce sont chaque fois ceux que la décomposition désigne. Le troisième panneau en plante deux, et les deux ressortent.}}
 
   <p>Le levier désigné est chaque fois le bon, et le levier de sortie ressort à zéro exact — ce qui est la vérité, puisque le journal synthétique ne gère aucune sortie, et non une approximation bruitée. En revanche, le levier du chronométrage capte une part parasite qu'il faut nommer&nbsp;: fermer le chronométrage remplace l'issue obtenue par la moyenne de la séance, ce qui détruit aussi la sélection <em>intraséance</em>. Les deux leviers ne sont pas séparables. Shapley signale cette interaction au lieu de la masquer, et c'est une limite du dispositif, non un artefact à corriger.</p>
 
