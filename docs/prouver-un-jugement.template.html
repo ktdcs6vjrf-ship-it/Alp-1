@@ -639,8 +639,16 @@
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
-      <li><span class="pt">Dixième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Dixième partie — Le seuil, et non le signal</span>
         <ol start="31">
+          <li><a href="#s-mauvaise-question">La question posée n’était pas la bonne</a></li>
+          <li><a href="#s-effondrement">Le seuil s’effondre quand le stop s’élargit</a></li>
+          <li><a href="#s-circularite">Une hypothèse qui supposait sa conclusion</a></li>
+          <li><a href="#s-ou-depenser">Où dépenser le jugement</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Onzième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="35">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1083,6 +1091,60 @@
 
   <div class="part">
     <span class="lab">Dixième partie</span>
+    <h2>Le seuil, et non le signal</h2>
+    <p>Ce que l'opérateur ne peut pas prédire, et ce qu'il décide entièrement.</p>
+  </div>
+
+  <h2 id="s-mauvaise-question">La question posée n'était pas la bonne</h2>
+
+  <p>Tout ce qui précède mesure une seule chose&nbsp;: la dérive <span class="v">µ</span> est-elle <em>démontrable</em> avec l'échantillon disponible. La réponse est non, elle est établie par trois routes indépendantes, et rien de ce qui suit ne la remet en cause.</p>
+
+  <p>Mais un trade n'a pas besoin que <span class="v">µ</span> soit démontrable. Il a besoin que <span class="v">µ</span> dépasse le seuil que la géométrie impose. L'identité de Wald, appliquée avec un temps borné par la séance, sépare les deux en une ligne&nbsp;:</p>
+
+  <p class="eq">E[R] = (µ&nbsp;·&nbsp;E[τ∧T] − c) / a<span class="eqn">(1)</span></p>
+
+  <p>d'où le seuil de rentabilité&nbsp;:</p>
+
+  <p class="eq">µ* = c / E[τ∧T]<span class="eqn">(2)</span></p>
+
+  <p><span class="v">µ</span> est une propriété du marché et reste hors de portée. <strong><span class="v">µ*</span> est une propriété de la géométrie, et l'opérateur la fixe entièrement.</strong> C'est une grandeur arithmétique là où <span class="v">µ</span> est statistique&nbsp;: elle ne demande aucun échantillon, aucune loi nulle, aucune taxe de multiplicité. Elle se calcule.</p>
+
+  <h2 id="s-effondrement">Le seuil s'effondre quand le stop s'élargit</h2>
+
+  <p>L'exposition croît comme le carré de la largeur du stop — c'est le régime diffusif, le temps d'atteinte d'une barrière allant comme <span class="v">a²/σ²</span> — pendant que le risque nominal ne croît que linéairement. La friction, elle, est fixe en points. Le seuil décroît donc <em>quadratiquement</em>, et c'est ce qui rend ce levier sans commune mesure avec les autres.</p>
+
+  {{TABLE:seuil}}
+
+  {{FIGURE:discseuil|Le seuil de rentabilité selon la largeur du stop, en échelle logarithmique, avec le domaine de dérive que le document nº&nbsp;1 déclare plausible posé derrière. Le cadre du bas donne l'espérance nette à dérive déclarée&nbsp;; son optimum est intérieur.}}
+
+  <p>À la géométrie déclarée par l'opérateur — un stop de {{s_stop_declare}}&nbsp;% de l'indice — le seuil vaut {{s_mu_declare}}&nbsp;points par heure. Le domaine de dérive que le document nº&nbsp;1 traite comme plausible s'arrête à {{s_plausible_haut}}. <strong>La rentabilité n'y est donc pas improbable&nbsp;: elle est arithmétiquement impossible</strong>, quelle que soit la dérive réelle, tant qu'elle reste dans ce domaine. Aucun signal, aucune couche d'analyse, aucune discipline ne change cela — c'est la géométrie qui ferme la porte.</p>
+
+  <p>À {{s_stop_optimum}}&nbsp;%, le seuil tombe à {{s_mu_optimum}}&nbsp;point par heure, soit six fois sous la borne <em>basse</em> du domaine plausible. L'espérance passe de {{s_er_declare}}&nbsp;R à {{s_er_optimum}}&nbsp;R par trade, <em>à dérive identique</em>. Seule la géométrie a changé.</p>
+
+  {{TABLE:ecart}}
+
+  <p>L'optimum est intérieur, et il l'est pour une raison mécanique qu'il faut énoncer&nbsp;: trop serré, la friction domine — elle mange {{s_cl_declare}} du risque nominal — et l'exposition est trop courte pour que la dérive agisse&nbsp;; trop large, l'exposition sature contre la fin de séance pendant que le risque nominal continue de croître, et l'espérance retombe en <span class="v">1/a</span>. Les deux forces se croisent à {{s_expo_optimum}}&nbsp;minutes d'exposition moyenne.</p>
+
+  <h2 id="s-circularite">Une hypothèse qui supposait sa conclusion</h2>
+
+  <p>Ce chapitre corrige un défaut du document nº&nbsp;1, et il faut le nommer. La dérive de référence y vaut <code>DRIFT_MULTIPLE × c / E[τ]</code>, c'est-à-dire deux fois le seuil de rentabilité. <strong>La dérive y est dérivée de la friction</strong>&nbsp;: l'avantage n'est pas mesuré, il est supposé, et il est supposé exactement au niveau qui rend la stratégie rentable.</p>
+
+  {{TABLE:circularite}}
+
+  <p>Cette dérive supposée vaut {{s_ref_circulaire}}&nbsp;points par heure, soit {{s_ref_facteur}}&nbsp;fois la borne haute du domaine que le même document appelle plausible. Les chapitres de risque qui en dépendent — Sortino, Kelly, drawdown, mesures de queue — tournent donc sous une dérive que le document juge lui-même invraisemblable, et leurs conclusions doivent se lire ainsi. Le présent chapitre déclare sa dérive de travail, {{s_derive_travail}}&nbsp;point par heure, et ne la dérive de rien.</p>
+
+  <h2 id="s-ou-depenser">Où dépenser le jugement</h2>
+
+  <p>La conséquence pour l'opérateur discrétionnaire est directe, et elle contredit l'usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c'est le seul terme de l'équation&nbsp;(1) qui exige un échantillon que l'opérateur n'aura jamais&nbsp;: {{d_mur_sr10}}&nbsp;décisions pour établir un Sharpe de {{d_sharpe_cite}} par décision.</p>
+
+  <p>Les deux autres termes ne demandent aucun échantillon. La friction se lit sur un relevé de courtage&nbsp;; l'exposition se lit sur un journal. Un opérateur qui déplace son jugement de la direction vers l'exécution et la géométrie échange un pari statistique contre un calcul, et c'est un très bon échange.</p>
+
+  <p>Trois décisions épuisent l'essentiel. Le <strong>contrat</strong>&nbsp;: sur les deux micro-contrats, la friction dépasse le risque nominal, et la position est perdue avant d'être ouverte. L'<strong>exécution</strong>&nbsp;: entrer à la limite plutôt qu'au marché divise la friction par deux, ce qui divise le seuil par deux. La <strong>géométrie</strong>&nbsp;: c'est le levier quadratique, et c'est de loin le plus puissant — un facteur {{s_facteur}} sépare le pire choix du meilleur.</p>
+
+  <p>Cela ne crée aucun avantage à partir de rien, et il faut être net là-dessus. À dérive nulle, l'espérance vaut <span class="v">−c/a</span> pour toute géométrie de la grille&nbsp;: négative partout, et l'optimum est de ne pas trader. Le théorème d'arrêt optionnel n'est pas contourné, il n'est jamais contournable. Ce chapitre établit une chose plus faible et plus utile&nbsp;: <strong>conditionnellement à une dérive positive, la géométrie décide si l'opérateur la garde ou si la friction la mange</strong> — et à la géométrie déclarée, elle la mange entièrement.</p>
+
+  <div class="part">
+    <span class="lab">Onzième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

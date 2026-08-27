@@ -1304,3 +1304,97 @@ def _couche(nom: str):
 
 for _cle, _fn in COUCHES_FIGURES.items():
     FIGURES[_cle] = _couche(_fn)
+
+# ---------------------------------------------------------------------------
+# Figure 21 — le seuil, et non le signal
+# ---------------------------------------------------------------------------
+
+
+def fig_seuil() -> str:
+    """Le seuil que la géométrie impose, et ce qu'elle rend à dérive déclarée.
+
+    Deux cadres qui partagent l'abscisse. En haut le seuil `µ* = c/E[τ∧T]`,
+    en échelle logarithmique parce qu'il couvre deux ordres de grandeur, avec
+    la bande de dérive plausible posée derrière : on voit d'un coup d'œil que
+    la géométrie déclarée tombe au-dessus de la bande — donc hors d'atteinte
+    quelle que soit la dérive réelle — et que l'optimum tombe six fois sous sa
+    borne basse. En bas l'espérance nette, dont l'optimum est intérieur.
+    """
+    from . import seuil as S
+    from .report11 import DERIVE_TRAVAIL
+
+    gs = S.scan()
+    xs = [g.stop_pct for g in gs]
+    mus = [g.break_even_per_hour for g in gs]
+    ers = [g.expectancy_r(DERIVE_TRAVAIL) for g in gs]
+    opt = S.best(DERIVE_TRAVAIL)
+    bas, haut = S.PLAUSIBLE_DRIFT_PER_HOUR
+
+    b = _plate(392, "Le seuil, et non le signal",
+               "Ce que la géométrie exige du signal",
+               f"dérive déclarée {_num(DERIVE_TRAVAIL, 1)} pt/h")
+
+    # --- cadre du haut : le seuil ----------------------------------------
+    # Domaines déduits des données, bande plausible comprise : c'est elle qui
+    # décide du verdict, elle doit donc tenir dans le cadre.
+    ylo = min(min(mus), bas) / 1.6
+    yhi = max(max(mus), haut) * 1.6
+    # Pas de « µ » dans l'intitulé : la feuille de style le met en capitales
+    # et le mu minuscule y devient un M. Le symbole vit dans la ligne de
+    # lecture, qui n'est pas capitalisée — même piège que dans `figquant`.
+    p1 = Panel(b, 66, 62, W - 116, 132, title="Seuil de rentabilité",
+               readout="µ* = c / E[τ∧T]")
+    p1.domain(min(xs) / 1.35, max(xs) * 1.35, ylo, yhi, xlog=True, ylog=True)
+    p1.band_y(bas, haut, "wash")
+    p1.frame()
+    # Graduations déduites du domaine, jamais écrites à la main : une
+    # puissance de dix posée hors du domaine serait tout de même tracée —
+    # `grid_y` ne découpe pas — et tomberait entre les deux cadres.
+    dec = [10.0 ** k for k in range(-3, 3)]
+    p1.grid_y([v for v in dec if ylo <= v <= yhi], lambda v: _num(v, 2),
+              "points par heure")
+    p1.grid_x([0.01, 0.025, 0.05, 0.1, 0.2, 0.4], lambda v: _num(v, 3) + " %")
+    p1.path(list(zip(xs, mus)), "s1")
+    for g in gs:
+        p1.dot(g.stop_pct, g.break_even_per_hour,
+               "s1" if g.reachable else "negf",
+               f"stop {_num(g.stop_pct, 3)} % — µ* = "
+               f"{_num(g.break_even_per_hour, 3)} pt/h", r=3.0)
+    p1.label(max(xs) * 1.3, (bas * haut) ** 0.5, "dérive plausible",
+             dx=-4, anchor="end", cls="tk halo")
+    p1.label(xs[0], mus[0], "géométrie déclarée", dx=8, dy=-6, cls="dl halo")
+
+    # --- cadre du bas : l'espérance --------------------------------------
+    lo2 = min(ers) - 0.06 * (max(ers) - min(ers))
+    hi2 = max(ers) + 0.14 * (max(ers) - min(ers))
+    p2 = Panel(b, 66, 250, W - 116, 96,
+               title="Espérance nette par trade",
+               readout="identité de Wald, temps borné par la séance")
+    p2.domain(min(xs) / 1.35, max(xs) * 1.35, lo2, hi2, xlog=True)
+    p2.frame()
+    pas = 0.2
+    p2.grid_y([pas * k for k in range(math.ceil(lo2 / pas),
+                                      math.floor(hi2 / pas) + 1)],
+              lambda v: _num(v, 1), "multiples du risque")
+    p2.grid_x([0.01, 0.025, 0.05, 0.1, 0.2, 0.4], lambda v: _num(v, 3) + " %",
+              "largeur du stop, en % de l\'indice")
+    p2.hline(0.0, "lvl strong")
+    p2.path(list(zip(xs, ers)), "s1")
+    p2.dot(opt.stop_pct, opt.expectancy_r(DERIVE_TRAVAIL), "s1f",
+           f"optimum — {_num(opt.expectancy_r(DERIVE_TRAVAIL), 4)} R", r=4.0)
+    p2.label(opt.stop_pct, opt.expectancy_r(DERIVE_TRAVAIL), "optimum",
+             dx=8, dy=-7, cls="dl halo")
+    p2.dot(xs[0], ers[0], "negf", r=4.0)
+
+    _source(b, "Le seuil ne dépend que de la géométrie et de la friction, "
+               "jamais du signal. La bande est le domaine de dérive que le "
+               "document nº 1 déclare plausible : une géométrie dont le seuil "
+               "passe au-dessus ne peut pas être rentable, quelle que soit la "
+               "dérive réelle. L\'optimum du cadre du bas est intérieur — la "
+               "friction domine à gauche, la saturation de séance à droite.")
+    return b.render(
+        "Seuil de rentabilité et espérance nette selon la largeur du stop, "
+        "avec le domaine de dérive plausible")
+
+
+FIGURES["discseuil"] = fig_seuil

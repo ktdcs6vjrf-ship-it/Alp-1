@@ -754,8 +754,16 @@
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
-      <li><span class="pt">Dixième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Dixième partie — Le seuil, et non le signal</span>
         <ol start="31">
+          <li><a href="#s-mauvaise-question">La question posée n’était pas la bonne</a></li>
+          <li><a href="#s-effondrement">Le seuil s’effondre quand le stop s’élargit</a></li>
+          <li><a href="#s-circularite">Une hypothèse qui supposait sa conclusion</a></li>
+          <li><a href="#s-ou-depenser">Où dépenser le jugement</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Onzième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="35">
           <li><a href="#s-protocole">Ce qu’il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -4841,6 +4849,181 @@
 
   <div class="part">
     <span class="lab">Dixième partie</span>
+    <h2>Le seuil, et non le signal</h2>
+    <p>Ce que l’opérateur ne peut pas prédire, et ce qu’il décide entièrement.</p>
+  </div>
+
+  <h2 id="s-mauvaise-question">La question posée n’était pas la bonne</h2>
+
+  <p>Tout ce qui précède mesure une seule chose&nbsp;: la dérive <span class="v">µ</span> est-elle <em>démontrable</em> avec l’échantillon disponible. La réponse est non, elle est établie par trois routes indépendantes, et rien de ce qui suit ne la remet en cause.</p>
+
+  <p>Mais un trade n’a pas besoin que <span class="v">µ</span> soit démontrable. Il a besoin que <span class="v">µ</span> dépasse le seuil que la géométrie impose. L’identité de Wald, appliquée avec un temps borné par la séance, sépare les deux en une ligne&nbsp;:</p>
+
+  <p class="eq">E[R] = (µ&nbsp;·&nbsp;E[τ∧T] − c) / a<span class="eqn">(1)</span></p>
+
+  <p>d’où le seuil de rentabilité&nbsp;:</p>
+
+  <p class="eq">µ* = c / E[τ∧T]<span class="eqn">(2)</span></p>
+
+  <p><span class="v">µ</span> est une propriété du marché et reste hors de portée. <strong><span class="v">µ*</span> est une propriété de la géométrie, et l’opérateur la fixe entièrement.</strong> C’est une grandeur arithmétique là où <span class="v">µ</span> est statistique&nbsp;: elle ne demande aucun échantillon, aucune loi nulle, aucune taxe de multiplicité. Elle se calcule.</p>
+
+  <h2 id="s-effondrement">Le seuil s’effondre quand le stop s’élargit</h2>
+
+  <p>L’exposition croît comme le carré de la largeur du stop — c’est le régime diffusif, le temps d’atteinte d’une barrière allant comme <span class="v">a²/σ²</span> — pendant que le risque nominal ne croît que linéairement. La friction, elle, est fixe en points. Le seuil décroît donc <em>quadratiquement</em>, et c’est ce qui rend ce levier sans commune mesure avec les autres.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 9</span> — Le seuil de dérive que chaque géométrie impose, et ce qu’elle rend à dérive déclarée.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Stop</th><th>a (pts)</th><th>E[τ∧T] min</th><th>c/L</th><th>µ* (pt/h)</th><th>Dans le plausible</th><th>E[R] à 2,0 pt/h</th></tr></thead>
+        <tbody>
+          <tr><td>0,010 %</td><td>0,60</td><td>2,4</td><td>0,550</td><td>8,189</td><td>non</td><td>−0,4157</td></tr>
+          <tr><td>0,025 %</td><td>1,50</td><td>10,0</td><td>0,220</td><td>1,985</td><td>oui</td><td>+0,0016</td></tr>
+          <tr><td>0,050 %</td><td>3,00</td><td>28,9</td><td>0,110</td><td>0,685</td><td>oui</td><td>+0,2112</td></tr>
+          <tr><td>0,075 %</td><td>4,50</td><td>50,6</td><td>0,073</td><td>0,391</td><td>oui</td><td>+0,3018</td></tr>
+          <tr><td>0,100 %</td><td>6,00</td><td>69,8</td><td>0,055</td><td>0,284</td><td>oui</td><td>+0,3329</td></tr>
+          <tr><td>0,150 %</td><td>9,00</td><td>100,9</td><td>0,037</td><td>0,196</td><td>oui</td><td>+0,3371</td></tr>
+          <tr><td>0,200 %</td><td>12,00</td><td>127,6</td><td>0,028</td><td>0,155</td><td>oui</td><td>+0,3271</td></tr>
+          <tr><td>0,300 %</td><td>18,00</td><td>173,9</td><td>0,018</td><td>0,114</td><td>oui</td><td>+0,3036</td></tr>
+          <tr><td>0,400 %</td><td>24,00</td><td>212,3</td><td>0,014</td><td>0,093</td><td>oui</td><td>+0,2812</td></tr>
+          <tr><td>0,600 %</td><td>36,00</td><td>271,3</td><td>0,009</td><td>0,073</td><td>oui</td><td>+0,2420</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> `µ* = c/E[τ∧T]` est le seuil de rentabilité, et il ne dépend que de la géométrie et de la friction — jamais du signal. Il décroît quadratiquement parce que l’exposition croît comme le carré du stop quand le risque nominal ne croît que linéairement. La dernière colonne est l’identité de Wald à dérive déclarée ; l’optimum y est intérieur, la saturation de séance reprenant d’un côté ce que la friction cède de l’autre.</p>
+    </figure>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 21</span> — Le seuil de rentabilité selon la largeur du stop, en échelle logarithmique, avec le domaine de dérive que le document nº&nbsp;1 déclare plausible posé derrière. Le cadre du bas donne l’espérance nette à dérive déclarée&nbsp;; son optimum est intérieur.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 392" role="img" aria-label="Seuil de rentabilité et espérance nette selon la largeur du stop, avec le domaine de dérive plausible" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL, ET NON LE SIGNAL</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie exige du signal</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">dérive déclarée 2,0 pt/h</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<text class="hdr" x="66.0" y="50.0">Seuil de rentabilité</text>
+<text class="read" x="610.0" y="50.0" text-anchor="end">µ* = c / E[τ∧T]</text>
+<line class="hsep" x1="66.0" y1="56.0" x2="610.0" y2="56.0"/>
+<rect class="wash" x="66.0" y="94.9" width="544.0" height="39.0"/>
+<rect class="frame" x="66.0" y="62.0" width="544.0" height="132.0"/>
+<line class="gl" x1="66.0" y1="175.7" x2="610.0" y2="175.7"/>
+<text class="tk" x="61.0" y="178.7" text-anchor="end">0,10</text>
+<line class="gl" x1="66.0" y1="122.0" x2="610.0" y2="122.0"/>
+<text class="tk" x="61.0" y="125.0" text-anchor="end">1,00</text>
+<line class="gl" x1="66.0" y1="68.3" x2="610.0" y2="68.3"/>
+<text class="tk" x="61.0" y="71.3" text-anchor="end">10,00</text>
+<text class="ax" transform="translate(24.0,128.0) rotate(-90)" text-anchor="middle">points par heure</text>
+<text class="tk" x="100.8" y="207.0" text-anchor="middle">0,010 %</text>
+<text class="tk" x="207.0" y="207.0" text-anchor="middle">0,025 %</text>
+<text class="tk" x="287.3" y="207.0" text-anchor="middle">0,050 %</text>
+<text class="tk" x="367.6" y="207.0" text-anchor="middle">0,100 %</text>
+<text class="tk" x="447.9" y="207.0" text-anchor="middle">0,200 %</text>
+<text class="tk" x="528.2" y="207.0" text-anchor="middle">0,400 %</text>
+<line class="ba" x1="66.0" y1="194.0" x2="610.0" y2="194.0"/>
+<path class="ln s1" d="M100.78,72.96 L206.95,106.00 L287.28,130.83 L334.26,143.90 L367.60,151.39 L414.58,159.98 L447.92,165.46 L494.90,172.66 L528.24,177.33 L575.22,183.04"></path>
+<circle class="pt negf" cx="100.78" cy="72.96" r="3"><title>stop 0,010 % — µ* = 8,189 pt/h</title></circle>
+<circle class="pt s1" cx="206.95" cy="106.00" r="3"><title>stop 0,025 % — µ* = 1,985 pt/h</title></circle>
+<circle class="pt s1" cx="287.28" cy="130.83" r="3"><title>stop 0,050 % — µ* = 0,685 pt/h</title></circle>
+<circle class="pt s1" cx="334.26" cy="143.90" r="3"><title>stop 0,075 % — µ* = 0,391 pt/h</title></circle>
+<circle class="pt s1" cx="367.60" cy="151.39" r="3"><title>stop 0,100 % — µ* = 0,284 pt/h</title></circle>
+<circle class="pt s1" cx="414.58" cy="159.98" r="3"><title>stop 0,150 % — µ* = 0,196 pt/h</title></circle>
+<circle class="pt s1" cx="447.92" cy="165.46" r="3"><title>stop 0,200 % — µ* = 0,155 pt/h</title></circle>
+<circle class="pt s1" cx="494.90" cy="172.66" r="3"><title>stop 0,300 % — µ* = 0,114 pt/h</title></circle>
+<circle class="pt s1" cx="528.24" cy="177.33" r="3"><title>stop 0,400 % — µ* = 0,093 pt/h</title></circle>
+<circle class="pt s1" cx="575.22" cy="183.04" r="3"><title>stop 0,600 % — µ* = 0,073 pt/h</title></circle>
+<text class="tk halo" x="601.6" y="117.4" text-anchor="end">dérive plausible</text>
+<text class="dl halo" x="108.8" y="67.0" text-anchor="start">géométrie déclarée</text>
+<text class="hdr" x="66.0" y="238.0">Espérance nette par trade</text>
+<text class="read" x="610.0" y="238.0" text-anchor="end">identité de Wald, temps borné par la séance</text>
+<line class="hsep" x1="66.0" y1="244.0" x2="610.0" y2="244.0"/>
+<rect class="frame" x="66.0" y="250.0" width="544.0" height="96.0"/>
+<line class="gl" x1="66.0" y1="339.5" x2="610.0" y2="339.5"/>
+<text class="tk" x="61.0" y="342.5" text-anchor="end">-0,4</text>
+<line class="gl" x1="66.0" y1="318.3" x2="610.0" y2="318.3"/>
+<text class="tk" x="61.0" y="321.3" text-anchor="end">-0,2</text>
+<line class="gl" x1="66.0" y1="297.0" x2="610.0" y2="297.0"/>
+<text class="tk" x="61.0" y="300.0" text-anchor="end">0,0</text>
+<line class="gl" x1="66.0" y1="275.8" x2="610.0" y2="275.8"/>
+<text class="tk" x="61.0" y="278.8" text-anchor="end">0,2</text>
+<line class="gl" x1="66.0" y1="254.5" x2="610.0" y2="254.5"/>
+<text class="tk" x="61.0" y="257.5" text-anchor="end">0,4</text>
+<text class="ax" transform="translate(24.0,298.0) rotate(-90)" text-anchor="middle">multiples du risque</text>
+<text class="tk" x="100.8" y="359.0" text-anchor="middle">0,010 %</text>
+<text class="tk" x="207.0" y="359.0" text-anchor="middle">0,025 %</text>
+<text class="tk" x="287.3" y="359.0" text-anchor="middle">0,050 %</text>
+<text class="tk" x="367.6" y="359.0" text-anchor="middle">0,100 %</text>
+<text class="tk" x="447.9" y="359.0" text-anchor="middle">0,200 %</text>
+<text class="tk" x="528.2" y="359.0" text-anchor="middle">0,400 %</text>
+<line class="ba" x1="66.0" y1="346.0" x2="610.0" y2="346.0"/>
+<text class="ax" x="338.0" y="374.0" text-anchor="middle">largeur du stop, en % de l’indice</text>
+<line class="lvl strong" x1="66.0" y1="297.0" x2="610.0" y2="297.0"/>
+<path class="ln s1" d="M100.78,341.20 L206.95,296.85 L287.28,274.57 L334.26,264.95 L367.60,261.65 L414.58,261.20 L447.92,262.26 L494.90,264.75 L528.24,267.14 L575.22,271.30"></path>
+<circle class="pt s1f" cx="414.58" cy="261.20" r="4"><title>optimum — 0,3371 R</title></circle>
+<text class="dl halo" x="422.6" y="254.2" text-anchor="start">optimum</text>
+<circle class="pt negf" cx="100.78" cy="341.20" r="4"></circle>
+
+</svg></div>
+      <p class="note">Le seuil ne dépend que de la géométrie et de la friction, jamais du signal. La bande est le domaine de dérive que le document nº 1 déclare plausible : une géométrie dont le seuil passe au-dessus ne peut pas être rentable, quelle que soit la dérive réelle. L’optimum du cadre du bas est intérieur — la friction domine à gauche, la saturation de séance à droite.</p>
+    </figure>
+
+  <p>À la géométrie déclarée par l’opérateur — un stop de 0,010&nbsp;% de l’indice — le seuil vaut 8,19&nbsp;points par heure. Le domaine de dérive que le document nº&nbsp;1 traite comme plausible s’arrête à 3,2. <strong>La rentabilité n’y est donc pas improbable&nbsp;: elle est arithmétiquement impossible</strong>, quelle que soit la dérive réelle, tant qu’elle reste dans ce domaine. Aucun signal, aucune couche d’analyse, aucune discipline ne change cela — c’est la géométrie qui ferme la porte.</p>
+
+  <p>À 0,150&nbsp;%, le seuil tombe à 0,196&nbsp;point par heure, soit six fois sous la borne <em>basse</em> du domaine plausible. L’espérance passe de −0,416&nbsp;R à +0,337&nbsp;R par trade, <em>à dérive identique</em>. Seule la géométrie a changé.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 10</span> — Le même signal, sept géométries : ce que le choix de l’opérateur fait au seuil qu’il doit franchir.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Configuration</th><th>µ* (pt/h)</th><th>Dans le plausible</th><th>E[R] à 2,0 pt/h</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Stop déclaré, MES, friction réaliste</td><td>32,260</td><td>non</td><td>−2,0323</td></tr>
+          <tr><td class="wrap">Stop déclaré, ES, friction réaliste</td><td>14,393</td><td>non</td><td>−0,8323</td></tr>
+          <tr><td class="wrap">Stop déclaré, ES, friction de référence</td><td>8,189</td><td>non</td><td>−0,4157</td></tr>
+          <tr class="sep"><td class="wrap">Stop déclaré, ES, friction optimiste</td><td>4,095</td><td>non</td><td>−0,1407</td></tr>
+          <tr><td class="wrap">Stop 0,050 %, ES, friction de référence</td><td>0,685</td><td>oui</td><td>+0,2112</td></tr>
+          <tr><td class="wrap">Stop 0,150 %, ES, friction de référence</td><td>0,196</td><td>oui</td><td>+0,3371</td></tr>
+          <tr><td class="wrap">Stop 0,150 %, ES, friction optimiste</td><td>0,098</td><td>oui</td><td>+0,3554</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Aucune ligne ne suppose une dérive différente d’une autre : seule la géométrie change. Les quatre premières lignes sont hors du domaine plausible, et la conclusion qui s’y attache n’est pas que la stratégie est improbable — c’est qu’elle est arithmétiquement impossible, quelle que soit la dérive réelle, tant qu’elle reste dans le domaine que le document nº 1 déclare.</p>
+    </figure>
+
+  <p>L’optimum est intérieur, et il l’est pour une raison mécanique qu’il faut énoncer&nbsp;: trop serré, la friction domine — elle mange 55 % du risque nominal — et l’exposition est trop courte pour que la dérive agisse&nbsp;; trop large, l’exposition sature contre la fin de séance pendant que le risque nominal continue de croître, et l’espérance retombe en <span class="v">1/a</span>. Les deux forces se croisent à 101&nbsp;minutes d’exposition moyenne.</p>
+
+  <h2 id="s-circularite">Une hypothèse qui supposait sa conclusion</h2>
+
+  <p>Ce chapitre corrige un défaut du document nº&nbsp;1, et il faut le nommer. La dérive de référence y vaut <code>DRIFT_MULTIPLE × c / E[τ]</code>, c’est-à-dire deux fois le seuil de rentabilité. <strong>La dérive y est dérivée de la friction</strong>&nbsp;: l’avantage n’est pas mesuré, il est supposé, et il est supposé exactement au niveau qui rend la stratégie rentable.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 11</span> — La dérive de référence du document nº 1, et ce à quoi elle se compare.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Grandeur</th><th>Points par heure</th><th class="wrap">Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Dérive de référence du document nº 1</td><td>16,38</td><td class="wrap">définie comme 2·µ*</td></tr>
+          <tr><td class="wrap">Seuil µ* à la géométrie déclarée</td><td>8,19</td><td class="wrap">mesuré</td></tr>
+          <tr><td class="wrap">Borne haute du domaine plausible</td><td>3,20</td><td class="wrap">déclarée</td></tr>
+          <tr><td class="wrap">Dérive de travail de ce chapitre</td><td>2,00</td><td class="wrap">déclarée, dans le domaine</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La dérive de référence vaut `DRIFT_MULTIPLE × c/E[τ]`, soit deux fois le seuil de rentabilité : elle est **dérivée de la friction**, donc l’avantage y est supposé et non mesuré. Elle vaut 5,1 fois la borne haute du domaine que le même document appelle plausible. Les chapitres de risque qui tournent sous cette dérive doivent se lire ainsi. Ce chapitre-ci déclare la sienne et ne la dérive de rien.</p>
+    </figure>
+
+  <p>Cette dérive supposée vaut 16,4&nbsp;points par heure, soit 5,1&nbsp;fois la borne haute du domaine que le même document appelle plausible. Les chapitres de risque qui en dépendent — Sortino, Kelly, drawdown, mesures de queue — tournent donc sous une dérive que le document juge lui-même invraisemblable, et leurs conclusions doivent se lire ainsi. Le présent chapitre déclare sa dérive de travail, 2,0&nbsp;point par heure, et ne la dérive de rien.</p>
+
+  <h2 id="s-ou-depenser">Où dépenser le jugement</h2>
+
+  <p>La conséquence pour l’opérateur discrétionnaire est directe, et elle contredit l’usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c’est le seul terme de l’équation&nbsp;(1) qui exige un échantillon que l’opérateur n’aura jamais&nbsp;: 555&nbsp;décisions pour établir un Sharpe de 0,10 par décision.</p>
+
+  <p>Les deux autres termes ne demandent aucun échantillon. La friction se lit sur un relevé de courtage&nbsp;; l’exposition se lit sur un journal. Un opérateur qui déplace son jugement de la direction vers l’exécution et la géométrie échange un pari statistique contre un calcul, et c’est un très bon échange.</p>
+
+  <p>Trois décisions épuisent l’essentiel. Le <strong>contrat</strong>&nbsp;: sur les deux micro-contrats, la friction dépasse le risque nominal, et la position est perdue avant d’être ouverte. L’<strong>exécution</strong>&nbsp;: entrer à la limite plutôt qu’au marché divise la friction par deux, ce qui divise le seuil par deux. La <strong>géométrie</strong>&nbsp;: c’est le levier quadratique, et c’est de loin le plus puissant — un facteur 329 sépare le pire choix du meilleur.</p>
+
+  <p>Cela ne crée aucun avantage à partir de rien, et il faut être net là-dessus. À dérive nulle, l’espérance vaut <span class="v">−c/a</span> pour toute géométrie de la grille&nbsp;: négative partout, et l’optimum est de ne pas trader. Le théorème d’arrêt optionnel n’est pas contourné, il n’est jamais contournable. Ce chapitre établit une chose plus faible et plus utile&nbsp;: <strong>conditionnellement à une dérive positive, la géométrie décide si l’opérateur la garde ou si la friction la mange</strong> — et à la géométrie déclarée, elle la mange entièrement.</p>
+
+  <div class="part">
+    <span class="lab">Onzième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n’est pas déclaré avant ne prouve rien après.</p>
   </div>

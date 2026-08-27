@@ -18,7 +18,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import figdisc, report10
+from . import figdisc, report10, report11
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .workingpaper import joindre_pieds
 from .report import Table
@@ -36,11 +36,22 @@ def values() -> dict[str, str]:
     contrairement au document de travail, qui en fusionne neuf et doit
     déclarer ses collisions.
     """
-    return report10.values()
+    fusion = dict(report10.values())
+    collisions = set(fusion) & set(report11.values())
+    if collisions:
+        raise KeyError(f"clés en collision entre report10 et report11 : "
+                       f"{sorted(collisions)}")
+    fusion.update(report11.values())
+    return fusion
 
 
 def tables() -> dict[str, Table]:
-    return report10.all_tables()
+    fusion = dict(report10.all_tables())
+    collisions = set(fusion) & set(report11.all_tables())
+    if collisions:
+        raise KeyError(f"tables en collision : {sorted(collisions)}")
+    fusion.update(report11.all_tables())
+    return fusion
 
 
 def figures() -> dict[str, str]:
