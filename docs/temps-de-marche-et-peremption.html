@@ -4582,39 +4582,47 @@
     </figure>
 
     <figure class="plate">
-      <figcaption><span class="lab">Figure 17</span> — Le rapport Sortino/Sharpe sur la grille des ratios gain/risque et des multiples de dérive, les trois ratios sur la calibration de référence, et la décomposition qui les sépare. La surface est presque plate le long de l'axe de la dérive&nbsp;: le facteur est une propriété de la géométrie, non du signal.</figcaption>
+      <figcaption><span class="lab">Figure 17</span> — Le rapport Sortino/Sharpe sur la grille des ratios gain/risque et des multiples de dérive, les trois ratios sur la calibration de référence, et la décomposition qui les sépare. Le ratio gain/risque gouverne le facteur — il le triple d'un bout à l'autre de la grille — quand la dérive ne le déplace que d'un dixième à 1:5 et de la moitié à 1:30&nbsp;: le facteur est d'abord une propriété de la géométrie, sans être indépendant du signal.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 348" role="img" aria-label="Sharpe, Sortino et Omega, et le facteur que la géométrie impose au rapport des deux premiers" preserveAspectRatio="xMidYMid meet">
 <polygon class="floor" points="166.0,210.0 235.0,247.5 166.0,285.0 97.0,247.5"></polygon>
-<line class="post" x1="166.0" y1="210.0" x2="166.0" y2="167.8"/>
-<line class="post" x1="235.0" y1="247.5" x2="235.0" y2="128.2"/>
-<line class="post" x1="166.0" y1="285.0" x2="166.0" y2="123.0"/>
-<line class="post" x1="97.0" y1="247.5" x2="97.0" y2="194.4"/>
-<polygon class="mesh hm5" points="166.0,148.6 189.0,125.7 166.0,123.0 143.0,140.0"><title>Sortino / Sharpe = 6.13</title></polygon>
-<polygon class="mesh hm3" points="143.0,176.4 166.0,148.6 143.0,140.0 120.0,177.6"><title>Sortino / Sharpe = 4.29</title></polygon>
-<polygon class="mesh hm4" points="189.0,148.3 212.0,130.9 189.0,125.7 166.0,148.6"><title>Sortino / Sharpe = 5.26</title></polygon>
-<polygon class="mesh hm1" points="120.0,187.8 143.0,176.4 120.0,177.6 97.0,194.4"><title>Sortino / Sharpe = 2.74</title></polygon>
-<polygon class="mesh hm2" points="166.0,170.3 189.0,148.3 166.0,148.6 143.0,176.4"><title>Sortino / Sharpe = 3.74</title></polygon>
-<polygon class="mesh hm4" points="212.0,142.6 235.0,128.2 212.0,130.9 189.0,148.3"><title>Sortino / Sharpe = 4.75</title></polygon>
-<polygon class="mesh hm1" points="143.0,178.5 166.0,170.3 143.0,176.4 120.0,187.8"><title>Sortino / Sharpe = 2.45</title></polygon>
-<polygon class="mesh hm2" points="189.0,161.3 212.0,142.6 189.0,148.3 166.0,170.3"><title>Sortino / Sharpe = 3.43</title></polygon>
-<polygon class="mesh hm1" points="166.0,167.8 189.0,161.3 166.0,170.3 143.0,178.5"><title>Sortino / Sharpe = 2.29</title></polygon>
+<line class="post" x1="166.0" y1="210.0" x2="166.0" y2="190.9"/>
+<line class="post" x1="235.0" y1="247.5" x2="235.0" y2="151.3"/>
+<line class="post" x1="166.0" y1="285.0" x2="166.0" y2="131.2"/>
+<line class="post" x1="97.0" y1="247.5" x2="97.0" y2="217.5"/>
+<polygon class="mesh hm5" points="166.0,171.8 189.0,148.8 166.0,131.2 143.0,163.1"><title>Sortino / Sharpe = 6.13</title></polygon>
+<polygon class="mesh hm3" points="143.0,199.6 166.0,171.8 143.0,163.1 120.0,200.8"><title>Sortino / Sharpe = 4.29</title></polygon>
+<polygon class="mesh hm4" points="189.0,171.5 212.0,154.0 189.0,148.8 166.0,171.8"><title>Sortino / Sharpe = 5.26</title></polygon>
+<polygon class="mesh hm1" points="120.0,210.9 143.0,199.6 120.0,200.8 97.0,217.5"><title>Sortino / Sharpe = 2.74</title></polygon>
+<polygon class="mesh hm2" points="166.0,193.5 189.0,171.5 166.0,171.8 143.0,199.6"><title>Sortino / Sharpe = 3.74</title></polygon>
+<polygon class="mesh hm4" points="212.0,165.7 235.0,151.3 212.0,154.0 189.0,171.5"><title>Sortino / Sharpe = 4.75</title></polygon>
+<polygon class="mesh hm1" points="143.0,201.7 166.0,193.5 143.0,199.6 120.0,210.9"><title>Sortino / Sharpe = 2.45</title></polygon>
+<polygon class="mesh hm2" points="189.0,184.4 212.0,165.7 189.0,171.5 166.0,193.5"><title>Sortino / Sharpe = 3.43</title></polygon>
+<polygon class="mesh hm1" points="166.0,190.9 189.0,184.4 166.0,193.5 143.0,201.7"><title>Sortino / Sharpe = 2.29</title></polygon>
 <text class="tk halo" x="86.0" y="262.5" text-anchor="end">1:5</text>
 <text class="tk halo" x="109.0" y="275.0" text-anchor="end">1:10</text>
 <text class="tk halo" x="132.0" y="287.5" text-anchor="end">1:20</text>
 <text class="tk halo" x="155.0" y="300.0" text-anchor="end">1:30</text>
 <text class="tk halo" x="242.0" y="258.5">1,5 µ*</text>
 <text class="tk halo" x="173.0" y="296.0">5 µ*</text>
-<text class="tk" x="49.0" y="250.5" text-anchor="end">0</text>
+<text class="tk" x="49.0" y="250.5" text-anchor="end">1</text>
 <line class="gl" x1="54.0" y1="247.5" x2="65.0" y2="247.5"/>
-<text class="tk" x="49.0" y="204.2" text-anchor="end">2</text>
+<text class="tk" x="49.0" y="227.4" text-anchor="end">2</text>
+<line class="gl" x1="54.0" y1="224.4" x2="65.0" y2="224.4"/>
+<text class="tk" x="49.0" y="204.2" text-anchor="end">3</text>
 <line class="gl" x1="54.0" y1="201.2" x2="65.0" y2="201.2"/>
-<text class="tk" x="49.0" y="157.9" text-anchor="end">4</text>
+<text class="tk" x="49.0" y="181.1" text-anchor="end">4</text>
+<line class="gl" x1="54.0" y1="178.1" x2="65.0" y2="178.1"/>
+<text class="tk" x="49.0" y="157.9" text-anchor="end">5</text>
 <line class="gl" x1="54.0" y1="154.9" x2="65.0" y2="154.9"/>
-<text class="tk" x="49.0" y="111.6" text-anchor="end">6</text>
+<text class="tk" x="49.0" y="134.8" text-anchor="end">6</text>
+<line class="gl" x1="54.0" y1="131.8" x2="65.0" y2="131.8"/>
+<text class="tk" x="49.0" y="111.6" text-anchor="end">7</text>
 <line class="gl" x1="54.0" y1="108.6" x2="65.0" y2="108.6"/>
+<text class="tk" x="49.0" y="88.5" text-anchor="end">8</text>
+<line class="gl" x1="54.0" y1="85.5" x2="65.0" y2="85.5"/>
 <text class="hdr" x="56" y="30">Rapport Sortino / Sharpe</text>
 <text class="sub" x="56" y="44">il vaut exactement σ/DD : un facteur que la géométrie fabrique,</text>
-<text class="sub" x="56" y="57">et que la dérive ne change presque pas</text>
+<text class="sub" x="56" y="57">et que la dérive amplifie sans le créer</text>
 <text class="hdr" x="384.0" y="62.0">Par trade</text>
 <text class="sub" x="508.0" y="49.0" text-anchor="end">R:R 1:20</text>
 <line class="hsep" x1="384.0" y1="68.0" x2="508.0" y2="68.0"/>
@@ -5169,29 +5177,31 @@
 <line class="lvl strong" x1="390.4" y1="46.0" x2="390.4" y2="222.0"/>
 <text class="lg halo" x="395.4" y="63.6" text-anchor="start">observée</text>
 <polygon class="floor" points="566.0,212.0 611.0,236.0 566.0,260.0 521.0,236.0"></polygon>
-<line class="post" x1="566.0" y1="212.0" x2="566.0" y2="110.2"/>
-<line class="post" x1="611.0" y1="236.0" x2="611.0" y2="201.4"/>
-<line class="post" x1="566.0" y1="260.0" x2="566.0" y2="228.3"/>
-<line class="post" x1="521.0" y1="236.0" x2="521.0" y2="134.2"/>
-<polygon class="mesh hm4" points="566.0,179.3 581.0,220.0 566.0,228.3 551.0,187.4"><title>facteur réel / √q = 0.737</title></polygon>
-<polygon class="mesh hm2" points="551.0,153.5 566.0,179.3 551.0,187.4 536.0,161.5"><title>facteur réel / √q = 0.861</title></polygon>
-<polygon class="mesh hm4" points="581.0,171.0 596.0,211.5 581.0,220.0 566.0,179.3"><title>facteur réel / √q = 0.738</title></polygon>
-<polygon class="mesh hm1" points="536.0,126.2 551.0,153.5 536.0,161.5 521.0,134.2"><title>facteur réel / √q = 0.953</title></polygon>
-<polygon class="mesh hm2" points="566.0,145.3 581.0,171.0 566.0,179.3 551.0,153.5"><title>facteur réel / √q = 0.862</title></polygon>
-<polygon class="mesh hm4" points="596.0,161.9 611.0,201.4 596.0,211.5 581.0,171.0"><title>facteur réel / √q = 0.743</title></polygon>
-<polygon class="mesh hm1" points="551.0,118.2 566.0,145.3 551.0,153.5 536.0,126.2"><title>facteur réel / √q = 0.953</title></polygon>
-<polygon class="mesh hm2" points="581.0,136.7 596.0,161.9 581.0,171.0 566.0,145.3"><title>facteur réel / √q = 0.865</title></polygon>
-<polygon class="mesh hm1" points="566.0,110.2 581.0,136.7 566.0,145.3 551.0,118.2"><title>facteur réel / √q = 0.954</title></polygon>
+<line class="post" x1="566.0" y1="212.0" x2="566.0" y2="116.0"/>
+<line class="post" x1="611.0" y1="236.0" x2="611.0" y2="236.0"/>
+<line class="post" x1="566.0" y1="260.0" x2="566.0" y2="260.0"/>
+<line class="post" x1="521.0" y1="236.0" x2="521.0" y2="140.0"/>
+<polygon class="mesh hm6" points="566.0,206.3 581.0,252.0 566.0,260.0 551.0,214.5"><title>facteur réel / √q = 0.737</title></polygon>
+<polygon class="mesh hm3" points="551.0,170.3 566.0,206.3 551.0,214.5 536.0,178.4"><title>facteur réel / √q = 0.861</title></polygon>
+<polygon class="mesh hm6" points="581.0,197.9 596.0,244.0 581.0,252.0 566.0,206.3"><title>facteur réel / √q = 0.738</title></polygon>
+<polygon class="mesh hm1" points="536.0,132.0 551.0,170.3 536.0,178.4 521.0,140.0"><title>facteur réel / √q = 0.953</title></polygon>
+<polygon class="mesh hm3" points="566.0,162.1 581.0,197.9 566.0,206.3 551.0,170.3"><title>facteur réel / √q = 0.862</title></polygon>
+<polygon class="mesh hm6" points="596.0,188.1 611.0,236.0 596.0,244.0 581.0,197.9"><title>facteur réel / √q = 0.743</title></polygon>
+<polygon class="mesh hm1" points="551.0,124.0 566.0,162.1 551.0,170.3 536.0,132.0"><title>facteur réel / √q = 0.953</title></polygon>
+<polygon class="mesh hm3" points="581.0,153.1 596.0,188.1 581.0,197.9 566.0,162.1"><title>facteur réel / √q = 0.865</title></polygon>
+<polygon class="mesh hm1" points="566.0,116.0 581.0,153.1 566.0,162.1 551.0,124.0"><title>facteur réel / √q = 0.954</title></polygon>
 <text class="tk halo" x="510.0" y="251.0" text-anchor="end">ρ = 0</text>
 <text class="tk halo" x="555.0" y="275.0" text-anchor="end">ρ = 0,4</text>
 <text class="tk halo" x="618.0" y="247.0">q 21</text>
 <text class="tk halo" x="573.0" y="271.0">252</text>
-<text class="tk" x="473.0" y="218.6" text-anchor="end">0,6</text>
-<line class="gl" x1="478.0" y1="215.6" x2="489.0" y2="215.6"/>
-<text class="tk" x="473.0" y="177.9" text-anchor="end">0,8</text>
-<line class="gl" x1="478.0" y1="174.9" x2="489.0" y2="174.9"/>
-<text class="tk" x="473.0" y="137.2" text-anchor="end">1,0</text>
-<line class="gl" x1="478.0" y1="134.2" x2="489.0" y2="134.2"/>
+<text class="tk" x="473.0" y="223.0" text-anchor="end">0,75</text>
+<line class="gl" x1="478.0" y1="220.0" x2="489.0" y2="220.0"/>
+<text class="tk" x="473.0" y="191.0" text-anchor="end">0,85</text>
+<line class="gl" x1="478.0" y1="188.0" x2="489.0" y2="188.0"/>
+<text class="tk" x="473.0" y="159.0" text-anchor="end">0,95</text>
+<line class="gl" x1="478.0" y1="156.0" x2="489.0" y2="156.0"/>
+<text class="tk" x="473.0" y="143.0" text-anchor="end">1,0</text>
+<line class="gl" x1="478.0" y1="140.0" x2="489.0" y2="140.0"/>
 <text class="hdr" x="490" y="30">Annualisation</text>
 <text class="sub" x="490" y="44">facteur réel rapporté à √q ;</text>
 <text class="sub" x="490" y="57">sous 1, le Sharpe publié</text>

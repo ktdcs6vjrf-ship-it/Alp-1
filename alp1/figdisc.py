@@ -282,10 +282,14 @@ def fig_wall() -> str:
 def fig_plane() -> str:
     """L'espérance selon la sélectivité et la mise, sans puis avec information.
 
-    À gauche, l'opérateur sans clairvoyance : la surface est plate, et plate
-    en négatif. Ni la sélectivité ni le dimensionnement ne la déforment,
-    parce qu'aucun des deux ne porte d'information — c'est le théorème
-    d'arrêt optionnel, transposé du choix des barrières au choix des trades.
+    À gauche, l'opérateur sans clairvoyance : la surface n'a aucune forme.
+    Elle erre entre −0,124 et +0,044 R, et elle passe au positif sur une
+    ligne — ce qui est la démonstration du propos et non son exception : à
+    cette taille d'échantillon, le bruit de la mesure dépasse largement ce
+    que la sélectivité pourrait produire. Le long de l'axe de la mise elle
+    est exactement proportionnelle, la taille multipliant une espérance sans
+    jamais en créer. C'est le théorème d'arrêt optionnel, transposé du choix
+    des barrières au choix des trades.
     À droite, le même opérateur muni d'une clairvoyance : la surface
     s'incline, et selon l'axe de la sélectivité.
 

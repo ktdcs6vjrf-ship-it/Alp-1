@@ -208,20 +208,33 @@ def fig_ratios() -> str:
     _zlo = min(min(r) for r in z)
     _zhi = max(max(r) for r in z)
     b = Board(660, 348)
+    # `_zlo` et `_zhi` étaient calculés puis ignorés : la fenêtre était écrite
+    # à la main de 0 à 7 pour une étendue réelle de 1,8 à 7,7. La surface
+    # n'occupait qu'un peu plus de la moitié de la hauteur du cadre, et sa
+    # variation s'en trouvait aplatie — c'est précisément ce que sa légende
+    # affirmait à tort.
+    _pas = 1.0
+    _lo = _pas * math.floor(_zlo / _pas)
+    _hi = _pas * math.ceil(_zhi / _pas)
     surface(
-        b, 166.0, 210.0, z, 0.0, 7.0, cx=23.0, cy=12.5, cz=162.0,
+        b, 166.0, 210.0, z, _lo, _hi, cx=23.0, cy=12.5, cz=162.0,
         row_labels=[f"1:{r:g}" for r in rr_grid],
         col_labels=["1,5 µ*", "", "", "5 µ*"],
-        z_ticks=[(0.0, "0"), (2.0, "2"), (4.0, "4"), (6.0, "6")],
+        z_ticks=[(v, f"{v:g}") for v in
+                 (_lo + _pas * k for k in range(int((_hi - _lo) / _pas) + 1))],
         tip="Sortino / Sharpe = {v:.2f}",
         classify=lambda v: heat_class((v - _zlo) / (_zhi - _zlo)),
     )
     # L'intitulé de panneau est mis en capitales par la feuille de style : le
     # sigma minuscule appartient donc à la ligne de sous-titre, pas au titre.
     b.add('<text class="hdr" x="56" y="30">Rapport Sortino / Sharpe</text>')
+    # Le sous-titre portait la même affirmation que la légende — « et que la
+    # dérive ne change presque pas » — et elle est fausse : la dérive déplace
+    # le facteur de la moitié à 1:30. Corriger la légende sans corriger le
+    # sous-titre aurait laissé les deux en désaccord dans la même figure.
     b.add('<text class="sub" x="56" y="44">il vaut exactement σ/DD : un facteur que '
           'la géométrie fabrique,</text>')
-    b.add('<text class="sub" x="56" y="57">et que la dérive ne change presque pas</text>')
+    b.add('<text class="sub" x="56" y="57">et que la dérive amplifie sans le créer</text>')
 
     # --- P2 : les trois ratios sur la calibration de référence -------------
     e0, n0 = q.edge_law(), q.null_law()
@@ -501,12 +514,18 @@ def fig_resampling() -> str:
     qs = [21, 63, 126, 252]
     z = [[lo_adjustment(rho, qq) / math.sqrt(qq) for qq in qs] for rho in rhos]
     surface(
-        b, 566.0, 212.0, z, 0.5, 1.05, cx=15.0, cy=8.0, cz=112.0,
+        # Fenêtre resserrée de 0,5 à 0,70 : les valeurs vont de 0,737 à 0,954
+        # et n'occupaient que deux cinquièmes de la hauteur du cadre. Le haut
+        # reste à 1,05 pour garder en vue l'unité, qui est la référence — le
+        # point où la règle en racine de q tomberait juste. La classification
+        # suit le même resserrement, sans quoi la couleur cesserait de
+        # correspondre à la hauteur.
+        b, 566.0, 212.0, z, 0.70, 1.05, cx=15.0, cy=8.0, cz=112.0,
         row_labels=["ρ = 0", "", "", "ρ = 0,4"],
         col_labels=["q 21", "", "", "252"],
-        z_ticks=[(0.6, "0,6"), (0.8, "0,8"), (1.0, "1,0")],
+        z_ticks=[(0.75, "0,75"), (0.85, "0,85"), (0.95, "0,95"), (1.0, "1,0")],
         tip="facteur réel / √q = {v:.3f}",
-        classify=lambda v: heat_class((1.0 - v) / 0.5),
+        classify=lambda v: heat_class((1.0 - v) / 0.30),
     )
     b.add('<text class="hdr" x="490" y="30">Annualisation</text>')
     b.add('<text class="sub" x="490" y="44">facteur réel rapporté à √q ;</text>')
