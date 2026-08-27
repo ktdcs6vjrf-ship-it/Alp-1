@@ -277,7 +277,10 @@
   tbody tr:last-child td { border-bottom: 1.1px solid var(--rule); }
   tbody tr.sep td { border-top: 0.6px solid var(--hair); }
   td.wrap, th.wrap { white-space: normal; min-width: 9rem; }
-  td.wrap { text-align: left; }
+  /* L'en-tête suit l'alignement de sa colonne. Sans cette règle, une colonne
+     qui se replie porte un contenu à gauche sous un en-tête à droite, et les
+     deux se lisent comme désalignés. */
+  td.wrap, th.wrap { text-align: left; }
 
   /* Tables larges : elles débordent la largeur de lecture, centrées. */
   figure.wide { width: min(94vw, 66rem); margin-left: 50%; transform: translateX(-50%); }
@@ -935,7 +938,7 @@
 
   <p>La première ligne est ce contrôle&nbsp;: à clairvoyance nulle, {{d_lois_nulle}}&nbsp;loi battue sur cinq, verdict refusé, malgré un Sharpe observé de {{d_sharpe_nulle}} qui aurait pu tromper un examen naïf. La dernière ligne établit la puissance&nbsp;: à {{d_bits_forte}}&nbsp;bit par décision, les cinq lois tombent et l'avantage est déclaré.</p>
 
-  <p>Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L'étendue de cette plage est fixée par la taille de l'échantillon&nbsp;: à {{d_seances}}&nbsp;séances, elle couvre les compétences inférieures à environ 0,05&nbsp;bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d'un taux de déclaration non nul sur la première ligne.</p>
+  <p>Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L'étendue de cette plage est fixée par la taille de l'échantillon&nbsp;: à {{d_seances}}&nbsp;séances, la transition se situe entre {{d_bits_refuse}} et {{d_bits_declare}}&nbsp;bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d'un taux de déclaration non nul sur la première ligne.</p>
 
   {{FIGURE:disccalib|Le nombre de lois nulles battues selon l'information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l'appareil ne déclare rien. La bande centrale marque la zone où l'avantage existe sans être démontrable.}}
 
@@ -990,11 +993,11 @@
 
   {{TABLE:wall}}
 
-  <p>Les deux premières routes s'accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de 0,10 par décision, il faut {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour.</p>
+  <p>Les deux premières routes s'accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de {{d_sharpe_cite}} par décision, il faut {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour.</p>
 
   {{FIGURE:disccloud|L'espérance cumulée décision après décision, sur {{d_chemins}}&nbsp;chemins rééchantillonnés d'un journal sans compétence. L'enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l'écart qu'un opérateur doit dépasser pour être distingué du hasard à ce stade.}}
 
-  {{FIGURE:discrolling|L'espérance mesurée sur une fenêtre glissante de 150 décisions, pour un opérateur sans compétence et pour un opérateur dont la clairvoyance est franche. La bande est l'intervalle à 95&nbsp;pour cent de la moyenne de fenêtre. Les deux bandes se recouvrent sur une partie de la période&nbsp;: à cette taille de fenêtre, les deux opérateurs ne sont pas séparés en permanence.}}
+  {{FIGURE:discrolling|L'espérance mesurée sur une fenêtre glissante de {{d_fenetre}} décisions, pour un opérateur sans compétence et pour un opérateur dont la clairvoyance est franche. La bande est l'intervalle à 95&nbsp;pour cent de la moyenne de fenêtre. Les deux bandes se recouvrent sur une partie de la période&nbsp;: à cette taille de fenêtre, les deux opérateurs ne sont pas séparés en permanence.}}
 
   {{FIGURE:discwall|La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.}}
 
@@ -1006,7 +1009,7 @@
 
   <p>Le relief a la forme d'une marche. Sous une certaine combinaison, la détection est un tirage à pile ou face&nbsp;; au-delà, elle est acquise. Situer l'opérateur sur cette marche est tout ce qu'un protocole préenregistré a besoin de savoir, et c'est aussi ce qui permet d'énoncer à l'avance la durée de la période d'observation plutôt que de l'arrêter quand le résultat plaît.</p>
 
-  {{FIGURE:discroc|Taux de détection contre taux de fausse déclaration, à trois tailles d'échantillon, pour une compétence de 0,005&nbsp;bit par décision. Le seuil de 5&nbsp;pour cent retenu dans tout le document est un point de ces courbes&nbsp;; les points marqués donnent la puissance correspondante. Le cadre de droite donne cette puissance en fonction du nombre de décisions.}}
+  {{FIGURE:discroc|Taux de détection contre taux de fausse déclaration, à trois tailles d'échantillon, pour une compétence de {{d_bits_roc}}&nbsp;bit par décision. Le seuil de 5&nbsp;pour cent retenu dans tout le document est un point de ces courbes&nbsp;; les points marqués donnent la puissance correspondante. Le cadre de droite donne cette puissance en fonction du nombre de décisions.}}
 
   <div class="part">
     <span class="lab">Huitième partie</span>
@@ -1112,7 +1115,7 @@
 
   <p>L'instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l'opérateur gagne mais s'il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: {{d_leviers}}&nbsp;leviers ne coûtent qu'un facteur&nbsp;{{d_facteur_taxe}} sur le seuil de preuve.</p>
 
-  <p>L'exigence d'échantillon se chiffre&nbsp;: {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
+  <p>L'exigence d'échantillon se chiffre&nbsp;: {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, pour un Sharpe de {{d_sharpe_cite}} par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
 
   <p>L'ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">10</a>, dont les champs antérieurs à l'issue ne sont pas reconstituables après coup. C'est la condition d'application du dispositif.</p>
 

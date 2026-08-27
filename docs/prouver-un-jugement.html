@@ -282,7 +282,10 @@
   tbody tr:last-child td { border-bottom: 1.1px solid var(--rule); }
   tbody tr.sep td { border-top: 0.6px solid var(--hair); }
   td.wrap, th.wrap { white-space: normal; min-width: 9rem; }
-  td.wrap { text-align: left; }
+  /* L'en-tête suit l'alignement de sa colonne. Sans cette règle, une colonne
+     qui se replie porte un contenu à gauche sous un en-tête à droite, et les
+     deux se lisent comme désalignés. */
+  td.wrap, th.wrap { text-align: left; }
 
   /* Tables larges : elles débordent la largeur de lecture, centrées. */
   figure.wide { width: min(94vw, 66rem); margin-left: 50%; transform: translateX(-50%); }
@@ -3570,7 +3573,7 @@
 
   <p>Le contrôle qui autorise tous les autres ne consiste pas à vérifier qu’un opérateur compétent est détecté — n’importe quelle statistique complaisante y parvient. Il consiste à vérifier qu’un opérateur <strong>sans</strong> compétence ne l’est pas.</p>
 
-      <figure>
+      <figure class="wide">
       <figcaption><span class="lab">Table 4</span> — Ce que l’appareil déclare, selon la compétence qu’on lui a plantée.</figcaption>
       <div class="scroll">
       <table>
@@ -3588,7 +3591,7 @@
 
   <p>La première ligne est ce contrôle&nbsp;: à clairvoyance nulle, 0&nbsp;loi battue sur cinq, verdict refusé, malgré un Sharpe observé de −0,0592 qui aurait pu tromper un examen naïf. La dernière ligne établit la puissance&nbsp;: à 0,2245&nbsp;bit par décision, les cinq lois tombent et l’avantage est déclaré.</p>
 
-  <p>Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L’étendue de cette plage est fixée par la taille de l’échantillon&nbsp;: à 400&nbsp;séances, elle couvre les compétences inférieures à environ 0,05&nbsp;bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d’un taux de déclaration non nul sur la première ligne.</p>
+  <p>Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L’étendue de cette plage est fixée par la taille de l’échantillon&nbsp;: à 400&nbsp;séances, la transition se situe entre 0,0282 et 0,0877&nbsp;bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d’un taux de déclaration non nul sur la première ligne.</p>
 
       <figure class="plate">
       <figcaption><span class="lab">Figure 12</span> — Le nombre de lois nulles battues selon l’information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres&nbsp;: sans compétence, l’appareil ne déclare rien. La bande centrale marque la zone où l’avantage existe sans être démontrable.</figcaption>
@@ -3659,7 +3662,7 @@
 
   <p>Le recensement retenu ici comporte 4&nbsp;leviers, ce qui porte le budget à 16&nbsp;configurations effectives.</p>
 
-      <figure>
+      <figure class="wide">
       <figcaption><span class="lab">Table 5</span> — Les quatre leviers discrétionnaires recensés, et ce que chacun ajoute au seuil de preuve.</figcaption>
       <div class="scroll">
       <table>
@@ -3743,7 +3746,7 @@
 
   <h2 id="s-convergence">Le mur, en décisions puis en années</h2>
 
-      <figure>
+      <figure class="wide">
       <figcaption><span class="lab">Table 6</span> — Le mur d’échantillon, à quatre leviers ouverts, en décisions puis en années de carrière.</figcaption>
       <div class="scroll">
       <table>
@@ -4593,7 +4596,7 @@
 
   <p>Le document&nbsp;n<sup>o</sup>&nbsp;1 de cette série situe son mur à plusieurs dizaines de milliers de trades. La comparaison ci-dessous rapporte les deux exigences sur une base commune.</p>
 
-      <figure>
+      <figure class="wide">
       <figcaption><span class="lab">Table 7</span> — Pourquoi le jugement est prouvable là où la géométrie ne l’est pas.</figcaption>
       <div class="scroll">
       <table>

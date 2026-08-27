@@ -40,6 +40,14 @@ SHARPES = (0.05, 0.075, 0.10, 0.15)
 #: de point de comparaison : c'est lui qui bute sur 17 434 trades.
 SHARPE_GEOMETRIE = 0.0332
 
+#: Paramètres cités en toutes lettres par la prose ou par une légende. Les
+#: tenir ici plutôt qu'au fil du texte est la règle 4 du dépôt : un nombre
+#: écrit à la main devient faux au premier changement, et le désaccord ne se
+#: voit pas.
+SHARPE_CITE = 0.10          # le Sharpe que le corps du texte prend en exemple
+FENETRE_GLISSANTE = 150     # largeur de la fenêtre de la figure éponyme
+BITS_ROC = 0.005            # compétence retenue par la caractéristique
+
 #: Paramètres du nuage Monte-Carlo, tenus ici pour que la légende de la figure
 #: cite le nombre réellement tracé. Ils doivent suivre `figdisc._paths`.
 _CHEMINS = 520
@@ -96,6 +104,7 @@ def table_levers() -> Table:
          "Ce que ce levier ajoute"],
         rows,
         wrap_cols=[0],
+        wide=True,
         note="Le seuil est calculé sur 3 000 décisions. Chaque levier double le "
              "nombre de configurations ; le seuil croît en racine du logarithme "
              "de ce nombre, d'où un incrément décroissant.",
@@ -157,6 +166,7 @@ def table_calibration() -> Table:
         ["Clairvoyance", "Bits par décision", "E[R] par décision",
          "Sharpe par décision", "Lois battues", "Verdict"],
         rows,
+        wide=True,
         note="La première ligne mesure le niveau du test : à compétence nulle, le "
              "nombre de lois battues est nul. La dernière mesure la puissance. "
              "Les lignes intermédiaires situent la plage où la compétence est "
@@ -226,6 +236,7 @@ def table_wall() -> Table:
          "Route 2 — seuil déflaté", "à 2 décisions/jour",
          "à 3 décisions/jour"],
         rows,
+        wide=True,
         note="Les deux routes convergent sans partager aucune hypothèse : la "
              "première ne connaît que la moyenne et la variance, la seconde ne "
              "connaît que le nombre de configurations. Deux chemins séparés qui "
@@ -261,6 +272,7 @@ def table_versus() -> Table:
          "Seuil déflaté", "Décisions requises", "à 2 par jour"],
         rows,
         wrap_cols=[0],
+        wide=True,
         note="L'arithmétique est celle de la proposition 2 : le budget de "
              "configurations entre dans l'exigence par un logarithme, l'effet "
              "revendiqué par un carré. Multiplier le premier par seize coûte "
@@ -406,6 +418,23 @@ def values() -> dict[str, str]:
         "d_mur_sr15": num(_trades_for_threshold(0.15, budget), 0),
         "d_mur_geometrie": num(n_geo, 0),
         "d_sharpe_geometrie": num(SHARPE_GEOMETRIE, 4),
+
+        # Les bornes de la plage d'indécision, relevées sur la calibration
+        # elle-même : la prose les citait de mémoire, à « environ 0,05 bit »,
+        # ce qui cesserait d'être vrai au premier changement d'échantillon.
+        "d_bits_refuse": num(max(
+            (_journal(k).skill_bits or 0.0)
+            for k in (0.0, 0.20, 0.35, SKILL_FORTE)
+            if not _verdict(k).accepted), 4),
+        "d_bits_declare": num(min(
+            (_journal(k).skill_bits or 0.0)
+            for k in (0.0, 0.20, 0.35, SKILL_FORTE)
+            if _verdict(k).accepted), 4),
+
+        # Les paramètres que la prose cite
+        "d_sharpe_cite": num(SHARPE_CITE, 2),
+        "d_fenetre": num(FENETRE_GLISSANTE, 0),
+        "d_bits_roc": num(BITS_ROC, 3),
 
         # La stratégie évaluée
         "d_couches": num(len(COUCHES), 0),

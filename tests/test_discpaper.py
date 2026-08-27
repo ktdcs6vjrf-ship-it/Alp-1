@@ -133,6 +133,56 @@ class TestRenvois(unittest.TestCase):
                              f"or la section est la {self.rangs[ancre]}e")
 
 
+class TestParametresCentralises(unittest.TestCase):
+    """Un paramètre cité par la prose vient du module, jamais du gabarit.
+
+    C'est la règle 4 du dépôt appliquée aux paramètres et non aux seuls
+    résultats. Un nombre qui gouverne un calcul et qu'on récrit à la main dans
+    une phrase devient faux dès que le calcul change, et le désaccord ne se
+    voit pas — ni à la lecture, ni à la construction.
+    """
+
+    #: Les constantes que la prose ou une légende cite en toutes lettres.
+    CLES = ("SHARPE_CITE", "FENETRE_GLISSANTE", "BITS_ROC", "N_SESSIONS")
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.gabarit = discpaper.TEMPLATE.read_text(encoding="utf-8")
+        cls.corps = cls.gabarit.split("</style>", 1)[1]
+
+    def test_aucun_parametre_ecrit_en_clair(self) -> None:
+        from alp1 import report10
+        from alp1.report import num
+
+        for cle in self.CLES:
+            valeur = getattr(report10, cle)
+            # On cherche la forme exacte que `num` produirait : c'est celle
+            # qu'un rédacteur recopierait.
+            for nd in (0, 2, 3):
+                litteral = num(valeur, nd)
+                if len(litteral) < 3:
+                    continue
+                self.assertNotIn(
+                    f">{litteral}", self.corps,
+                    f"{cle} = {litteral} est écrit en clair dans le gabarit ; "
+                    f"il doit venir de report10.values()")
+
+    def test_les_cles_correspondantes_existent(self) -> None:
+        """Les clés qui portent ces paramètres sont bien publiées.
+
+        L'assertion porte sur un booléen et non sur l'appartenance à la
+        chaîne : `assertIn` échouerait en déversant le gabarit entier dans le
+        message, ce qui rend l'échec illisible pour un gabarit de cette
+        taille.
+        """
+        vals = discpaper.values()
+        for cle in ("d_sharpe_cite", "d_fenetre", "d_bits_roc", "d_seances"):
+            self.assertIn(cle, vals, f"{cle} absente de values()")
+            self.assertTrue("{{" + cle + "}}" in self.gabarit,
+                            f"{cle} est calculée mais jamais citée "
+                            f"par le gabarit")
+
+
 class TestTypographie(unittest.TestCase):
     """La passe typographique française, et ce qu'elle doit épargner."""
 

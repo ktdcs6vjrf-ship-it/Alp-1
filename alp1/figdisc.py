@@ -840,10 +840,13 @@ def fig_rolling() -> str:
     compare deux opérateurs sur la même fenêtre, et montre à quelle taille de
     fenêtre leurs intervalles cessent de se recouvrir.
     """
-    #: Fenêtre et longueur du journal. Une fenêtre proche du nombre total de
-    #: décisions ne laisse qu'une poignée de positions : il faut un journal
-    #: nettement plus long que la fenêtre pour que la courbe existe.
-    FEN, SEANCES = 150, 1400
+    #: La fenêtre vient de `report10`, qui la publie aussi au document : sans
+    #: source unique, la légende et la figure divergeraient en silence. Le
+    #: journal doit être nettement plus long que la fenêtre, faute de quoi il
+    #: ne reste qu'une poignée de positions à tracer.
+    from .report10 import FENETRE_GLISSANTE
+
+    FEN, SEANCES = FENETRE_GLISSANTE, 1400
 
     def serie(skill: float) -> list[tuple[int, float, float]]:
         j = synthesise(skill=skill, n_sessions=SEANCES)
@@ -969,13 +972,15 @@ def fig_roc() -> str:
     déclaration accepté, le taux de détection correspondant, et elle le donne
     à plusieurs tailles d'échantillon.
     """
+    from .report10 import BITS_ROC
+
     def norm_ppf(q: float) -> float:
         from .costs import _norm_ppf
         return _norm_ppf(q)
 
     b = _plate(322, "Caractéristique",
                "Détection contre fausse déclaration",
-               "compétence de 0,005 bit par décision")
+               f"compétence de {_num(BITS_ROC, 3)} bit par décision")
     p = Panel(b, 66, 62, 300, 194)
     p.domain(0.0, 1.0, 0.0, 1.0)
     p.grid_y([0, 0.25, 0.5, 0.75, 1.0], lambda v: f"{v:.0%}")
@@ -986,7 +991,7 @@ def fig_roc() -> str:
     p.path([(0.0, 0.0), (1.0, 1.0)], "s3", dash="3 3")
     p.label(0.60, 0.60, "aucune séparation", dx=4, dy=-5, cls="tk halo")
 
-    besoin = trades_for_information(0.005)
+    besoin = trades_for_information(BITS_ROC)
     for n, cls in ((250, "hm3"), (1000, "hm5"), (4000, "hm7")):
         decalage = 1.96 * math.sqrt(n / besoin)
         pts = []
@@ -999,7 +1004,7 @@ def fig_roc() -> str:
         coude = pts[9]
         p.label(coude[0], coude[1], f"{n}", dx=6, dy=4, cls="tk halo")
         # Le point de fonctionnement retenu par le protocole.
-        pw = _power(n, 0.005)
+        pw = _power(n, BITS_ROC)
         p.dot(0.05, pw, "s1", f"{n} décisions · seuil 5 % · puissance {pw:.0%}")
     p.vline(0.05, "lvl strong")
     p.label(0.05, 0.06, "seuil retenu : 5 %", dx=7)
@@ -1009,7 +1014,7 @@ def fig_roc() -> str:
     q.domain(100, 6000, 0.0, 1.0)
     q.grid_y([0, 0.5, 0.8, 1.0], lambda v: f"{v:.0%}", side="right")
     q.grid_x([1000, 3000, 5000], lambda v: f"{v:g}", label="décisions")
-    q.path([(n, _power(n, 0.005)) for n in range(120, 6001, 40)], "s1")
+    q.path([(n, _power(n, BITS_ROC)) for n in range(120, 6001, 40)], "s1")
     q.hline(0.80, "lvl strong")
     q.tag(0.80, "80 %", side="left")
 
