@@ -114,12 +114,18 @@ FIGURE_TOKENS_DARK = """
 # intacts. La rampe séquentielle est une rampe de **luminance sur une seule
 # teinte** : sur fond sombre, « fort » doit être lumineux, faute de quoi la
 # valeur haute disparaît dans le fond.
+#
+# Le bas de la rampe démarre nettement au-dessus du fond, et non près de lui.
+# Une rampe qui partirait du noir rendrait invisible toute valeur basse : une
+# surface dont les valeurs occupent la moitié inférieure du domaine se lirait
+# alors comme une masse uniforme, ce qui est exactement le contraire de ce
+# qu'une rampe séquentielle est censée montrer.
 
 FIGURE_TOKENS_TERMINAL = """
     --s1: #9b8cff; --s2: #e4e6ea; --s3: #6e757d;
     --dv-neg: #e0625c; --mid: #22262c;
-    --hm0: #23203a; --hm1: #322c55; --hm2: #453b76; --hm3: #5a4d99;
-    --hm4: #7263bd; --hm5: #8d7cdc; --hm6: #ab9df0; --hm7: #cdc3ff;
+    --hm0: #3b3468; --hm1: #4a4184; --hm2: #5b50a0; --hm3: #6d60ba;
+    --hm4: #8071d1; --hm5: #9585e4; --hm6: #ab9bf2; --hm7: #c6baff;
 """
 
 # Réglages de trait propres au fond sombre. Les épaisseurs de la feuille

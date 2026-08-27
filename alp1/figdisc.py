@@ -187,12 +187,16 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
         board.add(f'<polygon class="mesh {classify(val)}" points="{pt}">'
                   f'<title>{_esc(tip.format(v=val))}</title></polygon>')
 
-    # L'échine de hauteur, à gauche du coin le plus à gauche.
-    edge = ox - (nj - 1) * cx - 26.0
-    top = proj(0, nj - 1, zhi)[1]
-    bot = proj(0, nj - 1, zlo)[1]
-    board.add(f'<line class="ba" x1="{edge:.1f}" y1="{top:.1f}" '
-              f'x2="{edge:.1f}" y2="{bot:.1f}"/>')
+    # L'échine de hauteur, à gauche du coin le plus à gauche. Sans
+    # graduation, on ne la trace pas : un axe nu se lit comme inachevé. Le
+    # garde porte sur ce bloc seul — les libellés d'arêtes qui suivent sont
+    # rendus dans tous les cas.
+    if z_ticks:
+        edge = ox - (nj - 1) * cx - 26.0
+        top = proj(0, nj - 1, zhi)[1]
+        bot = proj(0, nj - 1, zlo)[1]
+        board.add(f'<line class="ba" x1="{edge:.1f}" y1="{top:.1f}" '
+                  f'x2="{edge:.1f}" y2="{bot:.1f}"/>')
     for val, lab in z_ticks:
         yy = proj(0, nj - 1, val)[1]
         board.add(f'<line class="ba" x1="{edge:.1f}" y1="{yy:.1f}" '
@@ -200,18 +204,22 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
         board.add(f'<text class="tk" x="{edge - 5:.1f}" y="{yy + 3.5:.1f}" '
                   f'text-anchor="end">{_esc(lab)}</text>')
 
-    # Libellés des deux arêtes du sol, posés au-delà du contour.
+    # Libellés des deux arêtes du sol. Les deux séries convergent
+    # géométriquement au coin avant — le dernier libellé de ligne et le dernier
+    # libellé de colonne y occupent le même point. On les sépare en les posant
+    # sur deux lignes de base distinctes, ce qu'aucun décalage horizontal ne
+    # ferait puisque la convergence est exacte.
     for k, lab in enumerate(row_labels):
         if not lab:
             continue
         x, y = proj(k, nj - 1, floor_z)
-        board.add(f'<text class="tk halo" x="{x - 9:.1f}" y="{y + 13:.1f}" '
+        board.add(f'<text class="tk halo" x="{x - 11:.1f}" y="{y + 12:.1f}" '
                   f'text-anchor="end">{_esc(lab)}</text>')
     for k, lab in enumerate(col_labels):
         if not lab:
             continue
         x, y = proj(ni - 1, k, floor_z)
-        board.add(f'<text class="tk halo" x="{x + 9:.1f}" y="{y + 13:.1f}">'
+        board.add(f'<text class="tk halo" x="{x + 11:.1f}" y="{y + 26:.1f}">'
                   f'{_esc(lab)}</text>')
 
 
@@ -253,7 +261,7 @@ def fig_wall() -> str:
     b = _plate(384, "Mur d'échantillon", "Le mur, en années de carrière",
                "deux décisions par jour")
     _scale_legend(b, 0, 62, "immédiat", "6 ans et plus", "années requises")
-    _surface(b, 330, 214, z, 0.0, 6.0, cx=58.0, cy=19.0, cz=152.0,
+    _surface(b, 330, 232, z, 0.0, 6.0, cx=58.0, cy=13.0, cz=185.0,
              row_labels=[f"k = {k}" for k in ks],
              col_labels=[f"SR {_num(sr, 3)}" for sr in srs],
              z_ticks=[(0.0, "0"), (1.0, "1 an"), (3.0, "3 ans"), (6.0, "6 ans")],
@@ -264,47 +272,6 @@ def fig_wall() -> str:
     return b.render(
         "Surface du nombre d années requises selon les leviers ouverts et le "
         "Sharpe revendiqué par décision")
-
-
-# ---------------------------------------------------------------------------
-# Figure 2 — la surface de puissance
-# ---------------------------------------------------------------------------
-
-
-def fig_power() -> str:
-    """Probabilité de détecter un avantage, par échantillon et par effet.
-
-    Le relief a la forme d'une marche : sous une certaine combinaison la
-    détection est un tirage à pile ou face, au-delà elle est acquise. Situer
-    l'opérateur sur cette marche est tout ce qu'un protocole préenregistré a
-    besoin de savoir.
-    """
-    ns = [250, 500, 1000, 2000]
-    bits_grid = [0.005, 0.010, 0.020, 0.040]
-
-    def power(n: int, bits: float) -> float:
-        besoin = trades_for_information(bits)
-        if besoin <= 0.0 or not math.isfinite(besoin):
-            return 0.0
-        lam = 1.96 * math.sqrt(max(n, 1) / besoin)
-        return min(1.0, max(0.0, _norm_cdf(lam - 1.96)))
-
-    z = [[power(n, bt) for bt in bits_grid] for n in ns]
-
-    b = _plate(384, "Puissance", "La puissance de détection",
-               "test G informationnel, seuil 5 %")
-    _scale_legend(b, 0, 62, "0 %", "100 %", "probabilité de détection")
-    _surface(b, 330, 214, z, 0.0, 1.0, cx=58.0, cy=19.0, cz=152.0,
-             row_labels=[f"{n}" for n in ns],
-             col_labels=[_num(bt, 3) for bt in bits_grid],
-             z_ticks=[(0.0, "0 %"), (0.5, "50 %"), (0.80, "80 %"),
-                      (1.0, "100 %")],
-             tip="puissance {v:.0%}")
-    _source(b, "Arête gauche : décisions enregistrées. Arête droite : bits par "
-               "décision. Sous le palier de 80 %, l'absence de preuve ne prouve rien.")
-    return b.render(
-        "Surface de la puissance de détection selon le nombre de décisions "
-        "et l information portée par chacune")
 
 
 # ---------------------------------------------------------------------------
@@ -369,7 +336,7 @@ def fig_plane() -> str:
         ox = 208 + idx * 300
         b.add(f'<text class="lg" x="{ox:.1f}" y="72" text-anchor="middle">'
               f'{_esc(sub)}</text>')
-        _surface(b, ox, 216, z, -span, span, cx=32.0, cy=13.0, cz=112.0,
+        _surface(b, ox, 224, z, -span, span, cx=32.0, cy=10.0, cz=134.0,
                  row_labels=[f"{p:.0%}" for p in selectivity],
                  col_labels=[f"{s:g} R" for s in sizing],
                  z_ticks=([(-span, _num(-span, 2)), (0.0, "0"),
@@ -583,7 +550,9 @@ def fig_tax() -> str:
     p = Panel(b, 62, 62, W - 62, 186)
     p.domain(0, 8, 0.0, 0.105)
     p.grid_y([0.0, 0.025, 0.05, 0.075, 0.10], lambda v: _num(v, 3))
-    p.grid_x(list(range(9)), lambda v: f"{v:g}",
+    # La dernière graduation tombait sur le bord du cadre et s'y trouvait
+    # rognée ; on arrête la grille un cran avant.
+    p.grid_x([0, 1, 2, 3, 4, 5, 6, 7], lambda v: f"{v:g}",
              label="leviers discrétionnaires ouverts")
 
     for n, cls in ns:
@@ -676,7 +645,6 @@ def fig_calibration() -> str:
 
 FIGURES = {
     "discwall": fig_wall,
-    "discpower": fig_power,
     "discplane": fig_plane,
     "discnulls": fig_nulls,
     "discattrib": fig_attribution,
@@ -840,7 +808,7 @@ def fig_distribution() -> str:
     d = Panel(b, 372, 66, W - 372, 186, title="Répartition")
     d.domain(lo, hi, 0.0, 1.0)
     d.grid_y([0.0, 0.25, 0.5, 0.75, 1.0], lambda v: f"{v:.0%}")
-    d.grid_x([lo, p50, hi], lambda v: _num(v, 2), label="espérance par décision")
+    d.grid_x([lo, p50], lambda v: _num(v, 2), label="espérance par décision")
     d.path([(v, (i + 1) / n) for i, v in enumerate(finaux)], "s2")
     for v, part in ((p05, 0.05), (p50, 0.50), (p95, 0.95)):
         d.vline(v, "lvl")

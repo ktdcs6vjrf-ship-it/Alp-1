@@ -559,7 +559,9 @@ def fig_volume_profile() -> str:
     for lvl in lvn:
         r = 100.0 * prob_touch_single_barrier(STOP_PTS, prof.sigma_at(lvl, SIGMA_1MIN), 30.0)
         p3.dot(r, lvl, "s2f", f"LVN {lvl:g} · {r:.0f} %")
-        p3.label(r, lvl, "LVN", dx=6, dy=3.5, cls="dl halo")
+        # Posée à gauche du point : à droite, elle sortirait du cadre, le
+        # point se trouvant déjà près du bord.
+        p3.label(r, lvl, "LVN", dx=-7, dy=3.5, anchor="end", cls="dl halo")
     p3.hline(poc, "lvl strong")
 
     b.legend(56, 344, [("s3f", "haut volume (HVN)"),
@@ -624,9 +626,11 @@ def fig_dow_null() -> str:
     p2.label(1.0, 0.5, "repli = δ → ½", dx=9, dy=-7, cls="dl halo")
     b.legend(376, 300, [("s1", "µ = 0"), ("s2", "µ = µ*"), ("s3", "µ = 3 µ*")],
              step=76.0, kind="line")
-    b.caption(376, 324, "trois dérives, trois courbes presque confondues :",
-              anchor="start")
-    b.caption(376, 338, "la géométrie du repli décide, non le signal", anchor="start")
+    # Ligne trop longue pour la place restante à droite de la légende : elle
+    # se rognait au bord du cadre. Coupée en deux, elle tient.
+    b.caption(376, 324, "trois dérives, trois courbes", anchor="start")
+    b.caption(376, 338, "presque confondues : la géométrie", anchor="start")
+    b.caption(376, 352, "du repli décide, non le signal", anchor="start")
 
     up, down, inside = dow.p_close_beyond_body()
     strip_y = 300.0
@@ -696,7 +700,9 @@ def fig_fib_retracement() -> str:
     p1.path(impulse, "s1")
     p1.path(pull, "s1", dash="5 3")
     p1.dot(7.6, leg.level(0.70), "s2", "ordre limite touché dans la zone OTE")
-    p1.label(7.6, leg.level(0.70), "ordre rempli", dx=-8, dy=-8,
+    # Relevée d'une ligne : à hauteur du point, elle partageait sa ligne de
+    # base avec le ratio à gauche et sa probabilité à droite.
+    p1.label(7.6, leg.level(0.70), "ordre rempli", dx=-8, dy=-16,
              anchor="end", cls="dl halo")
 
     # --- arbitrage -------------------------------------------------------
@@ -724,9 +730,17 @@ def fig_fib_retracement() -> str:
     p2.hline(0.0, "zero")
     crit = fib.compare(leg_hi - leg_lo, a, target, FRICTION, mu_star, SIGMA_1MIN,
                        om.expected_time, oo.expected_time).critical_drift * 60.0
-    p2.vline(crit, "lvl")
-    p2.dot(crit, 0.0, "s2", f"changement de signe · {crit:.2f} point par heure")
-    p2.label(crit, 0.30, "µ*", dx=5, dy=0, cls="dl halo")
+    # Le changement de signe tombe au-delà de la dérive tracée : le marquer à
+    # sa position projetterait le repère, la ligne et l'étiquette hors du
+    # cadre. On le porte alors comme une lecture au bord, ce qui dit la même
+    # chose sans mentir sur l'échelle.
+    if crit <= p2.x1:
+        p2.vline(crit, "lvl")
+        p2.dot(crit, 0.0, "s2",
+               f"changement de signe · {crit:.2f} point par heure")
+        p2.label(crit, 0.30, "µ*", dx=5, dy=0, cls="dl halo")
+    else:
+        p2.tag(0.30, f"µ* = {crit:.1f} pt/h, hors cadre", side="right")
     p2.label(3.0, 0.16, "Δ > 0 : la grille paie", dx=-6, dy=0,
              anchor="end", cls="lg halo")
     p2.label(3.0, -0.14, "Δ < 0 : la grille coûte", dx=-6, dy=0,

@@ -17,7 +17,7 @@ Il est publié comme artefact : https://claude.ai/code/artifact/1a195a2a-36ad-47
 
 Second livrable : `docs/prouver-un-jugement.html` — **ALP nº 3**, sur
 l'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas codable
-(≈594 ko — 34 sections en dix parties, 8 tables, 21 figures dont trois
+(≈590 ko — 34 sections en dix parties, 8 tables, 20 figures dont deux
 surfaces isométriques). Chaîne propre : `journal.py` → `operator.py` →
 `attribution.py` → `report10.py` + `figdisc.py` → `discpaper.py`. Les sept
 figures de couches sont reprises de `figterm.py` sans être redéfinies : elles
