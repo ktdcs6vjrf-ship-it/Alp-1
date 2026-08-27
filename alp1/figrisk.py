@@ -84,10 +84,11 @@ def fig_friction_wall() -> str:
         p1.path(pts, cls, tip=f"friction {nom}")
 
     p1.hline(1.0, "lvl strong")
-    # Sous la ligne d'unité, non au-dessus : au-dessus, l'étiquette venait se
-    # poser sur celle du premier point, qui annonce précisément un c/L de
-    # 1,100 et se place elle aussi juste au-dessus de la ligne.
-    p1.label(0.0022, 0.72, "mur : la friction égale le risque", cls="dl halo")
+    # Deux étiquettes de point occupent déjà la bande autour de l'unité —
+    # 1,100 juste au-dessus, 0,550 juste en dessous. Celle du mur descend
+    # sous les deux, dans le quart bas-gauche que les trois courbes ont
+    # quitté à cette abscisse.
+    p1.label(0.0022, 0.30, "mur : la friction égale le risque", cls="dl halo")
     for x in STOP_PCT_BOX:
         v = _cl(x)
         p1.dot(x, v, "s1", tip=f"stop {_num(x, 3)} % — c/L = {_num(v, 3)}")
@@ -95,10 +96,12 @@ def fig_friction_wall() -> str:
     v50 = _cl(0.050)
     p1.dot(0.050, v50, "s1", tip="ancienne calibration")
     p1.label(0.050, v50, f"0,050 % → {_num(v50, 3)}", dx=8, dy=13)
-    # Seize points plus bas : à 246, la légende partageait sa ligne avec le
-    # libellé d'abscisse du cadre, posé à 250.
-    b.legend(62, 264, [("s3", "friction optimiste"), ("s1", "référence"),
-                       ("s2", "réaliste")], step=150, kind="line")
+    # Entre le libellé d'abscisse du cadre du haut, posé à 250, et la lecture
+    # du cadre du bas, posée à 288 : la légende tient à 268 sans toucher ni
+    # l'un ni l'autre. Le pas se resserre pour qu'elle ne s'étende pas sous
+    # cette lecture, qui est alignée à droite.
+    b.legend(62, 268, [("s3", "friction optimiste"), ("s1", "référence"),
+                       ("s2", "réaliste")], step=132, kind="line")
 
     p2 = Panel(b, 62, 300, 496, 122, title="Stop et friction, en ticks du contrat",
                readout="stop 0,010 % · barre pleine = friction")
@@ -139,7 +142,12 @@ def fig_spread_bite() -> str:
     survit à cette oscillation. À droite, la probabilité d'être sorti par ce
     seul bruit en une minute.
     """
-    b = Board(640, 430)
+    # Vingt-huit points de plus qu'auparavant : la bande comprise entre les
+    # libellés d'abscisse des deux cadres du haut et l'en-tête du cadre du bas
+    # était trop étroite pour les contenir tous les deux, et la lecture du
+    # troisième cadre — reportée sur une ligne propre parce qu'elle ne tient
+    # pas à côté de son titre — venait s'y poser.
+    b = Board(640, 458)
     tick = ES.tick_size
     demi = SPREAD_TICKS * tick / 2.0
 
@@ -178,7 +186,7 @@ def fig_spread_bite() -> str:
                 tip=f"spread = {part * 100:.0f} % du stop")
         p2.label(i, part, f"{part * 100:.0f} %", dx=0, dy=-7, anchor="middle")
 
-    p3 = Panel(b, 62, 300, 496, 96,
+    p3 = Panel(b, 62, 322, 496, 96,
                title="Probabilité d'être sorti par le seul bruit, en une minute",
                readout="premier passage sur le stop utile L − s")
     p3.domain(0.0020, 0.25, 0.0, 1.0, xlog=True)
@@ -198,7 +206,7 @@ def fig_spread_bite() -> str:
                                      SPREAD_TICKS * tick, SIGMA_1MIN)
         p3.dot(x, v, "s2", tip=f"{v * 100:.1f} %")
         p3.label(x, v, f"{v * 100:.0f} %", dx=8, dy=-6)
-    b.caption(320, 420, "trajectoire de cotation simulée de façon déterministe "
+    b.caption(320, 448, "trajectoire de cotation simulée de façon déterministe "
                         "— le prix efficient n'y bouge pas d'un point")
     return b.render("Rebond de cotation, part du stop consommée par le spread, "
                     "et probabilité de sortie par le bruit seul")
@@ -367,7 +375,7 @@ def fig_sharpe_requirement() -> str:
     décoratifs : ils disent à quelle hauteur la barre est placée par rapport à
     ce que le métier produit.
     """
-    b = Board(640, 400)
+    b = Board(640, 420)
 
     p1 = Panel(b, 66, 48, 492, 232,
                title="Ratio de Sharpe annualisé exigé du signal",
@@ -477,7 +485,10 @@ def fig_streak_diagnostic() -> str:
         hit = F.implied_hit_rate(k, 200)
         if hit > 0.0:
             ligne.append((float(k), F.implied_reward_risk(hit)))
-    p3 = Panel(b, 74, 336, 380, 30, title="", readout="")
+    # Trente points de haut ne tenaient pas trois graduations logarithmiques :
+    # « 1:3,0 » et « 1:12,0 » se touchaient. Le bandeau monte de dix points et
+    # en gagne seize.
+    p3 = Panel(b, 74, 326, 380, 46, title="", readout="")
     p3.domain(float(series[0]), float(series[-1]), 0.1, 12.0, ylog=True)
     p3.frame()
     p3.grid_y([0.5, 3, 12], lambda v: f"1:{_num(v, 1)}")
