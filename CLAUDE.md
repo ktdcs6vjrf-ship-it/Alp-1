@@ -113,7 +113,12 @@ Deux pièges déjà tombés dedans, à ne pas refaire :
   *détecter* — et jamais du taux de réussite *observé*, sinon un très mauvais
   résultat exige un petit échantillon et passe. Un test verrouille ce point.
 - ne pas borner le budget par `max(2.0, ...)` : cela masque le fait ci-dessus
-  et fait afficher +0 % à toutes les portes.
+  et fait afficher +0 % à toutes les portes. **Le piège a été retrouvé dans
+  ALP nº 3** : le bornage y fabriquait un seuil de 0,0215 à zéro levier, où la
+  vraie valeur est zéro, et le papier annonçait « quatre leviers coûtent un
+  facteur 2 » alors que c'était le rapport d'un levier à quatre. À zéro levier
+  il n'y a qu'une configuration, donc rien à sélectionner et rien à déflater ;
+  le premier levier fait un saut depuis zéro qu'aucun facteur ne mesure.
 
 ## Commandes
 

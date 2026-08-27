@@ -387,14 +387,23 @@ def values() -> dict[str, str]:
     n_geo = _trades_for_threshold(SHARPE_GEOMETRIE, 1.0)
 
     return {
-        # Le recensement
+        # Le recensement.
+        #
+        # Le seuil à zéro levier vaut exactement zéro : une configuration
+        # unique n'offre aucune sélection, donc rien à déflater. Le borner par
+        # `max(2.0, ·)` fabriquerait la valeur d'un levier et la ferait passer
+        # pour celle de zéro — c'est le piège que la mémoire de projet
+        # signale, et il faussait ici le facteur annoncé.
         "d_leviers": num(K_LEVERS, 0),
         "d_configs": num(budget, 0),
-        "d_seuil_k0": num(deflated_threshold_sharpe(2.0, 3000), 4),
+        "d_seuil_k0": num(deflated_threshold_sharpe(1, 3000), 4),
+        "d_seuil_k1": num(deflated_threshold_sharpe(2, 3000), 4),
         "d_seuil_k4": num(deflated_threshold_sharpe(budget, 3000), 4),
-        "d_facteur_taxe": num(
+        # Rapport du quatrième levier au premier : le seul rapport définissable,
+        # puisque le dénominateur à zéro levier est nul.
+        "d_facteur_1_4": num(
             deflated_threshold_sharpe(budget, 3000)
-            / max(deflated_threshold_sharpe(2.0, 3000), 1e-12), 2),
+            / deflated_threshold_sharpe(2, 3000), 1),
 
         # L'univers et sa vérité de référence
         "d_seances": num(N_SESSIONS, 0),

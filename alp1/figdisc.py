@@ -556,8 +556,11 @@ def fig_tax() -> str:
              label="leviers discrétionnaires ouverts")
 
     for n, cls in ns:
-        pts = [(k, deflated_threshold_sharpe(max(2.0, 2.0 ** k), n))
-               for k in range(9)]
+        # Sans bornage : à zéro levier le budget vaut une configuration, et le
+        # seuil est nul. Le borner à deux ferait démarrer la courbe au niveau
+        # d'un levier et masquerait le saut initial, qui est le fait le plus
+        # marquant de la figure.
+        pts = [(k, deflated_threshold_sharpe(2 ** k, n)) for k in range(9)]
         p.path(pts, cls)
         # Étiquette directe au bout de la courbe : pas de boîte de légende à
         # traverser des yeux pour identifier trois traits.
@@ -566,8 +569,9 @@ def fig_tax() -> str:
 
     p.vline(K_LEVERS, "lvl strong")
     p.label(K_LEVERS, 0.099, f"{K_LEVERS} leviers recensés", dx=7)
+    p.label(0, 0.004, "aucune taxe", dx=6)
     for n, cls in ns:
-        val = deflated_threshold_sharpe(max(2.0, 2.0 ** K_LEVERS), n)
+        val = deflated_threshold_sharpe(2 ** K_LEVERS, n)
         p.dot(K_LEVERS, val, cls.replace("hm", "s") if False else "s1",
               f"{K_LEVERS} leviers · {n} décisions · seuil {val:.4f}", r=3.4)
 

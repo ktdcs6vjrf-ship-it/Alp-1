@@ -663,7 +663,7 @@
 
     <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l’indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l’abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l’opérateur gagne mais s’il fait mieux qu’une règle qu’on écrit en dix lignes. L’appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à 0,2245&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
 
-    <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: 4&nbsp;leviers engendrent 16&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme, si bien que ces 16&nbsp;configurations ne coûtent qu’un facteur&nbsp;2,00. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur. <strong>L’exigence est inférieure à celle qui porte sur un avantage de géométrie</strong>, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.</p>
+    <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: 4&nbsp;leviers engendrent 16&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme&nbsp;: le premier levier fait tout le prix — il porte le seuil de zéro à 0,0215 — et les trois suivants ne le multiplient que par&nbsp;2,0. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur. <strong>L’exigence est inférieure à celle qui porte sur un avantage de géométrie</strong>, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.</p>
 
     <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d’arrêt optionnel</p>
     <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
@@ -671,7 +671,7 @@
 
   <div class="figures-cles">
     <div><span class="n">16</span><span class="t">configurations effectives engendrées par 4 leviers discrétionnaires</span></div>
-    <div><span class="n">2,00&nbsp;×</span><span class="t">ce que ces 4 leviers coûtent réellement au seuil de preuve</span></div>
+    <div><span class="n">2,0&nbsp;×</span><span class="t">ce que les trois leviers suivant le premier ajoutent au seuil</span></div>
     <div><span class="n">555</span><span class="t">décisions pour prouver un Sharpe de 0,10, taxe comprise</span></div>
     <div><span class="n">1,1&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
     <div><span class="n">91,7 %</span><span class="t">de l’avantage attribué au bon levier par la décomposition de Shapley</span></div>
@@ -3684,7 +3684,9 @@
 
   <p>Le seuil croît en <span class="v">√(k&nbsp;·&nbsp;ln&nbsp;2)</span>. La croissance est donc <strong>sous-linéaire en <span class="v">k</span></strong>, bien que le nombre de configurations, lui, croisse en 2<sup><span class="v">k</span></sup>.</p>
 
-  <p>Concrètement&nbsp;: passer de zéro à quatre leviers fait passer le seuil de 0,0215 à 0,0430, soit un facteur&nbsp;2,00. Seize configurations ne coûtent pas seize fois plus cher qu’une seule — elles coûtent deux fois plus cher. En échantillon, cela signifie un facteur quatre, ce qui est considérable mais nullement rédhibitoire.</p>
+  <p>Le point de départ mérite d’être posé exactement. À zéro levier, la famille compte une seule configuration&nbsp;: il n’y a rien à sélectionner, donc rien à déflater, et le seuil vaut 0,0000. Le premier levier le porte à 0,0215 — un saut depuis zéro, que nul facteur ne mesure. Les trois suivants le portent à 0,0430, soit un facteur&nbsp;2,0 sur ce premier palier.</p>
+
+  <p>C’est la forme de cette progression qui compte&nbsp;: 16&nbsp;configurations ne coûtent pas 16&nbsp;fois plus qu’une seule, ni même quatre fois plus que deux. En exigence d’échantillon, le facteur&nbsp;2,0 sur le seuil se traduit par un facteur quatre sur le nombre de décisions — considérable, et sans commune mesure avec l’exponentielle du nombre de configurations.</p>
 
       <figure class="plate">
       <figcaption><span class="lab">Figure 13</span> — Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d’échantillon. La concavité est le résultat&nbsp;: passer de zéro à un levier coûte davantage que passer de quatre à huit. Le trait vertical marque le recensement de 4&nbsp;leviers retenu ici.</figcaption>
@@ -3713,14 +3715,15 @@
 <text class="tk" x="585.2" y="261.0" text-anchor="middle">7</text>
 <line class="ba" x1="62.0" y1="248.0" x2="660.0" y2="248.0"/>
 <text class="ax" x="361.0" y="276.0" text-anchor="middle">leviers discrétionnaires ouverts</text>
-<path class="ln hm7" d="M62.00,182.04 L136.75,182.04 L211.50,154.72 L286.25,133.76 L361.00,116.09 L435.75,100.52 L510.50,86.44 L585.25,73.50"></path>
+<path class="ln hm7" d="M62.00,248.00 L136.75,182.04 L211.50,154.72 L286.25,133.76 L361.00,116.09 L435.75,100.52 L510.50,86.44 L585.25,73.50"></path>
 <text class="dl halo" x="656.0" y="64.4" text-anchor="end">1 000 décisions</text>
-<path class="ln hm5" d="M62.00,209.92 L136.75,209.92 L211.50,194.15 L286.25,182.04 L361.00,171.84 L435.75,162.85 L510.50,154.72 L585.25,147.25 L660.00,140.30"></path>
+<path class="ln hm5" d="M62.00,248.00 L136.75,209.92 L211.50,194.15 L286.25,182.04 L361.00,171.84 L435.75,162.85 L510.50,154.72 L585.25,147.25 L660.00,140.30"></path>
 <text class="dl halo" x="656.0" y="143.3" text-anchor="end">3 000 décisions</text>
-<path class="ln hm3" d="M62.00,227.14 L136.75,227.14 L211.50,218.50 L286.25,211.87 L361.00,206.29 L435.75,201.36 L510.50,196.91 L585.25,192.82 L660.00,189.01"></path>
+<path class="ln hm3" d="M62.00,248.00 L136.75,227.14 L211.50,218.50 L286.25,211.87 L361.00,206.29 L435.75,201.36 L510.50,196.91 L585.25,192.82 L660.00,189.01"></path>
 <text class="dl halo" x="656.0" y="192.0" text-anchor="end">10 000 décisions</text>
 <line class="lvl strong" x1="361.0" y1="62.0" x2="361.0" y2="248.0"/>
 <text class="dl halo" x="368.0" y="75.6" text-anchor="start">4 leviers recensés</text>
+<text class="dl halo" x="68.0" y="243.9" text-anchor="start">aucune taxe</text>
 <circle class="pt s1" cx="361.00" cy="116.09" r="3.4"><title>4 leviers · 1000 décisions · seuil 0.0745</title></circle>
 <circle class="pt s1" cx="361.00" cy="171.84" r="3.4"><title>4 leviers · 3000 décisions · seuil 0.0430</title></circle>
 <circle class="pt s1" cx="361.00" cy="206.29" r="3.4"><title>4 leviers · 10000 décisions · seuil 0.0235</title></circle>
@@ -4809,7 +4812,7 @@
 
   <p>La prétention d’un avantage non codable devient testable dès lors qu’elle est formulée en termes de trace plutôt que de règle. Elle relève alors d’un problème de mesure ordinaire, avec un instrument, des lois nulles, une puissance et un horizon.</p>
 
-  <p>L’instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l’opérateur gagne mais s’il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: 4&nbsp;leviers ne coûtent qu’un facteur&nbsp;2,00 sur le seuil de preuve.</p>
+  <p>L’instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l’opérateur gagne mais s’il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: le premier levier porte le seuil de zéro à 0,0215, et les trois suivants ne le multiplient que par&nbsp;2,0.</p>
 
   <p>L’exigence d’échantillon se chiffre&nbsp;: 555&nbsp;décisions, soit 1,1&nbsp;an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.</p>
 
