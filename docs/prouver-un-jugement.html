@@ -759,11 +759,12 @@
           <li><a href="#s-mauvaise-question">La question posée n’était pas la bonne</a></li>
           <li><a href="#s-effondrement">Le seuil s’effondre quand le stop s’élargit</a></li>
           <li><a href="#s-circularite">Une hypothèse qui supposait sa conclusion</a></li>
+          <li><a href="#s-refaire">Ce que les chapitres de risque deviennent</a></li>
           <li><a href="#s-ou-depenser">Où dépenser le jugement</a></li>
         </ol>
       </li>
       <li><span class="pt">Onzième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="35">
+        <ol start="36">
           <li><a href="#s-protocole">Ce qu’il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -5011,6 +5012,33 @@
     </figure>
 
   <p>Cette dérive supposée vaut 16,4&nbsp;points par heure, soit 5,1&nbsp;fois la borne haute du domaine que le même document appelle plausible. Les chapitres de risque qui en dépendent — Sortino, Kelly, drawdown, mesures de queue — tournent donc sous une dérive que le document juge lui-même invraisemblable, et leurs conclusions doivent se lire ainsi. Le présent chapitre déclare sa dérive de travail, 2,0&nbsp;point par heure, et ne la dérive de rien.</p>
+
+  <h2 id="s-refaire">Ce que les chapitres de risque deviennent</h2>
+
+  <p>Le défaut ne reste pas confiné à une hypothèse&nbsp;: il traverse tout ce que le document nº&nbsp;1 calcule ensuite. Sharpe, fraction de Kelly, coefficient de Lundberg, profondeur de ruine — chacun est établi sous la dérive de référence. Refaire ces calculs sous une dérive déclarée est donc le test décisif du chapitre.</p>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 12</span> — Les grandeurs de risque du document nº 1, refaites sous une dérive déclarée plutôt que dérivée de la friction.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Cas</th><th>µ (pt/h)</th><th>E[R]</th><th>Sharpe/trade</th><th>Kelly f*</th><th>θ* Lundberg</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Document nº 1 — µ = 2µ*, stop 0,010 %</td><td>16,38</td><td>+0,5500</td><td>+0,0873</td><td>1,82 %</td><td>0,0333</td></tr>
+          <tr class="sep"><td class="wrap">Dérive déclarée, stop 0,010 %</td><td>2,00</td><td>−0,4157</td><td>−0,0876</td><td>0,00 %</td><td>0,0000</td></tr>
+          <tr><td class="wrap">Dérive déclarée, stop 0,150 % optimal</td><td>2,00</td><td>+0,3371</td><td>+0,0918</td><td>3,34 %</td><td>0,0609</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La première ligne est le cas de référence du document nº 1, et son espérance vaut exactement le ratio de friction — c’est mécanique : si µ = 2µ*, alors µ·E[τ] = 2c et E[R] = c/a. **Le chiffre annoncé ne contient aucune information sur le marché ; il ne contient que la friction.** La deuxième ligne montre ce que devient la même géométrie sous une dérive plausible : l’espérance est négative, Kelly vaut zéro, et il n’y a rien à dimensionner. La troisième corrige la géométrie et non l’hypothèse : chaque grandeur y dépasse celle de la première ligne, à une dérive cinq fois plus faible.</p>
+    </figure>
+
+  <p>La première ligne mérite d’être lue deux fois. L’espérance de référence du document nº&nbsp;1 vaut +0,550&nbsp;R, et le ratio de friction vaut 0,550. Ce sont le même nombre, et c’est mécanique&nbsp;: si µ&nbsp;=&nbsp;2µ*, alors µ·E[τ]&nbsp;=&nbsp;2c, donc E[R]&nbsp;=&nbsp;(2c&nbsp;−&nbsp;c)/a&nbsp;=&nbsp;c/a. <strong>Le chiffre publié ne dit rien du marché&nbsp;; il dit la friction, et rien d’autre.</strong> Toute la chaîne qui en dépend hérite de cette propriété.</p>
+
+  <p>La deuxième ligne donne ce que devient la géométrie déclarée sous une dérive plausible&nbsp;: espérance négative, fraction de Kelly nulle, coefficient de Lundberg nul. Les chapitres de risque n’y sont pas seulement moins favorables — ils sont <em>vides</em>. On ne dimensionne pas une espérance négative, on s’en abstient.</p>
+
+  <p>La troisième ligne est le résultat de ce document. Elle ne corrige pas l’hypothèse en la remplaçant par une plus généreuse&nbsp;: elle garde la dérive plausible et corrige la géométrie. Le Sharpe par trade y vaut +0,0918 contre +0,0873 dans le cas circulaire, la fraction de Kelly 3,34&nbsp;% contre 1,82&nbsp;%, le coefficient de Lundberg 0,0609 contre 0,0333. <strong>Chaque grandeur de risque dépasse celle du cas de référence, à une dérive cinq fois plus faible.</strong></p>
+
+  <p>C’est la conclusion qu’il faut retenir de la correction, et elle est plus forte que sa version négative. Le document nº&nbsp;1 n’avait pas besoin d’une dérive invraisemblable pour tenir&nbsp;; il en avait besoin parce que sa géométrie mangeait tout. Retirer l’hypothèse et corriger la géométrie donne de meilleurs chiffres qu’en la gardant.</p>
 
   <h2 id="s-ou-depenser">Où dépenser le jugement</h2>
 

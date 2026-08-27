@@ -644,11 +644,12 @@
           <li><a href="#s-mauvaise-question">La question posée n’était pas la bonne</a></li>
           <li><a href="#s-effondrement">Le seuil s’effondre quand le stop s’élargit</a></li>
           <li><a href="#s-circularite">Une hypothèse qui supposait sa conclusion</a></li>
+          <li><a href="#s-refaire">Ce que les chapitres de risque deviennent</a></li>
           <li><a href="#s-ou-depenser">Où dépenser le jugement</a></li>
         </ol>
       </li>
       <li><span class="pt">Onzième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="35">
+        <ol start="36">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1132,6 +1133,20 @@
   {{TABLE:circularite}}
 
   <p>Cette dérive supposée vaut {{s_ref_circulaire}}&nbsp;points par heure, soit {{s_ref_facteur}}&nbsp;fois la borne haute du domaine que le même document appelle plausible. Les chapitres de risque qui en dépendent — Sortino, Kelly, drawdown, mesures de queue — tournent donc sous une dérive que le document juge lui-même invraisemblable, et leurs conclusions doivent se lire ainsi. Le présent chapitre déclare sa dérive de travail, {{s_derive_travail}}&nbsp;point par heure, et ne la dérive de rien.</p>
+
+  <h2 id="s-refaire">Ce que les chapitres de risque deviennent</h2>
+
+  <p>Le défaut ne reste pas confiné à une hypothèse&nbsp;: il traverse tout ce que le document nº&nbsp;1 calcule ensuite. Sharpe, fraction de Kelly, coefficient de Lundberg, profondeur de ruine — chacun est établi sous la dérive de référence. Refaire ces calculs sous une dérive déclarée est donc le test décisif du chapitre.</p>
+
+  {{TABLE:risque}}
+
+  <p>La première ligne mérite d'être lue deux fois. L'espérance de référence du document nº&nbsp;1 vaut {{r_er_ref}}&nbsp;R, et le ratio de friction vaut {{r_cl}}. Ce sont le même nombre, et c'est mécanique&nbsp;: si µ&nbsp;=&nbsp;2µ*, alors µ·E[τ]&nbsp;=&nbsp;2c, donc E[R]&nbsp;=&nbsp;(2c&nbsp;−&nbsp;c)/a&nbsp;=&nbsp;c/a. <strong>Le chiffre publié ne dit rien du marché&nbsp;; il dit la friction, et rien d'autre.</strong> Toute la chaîne qui en dépend hérite de cette propriété.</p>
+
+  <p>La deuxième ligne donne ce que devient la géométrie déclarée sous une dérive plausible&nbsp;: espérance négative, fraction de Kelly nulle, coefficient de Lundberg nul. Les chapitres de risque n'y sont pas seulement moins favorables — ils sont <em>vides</em>. On ne dimensionne pas une espérance négative, on s'en abstient.</p>
+
+  <p>La troisième ligne est le résultat de ce document. Elle ne corrige pas l'hypothèse en la remplaçant par une plus généreuse&nbsp;: elle garde la dérive plausible et corrige la géométrie. Le Sharpe par trade y vaut {{r_sharpe_opt}} contre {{r_sharpe_ref}} dans le cas circulaire, la fraction de Kelly {{r_kelly_opt}}&nbsp;% contre {{r_kelly_ref}}&nbsp;%, le coefficient de Lundberg {{r_theta_opt}} contre {{r_theta_ref}}. <strong>Chaque grandeur de risque dépasse celle du cas de référence, à une dérive cinq fois plus faible.</strong></p>
+
+  <p>C'est la conclusion qu'il faut retenir de la correction, et elle est plus forte que sa version négative. Le document nº&nbsp;1 n'avait pas besoin d'une dérive invraisemblable pour tenir&nbsp;; il en avait besoin parce que sa géométrie mangeait tout. Retirer l'hypothèse et corriger la géométrie donne de meilleurs chiffres qu'en la gardant.</p>
 
   <h2 id="s-ou-depenser">Où dépenser le jugement</h2>
 
