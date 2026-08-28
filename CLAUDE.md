@@ -170,7 +170,7 @@ figure ; ils tiennent en une trentaine de lignes chacun :
 ## Commandes
 
 ```
-python main.py --tests      # 787 tests (compter ~20 min, --wp et figures sont lents)
+python main.py --tests      # 794 tests (compter ~20 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit le document de travail
 python main.py --strategy   # rejoue la stratégie scellée et sa batterie
 python main.py --bounds     # la mesure encadrée par les deux remplissages
