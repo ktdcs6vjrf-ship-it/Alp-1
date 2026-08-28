@@ -376,6 +376,10 @@
   .fig .s1 { stroke: var(--s1); }  .fig .pt.s1 { fill: var(--s1); }
   .fig .s2 { stroke: var(--s2); }  .fig .pt.s2 { fill: var(--s2); }
   .fig .s3 { stroke: var(--s3); }  .fig .pt.s3 { fill: var(--s3); }
+  /* Un quatrième trait, du côté négatif de l'échelle divergente : `negf` ne
+     remplit que des aplats, et une courbe qui porte le signe d'un verdict ne
+     peut pas emprunter la teinte d'une série ordinaire. */
+  .fig .neg { stroke: var(--dv-neg); }  .fig .pt.neg { fill: var(--dv-neg); }
 
   .fig .area { stroke: var(--paper); stroke-width: 2; }
   .fig .area.ar1 { fill: var(--s1); }
@@ -646,7 +650,7 @@
 
   <div class="titleblock">
     <div class="venue">Série de documents de travail ALP &nbsp;·&nbsp; n<sup>o</sup>&nbsp;3</div>
-    <h1>Combien de décisions pour prouver un jugement&nbsp;? Lois nulles, taxe de multiplicité et mur d’échantillon chez l’opérateur discrétionnaire</h1>
+    <h1>Le seuil, et non le signal&nbsp;: ce que l’opérateur discrétionnaire décide vraiment. Lois nulles, taxe de multiplicité et théorème d’arrêt optionnel</h1>
     <p class="byline">Recherche ALP</p>
     <p class="affil">Évaluation de la décision discrétionnaire et théorie des tests multiples</p>
     <p class="dateline">Première version&nbsp;: août 2026 &nbsp;·&nbsp; Cette version&nbsp;: août 2026</p>
@@ -655,7 +659,7 @@
   <div class="abstract">
     <h2 class="unnumbered">Résumé</h2>
 
-    <p>Un opérateur qui décide au jugement peut établir la valeur de ce jugement en <strong>555&nbsp;décisions</strong>, soit un peu plus d’un an à deux décisions par séance, taxe de sélection comprise. Ce document établit ce chiffre et l’appareil qui le produit.</p>
+    <p>Un opérateur qui décide au jugement peut établir la valeur de ce jugement en <strong>619&nbsp;décisions</strong>, soit 1,2&nbsp;an à deux décisions par séance. Deux routes indépendantes y mènent — un test ordinaire sur la moyenne, 619&nbsp;décisions, et la taxe de sélection due aux 16&nbsp;configurations, 555 — et c’est la plus exigeante des deux qui lie. Ce document établit ce chiffre et l’appareil qui le produit.</p>
 
     <p>L’obstacle apparent est que la règle n’existe pas sous forme écrite&nbsp;: sans règle, pas de rejeu&nbsp;; sans rejeu, pas de loi nulle&nbsp;; sans loi nulle, rien à opposer au hasard. Il se lève par une distinction que l’évaluation des gérants pratique depuis quarante ans sans jamais disposer de la règle qu’elle juge&nbsp;: <strong>répliquer n’est pas détecter</strong>. On ne teste pas la règle&nbsp;; on teste la trace qu’elle laisse.</p>
 
@@ -663,7 +667,13 @@
 
     <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l’indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l’abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l’opérateur gagne mais s’il fait mieux qu’une règle qu’on écrit en dix lignes. L’appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à 0,2245&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
 
-    <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: 4&nbsp;leviers engendrent 16&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme&nbsp;: le premier levier fait tout le prix — il porte le seuil de zéro à 0,0215 — et les trois suivants ne le multiplient que par&nbsp;2,0. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur. <strong>L’exigence est inférieure à celle qui porte sur un avantage de géométrie</strong>, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.</p>
+    <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: 4&nbsp;leviers engendrent 16&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme&nbsp;: le premier levier fait tout le prix — il porte le seuil de zéro à 0,0215 — et les trois suivants ne le multiplient que par&nbsp;2,0. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur.</p>
+
+    <p>La dernière partie retourne la question, et c’est le résultat que ce document tient pour le sien. Prouver un jugement suppose que le jugement soit ce qui manque. Le théorème d’arrêt optionnel dit qu’il ne l’est pas&nbsp;: par l’identité de Wald à temps borné par la séance, <span class="v">E[R]&nbsp;=&nbsp;(µ·E[τ∧T]&nbsp;−&nbsp;c)/L</span>, d’où un seuil de rentabilité <span class="v">µ*&nbsp;=&nbsp;c/E[τ∧T]</span> qui ne dépend d’aucun signal. <strong><span class="v">µ</span> est une propriété du marché&nbsp;; <span class="v">µ*</span> est une propriété de la géométrie, et l’opérateur la fixe entièrement.</strong> Là où <span class="v">µ</span> demande un échantillon, une loi nulle et une taxe de multiplicité, <span class="v">µ*</span> se calcule.</p>
+
+    <p>Il se calcule, et il décide. À la géométrie déclarée par l’opérateur — un stop de 0,010&nbsp;% de l’indice — le seuil vaut 8,19&nbsp;points par heure quand le domaine de dérive que ce même document appelle plausible s’arrête à 3,2. La rentabilité n’y est pas improbable&nbsp;: elle est arithmétiquement impossible. À 0,150&nbsp;% elle tombe à 0,196, soit un facteur&nbsp;53 sur ce seul levier, quand améliorer l’exécution n’en donne que&nbsp;3,5. L’espérance passe de −0,416 à +0,337&nbsp;R par trade <em>à dérive identique</em>&nbsp;: seule la géométrie a changé.</p>
+
+    <p>Ce chapitre corrige un défaut du document nº&nbsp;1, et il faut le nommer. La dérive de référence y était <em>dérivée de la friction</em> — deux fois le seuil de rentabilité — donc supposée exactement au niveau qui rend la stratégie rentable, et à 16,4&nbsp;points par heure, soit 5,1&nbsp;fois la borne haute du plausible. Les chapitres de risque refaits sous une dérive déclarée et une géométrie corrigée donnent de <em>meilleures</em> grandeurs qu’en gardant l’hypothèse&nbsp;: Sharpe par trade +0,0918 contre +0,0873, fraction de Kelly 3,34&nbsp;% contre 1,82&nbsp;%, coefficient de Lundberg 0,0609 contre 0,0333 — à une dérive cinq fois plus faible.</p>
 
     <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d’arrêt optionnel</p>
     <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
@@ -672,8 +682,9 @@
   <div class="figures-cles">
     <div><span class="n">16</span><span class="t">configurations effectives engendrées par 4 leviers discrétionnaires</span></div>
     <div><span class="n">2,0&nbsp;×</span><span class="t">ce que les trois leviers suivant le premier ajoutent au seuil</span></div>
-    <div><span class="n">555</span><span class="t">décisions pour prouver un Sharpe de 0,10, taxe comprise</span></div>
-    <div><span class="n">1,1&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
+    <div><span class="n">619</span><span class="t">décisions pour prouver un Sharpe de 0,10, taxe comprise</span></div>
+    <div><span class="n">53&nbsp;×</span><span class="t">ce que la seule largeur du stop déplace du seuil de rentabilité</span></div>
+    <div><span class="n">1,2&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
     <div><span class="n">91,7 %</span><span class="t">de l’avantage attribué au bon levier par la décomposition de Shapley</span></div>
   </div>
 
@@ -971,9 +982,9 @@
 <text class="lg" x="472.0" y="303.5">µ = µ*</text>
 <line class="ln s3" x1="528.0" y1="300.0" x2="542.0" y2="300.0"/>
 <text class="lg" x="548.0" y="303.5">µ = 3 µ*</text>
-<text class="lg" x="376.0" y="324.0" text-anchor="start">trois dérives, trois courbes</text>
-<text class="lg" x="376.0" y="338.0" text-anchor="start">presque confondues : la géométrie</text>
-<text class="lg" x="376.0" y="352.0" text-anchor="start">du repli décide, non le signal</text>
+<text class="lg keep" x="376.0" y="324.0" text-anchor="start">trois dérives, trois courbes</text>
+<text class="lg keep" x="376.0" y="338.0" text-anchor="start">presque confondues : la géométrie</text>
+<text class="lg keep" x="376.0" y="352.0" text-anchor="start">du repli décide, non le signal</text>
 <text class="hdr" x="58" y="292">Clôture au-delà du corps de la veille</text>
 <rect class="up" x="58.0" y="300" width="86.5" height="14" rx="2"><title>hausse · 37.5 %</title></rect>
 <text class="lg" x="102.2" y="326" text-anchor="middle">hausse</text>
@@ -3248,87 +3259,103 @@
 
       <figure class="plate">
       <figcaption><span class="lab">Figure 9</span> — L’espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance. À gauche, l’opérateur sans information&nbsp;: la surface n’a <strong>aucune forme</strong>. Elle erre entre −0,124 et +0,044&nbsp;R sans que la sélectivité y dessine quoi que ce soit — c’est du bruit d’échantillonnage, et le fait qu’elle passe au positif sur une ligne en est la démonstration plutôt que l’exception. Le long de l’axe de la mise elle est exactement proportionnelle&nbsp;: la taille multiplie l’espérance qui existe, elle n’en crée pas. À droite, le même opérateur muni d’une clairvoyance de 0,2245&nbsp;bit&nbsp;: la surface s’incline, et elle s’incline selon l’axe de la sélectivité. C’est la figure qui dit où loge un avantage discrétionnaire, et où il ne loge pas.</figcaption>
-      <div class="scroll"><svg class="fig" viewBox="0 0 660 368" role="img" aria-label="Deux surfaces d espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance" preserveAspectRatio="xMidYMid meet">
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 386" role="img" aria-label="Deux surfaces d espérance par décision selon la sélectivité et la mise, sans puis avec clairvoyance" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">INVARIANCE</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Espérance selon la sélectivité et la mise</text>
-<text class="tk" x="660.0" y="31" text-anchor="end">sélectivité × mise</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">chaque cadre porte sa propre échelle</text>
 <line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
-<text class="lg" x="208.0" y="72" text-anchor="middle">sans clairvoyance</text>
-<line class="floor" x1="208.0" y1="157.0" x2="112.0" y2="187.0"/>
-<line class="floor" x1="240.0" y1="167.0" x2="144.0" y2="197.0"/>
-<line class="floor" x1="272.0" y1="177.0" x2="176.0" y2="207.0"/>
-<line class="floor" x1="304.0" y1="187.0" x2="208.0" y2="217.0"/>
-<line class="floor" x1="208.0" y1="157.0" x2="304.0" y2="187.0"/>
-<line class="floor" x1="176.0" y1="167.0" x2="272.0" y2="197.0"/>
-<line class="floor" x1="144.0" y1="177.0" x2="240.0" y2="207.0"/>
-<line class="floor" x1="112.0" y1="187.0" x2="208.0" y2="217.0"/>
-<line class="post" x1="208.0" y1="157.0" x2="208.0" y2="158.2"/>
-<line class="post" x1="304.0" y1="187.0" x2="304.0" y2="186.3"/>
-<line class="post" x1="208.0" y1="217.0" x2="208.0" y2="214.4"/>
-<line class="post" x1="112.0" y1="187.0" x2="112.0" y2="191.7"/>
-<polygon class="mesh dn" points="208.0,202.6 240.0,205.0 208.0,214.4 176.0,214.4"><title>-0.035 R</title></polygon>
-<polygon class="mesh dn" points="176.0,187.6 208.0,202.6 176.0,214.4 144.0,197.8"><title>-0.060 R</title></polygon>
-<polygon class="mesh dn" points="240.0,190.7 272.0,195.7 240.0,205.0 208.0,202.6"><title>-0.025 R</title></polygon>
-<polygon class="mesh dn" points="144.0,180.5 176.0,187.6 144.0,197.8 112.0,191.7"><title>-0.040 R</title></polygon>
-<polygon class="mesh dn" points="208.0,177.4 240.0,190.7 208.0,202.6 176.0,187.6"><title>-0.043 R</title></polygon>
-<polygon class="mesh ze" points="272.0,178.9 304.0,186.3 272.0,195.7 240.0,190.7"><title>-0.015 R</title></polygon>
-<polygon class="mesh dn" points="176.0,169.3 208.0,177.4 176.0,187.6 144.0,180.5"><title>-0.029 R</title></polygon>
-<polygon class="mesh dn" points="240.0,167.2 272.0,178.9 240.0,190.7 208.0,177.4"><title>-0.026 R</title></polygon>
-<polygon class="mesh ze" points="208.0,158.2 240.0,167.2 208.0,177.4 176.0,169.3"><title>-0.017 R</title></polygon>
-<line class="ba" x1="78.0" y1="120.0" x2="78.0" y2="254.0"/>
-<line class="ba" x1="78.0" y1="254.0" x2="83.0" y2="254.0"/>
-<text class="tk" x="73.0" y="257.5" text-anchor="end">-1,12 R</text>
-<line class="ba" x1="78.0" y1="187.0" x2="83.0" y2="187.0"/>
-<text class="tk" x="73.0" y="190.5" text-anchor="end">0</text>
-<line class="ba" x1="78.0" y1="120.0" x2="83.0" y2="120.0"/>
-<text class="tk" x="73.0" y="123.5" text-anchor="end">1,12 R</text>
-<text class="tk halo" x="101.0" y="202.0" text-anchor="end">100%</text>
-<text class="tk halo" x="133.0" y="212.0" text-anchor="end">75%</text>
-<text class="tk halo" x="165.0" y="222.0" text-anchor="end">50%</text>
-<text class="tk halo" x="197.0" y="232.0" text-anchor="end">25%</text>
-<text class="tk halo" x="315.0" y="213.0">0.5 R</text>
-<text class="tk halo" x="283.0" y="223.0">1 R</text>
-<text class="tk halo" x="251.0" y="233.0">1.5 R</text>
-<text class="tk halo" x="219.0" y="243.0">2 R</text>
-<text class="lg" x="508.0" y="72" text-anchor="middle">avec clairvoyance</text>
-<line class="floor" x1="508.0" y1="157.0" x2="412.0" y2="187.0"/>
-<line class="floor" x1="540.0" y1="167.0" x2="444.0" y2="197.0"/>
-<line class="floor" x1="572.0" y1="177.0" x2="476.0" y2="207.0"/>
-<line class="floor" x1="604.0" y1="187.0" x2="508.0" y2="217.0"/>
-<line class="floor" x1="508.0" y1="157.0" x2="604.0" y2="187.0"/>
-<line class="floor" x1="476.0" y1="167.0" x2="572.0" y2="197.0"/>
-<line class="floor" x1="444.0" y1="177.0" x2="540.0" y2="207.0"/>
-<line class="floor" x1="412.0" y1="187.0" x2="508.0" y2="217.0"/>
-<line class="post" x1="508.0" y1="157.0" x2="508.0" y2="158.2"/>
-<line class="post" x1="604.0" y1="187.0" x2="604.0" y2="170.2"/>
-<line class="post" x1="508.0" y1="217.0" x2="508.0" y2="150.0"/>
-<line class="post" x1="412.0" y1="187.0" x2="412.0" y2="191.7"/>
-<polygon class="mesh hm6" points="508.0,162.2 540.0,156.8 508.0,150.0 476.0,160.6"><title>+0.831 R</title></polygon>
-<polygon class="mesh hm5" points="476.0,174.7 508.0,162.2 476.0,160.6 444.0,180.6"><title>+0.460 R</title></polygon>
-<polygon class="mesh hm5" points="540.0,163.8 572.0,163.5 540.0,156.8 508.0,162.2"><title>+0.594 R</title></polygon>
-<polygon class="mesh hm3" points="444.0,180.5 476.0,174.7 444.0,180.6 412.0,191.7"><title>+0.086 R</title></polygon>
-<polygon class="mesh hm4" points="508.0,168.8 540.0,163.8 508.0,162.2 476.0,174.7"><title>+0.329 R</title></polygon>
-<polygon class="mesh hm4" points="572.0,165.4 604.0,170.2 572.0,163.5 540.0,163.8"><title>+0.356 R</title></polygon>
-<polygon class="mesh hm3" points="476.0,169.3 508.0,168.8 476.0,174.7 444.0,180.5"><title>+0.061 R</title></polygon>
-<polygon class="mesh hm4" points="540.0,162.9 572.0,165.4 540.0,163.8 508.0,168.8"><title>+0.197 R</title></polygon>
-<polygon class="mesh hm3" points="508.0,158.2 540.0,162.9 508.0,168.8 476.0,169.3"><title>+0.037 R</title></polygon>
-<text class="tk halo" x="401.0" y="202.0" text-anchor="end">100%</text>
-<text class="tk halo" x="433.0" y="212.0" text-anchor="end">75%</text>
-<text class="tk halo" x="465.0" y="222.0" text-anchor="end">50%</text>
-<text class="tk halo" x="497.0" y="232.0" text-anchor="end">25%</text>
-<text class="tk halo" x="615.0" y="213.0">0.5 R</text>
-<text class="tk halo" x="583.0" y="223.0">1 R</text>
-<text class="tk halo" x="551.0" y="233.0">1.5 R</text>
-<text class="tk halo" x="519.0" y="243.0">2 R</text>
-<rect class="negf" x="0.0" y="316.5" width="11" height="11" rx="2"/>
-<text class="lg" x="17.0" y="325.5">espérance négative</text>
-<rect class="wash" x="178.0" y="316.5" width="11" height="11" rx="2"/>
-<text class="lg" x="195.0" y="325.5">neutre, sous 0,02 R</text>
-<rect class="hm6" x="356.0" y="316.5" width="11" height="11" rx="2"/>
-<text class="lg" x="373.0" y="325.5">espérance positive</text>
+<text class="lg" x="186.0" y="74" text-anchor="middle">sans clairvoyance</text>
+<text class="tk" x="186.0" y="89" text-anchor="middle">étendue -0,124 à 0,044 R</text>
+<line class="floor" x1="186.0" y1="224.0" x2="102.0" y2="254.0"/>
+<line class="floor" x1="214.0" y1="234.0" x2="130.0" y2="264.0"/>
+<line class="floor" x1="242.0" y1="244.0" x2="158.0" y2="274.0"/>
+<line class="floor" x1="270.0" y1="254.0" x2="186.0" y2="284.0"/>
+<line class="floor" x1="186.0" y1="224.0" x2="270.0" y2="254.0"/>
+<line class="floor" x1="158.0" y1="234.0" x2="242.0" y2="264.0"/>
+<line class="floor" x1="130.0" y1="244.0" x2="214.0" y2="274.0"/>
+<line class="floor" x1="102.0" y1="254.0" x2="186.0" y2="284.0"/>
+<line class="post" x1="186.0" y1="224.0" x2="186.0" y2="155.9"/>
+<line class="post" x1="270.0" y1="254.0" x2="270.0" y2="167.7"/>
+<line class="post" x1="186.0" y1="284.0" x2="186.0" y2="178.0"/>
+<line class="post" x1="102.0" y1="254.0" x2="102.0" y2="220.9"/>
+<polygon class="mesh dn" points="186.0,239.6 214.0,174.6 186.0,178.0 158.0,268.0"><title>-0.035 R</title></polygon>
+<polygon class="mesh dn" points="158.0,180.4 186.0,239.6 158.0,268.0 130.0,192.4"><title>-0.060 R</title></polygon>
+<polygon class="mesh dn" points="214.0,211.2 242.0,171.2 214.0,174.6 186.0,239.6"><title>-0.025 R</title></polygon>
+<polygon class="mesh dn" points="130.0,199.2 158.0,180.4 130.0,192.4 102.0,220.9"><title>-0.040 R</title></polygon>
+<polygon class="mesh dn" points="186.0,168.3 214.0,211.2 186.0,239.6 158.0,180.4"><title>-0.043 R</title></polygon>
+<polygon class="mesh ze" points="242.0,182.7 270.0,167.7 242.0,171.2 214.0,211.2"><title>-0.015 R</title></polygon>
+<polygon class="mesh dn" points="158.0,177.6 186.0,168.3 158.0,180.4 130.0,199.2"><title>-0.029 R</title></polygon>
+<polygon class="mesh dn" points="214.0,156.3 242.0,182.7 214.0,211.2 186.0,168.3"><title>-0.026 R</title></polygon>
+<polygon class="mesh ze" points="186.0,155.9 214.0,156.3 186.0,168.3 158.0,177.6"><title>-0.017 R</title></polygon>
+<line class="ba" x1="68.0" y1="142.0" x2="68.0" y2="254.0"/>
+<line class="ba" x1="68.0" y1="233.6" x2="73.0" y2="233.6"/>
+<text class="tk" x="63.0" y="237.1" text-anchor="end">-0,10 R</text>
+<line class="ba" x1="68.0" y1="204.0" x2="73.0" y2="204.0"/>
+<text class="tk" x="63.0" y="207.5" text-anchor="end">-0,05 R</text>
+<line class="ba" x1="68.0" y1="174.3" x2="73.0" y2="174.3"/>
+<text class="tk" x="63.0" y="177.8" text-anchor="end">0,00 R</text>
+<line class="ba" x1="68.0" y1="144.7" x2="73.0" y2="144.7"/>
+<text class="tk" x="63.0" y="148.2" text-anchor="end">0,05 R</text>
+<text class="tk halo" x="91.0" y="269.0" text-anchor="end">100%</text>
+<text class="tk halo" x="119.0" y="279.0" text-anchor="end">75%</text>
+<text class="tk halo" x="147.0" y="289.0" text-anchor="end">50%</text>
+<text class="tk halo" x="175.0" y="299.0" text-anchor="end">25%</text>
+<text class="tk halo" x="281.0" y="280.0">0.5 R</text>
+<text class="tk halo" x="253.0" y="290.0">1 R</text>
+<text class="tk halo" x="225.0" y="300.0">1.5 R</text>
+<text class="tk halo" x="197.0" y="310.0">2 R</text>
+<text class="lg" x="508.0" y="74" text-anchor="middle">avec clairvoyance</text>
+<text class="tk" x="508.0" y="89" text-anchor="middle">étendue -0,079 à 1,123 R</text>
+<line class="floor" x1="508.0" y1="224.0" x2="424.0" y2="254.0"/>
+<line class="floor" x1="536.0" y1="234.0" x2="452.0" y2="264.0"/>
+<line class="floor" x1="564.0" y1="244.0" x2="480.0" y2="274.0"/>
+<line class="floor" x1="592.0" y1="254.0" x2="508.0" y2="284.0"/>
+<line class="floor" x1="508.0" y1="224.0" x2="592.0" y2="254.0"/>
+<line class="floor" x1="480.0" y1="234.0" x2="564.0" y2="264.0"/>
+<line class="floor" x1="452.0" y1="244.0" x2="536.0" y2="274.0"/>
+<line class="floor" x1="424.0" y1="254.0" x2="508.0" y2="284.0"/>
+<line class="post" x1="508.0" y1="224.0" x2="508.0" y2="213.1"/>
+<line class="post" x1="592.0" y1="254.0" x2="592.0" y2="218.1"/>
+<line class="post" x1="508.0" y1="284.0" x2="508.0" y2="178.0"/>
+<line class="post" x1="424.0" y1="254.0" x2="424.0" y2="248.0"/>
+<polygon class="mesh hm6" points="508.0,203.0 536.0,191.4 508.0,178.0 480.0,196.8"><title>+0.831 R</title></polygon>
+<polygon class="mesh hm5" points="480.0,224.3 508.0,203.0 480.0,196.8 452.0,228.6"><title>+0.460 R</title></polygon>
+<polygon class="mesh hm5" points="536.0,209.1 564.0,204.7 536.0,191.4 508.0,203.0"><title>+0.594 R</title></polygon>
+<polygon class="mesh hm3" points="452.0,236.4 480.0,224.3 452.0,228.6 424.0,248.0"><title>+0.086 R</title></polygon>
+<polygon class="mesh hm4" points="508.0,220.0 536.0,209.1 508.0,203.0 480.0,224.3"><title>+0.329 R</title></polygon>
+<polygon class="mesh hm4" points="564.0,215.3 592.0,218.1 564.0,204.7 536.0,209.1"><title>+0.356 R</title></polygon>
+<polygon class="mesh hm3" points="480.0,224.7 508.0,220.0 480.0,224.3 452.0,236.4"><title>+0.061 R</title></polygon>
+<polygon class="mesh hm4" points="536.0,215.7 564.0,215.3 536.0,209.1 508.0,220.0"><title>+0.197 R</title></polygon>
+<polygon class="mesh hm3" points="508.0,213.1 536.0,215.7 508.0,220.0 480.0,224.7"><title>+0.037 R</title></polygon>
+<line class="ba" x1="390.0" y1="142.0" x2="390.0" y2="254.0"/>
+<line class="ba" x1="390.0" y1="241.5" x2="395.0" y2="241.5"/>
+<text class="tk" x="385.0" y="245.0" text-anchor="end">0,00 R</text>
+<line class="ba" x1="390.0" y1="220.6" x2="395.0" y2="220.6"/>
+<text class="tk" x="385.0" y="224.1" text-anchor="end">0,25 R</text>
+<line class="ba" x1="390.0" y1="199.8" x2="395.0" y2="199.8"/>
+<text class="tk" x="385.0" y="203.3" text-anchor="end">0,50 R</text>
+<line class="ba" x1="390.0" y1="179.0" x2="395.0" y2="179.0"/>
+<text class="tk" x="385.0" y="182.5" text-anchor="end">0,75 R</text>
+<line class="ba" x1="390.0" y1="158.2" x2="395.0" y2="158.2"/>
+<text class="tk" x="385.0" y="161.7" text-anchor="end">1,00 R</text>
+<text class="tk halo" x="413.0" y="269.0" text-anchor="end">100%</text>
+<text class="tk halo" x="441.0" y="279.0" text-anchor="end">75%</text>
+<text class="tk halo" x="469.0" y="289.0" text-anchor="end">50%</text>
+<text class="tk halo" x="497.0" y="299.0" text-anchor="end">25%</text>
+<text class="tk halo" x="603.0" y="280.0">0.5 R</text>
+<text class="tk halo" x="575.0" y="290.0">1 R</text>
+<text class="tk halo" x="547.0" y="300.0">1.5 R</text>
+<text class="tk halo" x="519.0" y="310.0">2 R</text>
+<text class="lg keep" x="0.0" y="326.0" text-anchor="start">les deux cadres ne partagent pas leur échelle : l’étendue de droite vaut 7,1 fois celle de gauche</text>
+<rect class="negf" x="0.0" y="342.5" width="11" height="11" rx="2"/>
+<text class="lg" x="17.0" y="351.5">espérance négative</text>
+<rect class="wash" x="178.0" y="342.5" width="11" height="11" rx="2"/>
+<text class="lg" x="195.0" y="351.5">neutre, sous 0,02 R</text>
+<rect class="hm6" x="356.0" y="342.5" width="11" height="11" rx="2"/>
+<text class="lg" x="373.0" y="351.5">espérance positive</text>
 
 </svg></div>
-      <p class="note">Arête gauche : part des setups retenus. Arête droite : mise en unités de risque. Les deux surfaces partagent la même échelle de hauteur, graduée à gauche : c’est ce partage qui autorise à les comparer. Sans information, aucun réglage ne déforme la surface.</p>
+      <p class="note">Arête gauche : part des setups retenus. Arête droite : mise en unités de risque. Sans clairvoyance, la surface n’a aucune forme selon la sélectivité — elle change de signe d’une rangée à l’autre sans ordre — et reste exactement proportionnelle selon la mise, qui multiplie une espérance sans jamais en créer. Avec clairvoyance, elle monte régulièrement quand on resserre la sélection. La première rangée est commune aux deux cadres&amp;nbsp;: à 100 % de setups retenus, il n’y a plus de sélection, donc plus rien que la clairvoyance puisse changer.</p>
     </figure>
 
   <h2 id="s-plantee">Planter une compétence de taille connue</h2>
@@ -3707,7 +3734,7 @@
       <table>
         <thead><tr><th class="wrap">Levier</th><th>Clé</th><th>Configurations</th><th>Seuil déflaté</th><th>Ce que ce levier ajoute</th></tr></thead>
         <tbody>
-          <tr><td class="wrap">Entrer ou s’abstenir</td><td>entree</td><td>2</td><td>0,0215</td><td>+0,0000</td></tr>
+          <tr><td class="wrap">Entrer ou s’abstenir</td><td>entree</td><td>2</td><td>0,0215</td><td>+0,0215</td></tr>
           <tr><td class="wrap">Le moment exact dans la fenêtre</td><td>moment</td><td>4</td><td>0,0304</td><td>+0,0089</td></tr>
           <tr><td class="wrap">La taille de position</td><td>taille</td><td>8</td><td>0,0372</td><td>+0,0068</td></tr>
           <tr><td class="wrap">La gestion de sortie</td><td>sortie</td><td>16</td><td>0,0430</td><td>+0,0058</td></tr>
@@ -3807,7 +3834,7 @@
       <p class="note"><span class="lab">Lecture.</span> Les deux routes convergent sans partager aucune hypothèse : la première ne connaît que la moyenne et la variance, la seconde ne connaît que le nombre de configurations. Deux chemins séparés qui butent au même endroit disent que le mur est structurel.</p>
     </figure>
 
-  <p>Les deux premières routes s’accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de 0,10 par décision, il faut 555&nbsp;décisions, soit 1,1&nbsp;an à deux décisions par jour.</p>
+  <p>Les deux premières routes s’accordent à quelques pour cent près sur toute la plage — 619 décisions contre 555 au Sharpe cité — et c’est la plus exigeante qui lie&nbsp;: 619&nbsp;décisions, soit 1,2&nbsp;an à deux décisions par jour. Qu’elles s’accordent sans partager aucune hypothèse est le fait&nbsp;: la première ne connaît que la moyenne et la variance, la seconde ne connaît que le nombre de configurations.</p>
 
       <figure class="plate">
       <figcaption><span class="lab">Figure 14</span> — L’espérance cumulée décision après décision, sur 520&nbsp;chemins rééchantillonnés d’un journal sans compétence. L’enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l’écart qu’un opérateur doit dépasser pour être distingué du hasard à ce stade.</figcaption>
@@ -4413,7 +4440,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 16</span> — La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.</figcaption>
+      <figcaption><span class="lab">Figure 16</span> — La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision, la hauteur étant la plus exigeante des deux routes. L’arête des leviers est <em>plate</em> jusqu’au quatrième — la taxe de sélection y reste sous l’exigence du test ordinaire — quand celle du Sharpe va du simple au sextuple sur la même largeur.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 384" role="img" aria-label="Surface du nombre d années requises selon les leviers ouverts et le Sharpe revendiqué par décision" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">MUR D’ÉCHANTILLON</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Le mur, en années de carrière</text>
@@ -4438,19 +4465,19 @@
 <line class="floor" x1="272.0" y1="245.0" x2="446.0" y2="284.0"/>
 <line class="floor" x1="214.0" y1="258.0" x2="388.0" y2="297.0"/>
 <line class="floor" x1="156.0" y1="271.0" x2="330.0" y2="310.0"/>
-<line class="post" x1="330.0" y1="232.0" x2="330.0" y2="198.1"/>
+<line class="post" x1="330.0" y1="232.0" x2="330.0" y2="80.6"/>
 <line class="post" x1="504.0" y1="271.0" x2="504.0" y2="86.0"/>
 <line class="post" x1="330.0" y1="310.0" x2="330.0" y2="287.4"/>
-<line class="post" x1="156.0" y1="271.0" x2="156.0" y2="267.2"/>
-<polygon class="mesh hm1" points="330.0,250.1 388.0,246.1 330.0,287.4 272.0,281.9"><title>1.0 an(s)</title></polygon>
-<polygon class="mesh hm1" points="272.0,254.0 330.0,250.1 272.0,281.9 214.0,276.5"><title>0.6 an(s)</title></polygon>
-<polygon class="mesh hm2" points="388.0,210.7 446.0,193.5 388.0,246.1 330.0,250.1"><title>1.9 an(s)</title></polygon>
-<polygon class="mesh hm0" points="214.0,249.5 272.0,254.0 214.0,276.5 156.0,267.2"><title>0.3 an(s)</title></polygon>
-<polygon class="mesh hm1" points="330.0,227.8 388.0,210.7 330.0,250.1 272.0,254.0"><title>1.1 an(s)</title></polygon>
-<polygon class="mesh hm4" points="446.0,122.3 504.0,86.0 446.0,193.5 388.0,210.7"><title>3.8 an(s)</title></polygon>
-<polygon class="mesh hm1" points="272.0,229.9 330.0,227.8 272.0,254.0 214.0,249.5"><title>0.6 an(s)</title></polygon>
-<polygon class="mesh hm3" points="388.0,177.2 446.0,122.3 388.0,210.7 330.0,227.8"><title>2.4 an(s)</title></polygon>
-<polygon class="mesh hm1" points="330.0,198.1 388.0,177.2 330.0,227.8 272.0,229.9"><title>1.2 an(s)</title></polygon>
+<line class="post" x1="156.0" y1="271.0" x2="156.0" y2="254.2"/>
+<polygon class="mesh hm1" points="330.0,246.1 388.0,246.1 330.0,287.4 272.0,280.2"><title>1.0 an(s)</title></polygon>
+<polygon class="mesh hm1" points="272.0,233.1 330.0,246.1 272.0,280.2 214.0,267.2"><title>0.9 an(s)</title></polygon>
+<polygon class="mesh hm2" points="388.0,203.7 446.0,193.5 388.0,246.1 330.0,246.1"><title>2.0 an(s)</title></polygon>
+<polygon class="mesh hm1" points="214.0,220.1 272.0,233.1 214.0,267.2 156.0,254.2"><title>0.9 an(s)</title></polygon>
+<polygon class="mesh hm2" points="330.0,190.7 388.0,203.7 330.0,246.1 272.0,233.1"><title>1.7 an(s)</title></polygon>
+<polygon class="mesh hm5" points="446.0,106.6 504.0,86.0 446.0,193.5 388.0,203.7"><title>4.0 an(s)</title></polygon>
+<polygon class="mesh hm2" points="272.0,177.7 330.0,190.7 272.0,233.1 214.0,220.1"><title>1.7 an(s)</title></polygon>
+<polygon class="mesh hm4" points="388.0,93.6 446.0,106.6 388.0,203.7 330.0,190.7"><title>3.5 an(s)</title></polygon>
+<polygon class="mesh hm4" points="330.0,80.6 388.0,93.6 330.0,190.7 272.0,177.7"><title>3.5 an(s)</title></polygon>
 <line class="ba" x1="122.0" y1="86.0" x2="122.0" y2="271.0"/>
 <line class="ba" x1="122.0" y1="271.0" x2="127.0" y2="271.0"/>
 <text class="tk" x="117.0" y="274.5" text-anchor="end">0</text>
@@ -4470,7 +4497,7 @@
 <text class="tk halo" x="341.0" y="336.0">SR 0,150</text>
 
 </svg></div>
-      <p class="note">Arête gauche : leviers discrétionnaires ouverts. Arête droite : Sharpe revendiqué par décision. Hauteur plafonnée à six ans, à deux décisions par séance.</p>
+      <p class="note">Arête gauche : leviers discrétionnaires ouverts. Arête droite : Sharpe revendiqué par décision. La hauteur est la plus exigeante des deux routes — le test ordinaire sur la moyenne et la taxe de sélection — plafonnée à six ans, à deux décisions par séance. L’arête des leviers est plate jusqu’au quatrième parce que la taxe y reste sous l’exigence du test ordinaire : ouvrir ces leviers ne coûte rien de plus que ce qu’il faut de toute façon.</p>
     </figure>
 
   <p>La forme de la surface porte le message. L’axe des leviers est presque plat&nbsp;; l’axe du Sharpe est une falaise. Un opérateur qui hésite entre fermer des leviers et améliorer son signal a une réponse claire&nbsp;: le second effort domine le premier de très loin.</p>
@@ -4663,21 +4690,23 @@
       <figcaption><span class="lab">Table 7</span> — Pourquoi le jugement est prouvable là où la géométrie ne l’est pas.</figcaption>
       <div class="scroll">
       <table>
-        <thead><tr><th class="wrap">Objet du test</th><th>Sharpe revendiqué</th><th>Configurations</th><th>Seuil déflaté</th><th>Décisions requises</th><th>à 2 par jour</th></tr></thead>
+        <thead><tr><th class="wrap">Objet du test</th><th>Sharpe revendiqué</th><th>Configurations</th><th>Route 1 — test t</th><th>Route 2 — taxe</th><th>Exigence liante</th><th>à 2 par jour</th></tr></thead>
         <tbody>
-          <tr><td class="wrap">Géométrie de sortie (ALP-1)</td><td>0,0332</td><td>1</td><td>0,0215</td><td>1 258</td><td>2,5 an</td></tr>
-          <tr><td class="wrap">Opérateur discrétionnaire</td><td>0,1000</td><td>16</td><td>0,0430</td><td>555</td><td>1,1 an</td></tr>
+          <tr><td class="wrap">Géométrie de sortie (ALP-1)</td><td>0,0332</td><td>1</td><td>5 610</td><td>0</td><td>5 610</td><td>11,1 an</td></tr>
+          <tr><td class="wrap">Opérateur discrétionnaire</td><td>0,1000</td><td>16</td><td>619</td><td>555</td><td>619</td><td>1,2 an</td></tr>
         </tbody>
       </table>
       </div>
-      <p class="note"><span class="lab">Lecture.</span> L’arithmétique est celle de la proposition 2 : le budget de configurations entre dans l’exigence par un logarithme, l’effet revendiqué par un carré. Multiplier le premier par seize coûte moins que diviser le second par trois.</p>
+      <p class="note"><span class="lab">Lecture.</span> À une configuration unique la taxe de sélection est nulle — il n’y a rien à sélectionner — et c’est le test ordinaire qui lie. À seize configurations la taxe existe mais reste sous ce même test, qui lie encore : il faudrait plus de vingt-deux configurations pour qu’elle passe devant. L’arithmétique est celle de la proposition 2 : le budget de configurations entre dans l’exigence par un logarithme, l’effet revendiqué par un carré. Multiplier le premier par seize coûte moins que diviser le second par trois.</p>
     </figure>
 
-  <p>L’opérateur discrétionnaire paie 16&nbsp;fois plus de configurations que la géométrie scellée, et franchit pourtant le mur bien plus tôt. La raison n’est pas qu’il serait meilleur.</p>
+  <p>L’opérateur discrétionnaire paie 16&nbsp;fois plus de configurations que la géométrie scellée, et franchit pourtant le mur 9,1&nbsp;fois plus tôt. La raison n’est pas qu’il serait meilleur.</p>
+
+  <p>La table sépare les deux routes parce qu’aucune ne domine partout, et parce que la version précédente de ce document ne montrait que la seconde. Elle l’attribuait à la géométrie scellée en bornant son budget à deux essais&nbsp;: 1 258&nbsp;décisions de taxe de sélection pour une configuration unique, c’est-à-dire un chiffre qui n’existait que par le bornage. <strong>À une seule configuration il n’y a rien à sélectionner, donc rien à déflater, et la taxe vaut exactement zéro.</strong> C’est le test ordinaire qui lie alors — et il lie aussi à 16&nbsp;configurations&nbsp;: il faudrait dépasser 22&nbsp;configurations pour que la taxe passe devant lui. <em>Les quatre leviers recensés se cachent sous l’exigence du test ordinaire.</em></p>
 
   <div class="prop">
     <p><span class="lab">Proposition 2.</span> Le mur d’échantillon est gouverné par le rapport de l’effet revendiqué au bruit, et non par le nombre de configurations. La taxe de multiplicité entre par un logarithme&nbsp;; l’effet entre par un carré.</p>
-    <p class="proof"><span class="lab">Justification.</span> Le nombre de décisions requis vaut <span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>². Doubler le nombre de leviers multiplie <span class="v">B</span> par&nbsp;2 et <span class="v">N</span> par un facteur qui tend vers&nbsp;1&nbsp;; doubler le Sharpe divise <span class="v">N</span> par&nbsp;4. ∎</p>
+    <p class="proof"><span class="lab">Justification.</span> Les deux routes donnent <span class="v">N₁</span>&nbsp;=&nbsp;(z<sub>α</sub>&nbsp;+&nbsp;z<sub>β</sub>)²&nbsp;/&nbsp;<span class="v">SR</span>² et <span class="v">N₂</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>², et l’exigence est leur maximum, soit max((z<sub>α</sub>&nbsp;+&nbsp;z<sub>β</sub>)², 2&nbsp;ln&nbsp;<span class="v">B</span>)&nbsp;/&nbsp;<span class="v">SR</span>². Le Sharpe entre par un carré dans les deux termes&nbsp;; le budget n’entre que dans le second, et par un logarithme. Doubler le nombre de leviers multiplie <span class="v">B</span> par&nbsp;2 et <span class="v">N₂</span> par un facteur qui tend vers&nbsp;1, sans rien changer tant que <span class="v">N₂</span>&nbsp;&lt;&nbsp;<span class="v">N₁</span>&nbsp;; doubler le Sharpe divise l’exigence entière par&nbsp;4. ∎</p>
   </div>
 
   <p>Les deux objets ne revendiquent pas le même ordre de grandeur. Une stratégie de géométrie revendique un effet borné par le théorème d’invariance. Un opérateur discrétionnaire revendique un effet de jugement, dont l’amplitude n’est pas bornée par ce théorème. <strong>C’est le rapport de l’effet revendiqué au bruit, et non la qualité de l’un ou de l’autre, qui fixe l’exigence d’échantillon.</strong></p>
@@ -4868,6 +4897,186 @@
 
   <p><span class="v">µ</span> est une propriété du marché et reste hors de portée. <strong><span class="v">µ*</span> est une propriété de la géométrie, et l’opérateur la fixe entièrement.</strong> C’est une grandeur arithmétique là où <span class="v">µ</span> est statistique&nbsp;: elle ne demande aucun échantillon, aucune loi nulle, aucune taxe de multiplicité. Elle se calcule.</p>
 
+  <p>L’équation&nbsp;(1) est une droite en <span class="v">µ</span>, et il vaut la peine de la regarder comme telle plutôt que de la lire. Chaque géométrie en donne une&nbsp;; les quatre droites ci-dessous en sont quatre exemples, tracés sur la seule arithmétique de l’identité — aucune simulation, aucun échantillon.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 21</span> — L’identité de Wald tracée pour quatre géométries. L’ordonnée à l’origine de chaque droite est la friction rapportée au risque nominal, sa pente est le temps de marché acheté, et son croisement avec le zéro est le seuil <span class="v">µ*</span>. Le cadre du bas donne la pente à sa source&nbsp;: l’exposition croît comme le carré de la largeur du stop, puis sature contre la séance.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 420" role="img" aria-label="Espérance nette selon la dérive pour quatre géométries, et temps de marché acheté selon la largeur du stop" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ARRÊT OPTIONNEL</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie achète, et ce qu’elle ne crée pas</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">E[R] = (µ·E[τ∧T] − c) / L</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="ln neg" x1="66.0" y1="56.0" x2="80.0" y2="56.0"/>
+<text class="lg" x="86.0" y="59.5">0,010 %</text>
+<line class="ln s3" x1="182.0" y1="56.0" x2="196.0" y2="56.0"/>
+<text class="lg" x="202.0" y="59.5">0,050 %</text>
+<line class="ln s1" x1="298.0" y1="56.0" x2="312.0" y2="56.0"/>
+<text class="lg" x="318.0" y="59.5">0,100 %</text>
+<line class="ln s2" x1="414.0" y1="56.0" x2="428.0" y2="56.0"/>
+<text class="lg" x="434.0" y="59.5">0,200 %</text>
+<text class="hdr" x="66.0" y="80.0">Espérance nette selon la dérive du marché</text>
+<text class="read" x="610.0" y="80.0" text-anchor="end">quatre géométries, une friction</text>
+<line class="hsep" x1="66.0" y1="86.0" x2="610.0" y2="86.0"/>
+<rect class="wash" x="162.2" y="92.0" width="417.0" height="158.0"/>
+<rect class="frame" x="66.0" y="92.0" width="544.0" height="158.0"/>
+<line class="gl" x1="66.0" y1="242.5" x2="610.0" y2="242.5"/>
+<text class="tk" x="61.0" y="245.5" text-anchor="end">-0,6</text>
+<line class="gl" x1="66.0" y1="219.4" x2="610.0" y2="219.4"/>
+<text class="tk" x="61.0" y="222.4" text-anchor="end">-0,4</text>
+<line class="gl" x1="66.0" y1="196.4" x2="610.0" y2="196.4"/>
+<text class="tk" x="61.0" y="199.4" text-anchor="end">-0,2</text>
+<line class="gl" x1="66.0" y1="173.4" x2="610.0" y2="173.4"/>
+<text class="tk" x="61.0" y="176.4" text-anchor="end">0,0</text>
+<line class="gl" x1="66.0" y1="150.3" x2="610.0" y2="150.3"/>
+<text class="tk" x="61.0" y="153.3" text-anchor="end">0,2</text>
+<line class="gl" x1="66.0" y1="127.3" x2="610.0" y2="127.3"/>
+<text class="tk" x="61.0" y="130.3" text-anchor="end">0,4</text>
+<line class="gl" x1="66.0" y1="104.3" x2="610.0" y2="104.3"/>
+<text class="tk" x="61.0" y="107.3" text-anchor="end">0,6</text>
+<text class="ax" transform="translate(24.0,171.0) rotate(-90)" text-anchor="middle">multiples du risque</text>
+<text class="tk" x="66.0" y="263.0" text-anchor="middle">0,0</text>
+<text class="tk" x="194.3" y="263.0" text-anchor="middle">0,8</text>
+<text class="tk" x="322.6" y="263.0" text-anchor="middle">1,6</text>
+<text class="tk" x="450.9" y="263.0" text-anchor="middle">2,4</text>
+<text class="tk" x="579.2" y="263.0" text-anchor="middle">3,2</text>
+<line class="ba" x1="66.0" y1="250.0" x2="610.0" y2="250.0"/>
+<text class="ax" x="338.0" y="278.0" text-anchor="middle">dérive du marché, en points d’indice par heure</text>
+<line class="lvl strong" x1="66.0" y1="173.4" x2="610.0" y2="173.4"/>
+<path class="ln neg" d="M66.00,236.72 L610.00,210.49"><title>stop 0,010 % — pente 0.067 R par pt/h</title></path>
+<circle class="pt neg" cx="66.00" cy="236.72" r="3.5"><title>stop 0,010 % — à dérive nulle, −c/L = -0.550 R</title></circle>
+<path class="ln s3" d="M66.00,186.05 L610.00,123.30"><title>stop 0,050 % — pente 0.161 R par pt/h</title></path>
+<circle class="pt s3" cx="66.00" cy="186.05" r="3.5"><title>stop 0,050 % — à dérive nulle, −c/L = -0.110 R</title></circle>
+<path class="ln s1" d="M66.00,179.71 L610.00,103.95"><title>stop 0,100 % — pente 0.194 R par pt/h</title></path>
+<circle class="pt s1" cx="66.00" cy="179.71" r="3.5"><title>stop 0,100 % — à dérive nulle, −c/L = -0.055 R</title></circle>
+<path class="ln s2" d="M66.00,176.55 L610.00,107.29"><title>stop 0,200 % — pente 0.177 R par pt/h</title></path>
+<circle class="pt s2" cx="66.00" cy="176.55" r="3.5"><title>stop 0,200 % — à dérive nulle, −c/L = -0.028 R</title></circle>
+<text class="dl halo" x="76.0" y="225.7" text-anchor="start">à dérive nulle : −c/L</text>
+<text class="dl halo" x="75.6" y="124.6" text-anchor="start">0,100 % et 0,200 % se recouvrent : l’optimum est plat</text>
+<text class="dl halo" x="338.0" y="214.6" text-anchor="middle">la géométrie déclarée ne croise jamais le zéro</text>
+<text class="tk halo" x="288.2" y="105.0" text-anchor="middle">dérive plausible</text>
+<text class="hdr" x="66.0" y="294.0">Temps de marché acheté</text>
+<text class="read" x="610.0" y="294.0" text-anchor="end">E[τ∧T], borné par la séance</text>
+<line class="hsep" x1="66.0" y1="300.0" x2="610.0" y2="300.0"/>
+<rect class="frame" x="66.0" y="306.0" width="544.0" height="66.0"/>
+<line class="gl" x1="66.0" y1="372.0" x2="610.0" y2="372.0"/>
+<text class="tk" x="61.0" y="371.0" text-anchor="end">0</text>
+<line class="gl" x1="66.0" y1="351.2" x2="610.0" y2="351.2"/>
+<text class="tk" x="61.0" y="354.2" text-anchor="end">130</text>
+<line class="gl" x1="66.0" y1="330.5" x2="610.0" y2="330.5"/>
+<text class="tk" x="61.0" y="333.5" text-anchor="end">260</text>
+<line class="gl" x1="66.0" y1="309.7" x2="610.0" y2="309.7"/>
+<text class="tk" x="61.0" y="312.7" text-anchor="end">390</text>
+<text class="ax" transform="translate(24.0,339.0) rotate(-90)" text-anchor="middle">minutes</text>
+<text class="tk" x="100.8" y="385.0" text-anchor="middle">0,010 %</text>
+<text class="tk" x="207.0" y="385.0" text-anchor="middle">0,025 %</text>
+<text class="tk" x="287.3" y="385.0" text-anchor="middle">0,050 %</text>
+<text class="tk" x="367.6" y="385.0" text-anchor="middle">0,100 %</text>
+<text class="tk" x="447.9" y="385.0" text-anchor="middle">0,200 %</text>
+<text class="tk" x="528.2" y="385.0" text-anchor="middle">0,400 %</text>
+<line class="ba" x1="66.0" y1="372.0" x2="610.0" y2="372.0"/>
+<text class="ax" x="338.0" y="400.0" text-anchor="middle">largeur du stop, en % de l’indice</text>
+<line class="lvl" x1="66.0" y1="309.7" x2="610.0" y2="309.7"/>
+<text class="tk halo" x="601.6" y="304.7" text-anchor="end">séance entière</text>
+<path class="ln px" d="M100.78,371.61 L206.95,370.41 L287.28,367.38 L334.26,363.91 L367.60,360.85 L414.58,355.89 L447.92,351.62 L494.90,344.24 L528.24,338.10 L575.22,328.69"></path>
+<circle class="pt neg" cx="100.78" cy="371.61" r="3.5"><title>stop 0,010 % — 2.4 min</title></circle>
+<circle class="pt s3" cx="287.28" cy="367.38" r="3.5"><title>stop 0,050 % — 28.9 min</title></circle>
+<circle class="pt s1" cx="367.60" cy="360.85" r="3.5"><title>stop 0,100 % — 69.8 min</title></circle>
+<circle class="pt s2" cx="447.92" cy="351.62" r="3.5"><title>stop 0,200 % — 127.6 min</title></circle>
+
+</svg></div>
+      <p class="note">Chaque droite est une géométrie. Son ordonnée à l’origine est la friction rapportée au risque nominal, et elle est négative pour les quatre : à dérive nulle, aucune géométrie ne rend une espérance positive, quel que soit le placement des barrières. Sa pente est le temps de marché acheté par unité de risque, et c’est la seule chose que le choix des barrières décide. Son croisement avec le zéro est le seuil µ*. La géométrie déclarée ne croise pas le zéro dans la bande de dérive plausible ; les trois autres le croisent avant sa borne basse. Le cadre du bas donne la pente à sa source — et montre pourquoi la plus raide n’est pas la plus large, l’exposition saturant contre la séance.</p>
+    </figure>
+
+  <p>Trois choses s’y lisent sans calcul, et ce sont les trois termes de l’équation&nbsp;(1).</p>
+
+  <p><strong>L’ordonnée à l’origine est la loi nulle.</strong> À dérive nulle, les quatre droites valent exactement <span class="v">−c/L</span> et aucune n’atteint zéro. Aucune géométrie ne crée d’espérance&nbsp;: c’est le théorème d’arrêt optionnel, et il n’est pas un obstacle à contourner mais le socle sur lequel tout le reste s’appuie. Une géométrie qui rendrait une espérance positive à dérive nulle serait une erreur de calcul.</p>
+
+  <p><strong>La pente est le temps de marché acheté</strong>, <span class="v">E[τ∧T]/60L</span>. C’est la seule chose que le choix des barrières décide, et elle varie d’un facteur trois entre les quatre géométries. Le cadre du bas montre d’où elle vient et pourquoi elle finit par redescendre&nbsp;: l’exposition sature contre la fin de séance pendant que le risque nominal continue de croître.</p>
+
+  <p><strong>Le croisement avec le zéro est le seuil.</strong> La droite du stop déclaré ne croise jamais le zéro dans la bande de dérive plausible — elle reste sous <span class="v">−0,3&nbsp;R</span> jusqu’à la borne haute — quand les trois autres le croisent avant même sa borne basse. Le même signal, la même friction, la même séance&nbsp;: seule la géométrie change.</p>
+
+  <p>Le plan complet donne la frontière que ces quatre coupes ne montrent que par leurs croisements.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 22</span> — L’espérance nette sur le plan de la largeur de stop et de la dérive du marché. La couleur n’encode que le signe, la hauteur portant déjà la grandeur&nbsp;: la frontière rouge-bleu est l’ensemble des couples où <span class="v">µ&nbsp;=&nbsp;µ*</span>.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 372" role="img" aria-label="Surface de l espérance nette par trade sur le plan de la largeur de stop et de la dérive du marché, avec la frontière du signe" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ARRÊT OPTIONNEL, SUR DEUX AXES</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Où l’espérance change de signe</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">hauteur et couleur : E[R] par trade</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="floor" x1="314.0" y1="160.0" x2="186.0" y2="200.0"/>
+<line class="floor" x1="346.0" y1="170.0" x2="218.0" y2="210.0"/>
+<line class="floor" x1="378.0" y1="180.0" x2="250.0" y2="220.0"/>
+<line class="floor" x1="410.0" y1="190.0" x2="282.0" y2="230.0"/>
+<line class="floor" x1="442.0" y1="200.0" x2="314.0" y2="240.0"/>
+<line class="floor" x1="474.0" y1="210.0" x2="346.0" y2="250.0"/>
+<line class="floor" x1="314.0" y1="160.0" x2="474.0" y2="210.0"/>
+<line class="floor" x1="282.0" y1="170.0" x2="442.0" y2="220.0"/>
+<line class="floor" x1="250.0" y1="180.0" x2="410.0" y2="230.0"/>
+<line class="floor" x1="218.0" y1="190.0" x2="378.0" y2="240.0"/>
+<line class="floor" x1="186.0" y1="200.0" x2="346.0" y2="250.0"/>
+<line class="post" x1="314.0" y1="160.0" x2="314.0" y2="153.1"/>
+<line class="post" x1="474.0" y1="210.0" x2="474.0" y2="142.4"/>
+<line class="post" x1="346.0" y1="250.0" x2="346.0" y2="129.1"/>
+<line class="post" x1="186.0" y1="200.0" x2="186.0" y2="168.8"/>
+<polygon class="mesh hm5" points="346.0,115.9 378.0,132.4 346.0,129.1 314.0,109.9"><title>E[R] = +0.434 R</title></polygon>
+<polygon class="mesh hm6" points="314.0,104.5 346.0,115.9 314.0,109.9 282.0,96.9"><title>E[R] = +0.478 R</title></polygon>
+<polygon class="mesh hm4" points="378.0,121.9 410.0,135.8 378.0,132.4 346.0,115.9"><title>E[R] = +0.304 R</title></polygon>
+<polygon class="mesh hm5" points="282.0,109.7 314.0,104.5 282.0,96.9 250.0,105.2"><title>E[R] = +0.414 R</title></polygon>
+<polygon class="mesh hm5" points="346.0,112.0 378.0,121.9 346.0,115.9 314.0,104.5"><title>E[R] = +0.330 R</title></polygon>
+<polygon class="mesh hm4" points="410.0,128.0 442.0,139.1 410.0,135.8 378.0,121.9"><title>E[R] = +0.174 R</title></polygon>
+<polygon class="mesh hm4" points="250.0,125.7 282.0,109.7 250.0,105.2 218.0,125.7"><title>E[R] = +0.215 R</title></polygon>
+<polygon class="mesh hm4" points="314.0,114.3 346.0,112.0 314.0,104.5 282.0,109.7"><title>E[R] = +0.272 R</title></polygon>
+<polygon class="mesh hm4" points="378.0,119.6 410.0,128.0 378.0,121.9 346.0,112.0"><title>E[R] = +0.181 R</title></polygon>
+<polygon class="mesh hm3" points="442.0,134.0 474.0,142.4 442.0,139.1 410.0,128.0"><title>E[R] = +0.044 R</title></polygon>
+<polygon class="mesh dn" points="218.0,164.8 250.0,125.7 218.0,125.7 186.0,168.8"><title>E[R] = -0.136 R</title></polygon>
+<polygon class="mesh hm3" points="282.0,125.7 314.0,114.3 282.0,109.7 250.0,125.7"><title>E[R] = +0.106 R</title></polygon>
+<polygon class="mesh hm3" points="346.0,118.8 378.0,119.6 346.0,112.0 314.0,114.3"><title>E[R] = +0.130 R</title></polygon>
+<polygon class="mesh hm3" points="410.0,127.1 442.0,134.0 410.0,128.0 378.0,119.6"><title>E[R] = +0.033 R</title></polygon>
+<polygon class="mesh dn" points="250.0,160.9 282.0,125.7 250.0,125.7 218.0,164.8"><title>E[R] = -0.207 R</title></polygon>
+<polygon class="mesh dn" points="314.0,125.7 346.0,118.8 314.0,114.3 282.0,125.7"><title>E[R] = -0.002 R</title></polygon>
+<polygon class="mesh dn" points="378.0,123.3 410.0,127.1 378.0,119.6 346.0,118.8"><title>E[R] = -0.012 R</title></polygon>
+<polygon class="mesh dn" points="282.0,157.0 314.0,125.7 282.0,125.7 250.0,160.9"><title>E[R] = -0.278 R</title></polygon>
+<polygon class="mesh dn" points="346.0,125.8 378.0,123.3 346.0,118.8 314.0,125.7"><title>E[R] = -0.111 R</title></polygon>
+<polygon class="mesh dn" points="314.0,153.1 346.0,125.8 314.0,125.7 282.0,157.0"><title>E[R] = -0.349 R</title></polygon>
+<line class="ba" x1="152.0" y1="60.0" x2="152.0" y2="200.0"/>
+<line class="ba" x1="152.0" y1="198.7" x2="157.0" y2="198.7"/>
+<text class="tk" x="147.0" y="202.2" text-anchor="end">-0,6 R</text>
+<line class="ba" x1="152.0" y1="176.1" x2="157.0" y2="176.1"/>
+<text class="tk" x="147.0" y="179.6" text-anchor="end">-0,4 R</text>
+<line class="ba" x1="152.0" y1="153.5" x2="157.0" y2="153.5"/>
+<text class="tk" x="147.0" y="157.0" text-anchor="end">-0,2 R</text>
+<line class="ba" x1="152.0" y1="130.9" x2="157.0" y2="130.9"/>
+<text class="tk" x="147.0" y="134.4" text-anchor="end">0,0 R</text>
+<line class="ba" x1="152.0" y1="108.3" x2="157.0" y2="108.3"/>
+<text class="tk" x="147.0" y="111.8" text-anchor="end">0,2 R</text>
+<line class="ba" x1="152.0" y1="85.7" x2="157.0" y2="85.7"/>
+<text class="tk" x="147.0" y="89.2" text-anchor="end">0,4 R</text>
+<line class="ba" x1="152.0" y1="63.0" x2="157.0" y2="63.0"/>
+<text class="tk" x="147.0" y="66.5" text-anchor="end">0,6 R</text>
+<text class="tk halo" x="175.0" y="215.0" text-anchor="end">0,010 %</text>
+<text class="tk halo" x="207.0" y="225.0" text-anchor="end">0,025 %</text>
+<text class="tk halo" x="239.0" y="235.0" text-anchor="end">0,050 %</text>
+<text class="tk halo" x="271.0" y="245.0" text-anchor="end">0,100 %</text>
+<text class="tk halo" x="303.0" y="255.0" text-anchor="end">0,200 %</text>
+<text class="tk halo" x="335.0" y="265.0" text-anchor="end">0,400 %</text>
+<text class="tk halo" x="485.0" y="236.0">0,0</text>
+<text class="tk halo" x="453.0" y="246.0">0,8</text>
+<text class="tk halo" x="421.0" y="256.0">1,6</text>
+<text class="tk halo" x="389.0" y="266.0">2,4</text>
+<text class="tk halo" x="357.0" y="276.0">3,2 pt/h</text>
+<text class="lg keep" x="0.0" y="292.0" text-anchor="start">la frontière recule vers les fortes dérives à mesure que le stop se resserre</text>
+<rect class="dn" x="0.0" y="308.5" width="11" height="11" rx="2"/>
+<text class="lg" x="17.0" y="317.5">espérance négative — µ &lt; µ*</text>
+<rect class="hm6" x="300.0" y="308.5" width="11" height="11" rx="2"/>
+<text class="lg" x="317.0" y="317.5">espérance positive — µ &gt; µ*</text>
+
+</svg></div>
+      <p class="note">Arête gauche : largeur du stop. Arête droite : dérive du marché, en points d’indice par heure. La hauteur et la couleur portent la même grandeur, l’espérance nette par trade ; la couleur en isole le signe, qui est ce que la figure existe pour donner. La frontière rouge-bleu est l’ensemble des couples où µ = µ*. Elle recule vers les fortes dérives à mesure que le stop se resserre, et la rangée du stop déclaré reste entièrement rouge : son seuil dépasse la dérive la plus forte du cadre. La couleur d’une maille suit la moyenne de ses quatre coins ; le signe exact à dérive nulle se lit sur l’ordonnée à l’origine des droites de la figure précédente, non ici.</p>
+    </figure>
+
+  <p>La frontière recule vers les fortes dérives à mesure que le stop se resserre. C’est l’énoncé géométrique de l’équation&nbsp;(2), et il suffit à trancher&nbsp;: à la géométrie déclarée, la rangée entière est du mauvais côté. Le reste de cette partie mesure de combien.</p>
+
   <h2 id="s-effondrement">Le seuil s’effondre quand le stop s’élargit</h2>
 
   <p>L’exposition croît comme le carré de la largeur du stop — c’est le régime diffusif, le temps d’atteinte d’une barrière allant comme <span class="v">a²/σ²</span> — pendant que le risque nominal ne croît que linéairement. La friction, elle, est fixe en points. Le seuil décroît donc <em>quadratiquement</em>, et c’est ce qui rend ce levier sans commune mesure avec les autres.</p>
@@ -4895,7 +5104,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 21</span> — Le seuil de rentabilité selon la largeur du stop, en échelle logarithmique, avec le domaine de dérive que le document nº&nbsp;1 déclare plausible posé derrière. Le cadre du bas donne l’espérance nette à dérive déclarée&nbsp;; son optimum est intérieur.</figcaption>
+      <figcaption><span class="lab">Figure 23</span> — Le seuil de rentabilité selon la largeur du stop, en échelle logarithmique, avec le domaine de dérive que le document nº&nbsp;1 déclare plausible posé derrière. Le cadre du bas donne l’espérance nette à dérive déclarée&nbsp;; son optimum est intérieur.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 392" role="img" aria-label="Seuil de rentabilité et espérance nette selon la largeur du stop, avec le domaine de dérive plausible" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL, ET NON LE SIGNAL</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie exige du signal</text>
@@ -4994,7 +5203,7 @@
   <p>La friction est le second axe, et l’opérateur le contrôle aussi&nbsp;: elle dépend du courtier, de l’heure choisie et de la façon de passer l’ordre. La surface porte les deux axes ensemble et le plafond de dérive plausible avec eux, de sorte que le verdict se lise sans convertir une élévation en grandeur.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 22</span> — Le seuil de rentabilité sur le plan des deux variables que l’opérateur contrôle. Arête gauche&nbsp;: la largeur du stop. Arête droite&nbsp;: la friction aller-retour. La hauteur est le seuil en échelle logarithmique, et l’échine porte le plafond de dérive plausible. La couleur ne code pas la hauteur mais le verdict&nbsp;: une maille rouge exige une dérive que le marché ne fournit pas.</figcaption>
+      <figcaption><span class="lab">Figure 24</span> — Le seuil de rentabilité sur le plan des deux variables que l’opérateur contrôle. Arête gauche&nbsp;: la largeur du stop. Arête droite&nbsp;: la friction aller-retour. La hauteur est le seuil en échelle logarithmique, et l’échine porte le plafond de dérive plausible. La couleur ne code pas la hauteur mais le verdict&nbsp;: une maille rouge exige une dérive que le marché ne fournit pas.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 384" role="img" aria-label="Surface du seuil de rentabilité sur le plan de la largeur de stop et de la friction, avec le verdict d atteignabilité en couleur" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL SUR DEUX AXES</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie et la friction décident ensemble</text>
@@ -5111,7 +5320,7 @@
 
   <h2 id="s-ou-depenser">Où dépenser le jugement</h2>
 
-  <p>La conséquence pour l’opérateur discrétionnaire est directe, et elle contredit l’usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c’est le seul terme de l’équation&nbsp;(1) qui exige un échantillon que l’opérateur n’aura jamais&nbsp;: 555&nbsp;décisions pour établir un Sharpe de 0,10 par décision.</p>
+  <p>La conséquence pour l’opérateur discrétionnaire est directe, et elle contredit l’usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c’est le seul terme de l’équation&nbsp;(1) qui exige un échantillon que l’opérateur n’aura jamais&nbsp;: 619&nbsp;décisions pour établir un Sharpe de 0,10 par décision.</p>
 
   <p>Les deux autres termes ne demandent presque rien. La friction se lit sur un relevé de courtage&nbsp;; l’exposition se calcule. La table ci-dessous chiffre l’écart.</p>
 
@@ -5173,7 +5382,7 @@
 
   <p>L’instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l’opérateur gagne mais s’il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: le premier levier porte le seuil de zéro à 0,0215, et les trois suivants ne le multiplient que par&nbsp;2,0.</p>
 
-  <p>L’exigence d’échantillon se chiffre&nbsp;: 555&nbsp;décisions, soit 1,1&nbsp;an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.</p>
+  <p>L’exigence d’échantillon se chiffre&nbsp;: 619&nbsp;décisions, soit 1,2&nbsp;an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est 9,1&nbsp;fois inférieure à celle qui porte sur un avantage de géométrie, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.</p>
 
   <p>L’ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">10</a>, dont les champs antérieurs à l’issue ne sont pas reconstituables après coup. C’est la condition d’application du dispositif.</p>
 

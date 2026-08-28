@@ -392,6 +392,10 @@
   .fig .s1 { stroke: var(--s1); }  .fig .pt.s1 { fill: var(--s1); }
   .fig .s2 { stroke: var(--s2); }  .fig .pt.s2 { fill: var(--s2); }
   .fig .s3 { stroke: var(--s3); }  .fig .pt.s3 { fill: var(--s3); }
+  /* Un quatrième trait, du côté négatif de l'échelle divergente : `negf` ne
+     remplit que des aplats, et une courbe qui porte le signe d'un verdict ne
+     peut pas emprunter la teinte d'une série ordinaire. */
+  .fig .neg { stroke: var(--dv-neg); }  .fig .pt.neg { fill: var(--dv-neg); }
 
   .fig .area { stroke: var(--paper); stroke-width: 2; }
   .fig .area.ar1 { fill: var(--s1); }
@@ -2516,9 +2520,9 @@
 <text class="lg" x="472.0" y="303.5">µ = µ*</text>
 <line class="ln s3" x1="528.0" y1="300.0" x2="542.0" y2="300.0"/>
 <text class="lg" x="548.0" y="303.5">µ = 3 µ*</text>
-<text class="lg" x="376.0" y="324.0" text-anchor="start">trois dérives, trois courbes</text>
-<text class="lg" x="376.0" y="338.0" text-anchor="start">presque confondues : la géométrie</text>
-<text class="lg" x="376.0" y="352.0" text-anchor="start">du repli décide, non le signal</text>
+<text class="lg keep" x="376.0" y="324.0" text-anchor="start">trois dérives, trois courbes</text>
+<text class="lg keep" x="376.0" y="338.0" text-anchor="start">presque confondues : la géométrie</text>
+<text class="lg keep" x="376.0" y="352.0" text-anchor="start">du repli décide, non le signal</text>
 <text class="hdr" x="58" y="292">Clôture au-delà du corps de la veille</text>
 <rect class="up" x="58.0" y="300" width="86.5" height="14" rx="2"><title>hausse · 37.5 %</title></rect>
 <text class="lg" x="102.2" y="326" text-anchor="middle">hausse</text>

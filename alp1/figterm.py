@@ -113,8 +113,14 @@ class Board:
         construction : une légende de pied est sortie du SVG et rendue sous
         la figure, une annotation reste où l'auteur l'a mise parce qu'elle
         commente un élément précis du tracé.
+
+        La classe `keep` est ce qui le garantit, et elle a dû être ajoutée
+        après coup : `extraire_pieds` sortait aussi toute prose longue posée
+        près du bas du cadre, quelle que soit sa marque. Deux annotations ont
+        ainsi disparu de leur figure pour reparaître dans la note du
+        document, où elles ne commentaient plus rien.
         """
-        self.add(f'<text class="lg" x="{x:.1f}" y="{y:.1f}" '
+        self.add(f'<text class="lg keep" x="{x:.1f}" y="{y:.1f}" '
                  f'text-anchor="{anchor}">{_esc(text)}</text>')
 
     def legend(self, x: float, y: float, items: list[tuple[str, str]],

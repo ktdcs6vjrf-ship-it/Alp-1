@@ -55,10 +55,40 @@ _HORIZON = 1400
 
 
 def _trades_for_threshold(sharpe: float, budget: float) -> float:
-    """Décisions requises pour franchir le seuil déflaté à `budget` essais."""
+    """Décisions requises pour franchir le seuil déflaté à `budget` essais.
+
+    C'est la **route 2** seule : la taxe de sélection, et rien d'autre. À une
+    seule configuration elle vaut zéro, parce qu'il n'y a rien à sélectionner
+    et donc rien à déflater.
+
+    Le budget était borné par `max(budget, 2.0)`, ce qui fabriquait une taxe
+    là où il n'y en a aucune. Le bornage a coûté deux choses : la table des
+    leviers affichait « +0,0000 » pour le premier levier, alors qu'il porte
+    le seuil de zéro à 0,0215 ; et la comparaison avec la géométrie scellée
+    lui attribuait 1 258 décisions de taxe pour une seule configuration,
+    c'est-à-dire un chiffre qui n'existait que par le bornage. Une taxe nulle
+    est une information ; l'arrondir à deux essais n'en est pas une.
+    """
     if sharpe <= 0.0:
         return math.inf
-    return 2.0 * math.log(max(budget, 2.0)) / (sharpe ** 2)
+    return 2.0 * math.log(max(budget, 1.0)) / (sharpe ** 2)
+
+
+def _trades_binding(sharpe: float, budget: float) -> float:
+    """L'exigence qui lie réellement : la plus grande des deux routes.
+
+    La route 1 ne connaît que la moyenne et la variance et vaut même à une
+    configuration unique ; la route 2 ne connaît que le nombre de
+    configurations et s'annule à une seule. Aucune des deux ne domine partout,
+    et c'est leur maximum qu'un opérateur doit atteindre.
+
+    Le point remarquable est le seuil où la seconde passe devant la première :
+    il faut `2·ln B > (z_α + z_β)²`, soit plus de vingt-deux configurations.
+    **Les quatre premiers leviers se cachent donc sous l'exigence du test
+    ordinaire** — ils ne coûtent rien de plus que ce qu'il faut de toute façon.
+    """
+    return max(float(trades_for_significance(sharpe, 1.0)),
+               _trades_for_threshold(sharpe, budget))
 
 
 _CACHE: dict[str, object] = {}
@@ -87,8 +117,11 @@ def table_levers() -> Table:
     rows = []
     for k, (key, label) in enumerate(LEVERS, start=1):
         budget = 2.0 ** k
-        seuil = deflated_threshold_sharpe(max(2.0, budget), 3000)
-        avant = deflated_threshold_sharpe(max(2.0, 2.0 ** (k - 1)), 3000)
+        # Sans bornage : à `k = 1` le seuil d'avant est celui d'une
+        # configuration unique, donc zéro. Le premier levier fait un saut
+        # depuis zéro, et le bornage l'affichait comme « +0,0000 ».
+        seuil = deflated_threshold_sharpe(budget, 3000)
+        avant = deflated_threshold_sharpe(2.0 ** (k - 1), 3000)
         rows.append([
             label,
             key,
@@ -256,12 +289,21 @@ def table_versus() -> Table:
             ("Géométrie de sortie (ALP-1)", SHARPE_GEOMETRIE, 0),
             ("Opérateur discrétionnaire", 0.10, K_LEVERS)):
         b = 2.0 ** k
-        n = _trades_for_threshold(sr, b)
+        # Les deux routes sont données séparément, puis leur maximum. La
+        # version précédente ne montrait que la route 2, et l'attribuait à
+        # une configuration unique en bornant son budget à deux essais : la
+        # géométrie s'y voyait imputer 1 258 décisions de taxe de sélection
+        # alors qu'elle n'en paie aucune. La comparaison reposait donc
+        # entièrement sur le bornage. Sans lui elle tient, et plus largement.
+        t = float(trades_for_significance(sr, 1.0))
+        d = _trades_for_threshold(sr, b)
+        n = max(t, d)
         rows.append([
             label,
             num(sr, 4),
             num(b, 0),
-            num(deflated_threshold_sharpe(max(2.0, b), 3000), 4),
+            num(t, 0),
+            num(d, 0),
             num(n, 0),
             num(n / (2 * SESSIONS_PER_YEAR), 1, unit="an"),
         ])
@@ -269,14 +311,21 @@ def table_versus() -> Table:
         "versus",
         "Pourquoi le jugement est prouvable là où la géométrie ne l'est pas.",
         ["Objet du test", "Sharpe revendiqué", "Configurations",
-         "Seuil déflaté", "Décisions requises", "à 2 par jour"],
+         "Route 1 — test t", "Route 2 — taxe", "Exigence liante",
+         "à 2 par jour"],
         rows,
         wrap_cols=[0],
         wide=True,
-        note="L'arithmétique est celle de la proposition 2 : le budget de "
+        note="À une configuration unique la taxe de sélection est nulle — il "
+             "n'y a rien à sélectionner — et c'est le test ordinaire qui lie. "
+             "À seize configurations la taxe existe mais reste sous ce même "
+             "test, qui lie encore : il faudrait plus de vingt-deux "
+             "configurations pour qu'elle passe devant. "
+             "L'arithmétique est celle de la proposition 2 : le budget de "
              "configurations entre dans l'exigence par un logarithme, l'effet "
-             "revendiqué par un carré. Multiplier le premier par seize coûte "
-             "moins que diviser le second par trois.",
+             "revendiqué par un carré. Ici, multiplier le premier par seize ne "
+             "coûte rien du tout, quand diviser le second par trois "
+             "multiplie l'exigence par neuf.",
     )
 
 
@@ -384,7 +433,8 @@ def values() -> dict[str, str]:
     mec = sum(t.net_r for t in u) / len(u)
 
     n10 = _trades_for_threshold(0.10, budget)
-    n_geo = _trades_for_threshold(SHARPE_GEOMETRIE, 1.0)
+    n10_liant = _trades_binding(0.10, budget)
+    n_geo = _trades_binding(SHARPE_GEOMETRIE, 1.0)
 
     return {
         # Le recensement.
@@ -426,6 +476,16 @@ def values() -> dict[str, str]:
         "d_mur_sr05": num(_trades_for_threshold(0.05, budget), 0),
         "d_mur_sr15": num(_trades_for_threshold(0.15, budget), 0),
         "d_mur_geometrie": num(n_geo, 0),
+        "d_mur_liant": num(n10_liant, 0),
+        "d_ans_liant": num(n10_liant / (2 * SESSIONS_PER_YEAR), 1),
+        "d_facteur_versus": num(n_geo / n10_liant, 1),
+        "d_configs_bascule": num(math.exp(
+            (float(trades_for_significance(0.10, 1.0)) * 0.01) / 2.0), 0),
+        # Le chiffre que le bornage fabriquait, cité pour que la correction
+        # soit vérifiable dans le document plutôt que seulement dans le dépôt.
+        "d_mur_geometrie_ancien": num(
+            2.0 * math.log(2.0) / (SHARPE_GEOMETRIE ** 2), 0),
+        "d_mur_sr10_t": num(trades_for_significance(0.10, 1.0), 0),
         "d_sharpe_geometrie": num(SHARPE_GEOMETRIE, 4),
 
         # Les bornes de la plage d'indécision, relevées sur la calibration

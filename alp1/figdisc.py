@@ -55,10 +55,24 @@ def _norm_cdf(z: float) -> float:
 
 
 def _trades_for_threshold(sharpe: float, budget: float) -> float:
-    """Décisions requises pour franchir le seuil déflaté à `budget` essais."""
+    """Décisions requises, la plus exigeante des deux routes.
+
+    La route 1 est le test ordinaire sur la moyenne, `(z_α + z_β)²/SR²` ; elle
+    vaut même à configuration unique. La route 2 est la taxe de sélection,
+    `2·ln B/SR²` ; elle s'annule à configuration unique, parce qu'il n'y a
+    alors rien à sélectionner. C'est leur maximum qu'un opérateur doit
+    atteindre, et le module `report10` calcule exactement la même chose.
+
+    Le budget était borné par `max(budget, 2.0)`, ce qui fabriquait une taxe
+    là où il n'y en a aucune et faisait afficher à la surface plus d'un an à
+    zéro levier. La borne est levée ; le plancher est maintenant celui du test
+    ordinaire, qui est un vrai plancher.
+    """
     if sharpe <= 0.0:
         return math.inf
-    return 2.0 * math.log(max(budget, 2.0)) / (sharpe ** 2)
+    from .costs import trades_for_significance
+    return max(float(trades_for_significance(sharpe, 1.0)),
+               2.0 * math.log(max(budget, 1.0)) / (sharpe ** 2))
 
 
 def _ramp(u: float) -> str:
@@ -248,13 +262,24 @@ def fig_wall() -> str:
     """Années requises selon les leviers ouverts et le Sharpe revendiqué.
 
     La surface répond à la question que pose tout allocataire : combien de
-    temps avant de savoir ? Elle montre du même coup pourquoi la taxe de
-    multiplicité est supportable — l'arête des leviers est presque plate
-    devant celle du Sharpe, parce que le seuil croît en racine du logarithme
-    du budget alors que l'échantillon décroît comme le carré du Sharpe.
+    temps avant de savoir ?
+
+    L'arête des leviers y est **exactement plate jusqu'au quatrième**, et
+    c'est un fait et non une approximation : tant que la taxe de sélection
+    reste sous l'exigence du test ordinaire, ouvrir un levier ne coûte rien
+    de plus que ce qu'il faut de toute façon. Il faut dépasser vingt-deux
+    configurations pour qu'elle passe devant. L'arête du Sharpe, elle, va du
+    simple au sextuple sur la même largeur de cadre.
+
+    La version précédente bornait le budget à deux essais, ce qui donnait à
+    zéro levier une taxe inexistante et faisait monter l'arête dès le premier
+    pas. La légende parlait alors d'une arête « presque plate » — vraie du
+    bornage, pas de la donnée.
     """
     ks = [0, 2, 4, 6]
     srs = [0.05, 0.075, 0.10, 0.15]
+    # Le pas de deux leviers est conservé : c'est la lecture du cadre, et le
+    # palier se voit d'autant mieux qu'il couvre les deux premiers points.
     z = [[min(6.0, _trades_for_threshold(sr, 2.0 ** k)
               / (2 * SESSIONS_PER_YEAR)) for sr in srs] for k in ks]
 
@@ -267,8 +292,13 @@ def fig_wall() -> str:
              z_ticks=[(0.0, "0"), (1.0, "1 an"), (3.0, "3 ans"), (6.0, "6 ans")],
              tip="{v:.1f} an(s)")
     _source(b, "Arête gauche : leviers discrétionnaires ouverts. Arête droite : "
-               "Sharpe revendiqué par décision. Hauteur plafonnée à six ans, à "
-               "deux décisions par séance.")
+               "Sharpe revendiqué par décision. La hauteur est la plus "
+               "exigeante des deux routes — le test ordinaire sur la moyenne "
+               "et la taxe de sélection — plafonnée à six ans, à deux "
+               "décisions par séance. L'arête des leviers est plate jusqu'au "
+               "quatrième parce que la taxe y reste sous l'exigence du test "
+               "ordinaire : ouvrir ces leviers ne coûte rien de plus que ce "
+               "qu'il faut de toute façon.")
     return b.render(
         "Surface du nombre d années requises selon les leviers ouverts et le "
         "Sharpe revendiqué par décision")
@@ -310,53 +340,102 @@ def fig_plane() -> str:
         return rows
 
     z_null, z_edge = build(0.0), build(0.55)
-    span = max(abs(v) for r in z_null + z_edge for v in r) or 0.05
 
     #: Largeur de la bande neutre, en unités de risque. Le seuil est une
     #: grandeur économique — en deçà, l'espérance ne finance rien — et non une
-    #: fraction de l'étendue observée. Le calculer en fraction ferait
-    #: disparaître dans le neutre toute la surface sans clairvoyance, dont les
-    #: valeurs sont vingt fois plus petites que celles de sa voisine.
+    #: fraction de l'étendue observée.
     NEUTRE = 0.02
 
-    def diverging(v: float) -> str:
-        """Deux pôles opposés et un neutre au milieu.
+    def etendue(z: list[list[float]]) -> tuple[float, float]:
+        plat = [v for r in z for v in r]
+        return min(plat), max(plat)
 
-        Le neutre doit se lire comme « rien » : c'est lui qui fait de la
-        frontière du zéro une frontière visible plutôt qu'un simple
-        changement de nuance.
+    def cadre(z: list[list[float]]) -> tuple[float, float]:
+        """Le domaine de hauteur d'un cadre, déduit de ses propres données.
+
+        Une marge de six pour cent, et le zéro toujours inclus parce que
+        c'est la frontière que la couleur code.
         """
-        if v < -NEUTRE:
-            return "dn"
-        if v <= NEUTRE:
-            return "ze"
-        return _ramp(0.45 + 0.55 * min(1.0, v / span))
+        lo, hi = etendue(z)
+        marge = (hi - lo) * 0.06 or 0.01
+        return min(lo - marge, 0.0), max(hi + marge, 0.0)
 
-    b = _plate(368, "Invariance",
+    def graduations(lo: float, hi: float) -> list[tuple[float, str]]:
+        """Trois à cinq valeurs rondes dans le domaine, zéro compris."""
+        for pas in (0.02, 0.05, 0.10, 0.25, 0.50, 1.00):
+            k0, k1 = math.ceil(lo / pas), math.floor(hi / pas)
+            if k1 - k0 <= 4:
+                break
+        return [(pas * k, _num(pas * k, 2) + " R")
+                for k in range(k0, k1 + 1)]
+
+    b = _plate(386, "Invariance",
                "Espérance selon la sélectivité et la mise",
-               "sélectivité × mise")
+               "chaque cadre porte sa propre échelle")
     for idx, (sub, z) in enumerate((("sans clairvoyance", z_null),
                                     ("avec clairvoyance", z_edge))):
-        ox = 208 + idx * 300
-        b.add(f'<text class="lg" x="{ox:.1f}" y="72" text-anchor="middle">'
+        # Chaque cadre est gradué sur son propre domaine. Une échelle commune
+        # écrasait la surface de gauche contre son plancher — son étendue vaut
+        # le septième de celle de droite — et le lecteur n'y voyait plus
+        # qu'une crêpe, c'est-à-dire rien. La comparaison des grandeurs est
+        # rendue par les deux étendues écrites sous les titres et par la
+        # barre de rapport, non par un cadre qui rend l'une illisible.
+        lo, hi = cadre(z)
+        vlo, vhi = etendue(z)
+        span = max(abs(vlo), abs(vhi)) or 0.05
+
+        def diverging(v: float, span: float = span) -> str:
+            """Deux pôles opposés et un neutre au milieu.
+
+            Le neutre doit se lire comme « rien » : c'est lui qui fait de la
+            frontière du zéro une frontière visible plutôt qu'un simple
+            changement de nuance.
+            """
+            if v < -NEUTRE:
+                return "dn"
+            if v <= NEUTRE:
+                return "ze"
+            return _ramp(0.45 + 0.55 * min(1.0, v / span))
+
+        ox = 186 + idx * 322
+        b.add(f'<text class="lg" x="{ox:.1f}" y="74" text-anchor="middle">'
               f'{_esc(sub)}</text>')
-        _surface(b, ox, 224, z, -span, span, cx=32.0, cy=10.0, cz=134.0,
+        b.add(f'<text class="tk" x="{ox:.1f}" y="89" text-anchor="middle">'
+              f'{_esc("étendue " + _num(vlo, 3) + " à " + _num(vhi, 3) + " R")}'
+              f'</text>')
+        # Le sol se pose au bas du domaine et non au zéro : la rangée à
+        # 50 % descend sous zéro, et un sol posé là laissait la surface le
+        # traverser et venir s'écrire par-dessus les libellés d'arête. Le
+        # zéro reste lisible — il est gradué sur l'échine, et la couleur en
+        # fait une frontière.
+        _surface(b, ox, 224, z, lo, hi, cx=28.0, cy=10.0, cz=112.0,
                  row_labels=[f"{p:.0%}" for p in selectivity],
                  col_labels=[f"{s:g} R" for s in sizing],
-                 # L'échine n'est tracée qu'une fois : les deux surfaces
-                 # partagent la même échelle, et c'est ce partage qui rend la
-                 # comparaison légitime. La note de lecture le dit.
-                 z_ticks=([(-span, _num(-span, 2) + " R"), (0.0, "0"),
-                           (span, _num(span, 2) + " R")] if idx == 0 else []),
-                 tip="{v:+.3f} R", classify=diverging)
-    b.legend(0, 322, [("negf", "espérance négative"),
+                 z_ticks=graduations(lo, hi),
+                 tip="{v:+.3f} R", classify=diverging, zero=lo)
+
+    # Le rapport des deux étendues, écrit une fois : c'est la seule grandeur
+    # que deux échelles indépendantes ne donnent plus à lire directement.
+    _, hn = etendue(z_null)
+    ln, _x = etendue(z_null)
+    le, he = etendue(z_edge)
+    rapport = (he - le) / (hn - ln)
+    b.annotation(0, 326, "les deux cadres ne partagent pas leur échelle : "
+                         "l'étendue de droite vaut " + _num(rapport, 1)
+                 + " fois celle de gauche")
+    b.legend(0, 348, [("negf", "espérance négative"),
                       ("wash", "neutre, sous 0,02 R"),
                       ("hm6", "espérance positive")], step=178)
     _source(b, "Arête gauche : part des setups retenus. Arête droite : mise en "
-               "unités de risque. Les deux surfaces partagent la même échelle "
-               "de hauteur, graduée à gauche : c'est ce partage qui autorise à "
-               "les comparer. Sans information, aucun réglage ne déforme la "
-               "surface.")
+               "unités de risque. Sans clairvoyance, la surface n'a aucune "
+               "forme selon la sélectivité — elle change de signe d'une "
+               "rangée à l'autre sans ordre — et reste exactement "
+               "proportionnelle selon la mise, qui multiplie une espérance "
+               "sans jamais en créer. Avec clairvoyance, elle monte "
+               "régulièrement quand on resserre la sélection. La première "
+               "rangée est commune aux deux cadres&nbsp;: à 100 % de setups "
+               "retenus, il n'y a plus de sélection, donc plus rien que la "
+               "clairvoyance puisse changer.")
     return b.render(
         "Deux surfaces d espérance par décision selon la sélectivité et la "
         "mise, sans puis avec clairvoyance")
@@ -1493,3 +1572,230 @@ def fig_seuil_surface() -> str:
 
 
 FIGURES["discseuil3d"] = fig_seuil_surface
+
+
+# ---------------------------------------------------------------------------
+# Figure 23 — l'identité de Wald, montrée plutôt qu'énoncée
+# ---------------------------------------------------------------------------
+
+
+def fig_wald() -> str:
+    """Le théorème d'arrêt optionnel, en deux cadres et sans une ligne d'algèbre.
+
+    C'est le résultat qui fonde les trois documents, et il n'avait jusqu'ici
+    aucune figure — il vivait dans une identité posée en prose et dans des
+    tables. Le lecteur devait le croire sur parole.
+
+    Le cadre du haut porte quatre droites, une par géométrie, donnant
+    l'espérance nette selon la dérive du marché. Trois choses s'y lisent d'un
+    coup, et aucune ne demande de calcul.
+
+    D'abord **l'ordonnée à l'origine**. À dérive nulle, les quatre droites
+    valent exactement `−c/L` — la friction rapportée au risque nominal — et
+    aucune n'atteint zéro. Aucune géométrie ne crée d'espérance : c'est la loi
+    nulle du dépôt, et elle est ici un point sur un axe.
+
+    Ensuite **la pente**, qui est `E[τ∧T]/60L` : elle mesure le temps de
+    marché que la géométrie achète par unité de risque. C'est la seule chose
+    que le choix des barrières décide.
+
+    Enfin **le point de croisement**, qui est `µ*`. La droite du stop déclaré
+    ne croise jamais zéro dans la bande de dérive plausible ; les trois autres
+    la croisent avant même sa borne basse.
+
+    Le cadre du bas donne la pente à sa source : le temps de marché acheté
+    croît comme le carré de la largeur du stop tant que la séance ne borne
+    rien, puis sature contre elle. C'est cette saturation qui rend l'optimum
+    intérieur — la droite la plus raide n'est pas la plus large.
+    """
+    from . import quant as Q
+    from . import seuil as S
+
+    stops = (0.010, 0.050, 0.100, 0.200)
+    classes = ("neg", "s3", "s1", "s2")
+    gs = [S.geometry(p) for p in stops]
+    bas, haut = S.PLAUSIBLE_DRIFT_PER_HOUR
+    mu_max = haut * 1.06
+
+    b = _plate(420, "Arrêt optionnel",
+               "Ce que la géométrie achète, et ce qu'elle ne crée pas",
+               "E[R] = (µ·E[τ∧T] − c) / L")
+    # La légende monte sous le bandeau : posée en pied, elle venait heurter
+    # l'intitulé d'abscisse du second cadre, et quatre traits à identifier se
+    # lisent mieux avant les courbes qu'après.
+    b.legend(66, 56, [(c, _num(g.stop_pct, 3) + " %")
+                      for g, c in zip(gs, classes)], step=116, kind="line")
+
+    # --- cadre du haut : quatre droites, une par géométrie ----------------
+    # Domaine déduit des quatre droites elles-mêmes, bornes comprises : une
+    # fenêtre écrite à la main couperait l'ordonnée à l'origine de la
+    # géométrie serrée, qui est justement ce que le cadre existe pour montrer.
+    vals = [g.expectancy_r(m) for g in gs for m in (0.0, mu_max)]
+    lo = min(vals) - 0.10 * (max(vals) - min(vals))
+    hi = max(vals) + 0.09 * (max(vals) - min(vals))
+    p1 = Panel(b, 66, 92, W - 116, 158,
+               title="Espérance nette selon la dérive du marché",
+               readout="quatre géométries, une friction")
+    p1.domain(0.0, mu_max, lo, hi)
+    p1.band_x(bas, haut, "wash")
+    p1.frame()
+    pas = 0.2
+    p1.grid_y([pas * k for k in range(math.ceil(lo / pas),
+                                      math.floor(hi / pas) + 1)],
+              lambda v: _num(v, 1), "multiples du risque")
+    p1.grid_x([0.0, 0.8, 1.6, 2.4, 3.2], lambda v: _num(v, 1),
+              "dérive du marché, en points d'indice par heure")
+    p1.hline(0.0, "lvl strong")
+    for g, cls in zip(gs, classes):
+        p1.path([(0.0, g.expectancy_r(0.0)), (mu_max, g.expectancy_r(mu_max))],
+                cls, tip=f"stop {_num(g.stop_pct, 3)} % — pente "
+                         f"{g.exposure_min / 60.0 / g.stop_points:.3f} R par pt/h")
+        # L'ordonnée à l'origine est la loi nulle : on la marque, elle ne se
+        # déduit pas d'une droite qu'on suit du regard jusqu'à l'axe.
+        p1.dot(0.0, g.expectancy_r(0.0), cls, r=3.5,
+               tip=f"stop {_num(g.stop_pct, 3)} % — à dérive nulle, "
+                   f"−c/L = {g.expectancy_r(0.0):+.3f} R")
+    # Aucun libellé posé au bout des droites : celles de 0,100 % et 0,200 %
+    # se recouvrent presque partout — c'est le fond du propos, l'optimum
+    # étant plat — et deux libellés y tomberaient l'un sur l'autre. La
+    # légende du haut fait l'identification.
+    p1.label(0.0, gs[0].expectancy_r(0.0), "à dérive nulle : −c/L",
+             dx=10, dy=-11, cls="dl halo")
+    p1.label(0.06, hi * 0.60,
+             "0,100 % et 0,200 % se recouvrent : l'optimum est plat",
+             dx=0, dy=0, cls="dl halo")
+    p1.label(mu_max * 0.5, gs[0].expectancy_r(mu_max * 0.5),
+             "la géométrie déclarée ne croise jamais le zéro",
+             dx=0, dy=-9, anchor="middle", cls="dl halo")
+    p1.label((bas * haut) ** 0.5, hi, "dérive plausible", dx=0, dy=13,
+             anchor="middle", cls="tk halo")
+
+    # --- cadre du bas : la pente à sa source ------------------------------
+    fins = S.scan()
+    xs = [g.stop_pct for g in fins]
+    taus = [g.exposure_min for g in fins]
+    p2 = Panel(b, 66, 306, W - 116, 66, title="Temps de marché acheté",
+               readout="E[τ∧T], borné par la séance")
+    # Le domaine monte jusqu'à la séance entière : c'est le plafond contre
+    # lequel l'exposition sature, et un cadre calé sur le seul maximum
+    # observé aurait rejeté ce plafond hors du cadre — la ligne s'y serait
+    # tout de même tracée, `hline` ne découpant pas.
+    p2.domain(min(xs) / 1.35, max(xs) * 1.35, 0.0, Q.SESSION_MIN * 1.06,
+              xlog=True)
+    p2.frame()
+    p2.grid_y([0, 130, 260, 390], lambda v: f"{v:g}", "minutes")
+    p2.grid_x([0.01, 0.025, 0.05, 0.1, 0.2, 0.4], lambda v: _num(v, 3) + " %",
+              "largeur du stop, en % de l'indice")
+    p2.hline(Q.SESSION_MIN, "lvl")
+    p2.label(max(xs) * 1.3, Q.SESSION_MIN, "séance entière", dx=-4, dy=-5,
+             anchor="end", cls="tk halo")
+    p2.path(list(zip(xs, taus)), "px")
+    for g, cls in zip(gs, classes):
+        p2.dot(g.stop_pct, g.exposure_min, cls, r=3.5,
+               tip=f"stop {_num(g.stop_pct, 3)} % — {g.exposure_min:.1f} min")
+
+    _source(b, "Chaque droite est une géométrie. Son ordonnée à l'origine est "
+               "la friction rapportée au risque nominal, et elle est négative "
+               "pour les quatre : à dérive nulle, aucune géométrie ne rend une "
+               "espérance positive, quel que soit le placement des barrières. "
+               "Sa pente est le temps de marché acheté par unité de risque, et "
+               "c'est la seule chose que le choix des barrières décide. Son "
+               "croisement avec le zéro est le seuil µ*. La géométrie déclarée "
+               "ne croise pas le zéro dans la bande de dérive plausible ; les "
+               "trois autres le croisent avant sa borne basse. Le cadre du bas "
+               "donne la pente à sa source — et montre pourquoi la plus raide "
+               "n'est pas la plus large, l'exposition saturant contre la "
+               "séance.")
+    return b.render(
+        "Espérance nette selon la dérive pour quatre géométries, et temps de "
+        "marché acheté selon la largeur du stop")
+
+
+FIGURES["discwald"] = fig_wald
+
+
+def fig_wald_surface() -> str:
+    """L'espérance sur le plan (géométrie × dérive), et la frontière du zéro.
+
+    La figure précédente coupe ce plan en quatre droites. Celle-ci le montre
+    entier, et la couleur y code le signe : la seule chose que le lecteur ait
+    à trouver est la ligne où la surface change de couleur, qui est la
+    frontière `µ = µ*`.
+
+    Ce que la figure donne à lire est la **forme de la frontière**, et une
+    seule chose la décrit : elle recule vers les fortes dérives à mesure que
+    le stop se resserre. À la géométrie déclarée, la rangée entière reste
+    rouge — son seuil dépasse la dérive la plus forte du cadre, et aucune
+    dérive plausible ne la rend rentable.
+
+    Ce que la figure ne donne **pas** à lire, et qu'il faut chercher dans la
+    figure précédente : que l'arête de la dérive nulle soit négative sur toute
+    sa longueur. La couleur d'une maille suit la moyenne de ses quatre coins,
+    et les mailles qui bordent cette arête empruntent la moitié de leur
+    moyenne à la colonne voisine, où la dérive n'est plus nulle. L'ordonnée à
+    l'origine des quatre droites du cadre plan la porte exactement ; ici elle
+    serait affirmée sans être montrée.
+    """
+    from . import seuil as S
+
+    stops = (0.010, 0.025, 0.050, 0.100, 0.200, 0.400)
+    derives = (0.0, 0.8, 1.6, 2.4, 3.2)
+    gs = [S.geometry(p) for p in stops]
+    z = [[g.expectancy_r(m) for m in derives] for g in gs]
+
+    plat = [v for ligne in z for v in ligne]
+    # Le domaine suit les données, marge comprise, et le zéro y tombe où il
+    # tombe : c'est la frontière que la couleur code, pas une borne du cadre.
+    marge = (max(plat) - min(plat)) * 0.055
+    zlo, zhi = min(plat) - marge, max(plat) + marge
+
+    def signe(v: float) -> str:
+        """Rouge sous zéro, rampe au-dessus, et rien entre les deux.
+
+        Pas de bande neutre ici, à la différence du plan d'espérance : le
+        jeton neutre est un gris très sombre, et sur ce fond une maille qui
+        le porte disparaît. Un quart de la surface passe au voisinage de zéro
+        — c'est justement la région que la figure existe pour montrer — et
+        l'y peindre en noir revenait à l'effacer. La hauteur porte déjà la
+        grandeur ; la couleur ne porte que le signe.
+        """
+        if v < 0.0:
+            return "dn"
+        return _ramp(0.35 + 0.60 * min(1.0, v / max(zhi, 1e-9)))
+
+    b = _plate(372, "Arrêt optionnel, sur deux axes",
+               "Où l'espérance change de signe",
+               "hauteur et couleur : E[R] par trade")
+    # Hauteur ramenée à 140 : à 170, la graduation la plus haute de l'échine
+    # remontait au-dessus du filet de bandeau et venait sur le titre.
+    _surface(b, 314, 160, z, zlo, zhi, cx=32.0, cy=10.0, cz=140.0,
+             row_labels=[_num(p, 3) + " %" for p in stops],
+             col_labels=[_num(d, 1) for d in derives[:-1]]
+                        + [_num(derives[-1], 1) + " pt/h"],
+             z_ticks=[(0.2 * k, _num(0.2 * k, 1) + " R")
+                      for k in range(math.ceil(zlo / 0.2),
+                                     math.floor(zhi / 0.2) + 1)],
+             tip="E[R] = {v:+.3f} R", classify=signe, zero=zlo)
+    b.annotation(0, 292, "la frontière recule vers les fortes dérives à "
+                         "mesure que le stop se resserre")
+    b.legend(0, 314, [("dn", "espérance négative — µ < µ*"),
+                      ("hm6", "espérance positive — µ > µ*")],
+             step=300, kind="swatch")
+    _source(b, "Arête gauche : largeur du stop. Arête droite : dérive du "
+               "marché, en points d'indice par heure. La hauteur et la "
+               "couleur portent la même grandeur, l'espérance nette par "
+               "trade ; la couleur en isole le signe, qui est ce que la "
+               "figure existe pour donner. La frontière rouge-bleu est "
+               "l'ensemble des couples où µ = µ*. Elle recule vers les "
+               "fortes dérives à mesure que le stop se resserre, et la rangée "
+               "du stop déclaré reste entièrement rouge : son seuil dépasse la "
+               "dérive la plus forte du cadre. La couleur d'une maille suit la "
+               "moyenne de ses quatre coins ; le signe exact à dérive nulle se "
+               "lit sur l'ordonnée à l'origine des droites de la figure "
+               "précédente, non ici.")
+    return b.render(
+        "Surface de l espérance nette par trade sur le plan de la largeur de "
+        "stop et de la dérive du marché, avec la frontière du signe")
+
+
+FIGURES["discwald3d"] = fig_wald_surface

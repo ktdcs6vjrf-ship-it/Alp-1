@@ -531,7 +531,7 @@
 
   <div class="titleblock">
     <div class="venue">Série de documents de travail ALP &nbsp;·&nbsp; n<sup>o</sup>&nbsp;3</div>
-    <h1>Combien de décisions pour prouver un jugement&nbsp;? Lois nulles, taxe de multiplicité et mur d'échantillon chez l'opérateur discrétionnaire</h1>
+    <h1>Le seuil, et non le signal&nbsp;: ce que l'opérateur discrétionnaire décide vraiment. Lois nulles, taxe de multiplicité et théorème d'arrêt optionnel</h1>
     <p class="byline">Recherche ALP</p>
     <p class="affil">Évaluation de la décision discrétionnaire et théorie des tests multiples</p>
     <p class="dateline">Première version&nbsp;: août 2026 &nbsp;·&nbsp; Cette version&nbsp;: août 2026</p>
@@ -540,7 +540,7 @@
   <div class="abstract">
     <h2 class="unnumbered">Résumé</h2>
 
-    <p>Un opérateur qui décide au jugement peut établir la valeur de ce jugement en <strong>{{d_mur_sr10}}&nbsp;décisions</strong>, soit un peu plus d'un an à deux décisions par séance, taxe de sélection comprise. Ce document établit ce chiffre et l'appareil qui le produit.</p>
+    <p>Un opérateur qui décide au jugement peut établir la valeur de ce jugement en <strong>{{d_mur_liant}}&nbsp;décisions</strong>, soit {{d_ans_liant}}&nbsp;an à deux décisions par séance. Deux routes indépendantes y mènent — un test ordinaire sur la moyenne, {{d_mur_sr10_t}}&nbsp;décisions, et la taxe de sélection due aux {{d_configs}}&nbsp;configurations, {{d_mur_sr10}} — et c'est la plus exigeante des deux qui lie. Ce document établit ce chiffre et l'appareil qui le produit.</p>
 
     <p>L'obstacle apparent est que la règle n'existe pas sous forme écrite&nbsp;: sans règle, pas de rejeu&nbsp;; sans rejeu, pas de loi nulle&nbsp;; sans loi nulle, rien à opposer au hasard. Il se lève par une distinction que l'évaluation des gérants pratique depuis quarante ans sans jamais disposer de la règle qu'elle juge&nbsp;: <strong>répliquer n'est pas détecter</strong>. On ne teste pas la règle&nbsp;; on teste la trace qu'elle laisse.</p>
 
@@ -548,7 +548,13 @@
 
     <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l'indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l'abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l'opérateur gagne mais s'il fait mieux qu'une règle qu'on écrit en dix lignes. L'appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à {{d_bits_forte}}&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
 
-    <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme&nbsp;: le premier levier fait tout le prix — il porte le seuil de zéro à {{d_seuil_k1}} — et les trois suivants ne le multiplient que par&nbsp;{{d_facteur_1_4}}. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur. <strong>L'exigence est inférieure à celle qui porte sur un avantage de géométrie</strong>, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
+    <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme&nbsp;: le premier levier fait tout le prix — il porte le seuil de zéro à {{d_seuil_k1}} — et les trois suivants ne le multiplient que par&nbsp;{{d_facteur_1_4}}. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur.</p>
+
+    <p>La dernière partie retourne la question, et c'est le résultat que ce document tient pour le sien. Prouver un jugement suppose que le jugement soit ce qui manque. Le théorème d'arrêt optionnel dit qu'il ne l'est pas&nbsp;: par l'identité de Wald à temps borné par la séance, <span class="v">E[R]&nbsp;=&nbsp;(µ·E[τ∧T]&nbsp;−&nbsp;c)/L</span>, d'où un seuil de rentabilité <span class="v">µ*&nbsp;=&nbsp;c/E[τ∧T]</span> qui ne dépend d'aucun signal. <strong><span class="v">µ</span> est une propriété du marché&nbsp;; <span class="v">µ*</span> est une propriété de la géométrie, et l'opérateur la fixe entièrement.</strong> Là où <span class="v">µ</span> demande un échantillon, une loi nulle et une taxe de multiplicité, <span class="v">µ*</span> se calcule.</p>
+
+    <p>Il se calcule, et il décide. À la géométrie déclarée par l'opérateur — un stop de {{s_stop_declare}}&nbsp;% de l'indice — le seuil vaut {{s_mu_declare}}&nbsp;points par heure quand le domaine de dérive que ce même document appelle plausible s'arrête à {{s_plausible_haut}}. La rentabilité n'y est pas improbable&nbsp;: elle est arithmétiquement impossible. À {{s_stop_optimum}}&nbsp;% elle tombe à {{s_mu_optimum}}, soit un facteur&nbsp;{{s_facteur_geo}} sur ce seul levier, quand améliorer l'exécution n'en donne que&nbsp;{{s_facteur_friction}}. L'espérance passe de {{s_er_declare}} à {{s_er_optimum}}&nbsp;R par trade <em>à dérive identique</em>&nbsp;: seule la géométrie a changé.</p>
+
+    <p>Ce chapitre corrige un défaut du document nº&nbsp;1, et il faut le nommer. La dérive de référence y était <em>dérivée de la friction</em> — deux fois le seuil de rentabilité — donc supposée exactement au niveau qui rend la stratégie rentable, et à {{s_ref_circulaire}}&nbsp;points par heure, soit {{s_ref_facteur}}&nbsp;fois la borne haute du plausible. Les chapitres de risque refaits sous une dérive déclarée et une géométrie corrigée donnent de <em>meilleures</em> grandeurs qu'en gardant l'hypothèse&nbsp;: Sharpe par trade {{r_sharpe_opt}} contre {{r_sharpe_ref}}, fraction de Kelly {{r_kelly_opt}}&nbsp;% contre {{r_kelly_ref}}&nbsp;%, coefficient de Lundberg {{r_theta_opt}} contre {{r_theta_ref}} — à une dérive cinq fois plus faible.</p>
 
     <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d'arrêt optionnel</p>
     <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
@@ -557,8 +563,9 @@
   <div class="figures-cles">
     <div><span class="n">{{d_configs}}</span><span class="t">configurations effectives engendrées par {{d_leviers}} leviers discrétionnaires</span></div>
     <div><span class="n">{{d_facteur_1_4}}&nbsp;×</span><span class="t">ce que les trois leviers suivant le premier ajoutent au seuil</span></div>
-    <div><span class="n">{{d_mur_sr10}}</span><span class="t">décisions pour prouver un Sharpe de {{d_sharpe_cite}}, taxe comprise</span></div>
-    <div><span class="n">{{d_mur_ans10}}&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
+    <div><span class="n">{{d_mur_liant}}</span><span class="t">décisions pour prouver un Sharpe de {{d_sharpe_cite}}, taxe comprise</span></div>
+    <div><span class="n">{{s_facteur_geo}}&nbsp;×</span><span class="t">ce que la seule largeur du stop déplace du seuil de rentabilité</span></div>
+    <div><span class="n">{{d_ans_liant}}&nbsp;an</span><span class="t">le même mur, traduit à deux décisions par jour</span></div>
     <div><span class="n">{{d_part_entree}}</span><span class="t">de l'avantage attribué au bon levier par la décomposition de Shapley</span></div>
   </div>
 
@@ -1004,13 +1011,13 @@
 
   {{TABLE:wall}}
 
-  <p>Les deux premières routes s'accordent à quelques pour cent près sur toute la plage. La traduction en temps calendaire est la colonne qui intéresse un opérateur&nbsp;: à un Sharpe revendiqué de {{d_sharpe_cite}} par décision, il faut {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour.</p>
+  <p>Les deux premières routes s'accordent à quelques pour cent près sur toute la plage — {{d_mur_sr10_t}} décisions contre {{d_mur_sr10}} au Sharpe cité — et c'est la plus exigeante qui lie&nbsp;: {{d_mur_liant}}&nbsp;décisions, soit {{d_ans_liant}}&nbsp;an à deux décisions par jour. Qu'elles s'accordent sans partager aucune hypothèse est le fait&nbsp;: la première ne connaît que la moyenne et la variance, la seconde ne connaît que le nombre de configurations.</p>
 
   {{FIGURE:disccloud|L'espérance cumulée décision après décision, sur {{d_chemins}}&nbsp;chemins rééchantillonnés d'un journal sans compétence. L'enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l'écart qu'un opérateur doit dépasser pour être distingué du hasard à ce stade.}}
 
   {{FIGURE:discrolling|L'espérance mesurée sur une fenêtre glissante de {{d_fenetre}} décisions, pour un opérateur sans compétence et pour un opérateur dont la clairvoyance est franche. La bande est l'intervalle à 95&nbsp;pour cent de la moyenne de fenêtre. Les deux bandes se recouvrent sur une partie de la période&nbsp;: à cette taille de fenêtre, les deux opérateurs ne sont pas séparés en permanence.}}
 
-  {{FIGURE:discwall|La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision. La pente selon le Sharpe écrase celle selon les leviers, ce qui est la traduction géométrique de la concavité de la taxe.}}
+  {{FIGURE:discwall|La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision, la hauteur étant la plus exigeante des deux routes. L'arête des leviers est <em>plate</em> jusqu'au quatrième — la taxe de sélection y reste sous l'exigence du test ordinaire — quand celle du Sharpe va du simple au sextuple sur la même largeur.}}
 
   <p>La forme de la surface porte le message. L'axe des leviers est presque plat&nbsp;; l'axe du Sharpe est une falaise. Un opérateur qui hésite entre fermer des leviers et améliorer son signal a une réponse claire&nbsp;: le second effort domine le premier de très loin.</p>
 
@@ -1034,11 +1041,13 @@
 
   {{TABLE:versus}}
 
-  <p>L'opérateur discrétionnaire paie {{d_configs}}&nbsp;fois plus de configurations que la géométrie scellée, et franchit pourtant le mur bien plus tôt. La raison n'est pas qu'il serait meilleur.</p>
+  <p>L'opérateur discrétionnaire paie {{d_configs}}&nbsp;fois plus de configurations que la géométrie scellée, et franchit pourtant le mur {{d_facteur_versus}}&nbsp;fois plus tôt. La raison n'est pas qu'il serait meilleur.</p>
+
+  <p>La table sépare les deux routes parce qu'aucune ne domine partout, et parce que la version précédente de ce document ne montrait que la seconde. Elle l'attribuait à la géométrie scellée en bornant son budget à deux essais&nbsp;: {{d_mur_geometrie_ancien}}&nbsp;décisions de taxe de sélection pour une configuration unique, c'est-à-dire un chiffre qui n'existait que par le bornage. <strong>À une seule configuration il n'y a rien à sélectionner, donc rien à déflater, et la taxe vaut exactement zéro.</strong> C'est le test ordinaire qui lie alors — et il lie aussi à {{d_configs}}&nbsp;configurations&nbsp;: il faudrait dépasser {{d_configs_bascule}}&nbsp;configurations pour que la taxe passe devant lui. <em>Les quatre leviers recensés se cachent sous l'exigence du test ordinaire.</em></p>
 
   <div class="prop">
     <p><span class="lab">Proposition 2.</span> Le mur d'échantillon est gouverné par le rapport de l'effet revendiqué au bruit, et non par le nombre de configurations. La taxe de multiplicité entre par un logarithme&nbsp;; l'effet entre par un carré.</p>
-    <p class="proof"><span class="lab">Justification.</span> Le nombre de décisions requis vaut <span class="v">N</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>². Doubler le nombre de leviers multiplie <span class="v">B</span> par&nbsp;2 et <span class="v">N</span> par un facteur qui tend vers&nbsp;1&nbsp;; doubler le Sharpe divise <span class="v">N</span> par&nbsp;4. ∎</p>
+    <p class="proof"><span class="lab">Justification.</span> Les deux routes donnent <span class="v">N₁</span>&nbsp;=&nbsp;(z<sub>α</sub>&nbsp;+&nbsp;z<sub>β</sub>)²&nbsp;/&nbsp;<span class="v">SR</span>² et <span class="v">N₂</span>&nbsp;=&nbsp;2&nbsp;ln&nbsp;<span class="v">B</span>&nbsp;/&nbsp;<span class="v">SR</span>², et l'exigence est leur maximum, soit max((z<sub>α</sub>&nbsp;+&nbsp;z<sub>β</sub>)², 2&nbsp;ln&nbsp;<span class="v">B</span>)&nbsp;/&nbsp;<span class="v">SR</span>². Le Sharpe entre par un carré dans les deux termes&nbsp;; le budget n'entre que dans le second, et par un logarithme. Doubler le nombre de leviers multiplie <span class="v">B</span> par&nbsp;2 et <span class="v">N₂</span> par un facteur qui tend vers&nbsp;1, sans rien changer tant que <span class="v">N₂</span>&nbsp;&lt;&nbsp;<span class="v">N₁</span>&nbsp;; doubler le Sharpe divise l'exigence entière par&nbsp;4. ∎</p>
   </div>
 
   <p>Les deux objets ne revendiquent pas le même ordre de grandeur. Une stratégie de géométrie revendique un effet borné par le théorème d'invariance. Un opérateur discrétionnaire revendique un effet de jugement, dont l'amplitude n'est pas bornée par ce théorème. <strong>C'est le rapport de l'effet revendiqué au bruit, et non la qualité de l'un ou de l'autre, qui fixe l'exigence d'échantillon.</strong></p>
@@ -1110,6 +1119,24 @@
 
   <p><span class="v">µ</span> est une propriété du marché et reste hors de portée. <strong><span class="v">µ*</span> est une propriété de la géométrie, et l'opérateur la fixe entièrement.</strong> C'est une grandeur arithmétique là où <span class="v">µ</span> est statistique&nbsp;: elle ne demande aucun échantillon, aucune loi nulle, aucune taxe de multiplicité. Elle se calcule.</p>
 
+  <p>L'équation&nbsp;(1) est une droite en <span class="v">µ</span>, et il vaut la peine de la regarder comme telle plutôt que de la lire. Chaque géométrie en donne une&nbsp;; les quatre droites ci-dessous en sont quatre exemples, tracés sur la seule arithmétique de l'identité — aucune simulation, aucun échantillon.</p>
+
+  {{FIGURE:discwald|L'identité de Wald tracée pour quatre géométries. L'ordonnée à l'origine de chaque droite est la friction rapportée au risque nominal, sa pente est le temps de marché acheté, et son croisement avec le zéro est le seuil <span class="v">µ*</span>. Le cadre du bas donne la pente à sa source&nbsp;: l'exposition croît comme le carré de la largeur du stop, puis sature contre la séance.}}
+
+  <p>Trois choses s'y lisent sans calcul, et ce sont les trois termes de l'équation&nbsp;(1).</p>
+
+  <p><strong>L'ordonnée à l'origine est la loi nulle.</strong> À dérive nulle, les quatre droites valent exactement <span class="v">−c/L</span> et aucune n'atteint zéro. Aucune géométrie ne crée d'espérance&nbsp;: c'est le théorème d'arrêt optionnel, et il n'est pas un obstacle à contourner mais le socle sur lequel tout le reste s'appuie. Une géométrie qui rendrait une espérance positive à dérive nulle serait une erreur de calcul.</p>
+
+  <p><strong>La pente est le temps de marché acheté</strong>, <span class="v">E[τ∧T]/60L</span>. C'est la seule chose que le choix des barrières décide, et elle varie d'un facteur trois entre les quatre géométries. Le cadre du bas montre d'où elle vient et pourquoi elle finit par redescendre&nbsp;: l'exposition sature contre la fin de séance pendant que le risque nominal continue de croître.</p>
+
+  <p><strong>Le croisement avec le zéro est le seuil.</strong> La droite du stop déclaré ne croise jamais le zéro dans la bande de dérive plausible — elle reste sous <span class="v">−0,3&nbsp;R</span> jusqu'à la borne haute — quand les trois autres le croisent avant même sa borne basse. Le même signal, la même friction, la même séance&nbsp;: seule la géométrie change.</p>
+
+  <p>Le plan complet donne la frontière que ces quatre coupes ne montrent que par leurs croisements.</p>
+
+  {{FIGURE:discwald3d|L'espérance nette sur le plan de la largeur de stop et de la dérive du marché. La couleur n'encode que le signe, la hauteur portant déjà la grandeur&nbsp;: la frontière rouge-bleu est l'ensemble des couples où <span class="v">µ&nbsp;=&nbsp;µ*</span>.}}
+
+  <p>La frontière recule vers les fortes dérives à mesure que le stop se resserre. C'est l'énoncé géométrique de l'équation&nbsp;(2), et il suffit à trancher&nbsp;: à la géométrie déclarée, la rangée entière est du mauvais côté. Le reste de cette partie mesure de combien.</p>
+
   <h2 id="s-effondrement">Le seuil s'effondre quand le stop s'élargit</h2>
 
   <p>L'exposition croît comme le carré de la largeur du stop — c'est le régime diffusif, le temps d'atteinte d'une barrière allant comme <span class="v">a²/σ²</span> — pendant que le risque nominal ne croît que linéairement. La friction, elle, est fixe en points. Le seuil décroît donc <em>quadratiquement</em>, et c'est ce qui rend ce levier sans commune mesure avec les autres.</p>
@@ -1156,7 +1183,7 @@
 
   <h2 id="s-ou-depenser">Où dépenser le jugement</h2>
 
-  <p>La conséquence pour l'opérateur discrétionnaire est directe, et elle contredit l'usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c'est le seul terme de l'équation&nbsp;(1) qui exige un échantillon que l'opérateur n'aura jamais&nbsp;: {{d_mur_sr10}}&nbsp;décisions pour établir un Sharpe de {{d_sharpe_cite}} par décision.</p>
+  <p>La conséquence pour l'opérateur discrétionnaire est directe, et elle contredit l'usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c'est le seul terme de l'équation&nbsp;(1) qui exige un échantillon que l'opérateur n'aura jamais&nbsp;: {{d_mur_liant}}&nbsp;décisions pour établir un Sharpe de {{d_sharpe_cite}} par décision.</p>
 
   <p>Les deux autres termes ne demandent presque rien. La friction se lit sur un relevé de courtage&nbsp;; l'exposition se calcule. La table ci-dessous chiffre l'écart.</p>
 
@@ -1204,7 +1231,7 @@
 
   <p>L'instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l'opérateur gagne mais s'il bat une règle simple. La taxe de multiplicité est réelle mais concave&nbsp;: le premier levier porte le seuil de zéro à {{d_seuil_k1}}, et les trois suivants ne le multiplient que par&nbsp;{{d_facteur_1_4}}.</p>
 
-  <p>L'exigence d'échantillon se chiffre&nbsp;: {{d_mur_sr10}}&nbsp;décisions, soit {{d_mur_ans10}}&nbsp;an à deux décisions par jour, pour un Sharpe de {{d_sharpe_cite}} par décision, taxe de multiplicité comprise. Cette exigence est inférieure à celle qui porte sur un avantage de géométrie, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
+  <p>L'exigence d'échantillon se chiffre&nbsp;: {{d_mur_liant}}&nbsp;décisions, soit {{d_ans_liant}}&nbsp;an à deux décisions par jour, pour un Sharpe de {{d_sharpe_cite}} par décision, taxe de multiplicité comprise. Cette exigence est {{d_facteur_versus}}&nbsp;fois inférieure à celle qui porte sur un avantage de géométrie, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
 
   <p>L'ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">10</a>, dont les champs antérieurs à l'issue ne sont pas reconstituables après coup. C'est la condition d'application du dispositif.</p>
 

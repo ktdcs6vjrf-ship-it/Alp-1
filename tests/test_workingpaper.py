@@ -125,6 +125,37 @@ class TestPiedsDeFigure(unittest.TestCase):
         self.assertEqual(pieds, [])
         self.assertIn("trois courbes", propre)
 
+    def test_une_annotation_longue_marquee_keep_reste_dans_le_graphique(self):
+        """La marque `keep` prime sur le secours de longueur.
+
+        Le défaut a coûté deux annotations : posées dans la bande basse et
+        plus longues que le seuil de prose, elles étaient sorties du SVG et
+        reparaissaient dans la note du document, où elles ne commentaient
+        plus rien. `Board.annotation` pose la marque ; ce test la garde.
+        """
+        svg = ('<svg class="fig" viewBox="0 0 640 300">'
+               '<text class="lg keep" x="10" y="292">'
+               'la frontiere recule vers les fortes derives quand le stop se resserre'
+               '</text></svg>')
+        propre, pieds = monograph.extraire_pieds(svg)
+        self.assertEqual(pieds, [])
+        self.assertIn("la frontiere recule", propre)
+
+    def test_toute_annotation_du_depot_porte_la_marque_keep(self):
+        """Le contrôle de bout en bout : aucune annotation ne se perd.
+
+        Le test précédent garde la règle ; celui-ci garde son application.
+        Une figure qui poserait sa prose sans passer par `Board.annotation`
+        la verrait disparaître au premier build.
+        """
+        from alp1.figterm import Board
+        b = Board(640, 300)
+        b.annotation(10, 292, "une phrase assez longue pour depasser le seuil "
+                              "de prose et tomber dans la bande basse")
+        propre, pieds = monograph.extraire_pieds(b.render("essai"))
+        self.assertEqual(pieds, [])
+        self.assertIn("une phrase assez longue", propre)
+
     def test_un_texte_haut_dans_le_cadre_reste_dans_le_graphique(self):
         svg = ('<svg class="fig" viewBox="0 0 640 300"><text class="lg" x="10" y="40">'
                'un commentaire pose en haut du cadre, donc pas un pied de figure</text></svg>')

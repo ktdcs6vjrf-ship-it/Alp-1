@@ -27,6 +27,10 @@ FIGURE_CSS = """
   .fig .s1 { stroke: var(--s1); }  .fig .pt.s1 { fill: var(--s1); }
   .fig .s2 { stroke: var(--s2); }  .fig .pt.s2 { fill: var(--s2); }
   .fig .s3 { stroke: var(--s3); }  .fig .pt.s3 { fill: var(--s3); }
+  /* Un quatrième trait, du côté négatif de l'échelle divergente : `negf` ne
+     remplit que des aplats, et une courbe qui porte le signe d'un verdict ne
+     peut pas emprunter la teinte d'une série ordinaire. */
+  .fig .neg { stroke: var(--dv-neg); }  .fig .pt.neg { fill: var(--dv-neg); }
 
   .fig .area { stroke: var(--paper); stroke-width: 2; }
   .fig .area.ar1 { fill: var(--s1); }

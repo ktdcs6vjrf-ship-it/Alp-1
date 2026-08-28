@@ -133,6 +133,11 @@ def extraire_pieds(svg: str) -> tuple[str, list[str]]:
         texte = re.sub(r"<[^>]+>", "", corps).strip()
         if not ({"lg", "ax"} & set(classes)) or "sub" in classes:
             return m.group(0)
+        # `keep` déclare une annotation : une phrase qui commente un élément
+        # précis du tracé et qui n'a de sens qu'à sa place. Le secours de
+        # longueur ci-dessous l'aurait sortie comme n'importe quelle prose.
+        if "keep" in classes:
+            return m.group(0)
         # `cap` déclare un pied de figure. La longueur ne sert plus que de
         # secours, pour les figures qui posent leur prose sans passer par
         # `Board.caption` : elle coupait en deux toute phrase dont la dernière
