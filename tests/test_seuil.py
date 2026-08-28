@@ -12,7 +12,8 @@ from __future__ import annotations
 import unittest
 
 from alp1 import quant as q, seuil
-from alp1.costs import COST_BASE, COST_OPTIMISTIC, COST_REALISTIC, MES
+from alp1.costs import (COST_BASE, COST_OPTIMISTIC, COST_REALISTIC,
+                        ES, MES)
 
 
 class TestLoiNulle(unittest.TestCase):
@@ -131,6 +132,69 @@ class TestCircularite(unittest.TestCase):
         self.assertAlmostEqual(a.expectancy_r(2.0) - b.expectancy_r(2.0),
                                (b.friction_points - a.friction_points)
                                / a.stop_points, places=12)
+
+
+class TestSurfaceADeuxAxes(unittest.TestCase):
+    """Les grilles que la surface balaie, et la linéarité du second axe."""
+
+    def test_la_grille_de_stops_de_la_surface_sort_de_la_grille_generale(self) -> None:
+        """Elle en est une sous-suite, dans le même ordre.
+
+        La surface ne doit pas introduire de géométrie que le balayage
+        principal ignore : les deux figures du chapitre se liraient alors sur
+        des abscisses différentes sans que rien ne le signale.
+        """
+        for pct in seuil.SURFACE_STOP_PCT:
+            self.assertIn(pct, seuil.STOP_GRID_PCT)
+        self.assertEqual(list(seuil.SURFACE_STOP_PCT),
+                         sorted(seuil.SURFACE_STOP_PCT))
+
+    def test_la_grille_de_frictions_encadre_les_trois_modeles_declares(self) -> None:
+        """Ses bornes et son milieu sont exactement les coûts de `costs`."""
+        g = seuil.friction_grid()
+        self.assertEqual(len(g), 5)
+        self.assertEqual(list(g), sorted(g))
+        self.assertAlmostEqual(g[0], COST_OPTIMISTIC.friction_points(ES), places=12)
+        self.assertAlmostEqual(g[2], COST_BASE.friction_points(ES), places=12)
+        self.assertAlmostEqual(g[4], COST_REALISTIC.friction_points(ES), places=12)
+
+    def test_le_seuil_paramètre_par_la_friction_redit_la_geometrie(self) -> None:
+        """`break_even` et `Geometry.break_even_per_hour` sont la même chose.
+
+        Deux chemins de calcul pour une seule grandeur : si l'un dérivait de
+        l'autre, la surface et la table du chapitre cesseraient de s'accorder
+        sans qu'aucune erreur ne soit levée.
+        """
+        for pct in seuil.SURFACE_STOP_PCT:
+            g = seuil.geometry(pct, COST_BASE)
+            self.assertAlmostEqual(seuil.break_even(pct, g.friction_points),
+                                   g.break_even_per_hour, places=12)
+
+    def test_le_seuil_est_exactement_lineaire_en_la_friction(self) -> None:
+        """Doubler le coût double le seuil, à géométrie inchangée.
+
+        C'est ce qui autorise le texte à citer le rapport des deux modèles de
+        coût comme facteur du second axe, sans le recalculer.
+        """
+        g = seuil.friction_grid()
+        for pct in seuil.SURFACE_STOP_PCT:
+            self.assertAlmostEqual(seuil.break_even(pct, g[-1])
+                                   / seuil.break_even(pct, g[0]),
+                                   g[-1] / g[0], places=10)
+
+    def test_la_rangee_du_stop_le_plus_serre_depasse_le_plafond_partout(self) -> None:
+        """La lecture que la figure existe pour donner, gardée en Python.
+
+        La légende affirme qu'aucune amélioration d'exécution ne rachète la
+        géométrie déclarée. Si la friction la plus favorable la ramenait sous
+        le plafond, la phrase deviendrait fausse en silence.
+        """
+        haut = seuil.PLAUSIBLE_DRIFT_PER_HOUR[1]
+        for c in seuil.friction_grid():
+            self.assertGreater(seuil.break_even(seuil.SURFACE_STOP_PCT[0], c),
+                               haut)
+        self.assertLess(seuil.break_even(seuil.SURFACE_STOP_PCT[-1],
+                                         seuil.friction_grid()[-1]), haut)
 
 
 if __name__ == "__main__":

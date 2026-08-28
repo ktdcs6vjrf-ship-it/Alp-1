@@ -1398,3 +1398,98 @@ def fig_seuil() -> str:
 
 
 FIGURES["discseuil"] = fig_seuil
+
+# ---------------------------------------------------------------------------
+# Figure 22 — la surface du seuil, et le plafond du plausible
+# ---------------------------------------------------------------------------
+
+
+def fig_seuil_surface() -> str:
+    """Le seuil sur le plan (largeur de stop, friction), et ce qui le franchit.
+
+    La figure précédente montre le seuil le long d'un seul axe. Celle-ci le
+    montre sur les deux axes que l'opérateur contrôle réellement — la
+    géométrie et la friction — et y pose la seule chose qu'il ne contrôle
+    pas&nbsp;: le plafond de dérive plausible.
+
+    La hauteur est le logarithme du seuil, parce qu'il couvre deux ordres et
+    demi de grandeur et qu'une échelle linéaire écraserait tout sauf le coin
+    le plus défavorable. Les graduations portent les valeurs réelles.
+
+    La couleur ne code pas la hauteur mais le **verdict**&nbsp;: une maille
+    rouge est une configuration dont le seuil dépasse le plafond du plausible,
+    donc dont la rentabilité est impossible quelle que soit la dérive du
+    marché. C'est la lecture que la figure existe pour donner, et elle se fait
+    sans lire une seule graduation.
+    """
+    from . import seuil as S
+
+    # Les deux grilles viennent du module et non de la figure : le texte qui
+    # commente la surface cite les mêmes bornes, et une friction écrite deux
+    # fois finirait par diverger de l'autre.
+    stops = S.SURFACE_STOP_PCT
+    frictions = S.friction_grid()
+    plafond = S.PLAUSIBLE_DRIFT_PER_HOUR[1]
+
+    z = [[math.log10(S.break_even(pct, c)) for c in frictions]
+         for pct in stops]
+
+    plat = [v for ligne in z for v in ligne]
+    # Le domaine suit les données et non les décennies entières : arrondir à
+    # la décennie donnait quatre décades pour des valeurs qui n'en couvrent
+    # que 2,3, et la surface n'occupait plus que la moitié de son cadre.
+    zlo, zhi = min(plat) - 0.15, max(plat) + 0.15
+    limite = math.log10(plafond)
+
+    def verdict(v: float) -> str:
+        """Rouge au-dessus du plafond, rampe en dessous.
+
+        La frontière est la seule information que la figure doit livrer au
+        premier regard ; la nuance sous le plafond est secondaire.
+        """
+        if v > limite:
+            return "dn"
+        return _ramp(0.25 + 0.65 * (limite - v) / max(limite - zlo, 1e-9))
+
+    # Le sol se pose au bas du domaine et non à µ* = 1 pt/h : laissé au zéro
+    # par défaut, il coupait la surface en son milieu et la moitié basse
+    # passait sous un plancher qui n'est le plancher de rien.
+    ticks = [(float(k), _num(10.0 ** k, 2) if k < 1 else _num(10.0 ** k, 0))
+             for k in range(math.ceil(zlo), math.floor(zhi) + 1)]
+    ticks.append((limite, _num(plafond, 1) + " — plafond"))
+
+    b = _plate(384, "Le seuil sur deux axes",
+               "Ce que la géométrie et la friction décident ensemble",
+               "hauteur : µ* en points par heure")
+    # Libellés d'arête réduits à leur valeur : « stop 0,010 % » heurtait les
+    # graduations de l'échine, portées de ce même côté. Le sens des deux axes
+    # est donné par la ligne de lecture, où il ne coûte aucune place.
+    _surface(b, 330, 197, z, zlo, zhi, cx=44.0, cy=11.0, cz=190.0,
+             row_labels=[_num(p, 3) + " %" for p in stops],
+             col_labels=[_num(f, 3) for f in frictions[:-1]]
+                        + [_num(frictions[-1], 3) + " pt"],
+             z_ticks=sorted(ticks),
+             tip="µ* = {v:.2f} en log10 des points par heure",
+             classify=verdict, zero=zlo)
+
+    # Deux pastilles et non une rampe : le rouge n'appartient pas à la rampe,
+    # et une légende d'échelle continue décrirait un encodage que la figure
+    # n'emploie pas. C'est la couleur qui porte le verdict, pas la nuance.
+    b.legend(0, 344, [("hm5", "seuil sous le plafond — rentabilité possible"),
+                      ("dn", "seuil au-dessus — impossible à toute dérive")],
+             step=300, kind="swatch")
+    _source(b, "Arête gauche : largeur du stop. Arête droite : friction "
+               "aller-retour, en points. La hauteur est le seuil de "
+               "rentabilité en échelle logarithmique ; les graduations "
+               "portent sa valeur réelle en points par heure. Une maille "
+               "rouge dépasse le plafond de dérive plausible de "
+               + _num(plafond, 1) + " points par heure : sa rentabilité est "
+               "impossible, quelle que soit la dérive du marché. Seule la "
+               "rangée du stop le plus serré y tombe, et elle y tombe pour "
+               "toutes les frictions.")
+    return b.render(
+        "Surface du seuil de rentabilité sur le plan de la largeur de stop et "
+        "de la friction, avec le verdict d atteignabilité en couleur")
+
+
+FIGURES["discseuil3d"] = fig_seuil_surface

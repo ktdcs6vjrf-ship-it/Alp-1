@@ -249,7 +249,9 @@ def fig_ratios() -> str:
     # signale.
     _amp = max(abs(v) for _, vn, ve in entries for v in (vn, ve))
     _amp = max(_amp * 1.25, 0.02)
-    p2 = Panel(b, 384, 74, 124, 168, title="Par trade", readout="R:R 1:20")
+    # Cadre élargi de quatorze pixels : à 124 de large, les trois intitulés
+    # inclinés se touchaient — « Sortino » mordait sur « Omega − 1 ».
+    p2 = Panel(b, 384, 74, 138, 168, title="Par trade", readout="R:R 1:20")
     p2.domain(-0.5, len(entries) - 0.5, -_amp, _amp)
     p2.frame()
     p2.grid_y([-_amp, -_amp / 2, 0.0, _amp / 2, _amp], lambda v: _num(v, 2))
@@ -262,7 +264,7 @@ def fig_ratios() -> str:
                      f'{_esc(lab)}</text>')
 
     # --- P3 : dispersion totale contre dispersion à la baisse --------------
-    p3 = Panel(b, 546, 74, 90, 168, title="Dispersion",
+    p3 = Panel(b, 556, 74, 86, 168, title="Dispersion",
                readout=f"σ/DD = {_num(e0.sd / e0.downside_deviation(), 2)}")
     _hi = max(e0.sd, e0.downside_deviation()) * 1.18
     p3.domain(-0.5, 1.5, 0.0, _hi)

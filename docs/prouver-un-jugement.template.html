@@ -1126,6 +1126,12 @@
 
   <p>L'optimum est intérieur, et il l'est pour une raison mécanique qu'il faut énoncer&nbsp;: trop serré, la friction domine — elle mange {{s_cl_declare}} du risque nominal — et l'exposition est trop courte pour que la dérive agisse&nbsp;; trop large, l'exposition sature contre la fin de séance pendant que le risque nominal continue de croître, et l'espérance retombe en <span class="v">1/a</span>. Les deux forces se croisent à {{s_expo_optimum}}&nbsp;minutes d'exposition moyenne.</p>
 
+  <p>La friction est le second axe, et l'opérateur le contrôle aussi&nbsp;: elle dépend du courtier, de l'heure choisie et de la façon de passer l'ordre. La surface porte les deux axes ensemble et le plafond de dérive plausible avec eux, de sorte que le verdict se lise sans convertir une élévation en grandeur.</p>
+
+  {{FIGURE:discseuil3d|Le seuil de rentabilité sur le plan des deux variables que l'opérateur contrôle. Arête gauche&nbsp;: la largeur du stop. Arête droite&nbsp;: la friction aller-retour. La hauteur est le seuil en échelle logarithmique, et l'échine porte le plafond de dérive plausible. La couleur ne code pas la hauteur mais le verdict&nbsp;: une maille rouge exige une dérive que le marché ne fournit pas.}}
+
+  <p>La rangée rouge est celle du stop le plus serré, et elle est rouge <em>pour toutes les frictions</em>&nbsp;: aucune amélioration d'exécution ne rachète cette géométrie. Réciproquement, une fois le stop élargi, la friction déplace le seuil d'un facteur {{s_facteur_friction}} seulement, quand la géométrie le déplace d'un facteur {{s_facteur_geo}}. Les deux axes ne pèsent pas le même poids, et l'ordre dans lequel on les travaille est décidé par la figure.</p>
+
   <h2 id="s-circularite">Une hypothèse qui supposait sa conclusion</h2>
 
   <p>Ce chapitre corrige un défaut du document nº&nbsp;1, et il faut le nommer. La dérive de référence y vaut <code>DRIFT_MULTIPLE × c / E[τ]</code>, c'est-à-dire deux fois le seuil de rentabilité. <strong>La dérive y est dérivée de la friction</strong>&nbsp;: l'avantage n'est pas mesuré, il est supposé, et il est supposé exactement au niveau qui rend la stratégie rentable.</p>

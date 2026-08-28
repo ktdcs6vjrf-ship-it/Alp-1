@@ -207,16 +207,24 @@ class Panel:
 
     def grid_y(self, ticks, fmt=lambda v: f"{v:g}", label: str | None = None,
                side: str = "left") -> None:
+        base = self.y + self.h
         for v in ticks:
             yy = self.sy(v)
             self.board.add(f'<line class="gl" x1="{self.x:.1f}" y1="{yy:.1f}" '
                            f'x2="{self.x + self.w:.1f}" y2="{yy:.1f}"/>')
+            # La graduation la plus basse est centrée sur l'axe, et l'axe porte
+            # les graduations d'abscisse trois pixels plus bas : au coin, les
+            # deux boîtes se mordaient. On remonte cette seule graduation au
+            # lieu d'écarter toute la rangée d'abscisses, qui viendrait alors
+            # heurter les légendes posées sous elle.
+            dy = 3.0 if yy < base - 1.0 else -1.0
             if side == "left":
-                self.board.add(f'<text class="tk" x="{self.x - 5:.1f}" y="{yy + 3:.1f}" '
+                self.board.add(f'<text class="tk" x="{self.x - 5:.1f}" '
+                               f'y="{yy + dy:.1f}" '
                                f'text-anchor="end">{_esc(fmt(v))}</text>')
             else:
                 self.board.add(f'<text class="tk" x="{self.x + self.w + 5:.1f}" '
-                               f'y="{yy + 3:.1f}">{_esc(fmt(v))}</text>')
+                               f'y="{yy + dy:.1f}">{_esc(fmt(v))}</text>')
         if label:
             cy = self.y + self.h / 2
             # À gauche, quarante-deux points et non trente-quatre : le libellé
@@ -232,20 +240,28 @@ class Panel:
                            f'rotate(-90)" text-anchor="middle">{_esc(label)}</text>')
 
     def grid_x(self, ticks, fmt=lambda v: f"{v:g}", label: str | None = None,
-               rules: bool = False) -> None:
+               rules: bool = False, dy: float = 13.0) -> None:
+        """Graduations d'abscisse.
+
+        `dy` écarte les graduations de l'axe. Il reste à sa valeur par défaut
+        partout : l'écarter davantage rapprocherait les abscisses des légendes
+        posées sous elles. Le paramètre existe pour les cadres qui portent
+        quelque chose d'inhabituel sous leur axe.
+        """
         base = self.y + self.h
         for v in ticks:
             xx = self.sx(v)
             if rules:
                 self.board.add(f'<line class="gl" x1="{xx:.1f}" y1="{self.y:.1f}" '
                                f'x2="{xx:.1f}" y2="{base:.1f}"/>')
-            self.board.add(f'<text class="tk" x="{xx:.1f}" y="{base + 13:.1f}" '
+            self.board.add(f'<text class="tk" x="{xx:.1f}" y="{base + dy:.1f}" '
                            f'text-anchor="middle">{_esc(fmt(v))}</text>')
         self.board.add(f'<line class="ba" x1="{self.x:.1f}" y1="{base:.1f}" '
                        f'x2="{self.x + self.w:.1f}" y2="{base:.1f}"/>')
         if label:
             self.board.add(f'<text class="ax" x="{self.x + self.w / 2:.1f}" '
-                           f'y="{base + 28:.1f}" text-anchor="middle">{_esc(label)}</text>')
+                           f'y="{base + dy + 15:.1f}" text-anchor="middle">'
+                           f'{_esc(label)}</text>')
 
     # --- marques ----------------------------------------------------------
 
@@ -868,7 +884,9 @@ def fig_liquidity_map() -> str:
     cvd = [0.0]
     for i in range(1, n_t):
         cvd.append(cvd[-1] + (path[i] - path[i - 1]) * 0.8 + 0.55 * noise.gauss())
-    p2 = Panel(b, 58, 296, 500, 56, title="Delta de volume cumulé (CVD)",
+    # Le second cadre descend de six pixels : son titre venait s'asseoir sur
+    # la légende de la rampe, sans marge pour les séparer.
+    p2 = Panel(b, 58, 302, 500, 56, title="Delta de volume cumulé (CVD)",
                readout="contrats agressifs nets")
     # Domaine symétrique : le delta cumulé est une grandeur signée, et un
     # cadre calé sur ses extrêmes posait le zéro sur la bordure haute, où il

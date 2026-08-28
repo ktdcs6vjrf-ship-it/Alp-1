@@ -16,7 +16,7 @@ from alp1 import discpaper
 N_SECTIONS = 39
 N_PARTIES = 11
 N_TABLES = 13
-N_FIGURES = 21
+N_FIGURES = 22
 
 
 class TestConstruction(unittest.TestCase):

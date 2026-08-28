@@ -206,6 +206,15 @@ def values() -> dict[str, str]:
         "s_expo_optimum": num(optimum.exposure_min, 0),
         "s_facteur": num(pire.break_even_per_hour
                          / meilleur.break_even_per_hour, 0),
+        # Les deux axes séparés. Le facteur de friction est exactement le
+        # rapport des deux modèles de coût, µ* y étant linéaire ; le facteur
+        # de géométrie se mesure à friction fixe, sur la grille de la surface.
+        "s_facteur_friction": num(seuil.friction_grid()[-1]
+                                  / seuil.friction_grid()[0], 1),
+        "s_facteur_geo": num(
+            seuil.break_even(seuil.SURFACE_STOP_PCT[0], seuil.friction_grid()[2])
+            / seuil.break_even(seuil.SURFACE_STOP_PCT[-1],
+                               seuil.friction_grid()[2]), 0),
         "s_derive_travail": num(DERIVE_TRAVAIL, 1),
         "s_plausible_bas": num(seuil.PLAUSIBLE_DRIFT_PER_HOUR[0], 1),
         "s_plausible_haut": num(seuil.PLAUSIBLE_DRIFT_PER_HOUR[1], 1),

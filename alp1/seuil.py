@@ -42,7 +42,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .costs import COST_BASE, ES, Contract, CostModel, stop_points
+from .costs import (COST_BASE, COST_OPTIMISTIC, COST_REALISTIC, ES,
+                    Contract, CostModel, stop_points)
 from .horizon import outcome_scaled
 from . import quant as q
 
@@ -57,6 +58,11 @@ PLAUSIBLE_DRIFT_PER_HOUR = (0.6, 3.2)
 #: la séance.
 STOP_GRID_PCT = (0.010, 0.025, 0.050, 0.075, 0.100,
                  0.150, 0.200, 0.300, 0.400, 0.600)
+
+#: Sous-suite de `STOP_GRID_PCT` retenue pour la surface à deux axes. Cinq
+#: rangées suffisent à porter la forme et laissent les mailles lisibles en
+#: projection isométrique ; dix les rendraient illisibles sans rien ajouter.
+SURFACE_STOP_PCT = (0.010, 0.025, 0.050, 0.100, 0.200)
 
 
 @dataclass(frozen=True)
@@ -120,3 +126,33 @@ def best(drift_per_hour: float, cost: CostModel | None = None,
     """
     return max(scan(cost, contract, grid),
                key=lambda g: g.expectancy_r(drift_per_hour))
+
+
+def friction_grid(contract: Contract = ES) -> tuple[float, ...]:
+    """L'axe de friction de la surface à deux axes, en points aller-retour.
+
+    Les trois valeurs pivots sont les modèles de coût déclarés dans `costs` —
+    optimiste, de base, réaliste — et les deux intercalaires en sont les
+    milieux. La grille est construite ici, et non dans la figure, pour que la
+    figure et le texte qui la commente lisent la même chose : une friction
+    écrite deux fois est une friction qui finira par diverger.
+    """
+    lo = COST_OPTIMISTIC.friction_points(contract)
+    mid = COST_BASE.friction_points(contract)
+    hi = COST_REALISTIC.friction_points(contract)
+    return (lo, (lo + mid) / 2.0, mid, (mid + hi) / 2.0, hi)
+
+
+def break_even(stop_pct: float, friction_points: float,
+               reward_risk: float = q.RR_REF) -> float:
+    """`µ*` en points par heure, pour une friction donnée en points.
+
+    Même quantité que `Geometry.break_even_per_hour`, mais paramétrée par la
+    friction plutôt que par un modèle de coût : c'est ce qu'il faut pour
+    balayer le second axe de la surface. `µ*` y est **exactement linéaire**,
+    la friction n'entrant que par un facteur — doubler le coût double le
+    seuil, sans rien changer à la forme selon la géométrie.
+    """
+    a = stop_points(q.INDEX_LEVEL, stop_pct)
+    o = outcome_scaled(a, reward_risk * a, q.SESSION_MIN, q.SIGMA_1MIN, q.HURST)
+    return friction_points / o.expected_time * 60.0
