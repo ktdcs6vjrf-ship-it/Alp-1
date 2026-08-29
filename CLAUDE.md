@@ -38,8 +38,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/e2823a15-fd88-4450-8d65-df9701689b32
-- ALP nº 1 : https://claude.ai/code/artifact/7a1e4f3e-5c9b-4035-91b7-6f481ca43724
+- ALP nº 3 : https://claude.ai/code/artifact/c360de80-7cdd-4001-a2b7-4a437ce8f0ad
+- ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
 nouveau chemin de fichier, jamais republier le même.
