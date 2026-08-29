@@ -20,9 +20,8 @@ from pathlib import Path
 
 from . import figdisc, figflux, report10, report11, report13, report14
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
-from .workingpaper import joindre_pieds
+from .pieds import figure_html
 from .report import Table
-from .workingpaper import extraire_pieds
 
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = ROOT / "docs" / "prouver-un-jugement.template.html"
@@ -192,18 +191,7 @@ def build() -> str:
         key, caption = m.group(1), m.group(2).strip()
         if key not in figs:
             raise KeyError(f"figure inconnue : {key}")
-        svg, pieds = extraire_pieds(figs[key])
-        note = ""
-        if pieds:
-            corps = joindre_pieds(pieds)
-            note = f'\n      <p class="note">{corps}</p>'
-        return (
-            '    <figure class="plate">\n'
-            f'      <figcaption><span class="lab">Figure {fig_counter["n"]}</span>'
-            f' — {caption}</figcaption>\n'
-            f'      <div class="scroll">{svg}</div>{note}\n'
-            '    </figure>'
-        )
+        return figure_html(figs[key], fig_counter["n"], caption)
 
     text = re.sub(r"\{\{FIGURE:([a-z0-9_]+)\|(.+?)\}\}", sub_figure, text,
                   flags=re.S)

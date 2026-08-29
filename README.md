@@ -949,7 +949,7 @@ python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
 python main.py --disc             # journal de décision, lois nulles, attribution
 python main.py --discpaper        # reconstruit docs/prouver-un-jugement.html
-python main.py --tests            # 863 tests unitaires du noyau
+python main.py --tests            # 864 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -1040,6 +1040,7 @@ La production du document :
 | `alp1/report4.py` | Tables et valeurs du protocole à horizon borné |
 | `alp1/figdecay.py` | Figures de la décote et de l'exposant d'échelle |
 | `alp1/figpower.py` | Planches de puissance, de durée et de trajectoires séquentielles |
+| `alp1/pieds.py` | Sortie de la prose de pied hors du SVG, partagée par les trois documents |
 | `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
 | `alp1/workingpaper.py` | Assemblage du document de travail complet |
 

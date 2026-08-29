@@ -511,6 +511,35 @@ class TestReportAndPaper(unittest.TestCase):
                          len(figures.ALL_FIGURES) + len(figterm.ALL_FIGURES)
                          + len(figquant.ALL_FIGURES))
 
+    def test_le_document_court_sort_sa_prose_de_pied(self):
+        """Les trois documents traitent leurs figures pareil, ou aucun ne le fait.
+
+        L'extraction de la prose de pied vivait dans `workingpaper`, était
+        empruntée par `discpaper`, et manquait à `paper` — qui ne pouvait pas
+        importer ce module sans cycle. Le document court gardait donc ses
+        phrases d'explication *dans* ses graphiques, où elles chevauchaient
+        les marques : six chevauchements, trouvés au navigateur et invisibles
+        à la relecture. `alp1.pieds` porte maintenant le traitement pour les
+        trois, et ce test garde le résultat sur celui qui en manquait.
+        """
+        import re as _re
+        from alp1 import pieds
+
+        html = paper.build()
+        for svg in _re.findall(r"<svg class=\"fig\".*?</svg>", html, _re.S):
+            h = pieds.hauteur(svg)
+            for m in pieds.TEXTE_SVG.finditer(svg):
+                classes = set(m.group(1).split())
+                if "sub" in classes or "keep" in classes:
+                    continue
+                if not ({"lg", "ax"} & classes):
+                    continue
+                y = _re.search(r'y="(-?[\d.]+)"', m.group(2))
+                if not y or float(y.group(1)) < h - pieds.MARGE_PIED:
+                    continue
+                texte = _re.sub(r"<[^>]+>", "", m.group(3)).strip()
+                self.assertLessEqual(len(texte), pieds.LONGUEUR_PROSE, texte)
+
     def test_paper_values_are_consistent_with_tables(self):
         v = paper.values()
         # Le lift relatif cité dans le texte est bien c/L.

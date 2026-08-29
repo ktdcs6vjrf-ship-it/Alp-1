@@ -127,7 +127,11 @@ Rendu
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
 - `workingpaper.py` / `discpaper.py` / `paper.py` — construisent les
-  documents. Toute collision de clé lève une erreur.
+  documents. Toute collision de clé lève une erreur. **Les trois passent par
+  `pieds.figure_html`** : c'est ce qui garantit qu'ils traitent une figure
+  pareil. `paper.py` ne le faisait pas — il ne pouvait pas importer
+  `workingpaper` sans cycle — et gardait sa prose de pied dans ses SVG, où
+  elle chevauchait les marques.
 
 Hors du noyau Python
 - `pine/alp0.pine` — indicateur TradingView (Pine v6) : VWAP ancré, bandes σ,
@@ -242,14 +246,17 @@ Playwright sur le document construit :
 3. en Python, envelopper `Panel.path` et `Panel.dot` pour signaler un tracé
    que le découpage réduit à moins de deux points.
 
-État actuel : **zéro débordement, zéro chevauchement** sur les 82 figures des
-deux documents. Le balayage d'occupation ne laisse que des faux positifs
-connus (les lettres du profil TPO, les niveaux de stop de la figure de Roll).
+État actuel : **zéro débordement, zéro chevauchement** sur les figures des
+**trois** documents, `docs/alp1-paper.html` compris — il ne l'était pas, et
+c'est le balayage étendu à ce troisième build qui l'a montré. Le balayage
+d'occupation ne laisse que des faux positifs connus (les six cadres de terminal
+de la figure 7, les lettres du profil TPO, les niveaux de stop de la figure de
+Roll).
 
 ## Commandes
 
 ```
-python main.py --tests      # 863 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 864 tests (compter ~25 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html

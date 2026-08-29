@@ -27,6 +27,7 @@ from .figquant import render_all as render_quant_figures
 from .figterm import render_all as render_terminal_figures
 from .figures import render_all
 from .horizon import outcome, outcome_scaled
+from .pieds import figure_html
 from .report import (
     FRICTION,
     HURST,
@@ -233,12 +234,7 @@ def build() -> str:
         key, caption = m.group(1), m.group(2).strip()
         if key not in figures:
             raise KeyError(f"figure inconnue : {key}")
-        return (
-            '    <figure class="plate">\n'
-            f'      <figcaption><span class="lab">Figure {fig_counter["n"]}</span> — {caption}</figcaption>\n'
-            f'      <div class="scroll">{figures[key]}</div>\n'
-            '    </figure>'
-        )
+        return figure_html(figures[key], fig_counter["n"], caption)
 
     text = re.sub(r"\{\{FIGURE:([a-z_]+)\|(.+?)\}\}", sub_figure, text, flags=re.S)
 

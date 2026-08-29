@@ -110,72 +110,17 @@ def figures() -> dict[str, str]:
     return merged
 
 
-#: Une phrase d'explication posée dans le SVG ne se recompose pas : elle
-#: déborde du cadre sur les écrans étroits, chevauche les marques, et échappe
-#: à la sélection comme à la recherche. Ces lignes sont donc extraites du
-#: graphique et rendues sous la légende, où elles se comportent en texte.
-_TEXTE_SVG = re.compile(r'<text class="([^"]*)"([^>]*)>(.*?)</text>', re.S)
-_LONGUEUR_PROSE = 55      # au-delà, ce n'est plus une étiquette
-_MARGE_PIED = 90.0        # distance au bas du cadre qui définit un pied
-
-
-def _hauteur(svg: str) -> float:
-    m = re.search(r'viewBox="0 0 [\d.]+ ([\d.]+)"', svg)
-    return float(m.group(1)) if m else 0.0
-
-
-def extraire_pieds(svg: str) -> tuple[str, list[str]]:
-    """Sort la prose de pied de figure du SVG et la rend séparément.
-
-    Ne touche ni aux étiquettes de panneau (`sub`), qui portent la structure
-    de la figure, ni aux textes courts, qui sont des étiquettes de marque.
-    """
-    hauteur, pieds = _hauteur(svg), []
-
-    def remplacer(m: re.Match) -> str:
-        classes, attrs, corps = m.group(1).split(), m.group(2), m.group(3)
-        texte = re.sub(r"<[^>]+>", "", corps).strip()
-        if not ({"lg", "ax"} & set(classes)) or "sub" in classes:
-            return m.group(0)
-        # `keep` déclare une annotation : une phrase qui commente un élément
-        # précis du tracé et qui n'a de sens qu'à sa place. Le secours de
-        # longueur ci-dessous l'aurait sortie comme n'importe quelle prose.
-        if "keep" in classes:
-            return m.group(0)
-        # `cap` déclare un pied de figure. La longueur ne sert plus que de
-        # secours, pour les figures qui posent leur prose sans passer par
-        # `Board.caption` : elle coupait en deux toute phrase dont la dernière
-        # ligne tombait sous le seuil, laissant une moitié dans la note du
-        # document et l'autre orpheline sous la figure.
-        if "cap" not in classes and len(texte) <= _LONGUEUR_PROSE:
-            return m.group(0)
-        y = re.search(r'y="(-?[\d.]+)"', attrs)
-        if not y or float(y.group(1)) < hauteur - _MARGE_PIED:
-            return m.group(0)
-        pieds.append(texte)
-        return ""
-
-    return _TEXTE_SVG.sub(remplacer, svg), pieds
-
-
-def joindre_pieds(pieds: list[str]) -> str:
-    """Recompose les lignes de pied en phrases.
-
-    Chaque ligne reçoit son point final, sauf celle qui se termine par une
-    virgule ou un point-virgule et qu'une autre suit : celle-là se poursuit,
-    et la ponctuer la couperait en deux phrases dont la seconde commencerait
-    en minuscule. Le cas s'est produit : « … au-delà du seuil. les signaux
-    manqués sont ceux qui partaient. »
-    """
-    sortie = []
-    for i, ligne in enumerate(pieds):
-        ligne = ligne.rstrip()
-        continue_ = ligne.endswith((",", ";")) and i + 1 < len(pieds)
-        if continue_ or ligne.endswith((".", "?", "!")):
-            sortie.append(ligne)
-        else:
-            sortie.append(ligne.rstrip(" ,;") + ".")
-    return " ".join(sortie)
+#: L'extraction de la prose de pied vit dans `alp1.pieds`, parce que les
+#: trois documents doivent la faire pareil. Elle était définie ici, empruntée
+#: par `discpaper`, et absente de `paper` — qui ne pouvait pas importer ce
+#: module sans cycle. Le document court gardait donc sa prose dans ses SVG,
+#: où elle chevauchait les marques. Les noms locaux sont conservés : ils sont
+#: ce que les tests de ce document nomment.
+from .pieds import extraire as extraire_pieds          # noqa: E402
+from .pieds import figure_html, joindre as joindre_pieds   # noqa: E402
+from .pieds import hauteur as _hauteur                 # noqa: E402
+from .pieds import LONGUEUR_PROSE as _LONGUEUR_PROSE   # noqa: E402
+from .pieds import MARGE_PIED as _MARGE_PIED           # noqa: E402
 
 
 def build() -> str:
@@ -211,18 +156,7 @@ def build() -> str:
         key, caption = m.group(1), m.group(2).strip()
         if key not in figs:
             raise KeyError(f"figure inconnue : {key}")
-        svg, pieds = extraire_pieds(figs[key])
-        note = ""
-        if pieds:
-            corps = joindre_pieds(pieds)
-            note = f'\n      <p class="note">{corps}</p>'
-        return (
-            '    <figure class="plate">\n'
-            f'      <figcaption><span class="lab">Figure {fig_counter["n"]}</span>'
-            f' — {caption}</figcaption>\n'
-            f'      <div class="scroll">{svg}</div>{note}\n'
-            '    </figure>'
-        )
+        return figure_html(figs[key], fig_counter["n"], caption)
 
     text = re.sub(r"\{\{FIGURE:([a-z0-9_]+)\|(.+?)\}\}", sub_figure, text, flags=re.S)
 
