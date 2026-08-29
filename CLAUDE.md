@@ -29,8 +29,9 @@ Chaîne : `journal.py` → `operator.py` → `attribution.py` →
 `report10/11/13/14.py` + `sorties.py` + `figdisc.py` + `figflux.py` +
 `figsortie.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
-Un troisième build existe, `docs/alp1-paper.html` (`--paper`), version plus
-ancienne et plus courte d'ALP nº 1. Il partage `report*.py` : **une correction
+Deux autres builds existent — `docs/alp1-paper.html` (`--paper`), version
+plus ancienne et plus courte d'ALP nº 1, et `docs/alp2-paper.html`
+(`--paper2`), la bande de bruit. Il partage `report*.py` : **une correction
 de module s'y propage, donc il faut le rebâtir aussi — et le balayer.** Il a
 vécu longtemps hors des trois balayages, et y gardait six chevauchements que
 les deux autres documents n'avaient pas.
@@ -130,8 +131,8 @@ Rendu
   au stop de 0,150 %, parce qu'à 0,6 point une minute de bruit vaut deux fois
   le stop et qu'il n'y a alors *aucun* concept de sortie à discuter.
 - `pieds.py` — la prose de pied sort du SVG et se recompose sous la figure.
-  **Les trois documents y passent** ; `paper.py` ne le faisait pas, faute de
-  pouvoir importer `workingpaper` sans cycle. Deux règles y sont enterrées :
+  **Les quatre documents y passent** ; `paper.py` et `paper2.py` ne le
+  faisaient pas, faute de pouvoir importer `workingpaper` sans cycle. Deux règles y sont enterrées :
   une ligne de pied non finale doit finir sur une virgule, sinon le raccord
   la ponctue et coupe la phrase ; et toute phrase qui commence prend sa
   majuscule, sauf si elle ouvre sur une lettre grecque — `µ` capitalisé
@@ -266,7 +267,7 @@ Playwright sur le document construit :
    que le découpage réduit à moins de deux points.
 
 État actuel : **zéro débordement, zéro chevauchement** sur les figures des
-**trois** documents, `docs/alp1-paper.html` compris — il ne l'était pas, et
+**quatre** builds, `docs/alp1-paper.html` et `docs/alp2-paper.html` compris — il ne l'était pas, et
 c'est le balayage étendu à ce troisième build qui l'a montré. Le balayage
 d'occupation ne laisse que des faux positifs connus (les six cadres de terminal
 de la figure 7, les lettres du profil TPO, les niveaux de stop de la figure de
@@ -275,7 +276,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 878 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 880 tests (compter ~25 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html

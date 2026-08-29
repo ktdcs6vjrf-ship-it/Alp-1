@@ -125,6 +125,40 @@ class TestBuild(unittest.TestCase):
     def test_no_unresolved_placeholder(self):
         self.assertEqual(re.findall(r"\{\{[^}]+\}\}", self.html), [])
 
+    def test_le_quatrieme_build_sort_aussi_sa_prose_de_pied(self):
+        """Les quatre documents traitent leurs figures pareil, ou aucun.
+
+        `paper` et `paper2` gardaient tous deux leur prose d'explication
+        *dans* leurs SVG, faute de pouvoir importer `workingpaper` sans
+        cycle. `alp1.pieds` porte le traitement pour les quatre ; ce test
+        garde le dernier arrivé.
+        """
+        from alp1 import pieds
+
+        for svg in re.findall(r'<svg class="fig".*?</svg>', self.html, re.S):
+            hauteur = pieds.hauteur(svg)
+            for m in pieds.TEXTE_SVG.finditer(svg):
+                classes = set(m.group(1).split())
+                if "sub" in classes or "keep" in classes:
+                    continue
+                if not ({"lg", "ax"} & classes):
+                    continue
+                y = re.search(r'y="(-?[\d.]+)"', m.group(2))
+                if not y or float(y.group(1)) < hauteur - pieds.MARGE_PIED:
+                    continue
+                texte = re.sub(r"<[^>]+>", "", m.group(3)).strip()
+                self.assertLessEqual(len(texte), pieds.LONGUEUR_PROSE, texte)
+
+    def test_aucune_note_de_figure_ne_coupe_une_phrase(self):
+        """Une phrase qui reprend en minuscule après un point est coupée."""
+        for note in re.findall(r'<p class="note">(.*?)</p>', self.html, re.S):
+            if 'class="lab"' in note:
+                continue
+            texte = re.sub(r"<[^>]+>", "", note)
+            for m in re.finditer(r"\.\s+([a-zà-öø-ÿ])", texte):
+                self.fail(f"phrase coupée : "
+                          f"…{texte[max(0, m.start() - 50):m.start() + 30]}…")
+
     def test_document_has_title_and_shell(self):
         self.assertIn("<title>", self.html)
         self.assertIn('<div class="sheet"', self.html)

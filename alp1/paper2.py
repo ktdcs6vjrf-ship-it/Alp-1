@@ -29,6 +29,7 @@ from .friction import (
     max_size_for_margin,
 )
 from .grading import ALP1 as GRADE_ALP1, ALP2 as GRADE_ALP2
+from .pieds import figure_html
 from .momentum import (
     annualised_sharpe,
     contracts_for_risk,
@@ -202,13 +203,7 @@ def build() -> str:
         key, caption = m.group(1), m.group(2).strip()
         if key not in figures:
             raise KeyError(f"figure inconnue : {key}")
-        return (
-            '    <figure class="plate">\n'
-            f'      <figcaption><span class="lab">Figure {fig_counter["n"]}</span>'
-            f' — {caption}</figcaption>\n'
-            f'      <div class="scroll">{figures[key]}</div>\n'
-            '    </figure>'
-        )
+        return figure_html(figures[key], fig_counter["n"], caption)
 
     text = re.sub(r"\{\{FIGURE:([a-z0-9_]+)\|(.+?)\}\}", sub_figure, text, flags=re.S)
 

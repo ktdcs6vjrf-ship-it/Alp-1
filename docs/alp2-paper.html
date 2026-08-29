@@ -392,6 +392,10 @@
   .fig .s1 { stroke: var(--s1); }  .fig .pt.s1 { fill: var(--s1); }
   .fig .s2 { stroke: var(--s2); }  .fig .pt.s2 { fill: var(--s2); }
   .fig .s3 { stroke: var(--s3); }  .fig .pt.s3 { fill: var(--s3); }
+  /* Un quatrième trait, du côté négatif de l'échelle divergente : `negf` ne
+     remplit que des aplats, et une courbe qui porte le signe d'un verdict ne
+     peut pas emprunter la teinte d'une série ordinaire. */
+  .fig .neg { stroke: var(--dv-neg); }  .fig .pt.neg { fill: var(--dv-neg); }
 
   .fig .area { stroke: var(--paper); stroke-width: 2; }
   .fig .area.ar1 { fill: var(--s1); }
@@ -432,6 +436,25 @@
   .fig .hm3 { fill: var(--hm3); }  .fig .hm7 { fill: var(--hm7); }
   .fig .cl-lo { fill: var(--ink); }
   .fig .cl-hi { fill: var(--paper); }
+
+  /* --- rampe séquentielle en trait --------------------------------------
+     Les classes `hm*` posent un remplissage. Une polyligne qui les porterait
+     seule verrait ce remplissage écraser le `fill: none` de `.ln`, la règle
+     venant plus loin dans la feuille à spécificité égale — et la courbe se
+     refermerait en coin plein. Ces règles à deux classes tranchent, et
+     redonnent le trait. */
+
+  .fig .ln.hm0 { stroke: var(--hm0); fill: none; }
+  .fig .ln.hm1 { stroke: var(--hm1); fill: none; }
+  .fig .ln.hm2 { stroke: var(--hm2); fill: none; }
+  .fig .ln.hm3 { stroke: var(--hm3); fill: none; }
+  .fig .ln.hm4 { stroke: var(--hm4); fill: none; }
+  .fig .ln.hm5 { stroke: var(--hm5); fill: none; }
+  .fig .ln.hm6 { stroke: var(--hm6); fill: none; }
+  .fig .ln.hm7 { stroke: var(--hm7); fill: none; }
+  .fig .pt.hm3 { fill: var(--hm3); }
+  .fig .pt.hm5 { fill: var(--hm5); }
+  .fig .pt.hm7 { fill: var(--hm7); }
   /* Le débordement se borne de lui-même à 94vw ; il ne reste qu'à le
      supprimer sur les écrans où il n'y a plus de marge à prendre. */
   @media (max-width: 50rem) {
@@ -1047,8 +1070,9 @@
 <text class="dl halo" x="528.0" y="174.3">×2,59</text>
 <text class="lg" x="241.2" y="30.0">boîte de plausibilité</text>
 <text class="lg" x="528.0" y="30.0">facteur</text>
-<text class="ax" x="366.0" y="222.0" text-anchor="middle">chaque ligne a son unité ; le point rouge est la rupture</text>
+
 </svg></div>
+      <p class="note">Chaque ligne a son unité ; le point rouge est la rupture.</p>
     </figure>
 
       <figure>
