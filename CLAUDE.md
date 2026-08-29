@@ -36,7 +36,7 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/0d8a6548-553f-4418-a5d9-121a4bd93729
+- ALP nº 3 : https://claude.ai/code/artifact/e2823a15-fd88-4450-8d65-df9701689b32
 - ALP nº 1 : https://claude.ai/code/artifact/7a1e4f3e-5c9b-4035-91b7-6f481ca43724
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
