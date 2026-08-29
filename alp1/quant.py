@@ -908,6 +908,28 @@ def table_verdict() -> Table:
     )
 
 
+def _mc_separation() -> float:
+    """Trade à partir duquel les deux faisceaux ne se touchent plus.
+
+    Les faisceaux de la figure sont ceux des quantiles 5 % et 95 % ; ils se
+    séparent quand le décile bas de la loi avec dérive passe au-dessus du
+    décile haut de la loi nulle. La figure les trace sur `MC_TRADES` trades ;
+    cette fonction rend l'abscisse de la séparation, ou `MC_TRADES` si elle
+    n'a pas lieu.
+    """
+    from .mc import Rng, fan, fan_index
+
+    niveaux = (0.05, 0.25, 0.50, 0.75, 0.95)
+    pas = 12
+    idx = fan_index(MC_TRADES, pas)
+    fn = fan(null_law(), MC_TRADES, 900, niveaux, Rng(SEED + 31), pas)
+    fe = fan(edge_law(), MC_TRADES, 900, niveaux, Rng(SEED + 32), pas)
+    for k, x in enumerate(idx):
+        if fe[0.05][k] > fn[0.95][k]:
+            return float(x)
+    return float(MC_TRADES)
+
+
 def values() -> dict[str, str]:
     """Valeurs scalaires citées dans le texte de la troisième partie."""
     n0, e0 = null_law(), edge_law()
@@ -978,6 +1000,13 @@ def values() -> dict[str, str]:
         "q_calmar": num(calmar(e0, TRADES_PER_YEAR, n), 2),
         "q_tuw80": num(100 * prob_time_under_water_exceeds(0.80), 0),
         "q_mc_paths": num(MC_PATHS, 0),
+        # Le trade où les deux intervalles à 90 % cessent de se toucher. La
+        # légende de la figure annonçait un recouvrement « pendant toute
+        # l'année » ; les faisceaux se séparent bien avant, et cela n'a rien
+        # d'un résultat sur le marché — la dérive de référence est supposée à
+        # deux fois le seuil de rentabilité, donc au niveau exact qui rend la
+        # stratégie rentable.
+        "q_mc_separation": num(_mc_separation(), 0),
         "q_p_profit_null": num(100 * sum(1 for x in pn if x.terminal > 0) / len(pn), 0),
         "q_p_loss_edge": num(100 * sum(1 for x in pe if x.terminal <= 0) / len(pe), 0),
         "q_sr_null_q95": num(quantile([x.sharpe for x in pn], 0.95), 3),

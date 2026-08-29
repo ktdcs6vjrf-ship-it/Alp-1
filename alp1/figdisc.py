@@ -75,6 +75,20 @@ def _trades_for_threshold(sharpe: float, budget: float) -> float:
                2.0 * math.log(max(budget, 1.0)) / (sharpe ** 2))
 
 
+def _pourcent(p: float) -> str:
+    """Une probabilité de queue, lisible sur cinq ordres de grandeur.
+
+    Le pour-cent cesse de se lire sous le millième : « 0,0004 % » ne dit rien
+    à personne, quand « 4 par million » se compare tout de suite à ce qu'on
+    croise dans la vie.
+    """
+    if p >= 0.01:
+        return _num(p * 100.0, 1) + " %"
+    if p >= 1e-5:
+        return _num(p * 100.0, 3) + " %"
+    return _num(p * 1e6, 1) + " par million"
+
+
 def _ramp(u: float) -> str:
     """Classe de la rampe séquentielle pour une valeur normalisée dans [0, 1]."""
     return f"hm{min(7, max(0, int(round(u * 7.0))))}"
@@ -1799,3 +1813,139 @@ def fig_wald_surface() -> str:
 
 
 FIGURES["discwald3d"] = fig_wald_surface
+
+
+# ---------------------------------------------------------------------------
+# Figure 25 — le même chiffre, à cinq tailles d'échantillon
+# ---------------------------------------------------------------------------
+
+
+def fig_echelle() -> str:
+    """Pourquoi le même Sharpe observé est du bruit ici et un fait là.
+
+    C'est l'intuition centrale des trois documents, et elle n'avait pas
+    d'image. Un opérateur qui relève un Sharpe de 0,10 par décision sur cent
+    vingt-cinq décisions relève un événement ordinaire ; le même chiffre sur
+    deux mille décisions est un événement à quatre pour un million. Rien n'a
+    changé du chiffre — seul l'échantillon a changé, et avec lui la loi nulle
+    à laquelle on le compare.
+
+    Le cadre du haut montre cette loi nulle à cinq tailles. Chaque densité est
+    ramenée à la même hauteur : c'est sa **largeur** qui porte l'information,
+    et la comparer à hauteur égale est la seule façon de voir se resserrer
+    l'écart-type en `1/√N`. La part de la loi au-delà du chiffre revendiqué
+    est teintée, et elle fond d'une rangée à l'autre.
+
+    Le cadre du bas donne les deux routes du mur d'échantillon sous leur
+    forme commune. Toutes deux valent `K/√N` — le test ordinaire avec
+    `K = z_α + z_β`, la taxe de sélection avec `K = √(2·ln B)` — et c'est
+    pourquoi elles s'accordent : à seize configurations les deux constantes
+    valent 2,49 et 2,35, soit six pour cent d'écart. **Deux routes qui ne
+    partagent aucune hypothèse mais partagent leur forme.** Leurs croisements
+    avec le Sharpe revendiqué sont exactement les deux nombres que la table
+    du mur publie.
+    """
+    from .costs import norm_cdf, significance_constant
+
+    sharpe = 0.10
+    budget = 2.0 ** 4
+    tailles = (125, 250, 500, 1000, 2000)
+    k_test = significance_constant()
+    k_taxe = math.sqrt(2.0 * math.log(budget))
+
+    b = _plate(440, "Échelle",
+               "Le même chiffre, à cinq tailles d'échantillon",
+               f"Sharpe revendiqué {_num(sharpe, 2)} par décision")
+
+    # --- cadre du haut : la loi nulle se resserre en 1/√N -----------------
+    # Domaine déduit de la plus large des cinq lois : à N = 125 l'écart-type
+    # vaut 0,089, et une fenêtre plus étroite couperait ses queues.
+    demi = 2.9 / math.sqrt(min(tailles))
+    p1 = Panel(b, 92, 78, W - 168, 150,
+               title="La loi nulle du Sharpe observé",
+               readout="densités ramenées à la même hauteur")
+    p1.domain(-demi, demi, 0.0, float(len(tailles)))
+    p1.frame()
+    p1.grid_x([-0.2, -0.1, 0.0, 0.1, 0.2], lambda v: _num(v, 2),
+              "Sharpe observé par décision")
+    # Les rangées vont de la plus large en bas à la plus resserrée en haut :
+    # la graduation doit donc relire la liste à l'envers.
+    p1.grid_y([k + 0.5 for k in range(len(tailles))],
+              lambda v: f"N = {tailles[len(tailles) - 1 - int(v)]}")
+    for rang, n in enumerate(tailles):
+        # Les rangées se lisent de bas en haut par taille croissante : la
+        # plus large en bas, la plus resserrée en haut.
+        base = float(len(tailles) - 1 - rang)
+        sd = 1.0 / math.sqrt(n)
+        pts = [(-demi + 2.0 * demi * i / 120.0, 0.0) for i in range(121)]
+        courbe = [(x, base + 0.92 * math.exp(-0.5 * (x / sd) ** 2))
+                  for x, _ in pts]
+        # La queue au-delà du chiffre revendiqué, teintée : c'est elle qui
+        # fond d'une rangée à l'autre, et c'est la p-valeur.
+        queue = [(x, y) for x, y in courbe if x >= sharpe]
+        if queue:
+            # La queue est teintée du jeton de série et non du gris : celui-ci
+            # se confond avec le fond, et la part que la figure existe pour
+            # montrer se lisait comme un rectangle noir.
+            p1.area([(sharpe, base + 0.92 * math.exp(-0.5 * (sharpe / sd) ** 2))]
+                    + queue, base, "area ar1")
+        # Un seul jeton pour les cinq courbes : ce qui les distingue est leur
+        # largeur, et deux couleurs y ajouteraient une différence qui n'existe
+        # pas.
+        p1.path(courbe, "s2",
+                tip=f"N = {n} — écart-type de la loi nulle {sd:.4f}")
+        p = 1.0 - norm_cdf(sharpe / sd)
+        p1.label(demi, base + 0.30, _pourcent(p), dx=-6, anchor="end",
+                 cls="dl halo")
+    p1.vline(sharpe, "lvl strong")
+    p1.label(sharpe, float(len(tailles)), "chiffre revendiqué", dx=6, dy=13,
+             cls="tk halo")
+
+    # --- cadre du bas : les deux routes sous leur forme commune -----------
+    n_lo, n_hi = 100.0, 4000.0
+    p2 = Panel(b, 92, 296, W - 168, 76, title="Les deux routes du mur",
+               readout="toutes deux en K / √N")
+    p2.domain(n_lo, n_hi, 0.0, k_test / math.sqrt(n_lo) * 1.12, xlog=True)
+    p2.frame()
+    p2.grid_y([0.0, 0.1, 0.2], lambda v: _num(v, 2), "Sharpe requis")
+    p2.grid_x([125, 250, 500, 1000, 2000, 4000], lambda v: f"{v:g}",
+              "décisions enregistrées")
+    p2.hline(sharpe, "lvl strong")
+    # Les deux courbes se recouvrent presque : c'est le propos, et c'est
+    # aussi ce qui interdit de poser leurs deux libellés au même endroit. On
+    # les écarte de part et d'autre de la ligne du chiffre revendiqué.
+    for k, cls, nom, dy, anc in ((k_taxe, "s3", "taxe", -10.0, "end"),
+                                 (k_test, "s1", "test t", 16.0, "start")):
+        p2.path([(n_lo * (n_hi / n_lo) ** (i / 80.0),
+                  k / math.sqrt(n_lo * (n_hi / n_lo) ** (i / 80.0)))
+                 for i in range(81)], cls,
+                tip=f"{nom} — K = {k:.2f}")
+        n_star = (k / sharpe) ** 2
+        p2.dot(n_star, sharpe, cls, r=3.5,
+               tip=f"{nom} — {n_star:.0f} décisions")
+        p2.label(n_star, sharpe, f"{nom} · {_num(n_star, 0)}",
+                 dx=6.0 if anc == "start" else -6.0, dy=dy,
+                 anchor=anc, cls="dl halo")
+
+    # Deux entrées et non trois : la troisième désignait la teinte de queue
+    # par une classe de remplissage, que la légende de trait rendait sans
+    # contour — donc invisible, et débordant du cadre.
+    b.legend(92, 420, [("s1", f"test t — K = {_num(k_test, 2)}"),
+                       ("s3", f"taxe de sélection — K = {_num(k_taxe, 2)}")],
+             step=250, kind="line")
+    _source(b, "Cadre du haut : la loi nulle du Sharpe observé, à cinq "
+               "tailles d'échantillon. Les densités sont ramenées à la même "
+               "hauteur ; c'est leur largeur qui porte l'information, et elle "
+               "décroît en racine de l'échantillon. La part teintée est la "
+               "probabilité d'observer au moins le chiffre revendiqué sans "
+               "aucune compétence : elle passe de 13 % à quatre par million "
+               "sur la plage. Cadre du bas : les deux routes du mur ont la "
+               "même forme, K sur racine de N, et ne diffèrent que par leur "
+               "constante — d'où leur accord, qui ne tient à aucune "
+               "hypothèse partagée.")
+    return b.render(
+        "Loi nulle du Sharpe observé à cinq tailles d échantillon, et les "
+        "deux routes du mur sous leur forme commune")
+
+
+FIGURES["discechelle"] = fig_echelle

@@ -245,7 +245,6 @@ def table_gex_regime() -> Table:
         h = gex.hurst_from_feedback(k, SESSION_MIN)
         rho = gex.autocorrelation_from_feedback(k)
         o20 = outcome_scaled(STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, h)
-        o30 = outcome_scaled(STOP_PTS, 30 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, h)
         rows.append([
             num(gex_usd / 1e9, 0, "Md$"),
             num(k, 3, signed=True),
@@ -253,25 +252,27 @@ def table_gex_regime() -> Table:
             num(gex.vol_multiplier(k), 3),
             num(h, 3),
             num(100 * o20.p_target, 2, "%"),
-            num(100 * o30.p_target, 2, "%"),
             num(o20.expected_time, 1),
+            num(FRICTION / o20.expected_time * 60.0, 2),
         ])
     req = gex.required_gex_for_hurst(HURST, ADV_USD, horizon_min=SESSION_MIN)
     k_req = gex.feedback_from_hurst(HURST, SESSION_MIN)
     o20 = outcome_scaled(STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, HURST)
-    o30 = outcome_scaled(STOP_PTS, 30 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, HURST)
     rows.append([
         num(req / 1e9, 0, "Md$"), num(k_req, 3, signed=True),
         num(gex.autocorrelation_from_feedback(k_req), 3, signed=True),
         num(gex.vol_multiplier(k_req), 3), num(HURST, 3),
-        num(100 * o20.p_target, 2, "%"), num(100 * o30.p_target, 2, "%"),
+        num(100 * o20.p_target, 2, "%"),
         num(o20.expected_time, 1),
+        num(FRICTION / o20.expected_time * 60.0, 2),
     ])
     return Table(
         "gex_regime",
-        "Chaîne complète du gamma à l'atteignabilité : boucle de couverture, "
-        "autocorrélation induite, exposant d'échelle et probabilité de target.",
-        ["GEX net", "λΓ", "ρ", "σ_eff / σ", "H", "P(1:20)", "P(1:30)", "E[τ] (min)"],
+        "Chaîne complète du gamma au seuil de rentabilité : boucle de "
+        "couverture, autocorrélation induite, exposant d'échelle, temps de "
+        "marché acheté et seuil qui en découle.",
+        ["GEX net", "λΓ", "ρ", "σ_eff / σ", "H", "P(1:20)", "E[τ] (min)",
+         "µ* (pt/h)"],
         rows, rules_after=[6],
         note="La dernière ligne n'est pas une observation : c'est le gamma qu'il "
              "faudrait pour produire l'exposant d'échelle retenu par la "
@@ -288,21 +289,27 @@ def table_hurst_sensitivity() -> Table:
     """Sensibilité des conclusions du papier à l'exposant d'échelle."""
     rows = []
     sqrt_disp = SIGMA_1MIN * math.sqrt(SESSION_MIN)
-    p30_ref = outcome_scaled(STOP_PTS, 30 * STOP_PTS, SESSION_MIN,
-                             SIGMA_1MIN, HURST).p_target
-    p30_alt = outcome_scaled(STOP_PTS, 30 * STOP_PTS, SESSION_MIN,
-                             SIGMA_1MIN, 0.570).p_target
+    # Le seuil de rentabilité, et non la probabilité de target : celle-ci ne
+    # dépend pas de l'exposant — c'est le théorème d'arrêt optionnel — et la
+    # note annonçait « la probabilité d'atteindre 1:30 passe de 3,23 % à
+    # 3,23 %, soit une division par 1,0 ». Une phrase qui se réfute
+    # elle-même, dans le passage que le document appelle son plus fragile.
+    mu_ref = FRICTION / outcome_scaled(
+        STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, HURST
+    ).expected_time * 60.0
+    mu_alt = FRICTION / outcome_scaled(
+        STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, 0.570
+    ).expected_time * 60.0
     for h, label in ((0.500, "dispersion en racine du temps"),
                      (0.570, "les 60 points lus comme amplitude haut-bas"),
                      (0.600, "hypothèse intermédiaire"),
                      (HURST, "calibration retenue : 60 points d'écart-type"),
                      (0.700, "persistance plus forte encore")):
         o20 = outcome_scaled(STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, h)
-        o30 = outcome_scaled(STOP_PTS, 30 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, h)
         disp = sqrt_disp * SESSION_MIN ** (h - 0.5)
         rows.append([
             num(h, 3), num(disp, 0), num(100 * disp / INDEX_LEVEL, 2, "%"),
-            num(100 * o20.p_target, 2, "%"), num(100 * o30.p_target, 2, "%"),
+            num(100 * o20.p_target, 2, "%"),
             num(o20.expected_time, 1),
             num(FRICTION / o20.expected_time * 60, 3),
             label,
@@ -311,18 +318,26 @@ def table_hurst_sensitivity() -> Table:
         "hurst_sensitivity",
         "Ce que devient la conclusion du papier quand l'exposant d'échelle varie. "
         "Toutes les autres hypothèses sont inchangées.",
-        ["H", "Dispersion (pt)", "en %", "P(1:20)", "P(1:30)", "E[τ] (min)",
+        ["H", "Dispersion (pt)", "en %", "P(1:20)", "E[τ] (min)",
          "µ* (pt/h)", "Correspond à"],
         rows, wrap_last=True, wide=True,
-        note=f"C'est le paramètre le plus fragile du document, et il faut le dire. "
-             f"Les 60 points de dispersion de séance sont-ils un écart-type de "
-             f"clôture ou une amplitude haut-bas ? L'amplitude moyenne d'un "
-             f"brownien vaut environ 1,6 écart-type ; sous la seconde lecture, "
-             f"l'exposant tombe à 0,57 et la probabilité d'atteindre 1:30 passe "
-             f"de {num(100 * p30_ref, 2, '%')} à {num(100 * p30_alt, 2, '%')}, "
-             f"soit une division par {num(p30_ref / p30_alt, 1)}. Le premier test "
-             f"du protocole porte pour cette raison sur la loi d'échelle, avant "
-             f"tout signal d'entrée.")
+        note=f"La colonne P(1:20) ne bouge pas d'une ligne à l'autre, et ce "
+             f"n'est pas un défaut de calcul : les probabilités de barrière ne "
+             f"dépendent que de la géométrie, jamais de la loi d'échelle. "
+             f"C'est le théorème d'arrêt optionnel, vérifié ici sur cinq "
+             f"exposants. Ce que l'exposant déplace est le temps, et par "
+             f"l'identité de Wald le seuil de rentabilité. "
+             f"C'est le paramètre le plus fragile du document, et il faut le "
+             f"dire. Les 60 points de dispersion de séance sont-ils un "
+             f"écart-type de clôture ou une amplitude haut-bas ? L'amplitude "
+             f"moyenne d'un brownien vaut environ 1,6 écart-type ; sous la "
+             f"seconde lecture l'exposant tombe à 0,57 et le seuil passe de "
+             f"{num(mu_ref, 2)} à {num(mu_alt, 2)} points par heure, soit une "
+             f"baisse d'un facteur {num(mu_ref / mu_alt, 1)}. La conclusion y "
+             f"survit : même sous la lecture la plus favorable, le seuil reste "
+             f"près de deux fois au-dessus de la borne haute du domaine de "
+             f"dérive plausible. Le premier test du protocole porte pour cette "
+             f"raison sur la loi d'échelle, avant tout signal d'entrée.")
 
 
 # --- Profil de volume --------------------------------------------------------

@@ -1653,7 +1653,7 @@
 
   <h3>Le régime conditionne la géométrie</h3>
 
-  <p>Il existe cependant un rôle pour lequel le signe du gamma est, mécaniquement, le bon prédicteur — et c'est celui que la section <a href="#s-gamma">9</a> rend décisif. L'autocorrélation des rendements est exactement ce qui gouverne l'exposant d'échelle <span class="v">H</span> de l'équation (10)&nbsp;: une couverture pro-cyclique produit une dispersion qui croît plus vite que la racine du temps, une couverture contra-tendancielle une dispersion qui croît moins vite. Or <span class="v">H</span> décide de l'atteignabilité des targets éloignés, donc de la viabilité même d'un ratio de 1:20 à 1:30.</p>
+  <p>Il existe cependant un rôle pour lequel le signe du gamma est, mécaniquement, le bon prédicteur — et c'est celui que la section <a href="#s-gamma">9</a> rend décisif. L'autocorrélation des rendements est exactement ce qui gouverne l'exposant d'échelle <span class="v">H</span> de l'équation (10)&nbsp;: une couverture pro-cyclique produit une dispersion qui croît plus vite que la racine du temps, une couverture contra-tendancielle une dispersion qui croît moins vite. Or <span class="v">H</span> décide du <em>temps</em> que le trade passe en marché&nbsp;: une dispersion qui croît plus vite éloigne le prix des barrières plus tôt, et l'exposition moyenne tombe de 4,6 à 2,1&nbsp;minutes entre <span class="v">H</span>&nbsp;=&nbsp;½ et <span class="v">H</span>&nbsp;=&nbsp;0,70. Par l'identité de Wald, ce temps fixe le seuil de rentabilité, qui double sur la même plage. Il ne décide pas de l'atteignabilité du target&nbsp;: les probabilités de barrière ne dépendent que de la géométrie — c'est le théorème d'arrêt optionnel, et il vaut ici comme ailleurs.</p>
 
   <p>La prédiction est nette et se teste sans aucun signal d'entrée&nbsp;: <strong><span class="v">H</span> mesuré sous gamma négatif doit excéder <span class="v">H</span> mesuré sous gamma positif.</strong> Si l'écart est nul, le mécanisme invoqué n'existe pas et l'hypothèse tombe. S'il est net, le conditionnement acquiert un rôle opérationnel précis — non pas choisir la direction, mais choisir la géométrie&nbsp;: viser loin lorsque la dispersion s'étend, viser près, ou s'abstenir, lorsqu'elle se comprime. C'est une prédiction plus faible qu'un edge directionnel, mais elle est falsifiable sur données publiques et elle porte sur le paramètre que la section <a href="#s-critere">5</a> a identifié comme critique.</p>
 
@@ -2009,8 +2009,8 @@
   <p>Deux seuils bornent le domaine où (15) a un sens, et il ne faut pas les confondre. En <span class="v">λΓ</span>&nbsp;=&nbsp;−½, l'autocorrélation atteint l'unité&nbsp;: les rendements cessent d'être stationnaires et la dispersion croît linéairement en temps au lieu de croître en racine — c'est la forme quantitative du <em>gamma squeeze</em>. En <span class="v">λΓ</span>&nbsp;=&nbsp;−1, c'est l'amplification d'un seul pas qui diverge. Le premier seuil est le plus contraignant.</p>
 
     <figure class="plate">
-      <figcaption><span class="lab">Figure 9</span> — Chaîne causale du gamma à l'atteignabilité du target. À gauche, l'exposant d'échelle impliqué par un niveau de GEX, la bande grisée marquant le domaine plausible sur un indice. À droite, ce que l'exposant décide&nbsp;: la probabilité d'atteindre un target à 1:20 et à 1:30.</figcaption>
-      <div class="scroll"><svg class="fig" viewBox="0 0 640 320" role="img" aria-label="Du gamma dealer à l atteignabilité du target, par l exposant d échelle" preserveAspectRatio="xMidYMid meet">
+      <figcaption><span class="lab">Figure 9</span> — Chaîne causale du gamma au seuil de rentabilité. À gauche, l'exposant d'échelle impliqué par un niveau de GEX, la bande grisée marquant le domaine plausible sur un indice. À droite, ce que l'exposant décide&nbsp;: le temps de marché acheté, donc le seuil <span class="v">µ*</span>, qui va du simple au double sur la plage. La bande de fond est le domaine de dérive plausible&nbsp;; aucun exposant ne ramène le seuil dedans. Il ne décide pas de l'atteignabilité du target, qui ne dépend que de la géométrie.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 640 320" role="img" aria-label="Du gamma dealer au seuil de rentabilité, par l exposant d échelle et le temps de marché acheté" preserveAspectRatio="xMidYMid meet">
 <text class="hdr" x="58.0" y="34.0">Exposant impliqué par le gamma</text>
 <text class="sub" x="298.0" y="21.0" text-anchor="end">H = ½ + ln κ / ln T</text>
 <line class="hsep" x1="58.0" y1="40.0" x2="298.0" y2="40.0"/>
@@ -2042,20 +2042,23 @@
 <text class="dl halo" x="78.1" y="104.3" text-anchor="end">GEX requis</text>
 <text class="lg halo" x="218.0" y="247.1" text-anchor="middle">gamma plausible</text>
 <text class="hdr" x="372.0" y="34.0">Ce que l'exposant décide</text>
-<text class="sub" x="598.0" y="21.0" text-anchor="end">stop 0,050 %</text>
+<text class="sub" x="598.0" y="21.0" text-anchor="end">stop 0,010 %</text>
 <line class="hsep" x1="372.0" y1="40.0" x2="598.0" y2="40.0"/>
+<rect class="wash" x="372.0" y="189.9" width="226.0" height="52.1"/>
 <rect class="frame" x="372.0" y="46.0" width="226.0" height="208.0"/>
 <line class="gl" x1="372.0" y1="254.0" x2="598.0" y2="254.0"/>
 <text class="tk" x="603.0" y="253.0">0</text>
-<line class="gl" x1="372.0" y1="202.0" x2="598.0" y2="202.0"/>
-<text class="tk" x="603.0" y="205.0">2</text>
-<line class="gl" x1="372.0" y1="150.0" x2="598.0" y2="150.0"/>
-<text class="tk" x="603.0" y="153.0">4</text>
-<line class="gl" x1="372.0" y1="98.0" x2="598.0" y2="98.0"/>
-<text class="tk" x="603.0" y="101.0">6</text>
-<line class="gl" x1="372.0" y1="46.0" x2="598.0" y2="46.0"/>
-<text class="tk" x="603.0" y="49.0">8</text>
-<text class="ax" transform="translate(634.0,150.0) rotate(-90)" text-anchor="middle">P(target atteint) en %</text>
+<line class="gl" x1="372.0" y1="213.9" x2="598.0" y2="213.9"/>
+<text class="tk" x="603.0" y="216.9">2</text>
+<line class="gl" x1="372.0" y1="173.9" x2="598.0" y2="173.9"/>
+<text class="tk" x="603.0" y="176.9">4</text>
+<line class="gl" x1="372.0" y1="133.8" x2="598.0" y2="133.8"/>
+<text class="tk" x="603.0" y="136.8">6</text>
+<line class="gl" x1="372.0" y1="93.8" x2="598.0" y2="93.8"/>
+<text class="tk" x="603.0" y="96.8">8</text>
+<line class="gl" x1="372.0" y1="53.7" x2="598.0" y2="53.7"/>
+<text class="tk" x="603.0" y="56.7">10</text>
+<text class="ax" transform="translate(634.0,150.0) rotate(-90)" text-anchor="middle">seuil µ* en points par heure</text>
 <text class="tk" x="372.0" y="267.0" text-anchor="middle">0,50</text>
 <text class="tk" x="428.5" y="267.0" text-anchor="middle">0,55</text>
 <text class="tk" x="485.0" y="267.0" text-anchor="middle">0,60</text>
@@ -2063,33 +2066,34 @@
 <text class="tk" x="598.0" y="267.0" text-anchor="middle">0,70</text>
 <line class="ba" x1="372.0" y1="254.0" x2="598.0" y2="254.0"/>
 <text class="ax" x="485.0" y="282.0" text-anchor="middle">exposant d'échelle H</text>
-<path class="ln s1" d="M372.00,130.19 L377.65,130.19 L383.30,130.19 L388.95,130.19 L394.60,130.19 L400.25,130.19 L405.90,130.19 L411.55,130.19 L417.20,130.19 L422.85,130.19 L428.50,130.19 L434.15,130.19 L439.80,130.19 L445.45,130.19 L451.10,130.19 L456.75,130.19 L462.40,130.19 L468.05,130.19 L473.70,130.19 L479.35,130.19 L485.00,130.19 L490.65,130.19 L496.30,130.19 L501.95,130.19 L507.60,130.19 L513.25,130.19 L518.90,130.19 L524.55,130.19 L530.20,130.19 L535.85,130.19 L541.50,130.19 L547.15,130.19 L552.80,130.19 L558.45,130.19 L564.10,130.19 L569.75,130.19 L575.40,130.19 L581.05,130.19 L586.70,130.19 L592.35,130.19 L598.00,130.19"></path>
-<text class="dl halo" x="572.0" y="124.2" text-anchor="start">1:20</text>
-<path class="ln s3" d="M372.00,170.16 L377.65,170.15 L383.30,170.14 L388.95,170.13 L394.60,170.13 L400.25,170.13 L405.90,170.13 L411.55,170.13 L417.20,170.13 L422.85,170.13 L428.50,170.13 L434.15,170.13 L439.80,170.13 L445.45,170.13 L451.10,170.13 L456.75,170.13 L462.40,170.13 L468.05,170.13 L473.70,170.13 L479.35,170.13 L485.00,170.13 L490.65,170.13 L496.30,170.13 L501.95,170.13 L507.60,170.13 L513.25,170.13 L518.90,170.13 L524.55,170.13 L530.20,170.13 L535.85,170.13 L541.50,170.13 L547.15,170.13 L552.80,170.13 L558.45,170.13 L564.10,170.13 L569.75,170.13 L575.40,170.13 L581.05,170.13 L586.70,170.13 L592.35,170.13 L598.00,170.13"></path>
-<text class="dl halo" x="572.0" y="164.1" text-anchor="start">1:30</text>
+<path class="ln s1" d="M372.00,167.94 L377.65,165.64 L383.30,163.02 L388.95,160.39 L394.60,157.75 L400.25,155.10 L405.90,152.45 L411.55,149.79 L417.20,147.12 L422.85,144.46 L428.50,141.79 L434.15,139.12 L439.80,136.45 L445.45,133.78 L451.10,131.12 L456.75,128.46 L462.40,125.80 L468.05,123.14 L473.70,120.50 L479.35,117.85 L485.00,115.22 L490.65,112.59 L496.30,109.98 L501.95,107.37 L507.60,104.77 L513.25,102.18 L518.90,99.60 L524.55,97.04 L530.20,94.48 L535.85,91.94 L541.50,89.41 L547.15,86.89 L552.80,84.39 L558.45,81.90 L564.10,79.43 L569.75,76.97 L575.40,74.53 L581.05,72.10 L586.70,69.69 L592.35,67.29 L598.00,64.91"><title>cible 1:20</title></path>
+<text class="dl halo" x="572.0" y="58.9" text-anchor="start">1:20</text>
+<circle class="pt s1" cx="540.26" cy="89.96" r="4"><title>1:20 · H calibré · µ* = 8.19 pt/h pour E[τ] = 2.42 min</title></circle>
+<path class="ln s3" d="M372.00,196.62 L377.65,194.60 L383.30,192.42 L388.95,190.21 L394.60,187.98 L400.25,185.73 L405.90,183.45 L411.55,181.16 L417.20,178.85 L422.85,176.52 L428.50,174.18 L434.15,171.82 L439.80,169.46 L445.45,167.07 L451.10,164.68 L456.75,162.28 L462.40,159.87 L468.05,157.45 L473.70,155.02 L479.35,152.59 L485.00,150.15 L490.65,147.71 L496.30,145.27 L501.95,142.82 L507.60,140.38 L513.25,137.93 L518.90,135.48 L524.55,133.04 L530.20,130.60 L535.85,128.15 L541.50,125.72 L547.15,123.28 L552.80,120.85 L558.45,118.43 L564.10,116.01 L569.75,113.60 L575.40,111.20 L581.05,108.80 L586.70,106.41 L592.35,104.03 L598.00,101.66"><title>cible 1:30</title></path>
+<text class="dl halo" x="572.0" y="95.7" text-anchor="start">1:30</text>
+<circle class="pt s3" cx="540.26" cy="126.25" r="4"><title>1:30 · H calibré · µ* = 6.38 pt/h pour E[τ] = 3.10 min</title></circle>
 <line class="lvl" x1="540.3" y1="46.0" x2="540.3" y2="254.0"/>
-<circle class="pt s1" cx="540.26" cy="130.19" r="4"><title>1:20 · 4.76 %</title></circle>
-<circle class="pt s3" cx="540.26" cy="170.13" r="4"><title>1:30 · 3.23 %</title></circle>
-<text class="lg halo" x="535.3" y="61.6" text-anchor="end">H calibré</text>
+<text class="lg halo" x="535.3" y="57.3" text-anchor="end">H calibré</text>
+<text class="lg halo" x="592.0" y="215.9" text-anchor="end">dérive plausible</text>
 
 
 </svg></div>
-      <p class="note">le gamma agit sur l'espérance par un seul canal : l'exposant d'échelle, donc l'atteignabilité du target. volume quotidien de référence 400 Md$ · impact d'un pourcent par volume quotidien.</p>
+      <p class="note">le gamma agit par un seul canal : l'exposant d'échelle, donc le temps de marché acheté, donc le seuil — jamais l'atteignabilité du target, qui ne dépend que de la géométrie. volume quotidien de référence 400 Md$ · impact d'un pourcent par volume quotidien.</p>
     </figure>
 
     <figure>
-      <figcaption><span class="lab">Table 13</span> — Chaîne complète du gamma à l'atteignabilité : boucle de couverture, autocorrélation induite, exposant d'échelle et probabilité de target.</figcaption>
+      <figcaption><span class="lab">Table 13</span> — Chaîne complète du gamma au seuil de rentabilité : boucle de couverture, autocorrélation induite, exposant d'échelle, temps de marché acheté et seuil qui en découle.</figcaption>
       <div class="scroll">
       <table>
-        <thead><tr><th>GEX net</th><th>λΓ</th><th>ρ</th><th>σ_eff / σ</th><th>H</th><th>P(1:20)</th><th>P(1:30)</th><th>E[τ] (min)</th></tr></thead>
+        <thead><tr><th>GEX net</th><th>λΓ</th><th>ρ</th><th>σ_eff / σ</th><th>H</th><th>P(1:20)</th><th>E[τ] (min)</th><th>µ* (pt/h)</th></tr></thead>
         <tbody>
-          <tr><td>60 Md$</td><td>+0,150</td><td>−0,130</td><td>0,870</td><td>0,478</td><td>4,76 %</td><td>3,22 %</td><td>5,3</td></tr>
-          <tr><td>30 Md$</td><td>+0,075</td><td>−0,070</td><td>0,930</td><td>0,488</td><td>4,76 %</td><td>3,22 %</td><td>5,0</td></tr>
-          <tr><td>0 Md$</td><td>+0,000</td><td>−0,000</td><td>1,000</td><td>0,500</td><td>4,76 %</td><td>3,22 %</td><td>4,6</td></tr>
-          <tr><td>−30 Md$</td><td>−0,075</td><td>+0,081</td><td>1,081</td><td>0,514</td><td>4,76 %</td><td>3,23 %</td><td>4,3</td></tr>
-          <tr><td>−60 Md$</td><td>−0,150</td><td>+0,176</td><td>1,176</td><td>0,530</td><td>4,76 %</td><td>3,23 %</td><td>3,9</td></tr>
-          <tr><td>−120 Md$</td><td>−0,300</td><td>+0,429</td><td>1,429</td><td>0,577</td><td>4,76 %</td><td>3,23 %</td><td>3,1</td></tr>
-          <tr class="sep"><td>−166 Md$</td><td>−0,415</td><td>+0,710</td><td>1,710</td><td>0,649</td><td>4,76 %</td><td>3,23 %</td><td>2,4</td></tr>
+          <tr><td>60 Md$</td><td>+0,150</td><td>−0,130</td><td>0,870</td><td>0,478</td><td>4,76 %</td><td>5,3</td><td>3,72</td></tr>
+          <tr><td>30 Md$</td><td>+0,075</td><td>−0,070</td><td>0,930</td><td>0,488</td><td>4,76 %</td><td>5,0</td><td>3,98</td></tr>
+          <tr><td>0 Md$</td><td>+0,000</td><td>−0,000</td><td>1,000</td><td>0,500</td><td>4,76 %</td><td>4,6</td><td>4,30</td></tr>
+          <tr><td>−30 Md$</td><td>−0,075</td><td>+0,081</td><td>1,081</td><td>0,514</td><td>4,76 %</td><td>4,3</td><td>4,64</td></tr>
+          <tr><td>−60 Md$</td><td>−0,150</td><td>+0,176</td><td>1,176</td><td>0,530</td><td>4,76 %</td><td>3,9</td><td>5,07</td></tr>
+          <tr><td>−120 Md$</td><td>−0,300</td><td>+0,429</td><td>1,429</td><td>0,577</td><td>4,76 %</td><td>3,1</td><td>6,32</td></tr>
+          <tr class="sep"><td>−166 Md$</td><td>−0,415</td><td>+0,710</td><td>1,710</td><td>0,649</td><td>4,76 %</td><td>2,4</td><td>8,19</td></tr>
         </tbody>
       </table>
       </div>
@@ -2108,17 +2112,17 @@
       <figcaption><span class="lab">Table 14</span> — Ce que devient la conclusion du papier quand l'exposant d'échelle varie. Toutes les autres hypothèses sont inchangées.</figcaption>
       <div class="scroll">
       <table>
-        <thead><tr><th>H</th><th>Dispersion (pt)</th><th>en %</th><th>P(1:20)</th><th>P(1:30)</th><th>E[τ] (min)</th><th>µ* (pt/h)</th><th class="wrap">Correspond à</th></tr></thead>
+        <thead><tr><th>H</th><th>Dispersion (pt)</th><th>en %</th><th>P(1:20)</th><th>E[τ] (min)</th><th>µ* (pt/h)</th><th class="wrap">Correspond à</th></tr></thead>
         <tbody>
-          <tr><td>0,500</td><td>25</td><td>0,41 %</td><td>4,76 %</td><td>3,22 %</td><td>4,6</td><td>4,297</td><td class="wrap">dispersion en racine du temps</td></tr>
-          <tr><td>0,570</td><td>37</td><td>0,62 %</td><td>4,76 %</td><td>3,23 %</td><td>3,2</td><td>6,135</td><td class="wrap">les 60 points lus comme amplitude haut-bas</td></tr>
-          <tr><td>0,600</td><td>45</td><td>0,75 %</td><td>4,76 %</td><td>3,23 %</td><td>2,9</td><td>6,929</td><td class="wrap">hypothèse intermédiaire</td></tr>
-          <tr><td>0,649</td><td>60</td><td>1,00 %</td><td>4,76 %</td><td>3,23 %</td><td>2,4</td><td>8,189</td><td class="wrap">calibration retenue : 60 points d'écart-type</td></tr>
-          <tr><td>0,700</td><td>81</td><td>1,36 %</td><td>4,76 %</td><td>3,23 %</td><td>2,1</td><td>9,441</td><td class="wrap">persistance plus forte encore</td></tr>
+          <tr><td>0,500</td><td>25</td><td>0,41 %</td><td>4,76 %</td><td>4,6</td><td>4,297</td><td class="wrap">dispersion en racine du temps</td></tr>
+          <tr><td>0,570</td><td>37</td><td>0,62 %</td><td>4,76 %</td><td>3,2</td><td>6,135</td><td class="wrap">les 60 points lus comme amplitude haut-bas</td></tr>
+          <tr><td>0,600</td><td>45</td><td>0,75 %</td><td>4,76 %</td><td>2,9</td><td>6,929</td><td class="wrap">hypothèse intermédiaire</td></tr>
+          <tr><td>0,649</td><td>60</td><td>1,00 %</td><td>4,76 %</td><td>2,4</td><td>8,189</td><td class="wrap">calibration retenue : 60 points d'écart-type</td></tr>
+          <tr><td>0,700</td><td>81</td><td>1,36 %</td><td>4,76 %</td><td>2,1</td><td>9,441</td><td class="wrap">persistance plus forte encore</td></tr>
         </tbody>
       </table>
       </div>
-      <p class="note"><span class="lab">Lecture.</span> C'est le paramètre le plus fragile du document, et il faut le dire. Les 60 points de dispersion de séance sont-ils un écart-type de clôture ou une amplitude haut-bas ? L'amplitude moyenne d'un brownien vaut environ 1,6 écart-type ; sous la seconde lecture, l'exposant tombe à 0,57 et la probabilité d'atteindre 1:30 passe de 3,23 % à 3,23 %, soit une division par 1,0. Le premier test du protocole porte pour cette raison sur la loi d'échelle, avant tout signal d'entrée.</p>
+      <p class="note"><span class="lab">Lecture.</span> La colonne P(1:20) ne bouge pas d'une ligne à l'autre, et ce n'est pas un défaut de calcul : les probabilités de barrière ne dépendent que de la géométrie, jamais de la loi d'échelle. C'est le théorème d'arrêt optionnel, vérifié ici sur cinq exposants. Ce que l'exposant déplace est le temps, et par l'identité de Wald le seuil de rentabilité. C'est le paramètre le plus fragile du document, et il faut le dire. Les 60 points de dispersion de séance sont-ils un écart-type de clôture ou une amplitude haut-bas ? L'amplitude moyenne d'un brownien vaut environ 1,6 écart-type ; sous la seconde lecture l'exposant tombe à 0,57 et le seuil passe de 8,19 à 6,14 points par heure, soit une baisse d'un facteur 1,3. La conclusion y survit : même sous la lecture la plus favorable, le seuil reste près de deux fois au-dessus de la borne haute du domaine de dérive plausible. Le premier test du protocole porte pour cette raison sur la loi d'échelle, avant tout signal d'entrée.</p>
     </figure>
 
   <p>Il faut donc lire la section&nbsp;<a href="#s-seance">6</a> avec cette réserve&nbsp;: l'énoncé «&nbsp;1:30 est à la limite de la portée d'une séance&nbsp;» est conditionnel à une mesure qui n'a pas été faite ici, et dont la valeur alternative la plus plausible le renverse. C'est la raison pour laquelle le premier test du protocole ne porte sur aucun signal.</p>
@@ -2648,28 +2652,34 @@
 <text class="hdr" x="380.0" y="38.0">Écart d'espérance par signal</text>
 <text class="sub" x="592.0" y="25.0" text-anchor="end">Δ = E(OTE) − E(marché)</text>
 <line class="hsep" x1="380.0" y1="44.0" x2="592.0" y2="44.0"/>
+<rect class="wash" x="393.3" y="50.0" width="57.6" height="212.0"/>
 <rect class="frame" x="380.0" y="50.0" width="212.0" height="212.0"/>
-<line class="gl" x1="380.0" y1="245.7" x2="592.0" y2="245.7"/>
-<text class="tk" x="597.0" y="248.7">-0,8</text>
-<line class="gl" x1="380.0" y1="180.5" x2="592.0" y2="180.5"/>
-<text class="tk" x="597.0" y="183.5">-0,4</text>
-<line class="gl" x1="380.0" y1="115.2" x2="592.0" y2="115.2"/>
-<text class="tk" x="597.0" y="118.2">0,0</text>
-<line class="gl" x1="380.0" y1="50.0" x2="592.0" y2="50.0"/>
-<text class="tk" x="597.0" y="53.0">0,4</text>
+<line class="gl" x1="380.0" y1="258.3" x2="592.0" y2="258.3"/>
+<text class="tk" x="597.0" y="261.3">-0,1</text>
+<line class="gl" x1="380.0" y1="210.7" x2="592.0" y2="210.7"/>
+<text class="tk" x="597.0" y="213.7">0,0</text>
+<line class="gl" x1="380.0" y1="163.2" x2="592.0" y2="163.2"/>
+<text class="tk" x="597.0" y="166.2">0,1</text>
+<line class="gl" x1="380.0" y1="115.7" x2="592.0" y2="115.7"/>
+<text class="tk" x="597.0" y="118.7">0,2</text>
+<line class="gl" x1="380.0" y1="68.1" x2="592.0" y2="68.1"/>
+<text class="tk" x="597.0" y="71.1">0,3</text>
 <text class="ax" transform="translate(634.0,156.0) rotate(-90)" text-anchor="middle">Δ en points d'indice par signal</text>
 <text class="tk" x="380.0" y="275.0" text-anchor="middle">0,0</text>
-<text class="tk" x="450.7" y="275.0" text-anchor="middle">1,0</text>
-<text class="tk" x="521.3" y="275.0" text-anchor="middle">2,0</text>
-<text class="tk" x="592.0" y="275.0" text-anchor="middle">3,0</text>
+<text class="tk" x="424.3" y="275.0" text-anchor="middle">2,0</text>
+<text class="tk" x="468.7" y="275.0" text-anchor="middle">4,0</text>
+<text class="tk" x="513.0" y="275.0" text-anchor="middle">6,0</text>
+<text class="tk" x="557.3" y="275.0" text-anchor="middle">8,0</text>
 <line class="ba" x1="380.0" y1="262.0" x2="592.0" y2="262.0"/>
 <text class="ax" x="486.0" y="290.0" text-anchor="middle">dérive captée (points par heure)</text>
-<path class="ln s1" d="M380.00,68.91 L381.77,68.98 L383.53,69.05 L385.30,69.12 L387.07,69.20 L388.83,69.27 L390.60,69.34 L392.37,69.42 L394.13,69.49 L395.90,69.57 L397.67,69.65 L399.43,69.73 L401.20,69.80 L402.97,69.88 L404.73,69.96 L406.50,70.04 L408.27,70.13 L410.03,70.21 L411.80,70.29 L413.57,70.37 L415.33,70.46 L417.10,70.54 L418.87,70.63 L420.63,70.72 L422.40,70.80 L424.17,70.89 L425.93,70.98 L427.70,71.07 L429.47,71.16 L431.23,71.25 L433.00,71.34 L434.77,71.43 L436.53,71.53 L438.30,71.62 L440.07,71.71 L441.83,71.81 L443.60,71.91 L445.37,72.00 L447.13,72.10 L448.90,72.20 L450.67,72.29 L452.43,72.39 L454.20,72.49 L455.97,72.59 L457.73,72.69 L459.50,72.79 L461.27,72.90 L463.03,73.00 L464.80,73.10 L466.57,73.21 L468.33,73.31 L470.10,73.42 L471.87,73.52 L473.63,73.63 L475.40,73.74 L477.17,73.84 L478.93,73.95 L480.70,74.06 L482.47,74.17 L484.23,74.28 L486.00,74.39 L487.77,74.50 L489.53,74.61 L491.30,74.73 L493.07,74.84 L494.83,74.95 L496.60,75.07 L498.37,75.18 L500.13,75.30 L501.90,75.41 L503.67,75.53 L505.43,75.64 L507.20,75.76 L508.97,75.88 L510.73,76.00 L512.50,76.12 L514.27,76.24 L516.03,76.36 L517.80,76.48 L519.57,76.60 L521.33,76.72 L523.10,76.84 L524.87,76.96 L526.63,77.09 L528.40,77.21 L530.17,77.33 L531.93,77.46 L533.70,77.58 L535.47,77.71 L537.23,77.84 L539.00,77.96 L540.77,78.09 L542.53,78.22 L544.30,78.34 L546.07,78.47 L547.83,78.60 L549.60,78.73 L551.37,78.86 L553.13,78.99 L554.90,79.12 L556.67,79.25 L558.43,79.38 L560.20,79.51 L561.97,79.65 L563.73,79.78 L565.50,79.91 L567.27,80.05 L569.03,80.18 L570.80,80.31 L572.57,80.45 L574.33,80.58 L576.10,80.72 L577.87,80.86 L579.63,80.99 L581.40,81.13 L583.17,81.27 L584.93,81.40 L586.70,81.54 L588.47,81.68 L590.23,81.82 L592.00,81.96"></path>
-<line class="zero" x1="380.0" y1="115.2" x2="592.0" y2="115.2"/>
-<rect class="tag" x="430.0" y="59.3" width="160.0" height="14" rx="2"/>
-<text class="tagtx" x="510.0" y="69.8" text-anchor="middle">µ* = 8.2 pt/h, hors cadre</text>
-<text class="lg halo" x="586.0" y="89.1" text-anchor="end">Δ &gt; 0 : la grille paie</text>
-<text class="lg halo" x="586.0" y="138.1" text-anchor="end">Δ &lt; 0 : la grille coûte</text>
+<path class="ln s1" d="M380.00,75.70 L381.32,76.19 L382.65,76.70 L383.98,77.21 L385.30,77.75 L386.62,78.29 L387.95,78.85 L389.27,79.41 L390.60,80.00 L391.93,80.59 L393.25,81.19 L394.57,81.81 L395.90,82.44 L397.23,83.08 L398.55,83.73 L399.88,84.39 L401.20,85.06 L402.52,85.75 L403.85,86.44 L405.18,87.15 L406.50,87.86 L407.82,88.59 L409.15,89.33 L410.48,90.07 L411.80,90.83 L413.12,91.60 L414.45,92.38 L415.77,93.16 L417.10,93.96 L418.43,94.76 L419.75,95.58 L421.07,96.40 L422.40,97.23 L423.73,98.07 L425.05,98.92 L426.38,99.78 L427.70,100.64 L429.02,101.52 L430.35,102.40 L431.68,103.29 L433.00,104.19 L434.32,105.09 L435.65,106.00 L436.98,106.92 L438.30,107.85 L439.62,108.78 L440.95,109.72 L442.27,110.67 L443.60,111.62 L444.93,112.58 L446.25,113.55 L447.57,114.52 L448.90,115.49 L450.23,116.48 L451.55,117.47 L452.88,118.46 L454.20,119.46 L455.52,120.47 L456.85,121.48 L458.18,122.49 L459.50,123.51 L460.82,124.54 L462.15,125.57 L463.48,126.60 L464.80,127.64 L466.12,128.69 L467.45,129.73 L468.77,130.78 L470.10,131.84 L471.43,132.90 L472.75,133.96 L474.07,135.03 L475.40,136.10 L476.73,137.17 L478.05,138.25 L479.38,139.33 L480.70,140.41 L482.02,141.50 L483.35,142.59 L484.68,143.68 L486.00,144.78 L487.32,145.88 L488.65,146.98 L489.98,148.08 L491.30,149.18 L492.62,150.29 L493.95,151.40 L495.27,152.51 L496.60,153.63 L497.93,154.74 L499.25,155.86 L500.57,156.98 L501.90,158.11 L503.23,159.23 L504.55,160.36 L505.88,161.48 L507.20,162.61 L508.52,163.74 L509.85,164.87 L511.18,166.01 L512.50,167.14 L513.83,168.28 L515.15,169.41 L516.48,170.55 L517.80,171.69 L519.12,172.83 L520.45,173.97 L521.77,175.12 L523.10,176.26 L524.42,177.40 L525.75,178.55 L527.08,179.70 L528.40,180.84 L529.73,181.99 L531.05,183.14 L532.38,184.29 L533.70,185.44 L535.02,186.59 L536.35,187.74 L537.67,188.89 L539.00,190.04 L540.33,191.19 L541.65,192.35 L542.98,193.50 L544.30,194.66 L545.62,195.81 L546.95,196.96 L548.27,198.12 L549.60,199.27 L550.92,200.43 L552.25,201.58 L553.58,202.74 L554.90,203.90 L556.23,205.05 L557.55,206.21 L558.88,207.37 L560.20,208.52 L561.52,209.68 L562.85,210.84 L564.17,212.00 L565.50,213.15 L566.82,214.31 L568.15,215.47 L569.48,216.63 L570.80,217.78 L572.12,218.94 L573.45,220.10 L574.77,221.26 L576.10,222.41 L577.42,223.57 L578.75,224.73 L580.08,225.89 L581.40,227.04 L582.73,228.20 L584.05,229.36 L585.38,230.52 L586.70,231.67 L588.02,232.83 L589.35,233.99 L590.68,235.15 L592.00,236.30"></path>
+<line class="zero" x1="380.0" y1="210.7" x2="592.0" y2="210.7"/>
+<line class="lvl" x1="562.8" y1="50.0" x2="562.8" y2="262.0"/>
+<circle class="pt s2" cx="562.76" cy="210.73" r="4"><title>changement de signe · 8.24 point par heure</title></circle>
+<text class="dl halo" x="556.8" y="129.7" text-anchor="end">µ* = 8,2 pt/h</text>
+<text class="tk halo" x="410.7" y="62.0" text-anchor="middle">dérive plausible</text>
+<text class="lg halo" x="586.0" y="178.3" text-anchor="end">Δ &gt; 0 : la grille paie</text>
+<text class="lg halo" x="586.0" y="226.6" text-anchor="end">Δ &lt; 0 : la grille coûte</text>
 
 
 
@@ -4909,7 +4919,7 @@
     </figure>
 
     <figure class="plate">
-      <figcaption><span class="lab">Figure 19</span> — Faisceaux de courbes d'équité simulées, sans dérive puis sous la dérive de référence, et lois du P&amp;L annuel. Le recouvrement des deux faisceaux est le résultat&nbsp;: ils occupent la même région du plan pendant toute l'année.</figcaption>
+      <figcaption><span class="lab">Figure 19</span> — Faisceaux de courbes d'équité simulées, sans dérive puis sous la dérive de référence, et lois du P&amp;L annuel. Les deux faisceaux se séparent au trade&nbsp;240 — moins d'une demi-année — et leurs lois terminales ne se recouvrent pas. Ce n'est pas un résultat sur le marché&nbsp;: la dérive de référence vaut deux fois le seuil de rentabilité, c'est-à-dire qu'elle est supposée au niveau exact qui rend la stratégie rentable.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 308" role="img" aria-label="Faisceaux de courbes d équité simulées sans dérive puis sous dérive, et lois du P&amp;L annuel" preserveAspectRatio="xMidYMid meet">
 <text class="hdr" x="56.0" y="34.0">Sans dérive</text>
 <text class="read" x="252.0" y="34.0" text-anchor="end">µ = 0</text>
@@ -6038,7 +6048,7 @@
 
   <h3>Test 1 — Loi d'échelle</h3>
 
-  <p>Estimer <span class="v">H</span> par ratio de variance sur les rendements de une à trente minutes, sur l'ensemble de l'historique disponible, puis séparément par signe du gamma net. Ce test ne requiert que des données à la minute et une série de gamma&nbsp;; il ne comporte aucun paramètre libre et aucun signal d'entrée. Il décide de deux choses à la fois&nbsp;: l'atteignabilité des targets éloignés — donc la viabilité du paramétrage — et l'existence du mécanisme invoqué par le conditionnement de régime. <em>Critère de passage&nbsp;:</em> <span class="v">H</span> inconditionnel significativement supérieur à 0,5 sur l'horizon du trade, et <span class="v">H</span>(<span class="v">Γ</span>&nbsp;&lt;&nbsp;0)&nbsp;&gt;&nbsp;<span class="v">H</span>(<span class="v">Γ</span>&nbsp;&gt;&nbsp;0).</p>
+  <p>Estimer <span class="v">H</span> par ratio de variance sur les rendements de une à trente minutes, sur l'ensemble de l'historique disponible, puis séparément par signe du gamma net. Ce test ne requiert que des données à la minute et une série de gamma&nbsp;; il ne comporte aucun paramètre libre et aucun signal d'entrée. Il décide de deux choses à la fois&nbsp;: le temps de marché acheté par trade — donc le seuil de rentabilité, donc la viabilité du paramétrage — et l'existence du mécanisme invoqué par le conditionnement de régime. <em>Critère de passage&nbsp;:</em> <span class="v">H</span> inconditionnel significativement supérieur à 0,5 sur l'horizon du trade, et <span class="v">H</span>(<span class="v">Γ</span>&nbsp;&lt;&nbsp;0)&nbsp;&gt;&nbsp;<span class="v">H</span>(<span class="v">Γ</span>&nbsp;&gt;&nbsp;0).</p>
 
   <h3>Test 2 — Dérive captée</h3>
 
@@ -6808,7 +6818,7 @@
 
   <p>Une seconde objection porte sur un nombre qui n'apparaît nulle part dans les tables, et qui décide pourtant de toutes&nbsp;: l'exposant selon lequel la dispersion croît avec le temps.</p>
 
-  <p>La calibration pose une dispersion de séance et en déduit la volatilité par minute par σ₁&nbsp;=&nbsp;<i>D</i>/√<i>T</i>. Ce radical est l'exposant d'un brownien, <i>H</i>&nbsp;=&nbsp;½&nbsp;; il est posé, jamais mesuré. Ailleurs, la section&nbsp;<a href="#s-gamma">9</a> retient <i>H</i>&nbsp;=&nbsp;0,65 pour discuter de l'atteignabilité des targets. Les deux énoncés ne peuvent pas être vrais ensemble. Ou bien le prix diffuse en racine du temps, et la calibration est bonne mais la persistance invoquée n'existe pas&nbsp;; ou bien il diffuse en <i>t</i><sup><i>H</i></sup> avec <i>H</i>&nbsp;&gt;&nbsp;½, et c'est σ₁ qui est faux — et avec lui la bande de bruit, le stop, l'exposition et le seuil.</p>
+  <p>La calibration pose une dispersion de séance et en déduit la volatilité par minute par σ₁&nbsp;=&nbsp;<i>D</i>/√<i>T</i>. Ce radical est l'exposant d'un brownien, <i>H</i>&nbsp;=&nbsp;½&nbsp;; il est posé, jamais mesuré. Ailleurs, la section&nbsp;<a href="#s-gamma">9</a> retient <i>H</i>&nbsp;=&nbsp;0,65 pour établir le temps de marché acheté par trade. Les deux énoncés ne peuvent pas être vrais ensemble. Ou bien le prix diffuse en racine du temps, et la calibration est bonne mais la persistance invoquée n'existe pas&nbsp;; ou bien il diffuse en <i>t</i><sup><i>H</i></sup> avec <i>H</i>&nbsp;&gt;&nbsp;½, et c'est σ₁ qui est faux — et avec lui la bande de bruit, le stop, l'exposition et le seuil.</p>
 
   <p>Une seule calibration est cohérente avec un exposant donné&nbsp;: σ₁&nbsp;=&nbsp;<i>D</i>/<i>T</i><sup><i>H</i></sup>, tout le reste s'en déduisant. La table qui suit refait la chaîne complète, les trois entrées du document restant inchangées.</p>
 
@@ -6856,7 +6866,7 @@
 </svg></div>
     </figure>
 
-  <p>Le résultat va contre l'intuition qui avait motivé le recours à <i>H</i>&nbsp;&gt;&nbsp;½. Une persistance plus forte n'aide pas. Elle éloigne le prix plus vite du point d'entrée, donc le stop est touché plus souvent — 71,5&nbsp;% contre 66,2&nbsp;% —, et le seuil de signal monte d'un facteur 1,112. Le canal par lequel le document faisait jouer <i>H</i>, l'atteignabilité du target, est négligeable devant ces deux effets, pour une raison que la section&nbsp;<a href="#s-gamma">9</a> donne elle-même&nbsp;: à 3,23&nbsp;% de probabilité, le target n'est presque jamais atteint, et la sortie effective est la clôture de séance.</p>
+  <p>Le résultat va contre l'intuition qui avait motivé le recours à <i>H</i>&nbsp;&gt;&nbsp;½. Une persistance plus forte n'aide pas. Elle éloigne le prix plus vite du point d'entrée, donc le stop est touché plus souvent — 71,5&nbsp;% contre 66,2&nbsp;% —, et le seuil de signal monte d'un facteur 1,112. Le canal par lequel une version antérieure de ce document faisait jouer <i>H</i> — l'atteignabilité du target — n'est pas seulement faible&nbsp;: il est <em>nul</em>. Les probabilités de barrière ne dépendent que de la géométrie, et la probabilité d'atteindre 1:30 vaut 3,23&nbsp;% à tous les exposants. C'est le théorème d'arrêt optionnel, et la section&nbsp;<a href="#s-gamma">9</a> le porte désormais elle-même. Le target n'est de toute façon presque jamais atteint&nbsp;: la sortie effective est la clôture de séance.</p>
 
   <div class="keybox">
     <span class="lab">Réserve de méthode</span>
@@ -6869,7 +6879,7 @@
 
   <p>Le fractionnement des ordres institutionnels engendre bien une mémoire longue du flux signé&nbsp;: c'est le résultat de Lillo, Mike et Farmer, et il est solidement établi. Mais Bouchaud, Gefen, Potters et Wyart montrent que l'impact d'un ordre décroît selon un noyau dont l'exposant est précisément celui qui <em>restaure</em> la diffusivité. La mémoire du flux est compensée, et le prix reste à <i>H</i>&nbsp;≈&nbsp;½ par construction. Le mécanisme le mieux documenté de persistance du flux est donc aussi celui qui garantit l'absence de persistance du prix — ce qui n'est pas une coïncidence, mais la forme microstructurelle de l'efficience.</p>
 
-  <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement de l'atteignabilité du target, il décide de la calibration entière.</p>
+  <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement du temps de marché acheté, il décide de la calibration entière.</p>
 
 
   <h3>L'estimateur, et ce qu'il révèle de lui-même</h3>

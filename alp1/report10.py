@@ -11,7 +11,8 @@ from __future__ import annotations
 import math
 
 from .attribution import decompose
-from .costs import deflated_threshold_sharpe, trades_for_significance
+from .costs import (deflated_threshold_sharpe, significance_constant,
+                    trades_for_significance)
 from .entropy import trades_for_information
 from .journal import LEVERS, audit, planted_bits, synthesise, universe
 from .operator import evaluate
@@ -486,6 +487,11 @@ def values() -> dict[str, str]:
         "d_mur_geometrie_ancien": num(
             2.0 * math.log(2.0) / (SHARPE_GEOMETRIE ** 2), 0),
         "d_mur_sr10_t": num(trades_for_significance(0.10, 1.0), 0),
+        # Les deux constantes de la forme commune K/√N. Elles sont citées
+        # dans le texte parce que leur voisinage est la raison de l'accord
+        # des deux routes, et non une coïncidence à constater.
+        "d_k_test": num(significance_constant(), 2),
+        "d_k_taxe": num(math.sqrt(2.0 * math.log(budget)), 2),
         "d_sharpe_geometrie": num(SHARPE_GEOMETRIE, 4),
 
         # Les bornes de la plage d'indécision, relevées sur la calibration

@@ -140,9 +140,21 @@ def trades_for_significance(
     """
     if mean_r <= 0:
         raise ValueError("mean_r doit être > 0 pour tester un edge positif")
-    z_alpha = _norm_ppf(1.0 - alpha)
-    z_beta = _norm_ppf(power)
-    return math.ceil(((z_alpha + z_beta) ** 2) * (sd_r**2) / (mean_r**2))
+    return math.ceil((significance_constant(alpha, power) ** 2)
+                     * (sd_r**2) / (mean_r**2))
+
+
+def significance_constant(alpha: float = 0.05, power: float = 0.80) -> float:
+    """`z_α + z_β`, le facteur qui gouverne la route du test t.
+
+    Il est exposé parce qu'une figure a besoin de la constante elle-même et
+    non d'un nombre de trades : le seuil de significativité vaut
+    `(z_α + z_β)/√N`, et c'est cette courbe que l'on trace contre le seuil
+    déflaté `√(2·ln B/N)`. Les deux routes sont alors visiblement la même
+    forme en `1/√N`, à une constante près — 2,49 contre 2,35 à seize
+    configurations — ce qui est la raison pour laquelle elles s'accordent.
+    """
+    return _norm_ppf(1.0 - alpha) + _norm_ppf(power)
 
 
 def deflated_threshold_sharpe(n_trials: int, n_obs: int) -> float:

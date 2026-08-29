@@ -16,7 +16,7 @@ from alp1 import discpaper
 N_SECTIONS = 39
 N_PARTIES = 11
 N_TABLES = 13
-N_FIGURES = 24
+N_FIGURES = 25
 
 
 class TestConstruction(unittest.TestCase):
@@ -287,6 +287,78 @@ class TestValeurs(unittest.TestCase):
             return float(self.vals[cle].replace(" ", "").replace(",", "."))
         self.assertGreater(n("d_mur_sr05"), n("d_mur_sr10"))
         self.assertGreater(n("d_mur_sr10"), n("d_mur_sr15"))
+
+
+class TestLesDeuxRoutesDuMur(unittest.TestCase):
+    """Le bornage retiré, et les deux routes rendues comparables.
+
+    Le budget de configurations était borné par `max(2.0, ...)`, ce qui
+    fabriquait une taxe de sélection là où il n'y en a aucune. Le défaut
+    portait trois affirmations du document — un levier à « +0,0000 », une
+    géométrie à configuration unique créditée de 1 258 décisions de taxe, et
+    une surface qui montait dès le premier levier. Ces tests le ferment.
+    """
+
+    def test_a_configuration_unique_la_taxe_est_nulle(self) -> None:
+        """Rien à sélectionner, donc rien à déflater."""
+        from alp1.costs import deflated_threshold_sharpe
+        from alp1.report10 import _trades_for_threshold
+        self.assertEqual(deflated_threshold_sharpe(1, 3000), 0.0)
+        self.assertEqual(_trades_for_threshold(0.10, 1.0), 0.0)
+
+    def test_le_premier_levier_fait_un_saut_depuis_zero(self) -> None:
+        """La table des leviers affichait « +0,0000 » pour le premier.
+
+        Le résumé disait déjà l'inverse de sa propre table : il annonce que
+        le premier levier porte le seuil de zéro à sa valeur à deux
+        configurations. C'est la table qui avait tort.
+        """
+        from alp1.report10 import table_levers
+        premiere = table_levers().rows[0]
+        seuil, ajout = premiere[3], premiere[4]
+        self.assertEqual(ajout.lstrip("+"), seuil)
+        self.assertNotIn("0,0000", ajout)
+
+    def test_les_deux_routes_ont_la_meme_forme(self) -> None:
+        """Toutes deux valent K/√N, et c'est la raison de leur accord.
+
+        Le document cite les deux constantes ; la figure de l'échelle les
+        trace. Si l'une des deux cessait d'être un simple K/√N, la figure et
+        le texte diraient encore qu'elles se ressemblent sans que ce soit
+        vrai.
+        """
+        import math
+        from alp1.costs import significance_constant, trades_for_significance
+        from alp1.report10 import _trades_for_threshold
+        for sr in (0.05, 0.10, 0.15):
+            k_test = significance_constant()
+            self.assertAlmostEqual((k_test / sr) ** 2,
+                                   float(trades_for_significance(sr, 1.0)),
+                                   delta=1.0)
+            k_taxe = math.sqrt(2.0 * math.log(16.0))
+            self.assertAlmostEqual((k_taxe / sr) ** 2,
+                                   _trades_for_threshold(sr, 16.0), places=6)
+
+    def test_l_exigence_liante_est_le_maximum_des_deux(self) -> None:
+        """Et à seize configurations, c'est le test ordinaire qui lie."""
+        from alp1.costs import trades_for_significance
+        from alp1.report10 import _trades_binding, _trades_for_threshold
+        liant = _trades_binding(0.10, 16.0)
+        self.assertEqual(liant, float(trades_for_significance(0.10, 1.0)))
+        self.assertGreater(liant, _trades_for_threshold(0.10, 16.0))
+
+    def test_la_taxe_ne_passe_devant_qu_au_dela_de_vingt_deux_essais(self) -> None:
+        """Le seuil de bascule que le document cite, vérifié aux deux bords.
+
+        C'est de lui que sort la phrase « les quatre leviers recensés ne
+        coûtent rien de plus que ce qu'il faut de toute façon ».
+        """
+        from alp1.report10 import _trades_binding, _trades_for_threshold
+        for budget in (2.0, 4.0, 8.0, 16.0, 22.0):
+            self.assertGreater(_trades_binding(0.10, budget),
+                               _trades_for_threshold(0.10, budget))
+        self.assertEqual(_trades_binding(0.10, 64.0),
+                         _trades_for_threshold(0.10, 64.0))
 
 
 if __name__ == "__main__":

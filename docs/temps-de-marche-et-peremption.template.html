@@ -1086,7 +1086,7 @@
 
   <h3>Le régime conditionne la géométrie</h3>
 
-  <p>Il existe cependant un rôle pour lequel le signe du gamma est, mécaniquement, le bon prédicteur — et c'est celui que la section <a href="#s-gamma">9</a> rend décisif. L'autocorrélation des rendements est exactement ce qui gouverne l'exposant d'échelle <span class="v">H</span> de l'équation (10)&nbsp;: une couverture pro-cyclique produit une dispersion qui croît plus vite que la racine du temps, une couverture contra-tendancielle une dispersion qui croît moins vite. Or <span class="v">H</span> décide de l'atteignabilité des targets éloignés, donc de la viabilité même d'un ratio de 1:20 à 1:30.</p>
+  <p>Il existe cependant un rôle pour lequel le signe du gamma est, mécaniquement, le bon prédicteur — et c'est celui que la section <a href="#s-gamma">9</a> rend décisif. L'autocorrélation des rendements est exactement ce qui gouverne l'exposant d'échelle <span class="v">H</span> de l'équation (10)&nbsp;: une couverture pro-cyclique produit une dispersion qui croît plus vite que la racine du temps, une couverture contra-tendancielle une dispersion qui croît moins vite. Or <span class="v">H</span> décide du <em>temps</em> que le trade passe en marché&nbsp;: une dispersion qui croît plus vite éloigne le prix des barrières plus tôt, et l'exposition moyenne tombe de 4,6 à 2,1&nbsp;minutes entre <span class="v">H</span>&nbsp;=&nbsp;½ et <span class="v">H</span>&nbsp;=&nbsp;0,70. Par l'identité de Wald, ce temps fixe le seuil de rentabilité, qui double sur la même plage. Il ne décide pas de l'atteignabilité du target&nbsp;: les probabilités de barrière ne dépendent que de la géométrie — c'est le théorème d'arrêt optionnel, et il vaut ici comme ailleurs.</p>
 
   <p>La prédiction est nette et se teste sans aucun signal d'entrée&nbsp;: <strong><span class="v">H</span> mesuré sous gamma négatif doit excéder <span class="v">H</span> mesuré sous gamma positif.</strong> Si l'écart est nul, le mécanisme invoqué n'existe pas et l'hypothèse tombe. S'il est net, le conditionnement acquiert un rôle opérationnel précis — non pas choisir la direction, mais choisir la géométrie&nbsp;: viser loin lorsque la dispersion s'étend, viser près, ou s'abstenir, lorsqu'elle se comprime. C'est une prédiction plus faible qu'un edge directionnel, mais elle est falsifiable sur données publiques et elle porte sur le paramètre que la section <a href="#s-critere">5</a> a identifié comme critique.</p>
 
@@ -1179,7 +1179,7 @@
 
   <p>Deux seuils bornent le domaine où (15) a un sens, et il ne faut pas les confondre. En <span class="v">λΓ</span>&nbsp;=&nbsp;−½, l'autocorrélation atteint l'unité&nbsp;: les rendements cessent d'être stationnaires et la dispersion croît linéairement en temps au lieu de croître en racine — c'est la forme quantitative du <em>gamma squeeze</em>. En <span class="v">λΓ</span>&nbsp;=&nbsp;−1, c'est l'amplification d'un seul pas qui diverge. Le premier seuil est le plus contraignant.</p>
 
-{{FIGURE:gammafeedback|Chaîne causale du gamma à l'atteignabilité du target. À gauche, l'exposant d'échelle impliqué par un niveau de GEX, la bande grisée marquant le domaine plausible sur un indice. À droite, ce que l'exposant décide&nbsp;: la probabilité d'atteindre un target à 1:20 et à 1:30.}}
+{{FIGURE:gammafeedback|Chaîne causale du gamma au seuil de rentabilité. À gauche, l'exposant d'échelle impliqué par un niveau de GEX, la bande grisée marquant le domaine plausible sur un indice. À droite, ce que l'exposant décide&nbsp;: le temps de marché acheté, donc le seuil <span class="v">µ*</span>, qui va du simple au double sur la plage. La bande de fond est le domaine de dérive plausible&nbsp;; aucun exposant ne ramène le seuil dedans. Il ne décide pas de l'atteignabilité du target, qui ne dépend que de la géométrie.}}
 
 {{TABLE:gex_regime}}
 
@@ -1496,7 +1496,7 @@
 
 {{TABLE:montecarlo}}
 
-{{FIGURE:qmontecarlo|Faisceaux de courbes d'équité simulées, sans dérive puis sous la dérive de référence, et lois du P&amp;L annuel. Le recouvrement des deux faisceaux est le résultat&nbsp;: ils occupent la même région du plan pendant toute l'année.}}
+{{FIGURE:qmontecarlo|Faisceaux de courbes d'équité simulées, sans dérive puis sous la dérive de référence, et lois du P&amp;L annuel. Les deux faisceaux se séparent au trade&nbsp;{{q_mc_separation}} — moins d'une demi-année — et leurs lois terminales ne se recouvrent pas. Ce n'est pas un résultat sur le marché&nbsp;: la dérive de référence vaut deux fois le seuil de rentabilité, c'est-à-dire qu'elle est supposée au niveau exact qui rend la stratégie rentable.}}
 
   <h3>Ré-échantillonnage et randomisation</h3>
 
@@ -1627,7 +1627,7 @@
 
   <h3>Test 1 — Loi d'échelle</h3>
 
-  <p>Estimer <span class="v">H</span> par ratio de variance sur les rendements de une à trente minutes, sur l'ensemble de l'historique disponible, puis séparément par signe du gamma net. Ce test ne requiert que des données à la minute et une série de gamma&nbsp;; il ne comporte aucun paramètre libre et aucun signal d'entrée. Il décide de deux choses à la fois&nbsp;: l'atteignabilité des targets éloignés — donc la viabilité du paramétrage — et l'existence du mécanisme invoqué par le conditionnement de régime. <em>Critère de passage&nbsp;:</em> <span class="v">H</span> inconditionnel significativement supérieur à 0,5 sur l'horizon du trade, et <span class="v">H</span>(<span class="v">Γ</span>&nbsp;&lt;&nbsp;0)&nbsp;&gt;&nbsp;<span class="v">H</span>(<span class="v">Γ</span>&nbsp;&gt;&nbsp;0).</p>
+  <p>Estimer <span class="v">H</span> par ratio de variance sur les rendements de une à trente minutes, sur l'ensemble de l'historique disponible, puis séparément par signe du gamma net. Ce test ne requiert que des données à la minute et une série de gamma&nbsp;; il ne comporte aucun paramètre libre et aucun signal d'entrée. Il décide de deux choses à la fois&nbsp;: le temps de marché acheté par trade — donc le seuil de rentabilité, donc la viabilité du paramétrage — et l'existence du mécanisme invoqué par le conditionnement de régime. <em>Critère de passage&nbsp;:</em> <span class="v">H</span> inconditionnel significativement supérieur à 0,5 sur l'horizon du trade, et <span class="v">H</span>(<span class="v">Γ</span>&nbsp;&lt;&nbsp;0)&nbsp;&gt;&nbsp;<span class="v">H</span>(<span class="v">Γ</span>&nbsp;&gt;&nbsp;0).</p>
 
   <h3>Test 2 — Dérive captée</h3>
 
@@ -1883,7 +1883,7 @@
 
   <p>Une seconde objection porte sur un nombre qui n'apparaît nulle part dans les tables, et qui décide pourtant de toutes&nbsp;: l'exposant selon lequel la dispersion croît avec le temps.</p>
 
-  <p>La calibration pose une dispersion de séance et en déduit la volatilité par minute par σ₁&nbsp;=&nbsp;<i>D</i>/√<i>T</i>. Ce radical est l'exposant d'un brownien, <i>H</i>&nbsp;=&nbsp;½&nbsp;; il est posé, jamais mesuré. Ailleurs, la section&nbsp;<a href="#s-gamma">9</a> retient <i>H</i>&nbsp;=&nbsp;{{hurst}} pour discuter de l'atteignabilité des targets. Les deux énoncés ne peuvent pas être vrais ensemble. Ou bien le prix diffuse en racine du temps, et la calibration est bonne mais la persistance invoquée n'existe pas&nbsp;; ou bien il diffuse en <i>t</i><sup><i>H</i></sup> avec <i>H</i>&nbsp;&gt;&nbsp;½, et c'est σ₁ qui est faux — et avec lui la bande de bruit, le stop, l'exposition et le seuil.</p>
+  <p>La calibration pose une dispersion de séance et en déduit la volatilité par minute par σ₁&nbsp;=&nbsp;<i>D</i>/√<i>T</i>. Ce radical est l'exposant d'un brownien, <i>H</i>&nbsp;=&nbsp;½&nbsp;; il est posé, jamais mesuré. Ailleurs, la section&nbsp;<a href="#s-gamma">9</a> retient <i>H</i>&nbsp;=&nbsp;{{hurst}} pour établir le temps de marché acheté par trade. Les deux énoncés ne peuvent pas être vrais ensemble. Ou bien le prix diffuse en racine du temps, et la calibration est bonne mais la persistance invoquée n'existe pas&nbsp;; ou bien il diffuse en <i>t</i><sup><i>H</i></sup> avec <i>H</i>&nbsp;&gt;&nbsp;½, et c'est σ₁ qui est faux — et avec lui la bande de bruit, le stop, l'exposition et le seuil.</p>
 
   <p>Une seule calibration est cohérente avec un exposant donné&nbsp;: σ₁&nbsp;=&nbsp;<i>D</i>/<i>T</i><sup><i>H</i></sup>, tout le reste s'en déduisant. La table qui suit refait la chaîne complète, les trois entrées du document restant inchangées.</p>
 
@@ -1891,7 +1891,7 @@
 
   {{FIGURE:scalinghurst|Seuil de signal requis et probabilité d'arrêt en fonction de l'exposant d'échelle, la calibration étant refaite en chaque point. Les deux courbes montent ensemble&nbsp;: la persistance invoquée pour rendre les targets atteignables rend aussi le stop plus fréquent.}}
 
-  <p>Le résultat va contre l'intuition qui avait motivé le recours à <i>H</i>&nbsp;&gt;&nbsp;½. Une persistance plus forte n'aide pas. Elle éloigne le prix plus vite du point d'entrée, donc le stop est touché plus souvent — {{scal_pstop_high}}&nbsp;% contre {{scal_pstop_half}}&nbsp;% —, et le seuil de signal monte d'un facteur {{scal_factor}}. Le canal par lequel le document faisait jouer <i>H</i>, l'atteignabilité du target, est négligeable devant ces deux effets, pour une raison que la section&nbsp;<a href="#s-gamma">9</a> donne elle-même&nbsp;: à {{ptp30}}&nbsp;% de probabilité, le target n'est presque jamais atteint, et la sortie effective est la clôture de séance.</p>
+  <p>Le résultat va contre l'intuition qui avait motivé le recours à <i>H</i>&nbsp;&gt;&nbsp;½. Une persistance plus forte n'aide pas. Elle éloigne le prix plus vite du point d'entrée, donc le stop est touché plus souvent — {{scal_pstop_high}}&nbsp;% contre {{scal_pstop_half}}&nbsp;% —, et le seuil de signal monte d'un facteur {{scal_factor}}. Le canal par lequel une version antérieure de ce document faisait jouer <i>H</i> — l'atteignabilité du target — n'est pas seulement faible&nbsp;: il est <em>nul</em>. Les probabilités de barrière ne dépendent que de la géométrie, et la probabilité d'atteindre 1:30 vaut {{ptp30}}&nbsp;% à tous les exposants. C'est le théorème d'arrêt optionnel, et la section&nbsp;<a href="#s-gamma">9</a> le porte désormais elle-même. Le target n'est de toute façon presque jamais atteint&nbsp;: la sortie effective est la clôture de séance.</p>
 
   <div class="keybox">
     <span class="lab">Réserve de méthode</span>
@@ -1904,7 +1904,7 @@
 
   <p>Le fractionnement des ordres institutionnels engendre bien une mémoire longue du flux signé&nbsp;: c'est le résultat de Lillo, Mike et Farmer, et il est solidement établi. Mais Bouchaud, Gefen, Potters et Wyart montrent que l'impact d'un ordre décroît selon un noyau dont l'exposant est précisément celui qui <em>restaure</em> la diffusivité. La mémoire du flux est compensée, et le prix reste à <i>H</i>&nbsp;≈&nbsp;½ par construction. Le mécanisme le mieux documenté de persistance du flux est donc aussi celui qui garantit l'absence de persistance du prix — ce qui n'est pas une coïncidence, mais la forme microstructurelle de l'efficience.</p>
 
-  <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement de l'atteignabilité du target, il décide de la calibration entière.</p>
+  <p>Deux conséquences sont inscrites ici. La première est que la géométrie doit être choisie robuste à <i>H</i> plutôt qu'optimale en un point que personne n'a mesuré. La seconde est que le Test&nbsp;1 du protocole est à sa place en tête de séquence, mais pour une raison plus forte que celle qui y était donnée&nbsp;: il ne décide pas seulement du temps de marché acheté, il décide de la calibration entière.</p>
 
 
   <h3>L'estimateur, et ce qu'il révèle de lui-même</h3>

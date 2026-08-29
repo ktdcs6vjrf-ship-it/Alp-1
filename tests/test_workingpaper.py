@@ -265,5 +265,56 @@ class TestStructure(unittest.TestCase):
         self.assertEqual([int(n) for n in figs], list(range(1, len(figs) + 1)))
 
 
+class TestCeQueLExposantDecide(unittest.TestCase):
+    """Trois affirmations que le document faisait et que le calcul refusait.
+
+    Une figure titrée « ce que l'exposant décide » traçait la probabilité
+    d'atteindre le target selon l'exposant d'échelle. Cette probabilité ne
+    dépend pas de l'exposant : elle vaut la géométrie et rien d'autre. Deux
+    tables publiaient la même colonne constante, et l'une d'elles concluait
+    « la probabilité passe de 3,23 % à 3,23 %, soit une division par 1,0 ».
+    """
+
+    def test_la_probabilite_de_barriere_ne_depend_pas_de_l_exposant(self) -> None:
+        """C'est le théorème d'arrêt optionnel, et il vaut exactement.
+
+        Si ce test tombait, c'est que `outcome_scaled` aurait cessé de traiter
+        l'exposant comme un changement de temps — et alors les figures qui
+        s'appuient sur l'invariance devraient être relues.
+        """
+        from alp1.figterm import SESSION_MIN, SIGMA_1MIN, STOP_PTS
+        from alp1.horizon import outcome_scaled
+        ref = outcome_scaled(STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, 0.5)
+        for h in (0.52, 0.57, 0.60, 0.6489, 0.70):
+            o = outcome_scaled(STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, h)
+            self.assertAlmostEqual(o.p_target, ref.p_target, places=4)
+            self.assertAlmostEqual(o.p_target, 1.0 / 21.0, places=4)
+
+    def test_l_exposant_decide_le_temps_donc_le_seuil(self) -> None:
+        """Ce que la figure porte maintenant, et qui varie bien.
+
+        Le temps d'exposition tombe de moitié entre H = ½ et H = 0,70, donc le
+        seuil de rentabilité double. C'est la seule chaîne causale que le gamma
+        ouvre, et la seule que la figure a le droit d'afficher.
+        """
+        from alp1.figterm import SESSION_MIN, SIGMA_1MIN, STOP_PTS
+        from alp1.horizon import outcome_scaled
+        bas = outcome_scaled(STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, 0.50)
+        haut = outcome_scaled(STOP_PTS, 20 * STOP_PTS, SESSION_MIN, SIGMA_1MIN, 0.70)
+        self.assertLess(haut.expected_time, bas.expected_time)
+        self.assertGreater(bas.expected_time / haut.expected_time, 2.0)
+
+    def test_les_deux_faisceaux_de_monte_carlo_se_separent(self) -> None:
+        """La légende annonçait un recouvrement « pendant toute l'année ».
+
+        Ils se séparent bien avant la fin, et c'est mécanique : la dérive de
+        référence est supposée à deux fois le seuil de rentabilité. Le test
+        garde le fait, pas le chiffre — celui-ci est cité par une valeur.
+        """
+        from alp1.quant import MC_TRADES, _mc_separation
+        self.assertLess(_mc_separation(), MC_TRADES)
+        self.assertGreater(_mc_separation(), 0.0)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

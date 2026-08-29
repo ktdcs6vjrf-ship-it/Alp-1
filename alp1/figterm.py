@@ -38,6 +38,14 @@ STOP_PTS = stop_points(INDEX_LEVEL, STOP_PCT)
 FRICTION = COST_BASE.friction_points(ES)
 ADV_USD = 4.0e11          # volume quotidien du complexe indiciel, ordre de grandeur
 
+#: Domaine de dérive que la série traite comme plausible, en points d'indice
+#: par heure. Il est repris de `seuil.PLAUSIBLE_DRIFT_PER_HOUR` par un import
+#: différé — `seuil` n'importe pas ce module, mais l'écrire deux fois le ferait
+#: diverger du chapitre qui le déclare.
+def _plausible() -> tuple[float, float]:
+    from .seuil import PLAUSIBLE_DRIFT_PER_HOUR
+    return PLAUSIBLE_DRIFT_PER_HOUR
+
 
 def _esc(text: str) -> str:
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -303,6 +311,14 @@ class Panel:
             self.board.add(f'<path class="ln {cls}" d="{d}"{extra}>{t}</path>')
 
     def area(self, pts_top, baseline: float, cls: str, tip: str = "") -> None:
+        """Aire sous une courbe, refermée sur une ligne de base.
+
+        `cls` est posé **tel quel** : la feuille ne définit le remplissage que
+        sur `.area.ar1`, `.area.ar2`, `.area.ar3`, jamais sur `ar1` seul. Un
+        appel qui ne passe que le suffixe produit donc un tracé sans règle de
+        remplissage, que le rendu SVG peint en noir — une aire noire sur un
+        fond sombre, c'est-à-dire rien de visible. Passer « area ar1 ».
+        """
         if not pts_top:
             return
         d = " ".join(("M" if i == 0 else "L") + f"{self.sx(x):.2f},{self.sy(y):.2f}"
@@ -463,12 +479,26 @@ def fig_gex_levels() -> str:
 # ---------------------------------------------------------------------------
 
 def fig_gamma_feedback() -> str:
-    """La chaîne causale complète : Γ → λΓ → ρ → H → P(target).
+    """La chaîne causale complète : Γ → λΓ → ρ → H → E[τ] → µ*.
 
     Le panneau de gauche montre l'exposant d'échelle qu'un niveau de gamma peut
-    produire ; le domaine grisé est celui des GEX plausibles sur un indice. Le
-    panneau de droite montre ce que l'exposant décide : l'atteignabilité des
-    targets à 1:20 et 1:30.
+    produire ; le domaine grisé est celui des GEX plausibles sur un indice.
+
+    Le panneau de droite montrait la probabilité d'atteindre le target selon
+    l'exposant, sous le titre « ce que l'exposant décide ». **Il ne la décide
+    pas.** Les probabilités de barrière ne dépendent que de la géométrie —
+    c'est le théorème d'arrêt optionnel, qui est le résultat structurant de
+    cette série — et la courbe tracée était plate à 4,76 % sur toute la plage,
+    soit exactement 1/(1 + 20). Une figure qui affirmait le contraire de son
+    propre théorème, sur un cadre assez haut pour que la platitude passe pour
+    un choix.
+
+    Ce que l'exposant décide est le **temps** : de 4,6 minutes à H = ½ à
+    2,1 minutes à H = 0,70, pour une géométrie inchangée. Par l'identité de
+    Wald, cela fixe le seuil de rentabilité `µ* = c/E[τ]`, qui va du simple au
+    double sur la même plage. C'est ce que le panneau porte maintenant, et la
+    bande de fond y pose le domaine de dérive plausible : à cette géométrie,
+    aucun exposant ne ramène le seuil dedans.
     """
     b = Board(640, 320)
 
@@ -500,34 +530,51 @@ def fig_gamma_feedback() -> str:
     p1.label(req, HURST, "GEX requis", dx=-7, dy=14, anchor="end", cls="dl halo")
     p1.label(0.0, 0.468, "gamma plausible", dx=0, dy=0, anchor="middle", cls="lg halo")
 
-    # --- P2 : P(target) selon H -------------------------------------------
+    # --- P2 : le seuil de rentabilité selon H -----------------------------
+    # Et non la probabilité de target, qui ne dépend pas de l'exposant : la
+    # courbe précédente valait 4,76 % — 1/(1+20) — à toutes les abscisses.
     a = STOP_PTS
+    bas_pl, haut_pl = _plausible()
+    seuils = {}
+    for rr in (20.0, 30.0):
+        seuils[rr] = [
+            (0.50 + 0.20 * i / 40.0,
+             FRICTION / outcome_scaled(a, rr * a, SESSION_MIN, SIGMA_1MIN,
+                                       0.50 + 0.20 * i / 40.0).expected_time
+             * 60.0)
+            for i in range(41)]
+    tous = [v for c in seuils.values() for _, v in c]
     p2 = Panel(b, 372, 46, 226, 208, title="Ce que l'exposant décide",
-               readout="stop 0,050 %")
-    p2.domain(0.50, 0.70, 0.0, 8.0)
+               readout=f"stop {_num(STOP_PCT, 3)} %")
+    p2.domain(0.50, 0.70, 0.0, max(tous) * 1.10)
+    p2.band_y(bas_pl, haut_pl, "wash")
     p2.frame()
-    p2.grid_y([0, 2, 4, 6, 8], lambda v: f"{v:g}", "P(target atteint) en %", side="right")
+    p2.grid_y([0, 2, 4, 6, 8, 10], lambda v: f"{v:g}",
+              "seuil µ* en points par heure", side="right")
     p2.grid_x([0.50, 0.55, 0.60, 0.65, 0.70], lambda v: _num(v, 2),
               "exposant d'échelle H")
     for rr, cls in ((20.0, "s1"), (30.0, "s3")):
-        curve = []
-        for i in range(41):
-            hh = 0.50 + 0.20 * i / 40.0
-            o = outcome_scaled(a, rr * a, SESSION_MIN, SIGMA_1MIN, hh)
-            curve.append((hh, 100.0 * o.p_target))
-        p2.path(curve, cls)
-        p2.label(0.70, curve[-1][1], f"1:{rr:g}", dx=-26, dy=-6, cls="dl halo")
+        p2.path(seuils[rr], cls, tip=f"cible 1:{rr:g}")
+        p2.label(0.70, seuils[rr][-1][1], f"1:{rr:g}", dx=-26, dy=-6,
+                 cls="dl halo")
+        o = outcome_scaled(a, rr * a, SESSION_MIN, SIGMA_1MIN, HURST)
+        mu = FRICTION / o.expected_time * 60.0
+        p2.dot(HURST, mu, cls,
+               f"1:{rr:g} · H calibré · µ* = {mu:.2f} pt/h "
+               f"pour E[τ] = {o.expected_time:.2f} min")
     p2.vline(HURST, "lvl")
-    o20 = outcome_scaled(a, 20 * a, SESSION_MIN, SIGMA_1MIN, HURST)
-    o30 = outcome_scaled(a, 30 * a, SESSION_MIN, SIGMA_1MIN, HURST)
-    p2.dot(HURST, 100 * o20.p_target, "s1", f"1:20 · {100 * o20.p_target:.2f} %")
-    p2.dot(HURST, 100 * o30.p_target, "s3", f"1:30 · {100 * o30.p_target:.2f} %")
-    p2.label(HURST, 7.4, "H calibré", dx=-5, dy=0, anchor="end", cls="lg halo")
+    p2.label(HURST, max(tous) * 1.04, "H calibré", dx=-5, dy=0, anchor="end",
+             cls="lg halo")
+    p2.label(0.70, (bas_pl + haut_pl) / 2.0, "dérive plausible", dx=-6, dy=0,
+             anchor="end", cls="lg halo")
 
-    b.caption(320, 296, "le gamma agit sur l'espérance par un seul canal : "
-                        "l'exposant d'échelle, donc l'atteignabilité du target")
+    b.caption(320, 296, "le gamma agit par un seul canal : l'exposant "
+                        "d'échelle, donc le temps de marché acheté, donc le "
+                        "seuil — jamais l'atteignabilité du target, qui ne "
+                        "dépend que de la géométrie")
     b.caption(320, 312, "volume quotidien de référence 400 Md$ · impact d'un pourcent par volume quotidien")
-    return b.render("Du gamma dealer à l atteignabilité du target, par l exposant d échelle")
+    return b.render("Du gamma dealer au seuil de rentabilité, par l exposant "
+                    "d échelle et le temps de marché acheté")
 
 
 # ---------------------------------------------------------------------------
@@ -783,35 +830,44 @@ def fig_fib_retracement() -> str:
     # effleurer les graduations. Rendre la place au cadre les sépare.
     p2 = Panel(b, 380, 50, 212, 212, title="Écart d'espérance par signal",
                readout="Δ = E(OTE) − E(marché)")
-    p2.domain(0.0, 3.0, -0.9, 0.4)
-    p2.frame()
-    p2.grid_y([-0.8, -0.4, 0.0, 0.4], lambda v: _num(v, 1),
-              "Δ en points d'indice par signal", side="right")
-    p2.grid_x([0, 1, 2, 3], lambda v: _num(v, 1), "dérive captée (points par heure)")
+    crit = fib.compare(leg_hi - leg_lo, a, target, FRICTION, mu_star, SIGMA_1MIN,
+                       om.expected_time, oo.expected_time).critical_drift * 60.0
+    # La fenêtre s'arrête au changement de signe et non trois points par heure
+    # avant lui. Bornée à 3, elle ne montrait qu'un segment de courbe presque
+    # plat occupant six pour cent de la hauteur du cadre, sur lequel deux
+    # légendes annonçaient un changement de signe qui n'y était pas : « Δ > 0
+    # : la grille paie » et « Δ < 0 : la grille coûte » décrivaient un
+    # bornage, pas une donnée. Le seuil entre maintenant dans le cadre, et
+    # avec lui la seule chose que la figure ait à dire — il tombe loin à
+    # droite du domaine de dérive plausible.
+    x_max = crit * 1.16
     pts = []
-    for i in range(121):
-        mu_h = 3.0 * i / 120.0
+    for i in range(161):
+        mu_h = x_max * i / 160.0
         cmp = fib.compare(leg_hi - leg_lo, a, target, FRICTION, mu_h / 60.0,
                           SIGMA_1MIN, om.expected_time, oo.expected_time)
         pts.append((mu_h, cmp.edge))
+    ys = [y for _, y in pts]
+    marge = (max(ys) - min(ys)) * 0.16
+    p2.domain(0.0, x_max, min(ys) - marge, max(ys) + marge)
+    bas_pl, haut_pl = _plausible()
+    p2.band_x(bas_pl, haut_pl, "wash")
+    p2.frame()
+    p2.grid_y([-0.1, 0.0, 0.1, 0.2, 0.3], lambda v: _num(v, 1),
+              "Δ en points d'indice par signal", side="right")
+    p2.grid_x([0, 2, 4, 6, 8], lambda v: _num(v, 1),
+              "dérive captée (points par heure)")
     p2.path(pts, "s1")
     p2.hline(0.0, "zero")
-    crit = fib.compare(leg_hi - leg_lo, a, target, FRICTION, mu_star, SIGMA_1MIN,
-                       om.expected_time, oo.expected_time).critical_drift * 60.0
-    # Le changement de signe tombe au-delà de la dérive tracée : le marquer à
-    # sa position projetterait le repère, la ligne et l'étiquette hors du
-    # cadre. On le porte alors comme une lecture au bord, ce qui dit la même
-    # chose sans mentir sur l'échelle.
-    if crit <= p2.x1:
-        p2.vline(crit, "lvl")
-        p2.dot(crit, 0.0, "s2",
-               f"changement de signe · {crit:.2f} point par heure")
-        p2.label(crit, 0.30, "µ*", dx=5, dy=0, cls="dl halo")
-    else:
-        p2.tag(0.30, f"µ* = {crit:.1f} pt/h, hors cadre", side="right")
-    p2.label(3.0, 0.16, "Δ > 0 : la grille paie", dx=-6, dy=0,
+    p2.vline(crit, "lvl")
+    p2.dot(crit, 0.0, "s2", f"changement de signe · {crit:.2f} point par heure")
+    p2.label(crit, max(ys) * 0.60, f"µ* = {_num(crit, 1)} pt/h", dx=-6, dy=0,
+             anchor="end", cls="dl halo")
+    p2.label((bas_pl * haut_pl) ** 0.5, max(ys) + marge,
+             "dérive plausible", dx=0, dy=12, anchor="middle", cls="tk halo")
+    p2.label(x_max, max(ys) * 0.24, "Δ > 0 : la grille paie", dx=-6, dy=0,
              anchor="end", cls="lg halo")
-    p2.label(3.0, -0.14, "Δ < 0 : la grille coûte", dx=-6, dy=0,
+    p2.label(x_max, min(ys) * 0.62, "Δ < 0 : la grille coûte", dx=-6, dy=0,
              anchor="end", cls="lg halo")
 
     b.caption(320, 300, "trait plein : impulsion · pointillé : retracement · à gauche "

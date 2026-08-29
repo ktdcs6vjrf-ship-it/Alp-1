@@ -381,9 +381,21 @@ def fig_montecarlo() -> str:
     """Un backtest est un tirage, et cette figure montre les autres.
 
     Les deux faisceaux sont construits sur la même géométrie et la même
-    friction ; seule la dérive change. Leur recouvrement est le résultat : la
-    courbe médiane d'une stratégie sans edge et le décile bas d'une stratégie
-    avec edge occupent la même région du plan pendant toute l'année.
+    friction ; seule la dérive change.
+
+    La légende annonçait leur recouvrement « pendant toute l'année ». Elle
+    était fausse, et il faut dire pourquoi elle l'était : les deux intervalles
+    à 90 % cessent de se toucher au trade 240, moins d'une demi-année, et les
+    lois terminales sont disjointes — aucune année sans dérive ne dépasse la
+    médiane des années avec dérive.
+
+    Ce n'est pas un résultat sur le marché. C'est la conséquence de
+    l'hypothèse : la dérive de référence vaut `DRIFT_MULTIPLE × c/E[τ]`, soit
+    deux fois le seuil de rentabilité, c'est-à-dire qu'elle est supposée au
+    niveau exact qui rend la stratégie rentable. Un faisceau construit sous
+    cette hypothèse ne pouvait pas rester confondu avec celui de la loi nulle.
+    Ce que la figure montre est donc la circularité de la calibration, non
+    l'indistinguabilité des deux régimes.
     """
     from . import quant as q
     from .mc import Rng, fan, fan_index, quantile
