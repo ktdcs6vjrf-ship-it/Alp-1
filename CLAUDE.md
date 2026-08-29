@@ -21,12 +21,13 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (≈740 ko, 44 sections en douze
-parties, 17 tables, 34 figures dont neuf surfaces isométriques). L'évaluation
+**ALP nº 3** — `docs/prouver-un-jugement.html` (≈800 ko, 46 sections en treize
+parties, 19 tables, 36 figures dont onze surfaces isométriques). L'évaluation
 d'un opérateur discrétionnaire dont l'avantage n'est pas codable, puis le
-seuil de rentabilité, puis la lecture du flux. Chaîne : `journal.py` →
-`operator.py` → `attribution.py` → `report10/11/13/14.py` + `figdisc.py` +
-`figflux.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+seuil de rentabilité, puis **les concepts de sortie**, puis la lecture du flux.
+Chaîne : `journal.py` → `operator.py` → `attribution.py` →
+`report10/11/13/14.py` + `sorties.py` + `figdisc.py` + `figflux.py` +
+`figsortie.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Un troisième build existe, `docs/alp1-paper.html` (`--paper`), version plus
 ancienne et plus courte d'ALP nº 1. Il partage `report*.py` : **une correction
@@ -120,6 +121,21 @@ Flux d'ordres
 - `vprofile.py` — profil de volume, POC, HVN/LVN.
 
 Rendu
+- `sorties.py` — **douze concepts de sortie simulés sur trajectoires
+  appariées.** Sous prix sans dérive ils rendent tous `−c/a` ; sous dérive ils
+  tombent tous sur `(µ·E[τ]−c)/a`. Deux pièges y sont enterrés : l'identité de
+  Wald mesure le temps **exposé** (l'intégrale de la taille de position), pas
+  le temps écoulé — la prise partielle est la seule règle où les deux diffèrent,
+  et sa prédiction échoue tant qu'on prend le mauvais ; et la simulation tourne
+  au stop de 0,150 %, parce qu'à 0,6 point une minute de bruit vaut deux fois
+  le stop et qu'il n'y a alors *aucun* concept de sortie à discuter.
+- `pieds.py` — la prose de pied sort du SVG et se recompose sous la figure.
+  **Les trois documents y passent** ; `paper.py` ne le faisait pas, faute de
+  pouvoir importer `workingpaper` sans cycle. Deux règles y sont enterrées :
+  une ligne de pied non finale doit finir sur une virgule, sinon le raccord
+  la ponctue et coupe la phrase ; et toute phrase qui commence prend sa
+  majuscule, sauf si elle ouvre sur une lettre grecque — `µ` capitalisé
+  donnerait `Μ`.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
@@ -259,7 +275,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 864 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 878 tests (compter ~25 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html

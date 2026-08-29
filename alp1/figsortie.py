@@ -173,14 +173,14 @@ def fig_sortie_surface() -> str:
     def signe(v: float) -> str:
         return "dn" if v < 0.0 else "up"
 
-    b = Board(660, 406)
+    b = Board(660, 398)
     b.add('<text class="hdr" x="0" y="18">L\'espérance sur le plan du temps '
           'et de la dérive</text>')
     b.add('<text class="sub" x="0" y="34">hauteur et couleur : '
           '(µ·t/60 − c)/a · la frontière rouge-vert est µ = 60c/t</text>')
     b.add('<line class="ba" x1="0" y1="46" x2="660" y2="46"/>')
     surface(
-        b, 356.0, 172.0, z, zlo, zhi, cx=40.0, cy=13.0, cz=150.0,
+        b, 356.0, 150.0, z, zlo, zhi, cx=40.0, cy=13.0, cz=150.0,
         row_labels=[_num(t, 0) for t in TEMPS_3D[:-1]]
                    + [_num(TEMPS_3D[-1], 0) + " min"],
         col_labels=[_num(d, 1) for d in DERIVES_3D[:-1]]
@@ -190,14 +190,19 @@ def fig_sortie_surface() -> str:
                                 math.floor(zhi / 0.25) + 1)],
         tip="E[R] = {v:+.3f} R", classify=signe, zero=0.0,
     )
-    b.annotation(0, 322, "la frontière recule vers les fortes dérives")
-    b.annotation(0, 336, "à mesure que la position se raccourcit")
-    b.legend(0, 360, [("dn", "espérance négative — µ < 60c/t"),
+    b.annotation(0, 300, "la frontière recule vers les fortes dérives")
+    b.annotation(0, 314, "à mesure que la position se raccourcit")
+    b.legend(0, 338, [("dn", "espérance négative — µ < 60c/t"),
                       ("up", "espérance positive")], step=330, kind="swatch")
-    b.caption(330, 384, "l'arête gauche est le temps de position, l'arête "
+    # Chaque ligne de pied sauf la dernière doit finir sur une virgule : le
+    # raccord pose un point partout ailleurs, et la phrase se coupe en deux.
+    b.caption(330, 362, "l'arête gauche est le temps de position, l'arête "
                         "droite la dérive du marché,")
-    b.caption(330, 398, "et la hauteur l'espérance nette que leur produit "
-                        "commande")
+    b.caption(330, 376, "la hauteur l'espérance nette que leur produit "
+                        "commande,")
+    b.caption(330, 390, "et la couleur la moyenne des quatre coins de chaque "
+                        "maille — l'arête de plus faible dérive n'y est donc "
+                        "pas lisible")
     return b.render(
         "Surface de l espérance nette sur le plan du temps de position et de "
         "la dérive du marché, avec la frontière du signe")

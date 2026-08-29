@@ -70,6 +70,13 @@ def extraire(svg: str) -> tuple[str, list[str]]:
     return TEXTE_SVG.sub(remplacer, svg), pieds
 
 
+#: Minuscules latines, à l'exclusion des lettres grecques et des symboles.
+#: `µ` vaut U+00B5 et `σ` U+03C3 : aucune des deux n'est dans cet intervalle,
+#: et c'est voulu — capitaliser `µ` donnerait `Μ`, qui n'est pas le même
+#: caractère et ne veut plus rien dire.
+_MINUSCULES = "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ"
+
+
 def joindre(pieds: list[str]) -> str:
     """Recompose les lignes de pied en phrases.
 
@@ -78,15 +85,27 @@ def joindre(pieds: list[str]) -> str:
     et la ponctuer la couperait en deux phrases dont la seconde commencerait
     en minuscule. Le cas s'est produit : « … au-delà du seuil. les signaux
     manqués sont ceux qui partaient. »
+
+    **Et toute phrase qui commence prend sa majuscule.** Les lignes de pied
+    sont écrites en fragments minuscules, ce qui est juste tant qu'elles se
+    suivent dans une même phrase et faux dès qu'une phrase s'achève. Le
+    défaut se lisait une quarantaine de fois dans les trois documents : « …
+    aucune donnée de marché. la bande 3 σ est dépassée … ». La majuscule ne
+    s'applique qu'aux minuscules latines : `µ` et `σ` ouvrent des pieds, et
+    les capitaliser changerait le caractère.
     """
     sortie = []
+    debut_de_phrase = True
     for i, ligne in enumerate(pieds):
         ligne = ligne.rstrip()
+        if debut_de_phrase and ligne[:1] in _MINUSCULES:
+            ligne = ligne[0].upper() + ligne[1:]
         continue_ = ligne.endswith((",", ";")) and i + 1 < len(pieds)
         if continue_ or ligne.endswith((".", "?", "!")):
             sortie.append(ligne)
         else:
             sortie.append(ligne.rstrip(" ,;") + ".")
+        debut_de_phrase = not continue_
     return " ".join(sortie)
 
 

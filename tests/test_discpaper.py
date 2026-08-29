@@ -58,6 +58,24 @@ class TestMarquesDeNote(unittest.TestCase):
             self.assertNotIn("**", note)
             self.assertNotIn("`", note)
 
+    def test_aucune_note_de_figure_ne_coupe_une_phrase(self):
+        """Une phrase qui reprend en minuscule après un point est coupée.
+
+        Les lignes de pied sont écrites en fragments minuscules ; le raccord
+        les termine par un point dès qu'une phrase s'achève, et la suivante
+        gardait sa minuscule. Le défaut se lisait une quarantaine de fois
+        dans les trois documents. `pieds.joindre` pose la majuscule, ce test
+        la garde — et il ne vise que les notes de figure, une note de table
+        commençant par son intitulé « Lecture. » suivi d'une variable.
+        """
+        for note in re.findall(r'<p class="note">(.*?)</p>', self.corps, re.S):
+            if 'class="lab"' in note:
+                continue
+            texte = re.sub(r"<[^>]+>", "", note)
+            for m in re.finditer(r"\.\s+([a-zà-öø-ÿ])", texte):
+                self.fail(f"phrase coupée : "
+                          f"…{texte[max(0, m.start() - 50):m.start() + 30]}…")
+
     def test_aucune_cellule_ne_publie_sa_marque(self):
         for cellule in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", self.corps, re.S):
             self.assertNotIn("**", cellule)
