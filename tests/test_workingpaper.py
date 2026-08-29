@@ -92,12 +92,34 @@ class TestPiedsDeFigure(unittest.TestCase):
             ["première ligne", "deuxième ligne, qui continue,", "et sa suite"])
         self.assertEqual(
             recompose,
-            "première ligne. deuxième ligne, qui continue, et sa suite.")
+            "Première ligne. Deuxième ligne, qui continue, et sa suite.")
 
     def test_une_virgule_finale_sur_la_derniere_ligne_devient_un_point(self):
         """Rien ne suit : la virgule n'annonce plus rien."""
         self.assertEqual(monograph.joindre_pieds(["une ligne seule,"]),
-                         "une ligne seule.")
+                         "Une ligne seule.")
+
+    def test_une_phrase_qui_commence_prend_sa_majuscule(self):
+        """Et une ligne qui continue la sienne ne la prend pas.
+
+        Les deux attentes ci-dessus portaient la minuscule : elles encodaient
+        le défaut, à savoir qu'une phrase reprenait en minuscule après un
+        point. Ce test-ci porte la règle plutôt que son symptôme.
+        """
+        self.assertEqual(
+            monograph.joindre_pieds(["aucune donnée de marché",
+                                     "la bande est dépassée"]),
+            "Aucune donnée de marché. La bande est dépassée.")
+        self.assertEqual(
+            monograph.joindre_pieds(["aucune donnée,", "la bande est dépassée"]),
+            "Aucune donnée, la bande est dépassée.")
+
+    def test_une_lettre_grecque_ne_se_capitalise_pas(self):
+        """`µ` capitalisé donnerait `Μ`, qui n'est plus le même caractère."""
+        for ouverture in ("µ = 2 µ* est l'hypothèse", "σ suit la racine"):
+            with self.subTest(ligne=ouverture):
+                self.assertTrue(
+                    monograph.joindre_pieds([ouverture]).startswith(ouverture[0]))
 
     def test_une_ligne_courte_marquee_cap_est_extraite(self):
         """La marque prime sur la longueur.
