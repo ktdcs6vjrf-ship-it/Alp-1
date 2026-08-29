@@ -664,3 +664,152 @@ def render_all() -> dict[str, str]:
 def main() -> None:
     for nom, svg in render_all().items():
         print(f"{nom:16} {len(svg):7d} octets")
+
+
+# ---------------------------------------------------------------------------
+# Le spectre : combien de vos signaux sont réels
+# ---------------------------------------------------------------------------
+
+
+def fig_spectrum() -> str:
+    """La loi de Marchenko-Pastur, et la transition qui décide.
+
+    À gauche, le spectre d'une matrice de corrélation de sept séries
+    **indépendantes** sur deux cent cinquante observations, avec sa forme
+    fermée posée dessus. Les valeurs propres n'y valent pas toutes un : elles
+    s'étalent entre deux bornes que le seul rapport `k/N` fixe. Un opérateur
+    qui trouve une première valeur propre à 1,3 et y voit un facteur commun
+    voit du bruit.
+
+    À droite, la transition de Baik-Ben Arous-Péché. C'est le résultat le plus
+    net que ce dépôt connaisse du problème qu'il mesure partout : sous une
+    force critique `√γ`, un facteur **réel** ne sort pas du bruit. Pas
+    faiblement — sa valeur propre reste exactement collée au bord, et aucune
+    finesse d'estimation ne l'en décolle.
+    """
+    from . import spectrum as sp
+
+    k, n = 7, 250
+    gamma = k / n
+    lo, hi = sp.mp_edges(gamma)
+    loi = sp.null_spectrum(k, n, draws=260)
+    seuil = sp.bbp_threshold(gamma)
+
+    b = _plate(400, "Spectre",
+               "Combien de vos signaux sont réels",
+               f"{k} couches · {n} séances · γ = {_num(gamma, 3)}")
+
+    # --- le spectre de bruit, contre sa forme fermée -----------------------
+    p1 = Panel(b, 92, 90, 268, 176, title="Le spectre du bruit",
+               readout="séries indépendantes")
+    xlo, xhi = lo * 0.72, max(hi, loi.lambda_max_q95) * 1.14
+    p1.domain(xlo, xhi, 0.0, 1.12)
+    p1.frame()
+    p1.grid_x([0.5, 1.0, 1.5], lambda v: _num(v, 1), "valeur propre")
+    p1.grid_y([0.0, 0.5, 1.0], lambda v: _num(v, 1), "densité")
+    _histogramme(p1, list(loi.eigenvalues), 30, xlo, xhi)
+    pic = max(sp.mp_density(lo + (hi - lo) * i / 400.0, gamma)
+              for i in range(1, 400))
+    p1.path([(lo + (hi - lo) * i / 400.0,
+              sp.mp_density(lo + (hi - lo) * i / 400.0, gamma) / pic)
+             for i in range(1, 400)], "s2", tip="Marchenko-Pastur")
+    p1.vline(hi, "lvl strong")
+    p1.label(hi, 0.92, "λ₊ = " + _num(hi, 2), dx=6, dy=0, cls="dl halo")
+    p1.vline(loi.lambda_max_q95, "lvl")
+    # À droite de la ligne : à gauche elle tombait au milieu de l'histogramme.
+    p1.label(loi.lambda_max_q95, 0.30, "λ max à 95 %", dx=6, dy=0,
+             cls="tk halo")
+
+    # --- la transition ---------------------------------------------------
+    p2 = Panel(b, 424, 90, 176, 176, title="La transition",
+               readout="force du facteur → valeur propre")
+    forces = [0.02 * i for i in range(1, 41)]
+    vals = [(s, sp.spiked_eigenvalue(s, gamma)) for s in forces]
+    p2.domain(0.0, forces[-1], hi * 0.97, max(v for _, v in vals) * 1.03)
+    p2.frame()
+    p2.grid_x([0.0, 0.2, 0.4, 0.6, 0.8], lambda v: _num(v, 1),
+              "force du facteur, s")
+    # Graduations déduites du domaine : « 2,0 » y était écrit à la main et
+    # tombait hors du cadre, `grid_y` ne découpant pas.
+    ylo2, yhi2 = hi * 0.97, max(v for _, v in vals) * 1.03
+    p2.grid_y([0.2 * j for j in range(0, 20) if ylo2 <= 0.2 * j <= yhi2],
+              lambda v: _num(v, 1), "λ observée", side="right")
+    p2.path(vals, "s1")
+    p2.vline(seuil, "lvl strong")
+    p2.dot(seuil, hi, "s2", f"seuil √γ = {seuil:.3f}", r=4.0)
+    p2.label(seuil, max(v for _, v in vals) * 0.99,
+             "√γ = " + _num(seuil, 2), dx=6, dy=0, cls="dl halo")
+    p2.label(seuil * 0.5, hi * 1.004, "invisible", dx=0, dy=13,
+             anchor="middle", cls="lg halo")
+
+    b.annotation(0, 314, "sous la force critique, un facteur réel ne sort pas "
+                         "du bruit — pas faiblement : pas du tout")
+    b.legend(0, 338, [("s2", "Marchenko-Pastur, forme fermée"),
+                      ("area ar1", "spectre simulé, " + _num(loi.draws, 0)
+                       + " tirages")], step=290, kind="line")
+    _source(b, "À gauche, les valeurs propres de la matrice de corrélation de "
+               "sept séries indépendantes sur deux cent cinquante "
+               "observations, et la loi de Marchenko-Pastur qui les décrit. "
+               "Le bord λ₊ ne dépend que du rapport du nombre de séries au "
+               "nombre d'observations. Il est asymptotique : à sept séries la "
+               "plus grande valeur propre du bruit lui reste inférieure, y "
+               "compris à son quantile à quatre-vingt-quinze pour cent, et le "
+               "présenter comme une barre que le bruit vient toucher serait "
+               "une exagération. À droite, la valeur propre observée d'un "
+               "facteur réel de force s : plate sous √γ, croissante au-dessus.")
+    return b.render("Spectre de Marchenko-Pastur d une matrice de corrélation "
+                    "de bruit, et transition de Baik-Ben Arous-Péché")
+
+
+FIGURES["flowspectre"] = fig_spectrum
+
+
+def fig_spectrum_surface() -> str:
+    """La force critique sur le plan (couches suivies × séances observées).
+
+    Le seuil `√(k/N)` ne contient rien du marché. Il dit seulement ceci : la
+    force minimale d'un facteur pour être vu croît comme la racine du nombre
+    de choses regardées et décroît comme la racine du nombre de fois où on
+    les a regardées.
+
+    La conséquence est directe et elle contredit un réflexe. Ajouter une
+    couche d'analyse ne coûte pas qu'une taxe de multiplicité — cela relève
+    aussi le seuil sous lequel un facteur réel devient invisible. Regarder
+    plus de choses rend chacune plus difficile à voir.
+    """
+    from . import spectrum as sp
+
+    couches = (3, 5, 7, 12, 20)
+    seances = (60, 125, 250, 500, 1000)
+    z = [[sp.bbp_threshold(k / n) for n in seances] for k in couches]
+    plat = [v for ligne in z for v in ligne]
+    marge = (max(plat) - min(plat)) * 0.06
+    zlo, zhi = max(min(plat) - marge, 0.0), max(plat) + marge
+
+    b = _plate(352, "La force critique",
+               "Ce qu'un facteur doit peser pour se voir",
+               "hauteur : √γ, sans dimension")
+    _surface(b, 314, 152, z, zlo, zhi, cx=34.0, cy=11.0, cz=138.0,
+             row_labels=[f"{k} couches" if k == couches[0] else f"{k}"
+                         for k in couches],
+             col_labels=[_num(n, 0) for n in seances[:-1]]
+                        + [_num(seances[-1], 0) + " séances"],
+             z_ticks=[(0.1 * j, _num(0.1 * j, 1))
+                      for j in range(0, int(zhi / 0.1) + 2)
+                      if zlo <= 0.1 * j <= zhi],
+             tip="force critique √γ = {v:.3f}", zero=zlo)
+    b.annotation(0, 306, "ajouter une couche relève le seuil sous lequel un "
+                         "facteur réel devient invisible")
+    _source(b, "Arête gauche : nombre de couches d'analyse suivies. Arête "
+               "droite : nombre de séances observées. La hauteur est la force "
+               "minimale qu'un facteur commun doit avoir pour que sa valeur "
+               "propre sorte du bruit, sans dimension. Elle ne contient "
+               "aucune propriété du marché. Trois couches sur mille séances "
+               "demandent un facteur de cinq pour cent ; vingt couches sur "
+               "soixante séances en demandent un de cinquante-huit. Regarder "
+               "plus de choses rend chacune plus difficile à voir.")
+    return b.render("Surface de la force critique d un facteur selon le "
+                    "nombre de couches suivies et de séances observées")
+
+
+FIGURES["flowspectre3d"] = fig_spectrum_surface

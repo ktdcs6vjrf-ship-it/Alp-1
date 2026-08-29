@@ -743,30 +743,31 @@
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d’un opérateur réel</a></li>
           <li><a href="#s-concavite">Le quatrième levier coûte moins cher que le premier</a></li>
+          <li><a href="#s-spectre">Combien de couches peut-on suivre&nbsp;?</a></li>
         </ol>
       </li>
       <li><span class="pt">Septième partie — Le mur d’échantillon</span>
-        <ol start="23">
+        <ol start="24">
           <li><a href="#s-routes">Trois routes indépendantes</a></li>
           <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
           <li><a href="#s-puissance">Où la détection devient acquise</a></li>
         </ol>
       </li>
       <li><span class="pt">Huitième partie — Comparaison des deux régimes de preuve</span>
-        <ol start="26">
+        <ol start="27">
           <li><a href="#s-versus">Pourquoi le jugement est prouvable là où la géométrie ne l’est pas</a></li>
           <li><a href="#s-consequence">Ce que cela change pour l’opérateur</a></li>
         </ol>
       </li>
       <li><span class="pt">Neuvième partie — Décomposer l’avantage</span>
-        <ol start="28">
+        <ol start="29">
           <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
           <li><a href="#s-validation">Une décomposition réfutable</a></li>
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
       <li><span class="pt">Dixième partie — Le seuil, et non le signal</span>
-        <ol start="31">
+        <ol start="32">
           <li><a href="#s-mauvaise-question">La question posée n’était pas la bonne</a></li>
           <li><a href="#s-effondrement">Le seuil s’effondre quand le stop s’élargit</a></li>
           <li><a href="#s-circularite">Une hypothèse qui supposait sa conclusion</a></li>
@@ -775,7 +776,7 @@
         </ol>
       </li>
       <li><span class="pt">Onzième partie — Lire le flux</span>
-        <ol start="36">
+        <ol start="37">
           <li><a href="#s-footprint">Le footprint, et ce qu’un déséquilibre vaut</a></li>
           <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n’observe</a></li>
           <li><a href="#s-tpo">Le profil de marché, et ses cinq lectures</a></li>
@@ -783,7 +784,7 @@
         </ol>
       </li>
       <li><span class="pt">Douzième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="40">
+        <ol start="41">
           <li><a href="#s-protocole">Ce qu’il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -3818,6 +3819,196 @@
 
   <p>La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n’a presque rien à gagner à en fermer un&nbsp;; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.</p>
 
+  <h2 id="s-spectre">Combien de couches peut-on suivre&nbsp;?</h2>
+
+  <p>La taxe de multiplicité compte les <em>configurations</em>. Une autre arithmétique compte les <em>couches</em>, et elle donne une borne que la première ne voit pas.</p>
+
+  <p>Un opérateur qui suit 7&nbsp;couches d’analyse en regarde la matrice de corrélation, y trouve une première valeur propre nettement supérieure aux autres, et conclut qu’un facteur commun gouverne ses signaux. Marchenko et Pastur ont montré en 1967 que cette conclusion est presque toujours fausse, et pour une raison qui se calcule sans rien mesurer&nbsp;: sur <span class="v">k</span> séries <strong>indépendantes</strong> observées <span class="v">N</span> fois, les valeurs propres de la matrice de corrélation empirique ne valent pas toutes un. Elles s’étalent entre deux bornes que le seul rapport <span class="v">γ&nbsp;=&nbsp;k/N</span> fixe&nbsp;:</p>
+
+  <p class="eq">λ<sub>±</sub> = (1 ± √γ)²<span class="eqn">(3)</span></p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 14</span> — À gauche, le spectre d’une matrice de corrélation de 7&nbsp;séries <em>indépendantes</em> sur 250&nbsp;observations, avec la loi de Marchenko-Pastur posée dessus. À droite, la transition de Baik-Ben Arous-Péché&nbsp;: sous une force critique, un facteur réel ne sort pas du bruit.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 400" role="img" aria-label="Spectre de Marchenko-Pastur d une matrice de corrélation de bruit, et transition de Baik-Ben Arous-Péché" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">SPECTRE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Combien de vos signaux sont réels</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">7 couches · 250 séances · γ = 0,028</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<text class="hdr" x="92.0" y="78.0">Le spectre du bruit</text>
+<text class="sub" x="360.0" y="65.0" text-anchor="end">séries indépendantes</text>
+<line class="hsep" x1="92.0" y1="84.0" x2="360.0" y2="84.0"/>
+<rect class="frame" x="92.0" y="90.0" width="268.0" height="176.0"/>
+<text class="tk" x="92.2" y="279.0" text-anchor="middle">0,5</text>
+<text class="tk" x="219.3" y="279.0" text-anchor="middle">1,0</text>
+<text class="tk" x="346.4" y="279.0" text-anchor="middle">1,5</text>
+<line class="ba" x1="92.0" y1="266.0" x2="360.0" y2="266.0"/>
+<text class="ax" x="226.0" y="294.0" text-anchor="middle">valeur propre</text>
+<line class="gl" x1="92.0" y1="266.0" x2="360.0" y2="266.0"/>
+<text class="tk" x="87.0" y="265.0" text-anchor="end">0,0</text>
+<line class="gl" x1="92.0" y1="187.4" x2="360.0" y2="187.4"/>
+<text class="tk" x="87.0" y="190.4" text-anchor="end">0,5</text>
+<line class="gl" x1="92.0" y1="108.9" x2="360.0" y2="108.9"/>
+<text class="tk" x="87.0" y="111.9" text-anchor="end">1,0</text>
+<text class="ax" transform="translate(50.0,178.0) rotate(-90)" text-anchor="middle">densité</text>
+<rect class="area ar1" x="110.37" y="264.94" width="7.93" height="1.06"><title>0.1 % entre 0.57 et 0.60</title></rect>
+<rect class="area ar1" x="128.23" y="264.94" width="7.93" height="1.06"><title>0.1 % entre 0.64 et 0.67</title></rect>
+<rect class="area ar1" x="137.17" y="251.14" width="7.93" height="14.86"><title>0.8 % entre 0.67 et 0.71</title></rect>
+<rect class="area ar1" x="146.10" y="206.54" width="7.93" height="59.46"><title>3.1 % entre 0.71 et 0.75</title></rect>
+<rect class="area ar1" x="155.03" y="186.37" width="7.93" height="79.63"><title>4.1 % entre 0.75 et 0.78</title></rect>
+<rect class="area ar1" x="163.97" y="153.45" width="7.93" height="112.55"><title>5.8 % entre 0.78 et 0.82</title></rect>
+<rect class="area ar1" x="172.90" y="135.40" width="7.93" height="130.60"><title>6.8 % entre 0.82 et 0.85</title></rect>
+<rect class="area ar1" x="181.83" y="146.02" width="7.93" height="119.98"><title>6.2 % entre 0.85 et 0.89</title></rect>
+<rect class="area ar1" x="190.77" y="131.15" width="7.93" height="134.85"><title>7.0 % entre 0.89 et 0.92</title></rect>
+<rect class="area ar1" x="199.70" y="108.86" width="7.93" height="157.14"><title>8.1 % entre 0.92 et 0.96</title></rect>
+<rect class="area ar1" x="208.63" y="139.65" width="7.93" height="126.35"><title>6.5 % entre 0.96 et 0.99</title></rect>
+<rect class="area ar1" x="217.57" y="108.86" width="7.93" height="157.14"><title>8.1 % entre 0.99 et 1.03</title></rect>
+<rect class="area ar1" x="226.50" y="116.29" width="7.93" height="149.71"><title>7.7 % entre 1.03 et 1.06</title></rect>
+<rect class="area ar1" x="235.43" y="123.72" width="7.93" height="142.28"><title>7.4 % entre 1.06 et 1.10</title></rect>
+<rect class="area ar1" x="244.37" y="159.82" width="7.93" height="106.18"><title>5.5 % entre 1.10 et 1.13</title></rect>
+<rect class="area ar1" x="253.30" y="161.95" width="7.93" height="104.05"><title>5.4 % entre 1.13 et 1.17</title></rect>
+<rect class="area ar1" x="262.23" y="177.87" width="7.93" height="88.13"><title>4.6 % entre 1.17 et 1.20</title></rect>
+<rect class="area ar1" x="271.17" y="167.25" width="7.93" height="98.75"><title>5.1 % entre 1.20 et 1.24</title></rect>
+<rect class="area ar1" x="280.10" y="190.61" width="7.93" height="75.39"><title>3.9 % entre 1.24 et 1.27</title></rect>
+<rect class="area ar1" x="289.03" y="213.97" width="7.93" height="52.03"><title>2.7 % entre 1.27 et 1.31</title></rect>
+<rect class="area ar1" x="297.97" y="253.26" width="7.93" height="12.74"><title>0.7 % entre 1.31 et 1.34</title></rect>
+<rect class="area ar1" x="306.90" y="258.57" width="7.93" height="7.43"><title>0.4 % entre 1.34 et 1.38</title></rect>
+<rect class="area ar1" x="315.83" y="264.94" width="7.93" height="1.06"><title>0.1 % entre 1.38 et 1.41</title></rect>
+<path class="ln s2" d="M141.78,244.05 L142.20,235.07 L142.63,228.26 L143.05,222.58 L143.48,217.63 L143.90,213.21 L144.33,209.19 L144.75,205.48 L145.18,202.05 L145.61,198.83 L146.03,195.81 L146.46,192.95 L146.88,190.25 L147.31,187.67 L147.73,185.22 L148.16,182.87 L148.58,180.62 L149.01,178.46 L149.43,176.39 L149.86,174.39 L150.28,172.47 L150.71,170.62 L151.14,168.82 L151.56,167.09 L151.99,165.42 L152.41,163.79 L152.84,162.22 L153.26,160.70 L153.69,159.22 L154.11,157.78 L154.54,156.39 L154.96,155.04 L155.39,153.72 L155.81,152.44 L156.24,151.20 L156.67,149.99 L157.09,148.81 L157.52,147.66 L157.94,146.54 L158.37,145.46 L158.79,144.40 L159.22,143.36 L159.64,142.36 L160.07,141.37 L160.49,140.42 L160.92,139.48 L161.34,138.57 L161.77,137.69 L162.19,136.82 L162.62,135.97 L163.05,135.15 L163.47,134.35 L163.90,133.56 L164.32,132.80 L164.75,132.05 L165.17,131.32 L165.60,130.61 L166.02,129.91 L166.45,129.23 L166.87,128.57 L167.30,127.93 L167.72,127.30 L168.15,126.68 L168.58,126.08 L169.00,125.50 L169.43,124.93 L169.85,124.37 L170.28,123.83 L170.70,123.30 L171.13,122.78 L171.55,122.28 L171.98,121.79 L172.40,121.31 L172.83,120.84 L173.25,120.38 L173.68,119.94 L174.11,119.51 L174.53,119.09 L174.96,118.68 L175.38,118.28 L175.81,117.89 L176.23,117.51 L176.66,117.15 L177.08,116.79 L177.51,116.44 L177.93,116.10 L178.36,115.77 L178.78,115.45 L179.21,115.15 L179.64,114.84 L180.06,114.55 L180.49,114.27 L180.91,114.00 L181.34,113.73 L181.76,113.47 L182.19,113.22 L182.61,112.98 L183.04,112.75 L183.46,112.52 L183.89,112.31 L184.31,112.10 L184.74,111.89 L185.17,111.70 L185.59,111.51 L186.02,111.33 L186.44,111.16 L186.87,110.99 L187.29,110.83 L187.72,110.68 L188.14,110.54 L188.57,110.40 L188.99,110.27 L189.42,110.14 L189.84,110.02 L190.27,109.91 L190.70,109.80 L191.12,109.70 L191.55,109.61 L191.97,109.52 L192.40,109.43 L192.82,109.36 L193.25,109.29 L193.67,109.22 L194.10,109.16 L194.52,109.11 L194.95,109.06 L195.37,109.01 L195.80,108.98 L196.23,108.94 L196.65,108.92 L197.08,108.89 L197.50,108.88 L197.93,108.87 L198.35,108.86 L198.78,108.86 L199.20,108.86 L199.63,108.87 L200.05,108.88 L200.48,108.90 L200.90,108.92 L201.33,108.95 L201.76,108.98 L202.18,109.01 L202.61,109.05 L203.03,109.10 L203.46,109.15 L203.88,109.20 L204.31,109.26 L204.73,109.32 L205.16,109.39 L205.58,109.46 L206.01,109.54 L206.43,109.61 L206.86,109.70 L207.29,109.78 L207.71,109.88 L208.14,109.97 L208.56,110.07 L208.99,110.17 L209.41,110.28 L209.84,110.39 L210.26,110.51 L210.69,110.62 L211.11,110.75 L211.54,110.87 L211.96,111.00 L212.39,111.14 L212.82,111.27 L213.24,111.41 L213.67,111.56 L214.09,111.70 L214.52,111.86 L214.94,112.01 L215.37,112.17 L215.79,112.33 L216.22,112.49 L216.64,112.66 L217.07,112.83 L217.49,113.01 L217.92,113.19 L218.35,113.37 L218.77,113.55 L219.20,113.74 L219.62,113.93 L220.05,114.13 L220.47,114.33 L220.90,114.53 L221.32,114.73 L221.75,114.94 L222.17,115.15 L222.60,115.36 L223.02,115.58 L223.45,115.80 L223.87,116.02 L224.30,116.25 L224.73,116.47 L225.15,116.71 L225.58,116.94 L226.00,117.18 L226.43,117.42 L226.85,117.66 L227.28,117.91 L227.70,118.16 L228.13,118.41 L228.55,118.66 L228.98,118.92 L229.40,119.18 L229.83,119.44 L230.26,119.71 L230.68,119.98 L231.11,120.25 L231.53,120.53 L231.96,120.80 L232.38,121.08 L232.81,121.37 L233.23,121.65 L233.66,121.94 L234.08,122.23 L234.51,122.53 L234.93,122.82 L235.36,123.12 L235.79,123.42 L236.21,123.73 L236.64,124.04 L237.06,124.35 L237.49,124.66 L237.91,124.98 L238.34,125.29 L238.76,125.61 L239.19,125.94 L239.61,126.26 L240.04,126.59 L240.46,126.92 L240.89,127.26 L241.32,127.60 L241.74,127.93 L242.17,128.28 L242.59,128.62 L243.02,128.97 L243.44,129.32 L243.87,129.67 L244.29,130.03 L244.72,130.38 L245.14,130.74 L245.57,131.11 L245.99,131.47 L246.42,131.84 L246.85,132.21 L247.27,132.59 L247.70,132.96 L248.12,133.34 L248.55,133.72 L248.97,134.11 L249.40,134.49 L249.82,134.88 L250.25,135.28 L250.67,135.67 L251.10,136.07 L251.52,136.47 L251.95,136.87 L252.38,137.28 L252.80,137.69 L253.23,138.10 L253.65,138.51 L254.08,138.93 L254.50,139.35 L254.93,139.77 L255.35,140.19 L255.78,140.62 L256.20,141.05 L256.63,141.49 L257.05,141.92 L257.48,142.36 L257.91,142.80 L258.33,143.25 L258.76,143.69 L259.18,144.14 L259.61,144.60 L260.03,145.05 L260.46,145.51 L260.88,145.97 L261.31,146.44 L261.73,146.91 L262.16,147.38 L262.58,147.85 L263.01,148.33 L263.44,148.81 L263.86,149.29 L264.29,149.78 L264.71,150.27 L265.14,150.76 L265.56,151.25 L265.99,151.75 L266.41,152.26 L266.84,152.76 L267.26,153.27 L267.69,153.78 L268.11,154.30 L268.54,154.81 L268.97,155.34 L269.39,155.86 L269.82,156.39 L270.24,156.92 L270.67,157.46 L271.09,158.00 L271.52,158.54 L271.94,159.09 L272.37,159.64 L272.79,160.20 L273.22,160.75 L273.64,161.32 L274.07,161.88 L274.50,162.45 L274.92,163.03 L275.35,163.60 L275.77,164.19 L276.20,164.77 L276.62,165.36 L277.05,165.96 L277.47,166.56 L277.90,167.16 L278.32,167.77 L278.75,168.38 L279.17,169.00 L279.60,169.62 L280.03,170.25 L280.45,170.88 L280.88,171.52 L281.30,172.16 L281.73,172.81 L282.15,173.46 L282.58,174.12 L283.00,174.78 L283.43,175.45 L283.85,176.12 L284.28,176.80 L284.70,177.49 L285.13,178.18 L285.55,178.88 L285.98,179.58 L286.41,180.29 L286.83,181.01 L287.26,181.74 L287.68,182.47 L288.11,183.21 L288.53,183.95 L288.96,184.70 L289.38,185.46 L289.81,186.23 L290.23,187.01 L290.66,187.79 L291.08,188.59 L291.51,189.39 L291.94,190.20 L292.36,191.02 L292.79,191.85 L293.21,192.69 L293.64,193.54 L294.06,194.40 L294.49,195.27 L294.91,196.15 L295.34,197.05 L295.76,197.96 L296.19,198.88 L296.61,199.81 L297.04,200.76 L297.47,201.72 L297.89,202.69 L298.32,203.69 L298.74,204.69 L299.17,205.72 L299.59,206.76 L300.02,207.83 L300.44,208.91 L300.87,210.02 L301.29,211.14 L301.72,212.29 L302.14,213.47 L302.57,214.68 L303.00,215.91 L303.42,217.18 L303.85,218.48 L304.27,219.81 L304.70,221.19 L305.12,222.61 L305.55,224.08 L305.97,225.60 L306.40,227.19 L306.82,228.84 L307.25,230.56 L307.67,232.38 L308.10,234.30 L308.53,236.35 L308.95,238.55 L309.38,240.94 L309.80,243.58 L310.23,246.59 L310.65,250.15 L311.08,254.79"><title>Marchenko-Pastur</title></path>
+<line class="lvl strong" x1="311.5" y1="90.0" x2="311.5" y2="266.0"/>
+<text class="dl halo" x="317.5" y="121.4" text-anchor="start">λ₊ = 1,36</text>
+<line class="lvl" x1="302.3" y1="90.0" x2="302.3" y2="266.0"/>
+<text class="tk halo" x="308.3" y="218.9" text-anchor="start">λ max à 95 %</text>
+<text class="hdr" x="424.0" y="78.0">La transition</text>
+<text class="sub" x="600.0" y="65.0" text-anchor="end">force du facteur → valeur propre</text>
+<line class="hsep" x1="424.0" y1="84.0" x2="600.0" y2="84.0"/>
+<rect class="frame" x="424.0" y="90.0" width="176.0" height="176.0"/>
+<text class="tk" x="424.0" y="279.0" text-anchor="middle">0,0</text>
+<text class="tk" x="468.0" y="279.0" text-anchor="middle">0,2</text>
+<text class="tk" x="512.0" y="279.0" text-anchor="middle">0,4</text>
+<text class="tk" x="556.0" y="279.0" text-anchor="middle">0,6</text>
+<text class="tk" x="600.0" y="279.0" text-anchor="middle">0,8</text>
+<line class="ba" x1="424.0" y1="266.0" x2="600.0" y2="266.0"/>
+<text class="ax" x="512.0" y="294.0" text-anchor="middle">force du facteur, s</text>
+<line class="gl" x1="424.0" y1="242.9" x2="600.0" y2="242.9"/>
+<text class="tk" x="605.0" y="245.9">1,4</text>
+<line class="gl" x1="424.0" y1="184.0" x2="600.0" y2="184.0"/>
+<text class="tk" x="605.0" y="187.0">1,6</text>
+<line class="gl" x1="424.0" y1="125.0" x2="600.0" y2="125.0"/>
+<text class="tk" x="605.0" y="128.0">1,8</text>
+<text class="ax" transform="translate(642.0,178.0) rotate(-90)" text-anchor="middle">λ observée</text>
+<path class="ln s1" d="M428.40,253.95 L432.80,253.95 L437.20,253.95 L441.60,253.95 L446.00,253.95 L450.40,253.95 L454.80,253.95 L459.20,253.95 L463.60,253.69 L468.00,252.38 L472.40,250.23 L476.80,247.47 L481.20,244.22 L485.60,240.59 L490.00,236.66 L494.40,232.48 L498.80,228.10 L503.20,223.56 L507.60,218.87 L512.00,214.06 L516.40,209.15 L520.80,204.14 L525.20,199.07 L529.60,193.92 L534.00,188.71 L538.40,183.45 L542.80,178.14 L547.20,172.79 L551.60,167.41 L556.00,161.99 L560.40,156.53 L564.80,151.06 L569.20,145.55 L573.60,140.02 L578.00,134.48 L582.40,128.91 L586.80,123.32 L591.20,117.72 L595.60,112.10 L600.00,106.47"></path>
+<line class="lvl strong" x1="460.8" y1="90.0" x2="460.8" y2="266.0"/>
+<circle class="pt s2" cx="460.81" cy="253.95" r="4"><title>seuil √γ = 0.167</title></circle>
+<text class="dl halo" x="466.8" y="112.0" text-anchor="start">√γ = 0,17</text>
+<text class="lg halo" x="442.4" y="265.3" text-anchor="middle">invisible</text>
+<text class="lg keep" x="0.0" y="314.0" text-anchor="start">sous la force critique, un facteur réel ne sort pas du bruit — pas faiblement : pas du tout</text>
+<line class="ln s2" x1="0.0" y1="338.0" x2="14.0" y2="338.0"/>
+<text class="lg" x="20.0" y="341.5">Marchenko-Pastur, forme fermée</text>
+<line class="ln area ar1" x1="290.0" y1="338.0" x2="304.0" y2="338.0"/>
+<text class="lg" x="310.0" y="341.5">spectre simulé, 260 tirages</text>
+
+</svg></div>
+      <p class="note">À gauche, les valeurs propres de la matrice de corrélation de sept séries indépendantes sur deux cent cinquante observations, et la loi de Marchenko-Pastur qui les décrit. Le bord λ₊ ne dépend que du rapport du nombre de séries au nombre d’observations. Il est asymptotique : à sept séries la plus grande valeur propre du bruit lui reste inférieure, y compris à son quantile à quatre-vingt-quinze pour cent, et le présenter comme une barre que le bruit vient toucher serait une exagération. À droite, la valeur propre observée d’un facteur réel de force s : plate sous √γ, croissante au-dessus.</p>
+    </figure>
+
+      <figure class="wide">
+      <figcaption><span class="lab">Table 6</span> — Le bord du bruit et la force critique, selon le nombre de couches suivies et de séances observées.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Couches k</th><th>Séances N</th><th>γ = k/N</th><th>Bord λ₊</th><th>Part de variance</th><th>Force critique √γ</th><th>N requis pour s = 0,30</th></tr></thead>
+        <tbody>
+          <tr><td>3</td><td>250</td><td>0,0120</td><td>1,231</td><td>41,0 %</td><td>0,110</td><td>33</td></tr>
+          <tr><td>7</td><td>250</td><td>0,0280</td><td>1,363</td><td>19,5 %</td><td>0,167</td><td>78</td></tr>
+          <tr><td>7</td><td>60</td><td>0,1167</td><td>1,800</td><td>25,7 %</td><td>0,342</td><td>78</td></tr>
+          <tr><td>12</td><td>250</td><td>0,0480</td><td>1,486</td><td>12,4 %</td><td>0,219</td><td>133</td></tr>
+          <tr><td>20</td><td>60</td><td>0,3333</td><td>2,488</td><td>12,4 %</td><td>0,577</td><td>222</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La part de variance est le bord rapporté au nombre de couches : c’est la fraction qu’un facteur commun doit expliquer pour que sa valeur propre sorte du bruit. La dernière colonne inverse la condition √γ < s pour un facteur de force trois dixièmes. Rien dans ces colonnes ne contient une propriété du marché : le seuil ne dépend que du nombre de choses regardées, rapporté au nombre de fois où on les a regardées.</p>
+    </figure>
+
+  <p>À 7&nbsp;couches sur 250&nbsp;séances, <span class="v">γ</span> vaut 0,0280 et le bord haut 1,363. <strong>Toute valeur propre inférieure à ce bord est indiscernable du bruit</strong>, et ce n’est pas une approximation qui s’améliorerait avec l’échantillon&nbsp;: c’est une borne. Un facteur commun doit porter 19,5 % de la variance des couches pour se distinguer.</p>
+
+  <p>Une précision d’honnêteté, que la figure porte et que le texte doit répéter. Le bord <span class="v">λ₊</span> est <em>asymptotique</em>. À 7&nbsp;séries la plus grande valeur propre d’un spectre de bruit lui reste inférieure — 1,327 à son quantile à quatre-vingt-quinze pour cent contre 1,363 — et le présenter comme une barre que le bruit vient toucher serait une exagération. Il est conservateur, ce qui est le bon sens de l’erreur.</p>
+
+  <h3>La transition, et pourquoi elle est plus dure qu’une perte de puissance</h3>
+
+  <p>La question intéressante est l’inverse. À partir de quelle force un facteur <em>réel</em> devient-il visible&nbsp;? Baik, Ben Arous et Péché ont répondu en 2005, et la réponse est brutale. Pour un facteur de force <span class="v">s</span> — la population porte une valeur propre <span class="v">1&nbsp;+&nbsp;s</span> — la valeur propre observée vaut <span class="v">(1&nbsp;+&nbsp;s)(1&nbsp;+&nbsp;γ/s)</span> si <span class="v">s&nbsp;&gt;&nbsp;√γ</span>, et <span class="v">λ₊</span> sinon.</p>
+
+  <p><strong>Sous <span class="v">s&nbsp;=&nbsp;√γ</span>, le facteur ne sort pas du bruit. Pas faiblement&nbsp;: pas du tout.</strong> Sa valeur propre reste exactement collée au bord, et aucune finesse d’estimation ne l’en décolle. Ce n’est pas une perte de puissance qu’un échantillon plus grand rattraperait à la marge — c’est une transition de phase, et de l’autre côté il n’y a rien à rattraper.</p>
+
+  <p>À 7&nbsp;couches sur 250&nbsp;séances la force critique vaut 0,167. Le nombre d’observations requis pour qu’un facteur de force <span class="v">s</span> la franchisse s’en déduit&nbsp;: <span class="v">N&nbsp;&gt;&nbsp;k/s²</span>. Cette formule est remarquable par ce qu’elle ne contient pas — ni la loi des rendements, ni la friction, ni la géométrie du trade.</p>
+
+      <figure class="plate">
+      <figcaption><span class="lab">Figure 15</span> — La force critique sur le plan du nombre de couches suivies et du nombre de séances observées. Elle ne contient aucune propriété du marché&nbsp;: seulement le nombre de choses regardées, rapporté au nombre de fois où on les a regardées.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 352" role="img" aria-label="Surface de la force critique d un facteur selon le nombre de couches suivies et de séances observées" preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">LA FORCE CRITIQUE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce qu’un facteur doit peser pour se voir</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">hauteur : √γ, sans dimension</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="floor" x1="314.0" y1="152.0" x2="178.0" y2="196.0"/>
+<line class="floor" x1="348.0" y1="163.0" x2="212.0" y2="207.0"/>
+<line class="floor" x1="382.0" y1="174.0" x2="246.0" y2="218.0"/>
+<line class="floor" x1="416.0" y1="185.0" x2="280.0" y2="229.0"/>
+<line class="floor" x1="450.0" y1="196.0" x2="314.0" y2="240.0"/>
+<line class="floor" x1="314.0" y1="152.0" x2="450.0" y2="196.0"/>
+<line class="floor" x1="280.0" y1="163.0" x2="416.0" y2="207.0"/>
+<line class="floor" x1="246.0" y1="174.0" x2="382.0" y2="218.0"/>
+<line class="floor" x1="212.0" y1="185.0" x2="348.0" y2="229.0"/>
+<line class="floor" x1="178.0" y1="196.0" x2="314.0" y2="240.0"/>
+<line class="post" x1="314.0" y1="152.0" x2="314.0" y2="104.8"/>
+<line class="post" x1="450.0" y1="196.0" x2="450.0" y2="65.4"/>
+<line class="post" x1="314.0" y1="240.0" x2="314.0" y2="212.2"/>
+<line class="post" x1="178.0" y1="196.0" x2="178.0" y2="188.6"/>
+<polygon class="mesh hm2" points="314.0,187.0 348.0,187.4 314.0,212.2 280.0,208.7"><title>force critique √γ = 0.151</title></polygon>
+<polygon class="mesh hm1" points="280.0,184.6 314.0,187.0 280.0,208.7 246.0,203.8"><title>force critique √γ = 0.117</title></polygon>
+<polygon class="mesh hm2" points="348.0,160.9 382.0,156.8 348.0,187.4 314.0,187.0"><title>force critique √γ = 0.214</title></polygon>
+<polygon class="mesh hm1" points="246.0,177.9 280.0,184.6 246.0,203.8 212.0,195.8"><title>force critique √γ = 0.093</title></polygon>
+<polygon class="mesh hm2" points="314.0,162.1 348.0,160.9 314.0,187.0 280.0,184.6"><title>force critique √γ = 0.165</title></polygon>
+<polygon class="mesh hm3" points="382.0,128.5 416.0,118.2 382.0,156.8 348.0,160.9"><title>force critique √γ = 0.303</title></polygon>
+<polygon class="mesh hm1" points="212.0,172.3 246.0,177.9 212.0,195.8 178.0,188.6"><title>force critique √γ = 0.076</title></polygon>
+<polygon class="mesh hm1" points="280.0,157.2 314.0,162.1 280.0,184.6 246.0,177.9"><title>force critique √γ = 0.132</title></polygon>
+<polygon class="mesh hm3" points="348.0,134.7 382.0,128.5 348.0,160.9 314.0,162.1"><title>force critique √γ = 0.233</title></polygon>
+<polygon class="mesh hm5" points="416.0,85.1 450.0,65.4 416.0,118.2 382.0,128.5"><title>force critique √γ = 0.434</title></polygon>
+<polygon class="mesh hm1" points="246.0,153.7 280.0,157.2 246.0,177.9 212.0,172.3"><title>force critique √γ = 0.107</title></polygon>
+<polygon class="mesh hm2" points="314.0,132.4 348.0,134.7 314.0,162.1 280.0,157.2"><title>force critique √γ = 0.186</title></polygon>
+<polygon class="mesh hm4" points="382.0,99.0 416.0,85.1 382.0,128.5 348.0,134.7"><title>force critique √γ = 0.334</title></polygon>
+<polygon class="mesh hm2" points="280.0,132.0 314.0,132.4 280.0,157.2 246.0,153.7"><title>force critique √γ = 0.151</title></polygon>
+<polygon class="mesh hm3" points="348.0,100.5 382.0,99.0 348.0,134.7 314.0,132.4"><title>force critique √γ = 0.267</title></polygon>
+<polygon class="mesh hm2" points="314.0,104.8 348.0,100.5 314.0,132.4 280.0,132.0"><title>force critique √γ = 0.217</title></polygon>
+<line class="ba" x1="144.0" y1="58.0" x2="144.0" y2="196.0"/>
+<line class="ba" x1="144.0" y1="177.9" x2="149.0" y2="177.9"/>
+<text class="tk" x="139.0" y="181.4" text-anchor="end">0,1</text>
+<line class="ba" x1="144.0" y1="154.4" x2="149.0" y2="154.4"/>
+<text class="tk" x="139.0" y="157.9" text-anchor="end">0,2</text>
+<line class="ba" x1="144.0" y1="130.8" x2="149.0" y2="130.8"/>
+<text class="tk" x="139.0" y="134.3" text-anchor="end">0,3</text>
+<line class="ba" x1="144.0" y1="107.2" x2="149.0" y2="107.2"/>
+<text class="tk" x="139.0" y="110.7" text-anchor="end">0,4</text>
+<line class="ba" x1="144.0" y1="83.6" x2="149.0" y2="83.6"/>
+<text class="tk" x="139.0" y="87.1" text-anchor="end">0,5</text>
+<line class="ba" x1="144.0" y1="60.1" x2="149.0" y2="60.1"/>
+<text class="tk" x="139.0" y="63.6" text-anchor="end">0,6</text>
+<text class="tk halo" x="167.0" y="211.0" text-anchor="end">3 couches</text>
+<text class="tk halo" x="201.0" y="222.0" text-anchor="end">5</text>
+<text class="tk halo" x="235.0" y="233.0" text-anchor="end">7</text>
+<text class="tk halo" x="269.0" y="244.0" text-anchor="end">12</text>
+<text class="tk halo" x="303.0" y="255.0" text-anchor="end">20</text>
+<text class="tk halo" x="461.0" y="222.0">60</text>
+<text class="tk halo" x="427.0" y="233.0">125</text>
+<text class="tk halo" x="393.0" y="244.0">250</text>
+<text class="tk halo" x="359.0" y="255.0">500</text>
+<text class="tk halo" x="325.0" y="266.0">1 000 séances</text>
+<text class="lg keep" x="0.0" y="306.0" text-anchor="start">ajouter une couche relève le seuil sous lequel un facteur réel devient invisible</text>
+
+</svg></div>
+      <p class="note">Arête gauche : nombre de couches d’analyse suivies. Arête droite : nombre de séances observées. La hauteur est la force minimale qu’un facteur commun doit avoir pour que sa valeur propre sorte du bruit, sans dimension. Elle ne contient aucune propriété du marché. Trois couches sur mille séances demandent un facteur de cinq pour cent ; vingt couches sur soixante séances en demandent un de cinquante-huit. Regarder plus de choses rend chacune plus difficile à voir.</p>
+    </figure>
+
+  <p>La conséquence contredit un réflexe, et c’est la raison d’être de cette section. <strong>Ajouter une couche d’analyse ne coûte pas seulement une taxe de multiplicité&nbsp;: elle relève aussi le seuil sous lequel un facteur réel devient invisible.</strong> Regarder plus de choses rend chacune plus difficile à voir. La sixième partie disait que le quatrième levier coûte moins cher que le premier&nbsp;; celle-ci ajoute que la 7<sup>e</sup> couche, elle, coûte à toutes les autres.</p>
+
+
   <div class="part">
     <span class="lab">Septième partie</span>
     <h2>Le mur d’échantillon</h2>
@@ -3835,7 +4026,7 @@
   <p>Avant les chiffres, l’intuition qu’ils formalisent. Un Sharpe observé de 0,10 par décision n’a aucune valeur en soi&nbsp;: il n’en prend qu’une fois rapporté à la loi de ce qu’un opérateur sans compétence aurait obtenu sur le même nombre de décisions. Cette loi a une seule propriété qui compte — son écart-type vaut <span class="v">1/√N</span> — et c’est de là que sort tout le reste.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 14</span> — La loi nulle du Sharpe observé à cinq tailles d’échantillon, densités ramenées à la même hauteur pour que leur largeur seule porte l’information. La part teintée est la probabilité d’observer au moins le chiffre revendiqué sans aucune compétence. Le cadre du bas donne les deux routes du mur sous leur forme commune, <span class="v">K/√N</span>&nbsp;; leurs croisements avec le chiffre revendiqué sont les deux colonnes de la table qui suit.</figcaption>
+      <figcaption><span class="lab">Figure 16</span> — La loi nulle du Sharpe observé à cinq tailles d’échantillon, densités ramenées à la même hauteur pour que leur largeur seule porte l’information. La part teintée est la probabilité d’observer au moins le chiffre revendiqué sans aucune compétence. Le cadre du bas donne les deux routes du mur sous leur forme commune, <span class="v">K/√N</span>&nbsp;; leurs croisements avec le chiffre revendiqué sont les deux colonnes de la table qui suit.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 440" role="img" aria-label="Loi nulle du Sharpe observé à cinq tailles d échantillon, et les deux routes du mur sous leur forme commune" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">ÉCHELLE</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Le même chiffre, à cinq tailles d’échantillon</text>
@@ -3919,7 +4110,7 @@
   <p>Le cadre du bas le montre en une forme&nbsp;: les deux routes valent toutes deux <span class="v">K/√N</span>, avec <span class="v">K&nbsp;=&nbsp;z<sub>α</sub>&nbsp;+&nbsp;z<sub>β</sub></span> pour le test ordinaire et <span class="v">K&nbsp;=&nbsp;√(2&nbsp;ln&nbsp;B)</span> pour la taxe de sélection. À 16&nbsp;configurations ces deux constantes valent 2,49 et 2,35. <em>Leur accord ne tient à aucune hypothèse partagée&nbsp;: il tient à ce qu’elles ont la même forme et des constantes voisines.</em></p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 6</span> — Le mur d’échantillon, à quatre leviers ouverts, en décisions puis en années de carrière.</figcaption>
+      <figcaption><span class="lab">Table 7</span> — Le mur d’échantillon, à quatre leviers ouverts, en décisions puis en années de carrière.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Sharpe par décision</th><th>Route 1 — test t</th><th>Route 2 — seuil déflaté</th><th>à 2 décisions/jour</th><th>à 3 décisions/jour</th></tr></thead>
@@ -3937,7 +4128,7 @@
   <p>Les deux premières routes s’accordent à quelques pour cent près sur toute la plage — 619 décisions contre 555 au Sharpe cité — et c’est la plus exigeante qui lie&nbsp;: 619&nbsp;décisions, soit 1,2&nbsp;an à deux décisions par jour. Qu’elles s’accordent sans partager aucune hypothèse est le fait&nbsp;: la première ne connaît que la moyenne et la variance, la seconde ne connaît que le nombre de configurations.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 15</span> — L’espérance cumulée décision après décision, sur 520&nbsp;chemins rééchantillonnés d’un journal sans compétence. L’enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l’écart qu’un opérateur doit dépasser pour être distingué du hasard à ce stade.</figcaption>
+      <figcaption><span class="lab">Figure 17</span> — L’espérance cumulée décision après décision, sur 520&nbsp;chemins rééchantillonnés d’un journal sans compétence. L’enveloppe se resserre comme la racine du nombre de décisions&nbsp;; sa largeur à une abscisse donnée est l’écart qu’un opérateur doit dépasser pour être distingué du hasard à ce stade.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 330" role="img" aria-label="Nuage de trajectoires de l espérance cumulée sous absence de compétence, avec ses quantiles" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">MONTE-CARLO</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Espérance cumulée sous absence de compétence</text>
@@ -4497,7 +4688,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 16</span> — L’espérance mesurée sur une fenêtre glissante de 150 décisions, pour un opérateur sans compétence et pour un opérateur dont la clairvoyance est franche. La bande est l’intervalle à 95&nbsp;pour cent de la moyenne de fenêtre. Les deux bandes se recouvrent sur une partie de la période&nbsp;: à cette taille de fenêtre, les deux opérateurs ne sont pas séparés en permanence.</figcaption>
+      <figcaption><span class="lab">Figure 18</span> — L’espérance mesurée sur une fenêtre glissante de 150 décisions, pour un opérateur sans compétence et pour un opérateur dont la clairvoyance est franche. La bande est l’intervalle à 95&nbsp;pour cent de la moyenne de fenêtre. Les deux bandes se recouvrent sur une partie de la période&nbsp;: à cette taille de fenêtre, les deux opérateurs ne sont pas séparés en permanence.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 320" role="img" aria-label="Espérance mesurée sur fenêtre glissante et son intervalle de confiance, pour deux opérateurs" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">FENÊTRE GLISSANTE</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Espérance mesurée sur 150 décisions</text>
@@ -4540,7 +4731,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 17</span> — La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision, la hauteur étant la plus exigeante des deux routes. L’arête des leviers est <em>plate</em> jusqu’au quatrième — la taxe de sélection y reste sous l’exigence du test ordinaire — quand celle du Sharpe va du simple au sextuple sur la même largeur.</figcaption>
+      <figcaption><span class="lab">Figure 19</span> — La surface du mur&nbsp;: années de carrière requises selon le nombre de leviers ouverts et le Sharpe revendiqué par décision, la hauteur étant la plus exigeante des deux routes. L’arête des leviers est <em>plate</em> jusqu’au quatrième — la taxe de sélection y reste sous l’exigence du test ordinaire — quand celle du Sharpe va du simple au sextuple sur la même largeur.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 384" role="img" aria-label="Surface du nombre d années requises selon les leviers ouverts et le Sharpe revendiqué par décision" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">MUR D’ÉCHANTILLON</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Le mur, en années de carrière</text>
@@ -4605,7 +4796,7 @@
   <h2 id="s-puissance">Où la détection devient acquise</h2>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 18</span> — La puissance de détection à seuil de 5&nbsp;pour cent, par nombre de décisions et information par décision. Chaque case porte sa valeur en pour cent&nbsp;; la lecture d’une valeur précise, que le relief ne permet pas, est ici directe.</figcaption>
+      <figcaption><span class="lab">Figure 20</span> — La puissance de détection à seuil de 5&nbsp;pour cent, par nombre de décisions et information par décision. Chaque case porte sa valeur en pour cent&nbsp;; la lecture d’une valeur précise, que le relief ne permet pas, est ici directe.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 340" role="img" aria-label="Carte de la puissance de détection par nombre de décisions et information par décision" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">PUISSANCE</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Carte de puissance à seuil 5 %</text>
@@ -4716,7 +4907,7 @@
   <p>Le relief a la forme d’une marche. Sous une certaine combinaison, la détection est un tirage à pile ou face&nbsp;; au-delà, elle est acquise. Situer l’opérateur sur cette marche est tout ce qu’un protocole préenregistré a besoin de savoir, et c’est aussi ce qui permet d’énoncer à l’avance la durée de la période d’observation plutôt que de l’arrêter quand le résultat plaît.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 19</span> — Taux de détection contre taux de fausse déclaration, à trois tailles d’échantillon, pour une compétence de 0,005&nbsp;bit par décision. Le seuil de 5&nbsp;pour cent retenu dans tout le document est un point de ces courbes&nbsp;; les points marqués donnent la puissance correspondante. Le cadre de droite donne cette puissance en fonction du nombre de décisions.</figcaption>
+      <figcaption><span class="lab">Figure 21</span> — Taux de détection contre taux de fausse déclaration, à trois tailles d’échantillon, pour une compétence de 0,005&nbsp;bit par décision. Le seuil de 5&nbsp;pour cent retenu dans tout le document est un point de ces courbes&nbsp;; les points marqués donnent la puissance correspondante. Le cadre de droite donne cette puissance en fonction du nombre de décisions.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 322" role="img" aria-label="Caractéristique opérationnelle du test : taux de détection contre taux de fausse déclaration, à trois tailles d échantillon" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">CARACTÉRISTIQUE</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Détection contre fausse déclaration</text>
@@ -4787,7 +4978,7 @@
   <p>Le document&nbsp;n<sup>o</sup>&nbsp;1 de cette série situe son mur à plusieurs dizaines de milliers de trades. La comparaison ci-dessous rapporte les deux exigences sur une base commune.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 7</span> — Pourquoi le jugement est prouvable là où la géométrie ne l’est pas.</figcaption>
+      <figcaption><span class="lab">Table 8</span> — Pourquoi le jugement est prouvable là où la géométrie ne l’est pas.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Objet du test</th><th>Sharpe revendiqué</th><th>Configurations</th><th>Route 1 — test t</th><th>Route 2 — taxe</th><th>Exigence liante</th><th>à 2 par jour</th></tr></thead>
@@ -4845,7 +5036,7 @@
   <p>Une méthode d’attribution qu’on ne sait pas mettre en défaut ne mesure rien. Le contrôle appliqué ici est direct&nbsp;: on plante la compétence dans un levier connu, et la décomposition doit l’y désigner sans la répartir sur les autres.</p>
 
       <figure>
-      <figcaption><span class="lab">Table 8</span> — La décomposition de Shapley retrouve-t-elle la compétence là où elle a été plantée ?</figcaption>
+      <figcaption><span class="lab">Table 9</span> — La décomposition de Shapley retrouve-t-elle la compétence là où elle a été plantée ?</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Compétence plantée dans</th><th>Avantage total</th><th>entrée</th><th>moment</th><th>taille</th><th>sortie</th><th>Levier désigné</th></tr></thead>
@@ -4860,7 +5051,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 20</span> — La décomposition de Shapley en cascade, d’un opérateur dont la compétence est plantée dans l’entrée et dans la taille. Les deux colonnes pleines sont des niveaux — l’espérance de la règle scellée et celle de l’opérateur — et les marches intermédiaires sont les parts des quatre leviers. Leur somme est exacte par construction.</figcaption>
+      <figcaption><span class="lab">Figure 22</span> — La décomposition de Shapley en cascade, d’un opérateur dont la compétence est plantée dans l’entrée et dans la taille. Les deux colonnes pleines sont des niveaux — l’espérance de la règle scellée et celle de l’opérateur — et les marches intermédiaires sont les parts des quatre leviers. Leur somme est exacte par construction.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 342" role="img" aria-label="Cascade de la valeur de Shapley, de la règle scellée à l espérance réalisée par l opérateur" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">ATTRIBUTION</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">De la règle scellée à l’opérateur</text>
@@ -4916,7 +5107,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 21</span> — La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. Les barres franches marquent les leviers où la compétence a été plantée&nbsp;; ce sont chaque fois ceux que la décomposition désigne. Le troisième panneau en plante deux, et les deux ressortent.</figcaption>
+      <figcaption><span class="lab">Figure 23</span> — La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. Les barres franches marquent les leviers où la compétence a été plantée&nbsp;; ce sont chaque fois ceux que la décomposition désigne. Le troisième panneau en plante deux, et les deux ressortent.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 292" role="img" aria-label="Décomposition de Shapley de l avantage sur les quatre leviers, pour trois emplacements de la compétence plantée" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">CONTRÔLE DE L’ATTRIBUTION</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Part de chaque levier selon l’emplacement de la compétence</text>
@@ -5000,7 +5191,7 @@
   <p>L’équation&nbsp;(1) est une droite en <span class="v">µ</span>, et il vaut la peine de la regarder comme telle plutôt que de la lire. Chaque géométrie en donne une&nbsp;; les quatre droites ci-dessous en sont quatre exemples, tracés sur la seule arithmétique de l’identité — aucune simulation, aucun échantillon.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 22</span> — L’identité de Wald tracée pour quatre géométries. L’ordonnée à l’origine de chaque droite est la friction rapportée au risque nominal, sa pente est le temps de marché acheté, et son croisement avec le zéro est le seuil <span class="v">µ*</span>. Le cadre du bas donne la pente à sa source&nbsp;: l’exposition croît comme le carré de la largeur du stop, puis sature contre la séance.</figcaption>
+      <figcaption><span class="lab">Figure 24</span> — L’identité de Wald tracée pour quatre géométries. L’ordonnée à l’origine de chaque droite est la friction rapportée au risque nominal, sa pente est le temps de marché acheté, et son croisement avec le zéro est le seuil <span class="v">µ*</span>. Le cadre du bas donne la pente à sa source&nbsp;: l’exposition croît comme le carré de la largeur du stop, puis sature contre la séance.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 420" role="img" aria-label="Espérance nette selon la dérive pour quatre géométries, et temps de marché acheté selon la largeur du stop" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">ARRÊT OPTIONNEL</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie achète, et ce qu’elle ne crée pas</text>
@@ -5098,7 +5289,7 @@
   <p>Le plan complet donne la frontière que ces quatre coupes ne montrent que par leurs croisements.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 23</span> — L’espérance nette sur le plan de la largeur de stop et de la dérive du marché. La couleur n’encode que le signe, la hauteur portant déjà la grandeur&nbsp;: la frontière rouge-bleu est l’ensemble des couples où <span class="v">µ&nbsp;=&nbsp;µ*</span>.</figcaption>
+      <figcaption><span class="lab">Figure 25</span> — L’espérance nette sur le plan de la largeur de stop et de la dérive du marché. La couleur n’encode que le signe, la hauteur portant déjà la grandeur&nbsp;: la frontière rouge-bleu est l’ensemble des couples où <span class="v">µ&nbsp;=&nbsp;µ*</span>.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 372" role="img" aria-label="Surface de l espérance nette par trade sur le plan de la largeur de stop et de la dérive du marché, avec la frontière du signe" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">ARRÊT OPTIONNEL, SUR DEUX AXES</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Où l’espérance change de signe</text>
@@ -5182,7 +5373,7 @@
   <p>L’exposition croît comme le carré de la largeur du stop — c’est le régime diffusif, le temps d’atteinte d’une barrière allant comme <span class="v">a²/σ²</span> — pendant que le risque nominal ne croît que linéairement. La friction, elle, est fixe en points. Le seuil décroît donc <em>quadratiquement</em>, et c’est ce qui rend ce levier sans commune mesure avec les autres.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 9</span> — Le seuil de dérive que chaque géométrie impose, et ce qu’elle rend à dérive déclarée.</figcaption>
+      <figcaption><span class="lab">Table 10</span> — Le seuil de dérive que chaque géométrie impose, et ce qu’elle rend à dérive déclarée.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th>Stop</th><th>a (pts)</th><th>E[τ∧T] min</th><th>c/L</th><th>µ* (pt/h)</th><th>Dans le plausible</th><th>E[R] à 2,0 pt/h</th></tr></thead>
@@ -5204,7 +5395,7 @@
     </figure>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 24</span> — Le seuil de rentabilité selon la largeur du stop, en échelle logarithmique, avec le domaine de dérive que le document nº&nbsp;1 déclare plausible posé derrière. Le cadre du bas donne l’espérance nette à dérive déclarée&nbsp;; son optimum est intérieur.</figcaption>
+      <figcaption><span class="lab">Figure 26</span> — Le seuil de rentabilité selon la largeur du stop, en échelle logarithmique, avec le domaine de dérive que le document nº&nbsp;1 déclare plausible posé derrière. Le cadre du bas donne l’espérance nette à dérive déclarée&nbsp;; son optimum est intérieur.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 392" role="img" aria-label="Seuil de rentabilité et espérance nette selon la largeur du stop, avec le domaine de dérive plausible" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL, ET NON LE SIGNAL</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie exige du signal</text>
@@ -5280,7 +5471,7 @@
   <p>À 0,150&nbsp;%, le seuil tombe à 0,196&nbsp;point par heure, soit six fois sous la borne <em>basse</em> du domaine plausible. L’espérance passe de −0,416&nbsp;R à +0,337&nbsp;R par trade, <em>à dérive identique</em>. Seule la géométrie a changé.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 10</span> — Le même signal, sept géométries : ce que le choix de l’opérateur fait au seuil qu’il doit franchir.</figcaption>
+      <figcaption><span class="lab">Table 11</span> — Le même signal, sept géométries : ce que le choix de l’opérateur fait au seuil qu’il doit franchir.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Configuration</th><th>µ* (pt/h)</th><th>Dans le plausible</th><th>E[R] à 2,0 pt/h</th></tr></thead>
@@ -5303,7 +5494,7 @@
   <p>La friction est le second axe, et l’opérateur le contrôle aussi&nbsp;: elle dépend du courtier, de l’heure choisie et de la façon de passer l’ordre. La surface porte les deux axes ensemble et le plafond de dérive plausible avec eux, de sorte que le verdict se lise sans convertir une élévation en grandeur.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 25</span> — Le seuil de rentabilité sur le plan des deux variables que l’opérateur contrôle. Arête gauche&nbsp;: la largeur du stop. Arête droite&nbsp;: la friction aller-retour. La hauteur est le seuil en échelle logarithmique, et l’échine porte le plafond de dérive plausible. La couleur ne code pas la hauteur mais le verdict&nbsp;: une maille rouge exige une dérive que le marché ne fournit pas.</figcaption>
+      <figcaption><span class="lab">Figure 27</span> — Le seuil de rentabilité sur le plan des deux variables que l’opérateur contrôle. Arête gauche&nbsp;: la largeur du stop. Arête droite&nbsp;: la friction aller-retour. La hauteur est le seuil en échelle logarithmique, et l’échine porte le plafond de dérive plausible. La couleur ne code pas la hauteur mais le verdict&nbsp;: une maille rouge exige une dérive que le marché ne fournit pas.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 384" role="img" aria-label="Surface du seuil de rentabilité sur le plan de la largeur de stop et de la friction, avec le verdict d atteignabilité en couleur" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL SUR DEUX AXES</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie et la friction décident ensemble</text>
@@ -5374,7 +5565,7 @@
   <p>Ce chapitre corrige un défaut du document nº&nbsp;1, et il faut le nommer. La dérive de référence y vaut <code>DRIFT_MULTIPLE × c / E[τ]</code>, c’est-à-dire deux fois le seuil de rentabilité. <strong>La dérive y est dérivée de la friction</strong>&nbsp;: l’avantage n’est pas mesuré, il est supposé, et il est supposé exactement au niveau qui rend la stratégie rentable.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 11</span> — La dérive de référence du document nº 1, et ce à quoi elle se compare.</figcaption>
+      <figcaption><span class="lab">Table 12</span> — La dérive de référence du document nº 1, et ce à quoi elle se compare.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Grandeur</th><th>Points par heure</th><th class="wrap">Statut</th></tr></thead>
@@ -5396,7 +5587,7 @@
   <p>Le défaut ne reste pas confiné à une hypothèse&nbsp;: il traverse tout ce que le document nº&nbsp;1 calcule ensuite. Sharpe, fraction de Kelly, coefficient de Lundberg, profondeur de ruine — chacun est établi sous la dérive de référence. Refaire ces calculs sous une dérive déclarée est donc le test décisif du chapitre.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 12</span> — Les grandeurs de risque du document nº 1, refaites sous une dérive déclarée plutôt que dérivée de la friction.</figcaption>
+      <figcaption><span class="lab">Table 13</span> — Les grandeurs de risque du document nº 1, refaites sous une dérive déclarée plutôt que dérivée de la friction.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Cas</th><th>µ (pt/h)</th><th>E[R]</th><th>Sharpe/trade</th><th>Kelly f*</th><th>θ* Lundberg</th></tr></thead>
@@ -5425,7 +5616,7 @@
   <p>Les deux autres termes ne demandent presque rien. La friction se lit sur un relevé de courtage&nbsp;; l’exposition se calcule. La table ci-dessous chiffre l’écart.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 13</span> — Les trois termes de l’équation (1), et le nombre de décisions qu’il faut pour établir un progrès sur chacun.</figcaption>
+      <figcaption><span class="lab">Table 14</span> — Les trois termes de l’équation (1), et le nombre de décisions qu’il faut pour établir un progrès sur chacun.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Levier</th><th>Terme</th><th>Décisions pour t = 2</th><th>Rapport</th></tr></thead>
@@ -5463,7 +5654,7 @@
   <p><strong>L’épuisement.</strong> Le volume s’effondre au dernier niveau atteint. C’est le seul des trois qui n’ait pas de forme fermée&nbsp;: le volume au niveau extrême d’une excursion est un temps local, et sa loi se simule.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 26</span> — Trois barres en footprint, construites à volumes et niveaux déclarés. À chaque niveau, le volume exécuté au bid à gauche et à l’ask à droite&nbsp;; les cadres marquent un déséquilibre diagonal de 3 pour 1. La barre neutre en attend 0,94 de sa seule loi nulle.</figcaption>
+      <figcaption><span class="lab">Figure 28</span> — Trois barres en footprint, construites à volumes et niveaux déclarés. À chaque niveau, le volume exécuté au bid à gauche et à l’ask à droite&nbsp;; les cadres marquent un déséquilibre diagonal de 3 pour 1. La barre neutre en attend 0,94 de sa seule loi nulle.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 396" role="img" aria-label="Trois barres en footprint : neutre, absorption et déséquilibre acheteur, avec leurs lois nulles" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">FOOTPRINT</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que le carnet laisse comme trace une fois exécuté</text>
@@ -5615,7 +5806,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 14</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
+      <figcaption><span class="lab">Table 15</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Barre</th><th>Volume</th><th>Δ</th><th>z d’impact</th><th>Déséquilibres</th><th>Attendus sous martingale</th><th>Rapport d’épuisement</th></tr></thead>
@@ -5638,7 +5829,7 @@
   <p>Si les contrats arrivaient un à un et indépendamment, l’ask d’un niveau à 240 contrats suivrait une binomiale d’écart-type huit&nbsp;: un rapport de 3 pour 1 exigerait plus de quinze écarts-types, c’est-à-dire jamais. <strong>Le déséquilibre serait un signal parfait</strong>, ce qu’il n’est manifestement pas. Ce qui sauve la lecture — et ce qui la limite — est que les contrats n’arrivent pas un à un&nbsp;: un ordre de vingt lots est <em>un</em> tirage, pas vingt. L’échantillon effectif d’un niveau est son volume divisé par la taille de grappe.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 27</span> — À gauche, la fréquence d’un déséquilibre diagonal sous martingale selon la taille de grappe, sur deux niveaux à 240 contrats. À droite, la loi nulle du rapport d’épuisement, simulée sur des excursions sans dérive.</figcaption>
+      <figcaption><span class="lab">Figure 29</span> — À gauche, la fréquence d’un déséquilibre diagonal sous martingale selon la taille de grappe, sur deux niveaux à 240 contrats. À droite, la loi nulle du rapport d’épuisement, simulée sur des excursions sans dérive.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 414" role="img" aria-label="Fréquence nulle du déséquilibre diagonal selon la taille de grappe, et loi nulle du rapport d épuisement" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LOIS NULLES DU FOOTPRINT</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que les deux lectures valent contre leur bruit</text>
@@ -5731,7 +5922,7 @@
   <p>Le résultat est inconfortable et il faut le nommer. Sur deux niveaux à 240 contrats, la fréquence nulle d’un déséquilibre de 3 pour 1 vaut 0,000 % pour une grappe de cinq contrats, 1,7 % pour une grappe de vingt, 9,4 % pour une grappe de cinquante. <strong>La même barre est un événement à une chance sur mille ou une banalité à une sur dix, selon un paramètre que le flux agrégé ne donne pas.</strong> Toutes ces tailles de grappe sont plausibles sur un future indiciel.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 28</span> — La fréquence nulle du déséquilibre sur ses deux axes. Arête gauche&nbsp;: la taille de grappe, une hypothèse. Arête droite&nbsp;: le seuil de lecture, un choix. La surface descend d’un facteur cinq le long du second et monte d’un facteur mille le long du premier.</figcaption>
+      <figcaption><span class="lab">Figure 30</span> — La fréquence nulle du déséquilibre sur ses deux axes. Arête gauche&nbsp;: la taille de grappe, une hypothèse. Arête droite&nbsp;: le seuil de lecture, un choix. La surface descend d’un facteur cinq le long du second et monte d’un facteur mille le long du premier.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 344" role="img" aria-label="Surface de la fréquence nulle du déséquilibre diagonal selon la taille de grappe et le seuil de lecture" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL NE DÉCIDE PRESQUE RIEN</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Fréquence nulle du déséquilibre sur ses deux axes</text>
@@ -5805,7 +5996,7 @@
   <p>Le profil TPO compte les <em>périodes</em> et non les contrats. La séance est découpée en tranches de trente minutes, chacune reçoit une lettre, et la lettre est imprimée à tous les prix que la tranche a traversés. Steidlmayer l’a publié en 1984 pour le Chicago Board of Trade&nbsp;; son vocabulaire est passé tel quel dans toutes les plateformes. Le POC est le prix le plus longtemps visité, l’aire de valeur la tranche contenant soixante-dix pour cent des TPO, un tirage simple un prix qu’une seule période a touché, un extrême pauvre un haut ou un bas où deux périodes au moins ont imprimé — donc sans mèche.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 29</span> — Le profil d’une séance <em>sans dérive</em>, découpée en 13 périodes de trente minutes, sur des rangées de 3 points. Tout ce qu’on y reconnaît a été produit sans intention. À droite, la fréquence de trois lectures sous cette même loi, et ce qui décide la rareté de l’extrême pauvre.</figcaption>
+      <figcaption><span class="lab">Figure 31</span> — Le profil d’une séance <em>sans dérive</em>, découpée en 13 périodes de trente minutes, sur des rangées de 3 points. Tout ce qu’on y reconnaît a été produit sans intention. À droite, la fréquence de trois lectures sous cette même loi, et ce qui décide la rareté de l’extrême pauvre.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 430" role="img" aria-label="Profil TPO d une séance sans dérive, avec la fréquence nulle de cinq de ses lectures" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">PROFIL TPO</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Le temps passé à chaque prix, et ce qu’on croit y lire</text>
@@ -5931,7 +6122,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 15</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
+      <figcaption><span class="lab">Table 16</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Lecture</th><th>Sur la séance construite</th><th>Sous un prix sans dérive</th><th class="wrap">Ce qu’elle vaut</th></tr></thead>
@@ -5954,7 +6145,7 @@
   <p>Mais sa rareté ne tient pas au marché. À une rangée de 3 points, un extrême haut pauvre arrive dans 37 % des séances sans dérive&nbsp;; à un quart de point, dans 5 %. Un facteur 7, sans qu’aucune propriété du marché ne change — seul le nombre de rangées que la séance parcourt a changé.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 30</span> — La fréquence nulle d’un extrême pauvre sur le plan du pas de cotation et de la volatilité de séance. Seul leur rapport décide&nbsp;: deux marchés très différents peuvent tomber au même endroit, et le même marché change de verdict quand on change la rangée d’affichage.</figcaption>
+      <figcaption><span class="lab">Figure 32</span> — La fréquence nulle d’un extrême pauvre sur le plan du pas de cotation et de la volatilité de séance. Seul leur rapport décide&nbsp;: deux marchés très différents peuvent tomber au même endroit, et le même marché change de verdict quand on change la rangée d’affichage.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 352" role="img" aria-label="Surface de la fréquence nulle d un extrême pauvre selon le pas de cotation et la volatilité de séance" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">CE QUI DÉCIDE LA RARETÉ</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Fréquence nulle d’un extrême pauvre</text>
@@ -6030,7 +6221,7 @@
   <p>Le taux de réussite d’équilibre sans friction vaut <span class="v">1/(R+1)</span>&nbsp;; avec friction il vaut <span class="v">(1 + c/L)/(R+1)</span>. À la géométrie déclarée, cela fait passer le taux requis de 4,76 % à 7,38 % — une hausse relative de 55 %, ce qui paraît énorme. La divergence de Kullback-Leibler en donne le prix réel, en bits&nbsp;: <strong>0,941 % d’un bit par décision</strong>. Une décision binaire en porte un au plus.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 16</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
+      <figcaption><span class="lab">Table 17</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Géométrie</th><th>Stop</th><th>Friction c/L</th><th>Information exigée</th><th>Bruit toléré</th><th>Décisions pour le prouver</th></tr></thead>
@@ -6047,7 +6238,7 @@
   <p>La réponse est donc oui, et le chiffre est presque exactement celui de l’intuition&nbsp;: <strong>le marché peut être du bruit à 99,06 % et la géométrie déclarée tenir</strong>. En élargissant le stop, la friction tombe à onze pour cent du risque nominal et l’exigence à 0,042 % d’un bit&nbsp;: le marché peut alors être du bruit à 99,958 %.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 31</span> — L’information exigée par décision selon la friction rapportée au risque nominal, pour trois cibles, et l’échantillon requis pour l’établir. Les deux cadres partagent leur abscisse et disent la même tension en sens inverse.</figcaption>
+      <figcaption><span class="lab">Figure 33</span> — L’information exigée par décision selon la friction rapportée au risque nominal, pour trois cibles, et l’échantillon requis pour l’établir. Les deux cadres partagent leur abscisse et disent la même tension en sens inverse.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 420" role="img" aria-label="Information exigée par décision selon la friction rapportée au risque, et échantillon requis pour la détecter" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">BUDGET D’INFORMATION</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Combien de bruit un trade supporte-t-il ?</text>
@@ -6120,7 +6311,7 @@
   <p>Le second cadre porte le prix de cette bonne nouvelle, et il faut le lire en même temps que le premier. <strong>Moins un trade exige d’information, plus il faut de décisions pour établir qu’il l’a.</strong> À la géométrie déclarée, 474&nbsp;décisions suffisent&nbsp;; au stop élargi, il en faut 10 568, soit 22 fois plus. La géométrie qui rend l’avantage facile à obtenir est celle qui le rend difficile à prouver.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 32</span> — Le budget d’information sur ses deux axes, la cible et la friction — les deux grandeurs que l’opérateur fixe entièrement. La surface couvre trois ordres de grandeur sans qu’aucun signal n’entre dans le calcul.</figcaption>
+      <figcaption><span class="lab">Figure 34</span> — Le budget d’information sur ses deux axes, la cible et la friction — les deux grandeurs que l’opérateur fixe entièrement. La surface couvre trois ordres de grandeur sans qu’aucun signal n’entre dans le calcul.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 352" role="img" aria-label="Surface de l information exigée par décision selon la cible et la friction rapportée au risque" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">BUDGET D’INFORMATION, SUR DEUX AXES</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie exige du signal, en bits</text>
@@ -6205,7 +6396,7 @@
 
   <p><strong>Les chiffres rapportés sont des propriétés de l’appareil de mesure</strong>, établies sur journaux synthétiques. Ils ne constituent pas la mesure d’une compétence observée.</p>
 
-  <p><strong>Le levier de chronométrage n’est pas séparable du levier d’entrée</strong>, comme la section&nbsp;<a href="#s-validation">29</a> l’établit. Sa part inclut une composante d’interaction que le contrefactuel retenu n’isole pas.</p>
+  <p><strong>Le levier de chronométrage n’est pas séparable du levier d’entrée</strong>, comme la section&nbsp;<a href="#s-validation">30</a> l’établit. Sa part inclut une composante d’interaction que le contrefactuel retenu n’isole pas.</p>
 
   <p><strong>L’analyse suppose une compétence constante sur la période.</strong> Sous compétence variable — apprentissage, fatigue, changement de régime —, l’estimateur agrège des états distincts. Les méthodes de mesure à compétence variable dans le temps existent dans la littérature citée&nbsp;; elles ne sont pas mobilisées ici.</p>
 

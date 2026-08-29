@@ -624,30 +624,31 @@
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
           <li><a href="#s-concavite">Le quatrième levier coûte moins cher que le premier</a></li>
+          <li><a href="#s-spectre">Combien de couches peut-on suivre&nbsp;?</a></li>
         </ol>
       </li>
       <li><span class="pt">Septième partie — Le mur d'échantillon</span>
-        <ol start="23">
+        <ol start="24">
           <li><a href="#s-routes">Trois routes indépendantes</a></li>
           <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
           <li><a href="#s-puissance">Où la détection devient acquise</a></li>
         </ol>
       </li>
       <li><span class="pt">Huitième partie — Comparaison des deux régimes de preuve</span>
-        <ol start="26">
+        <ol start="27">
           <li><a href="#s-versus">Pourquoi le jugement est prouvable là où la géométrie ne l'est pas</a></li>
           <li><a href="#s-consequence">Ce que cela change pour l'opérateur</a></li>
         </ol>
       </li>
       <li><span class="pt">Neuvième partie — Décomposer l'avantage</span>
-        <ol start="28">
+        <ol start="29">
           <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
           <li><a href="#s-validation">Une décomposition réfutable</a></li>
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
       <li><span class="pt">Dixième partie — Le seuil, et non le signal</span>
-        <ol start="31">
+        <ol start="32">
           <li><a href="#s-mauvaise-question">La question posée n’était pas la bonne</a></li>
           <li><a href="#s-effondrement">Le seuil s’effondre quand le stop s’élargit</a></li>
           <li><a href="#s-circularite">Une hypothèse qui supposait sa conclusion</a></li>
@@ -656,7 +657,7 @@
         </ol>
       </li>
       <li><span class="pt">Onzième partie — Lire le flux</span>
-        <ol start="36">
+        <ol start="37">
           <li><a href="#s-footprint">Le footprint, et ce qu'un déséquilibre vaut</a></li>
           <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n'observe</a></li>
           <li><a href="#s-tpo">Le profil de marché, et ses cinq lectures</a></li>
@@ -664,7 +665,7 @@
         </ol>
       </li>
       <li><span class="pt">Douzième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="40">
+        <ol start="41">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1003,6 +1004,35 @@
 
   <p>La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n'a presque rien à gagner à en fermer un&nbsp;; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.</p>
 
+  <h2 id="s-spectre">Combien de couches peut-on suivre&nbsp;?</h2>
+
+  <p>La taxe de multiplicité compte les <em>configurations</em>. Une autre arithmétique compte les <em>couches</em>, et elle donne une borne que la première ne voit pas.</p>
+
+  <p>Un opérateur qui suit {{x_couches}}&nbsp;couches d'analyse en regarde la matrice de corrélation, y trouve une première valeur propre nettement supérieure aux autres, et conclut qu'un facteur commun gouverne ses signaux. Marchenko et Pastur ont montré en 1967 que cette conclusion est presque toujours fausse, et pour une raison qui se calcule sans rien mesurer&nbsp;: sur <span class="v">k</span> séries <strong>indépendantes</strong> observées <span class="v">N</span> fois, les valeurs propres de la matrice de corrélation empirique ne valent pas toutes un. Elles s'étalent entre deux bornes que le seul rapport <span class="v">γ&nbsp;=&nbsp;k/N</span> fixe&nbsp;:</p>
+
+  <p class="eq">λ<sub>±</sub> = (1 ± √γ)²<span class="eqn">(3)</span></p>
+
+  {{FIGURE:flowspectre|À gauche, le spectre d'une matrice de corrélation de {{x_couches}}&nbsp;séries <em>indépendantes</em> sur {{x_seances}}&nbsp;observations, avec la loi de Marchenko-Pastur posée dessus. À droite, la transition de Baik-Ben Arous-Péché&nbsp;: sous une force critique, un facteur réel ne sort pas du bruit.}}
+
+  {{TABLE:spectre}}
+
+  <p>À {{x_couches}}&nbsp;couches sur {{x_seances}}&nbsp;séances, <span class="v">γ</span> vaut {{x_gamma}} et le bord haut {{x_edge}}. <strong>Toute valeur propre inférieure à ce bord est indiscernable du bruit</strong>, et ce n'est pas une approximation qui s'améliorerait avec l'échantillon&nbsp;: c'est une borne. Un facteur commun doit porter {{x_part}} de la variance des couches pour se distinguer.</p>
+
+  <p>Une précision d'honnêteté, que la figure porte et que le texte doit répéter. Le bord <span class="v">λ₊</span> est <em>asymptotique</em>. À {{x_couches}}&nbsp;séries la plus grande valeur propre d'un spectre de bruit lui reste inférieure — {{x_lmax95}} à son quantile à quatre-vingt-quinze pour cent contre {{x_edge}} — et le présenter comme une barre que le bruit vient toucher serait une exagération. Il est conservateur, ce qui est le bon sens de l'erreur.</p>
+
+  <h3>La transition, et pourquoi elle est plus dure qu'une perte de puissance</h3>
+
+  <p>La question intéressante est l'inverse. À partir de quelle force un facteur <em>réel</em> devient-il visible&nbsp;? Baik, Ben Arous et Péché ont répondu en 2005, et la réponse est brutale. Pour un facteur de force <span class="v">s</span> — la population porte une valeur propre <span class="v">1&nbsp;+&nbsp;s</span> — la valeur propre observée vaut <span class="v">(1&nbsp;+&nbsp;s)(1&nbsp;+&nbsp;γ/s)</span> si <span class="v">s&nbsp;&gt;&nbsp;√γ</span>, et <span class="v">λ₊</span> sinon.</p>
+
+  <p><strong>Sous <span class="v">s&nbsp;=&nbsp;√γ</span>, le facteur ne sort pas du bruit. Pas faiblement&nbsp;: pas du tout.</strong> Sa valeur propre reste exactement collée au bord, et aucune finesse d'estimation ne l'en décolle. Ce n'est pas une perte de puissance qu'un échantillon plus grand rattraperait à la marge — c'est une transition de phase, et de l'autre côté il n'y a rien à rattraper.</p>
+
+  <p>À {{x_couches}}&nbsp;couches sur {{x_seances}}&nbsp;séances la force critique vaut {{x_seuil}}. Le nombre d'observations requis pour qu'un facteur de force <span class="v">s</span> la franchisse s'en déduit&nbsp;: <span class="v">N&nbsp;&gt;&nbsp;k/s²</span>. Cette formule est remarquable par ce qu'elle ne contient pas — ni la loi des rendements, ni la friction, ni la géométrie du trade.</p>
+
+  {{FIGURE:flowspectre3d|La force critique sur le plan du nombre de couches suivies et du nombre de séances observées. Elle ne contient aucune propriété du marché&nbsp;: seulement le nombre de choses regardées, rapporté au nombre de fois où on les a regardées.}}
+
+  <p>La conséquence contredit un réflexe, et c'est la raison d'être de cette section. <strong>Ajouter une couche d'analyse ne coûte pas seulement une taxe de multiplicité&nbsp;: elle relève aussi le seuil sous lequel un facteur réel devient invisible.</strong> Regarder plus de choses rend chacune plus difficile à voir. La sixième partie disait que le quatrième levier coûte moins cher que le premier&nbsp;; celle-ci ajoute que la {{x_couches}}<sup>e</sup> couche, elle, coûte à toutes les autres.</p>
+
+
   <div class="part">
     <span class="lab">Septième partie</span>
     <h2>Le mur d'échantillon</h2>
@@ -1307,7 +1337,7 @@
 
   <p><strong>Les chiffres rapportés sont des propriétés de l'appareil de mesure</strong>, établies sur journaux synthétiques. Ils ne constituent pas la mesure d'une compétence observée.</p>
 
-  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">29</a> l'établit. Sa part inclut une composante d'interaction que le contrefactuel retenu n'isole pas.</p>
+  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">30</a> l'établit. Sa part inclut une composante d'interaction que le contrefactuel retenu n'isole pas.</p>
 
   <p><strong>L'analyse suppose une compétence constante sur la période.</strong> Sous compétence variable — apprentissage, fatigue, changement de régime —, l'estimateur agrège des états distincts. Les méthodes de mesure à compétence variable dans le temps existent dans la littérature citée&nbsp;; elles ne sont pas mobilisées ici.</p>
 

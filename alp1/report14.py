@@ -11,6 +11,7 @@ import math
 
 from . import footprint as fp
 from . import quant as q
+from . import spectrum as sp
 from . import tpo as tp
 from .entropy import required_bits, trades_for_information
 from .report import Table, num
@@ -129,7 +130,49 @@ def table_bruit() -> Table:
     )
 
 
-TABLES = (table_footprint, table_tpo, table_bruit)
+#: Couches suivies et séances observées de la table du spectre. Sept est le
+#: nombre de couches que le document nº 3 recense ; deux cent cinquante est
+#: l'année de séances qu'un opérateur peut espérer journaliser.
+COUCHES = 7
+SEANCES = 250
+
+
+def table_spectre() -> Table:
+    """Ce qu'un facteur doit peser pour se voir, selon ce qu'on regarde."""
+    rows = []
+    for k, n in ((3, SEANCES), (COUCHES, SEANCES), (COUCHES, 60),
+                 (12, SEANCES), (20, 60)):
+        g = k / n
+        _, hi = sp.mp_edges(g)
+        seuil = sp.bbp_threshold(g)
+        rows.append([
+            num(k, 0),
+            num(n, 0),
+            num(g, 4),
+            num(hi, 3),
+            num(100 * hi / k, 1, "%"),
+            num(seuil, 3),
+            num(sp.observations_for_spike(0.30, k), 0),
+        ])
+    return Table(
+        "spectre",
+        "Le bord du bruit et la force critique, selon le nombre de couches "
+        "suivies et de séances observées.",
+        ["Couches k", "Séances N", "γ = k/N", "Bord λ₊",
+         "Part de variance", "Force critique √γ",
+         "N requis pour s = 0,30"],
+        rows, wide=True,
+        note="La part de variance est le bord rapporté au nombre de couches : "
+             "c'est la fraction qu'un facteur commun doit expliquer pour que "
+             "sa valeur propre sorte du bruit. La dernière colonne inverse la "
+             "condition √γ < s pour un facteur de force trois dixièmes. Rien "
+             "dans ces colonnes ne contient une propriété du marché : le seuil "
+             "ne dépend que du nombre de choses regardées, rapporté au nombre "
+             "de fois où on les a regardées.",
+    )
+
+
+TABLES = (table_footprint, table_tpo, table_bruit, table_spectre)
 
 
 def all_tables() -> dict[str, Table]:
@@ -185,6 +228,16 @@ def values() -> dict[str, str]:
         "i_hausse": num(100 * (declare.hit_needed / declare.hit_null - 1), 0, "%"),
         "i_facteur_n": num(trades_for_information(ouvert.bits)
                            / trades_for_information(declare.bits), 0),
+        # --- spectre ---
+        "x_couches": num(COUCHES, 0),
+        "x_seances": num(SEANCES, 0),
+        "x_gamma": num(COUCHES / SEANCES, 4),
+        "x_edge": num(sp.mp_edges(COUCHES / SEANCES)[1], 3),
+        "x_part": num(100 * sp.mp_edges(COUCHES / SEANCES)[1] / COUCHES, 1, "%"),
+        "x_seuil": num(sp.bbp_threshold(COUCHES / SEANCES), 3),
+        "x_lmax95": num(sp.null_spectrum(COUCHES, SEANCES, draws=260)
+                        .lambda_max_q95, 3),
+        "x_n_court": num(sp.observations_for_spike(0.30, COUCHES), 0),
     }
 
 
