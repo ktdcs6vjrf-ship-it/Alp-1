@@ -540,6 +540,17 @@ class TestReportAndPaper(unittest.TestCase):
                 texte = _re.sub(r"<[^>]+>", "", m.group(3)).strip()
                 self.assertLessEqual(len(texte), pieds.LONGUEUR_PROSE, texte)
 
+    def test_le_premier_test_du_protocole_se_lit_contre_sa_loi_nulle(self):
+        """Le document court porte la même correction que le long.
+
+        Un critère écrit contre 0,5 est franchi par le bruit seul : sur des
+        séances de 390 minutes, l'estimateur de Lo et MacKinlay rend un
+        exposant apparent supérieur à un demi *sur une marche aléatoire*.
+        """
+        html = paper.build()
+        self.assertNotIn("significativement supérieur à 0,5", html)
+        self.assertIn("loi nulle simulée de l", html)
+
     def test_paper_values_are_consistent_with_tables(self):
         v = paper.values()
         # Le lift relatif cité dans le texte est bien c/L.

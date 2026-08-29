@@ -243,6 +243,19 @@ class TestStructure(unittest.TestCase):
         self.assertIn("théorème d&#x27;invariance".replace("&#x27;", "'"), self.corps)
         self.assertIn("bande de bruit", self.corps)
 
+    def test_le_premier_test_du_protocole_se_lit_contre_sa_loi_nulle(self):
+        """Un critère écrit contre 0,5 est franchi par le bruit seul.
+
+        Le document mesure le biais de l'estimateur de ratio de variance, le
+        publie dans une table — sur une série qui *est* une marche aléatoire,
+        la statistique asymptotique la rejette à tous les horizons — et
+        écrivait pourtant le critère de passage de son premier test contre la
+        valeur théorique. C'était la seule règle du dépôt qu'il s'appliquait
+        partout sauf à l'endroit où elle décide.
+        """
+        self.assertNotIn("significativement supérieur à 0,5", self.corps)
+        self.assertIn("loi nulle simulée de l", self.corps)
+
     def test_la_composition_est_au_fer_a_gauche(self):
         """La césure française n'étant pas garantie, la justification est écartée."""
         self.assertIn("text-align: left", self.html)

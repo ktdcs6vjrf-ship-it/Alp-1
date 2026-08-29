@@ -276,7 +276,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 880 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 882 tests (compter ~25 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
@@ -317,8 +317,15 @@ explicite.
 
 1. Adopter le test directionnel : 39 % de trades en moins, mais impose un
    re-scellement du protocole préenregistré.
-2. Remplacer le ratio de variance par la DFA dans le Test 1, le ratio de
-   variance étant biaisé à Ĥ = 0,52 sur une vraie martingale.
+2. Remplacer le ratio de variance par la DFA dans le Test 1. **Le défaut qui
+   motivait cet arbitrage est corrigé** : le critère de passage se lisait
+   « Ĥ significativement supérieur à 0,5 » alors que l'estimateur rend
+   0,5182 ± 0,0031 sur une vraie martingale — six écarts-types, donc un test
+   franchi par le bruit seul. Le protocole se lit maintenant contre la loi
+   nulle simulée de l'estimateur, que `report5` publie déjà. Reste la question
+   ouverte, plus faible : la DFA serait-elle un meilleur estimateur que le
+   ratio de variance corrigé ? Elle ne corrige pas un test faux, elle en
+   choisirait un autre.
 3. Recalculer le chapitre des instruments à c = 0,65 au lieu de 0,33 —
    cela publierait des chiffres nettement moins favorables.
 4. Points d'audit 4, 5 et 6 : câbler la batterie anti-surajustement et le
