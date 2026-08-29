@@ -168,13 +168,14 @@ def fig_hypothese() -> str:
         L = _law(mu)
         v = L.sd / L.downside_deviation()
         p3.dot(mu, v, "s3", f"{lab} : σ/DD = {v:.2f}")
-        # Le point de la borne basse a la ligne « sans dérive » juste sous
-        # lui : son étiquette part vers la gauche, au-dessus d'une courbe qui
-        # n'y est pas encore montée. Celle de l'hypothèse garde la droite.
-        gauche = mu < 0.5 * mu_ref
-        p3.label(mu, v, lab + " : " + _num(v, 2),
-                 dx=-9 if gauche else 10, dy=-7 if gauche else 15,
-                 anchor="end" if gauche else "start", cls="dl halo")
+        # Les deux étiquettes partent vers la droite, sous leur point : la
+        # courbe monte, et ce qui est sous elle à droite d'un point y reste.
+        # Vers la gauche, celle de la borne basse sortait du cadre — le point
+        # est à un neuvième de la largeur — et heurtait la graduation.
+        # L'écart vertical est plus court pour la borne basse : la ligne
+        # « sans dérive » passe treize points sous elle.
+        p3.label(mu, v, lab + " : " + _num(v, 2), dx=10,
+                 dy=10 if mu < 0.5 * mu_ref else 15, cls="dl halo")
 
     # Quatre-vingt-dix points plus bas que l'axe du troisième cadre : posée à
     # 424, la légende tombait exactement sur l'intitulé « dérive (pt/h) ».
