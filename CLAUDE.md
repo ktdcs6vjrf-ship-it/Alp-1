@@ -34,7 +34,7 @@ de module s'y propage, donc il faut le rebâtir aussi.**
 
 Derniers artefacts publiés :
 - ALP nº 3 : https://claude.ai/code/artifact/0d8a6548-553f-4418-a5d9-121a4bd93729
-- ALP nº 1 : https://claude.ai/code/artifact/03f2186d-3cb7-4e07-9808-4bc011c92a26
+- ALP nº 1 : https://claude.ai/code/artifact/7a1e4f3e-5c9b-4035-91b7-6f481ca43724
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
 nouveau chemin de fichier, jamais republier le même.
