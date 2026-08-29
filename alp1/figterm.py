@@ -220,7 +220,14 @@ class Panel:
                        f'width="{self.w:.1f}" height="{self.h:.1f}"/>')
 
     def grid_y(self, ticks, fmt=lambda v: f"{v:g}", label: str | None = None,
-               side: str = "left") -> None:
+               side: str = "left", dx: float = 42.0) -> None:
+        """Graduations d'ordonnée, et son intitulé pivoté.
+
+        `dx` écarte l'intitulé de l'axe. Il reste à sa valeur par défaut
+        partout sauf là où les graduations sont longues — une échelle en
+        pour-cent à trois décimales déborde des quarante-deux pixels et vient
+        sur l'intitulé.
+        """
         base = self.y + self.h
         for v in ticks:
             yy = self.sy(v)
@@ -247,10 +254,10 @@ class Panel:
             # déborde de sa demi-hauteur, et l'y coller de force le faisait
             # revenir sur les graduations. Le maximum plutôt qu'un compromis.
             demi = 6.0
-            dx = (self.x - 42 if side == "left"
-                  else min(self.x + self.w + 42,
+            px = (self.x - dx if side == "left"
+                  else min(self.x + self.w + dx,
                            self.board.width - demi))
-            self.board.add(f'<text class="ax" transform="translate({dx:.1f},{cy:.1f}) '
+            self.board.add(f'<text class="ax" transform="translate({px:.1f},{cy:.1f}) '
                            f'rotate(-90)" text-anchor="middle">{_esc(label)}</text>')
 
     def grid_x(self, ticks, fmt=lambda v: f"{v:g}", label: str | None = None,

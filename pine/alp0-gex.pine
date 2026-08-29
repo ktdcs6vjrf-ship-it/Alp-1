@@ -1,0 +1,166 @@
+//@version=6
+indicator("Alp-0 GEX", "Alp-0 GEX", overlay = true,
+     max_lines_count = 500, max_labels_count = 500, max_boxes_count = 100)
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Alp-0 GEX — niveaux gamma d'un indice, portes sur son future
+//
+//  Le probleme que ce fichier resout
+//  ---------------------------------
+//  Un robot Discord repond a « !gex NDX » par une liste de niveaux exprimes
+//  en points d'INDICE. Le graphique, lui, est celui du FUTURE — NQ. Les deux
+//  echelles different d'une base qui bouge tous les jours et a chaque roll :
+//  reporter un niveau NDX tel quel sur NQ le decale de plusieurs dizaines de
+//  points, c'est-a-dire de bien plus que la distance qu'on pretend lire.
+//
+//  Pine n'a aucun acces reseau. Aucun indicateur ne peut donc interroger un
+//  robot Discord. Ce qu'il peut faire, et ce qu'il fait ici :
+//
+//    1. recevoir la liste collee telle quelle, une ligne par niveau ;
+//    2. mesurer la base NQ − NDX en direct, sur le graphique lui-meme ;
+//    3. tracer chaque niveau converti, etiquete, avec sa distance au prix.
+//
+//  Le collage est la seule action manuelle, et elle prend cinq secondes par
+//  jour. La conversion, elle, n'est jamais faite a la main : c'est la seule
+//  partie ou une erreur coute quelque chose.
+//
+//  Format accepte, une ligne par niveau
+//  ------------------------------------
+//    20450 = call wall
+//    20200 = gamma flip
+//    19980 = put wall
+//    20310
+//
+//  L'etiquette est facultative. Le separateur peut etre « = », « : » ou « | ».
+//  Les lignes vides et celles qui commencent par « # » sont ignorees, ce qui
+//  permet de coller la reponse du robot sans la nettoyer.
+//
+//  Ce que cet indicateur ne fait pas
+//  --------------------------------
+//  Il ne calcule aucun gamma. Il ne verifie pas les niveaux qu'on lui donne,
+//  il n'a aucune loi nulle et n'en revendique aucune. C'est un outil de
+//  report, pas une mesure — meme statut que `alp0.pine`.
+// ═══════════════════════════════════════════════════════════════════════════
+
+
+// ─── ① Les niveaux ────────────────────────────────────────────────────────
+gA = "① Niveaux, en points d'indice"
+raw = input.text_area(
+     "20450 = call wall\n20200 = gamma flip\n19980 = put wall",
+     "Colle ici la reponse du robot",
+     group = gA,
+     tooltip = "Une ligne par niveau. « prix = etiquette », l'etiquette " +
+               "etant facultative. Les lignes vides et celles commencant " +
+               "par # sont ignorees.")
+
+// ─── ② La conversion ──────────────────────────────────────────────────────
+gB = "② Conversion indice → future"
+idxSym  = input.symbol("NASDAQ:NDX", "Indice de reference", group = gB,
+     tooltip = "L'indice dans lequel les niveaux sont exprimes. NDX pour NQ, " +
+               "SPX pour ES, RUT pour RTY.")
+mode    = input.string("Base mesuree", "Methode",
+     options = ["Base mesuree", "Base fixe", "Aucune conversion"], group = gB,
+     tooltip = "« Base mesuree » lit NQ − NDX sur le graphique et la lisse : " +
+               "c'est la seule methode exacte, et elle survit au roll. " +
+               "« Base fixe » sert quand l'indice n'est pas disponible.")
+fixedBas = input.float(0.0, "Base fixe, en points", step = 0.25, group = gB)
+basLen   = input.int(30, "Lissage de la base, en barres", minval = 1,
+     maxval = 200, group = gB,
+     tooltip = "La base bouge lentement ; la mediane sur trente barres " +
+               "absorbe un print d'indice en retard sans retarder le roll.")
+
+// ─── ③ Apparence ──────────────────────────────────────────────────────────
+gC = "③ Apparence"
+colCall = input.color(color.new(#E0625C, 0), "Resistance / call",  group = gC)
+colPut  = input.color(color.new(#6E9BFF, 0), "Support / put",      group = gC)
+colFlip = input.color(color.new(#E4E6EA, 0), "Bascule / neutre",   group = gC)
+lw      = input.int(2, "Epaisseur", minval = 1, maxval = 5,        group = gC)
+extendR = input.int(60, "Prolonger de N barres", minval = 0, maxval = 500,
+     group = gC)
+showDist = input.bool(true, "Afficher la distance au prix", group = gC)
+showBase = input.bool(true, "Afficher la base mesuree",     group = gC)
+
+
+// ─── La base ──────────────────────────────────────────────────────────────
+// Le prix de l'indice, lu sur le meme pas de temps. `ignore_invalid_symbol`
+// evite que l'indicateur disparaisse si le symbole est mal ecrit, et
+// `lookahead_off` interdit tout regard vers l'avenir — meme sur un report,
+// une barre qui se repeint est un piege.
+idxClose = request.security(idxSym, timeframe.period, close,
+     lookahead = barmerge.lookahead_off, ignore_invalid_symbol = true)
+
+rawBasis = na(idxClose) ? na : close - idxClose
+// `var` : la derniere base valide survit aux heures ou l'indice ne cote pas.
+var float heldBasis = na
+smoothed = ta.median(rawBasis, basLen)
+if not na(smoothed)
+    heldBasis := smoothed
+
+basis = switch mode
+    "Base mesuree"     => nz(heldBasis, 0.0)
+    "Base fixe"        => fixedBas
+    => 0.0
+
+
+// ─── Le tracé ─────────────────────────────────────────────────────────────
+var line[]  lines  = array.new<line>()
+var label[] labels = array.new<label>()
+
+// Un mot de l'etiquette suffit a choisir la couleur. Le classement est
+// volontairement grossier : il ne sert qu'a distinguer trois familles d'un
+// coup d'oeil, et toute etiquette inconnue reste neutre.
+teinte(string tag) =>
+    t = str.lower(tag)
+    isCall = str.contains(t, "call") or str.contains(t, "resist") or
+             str.contains(t, "wall+") or str.contains(t, "cw")
+    isPut  = str.contains(t, "put") or str.contains(t, "support") or
+             str.contains(t, "pw")
+    isCall ? colCall : isPut ? colPut : colFlip
+
+if barstate.islast
+    // Tout est redessine a chaque tick de la derniere barre : c'est le seul
+    // moyen sûr de refleter un changement de la zone de texte.
+    while array.size(lines) > 0
+        line.delete(array.pop(lines))
+    while array.size(labels) > 0
+        label.delete(array.pop(labels))
+
+    x1 = bar_index - 1
+    x2 = bar_index + extendR
+
+    rows = str.split(raw, "\n")
+    for i = 0 to array.size(rows) - 1
+        row = str.trim(array.get(rows, i))
+        if str.length(row) > 0 and str.substring(row, 0, 1) != "#"
+            // Un seul separateur possible par ligne ; on essaie les trois.
+            sep = str.contains(row, "=") ? "=" :
+                  str.contains(row, ":") ? ":" :
+                  str.contains(row, "|") ? "|" : ""
+            parts = sep == "" ? array.from(row) : str.split(row, sep)
+            priceTxt = str.trim(array.get(parts, 0))
+            tag = array.size(parts) > 1 ? str.trim(array.get(parts, 1)) : ""
+            idxLvl = str.tonumber(priceTxt)
+            if not na(idxLvl)
+                lvl = idxLvl + basis
+                col = teinte(tag)
+                ln = line.new(x1, lvl, x2, lvl, xloc = xloc.bar_index,
+                     color = col, width = lw, style = line.style_solid)
+                array.push(lines, ln)
+
+                dist = lvl - close
+                txt = (tag == "" ? str.tostring(idxLvl, format.mintick) : tag) +
+                      "  " + str.tostring(lvl, format.mintick) +
+                      (showDist ? "   " + (dist >= 0 ? "+" : "") +
+                                  str.tostring(dist, "#.##") : "")
+                lb = label.new(x2, lvl, txt, xloc = xloc.bar_index,
+                     style = label.style_label_left, color = color.new(col, 88),
+                     textcolor = col, size = size.small)
+                array.push(labels, lb)
+
+    if showBase
+        info = "base " + str.tostring(basis, "#.##") +
+               "  ·  " + str.tostring(array.size(lines)) + " niveaux"
+        lbBase = label.new(bar_index, close, info, xloc = xloc.bar_index,
+             style = label.style_label_up, color = color.new(colFlip, 90),
+             textcolor = colFlip, size = size.small)
+        array.push(labels, lbBase)

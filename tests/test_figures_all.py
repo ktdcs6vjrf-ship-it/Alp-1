@@ -20,7 +20,7 @@ import unittest
 #: contenu réel du paquet : elle ne peut pas se démoder en silence.
 MODULES = (
     "figures", "figterm", "figquant", "figalp2", "figdecay",
-    "figpower", "figrisk", "figedge", "figstrat", "figdisc",
+    "figpower", "figrisk", "figedge", "figstrat", "figdisc", "figflux",
 )
 
 

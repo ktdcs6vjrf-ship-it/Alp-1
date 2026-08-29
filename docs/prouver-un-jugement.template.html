@@ -655,8 +655,16 @@
           <li><a href="#s-ou-depenser">Où dépenser le jugement</a></li>
         </ol>
       </li>
-      <li><span class="pt">Onzième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Onzième partie — Lire le flux</span>
         <ol start="36">
+          <li><a href="#s-footprint">Le footprint, et ce qu'un déséquilibre vaut</a></li>
+          <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n'observe</a></li>
+          <li><a href="#s-tpo">Le profil de marché, et ses cinq lectures</a></li>
+          <li><a href="#s-bruit">Combien de bruit un trade supporte-t-il&nbsp;?</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Douzième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="40">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1205,6 +1213,78 @@
 
   <div class="part">
     <span class="lab">Onzième partie</span>
+    <h2>Lire le flux</h2>
+    <p>Deux couches que l'opérateur regarde tous les jours, passées au même protocole que le reste.</p>
+  </div>
+
+  <h2 id="s-footprint">Le footprint, et ce qu'un déséquilibre vaut</h2>
+
+  <p>Un graphique en chandelles dit <em>où</em> le prix est allé. Un footprint dit <em>qui l'y a poussé</em>&nbsp;: pour chaque niveau de prix d'une barre, le volume exécuté au bid — un vendeur qui traverse le spread — et le volume exécuté à l'ask. La différence est le delta du niveau, sa somme le delta de barre. Trois lectures s'y sont installées, et chacune se mesure.</p>
+
+  <p><strong>Le déséquilibre diagonal.</strong> On compare l'ask d'un niveau au bid du niveau <em>inférieur</em>, jamais du même niveau. La raison est mécanique&nbsp;: à un instant donné, l'ask et le bid d'un même prix ne sont pas en concurrence, ils sont les deux côtés de deux spreads différents. La diagonale met en regard les deux ordres qui, eux, se disputaient la même file. Le seuil d'usage est {{f_ratio}} pour 1.</p>
+
+  <p><strong>L'absorption.</strong> Un volume important sans progrès de prix. C'est la lecture la plus utile et la plus mal mesurée, parce que «&nbsp;important&nbsp;» ne veut rien dire hors d'une échelle — et la bonne échelle est celle de l'impact. Sous une loi d'impact en racine, le déplacement d'une barre vaut <span class="v">λ·√V</span> à un aléa près, et la question devient un <span class="v">z</span>. Une absorption est un <span class="v">|z|</span> anormalement <em>petit</em> pour un volume anormalement <em>grand</em>&nbsp;; sans le second terme, une barre morte se lirait comme une absorption.</p>
+
+  <p><strong>L'épuisement.</strong> Le volume s'effondre au dernier niveau atteint. C'est le seul des trois qui n'ait pas de forme fermée&nbsp;: le volume au niveau extrême d'une excursion est un temps local, et sa loi se simule.</p>
+
+  {{FIGURE:flowfootprint|Trois barres en footprint, construites à volumes et niveaux déclarés. À chaque niveau, le volume exécuté au bid à gauche et à l'ask à droite&nbsp;; les cadres marquent un déséquilibre diagonal de {{f_ratio}} pour 1. La barre neutre en attend {{f_attendu_neutre}} de sa seule loi nulle.}}
+
+  {{TABLE:footprint}}
+
+  <p>Le chiffre qui décide est dans l'avant-dernière colonne. <strong>Une barre sans aucune intention produit environ {{f_attendu_neutre}} déséquilibre diagonal.</strong> En relever un ne dit donc rien&nbsp;; la barre construite en montre {{f_observe_desq}}, et c'est cet écart-là qui se lit. L'absorption se lit au <span class="v">z</span> d'impact&nbsp;: {{f_z_absorption}} pour un volume {{f_volume_absorption}} fois celui de la barre neutre. L'épuisement se lit contre une loi simulée dont la médiane vaut {{f_epuisement_median}} et le quantile à cinq pour cent {{f_epuisement_q05}} — le volume s'effondre déjà au niveau extrême sans qu'aucune intention n'y soit, parce que le prix y passe peu de temps.</p>
+
+  <h2 id="s-grappe">Ce qui décide la fréquence nulle, et que personne n'observe</h2>
+
+  <p>La loi nulle du déséquilibre est exacte et ne demande aucune simulation. Les volumes de niveau sont tenus pour donnés — le footprint ne prétend rien sur la quantité échangée, seulement sur sa répartition entre les deux côtés — et sous martingale chaque tirage est aussi probablement acheteur que vendeur. Reste à dire ce qu'est <em>un</em> tirage.</p>
+
+  <p>Si les contrats arrivaient un à un et indépendamment, l'ask d'un niveau à {{f_niveau}} contrats suivrait une binomiale d'écart-type huit&nbsp;: un rapport de {{f_ratio}} pour 1 exigerait plus de quinze écarts-types, c'est-à-dire jamais. <strong>Le déséquilibre serait un signal parfait</strong>, ce qu'il n'est manifestement pas. Ce qui sauve la lecture — et ce qui la limite — est que les contrats n'arrivent pas un à un&nbsp;: un ordre de vingt lots est <em>un</em> tirage, pas vingt. L'échantillon effectif d'un niveau est son volume divisé par la taille de grappe.</p>
+
+  {{FIGURE:flowfootnull|À gauche, la fréquence d'un déséquilibre diagonal sous martingale selon la taille de grappe, sur deux niveaux à {{f_niveau}} contrats. À droite, la loi nulle du rapport d'épuisement, simulée sur des excursions sans dérive.}}
+
+  <p>Le résultat est inconfortable et il faut le nommer. Sur deux niveaux à {{f_niveau}} contrats, la fréquence nulle d'un déséquilibre de {{f_ratio}} pour 1 vaut {{f_grappe5}} pour une grappe de cinq contrats, {{f_grappe20}} pour une grappe de vingt, {{f_grappe50}} pour une grappe de cinquante. <strong>La même barre est un événement à une chance sur mille ou une banalité à une sur dix, selon un paramètre que le flux agrégé ne donne pas.</strong> Toutes ces tailles de grappe sont plausibles sur un future indiciel.</p>
+
+  {{FIGURE:flowfoot3d|La fréquence nulle du déséquilibre sur ses deux axes. Arête gauche&nbsp;: la taille de grappe, une hypothèse. Arête droite&nbsp;: le seuil de lecture, un choix. La surface descend d'un facteur cinq le long du second et monte d'un facteur mille le long du premier.}}
+
+  <p>La surface pose les deux axes côte à côte, et le rapport entre eux est le sujet. Passer de {{f_ratio}} pour 1 à 5 pour 1 divise la fréquence nulle par cinq&nbsp;; passer d'une grappe de quatre à une grappe de quarante-huit la multiplie par plus de mille. <em>Le seuil que l'opérateur choisit ne décide presque rien devant l'hypothèse qu'il ne fait pas.</em> Ce n'est pas une raison d'abandonner la lecture&nbsp;: c'est une raison d'estimer la taille de grappe sur ses propres données avant de lui attribuer une rareté.</p>
+
+  <h2 id="s-tpo">Le profil de marché, et ses cinq lectures</h2>
+
+  <p>Le profil TPO compte les <em>périodes</em> et non les contrats. La séance est découpée en tranches de trente minutes, chacune reçoit une lettre, et la lettre est imprimée à tous les prix que la tranche a traversés. Steidlmayer l'a publié en 1984 pour le Chicago Board of Trade&nbsp;; son vocabulaire est passé tel quel dans toutes les plateformes. Le POC est le prix le plus longtemps visité, l'aire de valeur la tranche contenant soixante-dix pour cent des TPO, un tirage simple un prix qu'une seule période a touché, un extrême pauvre un haut ou un bas où deux périodes au moins ont imprimé — donc sans mèche.</p>
+
+  {{FIGURE:flowtpo|Le profil d'une séance <em>sans dérive</em>, découpée en {{t_periodes}} périodes de trente minutes, sur des rangées de {{t_rangee}} points. Tout ce qu'on y reconnaît a été produit sans intention. À droite, la fréquence de trois lectures sous cette même loi, et ce qui décide la rareté de l'extrême pauvre.}}
+
+  {{TABLE:tpo}}
+
+  <p>La séance de la figure n'a <strong>aucune dérive</strong>, et c'est délibéré. Un lecteur qui y reconnaît un POC, une aire de valeur, des tirages simples et une extension de séance y reconnaît des formes qu'aucune intention n'a produites.</p>
+
+  <p>Sur les cinq lectures, l'extension de séance arrive dans {{t_extension}} des séances sans dérive&nbsp;: ce n'est pas un événement, c'est ce qui arrive quand rien n'arrive. Les tirages simples se comptent — {{t_simples}} en moyenne à cette rangée — et l'aire de valeur couvre {{t_largeur}} de l'étendue&nbsp;; ni l'un ni l'autre ne se lit sans son écart à cette valeur. <strong>L'extrême pauvre est la seule des cinq qui soit réellement rare</strong>, et le document le dit, parce qu'il n'a pas pour objet de tout démolir.</p>
+
+  <p>Mais sa rareté ne tient pas au marché. À une rangée de {{t_rangee}} points, un extrême haut pauvre arrive dans {{t_pauvre_gros}} des séances sans dérive&nbsp;; à un quart de point, dans {{t_pauvre_fin}}. Un facteur {{t_facteur_pauvre}}, sans qu'aucune propriété du marché ne change — seul le nombre de rangées que la séance parcourt a changé.</p>
+
+  {{FIGURE:flowtpo3d|La fréquence nulle d'un extrême pauvre sur le plan du pas de cotation et de la volatilité de séance. Seul leur rapport décide&nbsp;: deux marchés très différents peuvent tomber au même endroit, et le même marché change de verdict quand on change la rangée d'affichage.}}
+
+  <p>C'est au profil ce que la taille de grappe est au footprint. <strong>Une lecture d'extrême ne se transporte pas d'un instrument à l'autre sans que sa loi nulle soit refaite</strong>, et elle ne se transporte pas non plus d'un réglage d'affichage à l'autre sur le même instrument.</p>
+
+  <h2 id="s-bruit">Combien de bruit un trade supporte-t-il&nbsp;?</h2>
+
+  <p>La question revient souvent sous la forme «&nbsp;le marché est du bruit à quatre-vingt-dix-neuf pour cent&nbsp;». Elle n'a de réponse que rapportée à une géométrie, et alors elle en a une, exacte.</p>
+
+  <p>Le taux de réussite d'équilibre sans friction vaut <span class="v">1/(R+1)</span>&nbsp;; avec friction il vaut <span class="v">(1 + c/L)/(R+1)</span>. À la géométrie déclarée, cela fait passer le taux requis de {{i_taux_nul}} à {{i_taux_requis}} — une hausse relative de {{i_hausse}}, ce qui paraît énorme. La divergence de Kullback-Leibler en donne le prix réel, en bits&nbsp;: <strong>{{i_bits_declare}} d'un bit par décision</strong>. Une décision binaire en porte un au plus.</p>
+
+  {{TABLE:bruit}}
+
+  <p>La réponse est donc oui, et le chiffre est presque exactement celui de l'intuition&nbsp;: <strong>le marché peut être du bruit à {{i_bruit_declare}} et la géométrie déclarée tenir</strong>. En élargissant le stop, la friction tombe à onze pour cent du risque nominal et l'exigence à {{i_bits_ouvert}} d'un bit&nbsp;: le marché peut alors être du bruit à {{i_bruit_ouvert}}.</p>
+
+  {{FIGURE:flowinfo|L'information exigée par décision selon la friction rapportée au risque nominal, pour trois cibles, et l'échantillon requis pour l'établir. Les deux cadres partagent leur abscisse et disent la même tension en sens inverse.}}
+
+  <p>Le second cadre porte le prix de cette bonne nouvelle, et il faut le lire en même temps que le premier. <strong>Moins un trade exige d'information, plus il faut de décisions pour établir qu'il l'a.</strong> À la géométrie déclarée, {{i_n_declare}}&nbsp;décisions suffisent&nbsp;; au stop élargi, il en faut {{i_n_ouvert}}, soit {{i_facteur_n}} fois plus. La géométrie qui rend l'avantage facile à obtenir est celle qui le rend difficile à prouver.</p>
+
+  {{FIGURE:flowinfo3d|Le budget d'information sur ses deux axes, la cible et la friction — les deux grandeurs que l'opérateur fixe entièrement. La surface couvre trois ordres de grandeur sans qu'aucun signal n'entre dans le calcul.}}
+
+  <p>C'est la tension que les trois documents mesurent, et elle se résout dans un sens précis. <em>Un opérateur qui trade n'a pas besoin de prouver&nbsp;; un opérateur qui alloue, si.</em> Le premier doit choisir la géométrie qui minimise l'information requise — c'est le chapitre précédent. Le second doit choisir celle qui la rend démontrable, et ce n'est pas la même.</p>
+
+  <div class="part">
+    <span class="lab">Douzième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
