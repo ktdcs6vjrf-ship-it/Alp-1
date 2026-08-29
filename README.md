@@ -8,6 +8,33 @@ Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
 49 sections en neuf parties, 107 tables, 48 figures.
 
+### Le second document
+
+> **Le seuil, et non le signal : ce que l'opérateur discrétionnaire décide
+> vraiment. Lois nulles, taxe de multiplicité et théorème d'arrêt optionnel**
+> *Série ALP, nº 3.* JEL : C12, C44, C52, G11, G14.
+
+[`docs/prouver-un-jugement.html`](docs/prouver-un-jugement.html) —
+44 sections en douze parties, 17 tables, 34 figures.
+
+Il part d'une question — combien de décisions faut-il pour établir la valeur
+d'un jugement qui n'existe pas sous forme écrite ? — et la retourne. Le
+théorème d'arrêt optionnel donne un seuil de rentabilité `µ* = c/E[τ∧T]` qui
+ne dépend d'aucun signal : `µ` est une propriété du marché, `µ*` une propriété
+de la géométrie, et l'opérateur la fixe entièrement. À la géométrie déclarée
+ce seuil vaut 8,19 point par heure quand le domaine de dérive plausible
+s'arrête à 3,2 — la rentabilité n'y est pas improbable, elle est
+arithmétiquement impossible. Élargir le stop la déplace d'un facteur 53.
+
+Deux parties récentes s'y ajoutent. **Lire le flux** passe le footprint et le
+profil de marché au même protocole que le reste : chaque lecture reçoit sa loi
+nulle, et le paramètre non observable dont cette loi dépend est nommé plutôt
+que caché. **Le budget d'information** répond en bits à la question du bruit :
+à la géométrie déclarée une décision doit porter 0,941 % d'un bit, donc le
+marché peut être du bruit à 99,06 % — mais l'établir demande 474 décisions, et
+la géométrie qui rend l'avantage facile à obtenir est celle qui le rend
+difficile à prouver.
+
 ## Ce que contient ce dépôt
 
 Une analyse **analytique**, sans donnée de marché. Elle délimite l'espace dans
@@ -914,7 +941,7 @@ python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
 python main.py --disc             # journal de décision, lois nulles, attribution
 python main.py --discpaper        # reconstruit docs/prouver-un-jugement.html
-python main.py --tests            # 842 tests unitaires du noyau
+python main.py --tests            # 843 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.

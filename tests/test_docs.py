@@ -133,6 +133,23 @@ class TestComptes(unittest.TestCase):
         n = len(re.findall(r'<h2 id="[a-z0-9-]+"', corps))
         self.citer(f"{n} sections", "nombre de sections")
 
+    def test_les_comptes_du_second_document_sont_les_bons(self):
+        """Le README annonce aussi la structure d'ALP nº 3.
+
+        Le second document est devenu le plus actif des deux ; l'annoncer
+        sans le garder reviendrait à le laisser se démoder en silence, ce
+        que la règle 3 du dépôt interdit.
+        """
+        from alp1.discpaper import build, figures, tables
+        corps = build().split("</style>", 1)[1]
+        n = len(re.findall(r'<h2 id="[a-z0-9-]+"', corps))
+        self.citer(f"{n} sections", "sections du document nº 3")
+        self.citer(f"{len(tables())} tables", "tables du document nº 3")
+        self.citer(f"{len(figures())} figures", "figures du document nº 3")
+        # Pas de contrôle sur le nombre de parties : le README l'écrit en
+        # toutes lettres, comme pour le document nº 1, et le triplet
+        # sections-tables-figures suffit à détecter une structure qui bouge.
+
     def test_le_nombre_de_tests_annonce_est_le_bon(self):
         loader = unittest.TestLoader()
         suite = loader.discover(str(RACINE / "tests"), top_level_dir=str(RACINE))

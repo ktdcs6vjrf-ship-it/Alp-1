@@ -4,179 +4,258 @@ Ce fichier existe pour qu'une session repartie de zéro retrouve l'état du
 travail sans le redécouvrir. Le dépôt est la seule mémoire : ce qui n'est pas
 écrit ici ou commité n'existe plus.
 
+**Si vous venez d'un `/clear` : lisez ce fichier en entier avant de toucher
+quoi que ce soit.** Il contient les pièges déjà tombés dedans, et ils sont
+tous du genre à ne pas se voir.
+
 ## Ce qu'est ce dépôt
 
-Un papier de recherche en français, de forme SSRN, sur l'invariance des
-géométries de sortie en intraday indice. Le noyau est un ensemble de modules
-Python qui **calculent** les chiffres, et le document HTML est **construit**
-à partir d'eux. Aucun nombre n'est écrit à la main dans le document.
+Deux papiers de recherche en français, de forme SSRN, sur l'intraday indice.
+Le noyau est un ensemble de modules Python qui **calculent** les chiffres, et
+les documents HTML sont **construits** à partir d'eux. Aucun nombre n'est
+écrit à la main dans un document.
 
-Livrable principal : `docs/temps-de-marche-et-peremption.html`
-(≈1,00 Mo — 49 sections en neuf parties, 107 tables, 48 figures).
-Il est publié comme artefact : https://claude.ai/code/artifact/1a195a2a-36ad-47df-9d1d-e44c43b4f982
+**ALP nº 1** — `docs/temps-de-marche-et-peremption.html` (≈970 ko, 49 sections
+en neuf parties, 107 tables, 48 figures). L'invariance des géométries de
+sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`.
 
-Second livrable : `docs/prouver-un-jugement.html` — **ALP nº 3**, sur
-l'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas codable
-(≈590 ko — 34 sections en dix parties, 8 tables, 20 figures dont deux
-surfaces isométriques). Chaîne propre : `journal.py` → `operator.py` →
-`attribution.py` → `report10.py` + `figdisc.py` → `discpaper.py`. Les sept
-figures de couches sont reprises de `figterm.py` sans être redéfinies : elles
-ne portent aucune couleur et adoptent seules le jeu de jetons sombre.
+**ALP nº 3** — `docs/prouver-un-jugement.html` (≈740 ko, 44 sections en douze
+parties, 17 tables, 34 figures dont neuf surfaces isométriques). L'évaluation
+d'un opérateur discrétionnaire dont l'avantage n'est pas codable, puis le
+seuil de rentabilité, puis la lecture du flux. Chaîne : `journal.py` →
+`operator.py` → `attribution.py` → `report10/11/13/14.py` + `figdisc.py` +
+`figflux.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+
+Un troisième build existe, `docs/alp1-paper.html` (`--paper`), version plus
+ancienne et plus courte d'ALP nº 1. Il partage `report*.py` : **une correction
+de module s'y propage, donc il faut le rebâtir aussi.**
+
+Derniers artefacts publiés :
+- ALP nº 3 : https://claude.ai/code/artifact/0d8a6548-553f-4418-a5d9-121a4bd93729
+- ALP nº 1 : https://claude.ai/code/artifact/03f2186d-3cb7-4e07-9808-4bc011c92a26
+
+L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
+nouveau chemin de fichier, jamais republier le même.
 
 ## Règles du dépôt — à ne pas enfreindre
 
 1. **Stdlib uniquement.** Pas de numpy, pas de scipy, pas de pandas.
    Python 3.11+. Tout aléa est déterministe et amorcé par une graine explicite.
+   (C'est pourquoi `spectrum.py` porte son propre Jacobi.)
 2. **Les figures n'écrivent aucune couleur en dur.** Elles passent par les
-   jetons CSS de `alp1/figcss.py`. `tests/test_figures_all.py` balaie les dix
+   jetons CSS de `alp1/figcss.py`. `tests/test_figures_all.py` balaie les onze
    modules `fig*.py` et refuse tout `#rrggbb` — y compris les entités HTML de
-   la forme `&#8202;`, qui doivent être écrites en caractère littéral.
+   la forme `&#8202;`, qui doivent être écrites en caractère littéral. Ajouter
+   un module de figures sans l'inscrire dans `MODULES` fait échouer le premier
+   test, ce qui est voulu.
 3. **Les comptes annoncés sont gardés par les tests.** `tests/test_docs.py`
-   vérifie que le README dit vrai (nombre de tests, de parties) et
-   `tests/test_workingpaper.py` vérifie la structure du document (sections,
-   parties, tables, figures). Changer l'un impose de changer l'autre.
+   vérifie que le README dit vrai, `tests/test_workingpaper.py` et
+   `tests/test_discpaper.py` vérifient la structure des documents (sections,
+   parties, tables, figures, rangs des renvois). Changer l'un impose de
+   changer l'autre.
 4. **Le document se reconstruit, il ne s'édite pas.** On modifie
-   `docs/*.template.html`, puis `python main.py --wp`. Éditer le HTML construit
-   à la main le remettrait en désaccord avec sa source au prochain build.
+   `docs/*.template.html`, puis `python main.py --wp` / `--discpaper`.
 5. **Toute méthode nouvelle vient avec sa loi nulle.** C'est la méthodologie
-   centrale du dépôt : un motif ne vaut que comparé à sa fréquence sous un prix
-   sans dérive. Un estimateur qu'on ne sait pas calibrer contre son bruit ne
-   rentre pas.
+   centrale : un motif ne vaut que comparé à sa fréquence sous un prix sans
+   dérive. Un estimateur qu'on ne sait pas calibrer contre son bruit ne rentre
+   pas.
+6. **Un paramètre déclaré n'est jamais dérivé de ce qu'il sert à évaluer.**
+   Corollaire du piège de circularité ci-dessous.
 
-## Le résultat structurant
+## Les deux résultats structurants
 
-Sous un prix sans dérive, l'espérance nette par trade vaut exactement `−c/L`,
-quels que soient le placement des barrières et la règle de gestion du stop.
-C'est le théorème d'arrêt optionnel : `E[R] = µ·E[τ] − c`. Aucune géométrie ne
-crée d'espérance ; elle ne fait qu'acheter du temps de marché `E[τ]`.
+**L'arrêt optionnel.** Par l'identité de Wald à temps borné par la séance,
+`E[R] = (µ·E[τ∧T] − c)/L`, d'où un seuil `µ* = c/E[τ∧T]`. À `µ = 0`,
+`E[R] = −c/L` pour toute géométrie : aucune géométrie ne crée d'espérance,
+elle achète du temps de marché. `µ` est une propriété du marché ; **`µ*` est
+une propriété de la géométrie, et l'opérateur la fixe entièrement.**
 
-Corollaire mesuré partout dans le papier : **le bruit propre de chaque
-instrument de mesure dépasse l'avantage que la stratégie exige.** Trois routes
-indépendantes convergent sur le même mur — test t : 17 434 trades ; seuil
-déflaté : 1 993 ; test G informationnel : 10 568.
+Conséquences chiffrées, toutes dans ALP nº 3 partie X :
+- stop déclaré 0,010 % → µ* = 8,19 pt/h, hors du domaine plausible (0,6–3,2) ;
+- stop 0,150 % → µ* = 0,196, un facteur 53 sur ce seul levier, quand améliorer
+  l'exécution n'en donne que 3,5 ;
+- espérance de −0,416 R à +0,337 R **à dérive identique**.
+
+**Le budget d'information.** À la géométrie déclarée, une décision doit porter
+0,941 % d'un bit : le marché peut être du bruit à 99,06 %. Au stop élargi,
+0,042 % — bruit à 99,958 %. Le prix : 474 décisions pour établir la première,
+10 568 pour la seconde. **Rendre l'exigence petite la rend indémontrable.**
 
 ## Carte des modules
 
+Mesure et géométrie
 - `measure.py` — chaîne de mesure, `scan_session`, paramètre `fill`
-  (`"stop"` optimiste / `"extreme"` pire cas compatible avec la barre),
-  `bounds()` qui encadre la mesure entre les deux.
-- `strategy.py` — **la stratégie backtestable scellée** (618 lignes).
-  Entrée minute 120, sortie 388, 3 tentatives. Sept portes de confluence
-  déclarées (`band`, `localvol`, `dow`, `vwapband`, `ote`, `gamma`, `book`),
-  toutes fermées dans `SEALED`. `validate()` fait tourner la batterie de sept
-  contrôles ; un seul manqué refuse.
-- `varratio.py` — ratio de variance de Lo–MacKinlay et loi d'échelle, avec
-  sa loi nulle simulée. Attention : biaisé à Ĥ = 0,52 sur une vraie martingale.
-- `entropy.py` — le plafond informationnel. `required_bits` (divergence de
-  Kullback-Leibler), `trades_for_information` (non-centralité du test G),
-  correction de biais de Miller–Madow.
-- `nonlinear.py` — entropie de permutation (Bandt–Pompe) et DFA (Peng),
-  chacune avec sa loi nulle.
-- `discipline.py` — la déviation comme multiplicité : `k` écarts
-  discrétionnaires valent `2^k` configurations effectives.
+  (`"stop"` optimiste / `"extreme"` pire cas), `bounds()`.
+- `strategy.py` — la stratégie backtestable scellée. Sept portes de confluence
+  déclarées, toutes fermées dans `SEALED`. `validate()` : batterie de sept.
+- `seuil.py` — `µ* = c/E[τ∧T]`, `Geometry`, `scan`, `best`, `break_even`,
+  `friction_grid`, `SURFACE_STOP_PCT`, `PLAUSIBLE_DRIFT_PER_HOUR = (0.6, 3.2)`.
+- `horizon.py` / `barriers.py` — temps d'atteinte, probabilités de barrière.
+  **`outcome_scaled` : l'exposant de Hurst n'agit que sur `expected_time`.**
+  Les probabilités de barrière n'en dépendent pas — c'est le théorème.
+
+Statistique
+- `entropy.py` — `required_bits` (Kullback-Leibler), `trades_for_information`,
+  Miller–Madow.
+- `spectrum.py` — Marchenko-Pastur (`mp_edges`, `mp_density`), transition
+  Baik-Ben Arous-Péché (`bbp_threshold = √γ`, `spiked_eigenvalue`),
+  `observations_for_spike(s, k) = k/s²`, Jacobi en stdlib.
+- `varratio.py` — Lo–MacKinlay. Biaisé à Ĥ = 0,52 sur une vraie martingale.
+- `nonlinear.py` — entropie de permutation (Bandt–Pompe), DFA (Peng).
 - `overfit.py` — purge, embargo, CSCV/PBO, bootstrap stationnaire.
-- `report*.py` — chaque module fournit `values()` et `all_tables()` au
-  document. `report9.py` est celui de la stratégie.
-- `fig*.py` — dix modules de figures, chacun expose `render_all()`. `figdisc.py`
-  est celui d ALP nº 3 et suit un jeu de jetons « terminal » qui lui est propre.
-- `workingpaper.py` — fusionne valeurs, tables et figures, et construit le
-  document. Toute collision de clé lève une erreur.
+- `discipline.py` — `k` écarts discrétionnaires valent `2^k` configurations.
 
-Hors du noyau Python :
+Flux d'ordres
+- `orderflow.py` — LPR, impact de Kyle, CVD, divergences.
+- `footprint.py` — déséquilibre diagonal (loi nulle **exacte**, binomiale),
+  absorption (`z = Δprix/λ√V`, p-valeur **centrale**), épuisement (loi
+  simulée). `CLUMP_DEFAULT = 20` décide de tout, voir ci-dessous.
+- `tpo.py` — profil de marché, POC, aire de valeur, tirages simples, extrême
+  pauvre, extension de séance — chacun avec sa loi nulle simulée.
+- `vprofile.py` — profil de volume, POC, HVN/LVN.
 
-- `pine/alp0.pine` — **Alp-0**, indicateur TradingView (Pine v6) écrit pour
-  l'opérateur. VWAP ancré et bandes d'écart-type pondérées par le volume
-  (0,5 à 3 σ), zones d'accumulation retenues seulement si volume **et**
-  réaction tiennent, et signal de confluence quand une bande tombe sur une
-  zone. Signal calculé sur barre fermée, donc sans repeinture. Ce fichier ne
-  participe ni au document ni aux tests : il n'a pas de loi nulle et n'en
-  revendique aucune — c'est un outil de lecture, pas une mesure.
+Rendu
+- `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
+  stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
+  risque refait. `report14` : flux, TPO, information, spectre.
+- `fig*.py` — onze modules, chacun expose `render_all()`. `figterm.py` porte
+  `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
+  `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
+- `workingpaper.py` / `discpaper.py` / `paper.py` — construisent les
+  documents. Toute collision de clé lève une erreur.
 
-## Le point qui décide la conception de la stratégie
+Hors du noyau Python
+- `pine/alp0.pine` — indicateur TradingView (Pine v6) : VWAP ancré, bandes σ,
+  zones d'accumulation, confluence. Barre fermée, sans repeinture.
+- `pine/alp0-gex.pine` — report de niveaux gamma. On colle la réponse d'un
+  robot Discord ; l'indicateur mesure lui-même la base `NQ − NDX` et la lisse.
+  **Ne jamais convertir NDX→NQ à la main : la base saute à chaque roll.**
+  Voir `docs/gex-discord-vers-tradingview.md`.
+- Ces deux fichiers ne participent ni aux documents ni aux tests : ils n'ont
+  pas de loi nulle et n'en revendiquent aucune.
 
-Chaque porte de confluence ouverte **double** la famille de stratégies, donc
-la taxe de sélection déflatée. Sur 7 012 trades, contre un Sharpe de référence
-de 0,0332 par trade :
+## Les pièges déjà tombés dedans
 
-| portes ouvertes | seuil déflaté | part du Sharpe consommée |
-|---|---|---|
-| 0 | 0,0000 | 0 % |
-| 1 | 0,0141 | 42 % |
-| 5 | 0,0314 | 95 % |
+### La circularité — le pire, et il a survécu longtemps
+`quant.reference_drift()` vaut `DRIFT_MULTIPLE × c/E[τ]`, soit **deux fois le
+seuil de rentabilité** : la dérive y est dérivée de la friction, donc supposée
+exactement au niveau qui rend la stratégie rentable. Elle vaut 16,4 pt/h, soit
+5,1 fois la borne haute du domaine que le même document appelle plausible.
+Tous les chapitres de risque d'ALP nº 1 en dépendent. `report13.py` les refait
+sous une dérive **déclarée** ; ALP nº 3 partie X le documente.
 
-Une configuration unique ne paie **aucune** taxe. C'est pourquoi la version
-scellée ne garde que le déclencheur. La confluence n'est pas rejetée par goût :
-elle est trop chère au regard de ce qu'elle doit financer.
+Signe qui trahit la circularité : l'espérance de référence vaut exactement le
+ratio de friction. C'est mécanique — si `µ = 2µ*` alors `E[R] = c/L` — et
+**le chiffre publié ne dit alors rien du marché, il dit la friction**.
 
-Deux pièges déjà tombés dedans, à ne pas refaire :
-- le contrôle d'échantillon doit partir de `REFERENCE_BITS` — l'effet à
-  *détecter* — et jamais du taux de réussite *observé*, sinon un très mauvais
-  résultat exige un petit échantillon et passe. Un test verrouille ce point.
-- ne pas borner le budget par `max(2.0, ...)` : cela masque le fait ci-dessus
-  et fait afficher +0 % à toutes les portes. **Le piège a été retrouvé dans
-  ALP nº 3** : le bornage y fabriquait un seuil de 0,0215 à zéro levier, où la
-  vraie valeur est zéro, et le papier annonçait « quatre leviers coûtent un
-  facteur 2 » alors que c'était le rapport d'un levier à quatre. À zéro levier
-  il n'y a qu'une configuration, donc rien à sélectionner et rien à déflater ;
-  le premier levier fait un saut depuis zéro qu'aucun facteur ne mesure.
+### Le bornage `max(2.0, budget)` — retiré partout, ne pas le remettre
+Il fabriquait une taxe de sélection là où il n'y en a aucune, et portait trois
+affirmations fausses : un levier à « +0,0000 » quand il porte le seuil de zéro
+à 0,0215 ; une géométrie à configuration unique créditée de 1 258 décisions de
+taxe ; une surface du mur qui montait dès le premier levier. À une seule
+configuration il n'y a rien à sélectionner, donc rien à déflater, et la taxe
+vaut **zéro**.
+
+Depuis, les deux routes du mur sont données séparément et c'est leur **maximum**
+qui lie. Le fait qui en sort est plus fort : il faut dépasser 22 configurations
+pour que la taxe passe devant le test ordinaire, donc **les quatre leviers
+recensés ne coûtent rien de plus que ce qu'il faut de toute façon**.
+
+### L'échantillon
+Le contrôle d'échantillon doit partir de `REFERENCE_BITS` — l'effet à
+*détecter* — et jamais du taux de réussite *observé*, sinon un très mauvais
+résultat exige un petit échantillon et passe. Un test verrouille ce point.
+
+### Le paramètre non observable qui décide de la loi nulle
+Deux couches en souffrent, et il faut le dire à chaque fois plutôt que de le
+cacher :
+- **footprint** : la fréquence nulle d'un déséquilibre 3:1 passe de moins d'un
+  pour mille à près d'un sur dix selon la taille de grappe (5 → 50 contrats),
+  toutes plausibles. Si les contrats arrivaient un à un, ce serait quinze
+  écarts-types — le déséquilibre serait un signal parfait, ce qu'il n'est pas.
+- **TPO** : la fréquence nulle d'un extrême pauvre passe de 5 % à 37 % entre
+  un quart de point et trois points de rangée. Un réglage d'affichage décide
+  de la rareté de ce qu'on lit.
 
 ## Les figures se regardent, elles ne se relisent pas
 
-Le code d'une figure peut être juste et la figure fausse. Trois défauts n'ont
-été trouvés qu'en rendant la page dans un navigateur et en la regardant :
+Le code d'une figure peut être juste et la figure fausse. **Tout défaut listé
+ici a été trouvé en rendant la page dans un navigateur et en la regardant, et
+aucun n'aurait été trouvé en relisant le code.**
 
-- **Un cadre entièrement vide.** Le troisième cadre de `couche_profil` avait
-  un domaine fixé à 48-86 % alors que les probabilités calculées valaient 90 à
-  93 %. `Panel.path` découpe au domaine : la courbe disparaissait sans erreur,
-  et les points, qui ne se découpent pas, se posaient hors du cadre. Le cadre
-  s'affichait vide dans les deux documents depuis sa création. **Un domaine se
-  déduit des données, jamais l'inverse.**
-- **Un tracé coupé en deux.** Même cause, effet plus discret : la trajectoire
-  de `couche_carnet` sortait par le bas et le tracé perdait un morceau au
-  milieu, ce qui se lit comme une interruption de la donnée.
-- **Une phrase coupée en deux.** `extraire_pieds` sortait du SVG les lignes de
-  pied une à une, sur un critère de longueur. Une phrase dont la dernière
-  ligne tombait sous cinquante-cinq caractères se retrouvait moitié sous la
-  figure, moitié dedans. La marque `cap`, posée par `Board.caption`, a
-  remplacé le critère ; `Board.annotation` sert aux phrases qui doivent rester
-  dans la figure.
+### Le domaine écrit à la main — retrouvé huit fois
+`Panel.path` découpe au domaine ; les points ne se découpaient pas et se
+posaient hors du cadre. Un cadre de `couche_profil` était **entièrement vide**
+depuis sa création (domaine 48-86 % pour des valeurs de 90 à 93 %). Le tracé
+de `couche_carnet` perdait un morceau au milieu. `figures.Canvas` ne découpait
+pas du tout — figures 1, 5 et 6 d'ALP nº 1 dessinaient hors planche. Le
+découpage existe maintenant partout, mais **c'est un filet, pas une dispense :
+un domaine se déduit des données.** Idem pour `grid_y` et `hline`, qui ne
+découpent pas : une graduation écrite à la main hors domaine est tout de même
+tracée.
 
-Le même défaut a été retrouvé six fois, dont quatre dans ALP nº 1 : un
-domaine écrit à la main, plus étroit que ce que la figure calcule. La surface
-d'espérance de la figure 1 montrait des échardes verticales ; le sommet de
-Kelly, seul objet du cadre qui le porte, était au-dessus du cadre ; les deux
-mesures gaussiennes de la queue débordaient jusqu'à la ligne de lecture. La
-cause commune était que `figures.Canvas` ne découpait pas au domaine, à la
-différence de `figterm.Panel`. Il le fait maintenant — mais **le découpage est
-un filet, pas une dispense : un domaine se déduit des données.**
+### Une légende écrite devant un cadre borné décrit le bornage — six fois
+- « la surface est presque plate le long de l'axe de l'edge » — vrai de la
+  fenêtre, faux de la donnée ;
+- « les deux faisceaux occupent la même région du plan pendant toute l'année » —
+  ils se séparent au trade 240 et leurs lois terminales sont disjointes ;
+- « ce que l'exposant décide : la probabilité d'atteindre le target » — **il ne
+  la décide pas**, elle vaut 4,76 % à toutes les abscisses, soit exactement
+  1/(1+20). Une figure qui affirmait le contraire du théorème d'arrêt
+  optionnel, dans le document qui en fait son résultat structurant ;
+- une table publiait « la probabilité passe de 3,23 % à 3,23 %, soit une
+  division par 1,0 », dans le passage que le document appelle son paramètre le
+  plus fragile.
 
-Corollaire qui a mordu deux fois : **une légende écrite devant un cadre borné
-décrit le bornage, pas la donnée.** « La surface est presque plate le long de
-l'axe de l'edge » et « la surface change de signe dans les deux directions »
-étaient toutes deux fausses, et toutes deux vraies de ce que la fenêtre
-laissait voir. Élargir une fenêtre oblige à relire sa légende.
+**Élargir une fenêtre oblige à relire sa légende.** Et une colonne constante
+sur sept lignes est un signal, pas un détail.
 
-Deux balayages automatiques valent d'être rejoués après toute retouche de
-figure ; ils tiennent en une trentaine de lignes chacun :
+### Les pièges de rendu
+- `Panel.area` pose sa classe telle quelle : la feuille ne définit le
+  remplissage que sur `.area.ar1`. Passer `"ar1"` seul donne un aplat **noir**.
+  Écrire `"area ar1"`.
+- `Board.annotation` pose la classe `keep` : sans elle, `extraire_pieds`
+  sortait aussi toute prose longue posée près du bas du cadre, et deux
+  annotations avaient disparu de leur figure pour reparaître dans la note du
+  document.
+- `Board.caption` pose `cap`, qui déclare un pied de figure. Sans marque, le
+  critère de longueur coupait une phrase en deux.
+- `grid_x(dy=)` et `grid_y(dx=)` écartent les intitulés d'axe. Utiles quand
+  les graduations sont longues ; à laisser au défaut ailleurs.
 
-1. dans le navigateur, comparer la boîte rendue de chaque `text`/`rect`/`path`
-   à celle du `<svg>` — cela attrape les débordements de viewBox — puis
-   croiser les boîtes des `text` entre elles, ce qui attrape les étiquettes
-   qui se recouvrent ;
-2. en Python, envelopper `Panel.path` et `Panel.dot` pour signaler un tracé
-   que le découpage réduit à moins de deux points, et une marque posée hors
-   du cadre.
+### Les trois balayages, à rejouer après toute retouche de figure
+Scripts dans le scratchpad de session, une trentaine de lignes chacun, en
+Playwright sur le document construit :
+
+1. **débordement et chevauchement** — comparer la boîte *client* (jamais
+   `getBBox`, qui ignore les rotations) de chaque `text`/`rect`/`path` à celle
+   du `<svg>`, puis croiser les boîtes des `text` entre elles ;
+2. **occupation** — pour chaque `rect.frame`, comparer la boîte des marques
+   qu'il contient à la sienne. Sous 42 % de la hauteur, relire : c'est ainsi
+   qu'ont été trouvés le cadre à 6 % de la grille de Fibonacci et la courbe
+   plate de « ce que l'exposant décide » ;
+3. en Python, envelopper `Panel.path` et `Panel.dot` pour signaler un tracé
+   que le découpage réduit à moins de deux points.
+
+État actuel : **zéro débordement, zéro chevauchement** sur les 82 figures des
+deux documents. Le balayage d'occupation ne laisse que des faux positifs
+connus (les lettres du profil TPO, les niveaux de stop de la figure de Roll).
 
 ## Commandes
 
 ```
-python main.py --tests      # 842 tests (compter ~20 min, --wp et figures sont lents)
-python main.py --wp         # reconstruit le document de travail
+python main.py --tests      # 843 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
+python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
+python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
 python main.py --strategy   # rejoue la stratégie scellée et sa batterie
 python main.py --bounds     # la mesure encadrée par les deux remplissages
 python main.py --disc       # journal de décision, lois nulles, attribution
-python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
 ```
+
+Modules exécutables directement pour inspecter leurs chiffres :
+`python -c "from alp1 import footprint; footprint.main()"` — idem pour `tpo`,
+`spectrum`, `seuil`, `report11`, `report14`.
 
 ## Contraintes d'environnement
 
@@ -185,9 +264,22 @@ hébergeur de données de marché n'est atteignable**. Toute mesure se fait donc
 sur série synthétique de vérité connue, ou sur un fichier fourni par
 l'utilisateur au format décrit dans `docs/donnees-requises.md`.
 
+Chromium est préinstallé et Playwright le trouve — ne jamais lancer
+`playwright install`.
+
 Développement sur la branche `claude/project-main-file-l8ix6k`. Ne jamais
 pousser ailleurs sans autorisation explicite. Pas de pull request sauf demande
 explicite.
+
+## Ce que l'utilisateur demande, en continu
+
+- Un **nouveau lien d'artefact à chaque amélioration**, jamais une republication.
+- Le **pourcentage de tokens restant** à chaque réponse.
+- Français, ton neutre et objectif, mais des phrases qui donnent envie de lire.
+- Fond sombre, langage graphique des captures « Marius Alpha Engine ».
+- **Chaque concept doit être imagé**, en 2D *et* en 3D, avec les meilleures
+  données possibles et une variété de types de graphiques.
+- Carte blanche pour retirer ce qui est faux.
 
 ## Arbitrages ouverts — non tranchés, ils engagent le nom de l'auteur
 
@@ -199,3 +291,6 @@ explicite.
    cela publierait des chiffres nettement moins favorables.
 4. Points d'audit 4, 5 et 6 : câbler la batterie anti-surajustement et le
    journal d'exécution dans `measure.py`.
+5. ALP nº 1 porte encore sa dérive de référence circulaire dans ses chapitres
+   de risque ; seul ALP nº 3 la corrige. Les refaire dans nº 1 changerait des
+   dizaines de chiffres publiés.
