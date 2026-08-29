@@ -47,11 +47,12 @@ class TestFusion(unittest.TestCase):
         # ALP-1, ALP-2, décote/exposant, horizon borné, instruments, les
         # bornes venues d'ailleurs, ce que le dehors offre, puis la géométrie
         # réellement pratiquée
-        # … et les quatre tables de la stratégie recomposée
-        self.assertEqual(len(t), 32 + 24 + 5 + 8 + 2 + 7 + 15 + 10 + 4)
+        # … les quatre tables de la stratégie recomposée, et les deux de
+        # l'audit de l'hypothèse d'edge
+        self.assertEqual(len(t), 32 + 24 + 5 + 8 + 2 + 7 + 15 + 10 + 4 + 2)
 
     def test_toutes_les_figures_coexistent(self):
-        self.assertEqual(len(monograph.figures()), 48)
+        self.assertEqual(len(monograph.figures()), 50)
 
 
 class TestPiedsDeFigure(unittest.TestCase):
@@ -194,8 +195,8 @@ class TestStructure(unittest.TestCase):
 
     def test_les_sections_sont_numerotees_en_continu(self):
         ids = re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps)
-        self.assertEqual(len(ids), 49)
-        self.assertEqual(len(set(ids)), 49)
+        self.assertEqual(len(ids), 50)
+        self.assertEqual(len(set(ids)), 50)
 
     def test_le_sommaire_couvre_toutes_les_sections(self):
         ids = set(re.findall(r'<h2 id="([a-z0-9-]+)"', self.corps))
@@ -259,6 +260,23 @@ class TestStructure(unittest.TestCase):
 
     def test_la_construction_est_deterministe(self):
         self.assertEqual(self.html, monograph.build())
+
+    def test_aucune_note_ne_publie_sa_marque_de_gras(self):
+        """Les astérisques et les apostrophes inverses se rendent, ne s'écrivent pas.
+
+        Vingt-six notes de ce document publiaient leurs `**` et huit leurs
+        apostrophes inverses comme des caractères. Le code était juste — la
+        chaîne y porte bien la marque — et la page, fausse. C'est la règle du
+        dépôt : une note se regarde.
+        """
+        for note in re.findall(r'<p class="note">(.*?)</p>', self.corps, re.S):
+            self.assertNotIn("**", note)
+            self.assertNotIn("`", note)
+
+    def test_aucune_cellule_ne_publie_sa_marque_de_gras(self):
+        for cellule in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", self.corps, re.S):
+            self.assertNotIn("**", cellule)
+            self.assertNotIn("`", cellule)
 
     def test_figures_et_tables_numerotees_a_partir_de_un(self):
         figs = re.findall(r'<span class="lab">Figure (\d+)</span>', self.corps)

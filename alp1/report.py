@@ -12,6 +12,7 @@ Usage :
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass, field
 
 from .barriers import (
@@ -81,6 +82,26 @@ def num(value: float, nd: int = 2, unit: str = "", signed: bool = False) -> str:
     return txt + ("\u202f" + unit if unit else "")
 
 
+#: `**gras**` et `` `code` ``, les deux seules marques que les notes de table
+#: emploient. Elles étaient rendues telles quelles : vingt-six notes du
+#: document nº 1 et deux du nº 3 publiaient leurs astérisques et leurs
+#: apostrophes inverses comme des caractères. Le défaut ne se voyait pas dans
+#: le code — la chaîne y est correcte — mais sur la page, ce qui est la règle
+#: du dépôt : une note se regarde.
+#:
+#: La marque de gras exige un caractère non blanc de chaque côté. Sans cette
+#: garde, `µ = 2 µ*` suivi d'une autre étoile plus loin dans la même note
+#: formait une paire, et la moitié de la phrase passait en gras.
+_GRAS = re.compile(r"\*\*(?=\S)(.+?)(?<=\S)\*\*", re.S)
+_CODE = re.compile(r"`([^`]+)`")
+
+
+def inline(text: str) -> str:
+    """Rend les deux marques d'accentuation d'une note ou d'une cellule."""
+    text = _GRAS.sub(r"<strong>\1</strong>", text)
+    return _CODE.sub(r'<span class="v">\1</span>', text)
+
+
 @dataclass
 class Table:
     """Une table du paper : en-têtes, lignes déjà formatées, lecture."""
@@ -118,16 +139,18 @@ class Table:
     def to_html(self, number: int) -> str:
         cols = self.wrapping()
         head = "".join(
-            "<th" + (' class="wrap"' if i in cols else "") + f">{h}</th>"
+            "<th" + (' class="wrap"' if i in cols else "") + f">{inline(h)}</th>"
             for i, h in enumerate(self.headers))
         body = []
         for i, r in enumerate(self.rows):
             cls = ' class="sep"' if i in self.rules_after else ""
             cells = "".join(
-                "<td" + (' class="wrap"' if j in cols else "") + f">{c}</td>"
+                "<td" + (' class="wrap"' if j in cols else "")
+                + f">{inline(c)}</td>"
                 for j, c in enumerate(r))
             body.append(f"<tr{cls}>{cells}</tr>")
-        note = (f'\n      <p class="note"><span class="lab">Lecture.</span> {self.note}</p>'
+        note = (f'\n      <p class="note"><span class="lab">Lecture.</span> '
+                f'{inline(self.note)}</p>'
                 if self.note else "")
         klass = ' class="wide"' if self.wide else ""
         return (

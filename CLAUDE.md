@@ -15,9 +15,11 @@ Le noyau est un ensemble de modules Python qui **calculent** les chiffres, et
 les documents HTML sont **construits** à partir d'eux. Aucun nombre n'est
 écrit à la main dans un document.
 
-**ALP nº 1** — `docs/temps-de-marche-et-peremption.html` (≈970 ko, 49 sections
-en neuf parties, 107 tables, 48 figures). L'invariance des géométries de
-sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`.
+**ALP nº 1** — `docs/temps-de-marche-et-peremption.html` (≈1,06 Mo, 50 sections
+en neuf parties, 109 tables, 50 figures). L'invariance des géométries de
+sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
+(`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
+« la circularité » plus bas.
 
 **ALP nº 3** — `docs/prouver-un-jugement.html` (≈740 ko, 44 sections en douze
 parties, 17 tables, 34 figures dont neuf surfaces isométriques). L'évaluation
@@ -43,7 +45,7 @@ nouveau chemin de fichier, jamais republier le même.
    Python 3.11+. Tout aléa est déterministe et amorcé par une graine explicite.
    (C'est pourquoi `spectrum.py` porte son propre Jacobi.)
 2. **Les figures n'écrivent aucune couleur en dur.** Elles passent par les
-   jetons CSS de `alp1/figcss.py`. `tests/test_figures_all.py` balaie les onze
+   jetons CSS de `alp1/figcss.py`. `tests/test_figures_all.py` balaie les douze
    modules `fig*.py` et refuse tout `#rrggbb` — y compris les entités HTML de
    la forme `&#8202;`, qui doivent être écrites en caractère littéral. Ajouter
    un module de figures sans l'inscrire dans `MODULES` fait échouer le premier
@@ -117,8 +119,11 @@ Flux d'ordres
 Rendu
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
-  risque refait. `report14` : flux, TPO, information, spectre.
-- `fig*.py` — onze modules, chacun expose `render_all()`. `figterm.py` porte
+  risque refait. `report14` : flux, TPO, information, spectre. `report15` :
+  l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
+  table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
+  découle, et un test l'exige.
+- `fig*.py` — douze modules, chacun expose `render_all()`. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
 - `workingpaper.py` / `discpaper.py` / `paper.py` — construisent les
@@ -244,7 +249,7 @@ connus (les lettres du profil TPO, les niveaux de stop de la figure de Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 843 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 863 tests (compter ~25 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
@@ -291,6 +296,12 @@ explicite.
    cela publierait des chiffres nettement moins favorables.
 4. Points d'audit 4, 5 et 6 : câbler la batterie anti-surajustement et le
    journal d'exécution dans `measure.py`.
-5. ALP nº 1 porte encore sa dérive de référence circulaire dans ses chapitres
-   de risque ; seul ALP nº 3 la corrige. Les refaire dans nº 1 changerait des
-   dizaines de chiffres publiés.
+5. ALP nº 1 porte toujours sa dérive de référence circulaire **dans les
+   chiffres** de ses chapitres de risque. Ce qui a changé : sa section 18 la
+   nomme, la mesure et sépare, par verdict calculé, les trois grandeurs que le
+   changement d'hypothèse laisse intactes des dix qu'il emporte. Le document
+   n'affirme donc plus rien de faux, mais ses tables restent chiffrées à
+   `k = 2`. Les recalculer à dérive déclarée changerait des dizaines de
+   chiffres publiés **et une centaine de phrases écrites devant eux** — c'est
+   le piège de la légende décrite plus bas, à l'échelle d'une partie entière.
+   Décision non tranchée.

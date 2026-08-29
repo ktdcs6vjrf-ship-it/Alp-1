@@ -613,12 +613,13 @@
           <li><a href="#s-flux">Flux d'ordres&nbsp;: ce qu'une lecture de carnet peut financer</a></li>
           <li><a href="#s-audit">Audit de falsifiabilité</a></li>
           <li><a href="#s-outils">La boîte à outils de validation</a></li>
+          <li><a href="#s-hypothese">Ce que l'hypothèse d'edge doit à la friction</a></li>
           <li><a href="#s-proto1">Protocole de falsification</a></li>
         </ol>
       </li>
       <li>
         <span class="pt">Quatrième partie — La reconstruction</span>
-        <ol start="19">
+        <ol start="20">
           <li><a href="#s-calib">Calibration</a></li>
           <li><a href="#s-geom">La géométrie à barrière unique</a></li>
           <li><a href="#s-seuil">Le critère maître, et le seuil qu'il impose</a></li>
@@ -639,7 +640,7 @@
       </li>
       <li>
         <span class="pt">Cinquième partie — Les bornes venues d'ailleurs</span>
-        <ol start="35">
+        <ol start="36">
           <li><a href="#s-information">Le plafond d'information</a></li>
           <li><a href="#s-nonlineaire">Deux mesures venues d'autres disciplines</a></li>
           <li><a href="#s-discipline">La discipline, chiffrée en preuve</a></li>
@@ -648,7 +649,7 @@
       </li>
       <li>
         <span class="pt">Sixième partie — Ce que le dehors offre, et ce qu'il coûte</span>
-        <ol start="39">
+        <ol start="40">
           <li><a href="#s-temoin">Le signal diffusé, et ce que le trajet lui prend</a></li>
           <li><a href="#s-catalogue">Le catalogue des dérives publiées</a></li>
           <li><a href="#s-assemblage">L'assemblage, et son nombre optimal de pièces</a></li>
@@ -657,7 +658,7 @@
       </li>
       <li>
         <span class="pt">Septième partie — La géométrie réellement pratiquée</span>
-        <ol start="43">
+        <ol start="44">
           <li><a href="#s-reel">Ce qu'un stop d'un centième de pour cent coûte</a></li>
           <li><a href="#s-spread">Ce que le spread prend avant que le prix ne bouge</a></li>
           <li><a href="#s-forcage">Le forçage, et son théorème</a></li>
@@ -666,13 +667,13 @@
       </li>
       <li>
         <span class="pt">Huitième partie — La règle, recomposée</span>
-        <ol start="47">
+        <ol start="48">
           <li><a href="#s-strategie">La stratégie, recomposée en une règle exécutable</a></li>
         </ol>
       </li>
       <li>
         <span class="pt">Verdict</span>
-        <ol start="48">
+        <ol start="49">
           <li><a href="#s-notation">Notation comparée des deux approches</a></li>
           <li><a href="#s-limites">Portée et limites</a></li>
         </ol>
@@ -972,7 +973,7 @@
     <div class="no">(10)</div>
   </div>
 
-  <p>Le processus <span class="v">X<sub>t</sub></span>&nbsp;=&nbsp;<span class="v">σ</span><sub>1</sub><span class="v">W</span>(<span class="v">t</span><sup>&thinsp;2H</sup>) reproduit exactement cette loi tout en restant une martingale&nbsp;: le changement de temps étant déterministe, toutes les formules de premier passage s'appliquent en remplaçant l'horizon réel par le temps effectif <span class="v">T</span><sup>2H</sup>, et les propositions 2 et 4 sont préservées. <span class="v">H</span> n'est pas un paramètre libre&nbsp;: il se mesure, et sa mesure est le premier test du protocole de la section <a href="#s-proto1">18</a>.</p>
+  <p>Le processus <span class="v">X<sub>t</sub></span>&nbsp;=&nbsp;<span class="v">σ</span><sub>1</sub><span class="v">W</span>(<span class="v">t</span><sup>&thinsp;2H</sup>) reproduit exactement cette loi tout en restant une martingale&nbsp;: le changement de temps étant déterministe, toutes les formules de premier passage s'appliquent en remplaçant l'horizon réel par le temps effectif <span class="v">T</span><sup>2H</sup>, et les propositions 2 et 4 sont préservées. <span class="v">H</span> n'est pas un paramètre libre&nbsp;: il se mesure, et sa mesure est le premier test du protocole de la section <a href="#s-proto1">19</a>.</p>
 
   <h3>Composition des issues</h3>
 
@@ -1046,9 +1047,9 @@
 
   <p>Les ratios élevés jouent ici dans les deux sens. Ils augmentent l'espérance par trade, par l'exposition&nbsp;; ils augmentent aussi la dispersion, car le résultat est dominé par une queue rare et grande. La Table&nbsp;8 et la Figure&nbsp;6 tranchent&nbsp;: <strong>à dérive captée égale, le ratio élevé l'emporte</strong> — {{n20_k2}} trades au ratio 1:20 contre {{n10_k2}} au ratio 1:10 pour une dérive de {{mu_k2}} point par heure — mais les ordres de grandeur restent exigeants. Une dérive de deux fois le seuil d'équilibre demande plusieurs milliers de trades, soit plusieurs années à deux trades par séance. Une dérive de trois fois le seuil ramène l'exigence à {{n20_k3}} trades.</p>
 
-  <p>Ce constat ne condamne pas la stratégie&nbsp;; il fixe l'ordre dans lequel les tests doivent être conduits. Les mesures de la section <a href="#s-proto1">18</a> portent sur des propriétés du prix conditionnées au signal, estimables sur historique en quelques jours de travail, et non sur un P&amp;L simulé qui demanderait des années de données pour trancher.</p>
+  <p>Ce constat ne condamne pas la stratégie&nbsp;; il fixe l'ordre dans lequel les tests doivent être conduits. Les mesures de la section <a href="#s-proto1">19</a> portent sur des propriétés du prix conditionnées au signal, estimables sur historique en quelques jours de travail, et non sur un P&amp;L simulé qui demanderait des années de données pour trancher.</p>
 
-  <p>Il faut ajouter à ce constat une précision qui en change la portée, et la section&nbsp;<a href="#s-borne">32</a> la démontre. Les nombres ci-dessus sont ceux d'un dispositif précis&nbsp;: un marché, une entrée par séance, une moyenne non pondérée sur des trades traités comme des observations interchangeables, un seuil corrigé de Bonferroni, une décision unique en fin d'échantillon. <strong>Ils mesurent le coût de ce dispositif, non une propriété de la stratégie.</strong> La même exigence de niveau et de puissance, servie par une statistique qui compte le temps de marché plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel et une décision séquentielle, tient dans un horizon borné à cinq années. La présente section reste la borne à opposer à un backtest ordinaire, et c'est à ce titre qu'elle est conservée telle quelle.</p>
+  <p>Il faut ajouter à ce constat une précision qui en change la portée, et la section&nbsp;<a href="#s-borne">33</a> la démontre. Les nombres ci-dessus sont ceux d'un dispositif précis&nbsp;: un marché, une entrée par séance, une moyenne non pondérée sur des trades traités comme des observations interchangeables, un seuil corrigé de Bonferroni, une décision unique en fin d'échantillon. <strong>Ils mesurent le coût de ce dispositif, non une propriété de la stratégie.</strong> La même exigence de niveau et de puissance, servie par une statistique qui compte le temps de marché plutôt que les tickets, une multiplicité traitée en séquence fixée, un panel et une décision séquentielle, tient dans un horizon borné à cinq années. La présente section reste la borne à opposer à un backtest ordinaire, et c'est à ce titre qu'elle est conservée telle quelle.</p>
 
 {{TABLE:validation}}
 
@@ -1092,7 +1093,7 @@
 
   <h3>Cohérence avec l'anomalie de bande</h3>
 
-  <p>Une observation de terrain — les extrêmes de bande à trois écarts-types donnent lieu à des balayages suivis de clôtures au-delà — est cohérente avec un régime de gamma négatif à ces niveaux. Cette cohérence est un point en faveur du mécanisme&nbsp;: elle aurait pu manquer. Sa force probante reste faible pour trois raisons&nbsp;: elle porte sur un phénomène unique, elle était disponible au moment où l'hypothèse a été formée, et elle admet au moins une explication concurrente sans contenu gamma — les extrêmes de bande sont par construction les zones où les ordres stop s'accumulent, et un balayage suivi d'une clôture au-delà est le comportement attendu d'une simple chasse aux stops. Elle ne dispense d'aucun des tests de la section <a href="#s-proto1">18</a>.</p>
+  <p>Une observation de terrain — les extrêmes de bande à trois écarts-types donnent lieu à des balayages suivis de clôtures au-delà — est cohérente avec un régime de gamma négatif à ces niveaux. Cette cohérence est un point en faveur du mécanisme&nbsp;: elle aurait pu manquer. Sa force probante reste faible pour trois raisons&nbsp;: elle porte sur un phénomène unique, elle était disponible au moment où l'hypothèse a été formée, et elle admet au moins une explication concurrente sans contenu gamma — les extrêmes de bande sont par construction les zones où les ordres stop s'accumulent, et un balayage suivi d'une clôture au-delà est le comportement attendu d'une simple chasse aux stops. Elle ne dispense d'aucun des tests de la section <a href="#s-proto1">19</a>.</p>
 
   <h2 id="s-instruments">Les instruments de la pile</h2>
 
@@ -1125,7 +1126,7 @@
 
   <p><em>Le GEX est une fonction du spot, pas une constante.</em> Chaque gamma est réévalué au niveau courant. Un marché «&nbsp;en gamma positif aujourd'hui&nbsp;» ne l'est plus nécessairement un pour cent plus bas&nbsp;; c'est précisément l'objet du niveau HVL défini plus loin.</p>
 
-  <p><em>Le signe <span class="v">ε<sub>i</sub></span> est une convention, pas une identité comptable.</em> La convention usuelle — teneurs longs de gamma sur les calls, courts sur les puts — traduit le déséquilibre habituel de la demande finale&nbsp;: les investisseurs achètent de la protection en puts et vendent des calls couverts. C'est une régularité de flux, qui s'inverse sur un marché où la demande finale porte sur les calls. Toute conclusion tirée d'un GEX publié est conditionnelle à ce paramètre, et le protocole de la section&nbsp;<a href="#s-proto1">18</a> le teste plutôt qu'il ne le suppose.</p>
+  <p><em>Le signe <span class="v">ε<sub>i</sub></span> est une convention, pas une identité comptable.</em> La convention usuelle — teneurs longs de gamma sur les calls, courts sur les puts — traduit le déséquilibre habituel de la demande finale&nbsp;: les investisseurs achètent de la protection en puts et vendent des calls couverts. C'est une régularité de flux, qui s'inverse sur un marché où la demande finale porte sur les calls. Toute conclusion tirée d'un GEX publié est conditionnelle à ce paramètre, et le protocole de la section&nbsp;<a href="#s-proto1">19</a> le teste plutôt qu'il ne le suppose.</p>
 
   <p><em>Le gamma d'une option 0DTE croît comme</em> <span class="v">1</span>/√<span class="v">τ</span>. Une option expirant le jour même porte, trois heures avant l'échéance, un gamma sans commune mesure avec celui d'une échéance mensuelle de même open interest, et il est concentré sur une largeur <span class="v">S</span>·<span class="v">σ</span>√<span class="v">τ</span> — une trentaine de points sur ES. La domination du gamma 0DTE en fin de séance n'est donc pas une hypothèse de marché&nbsp;: c'est une propriété de la formule.</p>
 
@@ -1435,7 +1436,7 @@
     <div class="no">(26)</div>
   </div>
 
-  <p>C'est la déformation d'entropie relative minimale sous contrainte de moyenne&nbsp;: elle ajoute exactement l'information «&nbsp;la dérive vaut <span class="v">µ</span>&nbsp;», et rien d'autre. Elle laisse le support inchangé, donc la géométrie du trade inchangée. <strong>L'edge de référence de toute cette partie est <span class="v">µ</span>&nbsp;=&nbsp;{{q_mult}}&thinsp;<span class="v">µ</span>*</strong> — le double du seuil de rentabilité de l'équation&nbsp;(7) —, ce qui donne par construction E[<span class="v">R</span>]&nbsp;=&nbsp;<span class="v">c/L</span>&nbsp;=&nbsp;{{q_edge_r}}&nbsp;R. C'est la seule hypothèse d'edge du document, elle est explicite, et elle n'a pas de paramètre libre.</p>
+  <p>C'est la déformation d'entropie relative minimale sous contrainte de moyenne&nbsp;: elle ajoute exactement l'information «&nbsp;la dérive vaut <span class="v">µ</span>&nbsp;», et rien d'autre. Elle laisse le support inchangé, donc la géométrie du trade inchangée. <strong>L'edge de référence de toute cette partie est <span class="v">µ</span>&nbsp;=&nbsp;{{q_mult}}&thinsp;<span class="v">µ</span>*</strong> — le double du seuil de rentabilité de l'équation&nbsp;(7) —, ce qui donne par construction E[<span class="v">R</span>]&nbsp;=&nbsp;<span class="v">c/L</span>&nbsp;=&nbsp;{{q_edge_r}}&nbsp;R. C'est la seule hypothèse d'edge du document, et elle est explicite. Elle n'est pas pour autant sans paramètre&nbsp;: le multiple en est un, il vaut deux par convention, et comme le seuil est lui-même déduit de la friction, l'espérance qui en sort est une image de la friction avant d'être une mesure du marché. La section&nbsp;<a href="#s-hypothese">18</a> en tire les conséquences, et sépare ce que la présente partie établit sans cette hypothèse de ce qu'elle lui doit.</p>
 
   <h3>Les ratios, et le facteur que la géométrie fabrique</h3>
 
@@ -1448,7 +1449,7 @@
     <div class="no">(27)</div>
   </div>
 
-  <p>Or sur une géométrie à stop fixe, la dispersion à la baisse est <em>bornée par le stop</em>&nbsp;: elle vaut {{q_dd}}&nbsp;R et ne bouge pas quand on éloigne le target. La dispersion totale, elle, est portée par la queue de gain et croît avec lui. Le rapport vaut {{q_sd_dd}} à 1:20, et il monte à {{q_sd_dd_50}} à 1:50. <strong>Publier un Sortino pour une stratégie à ratio gain/risque élevé, c'est publier un Sharpe multiplié par une constante qui ne contient aucune information sur le signal.</strong> Le même mécanisme, en sens inverse, explique pourquoi la VaR gaussienne d'un tel trade surestime la perte d'un facteur {{q_var_ratio}}&nbsp;: elle lit un écart-type dont la quasi-totalité vient du côté des gains.</p>
+  <p>Or sur une géométrie à stop fixe, la dispersion à la baisse est <em>bornée par le stop</em>&nbsp;: elle vaut {{q_dd}}&nbsp;R au ratio de référence et ne gagne que {{q_dd_grid}}&nbsp;% d'un bout à l'autre de la grille, quand la dispersion totale — portée par la queue de gain — y est multipliée par {{q_sd_grid}}. Le rapport vaut {{q_sd_dd}} à 1:20, et il monte à {{q_sd_dd_50}} à 1:50. <strong>Publier un Sortino pour une stratégie à ratio gain/risque élevé, c'est publier un Sharpe multiplié par un facteur que le placement des barrières fixe au premier ordre.</strong> Ce facteur n'est pas pour autant muet sur le signal, et la section&nbsp;<a href="#s-hypothese">18</a> mesure ce qu'il lui doit&nbsp;: à géométrie inchangée, il passe de {{q_sd_dd_nul}} sans dérive à {{q_sd_dd}} sous la dérive de référence. Le même mécanisme, en sens inverse, explique pourquoi la VaR gaussienne d'un tel trade surestime la perte d'un facteur {{q_var_ratio}}&nbsp;: elle lit un écart-type dont la quasi-totalité vient du côté des gains.</p>
 
 {{TABLE:ratios}}
 
@@ -1500,7 +1501,7 @@
 
   <h3>Ré-échantillonnage et randomisation</h3>
 
-  <p>Trois façons de fabriquer une loi nulle à partir d'un échantillon réel, et ce qui les sépare. Le <em>bootstrap i.i.d.</em> tire avec remise&nbsp;; il est correct pour des trades indépendants et détruit toute dépendance sérielle, donc sous-estime l'incertitude dès que les positions se chevauchent. Le <em>bootstrap stationnaire</em> de Politis et Romano recolle des blocs de longueur géométrique&nbsp;; c'est celui qu'il faut retenir dès que <span class="v">H</span>&nbsp;&ne;&nbsp;½, c'est-à-dire dans toute l'hypothèse de persistance sur laquelle repose la section&nbsp;<a href="#s-proto1">18</a>. Le <em>test de permutation de signe</em> ne randomise que la direction, et ne suppose donc ni normalité ni indépendance des amplitudes&nbsp;: sa loi nulle est exactement «&nbsp;la pile de couches ne prédit pas le sens&nbsp;».</p>
+  <p>Trois façons de fabriquer une loi nulle à partir d'un échantillon réel, et ce qui les sépare. Le <em>bootstrap i.i.d.</em> tire avec remise&nbsp;; il est correct pour des trades indépendants et détruit toute dépendance sérielle, donc sous-estime l'incertitude dès que les positions se chevauchent. Le <em>bootstrap stationnaire</em> de Politis et Romano recolle des blocs de longueur géométrique&nbsp;; c'est celui qu'il faut retenir dès que <span class="v">H</span>&nbsp;&ne;&nbsp;½, c'est-à-dire dans toute l'hypothèse de persistance sur laquelle repose la section&nbsp;<a href="#s-proto1">19</a>. Le <em>test de permutation de signe</em> ne randomise que la direction, et ne suppose donc ni normalité ni indépendance des amplitudes&nbsp;: sa loi nulle est exactement «&nbsp;la pile de couches ne prédit pas le sens&nbsp;».</p>
 
   <p>Un quatrième point, moins connu et plus coûteux&nbsp;: sous un AR(1) de coefficient <span class="v">ρ</span>, agréger <span class="v">q</span> périodes ne multiplie pas le Sharpe par &radic;<span class="v">q</span> mais par <span class="v">q</span>/&radic;(<span class="v">q</span>&nbsp;+&nbsp;2&thinsp;&Sigma;(<span class="v">q</span>&nbsp;−&nbsp;<span class="v">k</span>)<span class="v">ρ</span><sup><span class="v">k</span></sup>). Une autocorrélation positive — celle que produit toute stratégie dont les positions se chevauchent — <strong>gonfle</strong> le Sharpe annualisé publié, d'environ un cinquième à <span class="v">ρ</span>&nbsp;=&nbsp;0,2.</p>
 
@@ -1603,7 +1604,7 @@
 
   <p><strong>Troisièmement, il en découle une conclusion sur le surajustement qui est plus forte que la précaution habituelle, et elle vaut des deux côtés du mur.</strong> Là où l'avantage requis est petit, aucun backtest d'un an ne le distingue du bruit&nbsp;: un bon backtest d'un an n'y est pas une <em>preuve faible</em>, c'est une observation dont l'explication par défaut est la sélection. Là où il est grand — le cas de la géométrie déclarée —, un bon backtest d'un an affirme un Sharpe que la littérature ne documente pour aucun signal public, et se traite comme toute affirmation extraordinaire. Le surajustement n'est pas ici un risque à surveiller, c'est l'hypothèse nulle qu'il faudrait réfuter, et les seuils ci-dessus disent exactement à quel prix.</p>
 
-  <p><strong>Ces trois propositions portent sur un dispositif de mesure, et il faut dire lequel.</strong> Le nombre d'années ci-dessus est celui d'une moyenne non pondérée de trades comptés un par un, sur un marché, avec un seuil corrigé de Bonferroni et une décision unique. C'est le dispositif implicite de la quasi-totalité des backtests publiés, et c'est à ce titre qu'il fixe la barre. Ce n'est pas le meilleur dispositif disponible&nbsp;: la section&nbsp;<a href="#s-borne">32</a> en construit un qui atteint le même niveau et la même puissance dans un horizon borné à cinq années, sans relever d'un point la dérive supposée. La deuxième proposition doit donc se lire dans sa forme exacte — l'edge supposé n'est pas mesurable <em>par le dispositif ordinaire</em> dans un échantillon réalisable —, et la troisième reste entière, puisqu'elle ne porte pas sur la durée mais sur ce qu'un bon backtest d'un an autorise à conclure.</p>
+  <p><strong>Ces trois propositions portent sur un dispositif de mesure, et il faut dire lequel.</strong> Le nombre d'années ci-dessus est celui d'une moyenne non pondérée de trades comptés un par un, sur un marché, avec un seuil corrigé de Bonferroni et une décision unique. C'est le dispositif implicite de la quasi-totalité des backtests publiés, et c'est à ce titre qu'il fixe la barre. Ce n'est pas le meilleur dispositif disponible&nbsp;: la section&nbsp;<a href="#s-borne">33</a> en construit un qui atteint le même niveau et la même puissance dans un horizon borné à cinq années, sans relever d'un point la dérive supposée. La deuxième proposition doit donc se lire dans sa forme exacte — l'edge supposé n'est pas mesurable <em>par le dispositif ordinaire</em> dans un échantillon réalisable —, et la troisième reste entière, puisqu'elle ne porte pas sur la durée mais sur ce qu'un bon backtest d'un an autorise à conclure.</p>
 
   <p>Reste ce qui déplacerait le verdict, et le calcul le dit sans ambiguïté. La table finale l'énonce dans les deux sens où la question est décidable&nbsp;: par l'amplitude requise, et par la cadence.</p>
 
@@ -1619,7 +1620,62 @@
 
   <p>Ces trois lectures ne se substituent pas au protocole de la section suivante&nbsp;: elles en fixent le budget. Le Test&nbsp;2 y mesure la dérive captée&nbsp;; la présente partie dit combien de trades il faudra pour que sa réponse veuille dire quelque chose, et ce que coûtera chaque configuration essayée en chemin.</p>
 
-  <p>Un cinquième levier n'apparaît pas dans cette table parce qu'il ne porte pas sur la stratégie mais sur l'instrument de mesure&nbsp;: <strong>compter le temps d'exposition plutôt que les trades, pondérer par la volatilité connue avant l'entrée, ordonner les configurations au lieu de les corriger, élargir à un panel, décider séquentiellement.</strong> Pris ensemble, ces cinq gestes divisent la durée par plus de cinq, à hypothèse d'edge rigoureusement inchangée. La section&nbsp;<a href="#s-borne">32</a> les chiffre un par un, nomme l'hypothèse que chacun exige, et mesure sur la procédure entière ce qu'ils obtiennent réellement.</p>
+  <p>Un cinquième levier n'apparaît pas dans cette table parce qu'il ne porte pas sur la stratégie mais sur l'instrument de mesure&nbsp;: <strong>compter le temps d'exposition plutôt que les trades, pondérer par la volatilité connue avant l'entrée, ordonner les configurations au lieu de les corriger, élargir à un panel, décider séquentiellement.</strong> Pris ensemble, ces cinq gestes divisent la durée par plus de cinq, à hypothèse d'edge rigoureusement inchangée. La section&nbsp;<a href="#s-borne">33</a> les chiffre un par un, nomme l'hypothèse que chacun exige, et mesure sur la procédure entière ce qu'ils obtiennent réellement.</p>
+
+  <h2 id="s-hypothese">Ce que l'hypothèse d'edge doit à la friction</h2>
+
+  <p>La partie qui s'achève a produit un verdict, et ce verdict repose en entier sur une hypothèse&nbsp;: la dérive de référence vaut {{q_mult}}&thinsp;<span class="v">µ</span>*. La section&nbsp;<a href="#s-outils">17</a> la pose comme la seule du document, et elle est bien explicite&nbsp;: c'est déjà plus que ce que la plupart des travaux consentent à écrire. Mais elle a un paramètre, le multiple, et ce paramètre est indexé sur la grandeur qu'il sert à franchir. Cette section dit ce que cela retire au document, et — ce qui importe davantage — ce que cela ne lui retire pas.</p>
+
+  <h3>L'identité qui referme la boucle</h3>
+
+  <p>Le seuil de rentabilité n'est pas une grandeur de marché&nbsp;: il est déduit de la friction, <span class="v">µ</span>*&nbsp;=&nbsp;<span class="v">c</span>/E[<span class="v">τ∧T</span>]. Poser la dérive à <span class="v">µ</span>&nbsp;=&nbsp;<span class="v">k</span>&thinsp;<span class="v">µ</span>* et reporter dans le critère maître de l'équation&nbsp;(6) donne alors, sans aucune approximation,</p>
+
+  <div class="eq">
+    <div class="body">E[<span class="v">R</span>]<span class="op">=</span><span class="frac"><span><span class="v">µ</span>&thinsp;E[<span class="v">τ∧T</span>]&nbsp;−&nbsp;<span class="v">c</span></span><span><span class="v">a</span></span></span><span class="op">=</span>(<span class="v">k</span>&nbsp;−&nbsp;1)&thinsp;<span class="frac"><span><span class="v">c</span></span><span><span class="v">a</span></span></span>.</div>
+    <div class="no">(33)</div>
+  </div>
+
+  <p>Le temps d'exposition a disparu, et la volatilité avec lui. L'espérance publiée ne dépend du marché que par le multiple, et de la friction par tout le reste. À <span class="v">k</span>&nbsp;=&nbsp;2 elle vaut exactement <span class="v">c</span>/<span class="v">a</span>&nbsp;=&nbsp;{{h_friction_ratio}}&nbsp;R&nbsp;: <strong>le chiffre annoncé ne contient aucune information sur le marché, il contient la friction.</strong> Le multiple est donc bien un degré de liberté&nbsp;; il vaut deux&nbsp;; et rien, dans ce document ni ailleurs, ne le mesure.</p>
+
+  <p>Il faut être juste sur la portée de ce reproche. Une hypothèse d'edge est nécessaire — sans elle il n'y a pas de loi sous dérive, donc pas de Sharpe, pas de Kelly, pas de drawdown à espérer, et la troisième partie n'a plus d'objet. Le défaut n'est pas d'avoir posé une hypothèse&nbsp;: c'est de l'avoir indexée sur la grandeur qu'elle sert à franchir, puis de l'avoir présentée comme dépourvue de degré de liberté.</p>
+
+  <h3>Où tombe le multiple, et où tombe le plausible</h3>
+
+  <p>Un multiple n'a pas d'ordre de grandeur&nbsp;; une dérive en a un. À la géométrie déclarée, {{h_mu_star}}&nbsp;points d'indice par heure séparent la perte du gain, et l'hypothèse de référence en réclame {{h_mu_ref}}. Or le domaine de dérive que ce même document traite comme plausible — c'est la bande de fond de la figure de la section&nbsp;<a href="#s-gex">11</a>, celle dont la légende dit qu'aucun exposant d'échelle ne ramène le seuil dedans — s'étend de {{h_plausible_bas}} à {{h_plausible_haut}} points par heure. L'hypothèse de référence est donc {{h_facteur}}&nbsp;fois au-dessus de la borne haute de ce que le document tient lui-même pour possible.</p>
+
+  <p>Le fait décisif n'est pourtant pas ce facteur, mais son sens. Converti en multiples, le domaine plausible plafonne à <span class="v">k</span>&nbsp;=&nbsp;{{h_k_haut}}&nbsp;: <strong>il tombe tout entier sous le seuil de rentabilité.</strong> À la géométrie déclarée, aucune dérive que ce document juge plausible ne rend le trade profitable — l'espérance y vaut {{h_er_plausible}}&nbsp;R et le Sharpe annualisé {{h_sharpe_plausible}}. Le domaine où l'hypothèse serait crédible et celui où elle serait démontrable ne se recouvrent pas&nbsp;; entre les deux, il y a le seuil, et il est large.</p>
+
+{{TABLE:hypothese}}
+
+  <p>La table se lit d'abord par sa quatrième colonne, qui est affine en <span class="v">k</span> et s'annule à l'unité&nbsp;: c'est l'équation&nbsp;(33), vérifiable ligne à ligne. Elle se lit ensuite par ses deux colonnes de délai, qui valent l'infini sur les trois premières lignes. Ce n'est pas un manque d'échantillon&nbsp;: on ne démontre pas qu'un Sharpe négatif est positif, quel que soit le nombre d'observations. Le délai ne devient fini qu'au-delà du seuil, et il n'y descend sous l'année qu'au voisinage de l'hypothèse de référence — c'est-à-dire à un endroit du domaine que le document ne défend nulle part.</p>
+
+{{FIGURE:hyphypothese|Le délai d'établissement selon la dérive supposée, la décomposition de l'espérance publiée entre ce que la dérive apporte et ce que la friction prélève, et le rapport Sortino/Sharpe le long du même axe. Le premier cadre porte le résultat de la section&nbsp;: les deux courbes de délai n'existent qu'à droite du seuil, et la bande du plausible est tout entière à sa gauche.}}
+
+  <h3>Ce qui tombe avec l'hypothèse, et ce qui n'en dépend pas</h3>
+
+  <p>Il serait facile, et faux, de conclure que la troisième partie s'effondre. Une bonne moitié de ses résultats ne voit jamais la dérive&nbsp;: ils sortent de la loi nulle, d'une matrice de performances synthétique, ou de la géométrie seule. La table suivante les sépare, et son verdict n'est pas écrit à la main — il est <em>calculé</em> par comparaison des deux colonnes, de sorte qu'aucune ligne ne peut annoncer une indépendance que le calcul refuse.</p>
+
+{{TABLE:dependance}}
+
+  <p>{{h_n_libre}}&nbsp;grandeurs sur {{h_n_total}} traversent le changement d'hypothèse sans bouger d'un chiffre, et ce sont celles sur lesquelles la deuxième partie fonde son théorème. Les {{h_n_porte}}&nbsp;autres en dépendent, {{h_n_inverse}}&nbsp;d'entre elles jusqu'au changement de signe. La lecture correcte de la partie est donc celle-ci&nbsp;: <strong>ce qu'elle établit sans dérive, elle l'établit&nbsp;; ce qu'elle chiffre sous dérive, elle le chiffre à un endroit du domaine qu'elle ne défend pas.</strong> Le verdict de la section&nbsp;<a href="#s-outils">17</a>, selon lequel le problème d'inférence a presque disparu sur la géométrie déclarée, appartient à la seconde catégorie, et il faut le lire ainsi&nbsp;: le problème d'inférence disparaît si l'on suppose une dérive {{h_facteur}}&nbsp;fois supérieure à ce que le document tient pour possible.</p>
+
+  <p>Une ligne mérite d'être commentée pour elle-même, parce qu'elle a coûté une phrase au document. Le rapport Sortino/Sharpe y était annoncé comme une constante ne contenant aucune information sur le signal. La part géométrique du résultat tient&nbsp;: c'est bien le placement des barrières qui fixe l'ordre de grandeur du facteur, et c'est ce qui rend un Sortino ininterprétable seul. Mais le niveau, lui, se déplace de {{q_sd_dd_nul}} sans dérive à {{h_sd_dd_plausible}} à la borne du plausible et à {{h_sd_dd_ref}} sous l'hypothèse de référence&nbsp;— la moitié de son étendue. La section&nbsp;<a href="#s-outils">17</a> porte donc désormais l'énoncé exact, qui est plus faible et plus utile, et le troisième cadre de la figure ci-dessus trace le déplacement qu'il faut lire à sa place.</p>
+
+  <h3>Ce que la géométrie rachète, et jusqu'où</h3>
+
+  <p>Reste la question qui décide de la suite&nbsp;: puisque <span class="v">µ</span>* est une propriété de la géométrie, un élargissement du target ne peut-il pas ramener l'exigence dans le domaine plausible&nbsp;? Il la ramène, et beaucoup — l'exposition croît avec le target, donc le seuil décroît. Il ne la ramène pas assez. Sur la grille de ratios de ce document, le seuil le plus bas est celui du ratio {{h_rr_large}}, et il vaut encore {{h_mu_star_large}}&nbsp;points par heure, au-dessus du plafond de {{h_plausible_haut}}. <strong>Aucune géométrie de cette grille n'est rentable sous une dérive plausible</strong>, et c'est un résultat sur la grille, pas sur le marché.</p>
+
+{{FIGURE:hyphypothese3d|La table de détectabilité de la section&nbsp;<a href="#s-outils">17</a>, dépliée le long de l'axe qu'elle tient fixe. La hauteur est le logarithme du délai d'établissement après {{q_trials}} configurations essayées&nbsp;; la couleur d'alerte marque les configurations qu'aucune carrière n'établit. Le mur occupe le coin des géométries serrées et des dérives faibles, et la géométrie déclarée y tombe.}}
+
+  <p>La sortie n'est donc pas dans le multiple, et elle n'est pas non plus dans le ratio gain/risque. Elle est dans la largeur du stop, qui n'apparaît sur aucun des deux axes de cette surface parce que toute la troisième partie la tient fixe à un centième de pour cent. La septième partie chiffre ce que ce choix coûte, et la section&nbsp;<a href="#s-reel">44</a> le dit dans la seule unité qui décide, le rapport de la friction au risque nominal&nbsp;: le resserrement le porte de {{frc_cl_ancien}} à {{frc_cl_hi}}. C'est le seul des trois leviers — multiple, ratio, largeur — que l'opérateur contrôle sans rien supposer du marché.</p>
+
+  <h3>Trois consignes de lecture</h3>
+
+  <ul>
+    <li><strong>Tout nombre de cette partie portant la mention «&nbsp;sous la dérive de référence&nbsp;» est conditionnel à {{h_mu_ref}}&nbsp;points par heure</strong>, et doit être cité avec cette condition. Il n'est pas faux&nbsp;; il est situé.</li>
+    <li><strong>Aucun nombre de cette partie ne mesure le marché.</strong> Ce n'était déjà pas le cas, faute d'historique&nbsp;; l'équation&nbsp;(33) ajoute que même l'espérance de référence n'aurait rien mesuré si l'historique avait existé, puisqu'elle est une image de la friction.</li>
+    <li><strong>Le paramétrage déclaré n'a pas d'issue par le signal.</strong> Sa marge est négative sur tout le domaine plausible, et elle le reste quel que soit le ratio gain/risque de la grille. La suite du document ne cherche donc pas un signal plus fort&nbsp;; elle cherche une géométrie moins coûteuse.</li>
+  </ul>
 
   <h2 id="s-proto1">Protocole de falsification</h2>
 
@@ -1864,7 +1920,7 @@
 
   {{TABLE:decay_runway}}
 
-  <p>Le premier résultat est rassurant, et il faut l'énoncer avant l'autre. La conclusion survit à une décote de {{decay_break}}&nbsp;%, contre {{decay_pub}}&nbsp;% documentés en moyenne&nbsp;: la dérive publiée peut perdre les quatre cinquièmes de sa valeur sans que l'espérance nette devienne négative. C'est une marge que peu de stratégies publiées peuvent revendiquer, et elle tient à la géométrie — c'est exactement ce que le facteur {{ir_factor}} de la section&nbsp;<a href="#s-compare">23</a> a acheté.</p>
+  <p>Le premier résultat est rassurant, et il faut l'énoncer avant l'autre. La conclusion survit à une décote de {{decay_break}}&nbsp;%, contre {{decay_pub}}&nbsp;% documentés en moyenne&nbsp;: la dérive publiée peut perdre les quatre cinquièmes de sa valeur sans que l'espérance nette devienne négative. C'est une marge que peu de stratégies publiées peuvent revendiquer, et elle tient à la géométrie — c'est exactement ce que le facteur {{ir_factor}} de la section&nbsp;<a href="#s-compare">24</a> a acheté.</p>
 
   <p>Le second résultat l'est moins. La décote ne s'applique pas à une date indifférente&nbsp;: elle court depuis la publication. Datée du travail de {{decay_first_year}}, la dérive subsistante en {{asof}} vaut {{decay_first_left}} point de base pour un point de rupture à {{decay_brk_bps}}. La marge n'est plus de {{decay_margin_nominal}}× mais de {{decay_first_margin}}×, et la fenêtre se referme en {{decay_first_expiry}}. Datée de la généralisation de {{decay_last_year}}, elle vaut {{decay_last_left}} points de base, une marge de {{decay_last_margin}}×, et la fenêtre tient jusqu'en {{decay_last_expiry}}.</p>
 
@@ -1958,7 +2014,7 @@
 
   <p>La lecture est sévère. À {{n_star}} trades le Sharpe attendu rejoint tout juste le seuil de sélection à trois essais ; à 400 trades le seuil vaut encore 0,074 pour un Sharpe attendu de {{sr_trade}}. Deux conséquences opérationnelles en découlent, et elles sont inscrites dans le protocole : ne pas dépasser trois variantes, et n'ouvrir aucun examen avant {{n_min}} séances — une année pleine, pour qu'aucune décision ne repose sur une seule saison.</p>
 
-  <p>Le protocole scellé va toutefois plus loin que la déflation, et par une autre route. Déflater un Sharpe corrige <em>après coup</em> ce que le nombre d'essais explique à lui seul ; ordonner les configurations <em>avant</em> la mesure supprime le problème au lieu de le corriger. La section&nbsp;<a href="#s-borne">32</a> montre ce que l'échange rapporte : à taux d'erreur par famille identique, la séquence fixée rend au test principal le niveau plein, et le seuil de la configuration de référence redescend de {{pw_bonf_z}} à {{pw_fixed_z}}. La table ci-dessus reste le bon repère à opposer à un Sharpe rapporté sans protocole ; elle n'est plus la règle de décision.</p>
+  <p>Le protocole scellé va toutefois plus loin que la déflation, et par une autre route. Déflater un Sharpe corrige <em>après coup</em> ce que le nombre d'essais explique à lui seul ; ordonner les configurations <em>avant</em> la mesure supprime le problème au lieu de le corriger. La section&nbsp;<a href="#s-borne">33</a> montre ce que l'échange rapporte : à taux d'erreur par famille identique, la séquence fixée rend au test principal le niveau plein, et le seuil de la configuration de référence redescend de {{pw_bonf_z}} à {{pw_fixed_z}}. La table ci-dessus reste le bon repère à opposer à un Sharpe rapporté sans protocole ; elle n'est plus la règle de décision.</p>
 
   <h3>Le protocole scellé</h3>
 
@@ -1976,7 +2032,7 @@
 
   <p>Un protocole de vérification a deux propriétés, et les confondre est l'erreur qui rend un papier de stratégie inexploitable. La première est sa <strong>validité</strong>&nbsp;: la fréquence à laquelle il conclut à tort. La seconde est sa <strong>durée</strong>&nbsp;: le temps de marché qu'il faut lui donner pour qu'il conclue tout court. La section&nbsp;<a href="#s-horizon">8</a> chiffrait la seconde, et le chiffre était considérable — plusieurs milliers de trades, une décennie à deux trades par séance. Ce chiffre est exact pour le dispositif sur lequel il est calculé&nbsp;: un marché, une entrée par séance, une moyenne non pondérée, un seuil corrigé de Bonferroni, une décision unique en fin d'échantillon. Il n'est pas une propriété de la stratégie, et le confondre avec elle revient à confondre la qualité d'un signal avec celle de l'instrument qui le mesure.</p>
 
-  <p>Cette section construit le dispositif qui atteint la même validité — même niveau, même puissance, aucune concession sur l'un ni sur l'autre — dans un horizon borné à {{pw_horizon_years}} années de données. Elle repose sur cinq leviers. Aucun ne touche à l'hypothèse d'edge&nbsp;: la dérive supposée reste celle de la section&nbsp;<a href="#s-derive">24</a>, ni relevée, ni réécrite. Ce qui change est la manière de la mesurer.</p>
+  <p>Cette section construit le dispositif qui atteint la même validité — même niveau, même puissance, aucune concession sur l'un ni sur l'autre — dans un horizon borné à {{pw_horizon_years}} années de données. Elle repose sur cinq leviers. Aucun ne touche à l'hypothèse d'edge&nbsp;: la dérive supposée reste celle de la section&nbsp;<a href="#s-derive">25</a>, ni relevée, ni réécrite. Ce qui change est la manière de la mesurer.</p>
 
   <h3>L'information n'est pas le nombre de trades</h3>
 
@@ -1984,7 +2040,7 @@
 
   <div class="eq">
     <div class="body"><span class="v">µ̂</span><span class="op">=</span><span class="frac"><span>&Sigma;<span class="v">w<sub>i</sub></span>&thinsp;<span class="v">R<sub>i</sub></span></span><span>&Sigma;<span class="v">w<sub>i</sub></span>&thinsp;<span class="v">τ<sub>i</sub></span></span></span>,<span class="op"></span>&nbsp;&nbsp;<span class="v">w<sub>i</sub></span><span class="op">=</span>1/<span class="v">σ̂<sub>i</sub></span>²,<span class="op"></span>&nbsp;&nbsp;<span class="v">I</span><span class="op">=</span>1/Var(<span class="v">µ̂</span>),</div>
-    <div class="no">(33)</div>
+    <div class="no">(34)</div>
   </div>
 
   <p>Deux conséquences suivent, et elles sont l'essentiel du gain. La première&nbsp;: <strong>deux trades de dix minutes ne valent pas un trade de vingt minutes</strong> s'ils sont comptés comme deux observations d'une moyenne, alors qu'ils portent la même information sur <span class="v">µ</span>. Compter des tickets plutôt que du temps de marché jette une part de l'échantillon. La seconde&nbsp;: la volatilité d'une séance d'indice varie d'un facteur deux entre ses quantiles à 15 et 85&nbsp;%, et une moyenne non pondérée paie cette dispersion en variance. Pondérer par la volatilité estimée <em>avant</em> l'entrée — les quatorze séances précédentes, déjà gelées au protocole — est la pondération des moindres carrés généralisés, et son gain d'information est majoré exactement par <span class="v">E</span>[<span class="v">σ</span>²]&thinsp;·&thinsp;<span class="v">E</span>[1/<span class="v">σ</span>²]&nbsp;=&nbsp;<span class="v">e</span><sup>4<span class="v">ν</span>²</sup>, soit {{pw_gls}} à <span class="v">ν</span>&nbsp;=&nbsp;{{pw_nu}}. C'est un majorant&nbsp;: il suppose la volatilité connue, alors qu'elle est estimée&nbsp;; la simulation mesure ce qu'il en reste.</p>
@@ -2063,7 +2119,7 @@
 
   <div class="keybox">
     <span class="lab">Ce que l'horizon borné tranche, et ce qu'il ne tranche pas</span>
-    <p>Le protocole rend un verdict sur toute dérive captée supérieure à {{pw_mde_bps}} points de base, dans {{pw_horizon_years}} années au plus et {{pw_median_ref}} en médiane sous l'hypothèse du document. Il absorbe donc une décote de {{pw_decay_absorbed}} sur la dérive empruntée — mais pas davantage, et la section&nbsp;<a href="#s-decote">28</a> a établi que la décote documentée en moyenne sur les anomalies publiées est plus forte que cela.</p>
+    <p>Le protocole rend un verdict sur toute dérive captée supérieure à {{pw_mde_bps}} points de base, dans {{pw_horizon_years}} années au plus et {{pw_median_ref}} en médiane sous l'hypothèse du document. Il absorbe donc une décote de {{pw_decay_absorbed}} sur la dérive empruntée — mais pas davantage, et la section&nbsp;<a href="#s-decote">29</a> a établi que la décote documentée en moyenne sur les anomalies publiées est plus forte que cela.</p>
     <p>Les deux résultats se composent en une inégalité qu'il faut énoncer sans l'adoucir. La dérive reste au-dessus du seuil de détectabilité seulement si son taux de décroissance annuel est inférieur à {{pw_decay_max_rate_pct}}, contre {{pw_decay_documented_pct}} documentés. Datée du travail de {{decay_first_year}}, elle est passée sous ce seuil en {{pw_deadline_first}}&nbsp;; datée de sa généralisation, en {{pw_deadline_last}}. <strong>Ce n'est pas le protocole qui est trop lent&nbsp;: c'est la question qui a peut-être cessé d'être décidable, et le protocole est ce qui permet de le dire plutôt que de le supposer.</strong> Un silence de cinq années, adossé à une dérive minimale détectable publiée, est lui-même une mesure.</p>
   </div>
 
@@ -2141,7 +2197,7 @@
   <p>Trois calculs sans prémisse commune tombant dans un rapport de deux à un ne sont pas une coïncidence&nbsp;: c'est la signature d'une limite structurelle. Le mur n'est pas un artefact de la méthode retenue, et changer de méthode ne le déplacera pas.</p>
 
   <div class="keybox">
-    <span class="lab">Le piège, et il est le même qu'à la section&nbsp;<a href="#s-exposant">29</a></span>
+    <span class="lab">Le piège, et il est le même qu'à la section&nbsp;<a href="#s-exposant">30</a></span>
     <p>Les estimateurs d'information mutuelle par comptage sont biaisés <strong>vers le haut</strong>&nbsp;: deux variables rigoureusement indépendantes en affichent. À mille observations, le biais vaut {{inf_mi_bias}} millionièmes de bit — soit plus de cent fois ce que la stratégie réclame, et le double de ce que la dérive documentée porte.</p>
     <p>C'est exactement ce qui s'est produit avec le ratio de variance, sur un instrument entièrement différent, construit par une autre discipline, à une autre époque. Deux occurrences du même piège dans deux appareils sans lien commun suggèrent qu'il ne s'agit pas d'un défaut d'implémentation mais d'une propriété des mesures faites sur peu d'échantillons&nbsp;: <strong>toute mesure de structure surestime la structure.</strong></p>
   </div>
@@ -2261,7 +2317,7 @@
 
   <div class="keybox">
     <span class="lab">Ce que le témoin mesure vraiment</span>
-    <p>Il reste une lecture recevable, et ce n'est pas celle qu'on cherchait. Ce qu'un direct mesure de façon fiable n'est pas une prévision de prix mais une <strong>attention datée</strong>&nbsp;: combien de participants regardent le même niveau au même instant. Le cadre de ce document range cette grandeur du côté de la capacité et de la friction — section&nbsp;<a href="#s-friction">26</a> —, non du côté de la dérive. Une foule qui regarde le même niveau y déplace le carnet&nbsp;; elle n'y déplace pas l'espérance.</p>
+    <p>Il reste une lecture recevable, et ce n'est pas celle qu'on cherchait. Ce qu'un direct mesure de façon fiable n'est pas une prévision de prix mais une <strong>attention datée</strong>&nbsp;: combien de participants regardent le même niveau au même instant. Le cadre de ce document range cette grandeur du côté de la capacité et de la friction — section&nbsp;<a href="#s-friction">27</a> —, non du côté de la dérive. Une foule qui regarde le même niveau y déplace le carnet&nbsp;; elle n'y déplace pas l'espérance.</p>
     <p>La littérature va dans le même sens et un peu plus loin&nbsp;: Barber, Huang, Odean et Schwarz (2022) documentent que les épisodes d'attention retail extrême sont suivis de rendements <em>négatifs</em>. Le témoin, s'il informe, informe à contre-pied.</p>
   </div>
 
@@ -2273,7 +2329,7 @@
 
   <h2 id="s-catalogue">Le catalogue des dérives publiées</h2>
 
-  <p>Le document emprunte sa dérive à deux travaux et se demande, section&nbsp;<a href="#s-decote">28</a>, ce que le temps lui fait. La question symétrique n'était pas posée&nbsp;: la littérature en offre-t-elle d'autres&nbsp;? Neuf effets documentés y répondent, choisis pour être publiés avec une taille d'effet chiffrée, intraséance ou convertibles, et sans infrastructure institutionnelle apparente. Ils sont mesurés au critère maître, et à lui seul.</p>
+  <p>Le document emprunte sa dérive à deux travaux et se demande, section&nbsp;<a href="#s-decote">29</a>, ce que le temps lui fait. La question symétrique n'était pas posée&nbsp;: la littérature en offre-t-elle d'autres&nbsp;? Neuf effets documentés y répondent, choisis pour être publiés avec une taille d'effet chiffrée, intraséance ou convertibles, et sans infrastructure institutionnelle apparente. Ils sont mesurés au critère maître, et à lui seul.</p>
 
   {{TABLE:lit_catalogue}}
 
@@ -2291,7 +2347,7 @@
 
   {{TABLE:lit_constantes}}
 
-  <p>C'est un critère de compatibilité plus sévère que le mandat, et il corrige une lecture du document&nbsp;: l'avantage d'exposition d'ALP-2, établi section&nbsp;<a href="#s-compare">23</a>, n'est pas acquis contre n'importe quelle dérive. Il l'est contre une dérive dont l'horizon dépasse l'exposition, et pas autrement.</p>
+  <p>C'est un critère de compatibilité plus sévère que le mandat, et il corrige une lecture du document&nbsp;: l'avantage d'exposition d'ALP-2, établi section&nbsp;<a href="#s-compare">24</a>, n'est pas acquis contre n'importe quelle dérive. Il l'est contre une dérive dont l'horizon dépasse l'exposition, et pas autrement.</p>
 
   <p><strong>Troisième point — la convention de datation de la décote est un paramètre libre, et elle ne l'était pas déclarée.</strong> Un effet se déprécie à partir du jour où il est publié pour la première fois, non à chaque fois qu'il est republié&nbsp;: l'arbitrage répond à la première parution. Retenir l'autre convention multiplierait la dérive restante par {{lit_datation_rapport}} sur le même effet — davantage que la marge que la section&nbsp;28 conserve sur son point de rupture.</p>
 
@@ -2317,7 +2373,7 @@
 
   <h3>Où est l'avantage, point par point</h3>
 
-  <p><strong>Premier point — l'unique pièce compatible franchit le seuil d'un cheveu.</strong> Son ratio d'information vaut {{lit_mim_ir}} contre un seuil de {{lit_seuil_7012}} sur les trades du protocole scellé. Sur le budget en séances, seuil {{lit_seuil_1260}}, elle ne le franchit pas. La différence entre les deux lignes n'est pas la qualité de la pièce&nbsp;: c'est la cadence du protocole, et c'est un choix de dispositif — le même levier que la section&nbsp;<a href="#s-borne">32</a>.</p>
+  <p><strong>Premier point — l'unique pièce compatible franchit le seuil d'un cheveu.</strong> Son ratio d'information vaut {{lit_mim_ir}} contre un seuil de {{lit_seuil_7012}} sur les trades du protocole scellé. Sur le budget en séances, seuil {{lit_seuil_1260}}, elle ne le franchit pas. La différence entre les deux lignes n'est pas la qualité de la pièce&nbsp;: c'est la cadence du protocole, et c'est un choix de dispositif — le même levier que la section&nbsp;<a href="#s-borne">33</a>.</p>
 
   <p><strong>Deuxième point — ajuster un seul poids consomme les deux tiers de l'information.</strong> Il reste {{lit_conserve}}&nbsp;% du ratio d'information de la pièce après estimation, soit {{lit_consomme}}&nbsp;% consommés par un unique paramètre. Le document avait chiffré le coût de la sélection&nbsp;; celui de l'ajustement ne l'était pas, et il est du même ordre.</p>
 
@@ -2325,7 +2381,7 @@
 
   {{TABLE:lit_assemblage}}
 
-  <p>Le résultat est le même que celui de la section&nbsp;<a href="#s-surajustement">31</a>, obtenu sur un autre objet&nbsp;: à données identiques et procédure identique, l'ordre de lecture décide. Ce qui était vrai d'une famille de configurations l'est d'une famille de dérives publiées.</p>
+  <p>Le résultat est le même que celui de la section&nbsp;<a href="#s-surajustement">32</a>, obtenu sur un autre objet&nbsp;: à données identiques et procédure identique, l'ordre de lecture décide. Ce qui était vrai d'une famille de configurations l'est d'une famille de dérives publiées.</p>
 
   <h2 id="s-operateur">L'opérateur discrétionnaire, rendu décidable</h2>
 
@@ -2351,7 +2407,7 @@
 
   <p><strong>Deuxième point, et il pèse davantage que le premier — la dérive commune s'élimine dans la différence.</strong> Le dispositif apparié ne repose sur aucune dérive publiée&nbsp;: quel que soit ce que le marché offre, il est commun aux deux bras et disparaît. La section&nbsp;28 date la péremption de la dérive empruntée entre 2027 et 2030&nbsp;; la question «&nbsp;cet opérateur fait-il mieux que sa règle&nbsp;?&nbsp;» n'a pas de date de péremption. <strong>C'est la seule question de ce document qui reste décidable après l'échéance.</strong></p>
 
-  <p><strong>Troisième point — le même geste, selon la date à laquelle il est déclaré.</strong> La section&nbsp;<a href="#s-discipline">37</a> montre qu'une dérogation prise en regardant le marché double la famille de configurations, et que quatre suffisent à détruire la valeur probante du protocole. Le même écart, déclaré d'avance comme un second bras, coûte une comparaison et une seule&nbsp;: un facteur {{ope_declaration_4}} à quatre écarts. <strong>La différence entre un talent et une indiscipline n'est pas dans le geste&nbsp;: elle est dans la date à laquelle il a été déclaré.</strong></p>
+  <p><strong>Troisième point — le même geste, selon la date à laquelle il est déclaré.</strong> La section&nbsp;<a href="#s-discipline">38</a> montre qu'une dérogation prise en regardant le marché double la famille de configurations, et que quatre suffisent à détruire la valeur probante du protocole. Le même écart, déclaré d'avance comme un second bras, coûte une comparaison et une seule&nbsp;: un facteur {{ope_declaration_4}} à quatre écarts. <strong>La différence entre un talent et une indiscipline n'est pas dans le geste&nbsp;: elle est dans la date à laquelle il a été déclaré.</strong></p>
 
   {{TABLE:ope_declaration}}
 
@@ -2486,11 +2542,11 @@
 
   <p>La lecture est contre-intuitive et il faut la dire entière&nbsp;: <strong>une série maximale courte n'est pas une bonne nouvelle.</strong> Elle implique un taux de réussite élevé, donc — sous prix sans dérive, où taux de réussite et ratio sont le même paramètre écrit deux fois — un ratio bas. Cinq à six échecs au maximum sur deux cents tentatives implique un taux de réussite de {{frc_diag_p}}&nbsp;% et un ratio de <strong>1:{{frc_diag_rr}}</strong>. Ce n'est pas un 1:20.</p>
 
-  <p>Deux lectures s'offrent, et elles se distinguent par une observation que l'opérateur peut faire ce soir. Soit le ratio réellement pratiqué est proche de 1:1, et toutes les tables de cette partie doivent être relues à cette ligne — l'exigence y est plus basse, mais la friction relative y pèse dans les mêmes proportions. Soit le ratio est bien de 1:20 et les séries observées sont bien plus courtes que la loi nulle ne le prévoit, ce qui serait la <em>première indication positive</em> de tout le document&nbsp;: un taux de réussite significativement au-dessus de <span class="v">1/(R+1)</span> est exactement ce que le protocole de la section&nbsp;<a href="#s-proto2">34</a> cherche à établir. La distinction ne demande qu'un registre honnête des tentatives, ce que la section&nbsp;<a href="#s-temoin">39</a> décrit déjà pour un tiers et qui vaut d'abord pour soi.</p>
+  <p>Deux lectures s'offrent, et elles se distinguent par une observation que l'opérateur peut faire ce soir. Soit le ratio réellement pratiqué est proche de 1:1, et toutes les tables de cette partie doivent être relues à cette ligne — l'exigence y est plus basse, mais la friction relative y pèse dans les mêmes proportions. Soit le ratio est bien de 1:20 et les séries observées sont bien plus courtes que la loi nulle ne le prévoit, ce qui serait la <em>première indication positive</em> de tout le document&nbsp;: un taux de réussite significativement au-dessus de <span class="v">1/(R+1)</span> est exactement ce que le protocole de la section&nbsp;<a href="#s-proto2">35</a> cherche à établir. La distinction ne demande qu'un registre honnête des tentatives, ce que la section&nbsp;<a href="#s-temoin">40</a> décrit déjà pour un tiers et qui vaut d'abord pour soi.</p>
 
   <h3>Le renversement, et c'est le résultat le plus important de la partie</h3>
 
-  <p>Le document a construit, sur l'ancienne largeur, une conclusion qui portait sur la <strong>mesure</strong>&nbsp;: l'avantage requis y était minuscule — un lift relatif de {{c_over_l_v1}} — et par là même indiscernable du bruit sans une dizaine d'années de données. C'était le mur, et les sections&nbsp;<a href="#s-outils">17</a> à <a href="#s-borne">32</a> ne parlent que de lui.</p>
+  <p>Le document a construit, sur l'ancienne largeur, une conclusion qui portait sur la <strong>mesure</strong>&nbsp;: l'avantage requis y était minuscule — un lift relatif de {{c_over_l_v1}} — et par là même indiscernable du bruit sans une dizaine d'années de données. C'était le mur, et les sections&nbsp;<a href="#s-outils">17</a> à <a href="#s-borne">33</a> ne parlent que de lui.</p>
 
   <p>Le resserrement retourne ce mur sans le supprimer. À la largeur déclarée, l'avantage de référence n'est plus minuscule&nbsp;: il vaut {{q_edge_r}}&nbsp;R par trade, et {{q_mtrl}} trades — {{q_mtrl_years}}&nbsp;an — suffisent à affirmer qu'il est positif, contre plusieurs milliers auparavant. <strong>Le problème d'inférence disparaît presque entièrement.</strong></p>
 
@@ -2499,7 +2555,7 @@
   <div class="keybox">
     <span class="lab">Ce que cette partie recommande, et ce qu'elle ne recommande pas</span>
     <p>Elle ne dit pas d'abandonner. Elle dit que trois décisions, prises avant tout signal et sans rien mesurer, déplacent l'exigence de plusieurs ordres de grandeur&nbsp;: <strong>changer de contrat</strong> — le tick du Nasdaq divise <span class="v">c/L</span> par près de trois à largeur égale&nbsp;; <strong>élargir le stop</strong> — chaque doublement divise l'exigence de Sharpe par plus de deux, par les deux canaux à la fois&nbsp;; <strong>cesser de compter les sorties au point mort comme neutres</strong>, puisqu'elles coûtent {{frc_be_hi}}&nbsp;R chacune.</p>
-    <p>Et elle dit qu'une quatrième décision ne se prend pas sans mesure&nbsp;: le forçage lui-même. Son coût est démontré sous prix sans dérive&nbsp;; sa valeur, s'il en a une, tient dans une dérive conditionnelle qui n'a pas été mesurée ici. Le dispositif apparié de la section&nbsp;<a href="#s-operateur">42</a> est exactement l'instrument qui trancherait, et il est le seul de ce document qu'un opérateur seul peut conduire.</p>
+    <p>Et elle dit qu'une quatrième décision ne se prend pas sans mesure&nbsp;: le forçage lui-même. Son coût est démontré sous prix sans dérive&nbsp;; sa valeur, s'il en a une, tient dans une dérive conditionnelle qui n'a pas été mesurée ici. Le dispositif apparié de la section&nbsp;<a href="#s-operateur">43</a> est exactement l'instrument qui trancherait, et il est le seul de ce document qu'un opérateur seul peut conduire.</p>
   </div>
 
 
@@ -2609,16 +2665,16 @@
 
   <p>C'est la limite principale de ce document, et la seule que le dépôt ne puisse pas lever seul. Elle est énoncée ici plutôt que compensée par une affirmation de performance.</p>
 
-  <p>Deux résultats vont d'ailleurs contre l'hypothèse qui motivait la recherche, et ils doivent être énoncés au même rang que les autres. Le contrôle de plausibilité du régime de gamma montre que la persistance calibrée ne peut pas lui être attribuée&nbsp;: reproduire l'exposant retenu exigerait un gamma net d'un ordre de grandeur supérieur à tout gamma observable. Le candidat suivant de la littérature — la mémoire longue du flux engendrée par le fractionnement des ordres — échoue pour une raison inverse et plus profonde&nbsp;: le noyau d'impact qui lui répond restaure exactement la diffusivité, de sorte que le mécanisme le mieux documenté de persistance du flux garantit l'absence de persistance du prix. Aucun mécanisme documenté ne soutient donc l'exposant retenu, et la section&nbsp;<a href="#s-exposant">29</a> en tire la conséquence&nbsp;: la géométrie doit être choisie robuste à cet exposant plutôt qu'optimale en un point que personne n'a mesuré.</p>
+  <p>Deux résultats vont d'ailleurs contre l'hypothèse qui motivait la recherche, et ils doivent être énoncés au même rang que les autres. Le contrôle de plausibilité du régime de gamma montre que la persistance calibrée ne peut pas lui être attribuée&nbsp;: reproduire l'exposant retenu exigerait un gamma net d'un ordre de grandeur supérieur à tout gamma observable. Le candidat suivant de la littérature — la mémoire longue du flux engendrée par le fractionnement des ordres — échoue pour une raison inverse et plus profonde&nbsp;: le noyau d'impact qui lui répond restaure exactement la diffusivité, de sorte que le mécanisme le mieux documenté de persistance du flux garantit l'absence de persistance du prix. Aucun mécanisme documenté ne soutient donc l'exposant retenu, et la section&nbsp;<a href="#s-exposant">30</a> en tire la conséquence&nbsp;: la géométrie doit être choisie robuste à cet exposant plutôt qu'optimale en un point que personne n'a mesuré.</p>
 
   <p>Cinq réserves s'ajoutent à la limite principale&nbsp;:</p>
 
   <ul>
-    <li><strong>La dérive est empruntée, et elle est datée.</strong> Un effet documenté s'arbitre après publication&nbsp;— le document en donne un exemple, la dérive overnight, éteinte depuis 2021. La section&nbsp;<a href="#s-decote">28</a> chiffre cette décote sur la dérive retenue ici&nbsp;: la conclusion survit à une perte de {{decay_break}}&nbsp;% de sa valeur, contre {{decay_pub}}&nbsp;% documentés en moyenne, mais la marge tombe de {{decay_margin_nominal}}× à {{decay_first_margin}}× une fois la décote datée de la publication de {{decay_first_year}}, et la fenêtre se referme en {{decay_first_expiry}}. Le test&nbsp;2 du protocole existe pour lever cette réserve, et lui seul le peut.</li>
-    <li><strong>L'exposant d'échelle n'est pas mesuré.</strong> La calibration le pose à ½ et la discussion du gamma en retient {{hurst}}, ce qui n'est pas cohérent. La section&nbsp;<a href="#s-exposant">29</a> refait la chaîne sous exposant imposé&nbsp;: l'incohérence joue contre la stratégie, d'un facteur {{scal_factor}} sur le seuil requis, et aucun mécanisme documenté ne soutient la persistance invoquée. Le test&nbsp;1 la lève.</li>
+    <li><strong>La dérive est empruntée, et elle est datée.</strong> Un effet documenté s'arbitre après publication&nbsp;— le document en donne un exemple, la dérive overnight, éteinte depuis 2021. La section&nbsp;<a href="#s-decote">29</a> chiffre cette décote sur la dérive retenue ici&nbsp;: la conclusion survit à une perte de {{decay_break}}&nbsp;% de sa valeur, contre {{decay_pub}}&nbsp;% documentés en moyenne, mais la marge tombe de {{decay_margin_nominal}}× à {{decay_first_margin}}× une fois la décote datée de la publication de {{decay_first_year}}, et la fenêtre se referme en {{decay_first_expiry}}. Le test&nbsp;2 du protocole existe pour lever cette réserve, et lui seul le peut.</li>
+    <li><strong>L'exposant d'échelle n'est pas mesuré.</strong> La calibration le pose à ½ et la discussion du gamma en retient {{hurst}}, ce qui n'est pas cohérent. La section&nbsp;<a href="#s-exposant">30</a> refait la chaîne sous exposant imposé&nbsp;: l'incohérence joue contre la stratégie, d'un facteur {{scal_factor}} sur le seuil requis, et aucun mécanisme documenté ne soutient la persistance invoquée. Le test&nbsp;1 la lève.</li>
     <li><strong>La boîte de plausibilité est posée, pas mesurée.</strong> Ses bornes viennent d'observations publiques et du jugement. Un lecteur qui les juge trop larges ou trop étroites peut les modifier et relancer&nbsp;: les verdicts se recalculent.</li>
     <li><strong>Le modèle de carnet est paramétrique.</strong> Profondeur, amincissement au déclenchement et latence sont des ordres de grandeur, encadrés sur 243 combinaisons mais jamais observés sur un carnet réel.</li>
-    <li><strong>La décidabilité elle-même est datée.</strong> Le protocole de la section&nbsp;<a href="#s-borne">32</a> tranche toute dérive captée supérieure à {{pw_mde_bps}} points de base, soit une décote de {{pw_decay_absorbed}} au plus sur la dérive empruntée. La décote documentée est plus forte&nbsp;: si elle court depuis la publication, la dérive est passée sous le seuil de détectabilité en {{pw_deadline_first}} ou {{pw_deadline_last}} selon la datation retenue. Le protocole conserve alors sa valeur, mais elle change de nature&nbsp;— un silence de cinq années adossé à une dérive minimale détectable publiée exclut une amplitude, il ne mesure plus un avantage.</li>
+    <li><strong>La décidabilité elle-même est datée.</strong> Le protocole de la section&nbsp;<a href="#s-borne">33</a> tranche toute dérive captée supérieure à {{pw_mde_bps}} points de base, soit une décote de {{pw_decay_absorbed}} au plus sur la dérive empruntée. La décote documentée est plus forte&nbsp;: si elle court depuis la publication, la dérive est passée sous le seuil de détectabilité en {{pw_deadline_first}} ou {{pw_deadline_last}} selon la datation retenue. Le protocole conserve alors sa valeur, mais elle change de nature&nbsp;— un silence de cinq années adossé à une dérive minimale détectable publiée exclut une amplitude, il ne mesure plus un avantage.</li>
     <li><strong>Le panel suppose une dérive commune.</strong> Cinq contrats de trois fuseaux ne sont pas cinq expériences indépendantes, et le dispositif ne prétend pas le contraire&nbsp;: sa variance est groupée par date, ce qui le rend valide quelle que soit la corrélation, et l'hétérogénéité entre marchés est un falsificateur inscrit au protocole. Si la dérive est propre à un marché, le panel la dilue au lieu de la mesurer, et c'est le test de Cochran qui doit le dire avant la lecture du test principal.</li>
     <li><strong>Le conditionnement par le gamma reste une hypothèse.</strong> Il est inscrit au protocole comme configuration&nbsp;C2, et le document ne prétend pas qu'il fonctionne&nbsp;— seulement qu'il est testable sans données payantes.</li>
   </ul>
@@ -2626,7 +2682,7 @@
   <div class="keybox">
     <span class="lab">Le verdict, en une phrase</span>
     <p>Ce document n'établit pas qu'un avantage existe. Il établit qu'un changement de géométrie divise par {{ir_factor}} le seuil qu'un signal doit franchir, que la friction réelle laisse une marge de {{ir_margin}} sur une dérive documentée par des tiers, et qu'un protocole capable de trancher tient en cinq tests dont quatre se conduisent sur historique, sans donnée payante.</p>
-    <p>Ce qui manque est une série de prix. Rien d'autre&nbsp;— et, depuis la section&nbsp;<a href="#s-decote">28</a>, ce qui manque a une date&nbsp;: au taux de décote documenté, la dérive empruntée passe sous son point de rupture en {{decay_first_expiry}} si on la date du travail d'origine, en {{decay_last_expiry}} si on la date de sa généralisation.</p>
+    <p>Ce qui manque est une série de prix. Rien d'autre&nbsp;— et, depuis la section&nbsp;<a href="#s-decote">29</a>, ce qui manque a une date&nbsp;: au taux de décote documenté, la dérive empruntée passe sous son point de rupture en {{decay_first_expiry}} si on la date du travail d'origine, en {{decay_last_expiry}} si on la date de sa généralisation.</p>
     <p>Ce qui ne manque plus est le temps. Le protocole rend son verdict sur {{pw_horizon_years}} années de barres d'une minute au plus, {{pw_median_ref}} en médiane sous l'hypothèse retenue, à un niveau mesuré de {{pw_size}} et une puissance de {{pw_power_ref}}. La décennie que la section&nbsp;<a href="#s-horizon">8</a> annonçait était le coût d'un instrument de mesure, non celui de la question.</p>
   </div>
 

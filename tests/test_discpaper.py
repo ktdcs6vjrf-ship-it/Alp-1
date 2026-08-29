@@ -41,6 +41,29 @@ class TestConstruction(unittest.TestCase):
         self.assertEqual(re.findall(r"#[0-9a-fA-F]{6}", self.corps), [])
 
 
+class TestMarquesDeNote(unittest.TestCase):
+    """Les marques d'accentuation se rendent, elles ne s'écrivent pas.
+
+    Deux notes de ce document publiaient leurs astérisques de gras et deux
+    leurs apostrophes inverses comme des caractères. Le contrôle vaut pour
+    les deux documents : `report.inline` les rend, ce test l'exige.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.corps = discpaper.build().split("</style>", 1)[1]
+
+    def test_aucune_note_ne_publie_sa_marque(self):
+        for note in re.findall(r'<p class="note">(.*?)</p>', self.corps, re.S):
+            self.assertNotIn("**", note)
+            self.assertNotIn("`", note)
+
+    def test_aucune_cellule_ne_publie_sa_marque(self):
+        for cellule in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", self.corps, re.S):
+            self.assertNotIn("**", cellule)
+            self.assertNotIn("`", cellule)
+
+
 class TestComptes(unittest.TestCase):
     """Les comptes du gabarit sont ceux que le document rend."""
 

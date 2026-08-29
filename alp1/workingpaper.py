@@ -24,8 +24,10 @@ import re
 from pathlib import Path
 
 from . import (lexicon, paper, paper2, quant, report, report2, report3,
-               report4, report5, report6, report7, report8, report9)
+               report4, report5, report6, report7, report8, report9,
+               report15)
 from .figalp2 import render_all as render_alp2_figures
+from .fighyp import render_all as render_hypothesis_figures
 from .figdecay import render_all as render_decay_figures
 from .figedge import render_all as render_edge_figures
 from .figstrat import render_all as render_strat_figures
@@ -54,7 +56,8 @@ def values() -> dict[str, str]:
     for key, val in {**v2, **report3.values(), **report4.values(),
                      **report5.values(), **report6.values(),
                      **report7.values(),
-                     **report8.values(), **report9.values()}.items():
+                     **report8.values(), **report9.values(),
+                     **report15.values()}.items():
         if key in COLLISIONS_VALEURS:
             merged[f"{key}_a2"] = val
         elif key in merged and merged[key] != val:
@@ -78,6 +81,7 @@ def tables() -> dict[str, report.Table]:
         **report5.all_tables(),
         **report6.all_tables(),
         **report9.all_tables(),
+        **report15.all_tables(),
         **report7.all_tables(),
         **report8.all_tables(),
     }
@@ -98,7 +102,7 @@ def figures() -> dict[str, str]:
                    render_quant_figures, render_alp2_figures,
                    render_decay_figures, render_power_figures,
                    render_edge_figures, render_risk_figures,
-                   render_strat_figures):
+                   render_strat_figures, render_hypothesis_figures):
         for key, svg in render().items():
             if key in merged:
                 raise KeyError(f"collision de figure : {key!r}")

@@ -970,6 +970,17 @@ def values() -> dict[str, str]:
         "q_sortino": num(e0.sortino(), 4),
         "q_sd_dd": num(e0.sd / e0.downside_deviation(), 2),
         "q_sd_dd_50": num(edge_law(50.0).sd / edge_law(50.0).downside_deviation(), 1),
+        # Ce que chacune des deux dispersions fait d'un bout à l'autre de la
+        # grille de ratios. Le document affirmait que la dispersion à la
+        # baisse « ne bouge pas quand on éloigne le target » ; elle bouge de
+        # dix-huit pour cent, quand la dispersion totale est multipliée par
+        # six. C'est le rapport des deux mouvements qui porte le résultat,
+        # non l'immobilité de l'un d'eux.
+        "q_sd_dd_nul": num(n0.sd / n0.downside_deviation(), 2),
+        "q_dd_grid": num(100.0 * (edge_law(max(RR_GRID)).downside_deviation()
+                                  / edge_law(min(RR_GRID)).downside_deviation()
+                                  - 1.0), 0),
+        "q_sd_grid": num(edge_law(max(RR_GRID)).sd / edge_law(min(RR_GRID)).sd, 1),
         "q_dd": num(e0.downside_deviation(), 2),
         "q_omega": num(e0.omega(), 3),
         "q_kelly": num(100 * e0.kelly_fraction(), 2),

@@ -6,7 +6,7 @@
 
 Le document complet :
 [`docs/temps-de-marche-et-peremption.html`](docs/temps-de-marche-et-peremption.html) —
-49 sections en neuf parties, 107 tables, 48 figures.
+50 sections en neuf parties, 109 tables, 50 figures.
 
 ### Le second document
 
@@ -50,7 +50,15 @@ au marché à la clôture.
 Le document se lit en neuf parties. La première définit les huit notions
 nécessaires. La deuxième établit ce qu'une géométrie peut et ne peut pas. La
 troisième passe les sept instruments au crible de leur loi nulle — GEX, profil
-de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres. La quatrième
+de volume, VWAP, théorie de Dow, Fibonacci, carnet d'ordres —, puis audite
+l'hypothèse d'edge sous laquelle elle a chiffré ses propres résultats. Cette
+hypothèse pose la dérive à deux fois le seuil de rentabilité, lequel est déduit
+de la friction : l'espérance publiée vaut donc exactement le ratio de friction
+et ne dit rien du marché. Le domaine de dérive que le document appelle plausible
+tombe, lui, tout entier sous ce seuil. Un audit sépare alors — par un verdict
+calculé, jamais écrit à la main — les trois grandeurs que le changement
+d'hypothèse laisse intactes des dix qu'il emporte, dont trois jusqu'au
+changement de signe. La quatrième
 construit ALP-2 et la confronte à une dérive publiée et à une friction déduite
 du carnet. La cinquième va chercher hors de la finance les bornes que le
 théorème d'invariance laisse ouvertes. La sixième demande ce que le dehors
@@ -941,7 +949,7 @@ python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
 python main.py --disc             # journal de décision, lois nulles, attribution
 python main.py --discpaper        # reconstruit docs/prouver-un-jugement.html
-python main.py --tests            # 843 tests unitaires du noyau
+python main.py --tests            # 863 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -1025,6 +1033,8 @@ La production du document :
 | `alp1/figures.py` | Figures SVG du cadre |
 | `alp1/figterm.py` | Planches des couches, en panneaux de terminal |
 | `alp1/figquant.py` | Planches des instruments, surfaces isométriques comprises |
+| `alp1/report15.py` | Audit de l'hypothèse d'edge : le multiple comme paramètre, verdict calculé |
+| `alp1/fighyp.py` | Planches de l'audit : délai, décomposition de l'espérance, surface du mur |
 | `alp1/figcss.py` | Feuille de style partagée des figures |
 | `alp1/report3.py` | Tables et valeurs de la décote et de l'exposant d'échelle |
 | `alp1/report4.py` | Tables et valeurs du protocole à horizon borné |
