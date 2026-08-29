@@ -15,7 +15,7 @@ from alp1 import discpaper
 #: Ce que le gabarit déclare. Toute modification de structure passe par ici.
 N_SECTIONS = 46
 N_PARTIES = 13
-N_TABLES = 19
+N_TABLES = 20
 N_FIGURES = 36
 
 

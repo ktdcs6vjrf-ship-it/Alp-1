@@ -5933,6 +5933,38 @@
 
   <p>Le meilleur concept <em>discrétionnaire</em> ne se choisit donc pas sur l’espérance, puisqu’ils y sont tous équivalents. Il se choisit sur la dispersion qu’un opérateur peut tenir sans dévier de sa règle, à temps de position maximal. Ce que cela désigne est un stop large, aucun target, et une sortie à la clôture — la géométrie même que le chapitre du seuil avait désignée. Il faut être précis sur ce que vaut cet accord : <strong>ce ne sont pas deux routes indépendantes, c’est une seule identité appliquée à deux variables libres différentes</strong>, la largeur du stop d’un côté, la règle de sortie de l’autre. L’accord est donc une cohérence, pas une confirmation. Il aurait été une réfutation s’il avait manqué.</p>
 
+  <h3>Le premier test, et il ne coûte rien</h3>
+
+  <p>Tout ce qui précède désigne un contrôle que l’opérateur peut conduire ce soir, sur son propre journal, sans une donnée de prix et sans une seule statistique. Il suffit de renverser l’identité. Si <span class="v">µ*</span>&nbsp;=&nbsp;60<span class="v">c</span>/E[<span class="v">τ∧T</span>], alors</p>
+
+  <div class="eq">
+    <div class="body">E[<span class="v">τ∧T</span>]<span class="op">=</span><span class="frac"><span>60&thinsp;<span class="v">c</span></span><span><span class="v">µ*</span></span></span>,</div>
+  </div>
+
+  <p>et il suffit d’y poser, pour <span class="v">µ*</span>, le plafond du domaine que le document nº&nbsp;1 tient pour plausible. Ce que l’on obtient n’est pas une estimation : c’est une division, et elle rend une durée.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 17</span> — La durée de position sous laquelle aucune dérive plausible ne couvre la friction, par contrat et par modèle de coût</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Contrat</th><th>Friction optimiste (min)</th><th>Friction de référence (min)</th><th>Friction réaliste (min)</th><th>c de référence (pt)</th></tr></thead>
+        <tbody>
+          <tr><td>E-mini S&P</td><td>3,1</td><td>6,2</td><td>10,9</td><td>0,33</td></tr>
+          <tr class="sep"><td>E-mini Nasdaq</td><td>4,2</td><td>8,4</td><td>13,1</td><td>0,45</td></tr>
+          <tr><td>Micro S&P</td><td>9,8</td><td>19,7</td><td>24,4</td><td>1,05</td></tr>
+          <tr><td>Micro Nasdaq</td><td>21,1</td><td>42,2</td><td>46,9</td><td>2,25</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Ces durées ne sont pas des estimations, ce sont des divisions. <span class="v">µ* = 60c/E[τ∧T]</span> renversé donne <span class="v">E[τ∧T] = 60c/µ*</span>, et l’on y pose pour <span class="v">µ*</span> le plafond du domaine plausible, 3,2 point par heure. <strong>Une position tenue moins longtemps que la case correspondante ne peut pas être rentable, quelle que soit la qualité du signal</strong> — non parce que le signal serait mauvais, mais parce que la friction n’a pas eu le temps d’être couverte. Le contraste entre les deux moitiés de la table est le résultat : sur les micro-contrats il faut tenir des dizaines de minutes là où le contrat plein en demande moins de dix. C’est le seul contrôle de tout le document qu’un opérateur puisse exécuter le soir même sur son propre journal, sans une donnée de prix et sans une seule statistique : relever la durée moyenne de ses positions, et la comparer à une case.</p>
+    </figure>
+
+  <p>La lecture est immédiate et elle ne demande aucun avantage. <strong>Une position tenue moins longtemps que sa case ne peut pas être rentable, quelle que soit la qualité du signal</strong> — non parce que le signal serait mauvais, mais parce que la friction n’a pas eu le temps d’être couverte. Sur le contrat plein il faut 6,2&nbsp;minutes à la friction de référence, 10,9 à la friction réaliste. Sur le micro-Nasdaq il en faut 42,2, et c’est le même prix payé sur un cinquième de la taille.</p>
+
+  <p>La géométrie déclarée par l’opérateur tient 2,42&nbsp;minutes. Elle est donc sous sa case d’un facteur deux et demi sur le contrat plein, et d’un facteur dix-sept sur le micro-Nasdaq. Ce n’est pas un verdict sur sa lecture du marché&nbsp;: c’est un verdict sur la durée, et la durée est le seul terme de l’équation qu’aucun talent ne déplace.</p>
+
+  <p>Il faut être précis sur ce que ce contrôle décide, parce qu’il décide dans un seul sens. <strong>Sous la case, il réfute&nbsp;;</strong> aucune suite du protocole ne vaut la peine d’être conduite, et les centaines de décisions que le mur d’échantillon réclame seraient dépensées à mesurer un signal que la géométrie annule de toute façon. <strong>Au-dessus de la case, il ne confirme rien&nbsp;:</strong> il rend seulement le reste du protocole digne d’être payé. C’est un test d’admissibilité, pas un test de valeur — et c’est précisément pour cela qu’il doit venir en premier, puisqu’il est le seul qui soit gratuit.</p>
+
   <p>Le meilleur concept <em>quantitatif</em> n’est pas une règle sur le prix, et c’est la conclusion qui a le plus de conséquences. La friction est payée une fois, à l’entrée ; elle ne se rembourse pas en sortant tôt. Une sortie anticipée ne peut donc se justifier que par une information qui contredit celle qui a motivé l’entrée. <strong>La règle de sortie quantitative correcte est une règle d’information, pas une règle de prix</strong> : sortir quand ce qui fondait l’entrée a été démenti, et à aucun autre moment. La partie suivante mesure ce que valent, contre leur loi nulle, les deux couches d’information que l’opérateur regarde le plus pour prendre cette décision.</p>
 
   <div class="part">
@@ -6104,7 +6136,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 17</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
+      <figcaption><span class="lab">Table 18</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Barre</th><th>Volume</th><th>Δ</th><th>z d’impact</th><th>Déséquilibres</th><th>Attendus sous martingale</th><th>Rapport d’épuisement</th></tr></thead>
@@ -6420,7 +6452,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 18</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
+      <figcaption><span class="lab">Table 19</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Lecture</th><th>Sur la séance construite</th><th>Sous un prix sans dérive</th><th class="wrap">Ce qu’elle vaut</th></tr></thead>
@@ -6519,7 +6551,7 @@
   <p>Le taux de réussite d’équilibre sans friction vaut <span class="v">1/(R+1)</span>&nbsp;; avec friction il vaut <span class="v">(1 + c/L)/(R+1)</span>. À la géométrie déclarée, cela fait passer le taux requis de 4,76 % à 7,38 % — une hausse relative de 55 %, ce qui paraît énorme. La divergence de Kullback-Leibler en donne le prix réel, en bits&nbsp;: <strong>0,941 % d’un bit par décision</strong>. Une décision binaire en porte un au plus.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 19</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
+      <figcaption><span class="lab">Table 20</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Géométrie</th><th>Stop</th><th>Friction c/L</th><th>Information exigée</th><th>Bruit toléré</th><th>Décisions pour le prouver</th></tr></thead>

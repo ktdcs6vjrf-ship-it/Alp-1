@@ -22,7 +22,7 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 « la circularité » plus bas.
 
 **ALP nº 3** — `docs/prouver-un-jugement.html` (≈800 ko, 46 sections en treize
-parties, 19 tables, 36 figures dont onze surfaces isométriques). L'évaluation
+parties, 20 tables, 36 figures dont onze surfaces isométriques). L'évaluation
 d'un opérateur discrétionnaire dont l'avantage n'est pas codable, puis le
 seuil de rentabilité, puis **les concepts de sortie**, puis la lecture du flux.
 Chaîne : `journal.py` → `operator.py` → `attribution.py` →

@@ -60,8 +60,10 @@ import math
 from dataclasses import dataclass
 from functools import lru_cache
 
-from .costs import COST_BASE, ES, stop_points
+from .costs import (COST_BASE, COST_OPTIMISTIC, COST_REALISTIC, ES,
+                    MES, MNQ, NQ, stop_points)
 from . import quant as q
+from . import seuil
 from .report import Table, num
 from .report11 import DERIVE_TRAVAIL
 
@@ -468,7 +470,60 @@ def table_sorties_derive() -> Table:
              "et le rendement d'un trade court, et c'est là tout son coût.")
 
 
-TABLES = (table_sorties_nulles, table_sorties_derive)
+#: Les quatre contrats du dépôt, et les trois modèles de friction.
+CONTRATS = (("E-mini S&P", ES), ("E-mini Nasdaq", NQ),
+            ("Micro S&P", MES), ("Micro Nasdaq", MNQ))
+MODELES = (("optimiste", COST_OPTIMISTIC), ("de référence", COST_BASE),
+           ("réaliste", COST_REALISTIC))
+
+
+def exposition_minimale(contrat, modele) -> float:
+    """Minutes de position sous lesquelles aucune dérive plausible ne suffit.
+
+    `µ* = 60c/E[τ∧T]` ne dépend ni du stop, ni du target, ni du signal : la
+    friction et le temps de position l'épuisent. Renverser l'identité donne
+    donc une durée, et cette durée est le seul contrôle du dépôt qu'un
+    opérateur puisse exécuter sur son propre journal, le soir même, sans
+    aucune donnée de prix et sans une seule statistique.
+    """
+    return 60.0 * modele.friction_points(contrat) / seuil.PLAUSIBLE_DRIFT_PER_HOUR[1]
+
+
+def table_exposition_minimale() -> Table:
+    """La durée de position sous laquelle aucun signal ne rattrape la friction."""
+    rows = []
+    for nom, contrat in CONTRATS:
+        rows.append([nom]
+                    + [num(exposition_minimale(contrat, m), 1) for _, m in MODELES]
+                    + [num(COST_BASE.friction_points(contrat), 2)])
+    haut = seuil.PLAUSIBLE_DRIFT_PER_HOUR[1]
+    return Table(
+        "exposition_minimale",
+        "La durée de position sous laquelle aucune dérive plausible ne "
+        "couvre la friction, par contrat et par modèle de coût",
+        ["Contrat"] + ["Friction " + n + " (min)" for n, _ in MODELES]
+        + ["c de référence (pt)"],
+        rows,
+        wide=True,
+        rules_after=[1],
+        note="Ces durées ne sont pas des estimations, ce sont des divisions. "
+             "`µ* = 60c/E[τ∧T]` renversé donne `E[τ∧T] = 60c/µ*`, et l'on y "
+             "pose pour `µ*` le plafond du domaine plausible, "
+             + num(haut, 1) + " point par heure. **Une position tenue moins "
+             "longtemps que la case correspondante ne peut pas être rentable, "
+             "quelle que soit la qualité du signal** — non parce que le signal "
+             "serait mauvais, mais parce que la friction n'a pas eu le temps "
+             "d'être couverte. Le contraste entre les deux moitiés de la "
+             "table est le résultat : sur les micro-contrats il faut tenir "
+             "des dizaines de minutes là où le contrat plein en demande "
+             "moins de dix. C'est le seul contrôle de tout le document qu'un "
+             "opérateur puisse exécuter le soir même sur son propre journal, "
+             "sans une donnée de prix et sans une seule statistique : "
+             "relever la durée moyenne de ses positions, et la comparer à "
+             "une case.")
+
+
+TABLES = (table_sorties_nulles, table_sorties_derive, table_exposition_minimale)
 
 
 def all_tables() -> dict[str, Table]:
@@ -504,6 +559,13 @@ def values() -> dict[str, str]:
         "so_bruit_stop": num(bruit_sur_stop_declare(), 2),
         "so_be_cout": num(nd["be"].esperance - nd["stop"].esperance, 3,
                           signed=True),
+        "so_expo_es": num(exposition_minimale(ES, COST_BASE), 1),
+        "so_expo_es_reel": num(exposition_minimale(ES, COST_REALISTIC), 1),
+        "so_expo_mnq": num(exposition_minimale(MNQ, COST_BASE), 1),
+        "so_expo_declaree": num(60.0 * friction()
+                                / (60.0 * friction()
+                                   / q.geometry(q.RR_REF).expected_time), 2),
+        "so_tau_declare": num(q.geometry(q.RR_REF).expected_time, 2),
         "so_suiveur_cout": num(nd["suiv05"].esperance - nd["clot"].esperance,
                                3, signed=True),
     }
