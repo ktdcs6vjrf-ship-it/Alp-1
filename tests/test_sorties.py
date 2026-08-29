@@ -155,9 +155,39 @@ class TestGeometrie(unittest.TestCase):
         self.assertEqual({r.famille for r in rs},
                          {"discrétionnaire", "quantitatif"})
 
-    def test_les_deux_tables_sont_exposees(self):
+    def test_les_trois_tables_sont_exposees(self):
         self.assertEqual(set(S.all_tables()),
-                         {"sorties_nulles", "sorties_derive"})
+                         {"sorties_nulles", "sorties_derive",
+                          "exposition_minimale"})
+
+    def test_la_duree_minimale_croit_avec_la_friction(self):
+        """`E[τ∧T] = 60c/µ*` : la durée est affine en la friction.
+
+        C'est ce qui rend la table lisible d'un coup d'œil — les
+        micro-contrats demandent des dizaines de minutes là où le contrat
+        plein en demande moins de dix — et c'est aussi ce qui la rend
+        vérifiable sans la recalculer.
+        """
+        from alp1.costs import COST_BASE
+        durees = [S.exposition_minimale(c, COST_BASE) for _, c in S.CONTRATS]
+        frictions = [COST_BASE.friction_points(c) for _, c in S.CONTRATS]
+        self.assertEqual(durees, sorted(durees))
+        for d, f in zip(durees, frictions):
+            with self.subTest(friction=f):
+                self.assertAlmostEqual(d * S.seuil.PLAUSIBLE_DRIFT_PER_HOUR[1],
+                                       60.0 * f, places=9)
+
+    def test_la_geometrie_declaree_tombe_sous_sa_case(self):
+        """Le fait que la section publie, réduit à une inégalité.
+
+        La géométrie déclarée tient moins longtemps que la durée sous
+        laquelle aucune dérive plausible ne couvre la friction. Aucun signal
+        ne rattrape cela, et c'est un contrôle qui ne coûte rien.
+        """
+        from alp1.costs import COST_BASE, ES
+        from alp1 import quant as q
+        self.assertLess(q.geometry(q.RR_REF).expected_time,
+                        S.exposition_minimale(ES, COST_BASE))
 
 
 if __name__ == "__main__":

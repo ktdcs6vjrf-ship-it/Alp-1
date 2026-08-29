@@ -276,7 +276,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 884 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 886 tests (compter ~25 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
