@@ -30,7 +30,10 @@ seuil de rentabilité, puis la lecture du flux. Chaîne : `journal.py` →
 
 Un troisième build existe, `docs/alp1-paper.html` (`--paper`), version plus
 ancienne et plus courte d'ALP nº 1. Il partage `report*.py` : **une correction
-de module s'y propage, donc il faut le rebâtir aussi.**
+de module s'y propage, donc il faut le rebâtir aussi — et le balayer.** Il a
+vécu longtemps hors des trois balayages, et y gardait six chevauchements que
+les deux autres documents n'avaient pas.
+Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
 - ALP nº 3 : https://claude.ai/code/artifact/0d8a6548-553f-4418-a5d9-121a4bd93729
