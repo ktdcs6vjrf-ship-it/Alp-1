@@ -15,7 +15,7 @@ Le document complet :
 > *Série ALP, nº 3.* JEL : C12, C44, C52, G11, G14.
 
 [`docs/prouver-un-jugement.html`](docs/prouver-un-jugement.html) —
-44 sections en douze parties, 17 tables, 34 figures.
+46 sections en treize parties, 19 tables, 36 figures.
 
 Il part d'une question — combien de décisions faut-il pour établir la valeur
 d'un jugement qui n'existe pas sous forme écrite ? — et la retourne. Le
@@ -1040,6 +1040,8 @@ La production du document :
 | `alp1/report4.py` | Tables et valeurs du protocole à horizon borné |
 | `alp1/figdecay.py` | Figures de la décote et de l'exposant d'échelle |
 | `alp1/figpower.py` | Planches de puissance, de durée et de trajectoires séquentielles |
+| `alp1/sorties.py` | Douze concepts de sortie simulés sur trajectoires appariées, et leur loi nulle |
+| `alp1/figsortie.py` | Planches des sorties : l'identité de Wald mesurée, et sa frontière |
 | `alp1/pieds.py` | Sortie de la prose de pied hors du SVG, partagée par les trois documents |
 | `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
 | `alp1/workingpaper.py` | Assemblage du document de travail complet |

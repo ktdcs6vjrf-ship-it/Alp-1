@@ -21,7 +21,7 @@ import unittest
 MODULES = (
     "figures", "figterm", "figquant", "figalp2", "figdecay",
     "figpower", "figrisk", "figedge", "figstrat", "figdisc", "figflux",
-    "fighyp",
+    "fighyp", "figsortie",
 )
 
 

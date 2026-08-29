@@ -775,16 +775,22 @@
           <li><a href="#s-ou-depenser">Où dépenser le jugement</a></li>
         </ol>
       </li>
-      <li><span class="pt">Onzième partie — Lire le flux</span>
+      <li><span class="pt">Onzième partie — Sortir</span>
         <ol start="37">
+          <li><a href="#s-sortir">Douze concepts, et ce qu’ils font vraiment</a></li>
+          <li><a href="#s-sortir-choix">Ce qu’il reste alors à décider</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Douzième partie — Lire le flux</span>
+        <ol start="39">
           <li><a href="#s-footprint">Le footprint, et ce qu’un déséquilibre vaut</a></li>
           <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n’observe</a></li>
           <li><a href="#s-tpo">Le profil de marché, et ses cinq lectures</a></li>
           <li><a href="#s-bruit">Combien de bruit un trade supporte-t-il&nbsp;?</a></li>
         </ol>
       </li>
-      <li><span class="pt">Douzième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="41">
+      <li><span class="pt">Treizième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="43">
           <li><a href="#s-protocole">Ce qu’il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -5639,6 +5645,297 @@
 
   <div class="part">
     <span class="lab">Onzième partie</span>
+    <h2>Sortir</h2>
+    <p>Douze concepts de sortie, appliqués aux mêmes trajectoires, et le seul axe sur lequel un concept de sortie peut agir.</p>
+  </div>
+
+  <h2 id="s-sortir">Douze concepts, et ce qu’ils font vraiment</h2>
+
+  <p>Un opérateur intraday dispose d’une dizaine de façons de sortir — stop et target, remontée au point mort, stop suiveur, sortie sur temps, prise partielle, effondrement de volatilité, clôture sèche — et d’aucun moyen de les classer. Les trois documents ont démontré un théorème <em>sur</em> les sorties sans jamais cataloguer les sorties elles-mêmes. Ce chapitre les catalogue et les mesure.</p>
+
+  <p>La question « quelle est la meilleure sortie ? » n’a pas de réponse tant qu’on n’a pas dit <em>sur quoi</em> une sortie peut agir. L’identité de Wald le dit en une ligne :</p>
+
+  <div class="eq">
+    <div class="body">E[<span class="v">R</span>]<span class="op">=</span><span class="frac"><span><span class="v">µ</span>&thinsp;E[<span class="v">τ∧T</span>]&nbsp;−&nbsp;<span class="v">c</span></span><span><span class="v">a</span></span></span>.</div>
+  </div>
+
+  <p><span class="v">µ</span> appartient au marché, <span class="v">c</span> au courtier, <span class="v">a</span> à la déclaration de risque. <strong>Il ne reste que E[<span class="v">τ∧T</span>].</strong> Un concept de sortie n’agit que sur le temps de position, et son classement doit donc se lire sur cette seule colonne. C’est une prédiction, elle est testable, et la suite la teste.</p>
+
+  <h3>Le protocole</h3>
+
+  <p>48 000 trajectoires d’une séance, par pas d’une minute, sous une volatilité déclarée. Les 12 règles sont appliquées aux <strong>mêmes</strong> trajectoires : la variance d’une différence appariée est d’un ordre de grandeur sous celle des niveaux, et c’est la différence qui répond à la question posée. Chaque tirage est doublé par son antithétique, bruit de signe opposé et dérive inchangée. Une barrière franchie dans le pas est constatée <em>au prix atteint</em>, jamais au prix de la barrière : c’est le pire remplissage, celui que le protocole de mesure nomme ailleurs le remplissage extrême.</p>
+
+  <p>La discrétisation n’est pas une approximation d’une règle continue, et il faut le dire pour que le théorème s’applique proprement : <strong>c’est la règle</strong>. Un temps d’arrêt discret est un temps d’arrêt, l’arrêt optionnel s’y applique exactement, et rien dans ce qui suit ne dépend de la finesse du pas.</p>
+
+  <p>La simulation tourne à un stop de 0,150&nbsp;% — 9,0 points — et non au stop déclaré par l’opérateur. La raison est arithmétique, et elle est déjà un résultat : à la géométrie déclarée, <strong>une minute de bruit vaut 2,08 fois le stop</strong>. La position est close avant qu’aucune gestion n’ait eu le temps d’agir. Il n’existe pas de concept de sortie à cette géométrie ; il n’y a qu’une friction.</p>
+
+  <h3>Sous un prix sans dérive</h3>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 15</span> — Douze concepts de sortie sous un prix sans dérive, appliqués aux mêmes trajectoires</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Concept</th><th>Famille</th><th>Exposition (min)</th><th>E[R] (R)</th><th>Écart à la clôture sèche</th><th>σ[R]</th><th>Taux de gain</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">Stop seul, sortie à la clôture</td><td>discr.</td><td>192</td><td>−0,0456</td><td>−0,0089 ± 0,0178</td><td>1,91</td><td>28 %</td></tr>
+          <tr><td class="wrap">Stop et target 1:2</td><td>discr.</td><td>115</td><td>−0,0417</td><td>−0,0050 ± 0,0210</td><td>1,48</td><td>35 %</td></tr>
+          <tr><td class="wrap">Stop et target 1:5</td><td>discr.</td><td>185</td><td>−0,0471</td><td>−0,0105 ± 0,0181</td><td>1,88</td><td>28 %</td></tr>
+          <tr><td class="wrap">Stop et target 1:20</td><td>discr.</td><td>192</td><td>−0,0456</td><td>−0,0089 ± 0,0178</td><td>1,91</td><td>28 %</td></tr>
+          <tr><td class="wrap">Remontée au point mort à +1R</td><td>discr.</td><td>151</td><td>−0,0471</td><td>−0,0104 ± 0,0196</td><td>1,69</td><td>18 %</td></tr>
+          <tr><td class="wrap">Stop suiveur à 1R</td><td>discr.</td><td>70</td><td>−0,0396</td><td>−0,0029 ± 0,0226</td><td>1,15</td><td>35 %</td></tr>
+          <tr><td class="wrap">Stop suiveur à ½R</td><td>discr.</td><td>23</td><td>−0,0368</td><td>−0,0001 ± 0,0242</td><td>0,66</td><td>35 %</td></tr>
+          <tr><td class="wrap">Sortie sur temps, 60 minutes</td><td>quant.</td><td>51</td><td>−0,0386</td><td>−0,0019 ± 0,0232</td><td>0,99</td><td>47 %</td></tr>
+          <tr><td class="wrap">Sortie sur temps, 120 minutes</td><td>quant.</td><td>87</td><td>−0,0398</td><td>−0,0032 ± 0,0220</td><td>1,29</td><td>42 %</td></tr>
+          <tr><td class="wrap">Prise partielle à +1R, reste au point mort</td><td>discr.</td><td>106</td><td>−0,0464</td><td>−0,0098 ± 0,0205</td><td>1,26</td><td>50 %</td></tr>
+          <tr><td class="wrap">Effondrement de volatilité</td><td>quant.</td><td>177</td><td>−0,0454</td><td>−0,0088 ± 0,0185</td><td>1,83</td><td>30 %</td></tr>
+          <tr class="sep"><td class="wrap">Clôture sèche, sans stop</td><td>quant.</td><td>390</td><td>−0,0367</td><td>+0,0000 ± 0,0000</td><td>2,73</td><td>49 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La ligne de clôture sèche vaut <span class="v">−c/a</span> = −0,0367 <strong>exactement</strong>, et non à l’erreur près : sa valeur terminale est la somme des incréments, dont l’appariement antithétique annule la partie bruit. C’est elle qui ancre la table. Les onze autres franchissent des barrières, et leur écart à cette ancre est nul à l’erreur de Monte-Carlo près — l’intervalle donné est à deux écarts types, sur trajectoires appariées. Le pire écart à la prédiction vaut 0,0105 R, soit 29 % du ratio de friction. <strong>Aucun concept de sortie ne crée d’espérance, et cela vaut pour le stop suiveur, la prise partielle et la sortie sur temps</strong> — que le dépôt affirmait sans les mesurer. Ce qui change d’une ligne à l’autre est la dispersion, d’un facteur quatre, et le taux de gain, de dix-sept à cinquante pour cent.</p>
+    </figure>
+
+  <p>Les douze rendent <span class="v">−c/a</span>, et l’écart de chacune à l’ancre est nul à l’erreur de Monte-Carlo près. Le dépôt écrivait déjà que « il en va de même du stop suiveur, des prises partielles et de tout autre schéma de gestion » ; c’était vrai, et ce n’était pas mesuré. Ça l’est.</p>
+
+  <p>Ce qui change d’une ligne à l’autre mérite d’être regardé, parce que c’est précisément ce qu’un opérateur croit lire comme une compétence. La dispersion va de 0,66 à 2,73&nbsp;R, un facteur quatre. Le taux de gain va de 18 à 50&nbsp;%. <strong>Le taux de gain est un réglage de sortie, pas une mesure de compétence</strong> : sur un prix sans dérive, on le règle où l’on veut entre dix-huit et cinquante pour cent sans déplacer l’espérance d’un millième. Une statistique de résultat qui bouge autant sans que rien ne bouge dans le marché ne peut pas servir à juger un opérateur.</p>
+
+  <h3>Sous une dérive déclarée</h3>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 16</span> — Les mêmes douze concepts sous une dérive déclarée de 2,0 point par heure, rangés par exposition</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Concept</th><th>Exposition (min)</th><th>Temps écoulé</th><th>E[R] simulée</th><th>Wald (µ·E[τ] − c)/a</th><th>Écart</th><th>Sharpe/trade</th></tr></thead>
+        <tbody>
+          <tr class="sep"><td class="wrap">Clôture sèche, sans stop</td><td>390</td><td>—</td><td>+1,4078</td><td>+1,4078</td><td>−0,0000</td><td>+0,5163</td></tr>
+          <tr><td class="wrap">Stop seul, sortie à la clôture</td><td>233</td><td>—</td><td>+0,8179</td><td>+0,8263</td><td>−0,0084</td><td>+0,3244</td></tr>
+          <tr><td class="wrap">Stop et target 1:20</td><td>233</td><td>—</td><td>+0,8179</td><td>+0,8263</td><td>−0,0084</td><td>+0,3244</td></tr>
+          <tr><td class="wrap">Stop et target 1:5</td><td>218</td><td>—</td><td>+0,7596</td><td>+0,7709</td><td>−0,0113</td><td>+0,3227</td></tr>
+          <tr><td class="wrap">Effondrement de volatilité</td><td>214</td><td>—</td><td>+0,7430</td><td>+0,7544</td><td>−0,0114</td><td>+0,3086</td></tr>
+          <tr><td class="wrap">Remontée au point mort à +1R</td><td>188</td><td>—</td><td>+0,6544</td><td>+0,6609</td><td>−0,0066</td><td>+0,2815</td></tr>
+          <tr><td class="wrap">Prise partielle à +1R, reste au point mort</td><td>124</td><td>188</td><td>+0,4169</td><td>+0,4184</td><td>−0,0015</td><td>+0,2702</td></tr>
+          <tr><td class="wrap">Stop et target 1:2</td><td>119</td><td>—</td><td>+0,4031</td><td>+0,4038</td><td>−0,0007</td><td>+0,2577</td></tr>
+          <tr><td class="wrap">Sortie sur temps, 120 minutes</td><td>94</td><td>—</td><td>+0,3057</td><td>+0,3098</td><td>−0,0041</td><td>+0,2138</td></tr>
+          <tr><td class="wrap">Stop suiveur à 1R</td><td>81</td><td>—</td><td>+0,2588</td><td>+0,2646</td><td>−0,0058</td><td>+0,1799</td></tr>
+          <tr><td class="wrap">Sortie sur temps, 60 minutes</td><td>53</td><td>—</td><td>+0,1569</td><td>+0,1591</td><td>−0,0022</td><td>+0,1517</td></tr>
+          <tr><td class="wrap">Stop suiveur à ½R</td><td>25</td><td>—</td><td>+0,0551</td><td>+0,0552</td><td>−0,0001</td><td>+0,0733</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La cinquième colonne n’est pas ajustée : c’est l’identité de Wald évaluée sur l’exposition mesurée, et la sixième dit ce qu’il en reste. Le pire écart vaut 0,0114 R sur une gamme d’espérance de 0,055 à 1,408 R. <strong>Le classement des concepts de sortie est entièrement expliqué par la première colonne</strong>, et par rien d’autre : aucune règle n’ajoute ni ne retire quoi que ce soit à ce que son temps d’exposition commande. La troisième colonne n’est renseignée que pour la prise partielle, seule règle qui change de taille en cours de route : son temps écoulé vaut 188 minutes quand son temps *exposé* n’en vaut que 124. Elle a la durée d’un trade long et le rendement d’un trade court, et c’est là tout son coût.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 28</span> — L’espérance des douze concepts selon le temps de position, sous une dérive déclarée puis sous un prix sans dérive, et la dispersion que chacun achète. La droite du premier cadre n’est pas ajustée : c’est l’identité de Wald, et les douze mesures s’y posent. Le cadre du milieu porte une échelle cent quarante fois plus fine que son voisin, et sa lecture chiffrée le dit — sans quoi douze points confondus se liraient comme douze points distincts.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 488" role="img" aria-label="Espérance des douze concepts de sortie selon le temps de position, sous dérive déclarée puis sous prix sans dérive, et dispersion associée" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="78.0" y="40.0">Sous dérive déclarée</text>
+<text class="sub" x="314.0" y="27.0" text-anchor="end">µ = 2,0 pt/h</text>
+<line class="hsep" x1="78.0" y1="46.0" x2="314.0" y2="46.0"/>
+<rect class="frame" x="78.0" y="52.0" width="236.0" height="156.0"/>
+<line class="gl" x1="78.0" y1="190.7" x2="314.0" y2="190.7"/>
+<text class="tk" x="73.0" y="193.7" text-anchor="end">+0,0</text>
+<line class="gl" x1="78.0" y1="147.3" x2="314.0" y2="147.3"/>
+<text class="tk" x="73.0" y="150.3" text-anchor="end">+0,5</text>
+<line class="gl" x1="78.0" y1="104.0" x2="314.0" y2="104.0"/>
+<text class="tk" x="73.0" y="107.0" text-anchor="end">+1,0</text>
+<line class="gl" x1="78.0" y1="60.7" x2="314.0" y2="60.7"/>
+<text class="tk" x="73.0" y="63.7" text-anchor="end">+1,5</text>
+<text class="ax" transform="translate(36.0,130.0) rotate(-90)" text-anchor="middle">E[R] (R)</text>
+<text class="tk" x="78.0" y="221.0" text-anchor="middle">0</text>
+<text class="tk" x="152.8" y="221.0" text-anchor="middle">130</text>
+<text class="tk" x="227.7" y="221.0" text-anchor="middle">260</text>
+<text class="tk" x="302.5" y="221.0" text-anchor="middle">390</text>
+<line class="ba" x1="78.0" y1="208.0" x2="314.0" y2="208.0"/>
+<text class="ax" x="196.0" y="236.0" text-anchor="middle">temps de position (min)</text>
+<line class="zero" x1="78.0" y1="190.7" x2="314.0" y2="190.7"/>
+<path class="ln s2" d="M78.00,193.84 L314.00,62.24"></path>
+<circle class="pt s1" cx="212.12" cy="119.78" r="4"><title>Stop seul, sortie à la clôture — 233 min, +0.818 R</title></circle>
+<circle class="pt s1" cx="146.45" cy="155.73" r="4"><title>Stop et target 1:2 — 119 min, +0.403 R</title></circle>
+<circle class="pt s1" cx="203.51" cy="124.83" r="4"><title>Stop et target 1:5 — 218 min, +0.760 R</title></circle>
+<circle class="pt s1" cx="212.12" cy="119.78" r="4"><title>Stop et target 1:20 — 233 min, +0.818 R</title></circle>
+<circle class="pt s1" cx="186.42" cy="133.95" r="4"><title>Remontée au point mort à +1R — 188 min, +0.654 R</title></circle>
+<circle class="pt s1" cx="124.83" cy="168.24" r="4"><title>Stop suiveur à 1R — 81 min, +0.259 R</title></circle>
+<circle class="pt s1" cx="92.27" cy="185.89" r="4"><title>Stop suiveur à ½R — 25 min, +0.055 R</title></circle>
+<circle class="pt s1" cx="108.43" cy="177.07" r="4"><title>Sortie sur temps, 60 minutes — 53 min, +0.157 R</title></circle>
+<circle class="pt s1" cx="131.84" cy="164.17" r="4"><title>Sortie sur temps, 120 minutes — 94 min, +0.306 R</title></circle>
+<circle class="pt s1" cx="149.58" cy="154.54" r="4"><title>Prise partielle à +1R, reste au point mort — 124 min, +0.417 R</title></circle>
+<circle class="pt s1" cx="200.94" cy="126.28" r="4"><title>Effondrement de volatilité — 214 min, +0.743 R</title></circle>
+<circle class="pt s1" cx="302.49" cy="68.66" r="4"><title>Clôture sèche, sans stop — 390 min, +1.408 R</title></circle>
+<text class="dl halo" x="89.5" y="78.0" text-anchor="start">identité de Wald</text>
+<text class="hdr" x="372.0" y="40.0">Sous prix sans dérive</text>
+<text class="sub" x="592.0" y="27.0" text-anchor="end">étendue 0,010 R</text>
+<line class="hsep" x1="372.0" y1="46.0" x2="592.0" y2="46.0"/>
+<rect class="frame" x="372.0" y="52.0" width="220.0" height="156.0"/>
+<line class="gl" x1="372.0" y1="204.9" x2="592.0" y2="204.9"/>
+<text class="tk" x="367.0" y="207.9" text-anchor="end">−0,07</text>
+<line class="gl" x1="372.0" y1="180.1" x2="592.0" y2="180.1"/>
+<text class="tk" x="367.0" y="183.1" text-anchor="end">−0,06</text>
+<line class="gl" x1="372.0" y1="155.4" x2="592.0" y2="155.4"/>
+<text class="tk" x="367.0" y="158.4" text-anchor="end">−0,05</text>
+<line class="gl" x1="372.0" y1="130.7" x2="592.0" y2="130.7"/>
+<text class="tk" x="367.0" y="133.7" text-anchor="end">−0,04</text>
+<line class="gl" x1="372.0" y1="105.9" x2="592.0" y2="105.9"/>
+<text class="tk" x="367.0" y="108.9" text-anchor="end">−0,03</text>
+<line class="gl" x1="372.0" y1="81.2" x2="592.0" y2="81.2"/>
+<text class="tk" x="367.0" y="84.2" text-anchor="end">−0,02</text>
+<line class="gl" x1="372.0" y1="56.5" x2="592.0" y2="56.5"/>
+<text class="tk" x="367.0" y="59.5" text-anchor="end">−0,01</text>
+<text class="ax" transform="translate(330.0,130.0) rotate(-90)" text-anchor="middle">E[R] (R)</text>
+<text class="tk" x="372.0" y="221.0" text-anchor="middle">0</text>
+<text class="tk" x="441.8" y="221.0" text-anchor="middle">130</text>
+<text class="tk" x="511.5" y="221.0" text-anchor="middle">260</text>
+<text class="tk" x="581.3" y="221.0" text-anchor="middle">390</text>
+<line class="ba" x1="372.0" y1="208.0" x2="592.0" y2="208.0"/>
+<text class="ax" x="482.0" y="236.0" text-anchor="middle">temps de position (min)</text>
+<line class="lvl strong" x1="372.0" y1="122.4" x2="592.0" y2="122.4"/>
+<circle class="pt s1" cx="474.79" cy="144.40" r="4"><title>Stop seul, sortie à la clôture — -0.0456 R</title></circle>
+<rect class="s1f" x="473.99" y="100.38" width="1.60" height="88.05"><title>± 2 erreurs types : 0.0178</title></rect>
+<circle class="pt s1" cx="433.59" cy="134.80" r="4"><title>Stop et target 1:2 — -0.0417 R</title></circle>
+<rect class="s1f" x="432.79" y="82.94" width="1.60" height="103.73"><title>± 2 erreurs types : 0.0210</title></rect>
+<circle class="pt s1" cx="471.51" cy="148.33" r="4"><title>Stop et target 1:5 — -0.0471 R</title></circle>
+<rect class="s1f" x="470.71" y="103.65" width="1.60" height="89.36"><title>± 2 erreurs types : 0.0181</title></rect>
+<circle class="pt s1" cx="474.79" cy="144.40" r="4"><title>Stop et target 1:20 — -0.0456 R</title></circle>
+<rect class="s1f" x="473.99" y="100.38" width="1.60" height="88.05"><title>± 2 erreurs types : 0.0178</title></rect>
+<circle class="pt s1" cx="452.83" cy="148.12" r="4"><title>Remontée au point mort à +1R — -0.0471 R</title></circle>
+<rect class="s1f" x="452.03" y="99.67" width="1.60" height="96.90"><title>± 2 erreurs types : 0.0196</title></rect>
+<circle class="pt s1" cx="409.53" cy="129.66" r="4"><title>Stop suiveur à 1R — -0.0396 R</title></circle>
+<rect class="s1f" x="408.73" y="73.83" width="1.60" height="111.68"><title>± 2 erreurs types : 0.0226</title></rect>
+<circle class="pt s1" cx="384.20" cy="122.64" r="4"><title>Stop suiveur à ½R — -0.0368 R</title></circle>
+<rect class="s1f" x="383.40" y="62.76" width="1.60" height="119.76"><title>± 2 erreurs types : 0.0242</title></rect>
+<circle class="pt s1" cx="399.45" cy="127.14" r="4"><title>Sortie sur temps, 60 minutes — -0.0386 R</title></circle>
+<rect class="s1f" x="398.65" y="69.65" width="1.60" height="114.99"><title>± 2 erreurs types : 0.0232</title></rect>
+<circle class="pt s1" cx="418.67" cy="130.26" r="4"><title>Sortie sur temps, 120 minutes — -0.0398 R</title></circle>
+<rect class="s1f" x="417.87" y="75.84" width="1.60" height="108.84"><title>± 2 erreurs types : 0.0220</title></rect>
+<circle class="pt s1" cx="428.90" cy="146.61" r="4"><title>Prise partielle à +1R, reste au point mort — -0.0464 R</title></circle>
+<rect class="s1f" x="428.10" y="95.97" width="1.60" height="101.27"><title>± 2 erreurs types : 0.0205</title></rect>
+<circle class="pt s1" cx="466.88" cy="144.15" r="4"><title>Effondrement de volatilité — -0.0454 R</title></circle>
+<rect class="s1f" x="466.08" y="98.50" width="1.60" height="91.31"><title>± 2 erreurs types : 0.0185</title></rect>
+<circle class="pt s1" cx="581.27" cy="122.43" r="4"><title>Clôture sèche, sans stop — -0.0367 R</title></circle>
+<text class="dl halo" x="589.3" y="115.4" text-anchor="end">−c/a = -0,0367</text>
+<text class="hdr" x="78.0" y="276.0">La dispersion achetée</text>
+<text class="read" x="592.0" y="276.0" text-anchor="end">σ[R] contre √t</text>
+<line class="hsep" x1="78.0" y1="282.0" x2="592.0" y2="282.0"/>
+<rect class="frame" x="78.0" y="288.0" width="514.0" height="108.0"/>
+<line class="gl" x1="78.0" y1="396.0" x2="592.0" y2="396.0"/>
+<text class="tk" x="73.0" y="395.0" text-anchor="end">0</text>
+<line class="gl" x1="78.0" y1="360.0" x2="592.0" y2="360.0"/>
+<text class="tk" x="73.0" y="363.0" text-anchor="end">1</text>
+<line class="gl" x1="78.0" y1="324.0" x2="592.0" y2="324.0"/>
+<text class="tk" x="73.0" y="327.0" text-anchor="end">2</text>
+<line class="gl" x1="78.0" y1="288.0" x2="592.0" y2="288.0"/>
+<text class="tk" x="73.0" y="291.0" text-anchor="end">3</text>
+<text class="ax" transform="translate(36.0,342.0) rotate(-90)" text-anchor="middle">σ[R] (R)</text>
+<text class="tk" x="78.0" y="409.0" text-anchor="middle">0</text>
+<text class="tk" x="241.0" y="409.0" text-anchor="middle">130</text>
+<text class="tk" x="404.0" y="409.0" text-anchor="middle">260</text>
+<text class="tk" x="566.9" y="409.0" text-anchor="middle">390</text>
+<line class="ba" x1="78.0" y1="396.0" x2="592.0" y2="396.0"/>
+<text class="ax" x="335.0" y="424.0" text-anchor="middle">temps de position (min)</text>
+<path class="ln s2" d="M79.25,391.03 L84.27,384.89 L89.28,381.09 L94.30,378.08 L99.31,375.51 L104.33,373.22 L109.34,371.15 L114.36,369.23 L119.37,367.45 L124.39,365.76 L129.40,364.17 L134.41,362.66 L139.43,361.21 L144.44,359.81 L149.46,358.47 L154.47,357.18 L159.49,355.93 L164.50,354.71 L169.52,353.53 L174.53,352.38 L179.55,351.26 L184.56,350.17 L189.58,349.11 L194.59,348.06 L199.60,347.04 L204.62,346.05 L209.63,345.07 L214.65,344.10 L219.66,343.16 L224.68,342.23 L229.69,341.32 L234.71,340.43 L239.72,339.54 L244.74,338.68 L249.75,337.82 L254.77,336.98 L259.78,336.14 L264.80,335.32 L269.81,334.52 L274.82,333.72 L279.84,332.93 L284.85,332.15 L289.87,331.38 L294.88,330.62 L299.90,329.87 L304.91,329.13 L309.93,328.39 L314.94,327.66 L319.96,326.94 L324.97,326.23 L329.99,325.53 L335.00,324.83 L340.01,324.14 L345.03,323.46 L350.04,322.78 L355.06,322.11 L360.07,321.44 L365.09,320.78 L370.10,320.13 L375.12,319.48 L380.13,318.83 L385.15,318.20 L390.16,317.56 L395.18,316.94 L400.19,316.31 L405.20,315.70 L410.22,315.08 L415.23,314.47 L420.25,313.87 L425.26,313.27 L430.28,312.68 L435.29,312.09 L440.31,311.50 L445.32,310.92 L450.34,310.34 L455.35,309.76 L460.37,309.19 L465.38,308.62 L470.40,308.06 L475.41,307.50 L480.42,306.94 L485.44,306.39 L490.45,305.84 L495.47,305.29 L500.48,304.75 L505.50,304.21 L510.51,303.67 L515.53,303.14 L520.54,302.61 L525.56,302.08 L530.57,301.56 L535.59,301.04 L540.60,300.52 L545.61,300.00 L550.63,299.49 L555.64,298.98 L560.66,298.47 L565.67,297.96 L570.69,297.46 L575.70,296.96 L580.72,296.46 L585.73,295.97 L590.75,295.47"></path>
+<circle class="pt s1" cx="318.15" cy="327.18" r="4"><title>Stop seul, sortie à la clôture — σ = 1.91 R</title></circle>
+<circle class="pt s1" cx="221.90" cy="342.71" r="4"><title>Stop et target 1:2 — σ = 1.48 R</title></circle>
+<circle class="pt s1" cx="310.49" cy="328.42" r="4"><title>Stop et target 1:5 — σ = 1.88 R</title></circle>
+<circle class="pt s1" cx="318.15" cy="327.18" r="4"><title>Stop et target 1:20 — σ = 1.91 R</title></circle>
+<circle class="pt s1" cx="266.85" cy="335.20" r="4"><title>Remontée au point mort à +1R — σ = 1.69 R</title></circle>
+<circle class="pt s1" cx="165.67" cy="354.48" r="4"><title>Stop suiveur à 1R — σ = 1.15 R</title></circle>
+<circle class="pt s1" cx="106.50" cy="372.27" r="4"><title>Stop suiveur à ½R — σ = 0.66 R</title></circle>
+<circle class="pt s1" cx="142.14" cy="360.49" r="4"><title>Sortie sur temps, 60 minutes — σ = 0.99 R</title></circle>
+<circle class="pt s1" cx="187.05" cy="349.61" r="4"><title>Sortie sur temps, 120 minutes — σ = 1.29 R</title></circle>
+<circle class="pt s1" cx="210.94" cy="350.80" r="4"><title>Prise partielle à +1R, reste au point mort — σ = 1.26 R</title></circle>
+<circle class="pt s1" cx="299.67" cy="330.01" r="4"><title>Effondrement de volatilité — σ = 1.83 R</title></circle>
+<circle class="pt s1" cx="566.93" cy="297.84" r="4"><title>Clôture sèche, sans stop — σ = 2.73 R</title></circle>
+<text class="dl halo" x="266.0" y="376.2" text-anchor="start">σ ∝ √t, ancrée sur la clôture sèche</text>
+<line class="ln s1" x1="78.0" y1="442.0" x2="92.0" y2="442.0"/>
+<text class="lg" x="98.0" y="445.5">un concept de sortie</text>
+<line class="ln s2" x1="328.0" y1="442.0" x2="342.0" y2="442.0"/>
+<text class="lg" x="348.0" y="445.5">l’identité, non ajustée</text>
+
+
+</svg></div>
+      <p class="note">les douze concepts se rangent sur la droite de Wald sous dérive, et se confondent sans elle, ce qui ne laisse au choix d’une sortie qu’un seul axe : le temps de position.</p>
+    </figure>
+
+  <p>L’espérance simulée égale la prédiction de Wald pour les douze règles, à 0,0114&nbsp;R près, sur une gamme qui va de +0,055 à +1,408&nbsp;R — un facteur 16. <strong>Le classement des concepts de sortie est entièrement expliqué par leur temps de position, et par rien d’autre.</strong> Aucune règle n’ajoute ni ne retire quoi que ce soit à ce que son exposition commande.</p>
+
+  <p>Une ligne se comporte autrement, et elle est instructive. La prise partielle est la seule règle qui <em>change de taille</em> en cours de route, et sa prédiction échouait tant que la colonne portait le temps écoulé. L’identité de Wald ne mesure pas le temps écoulé mais le temps <em>exposé</em>, l’intégrale de la taille de position. Pour cette règle les deux diffèrent : 188 minutes écoulées, 124 minutes exposées. <strong>Elle a la durée d’un trade long et le rendement d’un trade court</strong>, et c’est là tout son coût — −0,401&nbsp;R contre le stop simple.</p>
+
+  <h2 id="s-sortir-choix">Ce qu’il reste alors à décider</h2>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 29</span> — L’espérance nette sur le plan du temps de position et de la dérive du marché. La hauteur est l’identité, non un ajustement — la figure précédente a montré que les mesures y tombent. Ce que celle-ci ajoute est la forme de la frontière du zéro, l’hyperbole µ = 60c/t : raccourcir une position relève le seuil de dérive qu’il faut pour la rentabiliser, et le relève d’autant plus vite qu’on raccourcit déjà.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 406" role="img" aria-label="Surface de l espérance nette sur le plan du temps de position et de la dérive du marché, avec la frontière du signe" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="0" y="18">L’espérance sur le plan du temps et de la dérive</text>
+<text class="sub" x="0" y="34">hauteur et couleur : (µ·t/60 − c)/a · la frontière rouge-vert est µ = 60c/t</text>
+<line class="ba" x1="0" y1="46" x2="660" y2="46"/>
+<polygon class="floor" points="356.0,160.2 516.0,212.2 356.0,264.2 196.0,212.2"></polygon>
+<line class="post" x1="356.0" y1="160.2" x2="356.0" y2="164.0"/>
+<line class="post" x1="516.0" y1="212.2" x2="516.0" y2="208.1"/>
+<line class="post" x1="356.0" y1="264.2" x2="356.0" y2="134.0"/>
+<line class="post" x1="196.0" y1="212.2" x2="196.0" y2="207.9"/>
+<polygon class="mesh up" points="356.0,201.1 396.0,188.3 356.0,134.0 316.0,172.8"><title>E[R] = +0.663 R</title></polygon>
+<polygon class="mesh up" points="316.0,208.8 356.0,201.1 316.0,172.8 276.0,201.1"><title>E[R] = +0.363 R</title></polygon>
+<polygon class="mesh up" points="396.0,208.8 436.0,208.9 396.0,188.3 356.0,201.1"><title>E[R] = +0.313 R</title></polygon>
+<polygon class="mesh up" points="276.0,206.2 316.0,208.8 276.0,201.1 236.0,208.8"><title>E[R] = +0.163 R</title></polygon>
+<polygon class="mesh up" points="356.0,206.2 396.0,208.8 356.0,201.1 316.0,208.8"><title>E[R] = +0.163 R</title></polygon>
+<polygon class="mesh up" points="436.0,206.2 476.0,212.7 436.0,208.9 396.0,208.8"><title>E[R] = +0.138 R</title></polygon>
+<polygon class="mesh up" points="236.0,199.2 276.0,206.2 236.0,208.8 196.0,207.9"><title>E[R] = +0.058 R</title></polygon>
+<polygon class="mesh up" points="316.0,198.3 356.0,206.2 316.0,208.8 276.0,206.2"><title>E[R] = +0.063 R</title></polygon>
+<polygon class="mesh up" points="396.0,198.3 436.0,206.2 396.0,208.8 356.0,206.2"><title>E[R] = +0.063 R</title></polygon>
+<polygon class="mesh up" points="476.0,198.3 516.0,208.1 476.0,212.7 436.0,206.2"><title>E[R] = +0.051 R</title></polygon>
+<polygon class="mesh up" points="276.0,188.3 316.0,198.3 276.0,206.2 236.0,199.2"><title>E[R] = +0.011 R</title></polygon>
+<polygon class="mesh up" points="356.0,187.9 396.0,198.3 356.0,206.2 316.0,198.3"><title>E[R] = +0.013 R</title></polygon>
+<polygon class="mesh up" points="436.0,187.9 476.0,198.3 436.0,206.2 396.0,198.3"><title>E[R] = +0.013 R</title></polygon>
+<polygon class="mesh dn" points="316.0,176.4 356.0,187.9 316.0,198.3 276.0,188.3"><title>E[R] = -0.013 R</title></polygon>
+<polygon class="mesh dn" points="396.0,176.2 436.0,187.9 396.0,198.3 356.0,187.9"><title>E[R] = -0.012 R</title></polygon>
+<polygon class="mesh dn" points="356.0,164.0 396.0,176.2 356.0,187.9 316.0,176.4"><title>E[R] = -0.025 R</title></polygon>
+<text class="tk halo" x="185.0" y="227.2" text-anchor="end">25</text>
+<text class="tk halo" x="225.0" y="240.2" text-anchor="end">60</text>
+<text class="tk halo" x="265.0" y="253.2" text-anchor="end">120</text>
+<text class="tk halo" x="305.0" y="266.2" text-anchor="end">240</text>
+<text class="tk halo" x="345.0" y="279.2" text-anchor="end">390 min</text>
+<text class="tk halo" x="523.0" y="223.2">0,1</text>
+<text class="tk halo" x="483.0" y="236.2">0,2</text>
+<text class="tk halo" x="443.0" y="249.2">0,4</text>
+<text class="tk halo" x="403.0" y="262.2">0,8</text>
+<text class="tk halo" x="363.0" y="275.2">1,6 pt/h</text>
+<text class="tk" x="148.0" y="215.2" text-anchor="end">+0,00</text>
+<line class="gl" x1="153.0" y1="212.2" x2="164.0" y2="212.2"/>
+<text class="tk" x="148.0" y="186.1" text-anchor="end">+0,25</text>
+<line class="gl" x1="153.0" y1="183.1" x2="164.0" y2="183.1"/>
+<text class="tk" x="148.0" y="157.1" text-anchor="end">+0,50</text>
+<line class="gl" x1="153.0" y1="154.1" x2="164.0" y2="154.1"/>
+<text class="tk" x="148.0" y="128.0" text-anchor="end">+0,75</text>
+<line class="gl" x1="153.0" y1="125.0" x2="164.0" y2="125.0"/>
+<text class="tk" x="148.0" y="98.9" text-anchor="end">+1,00</text>
+<line class="gl" x1="153.0" y1="95.9" x2="164.0" y2="95.9"/>
+<text class="lg keep" x="0.0" y="322.0" text-anchor="start">la frontière recule vers les fortes dérives</text>
+<text class="lg keep" x="0.0" y="336.0" text-anchor="start">à mesure que la position se raccourcit</text>
+<rect class="dn" x="0.0" y="354.5" width="11" height="11" rx="2"/>
+<text class="lg" x="17.0" y="363.5">espérance négative — µ &lt; 60c/t</text>
+<rect class="up" x="330.0" y="354.5" width="11" height="11" rx="2"/>
+<text class="lg" x="347.0" y="363.5">espérance positive</text>
+
+
+</svg></div>
+      <p class="note">l’arête gauche est le temps de position, l’arête droite la dérive du marché, et la hauteur l’espérance nette que leur produit commande.</p>
+    </figure>
+
+  <p>La surface donne la conséquence pratique sans qu’il faille lire une graduation. La frontière recule vers les fortes dérives à mesure que la position se raccourcit, et elle recule vite : c’est la même hyperbole que le chapitre du seuil, vue depuis le temps plutôt que depuis la géométrie. Trois conséquences en découlent, et elles sont opérationnelles.</p>
+
+  <ul>
+    <li><strong>Sous dérive positive, le meilleur concept de sortie est celui qui tient la position le plus longtemps.</strong> Le maximum est la clôture sèche, et son défaut n’est pas dans l’espérance mais dans la perte : elle n’est pas bornée. La décision n’est donc pas une décision de lecture du marché, c’est une décision de capacité — combien de séance l’opérateur peut-il tenir, compte tenu de la perte qu’il peut absorber ?</li>
+    <li><strong>Chaque raccourci a son prix, et il est chiffré.</strong> La remontée au point mort coûte −0,164&nbsp;R contre le stop simple. Le stop suiveur à ½R coûte −1,353&nbsp;R contre la clôture sèche. Ce ne sont pas des pertes de mauvaise exécution : ce sont les exactes contreparties du temps de marché abandonné, et elles se lisent sur la première colonne de la table.</li>
+    <li><strong>Aucune de ces règles ne peut ajouter d’espérance, parce qu’aucune ne lit autre chose que le prix passé.</strong> Ce sont toutes des temps d’arrêt sur la filtration du prix, et le théorème les couvre toutes. La seule sortie qui pourrait ajouter quelque chose est celle qui conditionne sur une information que le prix ne porte pas encore.</li>
+  </ul>
+
+  <h3>La réponse discrétionnaire, et la réponse quantitative</h3>
+
+  <p>Le meilleur concept <em>discrétionnaire</em> ne se choisit donc pas sur l’espérance, puisqu’ils y sont tous équivalents. Il se choisit sur la dispersion qu’un opérateur peut tenir sans dévier de sa règle, à temps de position maximal. Ce que cela désigne est un stop large, aucun target, et une sortie à la clôture — exactement la géométrie que le chapitre du seuil avait désignée par le calcul du seuil. <strong>Deux routes indépendantes tombent sur la même recommandation</strong>, et c’est la seule forme de confirmation qu’un travail sans données puisse produire.</p>
+
+  <p>Le meilleur concept <em>quantitatif</em> n’est pas une règle sur le prix, et c’est la conclusion qui a le plus de conséquences. La friction est payée une fois, à l’entrée ; elle ne se rembourse pas en sortant tôt. Une sortie anticipée ne peut donc se justifier que par une information qui contredit celle qui a motivé l’entrée. <strong>La règle de sortie quantitative correcte est une règle d’information, pas une règle de prix</strong> : sortir quand ce qui fondait l’entrée a été démenti, et à aucun autre moment. La partie suivante mesure ce que valent, contre leur loi nulle, les deux couches d’information que l’opérateur regarde le plus pour prendre cette décision.</p>
+
+  <div class="part">
+    <span class="lab">Douzième partie</span>
     <h2>Lire le flux</h2>
     <p>Deux couches que l’opérateur regarde tous les jours, passées au même protocole que le reste.</p>
   </div>
@@ -5654,7 +5951,7 @@
   <p><strong>L’épuisement.</strong> Le volume s’effondre au dernier niveau atteint. C’est le seul des trois qui n’ait pas de forme fermée&nbsp;: le volume au niveau extrême d’une excursion est un temps local, et sa loi se simule.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 28</span> — Trois barres en footprint, construites à volumes et niveaux déclarés. À chaque niveau, le volume exécuté au bid à gauche et à l’ask à droite&nbsp;; les cadres marquent un déséquilibre diagonal de 3 pour 1. La barre neutre en attend 0,94 de sa seule loi nulle.</figcaption>
+      <figcaption><span class="lab">Figure 30</span> — Trois barres en footprint, construites à volumes et niveaux déclarés. À chaque niveau, le volume exécuté au bid à gauche et à l’ask à droite&nbsp;; les cadres marquent un déséquilibre diagonal de 3 pour 1. La barre neutre en attend 0,94 de sa seule loi nulle.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 396" role="img" aria-label="Trois barres en footprint : neutre, absorption et déséquilibre acheteur, avec leurs lois nulles" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">FOOTPRINT</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que le carnet laisse comme trace une fois exécuté</text>
@@ -5806,7 +6103,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 15</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
+      <figcaption><span class="lab">Table 17</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Barre</th><th>Volume</th><th>Δ</th><th>z d’impact</th><th>Déséquilibres</th><th>Attendus sous martingale</th><th>Rapport d’épuisement</th></tr></thead>
@@ -5829,7 +6126,7 @@
   <p>Si les contrats arrivaient un à un et indépendamment, l’ask d’un niveau à 240 contrats suivrait une binomiale d’écart-type huit&nbsp;: un rapport de 3 pour 1 exigerait plus de quinze écarts-types, c’est-à-dire jamais. <strong>Le déséquilibre serait un signal parfait</strong>, ce qu’il n’est manifestement pas. Ce qui sauve la lecture — et ce qui la limite — est que les contrats n’arrivent pas un à un&nbsp;: un ordre de vingt lots est <em>un</em> tirage, pas vingt. L’échantillon effectif d’un niveau est son volume divisé par la taille de grappe.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 29</span> — À gauche, la fréquence d’un déséquilibre diagonal sous martingale selon la taille de grappe, sur deux niveaux à 240 contrats. À droite, la loi nulle du rapport d’épuisement, simulée sur des excursions sans dérive.</figcaption>
+      <figcaption><span class="lab">Figure 31</span> — À gauche, la fréquence d’un déséquilibre diagonal sous martingale selon la taille de grappe, sur deux niveaux à 240 contrats. À droite, la loi nulle du rapport d’épuisement, simulée sur des excursions sans dérive.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 414" role="img" aria-label="Fréquence nulle du déséquilibre diagonal selon la taille de grappe, et loi nulle du rapport d épuisement" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LOIS NULLES DU FOOTPRINT</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que les deux lectures valent contre leur bruit</text>
@@ -5922,7 +6219,7 @@
   <p>Le résultat est inconfortable et il faut le nommer. Sur deux niveaux à 240 contrats, la fréquence nulle d’un déséquilibre de 3 pour 1 vaut 0,000 % pour une grappe de cinq contrats, 1,7 % pour une grappe de vingt, 9,4 % pour une grappe de cinquante. <strong>La même barre est un événement à une chance sur mille ou une banalité à une sur dix, selon un paramètre que le flux agrégé ne donne pas.</strong> Toutes ces tailles de grappe sont plausibles sur un future indiciel.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 30</span> — La fréquence nulle du déséquilibre sur ses deux axes. Arête gauche&nbsp;: la taille de grappe, une hypothèse. Arête droite&nbsp;: le seuil de lecture, un choix. La surface descend d’un facteur cinq le long du second et monte d’un facteur mille le long du premier.</figcaption>
+      <figcaption><span class="lab">Figure 32</span> — La fréquence nulle du déséquilibre sur ses deux axes. Arête gauche&nbsp;: la taille de grappe, une hypothèse. Arête droite&nbsp;: le seuil de lecture, un choix. La surface descend d’un facteur cinq le long du second et monte d’un facteur mille le long du premier.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 344" role="img" aria-label="Surface de la fréquence nulle du déséquilibre diagonal selon la taille de grappe et le seuil de lecture" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL NE DÉCIDE PRESQUE RIEN</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Fréquence nulle du déséquilibre sur ses deux axes</text>
@@ -5996,7 +6293,7 @@
   <p>Le profil TPO compte les <em>périodes</em> et non les contrats. La séance est découpée en tranches de trente minutes, chacune reçoit une lettre, et la lettre est imprimée à tous les prix que la tranche a traversés. Steidlmayer l’a publié en 1984 pour le Chicago Board of Trade&nbsp;; son vocabulaire est passé tel quel dans toutes les plateformes. Le POC est le prix le plus longtemps visité, l’aire de valeur la tranche contenant soixante-dix pour cent des TPO, un tirage simple un prix qu’une seule période a touché, un extrême pauvre un haut ou un bas où deux périodes au moins ont imprimé — donc sans mèche.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 31</span> — Le profil d’une séance <em>sans dérive</em>, découpée en 13 périodes de trente minutes, sur des rangées de 3 points. Tout ce qu’on y reconnaît a été produit sans intention. À droite, la fréquence de trois lectures sous cette même loi, et ce qui décide la rareté de l’extrême pauvre.</figcaption>
+      <figcaption><span class="lab">Figure 33</span> — Le profil d’une séance <em>sans dérive</em>, découpée en 13 périodes de trente minutes, sur des rangées de 3 points. Tout ce qu’on y reconnaît a été produit sans intention. À droite, la fréquence de trois lectures sous cette même loi, et ce qui décide la rareté de l’extrême pauvre.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 430" role="img" aria-label="Profil TPO d une séance sans dérive, avec la fréquence nulle de cinq de ses lectures" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">PROFIL TPO</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Le temps passé à chaque prix, et ce qu’on croit y lire</text>
@@ -6122,7 +6419,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 16</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
+      <figcaption><span class="lab">Table 18</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Lecture</th><th>Sur la séance construite</th><th>Sous un prix sans dérive</th><th class="wrap">Ce qu’elle vaut</th></tr></thead>
@@ -6145,7 +6442,7 @@
   <p>Mais sa rareté ne tient pas au marché. À une rangée de 3 points, un extrême haut pauvre arrive dans 37 % des séances sans dérive&nbsp;; à un quart de point, dans 5 %. Un facteur 7, sans qu’aucune propriété du marché ne change — seul le nombre de rangées que la séance parcourt a changé.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 32</span> — La fréquence nulle d’un extrême pauvre sur le plan du pas de cotation et de la volatilité de séance. Seul leur rapport décide&nbsp;: deux marchés très différents peuvent tomber au même endroit, et le même marché change de verdict quand on change la rangée d’affichage.</figcaption>
+      <figcaption><span class="lab">Figure 34</span> — La fréquence nulle d’un extrême pauvre sur le plan du pas de cotation et de la volatilité de séance. Seul leur rapport décide&nbsp;: deux marchés très différents peuvent tomber au même endroit, et le même marché change de verdict quand on change la rangée d’affichage.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 352" role="img" aria-label="Surface de la fréquence nulle d un extrême pauvre selon le pas de cotation et la volatilité de séance" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">CE QUI DÉCIDE LA RARETÉ</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Fréquence nulle d’un extrême pauvre</text>
@@ -6221,7 +6518,7 @@
   <p>Le taux de réussite d’équilibre sans friction vaut <span class="v">1/(R+1)</span>&nbsp;; avec friction il vaut <span class="v">(1 + c/L)/(R+1)</span>. À la géométrie déclarée, cela fait passer le taux requis de 4,76 % à 7,38 % — une hausse relative de 55 %, ce qui paraît énorme. La divergence de Kullback-Leibler en donne le prix réel, en bits&nbsp;: <strong>0,941 % d’un bit par décision</strong>. Une décision binaire en porte un au plus.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 17</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
+      <figcaption><span class="lab">Table 19</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Géométrie</th><th>Stop</th><th>Friction c/L</th><th>Information exigée</th><th>Bruit toléré</th><th>Décisions pour le prouver</th></tr></thead>
@@ -6238,7 +6535,7 @@
   <p>La réponse est donc oui, et le chiffre est presque exactement celui de l’intuition&nbsp;: <strong>le marché peut être du bruit à 99,06 % et la géométrie déclarée tenir</strong>. En élargissant le stop, la friction tombe à onze pour cent du risque nominal et l’exigence à 0,042 % d’un bit&nbsp;: le marché peut alors être du bruit à 99,958 %.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 33</span> — L’information exigée par décision selon la friction rapportée au risque nominal, pour trois cibles, et l’échantillon requis pour l’établir. Les deux cadres partagent leur abscisse et disent la même tension en sens inverse.</figcaption>
+      <figcaption><span class="lab">Figure 35</span> — L’information exigée par décision selon la friction rapportée au risque nominal, pour trois cibles, et l’échantillon requis pour l’établir. Les deux cadres partagent leur abscisse et disent la même tension en sens inverse.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 420" role="img" aria-label="Information exigée par décision selon la friction rapportée au risque, et échantillon requis pour la détecter" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">BUDGET D’INFORMATION</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Combien de bruit un trade supporte-t-il ?</text>
@@ -6311,7 +6608,7 @@
   <p>Le second cadre porte le prix de cette bonne nouvelle, et il faut le lire en même temps que le premier. <strong>Moins un trade exige d’information, plus il faut de décisions pour établir qu’il l’a.</strong> À la géométrie déclarée, 474&nbsp;décisions suffisent&nbsp;; au stop élargi, il en faut 10 568, soit 22 fois plus. La géométrie qui rend l’avantage facile à obtenir est celle qui le rend difficile à prouver.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 34</span> — Le budget d’information sur ses deux axes, la cible et la friction — les deux grandeurs que l’opérateur fixe entièrement. La surface couvre trois ordres de grandeur sans qu’aucun signal n’entre dans le calcul.</figcaption>
+      <figcaption><span class="lab">Figure 36</span> — Le budget d’information sur ses deux axes, la cible et la friction — les deux grandeurs que l’opérateur fixe entièrement. La surface couvre trois ordres de grandeur sans qu’aucun signal n’entre dans le calcul.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 352" role="img" aria-label="Surface de l information exigée par décision selon la cible et la friction rapportée au risque" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">BUDGET D’INFORMATION, SUR DEUX AXES</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie exige du signal, en bits</text>
@@ -6373,7 +6670,7 @@
   <p>C’est la tension que les trois documents mesurent, et elle se résout dans un sens précis. <em>Un opérateur qui trade n’a pas besoin de prouver&nbsp;; un opérateur qui alloue, si.</em> Le premier doit choisir la géométrie qui minimise l’information requise — c’est le chapitre précédent. Le second doit choisir celle qui la rend démontrable, et ce n’est pas la même.</p>
 
   <div class="part">
-    <span class="lab">Douzième partie</span>
+    <span class="lab">Treizième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n’est pas déclaré avant ne prouve rien après.</p>
   </div>

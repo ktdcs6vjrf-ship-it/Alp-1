@@ -656,16 +656,22 @@
           <li><a href="#s-ou-depenser">Où dépenser le jugement</a></li>
         </ol>
       </li>
-      <li><span class="pt">Onzième partie — Lire le flux</span>
+      <li><span class="pt">Onzième partie — Sortir</span>
         <ol start="37">
+          <li><a href="#s-sortir">Douze concepts, et ce qu'ils font vraiment</a></li>
+          <li><a href="#s-sortir-choix">Ce qu'il reste alors à décider</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Douzième partie — Lire le flux</span>
+        <ol start="39">
           <li><a href="#s-footprint">Le footprint, et ce qu'un déséquilibre vaut</a></li>
           <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n'observe</a></li>
           <li><a href="#s-tpo">Le profil de marché, et ses cinq lectures</a></li>
           <li><a href="#s-bruit">Combien de bruit un trade supporte-t-il&nbsp;?</a></li>
         </ol>
       </li>
-      <li><span class="pt">Douzième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="41">
+      <li><span class="pt">Treizième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="43">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1243,6 +1249,68 @@
 
   <div class="part">
     <span class="lab">Onzième partie</span>
+    <h2>Sortir</h2>
+    <p>Douze concepts de sortie, appliqués aux mêmes trajectoires, et le seul axe sur lequel un concept de sortie peut agir.</p>
+  </div>
+
+  <h2 id="s-sortir">Douze concepts, et ce qu'ils font vraiment</h2>
+
+  <p>Un opérateur intraday dispose d'une dizaine de façons de sortir — stop et target, remontée au point mort, stop suiveur, sortie sur temps, prise partielle, effondrement de volatilité, clôture sèche — et d'aucun moyen de les classer. Les trois documents ont démontré un théorème <em>sur</em> les sorties sans jamais cataloguer les sorties elles-mêmes. Ce chapitre les catalogue et les mesure.</p>
+
+  <p>La question « quelle est la meilleure sortie ? » n'a pas de réponse tant qu'on n'a pas dit <em>sur quoi</em> une sortie peut agir. L'identité de Wald le dit en une ligne :</p>
+
+  <div class="eq">
+    <div class="body">E[<span class="v">R</span>]<span class="op">=</span><span class="frac"><span><span class="v">µ</span>&thinsp;E[<span class="v">τ∧T</span>]&nbsp;−&nbsp;<span class="v">c</span></span><span><span class="v">a</span></span></span>.</div>
+  </div>
+
+  <p><span class="v">µ</span> appartient au marché, <span class="v">c</span> au courtier, <span class="v">a</span> à la déclaration de risque. <strong>Il ne reste que E[<span class="v">τ∧T</span>].</strong> Un concept de sortie n'agit que sur le temps de position, et son classement doit donc se lire sur cette seule colonne. C'est une prédiction, elle est testable, et la suite la teste.</p>
+
+  <h3>Le protocole</h3>
+
+  <p>{{so_n}} trajectoires d'une séance, par pas d'une minute, sous une volatilité déclarée. Les {{so_regles}} règles sont appliquées aux <strong>mêmes</strong> trajectoires : la variance d'une différence appariée est d'un ordre de grandeur sous celle des niveaux, et c'est la différence qui répond à la question posée. Chaque tirage est doublé par son antithétique, bruit de signe opposé et dérive inchangée. Une barrière franchie dans le pas est constatée <em>au prix atteint</em>, jamais au prix de la barrière : c'est le pire remplissage, celui que le protocole de mesure nomme ailleurs le remplissage extrême.</p>
+
+  <p>La discrétisation n'est pas une approximation d'une règle continue, et il faut le dire pour que le théorème s'applique proprement : <strong>c'est la règle</strong>. Un temps d'arrêt discret est un temps d'arrêt, l'arrêt optionnel s'y applique exactement, et rien dans ce qui suit ne dépend de la finesse du pas.</p>
+
+  <p>La simulation tourne à un stop de {{so_stop_pct}}&nbsp;% — {{so_stop_pts}} points — et non au stop déclaré par l'opérateur. La raison est arithmétique, et elle est déjà un résultat : à la géométrie déclarée, <strong>une minute de bruit vaut {{so_bruit_stop}} fois le stop</strong>. La position est close avant qu'aucune gestion n'ait eu le temps d'agir. Il n'existe pas de concept de sortie à cette géométrie ; il n'y a qu'une friction.</p>
+
+  <h3>Sous un prix sans dérive</h3>
+
+{{TABLE:sorties_nulles}}
+
+  <p>Les douze rendent <span class="v">−c/a</span>, et l'écart de chacune à l'ancre est nul à l'erreur de Monte-Carlo près. Le dépôt écrivait déjà que « il en va de même du stop suiveur, des prises partielles et de tout autre schéma de gestion » ; c'était vrai, et ce n'était pas mesuré. Ça l'est.</p>
+
+  <p>Ce qui change d'une ligne à l'autre mérite d'être regardé, parce que c'est précisément ce qu'un opérateur croit lire comme une compétence. La dispersion va de {{so_sd_min}} à {{so_sd_max}}&nbsp;R, un facteur quatre. Le taux de gain va de {{so_gain_min}} à {{so_gain_max}}&nbsp;%. <strong>Le taux de gain est un réglage de sortie, pas une mesure de compétence</strong> : sur un prix sans dérive, on le règle où l'on veut entre dix-huit et cinquante pour cent sans déplacer l'espérance d'un millième. Une statistique de résultat qui bouge autant sans que rien ne bouge dans le marché ne peut pas servir à juger un opérateur.</p>
+
+  <h3>Sous une dérive déclarée</h3>
+
+{{TABLE:sorties_derive}}
+
+{{FIGURE:sortiewald|L'espérance des douze concepts selon le temps de position, sous une dérive déclarée puis sous un prix sans dérive, et la dispersion que chacun achète. La droite du premier cadre n'est pas ajustée : c'est l'identité de Wald, et les douze mesures s'y posent. Le cadre du milieu porte une échelle cent quarante fois plus fine que son voisin, et sa lecture chiffrée le dit — sans quoi douze points confondus se liraient comme douze points distincts.}}
+
+  <p>L'espérance simulée égale la prédiction de Wald pour les douze règles, à {{so_pire_derive}}&nbsp;R près, sur une gamme qui va de {{so_er_min}} à {{so_er_max}}&nbsp;R — un facteur {{so_facteur}}. <strong>Le classement des concepts de sortie est entièrement expliqué par leur temps de position, et par rien d'autre.</strong> Aucune règle n'ajoute ni ne retire quoi que ce soit à ce que son exposition commande.</p>
+
+  <p>Une ligne se comporte autrement, et elle est instructive. La prise partielle est la seule règle qui <em>change de taille</em> en cours de route, et sa prédiction échouait tant que la colonne portait le temps écoulé. L'identité de Wald ne mesure pas le temps écoulé mais le temps <em>exposé</em>, l'intégrale de la taille de position. Pour cette règle les deux diffèrent : {{so_part_ecoule}} minutes écoulées, {{so_part_expo}} minutes exposées. <strong>Elle a la durée d'un trade long et le rendement d'un trade court</strong>, et c'est là tout son coût — {{so_part_cout}}&nbsp;R contre le stop simple.</p>
+
+  <h2 id="s-sortir-choix">Ce qu'il reste alors à décider</h2>
+
+{{FIGURE:sortiesurface|L'espérance nette sur le plan du temps de position et de la dérive du marché. La hauteur est l'identité, non un ajustement — la figure précédente a montré que les mesures y tombent. Ce que celle-ci ajoute est la forme de la frontière du zéro, l'hyperbole µ = 60c/t : raccourcir une position relève le seuil de dérive qu'il faut pour la rentabiliser, et le relève d'autant plus vite qu'on raccourcit déjà.}}
+
+  <p>La surface donne la conséquence pratique sans qu'il faille lire une graduation. La frontière recule vers les fortes dérives à mesure que la position se raccourcit, et elle recule vite : c'est la même hyperbole que le chapitre du seuil, vue depuis le temps plutôt que depuis la géométrie. Trois conséquences en découlent, et elles sont opérationnelles.</p>
+
+  <ul>
+    <li><strong>Sous dérive positive, le meilleur concept de sortie est celui qui tient la position le plus longtemps.</strong> Le maximum est la clôture sèche, et son défaut n'est pas dans l'espérance mais dans la perte : elle n'est pas bornée. La décision n'est donc pas une décision de lecture du marché, c'est une décision de capacité — combien de séance l'opérateur peut-il tenir, compte tenu de la perte qu'il peut absorber ?</li>
+    <li><strong>Chaque raccourci a son prix, et il est chiffré.</strong> La remontée au point mort coûte {{so_be_cout}}&nbsp;R contre le stop simple. Le stop suiveur à ½R coûte {{so_suiveur_cout}}&nbsp;R contre la clôture sèche. Ce ne sont pas des pertes de mauvaise exécution : ce sont les exactes contreparties du temps de marché abandonné, et elles se lisent sur la première colonne de la table.</li>
+    <li><strong>Aucune de ces règles ne peut ajouter d'espérance, parce qu'aucune ne lit autre chose que le prix passé.</strong> Ce sont toutes des temps d'arrêt sur la filtration du prix, et le théorème les couvre toutes. La seule sortie qui pourrait ajouter quelque chose est celle qui conditionne sur une information que le prix ne porte pas encore.</li>
+  </ul>
+
+  <h3>La réponse discrétionnaire, et la réponse quantitative</h3>
+
+  <p>Le meilleur concept <em>discrétionnaire</em> ne se choisit donc pas sur l'espérance, puisqu'ils y sont tous équivalents. Il se choisit sur la dispersion qu'un opérateur peut tenir sans dévier de sa règle, à temps de position maximal. Ce que cela désigne est un stop large, aucun target, et une sortie à la clôture — exactement la géométrie que le chapitre du seuil avait désignée par le calcul du seuil. <strong>Deux routes indépendantes tombent sur la même recommandation</strong>, et c'est la seule forme de confirmation qu'un travail sans données puisse produire.</p>
+
+  <p>Le meilleur concept <em>quantitatif</em> n'est pas une règle sur le prix, et c'est la conclusion qui a le plus de conséquences. La friction est payée une fois, à l'entrée ; elle ne se rembourse pas en sortant tôt. Une sortie anticipée ne peut donc se justifier que par une information qui contredit celle qui a motivé l'entrée. <strong>La règle de sortie quantitative correcte est une règle d'information, pas une règle de prix</strong> : sortir quand ce qui fondait l'entrée a été démenti, et à aucun autre moment. La partie suivante mesure ce que valent, contre leur loi nulle, les deux couches d'information que l'opérateur regarde le plus pour prendre cette décision.</p>
+
+  <div class="part">
+    <span class="lab">Douzième partie</span>
     <h2>Lire le flux</h2>
     <p>Deux couches que l'opérateur regarde tous les jours, passées au même protocole que le reste.</p>
   </div>
@@ -1314,7 +1382,7 @@
   <p>C'est la tension que les trois documents mesurent, et elle se résout dans un sens précis. <em>Un opérateur qui trade n'a pas besoin de prouver&nbsp;; un opérateur qui alloue, si.</em> Le premier doit choisir la géométrie qui minimise l'information requise — c'est le chapitre précédent. Le second doit choisir celle qui la rend démontrable, et ce n'est pas la même.</p>
 
   <div class="part">
-    <span class="lab">Douzième partie</span>
+    <span class="lab">Treizième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
