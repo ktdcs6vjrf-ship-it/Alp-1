@@ -835,8 +835,17 @@
           <li><a href="#s-bruit">Combien de bruit un trade supporte-t-il&nbsp;?</a></li>
         </ol>
       </li>
-      <li><span class="pt">Quatorzième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Quatorzième partie — Ce que le théorème ne suppose pas</span>
         <ol start="53">
+          <li><a href="#s-normalite">«&nbsp;Votre théorème suppose une loi normale&nbsp;»</a></li>
+          <li><a href="#s-invariance-lois">Six lois, une seule espérance</a></li>
+          <li><a href="#s-queues-seuil">Ce que les queues déplacent, et de combien</a></li>
+          <li><a href="#s-lire-esperance">Le prix, en décisions, d’une espérance lue</a></li>
+          <li><a href="#s-systematique">Systématique et discrétionnaire, alpha et bêta</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Quinzième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="58">
           <li><a href="#s-protocole">Ce qu’il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -11931,6 +11940,655 @@
 
   <div class="part">
     <span class="lab">Quatorzième partie</span>
+    <h2>Ce que le théorème ne suppose pas</h2>
+    <p>Une objection sérieuse revient à chaque exposé&nbsp;: le résultat serait démontré sous une loi normale, et les marchés n’en suivent pas. Cette partie la prend au mot, remplace la loi des prix six fois, et publie ce qui bouge — l’espérance, ou autre chose.</p>
+  </div>
+
+  <h2 id="s-normalite">«&nbsp;Votre théorème suppose une loi normale&nbsp;»</h2>
+
+  <p>L’objection se formule ainsi&nbsp;: les rendements ne sont pas gaussiens, leurs queues sont épaisses, leurs deux côtés ne se ressemblent pas — donc un résultat établi sous loi normale ne dit rien du marché réel. La première moitié est vraie et il faut le dire avant de corriger la seconde&nbsp;: les queues <em>sont</em> épaisses, et les deux côtés ne se ressemblent <em>pas</em>.</p>
+
+  <p>La conclusion, elle, ne suit pas, et la raison tient en une ligne. <strong>L’identité de Wald ne demande pas la normalité.</strong> Elle demande que le prix soit une martingale de carré intégrable et que le temps d’arrêt soit borné par la séance. Un prix à sauts, à kurtosis infinie, à volatilité en grappes ou à baisse plafonnée reste une martingale dès lors que ses incréments sont centrés — et le théorème d’arrêt optionnel s’y applique mot pour mot, sans amendement.</p>
+
+  <p>Ce chapitre ne se contente pas de l’affirmer. Il remplace la loi des incréments six fois, à variance par minute <em>identique</em>, et mesure. Les six lois ne sont pas choisies pour être commodes&nbsp;: trois d’entre elles sont là parce qu’elles sont les pires cas de l’objection.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 30</span> — Les six lois d’incrément, à variance par minute identique.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Loi</th><th class="wrap">Ce qu’elle porte</th><th>Écart-type</th><th>Asymétrie</th><th>Kurtosis excéd.</th><th class="wrap">Pire incrément</th></tr></thead>
+        <tbody>
+          <tr><td>Gaussienne</td><td class="wrap">la loi qu’on accuse le théorème de supposer</td><td>1,000</td><td>+0,01</td><td>0,00</td><td class="wrap">−4,61</td></tr>
+          <tr><td>Student, 5 degrés</td><td class="wrap">queues épaisses, symétrique, kurtosis excédentaire 6</td><td>1,004</td><td>+0,01</td><td>5,10</td><td class="wrap">−19,39</td></tr>
+          <tr><td>Student, 3 degrés</td><td class="wrap">la variance existe, le moment d’ordre quatre non</td><td>1,003</td><td>−0,61</td><td>infinie</td><td class="wrap">−81,33</td></tr>
+          <tr><td>Sauts de Merton</td><td class="wrap">diffusion plus sauts négatifs compensés : l’asymétrie d’un indice</td><td>0,998</td><td>−0,86</td><td>6,55</td><td class="wrap">−13,39</td></tr>
+          <tr><td>Volatilité en grappes</td><td class="wrap">volatilité de séance lognormale, régimes calmes et agités</td><td>1,029</td><td>+0,02</td><td>2,67</td><td class="wrap">−8,24</td></tr>
+          <tr><td>Baisse plafonnée</td><td class="wrap">plancher à un écart-type, hausse non bornée : l’affirmation au mot</td><td>1,000</td><td>+2,01</td><td>6,05</td><td class="wrap">−1,00</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Toutes les lois sont centrées et ramenées à une variance de un : la colonne d’écart-type le vérifie plutôt que de le supposer, et c’est ce qui autorise la comparaison. Le « pire incrément » est le minimum observé sur 400 mille tirages, en écarts-types ; la loi à baisse plafonnée ne descend jamais au-dessous de −1, par construction. La kurtosis de la Student à trois degrés est écrite « infinie » et non estimée : son moment d’ordre quatre diverge, si bien qu’un nombre publié là ne serait pas une mesure mais un tirage.</p>
+    </figure>
+
+  <p>La troisième ligne est le cas limite. À trois degrés de liberté, la variance d’une Student existe encore mais <strong>son moment d’ordre quatre diverge</strong>&nbsp;: sa kurtosis n’est pas grande, elle est infinie. Si le résultat survit à celle-là, il ne doit rien à la forme des queues.</p>
+
+  <p>La sixième est l’objection elle-même, écrite en loi de probabilité. «&nbsp;La baisse est plafonnée, la hausse est illimitée&nbsp;»&nbsp;: un incrément exponentiel recentré ne descend jamais au-dessous de −1,00&nbsp;écart-type, n’a aucune borne supérieure, et son asymétrie mesurée vaut +2,01. Si cette propriété créait de l’espérance, elle en créerait ici plus que nulle part ailleurs.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 54</span> — Les deux queues de chaque loi, comptées séparément sur quatre cent mille tirages. Une fréquence comptée, jamais une densité tracée&nbsp;: c’est ce qui autorise à comparer six lois dont trois n’ont pas de forme fermée.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 452" role="img" aria-label="Fréquence des incréments au-delà de x écarts-types, et rapport des deux queues, pour six lois de même variance." preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ROBUSTESSE · LES QUEUES</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">À quelle fréquence un incrément dépasse x écarts-types ?</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">400 mille tirages par loi</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<text class="hdr" x="66.0" y="80.0">Queue gauche : P(incrément ≤ −x)</text>
+<text class="sub" x="329.0" y="67.0" text-anchor="end">vers la perte</text>
+<line class="hsep" x1="66.0" y1="86.0" x2="329.0" y2="86.0"/>
+<rect class="frame" x="66.0" y="92.0" width="263.0" height="214.0"/>
+<line class="gl" x1="66.0" y1="270.7" x2="329.0" y2="270.7"/>
+<text class="tk" x="61.0" y="273.7" text-anchor="end">0,01 %</text>
+<line class="gl" x1="66.0" y1="220.3" x2="329.0" y2="220.3"/>
+<text class="tk" x="61.0" y="223.3" text-anchor="end">0,1 %</text>
+<line class="gl" x1="66.0" y1="169.9" x2="329.0" y2="169.9"/>
+<text class="tk" x="61.0" y="172.9" text-anchor="end">1 %</text>
+<line class="gl" x1="66.0" y1="119.4" x2="329.0" y2="119.4"/>
+<text class="tk" x="61.0" y="122.4" text-anchor="end">10 %</text>
+<text class="ax" transform="translate(20.0,199.0) rotate(-90)" text-anchor="middle">fréquence</text>
+<text class="tk" x="89.9" y="319.0" text-anchor="middle">1 σ</text>
+<text class="tk" x="137.7" y="319.0" text-anchor="middle">2 σ</text>
+<text class="tk" x="185.5" y="319.0" text-anchor="middle">3 σ</text>
+<text class="tk" x="233.4" y="319.0" text-anchor="middle">4 σ</text>
+<text class="tk" x="281.2" y="319.0" text-anchor="middle">5 σ</text>
+<text class="tk" x="329.0" y="319.0" text-anchor="middle">6 σ</text>
+<line class="ba" x1="66.0" y1="306.0" x2="329.0" y2="306.0"/>
+<path class="ln ln hm1" d="M66.00,94.69 L77.95,101.43 L89.91,109.30 L101.86,118.29 L113.82,128.47 L125.77,139.86 L137.73,152.38 L149.68,165.91 L161.64,180.22 L173.59,196.60 L185.55,213.34 L197.50,232.91 L209.45,252.27 L221.41,271.87 L233.36,301.11"><title>Gaussienne</title></path>
+<path class="ln ln hm2" d="M66.00,97.35 L77.95,105.45 L89.91,114.25 L101.86,123.25 L113.82,132.20 L125.77,141.09 L137.73,149.83 L149.68,158.22 L161.64,166.43 L173.59,173.98 L185.55,181.30 L197.50,188.13 L209.45,194.56 L221.41,200.75 L233.36,206.51 L245.32,213.30 L257.27,218.42 L269.23,224.39 L281.18,228.68 L293.14,234.01 L305.09,238.42 L317.05,241.36 L329.00,245.44"><title>Student, 5 degrés</title></path>
+<path class="ln ln hm3" d="M66.00,101.67 L77.95,111.65 L89.91,121.46 L101.86,130.66 L113.82,139.31 L125.77,147.01 L137.73,154.15 L149.68,160.87 L161.64,167.21 L173.59,172.65 L185.55,177.86 L197.50,183.16 L209.45,188.03 L221.41,192.25 L233.36,196.47 L245.32,200.40 L257.27,204.01 L269.23,207.41 L281.18,209.81 L293.14,212.98 L305.09,215.87 L317.05,218.17 L329.00,220.87"><title>Student, 3 degrés</title></path>
+<path class="ln ln hm4" d="M66.00,95.93 L77.95,103.36 L89.91,111.94 L101.86,121.69 L113.82,132.43 L125.77,144.08 L137.73,156.52 L149.68,168.71 L161.64,179.78 L173.59,188.18 L185.55,194.14 L197.50,197.35 L209.45,199.07 L221.41,199.96 L233.36,200.89 L245.32,201.83 L257.27,202.67 L269.23,203.62 L281.18,205.02 L293.14,206.37 L305.09,208.09 L317.05,210.02 L329.00,211.72"><title>Sauts de Merton</title></path>
+<path class="ln ln hm5" d="M66.00,97.39 L77.95,105.16 L89.91,113.24 L101.86,121.46 L113.82,129.79 L125.77,138.22 L137.73,146.53 L149.68,154.88 L161.64,162.79 L173.59,170.59 L185.55,178.12 L197.50,186.29 L209.45,193.41 L221.41,200.80 L233.36,208.66 L245.32,214.82 L257.27,222.08 L269.23,228.84 L281.18,235.60 L293.14,241.94 L305.09,248.59 L317.05,254.50 L329.00,259.78"><title>Volatilité en grappes</title></path>
+<text class="hdr" x="363.0" y="80.0">Rapport des deux queues</text>
+<text class="sub" x="626.0" y="67.0" text-anchor="end">gauche ÷ droite</text>
+<line class="hsep" x1="363.0" y1="86.0" x2="626.0" y2="86.0"/>
+<rect class="frame" x="363.0" y="92.0" width="263.0" height="214.0"/>
+<line class="gl" x1="363.0" y1="272.1" x2="626.0" y2="272.1"/>
+<text class="tk" x="358.0" y="275.1" text-anchor="end">1 × symétrique</text>
+<line class="gl" x1="363.0" y1="232.8" x2="626.0" y2="232.8"/>
+<text class="tk" x="358.0" y="235.8" text-anchor="end">2 ×</text>
+<line class="gl" x1="363.0" y1="180.9" x2="626.0" y2="180.9"/>
+<text class="tk" x="358.0" y="183.9" text-anchor="end">5 ×</text>
+<line class="gl" x1="363.0" y1="141.6" x2="626.0" y2="141.6"/>
+<text class="tk" x="358.0" y="144.6" text-anchor="end">10 ×</text>
+<line class="gl" x1="363.0" y1="102.3" x2="626.0" y2="102.3"/>
+<text class="tk" x="358.0" y="105.3" text-anchor="end">20 ×</text>
+<text class="tk" x="370.1" y="319.0" text-anchor="middle">1 σ</text>
+<text class="tk" x="441.2" y="319.0" text-anchor="middle">2 σ</text>
+<text class="tk" x="512.3" y="319.0" text-anchor="middle">3 σ</text>
+<text class="tk" x="583.4" y="319.0" text-anchor="middle">4 σ</text>
+<line class="ba" x1="363.0" y1="306.0" x2="626.0" y2="306.0"/>
+<line class="lvl" x1="363.0" y1="272.1" x2="626.0" y2="272.1"/>
+<path class="ln ln hm1" d="M370.11,272.13 L387.88,272.57 L405.65,272.94 L423.42,273.47 L441.19,273.90 L458.96,273.60 L476.73,271.34 L494.50,273.77 L512.27,274.64 L530.04,275.06"><title>Gaussienne</title></path>
+<path class="ln ln hm2" d="M370.11,272.38 L387.88,272.05 L405.65,271.68 L423.42,272.05 L441.19,272.73 L458.96,272.36 L476.73,272.98 L494.50,273.10 L512.27,273.90 L530.04,273.25 L547.81,272.38 L565.58,271.71 L583.35,271.43 L601.12,273.24 L618.89,271.60"><title>Student, 5 degrés</title></path>
+<path class="ln ln hm3" d="M370.11,271.30 L387.88,271.39 L405.65,271.57 L423.42,271.48 L441.19,270.89 L458.96,271.16 L476.73,271.37 L494.50,271.14 L512.27,271.05 L530.04,272.66 L547.81,273.34 L565.58,273.32 L583.35,273.48 L601.12,273.86 L618.89,272.92"><title>Student, 3 degrés</title></path>
+<path class="ln ln hm4" d="M370.11,274.77 L387.88,274.33 L405.65,273.26 L423.42,271.37 L441.19,268.08 L458.96,260.38 L476.73,246.97 L494.50,221.43 L512.27,187.15 L530.04,142.55"><title>Sauts de Merton</title></path>
+<path class="ln ln hm5" d="M370.11,272.45 L387.88,272.68 L405.65,272.83 L423.42,273.18 L441.19,273.09 L458.96,273.85 L476.73,273.26 L494.50,273.52 L512.27,272.53 L530.04,274.84 L547.81,274.07 L565.58,273.83 L583.35,275.43 L601.12,273.75 L618.89,274.82"><title>Volatilité en grappes</title></path>
+<text class="dl halo" x="524.0" y="134.6" text-anchor="end">sauts</text>
+<text class="dl halo" x="483.8" y="301.1" text-anchor="middle">plancher : plus aucune baisse au-delà de 1 σ</text>
+<rect class="hm1" x="0.0" y="334.5" width="11" height="11" rx="2"/>
+<text class="lg" x="17.0" y="343.5">normale</text>
+<rect class="hm2" x="110.0" y="334.5" width="11" height="11" rx="2"/>
+<text class="lg" x="127.0" y="343.5">Student 5</text>
+<rect class="hm3" x="220.0" y="334.5" width="11" height="11" rx="2"/>
+<text class="lg" x="237.0" y="343.5">Student 3</text>
+<rect class="hm4" x="330.0" y="334.5" width="11" height="11" rx="2"/>
+<text class="lg" x="347.0" y="343.5">sauts</text>
+<rect class="hm5" x="440.0" y="334.5" width="11" height="11" rx="2"/>
+<text class="lg" x="457.0" y="343.5">grappes</text>
+<rect class="hm7" x="550.0" y="334.5" width="11" height="11" rx="2"/>
+<text class="lg" x="567.0" y="343.5">plancher</text>
+<text class="lg keep" x="0.0" y="372.0" text-anchor="start">les six lois ont la même variance par minute : seule la forme de leurs queues change</text>
+<text class="lg keep" x="0.0" y="396.0" text-anchor="start">à trois écarts-types, la loi à sauts tombe 4,5 fois plus souvent à gauche qu’à droite :</text>
+<text class="lg keep" x="0.0" y="412.0" text-anchor="start">l’asymétrie d’un indice est négative, pas positive</text>
+<text class="lg keep" x="0.0" y="428.0" text-anchor="start">et la loi à plancher n’a plus aucune queue gauche au-delà de 1,00 σ</text>
+
+</svg></div>
+      <p class="note">Chaque courbe est une fréquence comptée, jamais une densité tracée : c’est ce qui autorise à comparer six lois dont trois n’ont pas de forme fermée. Les six ont la même variance par minute — la différence visible ici est donc de forme, et d’elle seule. Le cadre de droite s’arrête là où l’une des deux queues compte moins de 100 observations : au-delà, un rapport de queues n’est plus une estimation mais un tirage, et le seuil est appliqué plutôt que commenté. La loi à plancher n’y figure pas du tout, et c’est exact : son numérateur est nul au-delà d’un écart-type. Asymétrie mesurée : −0,86 pour les sauts, +2,01 pour le plancher.</p>
+    </figure>
+
+  <p>Et la figure retourne l’affirmation sur un point de fait, qu’il vaut mieux établir que discuter. La loi qui imite un indice actions — une diffusion plus des sauts négatifs compensés, 1,17&nbsp;saut par séance de 7,5&nbsp;points, soit 83&nbsp;% du stop en une minute — tombe à 3&nbsp;écarts-types <strong>4,5&nbsp;fois plus souvent à gauche qu’à droite</strong>. Son asymétrie vaut −0,86. Sur un indice, ce qui est illimité n’est pas la hausse&nbsp;: c’est la baisse rapide. L’affirmation inverse décrit un actif à responsabilité limitée détenu au comptant, pas un contrat à terme sur indice tenu à la séance.</p>
+
+  <h2 id="s-invariance-lois">Six lois, une seule espérance</h2>
+
+  <p>La géométrie de l’épreuve est celle de la partie&nbsp;XI&nbsp;: un stop de 0,150&nbsp;%, soit 9,00&nbsp;points, une cible à 2&nbsp;fois le risque, une sortie à la clôture, 0,33&nbsp;point de friction. Le choix du stop élargi n’est pas de confort — à la largeur déclarée du document nº&nbsp;1, une minute de bruit vaut deux stops, si bien que la loi des incréments n’a pas le temps de s’exprimer avant que la barrière ne soit franchie. À 0,150&nbsp;% elle a le temps, et c’est la seule condition sous laquelle la question posée ici a un sens.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 31</span> — L’espérance d’une géométrie sous prix sans dérive, loi par loi.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Loi</th><th>p(objectif)</th><th>p(stop)</th><th>E[τ∧T] (min)</th><th>E[R] simulée</th><th>−c/a prédit</th><th>Écart (erreurs types)</th><th class="wrap">Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Gaussienne</td><td>32,9  %</td><td>64,4  %</td><td>114,7</td><td>−0,0350</td><td>−0,0367</td><td>+0,24</td><td class="wrap">compatible</td></tr>
+          <tr><td>Student, 5 degrés</td><td>32,8  %</td><td>64,2  %</td><td>117,4</td><td>−0,0375</td><td>−0,0367</td><td>−0,12</td><td class="wrap">compatible</td></tr>
+          <tr><td>Student, 3 degrés</td><td>32,6  %</td><td>63,1  %</td><td>128,8</td><td>−0,0356</td><td>−0,0367</td><td>+0,15</td><td class="wrap">compatible</td></tr>
+          <tr><td>Sauts de Merton</td><td>33,4  %</td><td>63,7  %</td><td>118,4</td><td>−0,0398</td><td>−0,0367</td><td>−0,33</td><td class="wrap">compatible</td></tr>
+          <tr><td>Volatilité en grappes</td><td>26,9  %</td><td>58,7  %</td><td>158,3</td><td>−0,0441</td><td>−0,0367</td><td>−1,17</td><td class="wrap">compatible</td></tr>
+          <tr><td>Baisse plafonnée</td><td>30,9  %</td><td>66,3  %</td><td>112,5</td><td>−0,0570</td><td>−0,0367</td><td>−2,14</td><td class="wrap">compatible</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La prédiction est la même pour les six lignes : à dérive nulle, l’identité de Wald donne E[R] = −c/a = −0,0367 R, quelle que soit la loi des incréments. La colonne de verdict est <strong>calculée</strong> contre 2,87 erreurs types — le seuil de Bonferroni des 12 verdicts de la campagne, et non le deux usuel. La correction n’est pas une indulgence : à 5 % et 12 tests, la probabilité qu’au moins un écart dépasse deux erreurs types <strong>alors que le théorème tient partout</strong> vaut 46 %, et publier « réfutée » sur cette base reviendrait à annoncer une découverte au premier faux positif. Les probabilités de barrière, elles, changent d’une loi à l’autre : c’est attendu, et cela ne déplace pas l’espérance.</p>
+    </figure>
+
+  <p>Six lignes, une seule prédiction&nbsp;: −0,0367&nbsp;R. La kurtosis infinie ne l’écarte pas, la queue gauche épaisse de la loi à sauts non plus, et le plancher de la loi asymétrique non plus. <strong>La forme des queues ne crée ni ne détruit d’espérance.</strong></p>
+
+  <p>Un mot sur le verdict, parce qu’il a failli dire autre chose. Le plus grand écart de la campagne vaut 2,27&nbsp;erreurs types, sur la loi à plancher&nbsp;: au seuil usuel de deux, une ligne aurait porté «&nbsp;réfutée&nbsp;». Elle ne le porte pas, et la raison n’est pas une indulgence. La campagne prononce 12&nbsp;verdicts&nbsp;; à cinq pour cent chacun, la probabilité qu’au moins un dépasse deux erreurs types <em>alors que le théorème tient partout</em> vaut 46&nbsp;%. Le seuil est donc corrigé à 2,87 par Bonferroni, et il est calculé et non écrit. C’est la faute que ce document reproche ailleurs, et il n’y a aucune raison de se l’épargner à soi-même.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 55</span> — L’espérance mesurée de six lois de prix, chacune contre sa propre prédiction. Le trait horizontal est écrit avant de simuler&nbsp;; le point est la mesure&nbsp;; la barre vaut deux erreurs types.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 534" role="img" aria-label="Espérance simulée de six lois de prix, comparée à la prédiction de Wald, sans dérive puis sous dérive." preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ROBUSTESSE · L’INVARIANCE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">L’espérance mesurée tombe-t-elle sur ce que Wald prédit ?</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">barre : deux erreurs types</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<text class="hdr" x="78.0" y="84.0">Sans dérive</text>
+<text class="read" x="650.0" y="84.0" text-anchor="end">prédiction commune : −0,0367 R</text>
+<line class="hsep" x1="78.0" y1="90.0" x2="650.0" y2="90.0"/>
+<rect class="frame" x="78.0" y="96.0" width="572.0" height="146.0"/>
+<line class="gl" x1="78.0" y1="229.0" x2="650.0" y2="229.0"/>
+<text class="tk" x="73.0" y="232.0" text-anchor="end">−0,090</text>
+<line class="gl" x1="78.0" y1="186.0" x2="650.0" y2="186.0"/>
+<text class="tk" x="73.0" y="189.0" text-anchor="end">−0,060</text>
+<line class="gl" x1="78.0" y1="143.0" x2="650.0" y2="143.0"/>
+<text class="tk" x="73.0" y="146.0" text-anchor="end">−0,030</text>
+<line class="gl" x1="78.0" y1="99.9" x2="650.0" y2="99.9"/>
+<text class="tk" x="73.0" y="102.9" text-anchor="end">+0,000</text>
+<text class="ax" transform="translate(24.0,169.0) rotate(-90)" text-anchor="middle">E[R]</text>
+<text class="tk" x="133.4" y="255.0" text-anchor="middle">normale</text>
+<text class="tk" x="225.6" y="255.0" text-anchor="middle">Student 5</text>
+<text class="tk" x="317.9" y="255.0" text-anchor="middle">Student 3</text>
+<text class="tk" x="410.1" y="255.0" text-anchor="middle">sauts</text>
+<text class="tk" x="502.4" y="255.0" text-anchor="middle">grappes</text>
+<text class="tk" x="594.6" y="255.0" text-anchor="middle">plancher</text>
+<line class="ba" x1="78.0" y1="242.0" x2="650.0" y2="242.0"/>
+<rect class="lvl" x="101.99" y="151.83" width="62.74" height="1.40"><title>prédiction de Wald : −0,0367</title></rect>
+<rect class="hm1" x="132.25" y="130.74" width="2.20" height="38.84"><title>deux erreurs types</title></rect>
+<circle class="pt hm1" cx="133.35" cy="150.16" r="4.2"><title>Gaussienne — mesurée −0,0350, prédite −0,0367</title></circle>
+<rect class="lvl" x="194.25" y="151.83" width="62.74" height="1.40"><title>prédiction de Wald : −0,0367</title></rect>
+<rect class="hm2" x="224.51" y="134.08" width="2.20" height="39.31"><title>deux erreurs types</title></rect>
+<circle class="pt hm2" cx="225.61" cy="153.73" r="4.2"><title>Student, 5 degrés — mesurée −0,0375, prédite −0,0367</title></circle>
+<rect class="lvl" x="286.50" y="151.83" width="62.74" height="1.40"><title>prédiction de Wald : −0,0367</title></rect>
+<rect class="hm3" x="316.77" y="130.27" width="2.20" height="41.36"><title>deux erreurs types</title></rect>
+<circle class="pt hm3" cx="317.87" cy="150.95" r="4.2"><title>Student, 3 degrés — mesurée −0,0356, prédite −0,0367</title></circle>
+<rect class="lvl" x="378.76" y="151.83" width="62.74" height="1.40"><title>prédiction de Wald : −0,0367</title></rect>
+<rect class="hm4" x="409.03" y="129.18" width="2.20" height="55.77"><title>deux erreurs types</title></rect>
+<circle class="pt hm4" cx="410.13" cy="157.06" r="4.2"><title>Sauts de Merton — mesurée −0,0398, prédite −0,0367</title></circle>
+<rect class="lvl" x="471.02" y="151.83" width="62.74" height="1.40"><title>prédiction de Wald : −0,0367</title></rect>
+<rect class="hm5" x="501.29" y="144.95" width="2.20" height="36.56"><title>deux erreurs types</title></rect>
+<circle class="pt hm5" cx="502.39" cy="163.23" r="4.2"><title>Volatilité en grappes — mesurée −0,0441, prédite −0,0367</title></circle>
+<rect class="lvl" x="563.28" y="151.83" width="62.74" height="1.40"><title>prédiction de Wald : −0,0367</title></rect>
+<rect class="hm7" x="593.55" y="154.47" width="2.20" height="54.51"><title>deux erreurs types</title></rect>
+<circle class="pt hm7" cx="594.65" cy="181.73" r="4.2"><title>Baisse plafonnée — mesurée −0,0570, prédite −0,0367</title></circle>
+<text class="hdr" x="78.0" y="288.0">Sous 3,2 point par heure</text>
+<text class="read" x="650.0" y="288.0" text-anchor="end">prédiction propre à chaque loi</text>
+<line class="hsep" x1="78.0" y1="294.0" x2="650.0" y2="294.0"/>
+<rect class="frame" x="78.0" y="300.0" width="572.0" height="146.0"/>
+<line class="gl" x1="78.0" y1="435.3" x2="650.0" y2="435.3"/>
+<text class="tk" x="73.0" y="438.3" text-anchor="end">+0,600</text>
+<line class="gl" x1="78.0" y1="400.9" x2="650.0" y2="400.9"/>
+<text class="tk" x="73.0" y="403.9" text-anchor="end">+0,700</text>
+<line class="gl" x1="78.0" y1="366.5" x2="650.0" y2="366.5"/>
+<text class="tk" x="73.0" y="369.5" text-anchor="end">+0,800</text>
+<line class="gl" x1="78.0" y1="332.1" x2="650.0" y2="332.1"/>
+<text class="tk" x="73.0" y="335.1" text-anchor="end">+0,900</text>
+<text class="ax" transform="translate(24.0,373.0) rotate(-90)" text-anchor="middle">E[R]</text>
+<text class="tk" x="133.4" y="459.0" text-anchor="middle">normale</text>
+<text class="tk" x="225.6" y="459.0" text-anchor="middle">Student 5</text>
+<text class="tk" x="317.9" y="459.0" text-anchor="middle">Student 3</text>
+<text class="tk" x="410.1" y="459.0" text-anchor="middle">sauts</text>
+<text class="tk" x="502.4" y="459.0" text-anchor="middle">grappes</text>
+<text class="tk" x="594.6" y="459.0" text-anchor="middle">plancher</text>
+<line class="ba" x1="78.0" y1="446.0" x2="650.0" y2="446.0"/>
+<rect class="lvl" x="101.99" y="413.08" width="62.74" height="1.40"><title>prédiction de Wald : +0,6625</title></rect>
+<rect class="hm1" x="132.25" y="407.63" width="2.20" height="9.76"><title>deux erreurs types</title></rect>
+<circle class="pt hm1" cx="133.35" cy="412.51" r="4.2"><title>Gaussienne — mesurée +0,6662, prédite +0,6625</title></circle>
+<rect class="lvl" x="194.25" y="405.81" width="62.74" height="1.40"><title>prédiction de Wald : +0,6837</title></rect>
+<rect class="hm2" x="224.51" y="401.43" width="2.20" height="9.86"><title>deux erreurs types</title></rect>
+<circle class="pt hm2" cx="225.61" cy="406.36" r="4.2"><title>Student, 5 degrés — mesurée +0,6841, prédite +0,6837</title></circle>
+<rect class="lvl" x="286.50" y="383.28" width="62.74" height="1.40"><title>prédiction de Wald : +0,7492</title></rect>
+<rect class="hm3" x="316.77" y="379.74" width="2.20" height="10.29"><title>deux erreurs types</title></rect>
+<circle class="pt hm3" cx="317.87" cy="384.88" r="4.2"><title>Student, 3 degrés — mesurée +0,7466, prédite +0,7492</title></circle>
+<rect class="lvl" x="378.76" y="407.65" width="62.74" height="1.40"><title>prédiction de Wald : +0,6783</title></rect>
+<rect class="hm4" x="409.03" y="399.19" width="2.20" height="13.94"><title>deux erreurs types</title></rect>
+<circle class="pt hm4" cx="410.13" cy="406.16" r="4.2"><title>Sauts de Merton — mesurée +0,6847, prédite +0,6783</title></circle>
+<rect class="lvl" x="471.02" y="332.08" width="62.74" height="1.40"><title>prédiction de Wald : +0,8982</title></rect>
+<rect class="hm5" x="501.29" y="327.35" width="2.20" height="9.16"><title>deux erreurs types</title></rect>
+<circle class="pt hm5" cx="502.39" cy="331.93" r="4.2"><title>Volatilité en grappes — mesurée +0,9006, prédite +0,8982</title></circle>
+<rect class="lvl" x="563.28" y="402.52" width="62.74" height="1.40"><title>prédiction de Wald : +0,6932</title></rect>
+<rect class="hm7" x="593.55" y="404.15" width="2.20" height="13.90"><title>deux erreurs types</title></rect>
+<circle class="pt hm7" cx="594.65" cy="411.11" r="4.2"><title>Baisse plafonnée — mesurée +0,6703, prédite +0,6932</title></circle>
+<text class="lg keep" x="0.0" y="486.0" text-anchor="start">trait horizontal : la prédiction, écrite avant de simuler · point : la mesure · barre : deux erreurs types</text>
+<text class="lg keep" x="0.0" y="502.0" text-anchor="start">en haut la prédiction est la même pour les six lois ; en bas elle suit le temps de marché de chacune</text>
+
+</svg></div>
+      <p class="note">Aucun point ne s’écarte de sa prédiction de plus de 2,27 erreurs types, pour un seuil de décision de 2,87 — celui de Bonferroni sur les 12 verdicts de la campagne. La correction n’est pas une indulgence : à cinq pour cent et 12 tests, la probabilité qu’au moins un écart dépasse deux erreurs types alors même que le théorème tient partout vaut 46 %. Publier une réfutation sur cette base reviendrait à annoncer une découverte au premier faux positif, faute que ce document reproche ailleurs et qu’il s’applique donc à lui-même.</p>
+    </figure>
+
+  <p>Sous dérive, la prédiction cesse d’être commune&nbsp;: elle vaut <span class="v">(µ·E[τ∧T]&nbsp;−&nbsp;c)/a</span>, et le temps de marché dépend de la loi. Les traits se déplacent donc, et les points se déplacent avec eux.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 32</span> — Sous une dérive de 3,2 point par heure, la borne haute du domaine plausible.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Loi</th><th>E[τ∧T] (min)</th><th>E[R] simulée</th><th>Prédiction de Wald</th><th>Écart (erreurs types)</th><th class="wrap">Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Gaussienne</td><td>118,0</td><td>+0,6662</td><td>+0,6625</td><td>+0,52</td><td class="wrap">compatible</td></tr>
+          <tr><td>Student, 5 degrés</td><td>121,6</td><td>+0,6841</td><td>+0,6837</td><td>+0,06</td><td class="wrap">compatible</td></tr>
+          <tr><td>Student, 3 degrés</td><td>132,6</td><td>+0,7466</td><td>+0,7492</td><td>−0,35</td><td class="wrap">compatible</td></tr>
+          <tr><td>Sauts de Merton</td><td>120,6</td><td>+0,6847</td><td>+0,6783</td><td>+0,63</td><td class="wrap">compatible</td></tr>
+          <tr><td>Volatilité en grappes</td><td>157,8</td><td>+0,9006</td><td>+0,8982</td><td>+0,37</td><td class="wrap">compatible</td></tr>
+          <tr><td>Baisse plafonnée</td><td>123,2</td><td>+0,6703</td><td>+0,6932</td><td>−2,27</td><td class="wrap">compatible</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La prédiction n’est plus commune aux six lignes : elle vaut (µ·E[τ∧T] − c)/a, et <span class="v">E[τ∧T]</span> dépend de la loi. C’est là, et nulle part ailleurs, que la forme des queues entre dans le résultat — par le temps de marché, jamais par un avantage propre.</p>
+    </figure>
+
+  <p>C’est exactement la façon dont la forme des queues entre dans le résultat&nbsp;: <strong>par le temps de marché, et par rien d’autre.</strong> Aucune loi ne donne un avantage&nbsp;; certaines donnent plus de minutes d’exposition pour la même friction.</p>
+
+  <h3>Le dépassement, et pourquoi il ne compte pas</h3>
+
+  <p>Il reste une objection plus fine, et elle est meilleure que la première&nbsp;: sous une loi à sauts, on <em>traverse</em> son stop. Le prix ne s’arrête pas à la barrière, il la franchit, et la perte réalisée dépasse la perte déclarée. La table le mesure&nbsp;: le dépassement moyen passe de 0,724&nbsp;point sous loi gaussienne à 1,036 sous la loi à sauts, un facteur 1,4.</p>
+
+  <p>Et l’espérance ne bouge pas. La raison est contre-intuitive et elle est exacte&nbsp;: <strong>on traverse son objectif aussi</strong>, et l’arrêt optionnel compte les deux traversées. Le prix de sortie reste centré, quelle que soit la brutalité avec laquelle on l’atteint. Ce que le dépassement emporte, ce n’est pas l’espérance&nbsp;: c’est la dispersion et la queue de perte, et la table suivante les publie.</p>
+
+  <h2 id="s-queues-seuil">Ce que les queues déplacent, et de combien</h2>
+
+  <p>Conclure que la forme des queues n’a aucune conséquence serait faux, et ce serait la faute symétrique de celle qu’on vient de corriger. Trois grandeurs bougent, et il faut les ranger par ce qu’elles coûtent.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 33</span> — Ce que la forme des queues déplace, une fois l’espérance écartée.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Loi</th><th>E[τ∧T] (min)</th><th>µ* (pt/h)</th><th>Écart de seuil</th><th>Dépassement au stop (pts)</th><th>Écart-type de R</th><th class="wrap">Quantile 1 % de R</th></tr></thead>
+        <tbody>
+          <tr><td>Gaussienne</td><td>114,7</td><td>0,173</td><td>+0,0  %</td><td>0,724</td><td>1,483</td><td class="wrap">−1,314</td></tr>
+          <tr><td>Student, 5 degrés</td><td>117,4</td><td>0,169</td><td>−2,3  %</td><td>0,885</td><td>1,501</td><td class="wrap">−1,489</td></tr>
+          <tr><td>Student, 3 degrés</td><td>128,8</td><td>0,154</td><td>−11,0  %</td><td>1,290</td><td>1,579</td><td class="wrap">−2,001</td></tr>
+          <tr><td>Sauts de Merton</td><td>118,4</td><td>0,167</td><td>−3,2  %</td><td>1,036</td><td>1,506</td><td class="wrap">−1,757</td></tr>
+          <tr><td>Volatilité en grappes</td><td>158,3</td><td>0,125</td><td>−27,6  %</td><td>0,707</td><td>1,396</td><td class="wrap">−1,356</td></tr>
+          <tr><td>Baisse plafonnée</td><td>112,5</td><td>0,176</td><td>+1,9  %</td><td>0,421</td><td>1,471</td><td class="wrap">−1,159</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le dépassement est ce dont on franchit son stop dans le pas où on le franchit. La loi qui saute le multiplie par 1,4 par rapport à la gaussienne, et son espérance ne bouge pas : on traverse son stop, mais on traverse son objectif aussi, et l’arrêt optionnel compte les deux. Ce que les queues emportent vraiment tient dans les trois dernières colonnes : le seuil de rentabilité, la dispersion, et la queue de perte — c’est-à-dire ce qu’il faut de marché, et ce qu’il faut de capital, jamais ce qu’on gagne.</p>
+    </figure>
+
+  <p>Le sens de la première colonne surprend. À variance égale, <strong>une loi à queues épaisses fait <em>durer</em> les trades</strong>&nbsp;: 128,8&nbsp;minutes sous la Student à trois degrés contre 114,7 sous la gaussienne. La raison tient en une phrase — la variance étant fixée, ce qu’une loi met dans ses queues rares, elle le retire de sa minute ordinaire&nbsp;; le chemin typique bouge donc moins, et la barrière vient plus tard. Le seuil de rentabilité suit en sens inverse, puisqu’il vaut <span class="v">c/E[τ∧T]</span>.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 56</span> — Temps de marché et seuil de rentabilité de six lois de même variance. Le filet horizontal est la gaussienne, prise pour repère.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 524" role="img" aria-label="Temps de marché et seuil de rentabilité de six lois de prix de même variance." preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ROBUSTESSE · CE QUI BOUGE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que les queues déplacent, une fois l’espérance écartée</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">sans dérive, stop 0,150 %</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<text class="hdr" x="78.0" y="84.0">Temps de marché par décision</text>
+<text class="read" x="650.0" y="84.0" text-anchor="end">E[τ∧T], en minutes</text>
+<line class="hsep" x1="78.0" y1="90.0" x2="650.0" y2="90.0"/>
+<rect class="frame" x="78.0" y="96.0" width="572.0" height="146.0"/>
+<line class="gl" x1="78.0" y1="242.0" x2="650.0" y2="242.0"/>
+<text class="tk" x="73.0" y="241.0" text-anchor="end">0 min</text>
+<line class="gl" x1="78.0" y1="211.8" x2="650.0" y2="211.8"/>
+<text class="tk" x="73.0" y="214.8" text-anchor="end">40 min</text>
+<line class="gl" x1="78.0" y1="181.5" x2="650.0" y2="181.5"/>
+<text class="tk" x="73.0" y="184.5" text-anchor="end">80 min</text>
+<line class="gl" x1="78.0" y1="151.3" x2="650.0" y2="151.3"/>
+<text class="tk" x="73.0" y="154.3" text-anchor="end">120 min</text>
+<line class="gl" x1="78.0" y1="121.0" x2="650.0" y2="121.0"/>
+<text class="tk" x="73.0" y="124.0" text-anchor="end">160 min</text>
+<text class="tk" x="133.4" y="255.0" text-anchor="middle">normale</text>
+<text class="tk" x="225.6" y="255.0" text-anchor="middle">Student 5</text>
+<text class="tk" x="317.9" y="255.0" text-anchor="middle">Student 3</text>
+<text class="tk" x="410.1" y="255.0" text-anchor="middle">sauts</text>
+<text class="tk" x="502.4" y="255.0" text-anchor="middle">grappes</text>
+<text class="tk" x="594.6" y="255.0" text-anchor="middle">plancher</text>
+<line class="ba" x1="78.0" y1="242.0" x2="650.0" y2="242.0"/>
+<line class="lvl" x1="78.0" y1="155.3" x2="650.0" y2="155.3"/>
+<rect class="hm1" x="116.35" y="155.30" width="34.00" height="86.70"><title>Gaussienne — 114,7 min</title></rect>
+<rect class="hm2" x="208.61" y="153.24" width="34.00" height="88.76"><title>Student, 5 degrés — 117,4 min</title></rect>
+<rect class="hm3" x="300.87" y="144.63" width="34.00" height="97.37"><title>Student, 3 degrés — 128,8 min</title></rect>
+<rect class="hm4" x="393.13" y="152.47" width="34.00" height="89.53"><title>Sauts de Merton — 118,4 min</title></rect>
+<rect class="hm5" x="485.39" y="122.33" width="34.00" height="119.67"><title>Volatilité en grappes — 158,3 min</title></rect>
+<rect class="hm7" x="577.65" y="156.93" width="34.00" height="85.07"><title>Baisse plafonnée — 112,5 min</title></rect>
+<text class="dl halo" x="590.6" y="148.3" text-anchor="end">gaussienne</text>
+<text class="hdr" x="78.0" y="288.0">Seuil de rentabilité</text>
+<text class="read" x="650.0" y="288.0" text-anchor="end">µ* = c/E[τ∧T], en pt/h</text>
+<line class="hsep" x1="78.0" y1="294.0" x2="650.0" y2="294.0"/>
+<rect class="frame" x="78.0" y="300.0" width="572.0" height="146.0"/>
+<line class="gl" x1="78.0" y1="446.0" x2="650.0" y2="446.0"/>
+<text class="tk" x="73.0" y="445.0" text-anchor="end">0,00</text>
+<line class="gl" x1="78.0" y1="412.0" x2="650.0" y2="412.0"/>
+<text class="tk" x="73.0" y="415.0" text-anchor="end">0,05</text>
+<line class="gl" x1="78.0" y1="378.0" x2="650.0" y2="378.0"/>
+<text class="tk" x="73.0" y="381.0" text-anchor="end">0,10</text>
+<line class="gl" x1="78.0" y1="344.0" x2="650.0" y2="344.0"/>
+<text class="tk" x="73.0" y="347.0" text-anchor="end">0,15</text>
+<line class="gl" x1="78.0" y1="310.0" x2="650.0" y2="310.0"/>
+<text class="tk" x="73.0" y="313.0" text-anchor="end">0,20</text>
+<text class="tk" x="133.4" y="459.0" text-anchor="middle">normale</text>
+<text class="tk" x="225.6" y="459.0" text-anchor="middle">Student 5</text>
+<text class="tk" x="317.9" y="459.0" text-anchor="middle">Student 3</text>
+<text class="tk" x="410.1" y="459.0" text-anchor="middle">sauts</text>
+<text class="tk" x="502.4" y="459.0" text-anchor="middle">grappes</text>
+<text class="tk" x="594.6" y="459.0" text-anchor="middle">plancher</text>
+<line class="ba" x1="78.0" y1="446.0" x2="650.0" y2="446.0"/>
+<line class="lvl" x1="78.0" y1="328.6" x2="650.0" y2="328.6"/>
+<rect class="hm1" x="116.35" y="328.58" width="34.00" height="117.42"><title>Gaussienne — 0,173 pt/h</title></rect>
+<rect class="hm2" x="208.61" y="331.30" width="34.00" height="114.70"><title>Student, 5 degrés — 0,169 pt/h</title></rect>
+<rect class="hm3" x="300.87" y="341.45" width="34.00" height="104.55"><title>Student, 3 degrés — 0,154 pt/h</title></rect>
+<rect class="hm4" x="393.13" y="332.30" width="34.00" height="113.70"><title>Sauts de Merton — 0,167 pt/h</title></rect>
+<rect class="hm5" x="485.39" y="360.93" width="34.00" height="85.07"><title>Volatilité en grappes — 0,125 pt/h</title></rect>
+<rect class="hm7" x="577.65" y="326.33" width="34.00" height="119.67"><title>Baisse plafonnée — 0,176 pt/h</title></rect>
+<text class="dl halo" x="590.6" y="321.6" text-anchor="end">gaussienne</text>
+<text class="lg keep" x="0.0" y="486.0" text-anchor="start">filet horizontal : la gaussienne, prise pour repère · à variance égale, une queue plus épaisse allonge le trade,</text>
+<text class="lg keep" x="0.0" y="502.0" text-anchor="start">parce que ce qu’une loi met dans ses queues rares, elle le retire de sa minute ordinaire</text>
+
+</svg></div>
+      <p class="note">Le seuil est l’image exacte du temps, retournée : µ* = c/E[τ∧T], avec c = 0,33 point de friction. Les six lois s’étalent sur 40,7 % de seuil, quand le seul passage du stop de 0,050 % à 0,225 % en déplace 12,7 fois plus. La forme des queues compte donc, et elle compte moins que la première décision de géométrie que l’opérateur prend.</p>
+    </figure>
+
+  <p>Reste à ranger les deux effets l’un par rapport à l’autre, et c’est ce que les deux surfaces font. La première pose l’espérance sur le plan de l’épaisseur de queue et de la dérive.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 57</span> — L’espérance par décision sur le plan de la kurtosis et de la dérive. Un plan incliné, dont la pente n’a qu’une direction.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 470" role="img" aria-label="Espérance par décision sur le plan de la kurtosis et de la dérive : un plan incliné dans la seule direction de la dérive." preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ROBUSTESSE · L’ESPÉRANCE</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la dérive ajoute, ce que les queues n’ajoutent pas</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">hauteur : E[R] par décision</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="floor" x1="343.2" y1="232.0" x2="175.2" y2="284.0"/>
+<line class="floor" x1="385.2" y1="245.0" x2="217.2" y2="297.0"/>
+<line class="floor" x1="427.2" y1="258.0" x2="259.2" y2="310.0"/>
+<line class="floor" x1="469.2" y1="271.0" x2="301.2" y2="323.0"/>
+<line class="floor" x1="511.2" y1="284.0" x2="343.2" y2="336.0"/>
+<line class="floor" x1="343.2" y1="232.0" x2="511.2" y2="284.0"/>
+<line class="floor" x1="301.2" y1="245.0" x2="469.2" y2="297.0"/>
+<line class="floor" x1="259.2" y1="258.0" x2="427.2" y2="310.0"/>
+<line class="floor" x1="217.2" y1="271.0" x2="385.2" y2="323.0"/>
+<line class="floor" x1="175.2" y1="284.0" x2="343.2" y2="336.0"/>
+<line class="post" x1="343.2" y1="232.0" x2="343.2" y2="74.0"/>
+<line class="post" x1="511.2" y1="284.0" x2="511.2" y2="146.6"/>
+<line class="post" x1="343.2" y1="336.0" x2="343.2" y2="336.0"/>
+<line class="post" x1="175.2" y1="284.0" x2="175.2" y2="283.3"/>
+<path class="nuage hm6" stroke-width="4.66" d="M327.4,92.9h.01M322.2,99.2h.01M316.9,105.5h.01M332.7,96.1h.01M327.4,102.3h.01M343.2,93.0h.01M337.9,99.2h.01M348.4,96.2h.01"/>
+<path class="nuage hm7" stroke-width="4.87" d="M343.2,74.0h.01M337.9,80.3h.01M332.7,86.6h.01M348.4,77.2h.01M343.2,83.5h.01M337.9,89.8h.01M353.7,80.5h.01M348.4,86.7h.01M358.9,83.7h.01M353.7,90.0h.01M364.2,87.0h.01M358.9,93.2h.01M369.4,90.2h.01"/>
+<path class="nuage hm5" stroke-width="4.17" d="M301.2,124.4h.01M295.9,131.0h.01M290.7,137.6h.01M285.4,144.1h.01M311.7,121.2h.01M306.4,127.4h.01M301.2,133.9h.01M295.9,140.4h.01M316.9,124.2h.01M311.7,130.5h.01M306.4,136.9h.01M322.2,127.3h.01M316.9,133.5h.01M332.7,124.2h.01M327.4,130.4h.01M337.9,127.3h.01"/>
+<path class="nuage hm6" stroke-width="4.55" d="M311.7,111.8h.01M306.4,118.1h.01M322.2,108.6h.01M316.9,114.9h.01M332.7,105.5h.01M327.4,111.7h.01M322.2,118.0h.01M343.2,102.4h.01M337.9,108.6h.01M332.7,114.9h.01M327.4,121.1h.01M353.7,99.4h.01M348.4,105.6h.01M343.2,111.8h.01M337.9,118.0h.01M364.2,96.4h.01M358.9,102.6h.01M353.7,108.8h.01M348.4,114.9h.01M343.2,121.1h.01M369.4,99.6h.01M364.2,105.8h.01M358.9,111.9h.01M353.7,118.1h.01M348.4,124.2h.01M379.9,96.7h.01M374.7,102.9h.01M369.4,109.0h.01M364.2,115.1h.01M358.9,121.2h.01M385.2,100.0h.01M379.9,106.1h.01M374.7,112.2h.01M369.4,118.3h.01M390.4,102.2h.01M385.2,108.2h.01M379.9,114.3h.01M395.7,104.4h.01M390.4,110.4h.01M400.9,106.6h.01"/>
+<path class="nuage hm7" stroke-width="4.80" d="M374.7,93.5h.01"/>
+<path class="nuage hm3" stroke-width="3.34" d="M253.9,183.7h.01"/>
+<path class="nuage hm4" stroke-width="3.68" d="M280.2,150.7h.01M274.9,157.3h.01M269.7,163.9h.01M264.4,170.5h.01M259.2,177.0h.01M285.4,153.3h.01M280.2,159.8h.01M274.9,166.3h.01M269.7,172.8h.01M264.4,179.2h.01M290.7,155.9h.01M285.4,162.3h.01M280.2,168.7h.01M274.9,175.0h.01M295.9,158.6h.01M290.7,164.8h.01M285.4,171.1h.01M306.4,155.0h.01M301.2,161.2h.01M295.9,167.3h.01M311.7,157.7h.01M306.4,163.8h.01M316.9,160.5h.01"/>
+<path class="nuage hm5" stroke-width="4.08" d="M290.7,146.9h.01M301.2,143.2h.01M295.9,149.6h.01M311.7,139.8h.01M306.4,146.0h.01M301.2,152.3h.01M322.2,136.6h.01M316.9,142.7h.01M311.7,148.9h.01M332.7,133.4h.01M327.4,139.6h.01M322.2,145.7h.01M316.9,151.7h.01M343.2,130.4h.01M337.9,136.5h.01M332.7,142.6h.01M327.4,148.6h.01M322.2,154.5h.01M348.4,133.4h.01M343.2,139.6h.01M337.9,145.7h.01M332.7,151.5h.01M327.4,157.3h.01M358.9,130.4h.01M353.7,136.5h.01M348.4,142.6h.01M343.2,148.7h.01M337.9,154.5h.01M364.2,132.4h.01M358.9,138.4h.01M353.7,144.4h.01M348.4,150.5h.01M369.4,134.3h.01M364.2,140.3h.01M358.9,146.2h.01M374.7,136.2h.01M369.4,142.1h.01M379.9,138.1h.01"/>
+<path class="nuage hm6" stroke-width="4.50" d="M353.7,127.3h.01M364.2,124.4h.01M374.7,120.3h.01M369.4,126.3h.01M385.2,116.4h.01M379.9,122.3h.01M374.7,128.3h.01M395.7,112.6h.01M390.4,118.5h.01M385.2,124.4h.01M379.9,130.3h.01M406.2,108.9h.01M400.9,114.7h.01M395.7,120.6h.01M390.4,126.4h.01M385.2,132.3h.01M411.4,111.1h.01M406.2,116.9h.01M400.9,122.7h.01M395.7,128.5h.01M390.4,134.3h.01M416.7,113.3h.01M411.4,119.0h.01M406.2,124.8h.01M400.9,130.5h.01M421.9,115.5h.01M416.7,121.2h.01M411.4,126.9h.01M427.2,117.7h.01M421.9,123.3h.01M432.4,119.5h.01"/>
+<path class="nuage hm2" stroke-width="2.86" d="M232.9,210.1h.01M227.7,216.7h.01M222.4,223.4h.01M238.2,211.9h.01M232.9,218.5h.01M243.4,213.7h.01"/>
+<path class="nuage hm3" stroke-width="3.21" d="M248.7,190.3h.01M243.4,196.9h.01M238.2,203.5h.01M259.2,185.8h.01M253.9,192.3h.01M248.7,198.8h.01M243.4,205.4h.01M264.4,187.9h.01M259.2,194.3h.01M253.9,200.8h.01M248.7,207.3h.01M269.7,190.0h.01M264.4,196.4h.01M259.2,202.8h.01M253.9,209.1h.01M280.2,185.8h.01M274.9,192.1h.01M269.7,198.4h.01M264.4,204.7h.01M285.4,188.0h.01M280.2,194.2h.01M274.9,200.4h.01M290.7,190.1h.01M285.4,196.3h.01M295.9,192.3h.01"/>
+<path class="nuage hm4" stroke-width="3.64" d="M269.7,181.4h.01M280.2,177.3h.01M274.9,183.6h.01M290.7,173.5h.01M285.4,179.6h.01M301.2,169.8h.01M295.9,175.9h.01M290.7,181.9h.01M311.7,166.4h.01M306.4,172.3h.01M301.2,178.3h.01M295.9,184.2h.01M322.2,163.2h.01M316.9,169.0h.01M311.7,174.8h.01M306.4,180.7h.01M301.2,186.5h.01M332.7,160.2h.01M327.4,165.9h.01M322.2,171.6h.01M316.9,177.3h.01M311.7,183.1h.01M306.4,188.8h.01M337.9,162.1h.01M332.7,167.9h.01M327.4,173.7h.01M322.2,179.4h.01M316.9,185.2h.01M343.2,163.9h.01M337.9,169.8h.01M332.7,175.7h.01M327.4,181.5h.01M348.4,165.8h.01M343.2,171.8h.01M337.9,177.7h.01M353.7,167.7h.01M348.4,173.7h.01M358.9,169.6h.01"/>
+<path class="nuage hm5" stroke-width="4.10" d="M343.2,156.3h.01M353.7,152.2h.01M348.4,158.1h.01M364.2,148.0h.01M358.9,154.0h.01M353.7,159.9h.01M374.7,144.0h.01M369.4,149.9h.01M364.2,155.7h.01M358.9,161.7h.01M385.2,140.1h.01M379.9,145.9h.01M374.7,151.7h.01M369.4,157.5h.01M364.2,163.5h.01M390.4,142.0h.01M385.2,147.7h.01M379.9,153.5h.01M374.7,159.2h.01M369.4,165.4h.01M395.7,143.9h.01M390.4,149.6h.01M385.2,155.3h.01M379.9,160.9h.01M400.9,145.8h.01M395.7,151.4h.01M390.4,157.1h.01M411.4,142.1h.01M406.2,147.8h.01M400.9,153.4h.01M416.7,144.0h.01M411.4,149.7h.01M421.9,145.9h.01"/>
+<path class="nuage hm6" stroke-width="4.49" d="M395.7,136.2h.01M406.2,132.5h.01M400.9,138.2h.01M416.7,129.0h.01M411.4,134.6h.01M406.2,140.2h.01M427.2,125.2h.01M421.9,130.8h.01M416.7,136.5h.01M437.7,121.3h.01M432.4,127.0h.01M427.2,132.7h.01M421.9,138.3h.01M442.9,123.1h.01M437.7,128.8h.01M432.4,134.5h.01M427.2,140.2h.01M448.2,124.9h.01M442.9,130.7h.01M437.7,136.4h.01M432.4,142.1h.01M453.4,126.7h.01M448.2,132.5h.01M442.9,138.2h.01M458.7,128.6h.01M453.4,134.3h.01M463.9,130.4h.01"/>
+<path class="nuage hm1" stroke-width="2.33" d="M206.7,243.3h.01M201.4,250.0h.01M196.2,256.6h.01M190.9,263.3h.01M211.9,244.8h.01M206.7,251.4h.01M201.4,258.0h.01M217.2,246.2h.01M211.9,252.8h.01M222.4,247.7h.01"/>
+<path class="nuage hm2" stroke-width="2.73" d="M217.2,230.0h.01M211.9,236.6h.01M227.7,225.0h.01M222.4,231.5h.01M217.2,238.2h.01M238.2,220.2h.01M232.9,226.7h.01M227.7,233.1h.01M222.4,239.7h.01M248.7,215.5h.01M243.4,221.9h.01M238.2,228.3h.01M232.9,234.7h.01M227.7,241.2h.01M253.9,217.3h.01M248.7,223.6h.01M243.4,229.9h.01M238.2,236.2h.01M232.9,242.7h.01M259.2,219.1h.01M253.9,225.4h.01M248.7,231.6h.01M243.4,237.8h.01M264.4,220.9h.01M259.2,227.1h.01M253.9,233.2h.01M269.7,222.7h.01M264.4,228.8h.01M274.9,224.5h.01"/>
+<path class="nuage hm3" stroke-width="3.19" d="M259.2,211.0h.01M269.7,206.7h.01M264.4,212.9h.01M280.2,202.5h.01M274.9,208.6h.01M269.7,214.8h.01M290.7,198.4h.01M285.4,204.5h.01M280.2,210.6h.01M274.9,216.6h.01M301.2,194.5h.01M295.9,200.5h.01M290.7,206.5h.01M285.4,212.5h.01M280.2,218.5h.01M306.4,196.8h.01M301.2,202.8h.01M295.9,208.8h.01M290.7,214.8h.01M285.4,220.8h.01M311.7,199.1h.01M306.4,205.1h.01M301.2,211.1h.01M295.9,217.1h.01M322.2,195.5h.01M316.9,201.5h.01M311.7,207.4h.01M306.4,213.4h.01M327.4,197.8h.01M322.2,203.8h.01M316.9,209.7h.01M332.7,200.0h.01M327.4,206.1h.01M337.9,202.2h.01"/>
+<path class="nuage hm4" stroke-width="3.62" d="M311.7,191.0h.01M322.2,187.4h.01M316.9,193.3h.01M332.7,183.6h.01M327.4,189.6h.01M343.2,179.7h.01M337.9,185.7h.01M332.7,191.8h.01M353.7,175.7h.01M348.4,181.8h.01M343.2,187.8h.01M337.9,193.9h.01M364.2,171.5h.01M358.9,177.6h.01M353.7,183.8h.01M348.4,189.9h.01M343.2,196.1h.01M369.4,173.4h.01M364.2,179.6h.01M358.9,185.8h.01M353.7,192.0h.01M348.4,198.3h.01M374.7,175.3h.01M369.4,181.6h.01M364.2,187.9h.01M358.9,194.1h.01M379.9,177.2h.01M374.7,183.5h.01M369.4,189.8h.01M385.2,179.2h.01M379.9,185.4h.01M390.4,181.1h.01"/>
+<path class="nuage hm5" stroke-width="4.09" d="M374.7,167.2h.01M385.2,162.7h.01M379.9,169.0h.01M395.7,159.0h.01M390.4,164.7h.01M385.2,171.0h.01M406.2,155.4h.01M400.9,161.0h.01M395.7,166.7h.01M390.4,172.9h.01M416.7,151.6h.01M411.4,157.3h.01M406.2,163.0h.01M400.9,168.7h.01M395.7,174.9h.01M427.2,147.8h.01M421.9,153.5h.01M416.7,159.3h.01M411.4,165.0h.01M406.2,170.7h.01M400.9,176.9h.01M432.4,149.7h.01M427.2,155.5h.01M421.9,161.2h.01M416.7,167.0h.01M411.4,172.7h.01M437.7,151.6h.01M432.4,157.4h.01M427.2,163.2h.01M421.9,168.9h.01M442.9,153.5h.01M437.7,159.3h.01M432.4,165.1h.01M448.2,155.4h.01M442.9,161.3h.01M453.4,157.3h.01"/>
+<path class="nuage hm6" stroke-width="4.48" d="M437.7,144.0h.01M448.2,140.1h.01M442.9,145.9h.01M458.7,136.2h.01M453.4,141.9h.01M448.2,147.7h.01M469.2,132.2h.01M463.9,138.0h.01M458.7,143.8h.01M453.4,149.6h.01M474.4,134.0h.01M469.2,139.8h.01M463.9,145.6h.01M458.7,151.5h.01M479.7,135.8h.01M474.4,141.6h.01M469.2,147.5h.01M463.9,153.3h.01M484.9,137.6h.01M479.7,143.4h.01M474.4,149.3h.01M490.2,139.4h.01M484.9,145.2h.01M495.4,141.2h.01"/>
+<path class="nuage hm0" stroke-width="1.91" d="M185.7,270.0h.01M180.4,276.7h.01M175.2,283.3h.01M190.9,271.2h.01M185.7,277.9h.01M180.4,284.5h.01M190.9,279.1h.01M185.7,285.6h.01M196.2,280.3h.01"/>
+<path class="nuage hm1" stroke-width="2.26" d="M196.2,264.6h.01M206.7,259.4h.01M201.4,265.9h.01M196.2,272.5h.01M217.2,254.2h.01M211.9,260.7h.01M206.7,267.2h.01M201.4,273.8h.01M227.7,249.2h.01M222.4,255.6h.01M217.2,262.1h.01M211.9,268.6h.01M206.7,275.0h.01M232.9,250.6h.01M227.7,257.0h.01M222.4,263.5h.01M217.2,269.9h.01M238.2,252.1h.01M232.9,258.5h.01M227.7,264.8h.01M243.4,253.6h.01M238.2,259.9h.01M248.7,255.0h.01"/>
+<path class="nuage hm2" stroke-width="2.73" d="M238.2,244.2h.01M248.7,239.4h.01M243.4,245.7h.01M259.2,234.9h.01M253.9,240.9h.01M248.7,247.3h.01M269.7,230.5h.01M264.4,236.5h.01M259.2,242.5h.01M253.9,248.8h.01M280.2,226.8h.01M274.9,232.8h.01M269.7,238.8h.01M264.4,244.8h.01M259.2,251.0h.01M285.4,229.1h.01M280.2,235.0h.01M274.9,241.0h.01M269.7,247.0h.01M290.7,231.3h.01M285.4,237.3h.01M280.2,243.3h.01M301.2,227.6h.01M295.9,233.6h.01M290.7,239.6h.01M306.4,229.9h.01M301.2,235.9h.01M311.7,232.2h.01"/>
+<path class="nuage hm3" stroke-width="3.15" d="M290.7,223.1h.01M301.2,219.4h.01M295.9,225.4h.01M311.7,215.7h.01M306.4,221.7h.01M322.2,212.0h.01M316.9,218.0h.01M311.7,224.0h.01M332.7,208.4h.01M327.4,214.3h.01M322.2,220.3h.01M316.9,226.2h.01M343.2,204.5h.01M337.9,210.7h.01M332.7,216.7h.01M327.4,222.6h.01M322.2,228.5h.01M348.4,206.7h.01M343.2,213.0h.01M337.9,219.0h.01M332.7,224.9h.01M353.7,208.6h.01M348.4,214.8h.01M343.2,220.8h.01M358.9,210.4h.01M353.7,216.6h.01M364.2,212.2h.01"/>
+<path class="nuage hm4" stroke-width="3.63" d="M353.7,200.4h.01M364.2,196.0h.01M358.9,202.3h.01M374.7,191.7h.01M369.4,197.9h.01M364.2,204.2h.01M385.2,187.4h.01M379.9,193.6h.01M374.7,199.8h.01M369.4,206.0h.01M395.7,183.1h.01M390.4,189.3h.01M385.2,195.5h.01M379.9,201.7h.01M374.7,207.9h.01M400.9,185.0h.01M395.7,191.2h.01M390.4,197.4h.01M385.2,203.6h.01M411.4,180.9h.01M406.2,187.0h.01M400.9,193.2h.01M395.7,199.3h.01M416.7,182.8h.01M411.4,189.0h.01M406.2,195.1h.01M421.9,184.8h.01M416.7,190.9h.01M427.2,186.7h.01"/>
+<path class="nuage hm5" stroke-width="4.08" d="M406.2,178.9h.01M416.7,174.7h.01M427.2,170.9h.01M421.9,176.7h.01M437.7,167.1h.01M432.4,172.9h.01M427.2,178.7h.01M448.2,163.1h.01M442.9,169.0h.01M437.7,174.8h.01M432.4,180.6h.01M458.7,159.2h.01M453.4,165.0h.01M448.2,170.9h.01M442.9,176.7h.01M437.7,182.6h.01M463.9,161.0h.01M458.7,166.9h.01M453.4,172.7h.01M448.2,178.6h.01M469.2,162.9h.01M463.9,168.8h.01M458.7,174.6h.01M474.4,164.7h.01M469.2,170.6h.01M479.7,166.6h.01"/>
+<path class="nuage hm6" stroke-width="4.44" d="M469.2,155.2h.01M479.7,151.1h.01M474.4,157.0h.01M490.2,147.1h.01M484.9,153.0h.01M479.7,158.8h.01M500.7,143.0h.01M495.4,148.9h.01M490.2,154.8h.01M484.9,160.7h.01M505.9,144.8h.01M500.7,150.7h.01M495.4,156.6h.01M490.2,162.5h.01M511.2,146.6h.01M505.9,152.5h.01M500.7,158.4h.01"/>
+<path class="nuage hm0" stroke-width="1.92" d="M190.9,286.8h.01M201.4,281.5h.01M196.2,287.9h.01M206.7,282.7h.01M201.4,289.1h.01M211.9,283.9h.01M206.7,290.3h.01M217.2,285.1h.01M211.9,291.4h.01M222.4,286.3h.01M217.2,292.6h.01M227.7,288.1h.01"/>
+<path class="nuage hm1" stroke-width="2.26" d="M211.9,276.3h.01M222.4,271.2h.01M217.2,277.5h.01M232.9,266.2h.01M227.7,272.5h.01M222.4,278.8h.01M243.4,261.3h.01M238.2,267.5h.01M232.9,273.8h.01M227.7,280.1h.01M253.9,257.1h.01M248.7,263.3h.01M243.4,269.5h.01M238.2,275.7h.01M232.9,281.9h.01M259.2,259.2h.01M253.9,265.4h.01M248.7,271.5h.01M243.4,277.6h.01M238.2,283.7h.01M264.4,261.4h.01M259.2,267.4h.01M253.9,273.5h.01M248.7,279.5h.01M269.7,263.5h.01M264.4,269.4h.01M259.2,275.4h.01M274.9,265.6h.01M269.7,271.5h.01M285.4,261.8h.01M280.2,267.7h.01M290.7,264.0h.01"/>
+<path class="nuage hm2" stroke-width="2.70" d="M264.4,253.1h.01M274.9,249.3h.01M269.7,255.3h.01M285.4,245.5h.01M280.2,251.5h.01M274.9,257.5h.01M295.9,241.8h.01M290.7,247.8h.01M285.4,253.8h.01M280.2,259.7h.01M306.4,238.1h.01M301.2,244.1h.01M295.9,250.1h.01M290.7,256.0h.01M316.9,234.5h.01M311.7,240.4h.01M306.4,246.4h.01M301.2,252.3h.01M295.9,258.3h.01M322.2,236.8h.01M316.9,242.7h.01M311.7,248.6h.01M306.4,254.6h.01M301.2,260.5h.01M327.4,238.5h.01M322.2,244.5h.01M316.9,250.4h.01M311.7,256.3h.01M332.7,240.3h.01M327.4,246.2h.01M322.2,252.2h.01M337.9,242.1h.01M332.7,248.0h.01M343.2,243.9h.01"/>
+<path class="nuage hm3" stroke-width="3.17" d="M327.4,230.8h.01M337.9,226.7h.01M332.7,232.6h.01M348.4,222.6h.01M343.2,228.5h.01M337.9,234.4h.01M358.9,218.4h.01M353.7,224.4h.01M348.4,230.3h.01M343.2,236.2h.01M369.4,214.1h.01M364.2,220.3h.01M358.9,226.2h.01M353.7,232.1h.01M348.4,238.0h.01M374.7,215.9h.01M369.4,222.1h.01M364.2,228.0h.01M358.9,233.9h.01M353.7,239.8h.01M385.2,211.6h.01M379.9,217.7h.01M374.7,223.9h.01M369.4,229.8h.01M364.2,235.7h.01M390.4,213.4h.01M385.2,219.6h.01M379.9,225.7h.01M374.7,231.6h.01M395.7,215.3h.01M390.4,221.4h.01M385.2,227.5h.01M400.9,217.0h.01M395.7,223.0h.01M406.2,218.7h.01"/>
+<path class="nuage hm4" stroke-width="3.64" d="M379.9,209.7h.01M390.4,205.4h.01M400.9,201.2h.01M395.7,207.3h.01M411.4,197.0h.01M406.2,203.1h.01M400.9,209.2h.01M421.9,192.8h.01M416.7,198.8h.01M411.4,204.9h.01M406.2,210.9h.01M432.4,188.6h.01M427.2,194.6h.01M421.9,200.6h.01M416.7,206.6h.01M411.4,212.6h.01M437.7,190.5h.01M432.4,196.4h.01M427.2,202.4h.01M421.9,208.4h.01M416.7,214.4h.01M442.9,192.3h.01M437.7,198.3h.01M432.4,204.2h.01M427.2,210.1h.01M448.2,194.2h.01M442.9,200.1h.01M437.7,206.0h.01M453.4,196.1h.01M448.2,201.9h.01M458.7,198.0h.01"/>
+<path class="nuage hm5" stroke-width="4.03" d="M442.9,184.5h.01M453.4,180.5h.01M448.2,186.4h.01M463.9,176.5h.01M458.7,182.4h.01M453.4,188.3h.01M474.4,172.5h.01M469.2,178.4h.01M463.9,184.3h.01M458.7,190.2h.01M484.9,168.5h.01M479.7,174.4h.01M474.4,180.3h.01M469.2,186.2h.01M463.9,192.1h.01M490.2,170.3h.01M484.9,176.3h.01M479.7,182.2h.01M474.4,188.1h.01M469.2,194.1h.01"/>
+<path class="nuage hm6" stroke-width="4.32" d="M495.4,164.4h.01"/>
+<path class="nuage hm0" stroke-width="1.93" d="M222.4,294.3h.01M232.9,289.8h.01M227.7,296.0h.01M238.2,291.6h.01M232.9,297.6h.01M243.4,293.4h.01M238.2,299.3h.01M248.7,295.1h.01M243.4,301.0h.01M253.9,296.9h.01M248.7,302.7h.01M259.2,298.6h.01"/>
+<path class="nuage hm1" stroke-width="2.25" d="M243.4,285.6h.01M253.9,281.4h.01M248.7,287.4h.01M264.4,277.4h.01M259.2,283.3h.01M253.9,289.2h.01M274.9,273.5h.01M269.7,279.4h.01M264.4,285.2h.01M259.2,291.0h.01M285.4,269.8h.01M280.2,275.6h.01M274.9,281.3h.01M269.7,287.1h.01M264.4,292.9h.01M295.9,266.2h.01M290.7,271.9h.01M285.4,277.6h.01M280.2,283.3h.01M274.9,289.0h.01M269.7,294.7h.01M301.2,268.0h.01M295.9,273.7h.01M290.7,279.5h.01M285.4,285.2h.01M280.2,291.0h.01M306.4,269.8h.01M301.2,275.6h.01M295.9,281.4h.01M290.7,287.1h.01M311.7,271.6h.01M306.4,277.4h.01M301.2,283.2h.01M316.9,273.4h.01M311.7,279.3h.01M322.2,275.2h.01"/>
+<path class="nuage hm2" stroke-width="2.70" d="M306.4,262.3h.01M316.9,258.1h.01M311.7,264.0h.01M327.4,253.9h.01M322.2,259.9h.01M316.9,265.8h.01M337.9,249.8h.01M332.7,255.7h.01M327.4,261.6h.01M322.2,267.5h.01M348.4,245.7h.01M343.2,251.6h.01M337.9,257.5h.01M332.7,263.4h.01M327.4,269.3h.01M353.7,247.5h.01M348.4,253.4h.01M343.2,259.2h.01M337.9,265.1h.01M332.7,271.0h.01M358.9,249.2h.01M353.7,255.1h.01M348.4,261.0h.01M343.2,266.9h.01M364.2,251.0h.01M358.9,256.9h.01M353.7,262.8h.01M369.4,252.7h.01M364.2,258.6h.01M374.7,254.4h.01"/>
+<path class="nuage hm3" stroke-width="3.17" d="M358.9,241.6h.01M369.4,237.5h.01M364.2,243.4h.01M379.9,233.4h.01M374.7,239.3h.01M369.4,245.1h.01M390.4,229.1h.01M385.2,235.0h.01M379.9,240.9h.01M374.7,246.8h.01M400.9,224.7h.01M395.7,230.7h.01M390.4,236.6h.01M385.2,242.5h.01M379.9,248.5h.01M411.4,220.3h.01M406.2,226.3h.01M400.9,232.3h.01M395.7,238.2h.01M390.4,244.2h.01M385.2,250.1h.01M416.7,222.0h.01M411.4,227.9h.01M406.2,233.9h.01M400.9,239.8h.01M395.7,245.8h.01M421.9,223.7h.01M416.7,229.6h.01M411.4,235.5h.01M406.2,241.5h.01M427.2,225.4h.01M421.9,231.2h.01M416.7,237.1h.01M432.4,227.0h.01M427.2,232.8h.01M437.7,228.7h.01"/>
+<path class="nuage hm4" stroke-width="3.58" d="M421.9,216.1h.01M432.4,211.9h.01M427.2,217.8h.01M442.9,207.8h.01M437.7,213.6h.01M432.4,219.5h.01M453.4,203.8h.01M448.2,209.6h.01M442.9,215.4h.01M437.7,221.2h.01M463.9,199.8h.01M458.7,205.6h.01M453.4,211.4h.01M448.2,217.2h.01M442.9,222.9h.01"/>
+<path class="nuage hm0" stroke-width="1.93" d="M253.9,304.4h.01M264.4,300.4h.01M259.2,306.1h.01M269.7,302.4h.01M264.4,308.2h.01M274.9,304.5h.01M269.7,310.3h.01M285.4,300.7h.01M280.2,306.5h.01M274.9,312.4h.01M290.7,302.7h.01M285.4,308.6h.01M280.2,314.5h.01M295.9,304.7h.01M290.7,310.6h.01M301.2,306.7h.01"/>
+<path class="nuage hm1" stroke-width="2.25" d="M274.9,296.7h.01M285.4,292.9h.01M280.2,298.7h.01M295.9,289.1h.01M290.7,294.9h.01M306.4,285.1h.01M301.2,291.0h.01M295.9,296.9h.01M316.9,281.1h.01M311.7,287.0h.01M306.4,292.9h.01M301.2,298.8h.01M327.4,277.0h.01M322.2,282.9h.01M316.9,288.9h.01M311.7,294.8h.01M306.4,300.8h.01M332.7,278.8h.01M327.4,284.8h.01M322.2,290.8h.01M316.9,296.8h.01M311.7,302.8h.01M337.9,280.6h.01M332.7,286.6h.01M327.4,292.6h.01M322.2,298.7h.01M343.2,282.3h.01M337.9,288.3h.01M332.7,294.4h.01M348.4,284.1h.01M343.2,290.1h.01M353.7,285.8h.01"/>
+<path class="nuage hm2" stroke-width="2.68" d="M337.9,272.8h.01M348.4,268.7h.01M343.2,274.5h.01M358.9,264.5h.01M353.7,270.4h.01M348.4,276.3h.01M369.4,260.3h.01M364.2,266.2h.01M358.9,272.1h.01M353.7,278.1h.01M379.9,256.1h.01M374.7,262.0h.01M369.4,267.9h.01M364.2,273.9h.01M358.9,279.8h.01M385.2,257.7h.01M379.9,263.7h.01M374.7,269.7h.01M369.4,275.6h.01M364.2,281.6h.01M390.4,259.4h.01M385.2,265.4h.01M379.9,271.4h.01M374.7,277.4h.01M395.7,261.1h.01M390.4,267.1h.01M385.2,273.1h.01M400.9,262.8h.01M395.7,268.8h.01M406.2,264.4h.01"/>
+<path class="nuage hm3" stroke-width="3.06" d="M390.4,251.8h.01M400.9,247.4h.01M395.7,253.4h.01M411.4,243.1h.01M406.2,249.1h.01M400.9,255.1h.01M421.9,238.7h.01M416.7,244.7h.01M411.4,250.7h.01M406.2,256.7h.01M432.4,234.5h.01M427.2,240.3h.01M421.9,246.3h.01M416.7,252.3h.01M411.4,258.4h.01"/>
+<path class="nuage hm0" stroke-width="1.90" d="M285.4,316.5h.01M295.9,312.7h.01M290.7,318.6h.01M306.4,308.7h.01M301.2,314.7h.01M295.9,320.7h.01M311.7,310.8h.01M306.4,316.8h.01M301.2,322.8h.01M316.9,312.4h.01M311.7,318.4h.01M306.4,324.5h.01M322.2,314.1h.01M316.9,320.1h.01M311.7,326.1h.01M327.4,315.8h.01M322.2,321.8h.01M332.7,317.5h.01"/>
+<path class="nuage hm1" stroke-width="2.24" d="M316.9,304.7h.01M327.4,300.4h.01M322.2,306.4h.01M337.9,296.1h.01M332.7,302.1h.01M327.4,308.1h.01M348.4,291.8h.01M343.2,297.8h.01M337.9,303.8h.01M332.7,309.8h.01M358.9,287.6h.01M353.7,293.5h.01M348.4,299.5h.01M343.2,305.5h.01M337.9,311.5h.01M364.2,289.3h.01M358.9,295.3h.01M353.7,301.2h.01M348.4,307.2h.01M343.2,313.2h.01M369.4,291.0h.01M364.2,297.0h.01M358.9,302.9h.01M353.7,308.9h.01M374.7,292.8h.01M369.4,298.7h.01M364.2,304.7h.01M379.9,294.5h.01M374.7,300.5h.01"/>
+<path class="nuage hm2" stroke-width="2.59" d="M369.4,283.3h.01M379.9,279.1h.01M374.7,285.1h.01M390.4,274.8h.01M385.2,280.8h.01M379.9,286.9h.01M400.9,270.5h.01M395.7,276.5h.01M390.4,282.6h.01M385.2,288.6h.01"/>
+<path class="nuage hm0" stroke-width="1.88" d="M316.9,327.8h.01M327.4,323.4h.01M322.2,329.4h.01M337.9,319.1h.01M332.7,325.1h.01M327.4,331.1h.01M343.2,320.8h.01M337.9,326.8h.01M332.7,332.7h.01M348.4,322.5h.01M343.2,328.4h.01M337.9,334.4h.01M353.7,324.2h.01M348.4,330.1h.01"/>
+<path class="nuage hm1" stroke-width="2.12" d="M348.4,314.9h.01M358.9,310.6h.01M353.7,316.5h.01M369.4,306.4h.01M364.2,312.3h.01M358.9,318.2h.01"/>
+<path class="nuage hm0" stroke-width="1.80" d="M343.2,336.0h.01"/>
+<circle class="noeud hm7" cx="343.2" cy="74.0" r="2.6"><title>+0.768 R</title></circle>
+<circle class="noeud hm5" cx="301.2" cy="124.4" r="2.6"><title>+0.575 R</title></circle>
+<circle class="noeud hm6" cx="385.2" cy="100.0" r="2.6"><title>+0.701 R</title></circle>
+<circle class="noeud hm4" cx="259.2" cy="177.0" r="2.6"><title>+0.371 R</title></circle>
+<circle class="noeud hm5" cx="343.2" cy="148.7" r="2.6"><title>+0.517 R</title></circle>
+<circle class="noeud hm6" cx="427.2" cy="117.7" r="2.6"><title>+0.676 R</title></circle>
+<circle class="noeud hm2" cx="217.2" cy="230.0" r="2.6"><title>+0.166 R</title></circle>
+<circle class="noeud hm3" cx="301.2" cy="194.5" r="2.6"><title>+0.348 R</title></circle>
+<circle class="noeud hm5" cx="385.2" cy="162.7" r="2.6"><title>+0.512 R</title></circle>
+<circle class="noeud hm6" cx="469.2" cy="132.2" r="2.6"><title>+0.669 R</title></circle>
+<circle class="noeud hm0" cx="175.2" cy="283.3" r="2.6"><title>-0.042 R</title></circle>
+<circle class="noeud hm2" cx="259.2" cy="242.5" r="2.6"><title>+0.168 R</title></circle>
+<circle class="noeud hm3" cx="343.2" cy="213.0" r="2.6"><title>+0.320 R</title></circle>
+<circle class="noeud hm5" cx="427.2" cy="178.7" r="2.6"><title>+0.496 R</title></circle>
+<circle class="noeud hm6" cx="511.2" cy="146.6" r="2.6"><title>+0.662 R</title></circle>
+<circle class="noeud hm0" cx="217.2" cy="292.6" r="2.6"><title>-0.022 R</title></circle>
+<circle class="noeud hm2" cx="301.2" cy="260.5" r="2.6"><title>+0.143 R</title></circle>
+<circle class="noeud hm3" cx="385.2" cy="227.5" r="2.6"><title>+0.312 R</title></circle>
+<circle class="noeud hm5" cx="469.2" cy="194.1" r="2.6"><title>+0.484 R</title></circle>
+<circle class="noeud hm0" cx="259.2" cy="306.1" r="2.6"><title>-0.025 R</title></circle>
+<circle class="noeud hm2" cx="343.2" cy="274.5" r="2.6"><title>+0.137 R</title></circle>
+<circle class="noeud hm3" cx="427.2" cy="240.3" r="2.6"><title>+0.314 R</title></circle>
+<circle class="noeud hm0" cx="301.2" cy="322.8" r="2.6"><title>-0.044 R</title></circle>
+<circle class="noeud hm2" cx="385.2" cy="288.6" r="2.6"><title>+0.132 R</title></circle>
+<circle class="noeud hm0" cx="343.2" cy="336.0" r="2.6"><title>-0.045 R</title></circle>
+<line class="ba" x1="141.2" y1="126.0" x2="141.2" y2="284.0"/>
+<line class="ba" x1="141.2" y1="284.0" x2="146.2" y2="284.0"/>
+<text class="tk" x="136.2" y="287.5" text-anchor="end">−0,05</text>
+<line class="ba" x1="141.2" y1="236.3" x2="146.2" y2="236.3"/>
+<text class="tk" x="136.2" y="239.8" text-anchor="end">+0,20</text>
+<line class="ba" x1="141.2" y1="187.7" x2="146.2" y2="187.7"/>
+<text class="tk" x="136.2" y="191.2" text-anchor="end">+0,45</text>
+<line class="ba" x1="141.2" y1="139.1" x2="146.2" y2="139.1"/>
+<text class="tk" x="136.2" y="142.6" text-anchor="end">+0,70</text>
+<text class="tk halo" x="164.2" y="299.0" text-anchor="end">35,5</text>
+<text class="tk halo" x="206.2" y="312.0" text-anchor="end">12,8</text>
+<text class="tk halo" x="248.2" y="325.0" text-anchor="end">3,9</text>
+<text class="tk halo" x="290.2" y="338.0" text-anchor="end">0,6</text>
+<text class="tk halo" x="332.2" y="351.0" text-anchor="end">0,0</text>
+<text class="tk halo" x="522.2" y="310.0">3,2 pt/h</text>
+<text class="tk halo" x="480.2" y="323.0">2,4 pt/h</text>
+<text class="tk halo" x="438.2" y="336.0">1,6 pt/h</text>
+<text class="tk halo" x="396.2" y="349.0">0,8 pt/h</text>
+<text class="tk halo" x="354.2" y="362.0">0,0 pt/h</text>
+<text class="lg keep" x="0.0" y="396.0" text-anchor="start">arête gauche : kurtosis excédentaire, de 0 à 35,5 · arête droite : dérive du marché, en points par heure</text>
+<text class="lg keep" x="0.0" y="412.0" text-anchor="start">la pente n’a qu’une direction : celle de la dérive</text>
+<text class="lg keep" x="0.0" y="428.0" text-anchor="start">sur l’arête la plus proche, la dérive est nulle et le relief est plat</text>
+
+</svg></div>
+      <p class="note">La famille de lois est continue : un mélange d’échelles à deux points, à variance constante, dont la kurtosis se règle par une formule. Toutes les cellules voient le même flux de nombres aléatoires — la graine ne dépend que de l’indice de trajectoire, jamais de la cellule — et c’est ce qui rend le relief lisse sans qu’aucun lissage soit appliqué. Le long de l’arête à dérive nulle, l’espérance moyenne vaut −0,0357 R pour une prédiction de −0,0367 R, et l’étendue de toute l’arête vaut 0,0227 R.</p>
+    </figure>
+
+  <p>Le relief monte le long de l’axe de la dérive et reste plat le long de l’axe des queues. Sur l’arête la plus proche du lecteur, celle de la dérive nulle, l’espérance moyenne vaut −0,0357&nbsp;R pour une prédiction de −0,0367, et l’étendue de toute l’arête — d’une kurtosis excédentaire nulle à 35,5 — vaut 0,0227&nbsp;R. C’est le théorème, dessiné.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 58</span> — Le seuil de rentabilité sur le plan de la kurtosis et de la largeur de stop. Les deux axes le déplacent&nbsp;; ils ne le déplacent pas dans le même rapport.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 470" role="img" aria-label="Seuil de rentabilité sur le plan de la kurtosis et de la largeur de stop." preserveAspectRatio="xMidYMid meet">
+<text class="tk" x="0" y="11" style="letter-spacing:.11em">ROBUSTESSE · LE SEUIL</text>
+<text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Les queues déplacent le seuil, la géométrie bien plus</text>
+<text class="tk" x="660.0" y="31" text-anchor="end">hauteur : µ* en pt/h</text>
+<line class="ba" x1="0" y1="38.0" x2="660.0" y2="38.0"/>
+<line class="floor" x1="343.2" y1="232.0" x2="175.2" y2="284.0"/>
+<line class="floor" x1="385.2" y1="245.0" x2="217.2" y2="297.0"/>
+<line class="floor" x1="427.2" y1="258.0" x2="259.2" y2="310.0"/>
+<line class="floor" x1="469.2" y1="271.0" x2="301.2" y2="323.0"/>
+<line class="floor" x1="511.2" y1="284.0" x2="343.2" y2="336.0"/>
+<line class="floor" x1="343.2" y1="232.0" x2="511.2" y2="284.0"/>
+<line class="floor" x1="301.2" y1="245.0" x2="469.2" y2="297.0"/>
+<line class="floor" x1="259.2" y1="258.0" x2="427.2" y2="310.0"/>
+<line class="floor" x1="217.2" y1="271.0" x2="385.2" y2="323.0"/>
+<line class="floor" x1="175.2" y1="284.0" x2="343.2" y2="336.0"/>
+<line class="post" x1="343.2" y1="232.0" x2="343.2" y2="74.0"/>
+<line class="post" x1="511.2" y1="284.0" x2="511.2" y2="196.2"/>
+<line class="post" x1="343.2" y1="336.0" x2="343.2" y2="336.0"/>
+<line class="post" x1="175.2" y1="284.0" x2="175.2" y2="283.1"/>
+<path class="nuage hm5" stroke-width="4.05" d="M322.2,123.6h.01M316.9,136.0h.01M327.4,125.4h.01"/>
+<path class="nuage hm6" stroke-width="4.55" d="M332.7,98.8h.01M327.4,111.2h.01M337.9,100.7h.01M332.7,113.0h.01M348.4,90.2h.01M343.2,102.5h.01M337.9,114.8h.01M353.7,92.1h.01M348.4,104.4h.01M358.9,94.0h.01"/>
+<path class="nuage hm7" stroke-width="4.93" d="M343.2,74.0h.01M337.9,86.4h.01M348.4,75.9h.01M343.2,88.3h.01M353.7,77.8h.01M358.9,79.8h.01M364.2,81.7h.01M369.4,83.6h.01"/>
+<path class="nuage hm3" stroke-width="3.17" d="M301.2,173.2h.01M295.9,179.0h.01M290.7,184.9h.01M285.4,190.8h.01M306.4,174.8h.01M301.2,180.7h.01M295.9,186.6h.01M311.7,176.5h.01M306.4,182.4h.01M316.9,178.2h.01"/>
+<path class="nuage hm4" stroke-width="3.59" d="M311.7,148.4h.01M306.4,160.8h.01M316.9,150.1h.01M311.7,162.5h.01M322.2,151.8h.01M316.9,164.2h.01M327.4,153.6h.01M322.2,165.9h.01M332.7,155.3h.01M327.4,167.6h.01M337.9,157.1h.01"/>
+<path class="nuage hm5" stroke-width="4.03" d="M322.2,137.7h.01M332.7,127.2h.01M327.4,139.5h.01M337.9,129.0h.01M332.7,141.3h.01M343.2,130.8h.01M337.9,143.1h.01M348.4,132.6h.01M343.2,144.8h.01M353.7,134.4h.01M348.4,146.6h.01M358.9,136.2h.01M369.4,125.8h.01"/>
+<path class="nuage hm6" stroke-width="4.54" d="M343.2,116.7h.01M353.7,106.2h.01M348.4,118.5h.01M364.2,95.9h.01M358.9,108.1h.01M353.7,120.3h.01M369.4,97.7h.01M364.2,110.0h.01M358.9,122.2h.01M374.7,99.6h.01M369.4,111.8h.01M364.2,124.0h.01M379.9,101.5h.01M374.7,113.7h.01M385.2,104.1h.01M379.9,116.2h.01M390.4,106.7h.01"/>
+<path class="nuage hm7" stroke-width="4.93" d="M374.7,85.5h.01M379.9,87.5h.01M385.2,89.4h.01M390.4,92.1h.01M395.7,94.8h.01M400.9,97.4h.01"/>
+<path class="nuage hm2" stroke-width="2.77" d="M280.2,196.7h.01M274.9,202.6h.01M269.7,208.5h.01M264.4,214.4h.01M259.2,220.2h.01M253.9,225.1h.01M285.4,198.4h.01M280.2,204.3h.01M274.9,210.1h.01M269.7,216.0h.01M264.4,221.9h.01M290.7,200.0h.01M285.4,205.9h.01M280.2,211.8h.01M274.9,217.7h.01M295.9,201.7h.01M290.7,207.6h.01M285.4,213.5h.01M301.2,203.4h.01M295.9,209.2h.01M306.4,205.0h.01"/>
+<path class="nuage hm3" stroke-width="3.12" d="M290.7,192.5h.01M301.2,188.3h.01M295.9,194.2h.01M311.7,184.1h.01M306.4,189.9h.01M301.2,195.8h.01M322.2,179.9h.01M316.9,185.7h.01M311.7,191.6h.01M306.4,197.5h.01M327.4,181.6h.01M322.2,187.4h.01M316.9,193.3h.01M311.7,199.2h.01M332.7,183.2h.01M327.4,189.1h.01M322.2,195.0h.01M316.9,200.8h.01M337.9,184.9h.01M332.7,190.8h.01M327.4,196.6h.01M343.2,186.6h.01M337.9,192.5h.01M348.4,188.6h.01"/>
+<path class="nuage hm4" stroke-width="3.60" d="M332.7,169.3h.01M343.2,158.8h.01M337.9,171.0h.01M348.4,160.5h.01M343.2,172.7h.01M353.7,162.3h.01M348.4,174.4h.01M358.9,164.5h.01M353.7,176.6h.01M364.2,166.7h.01M358.9,178.7h.01M374.7,157.0h.01M369.4,168.9h.01M379.9,159.3h.01"/>
+<path class="nuage hm5" stroke-width="4.09" d="M353.7,148.4h.01M364.2,138.0h.01M358.9,150.1h.01M374.7,128.3h.01M369.4,140.3h.01M364.2,152.4h.01M379.9,130.7h.01M374.7,142.7h.01M369.4,154.7h.01M385.2,133.2h.01M379.9,145.1h.01M390.4,135.6h.01M385.2,147.4h.01M395.7,138.1h.01M390.4,149.8h.01M400.9,140.5h.01"/>
+<path class="nuage hm6" stroke-width="4.55" d="M385.2,118.7h.01M395.7,109.3h.01M390.4,121.3h.01M400.9,112.0h.01M395.7,123.8h.01M406.2,114.6h.01M400.9,126.3h.01M411.4,117.2h.01M406.2,128.8h.01M416.7,119.8h.01M411.4,131.4h.01M421.9,122.4h.01M432.4,115.0h.01"/>
+<path class="nuage hm7" stroke-width="4.82" d="M406.2,100.1h.01M411.4,102.8h.01M416.7,105.5h.01M421.9,108.2h.01M427.2,110.9h.01"/>
+<path class="nuage hm1" stroke-width="2.32" d="M248.7,230.0h.01M243.4,234.8h.01M238.2,239.7h.01M232.9,244.6h.01M227.7,249.4h.01M222.4,254.3h.01M253.9,231.6h.01M248.7,236.5h.01M243.4,241.4h.01M238.2,246.2h.01M232.9,251.1h.01M259.2,233.3h.01M253.9,238.1h.01M248.7,243.0h.01M243.4,247.9h.01M264.4,234.9h.01M259.2,239.8h.01M253.9,244.7h.01M269.7,236.6h.01M264.4,241.4h.01M274.9,238.2h.01"/>
+<path class="nuage hm2" stroke-width="2.69" d="M259.2,226.8h.01M269.7,223.6h.01M264.4,228.4h.01M280.2,219.3h.01M274.9,225.2h.01M269.7,230.1h.01M290.7,215.1h.01M285.4,221.0h.01M280.2,226.9h.01M274.9,231.7h.01M301.2,210.9h.01M295.9,216.8h.01M290.7,222.6h.01M285.4,228.5h.01M280.2,233.4h.01M311.7,206.7h.01M306.4,212.6h.01M301.2,218.4h.01M295.9,224.3h.01M290.7,230.2h.01M285.4,235.0h.01M316.9,208.4h.01M311.7,214.2h.01M306.4,220.1h.01M301.2,226.0h.01M295.9,231.8h.01M322.2,210.0h.01M316.9,215.9h.01M311.7,221.8h.01M306.4,227.6h.01M327.4,211.9h.01M322.2,217.8h.01M316.9,223.6h.01M332.7,213.8h.01M327.4,219.6h.01M337.9,215.7h.01"/>
+<path class="nuage hm3" stroke-width="3.13" d="M322.2,202.5h.01M332.7,198.3h.01M327.4,204.2h.01M343.2,194.5h.01M337.9,200.3h.01M332.7,206.1h.01M353.7,190.7h.01M348.4,196.5h.01M343.2,202.3h.01M337.9,208.0h.01M358.9,192.7h.01M353.7,198.5h.01M348.4,204.2h.01M343.2,210.0h.01M364.2,194.7h.01M358.9,200.5h.01M353.7,206.2h.01M348.4,211.9h.01M369.4,196.8h.01M364.2,202.5h.01M358.9,208.2h.01M379.9,187.2h.01M374.7,198.8h.01M369.4,204.5h.01M385.2,189.3h.01M379.9,200.9h.01M390.4,191.4h.01"/>
+<path class="nuage hm4" stroke-width="3.63" d="M364.2,180.8h.01M374.7,171.1h.01M369.4,182.9h.01M385.2,161.5h.01M379.9,173.3h.01M374.7,185.0h.01M390.4,163.8h.01M385.2,175.5h.01M395.7,166.1h.01M390.4,177.7h.01M400.9,168.4h.01M395.7,179.9h.01M406.2,171.5h.01M400.9,182.8h.01M411.4,174.5h.01"/>
+<path class="nuage hm5" stroke-width="4.10" d="M395.7,152.2h.01M406.2,142.9h.01M400.9,154.5h.01M411.4,145.4h.01M406.2,156.9h.01M416.7,148.9h.01M411.4,160.2h.01M427.2,141.3h.01M421.9,152.4h.01M416.7,163.5h.01M432.4,145.0h.01M427.2,155.9h.01M421.9,166.8h.01M437.7,148.7h.01M432.4,159.4h.01M442.9,152.5h.01M453.4,145.9h.01"/>
+<path class="nuage hm6" stroke-width="4.48" d="M416.7,133.9h.01M427.2,126.3h.01M421.9,137.6h.01M437.7,119.2h.01M432.4,130.2h.01M442.9,123.3h.01M437.7,134.2h.01M448.2,127.4h.01M442.9,138.1h.01M453.4,131.6h.01M448.2,142.0h.01M458.7,135.7h.01M463.9,139.9h.01"/>
+<path class="nuage hm0" stroke-width="1.97" d="M211.9,262.2h.01M206.7,265.1h.01M201.4,268.1h.01M196.2,271.1h.01M190.9,274.1h.01M217.2,263.8h.01M211.9,266.8h.01M206.7,269.8h.01M201.4,272.8h.01M222.4,265.4h.01M217.2,268.4h.01M211.9,271.4h.01M227.7,267.1h.01M222.4,270.1h.01M232.9,268.7h.01"/>
+<path class="nuage hm1" stroke-width="2.24" d="M217.2,259.2h.01M227.7,255.9h.01M222.4,260.8h.01M238.2,252.7h.01M232.9,257.6h.01M227.7,262.5h.01M248.7,249.5h.01M243.4,254.4h.01M238.2,259.2h.01M232.9,264.1h.01M259.2,246.3h.01M253.9,251.2h.01M248.7,256.0h.01M243.4,260.9h.01M238.2,265.7h.01M269.7,243.1h.01M264.4,248.0h.01M259.2,252.8h.01M253.9,257.7h.01M248.7,262.5h.01M243.4,267.4h.01M280.2,239.9h.01M274.9,244.7h.01M269.7,249.6h.01M264.4,254.5h.01M259.2,259.3h.01M253.9,264.2h.01M285.4,241.5h.01M280.2,246.4h.01M274.9,251.2h.01M269.7,256.1h.01M264.4,261.0h.01M290.7,243.2h.01M285.4,248.0h.01M280.2,252.9h.01M274.9,257.8h.01M295.9,244.9h.01M290.7,249.8h.01M285.4,254.6h.01M301.2,246.7h.01M295.9,251.5h.01M306.4,248.4h.01M316.9,245.3h.01"/>
+<path class="nuage hm2" stroke-width="2.70" d="M290.7,236.7h.01M301.2,233.5h.01M295.9,238.3h.01M311.7,229.4h.01M306.4,235.2h.01M301.2,240.1h.01M322.2,225.4h.01M316.9,231.2h.01M311.7,237.0h.01M306.4,241.8h.01M332.7,221.5h.01M327.4,227.3h.01M322.2,233.0h.01M316.9,238.8h.01M311.7,243.6h.01M343.2,217.6h.01M337.9,223.4h.01M332.7,229.1h.01M327.4,234.8h.01M322.2,240.5h.01M348.4,219.5h.01M343.2,225.2h.01M337.9,230.9h.01M332.7,236.6h.01M327.4,242.3h.01M353.7,221.4h.01M348.4,227.1h.01M343.2,232.8h.01M337.9,238.4h.01M358.9,223.3h.01M353.7,229.0h.01M348.4,234.6h.01M369.4,219.7h.01M364.2,225.3h.01M358.9,230.8h.01M374.7,222.0h.01M369.4,227.5h.01M379.9,224.3h.01"/>
+<path class="nuage hm3" stroke-width="3.11" d="M353.7,213.9h.01M364.2,210.1h.01M358.9,215.8h.01M374.7,206.5h.01M369.4,212.1h.01M364.2,217.7h.01M385.2,202.9h.01M379.9,208.5h.01M374.7,214.1h.01M395.7,194.0h.01M390.4,205.3h.01M385.2,210.9h.01M379.9,216.4h.01M400.9,196.7h.01M395.7,207.8h.01M390.4,213.3h.01M385.2,218.8h.01M406.2,199.4h.01M400.9,210.2h.01M395.7,215.7h.01M390.4,221.2h.01M411.4,202.0h.01M406.2,212.7h.01M400.9,218.1h.01M416.7,204.7h.01M411.4,215.1h.01M421.9,207.3h.01"/>
+<path class="nuage hm4" stroke-width="3.64" d="M406.2,185.6h.01M416.7,177.6h.01M411.4,188.5h.01M427.2,170.0h.01M421.9,180.7h.01M416.7,191.4h.01M432.4,173.3h.01M427.2,183.8h.01M421.9,194.2h.01M437.7,176.6h.01M432.4,186.9h.01M427.2,197.1h.01M442.9,179.9h.01M437.7,189.9h.01M432.4,199.9h.01M448.2,183.2h.01M442.9,193.0h.01M458.7,178.8h.01M453.4,188.2h.01M463.9,184.2h.01M474.4,180.9h.01M484.9,178.4h.01"/>
+<path class="nuage hm5" stroke-width="4.04" d="M437.7,162.9h.01M448.2,156.2h.01M442.9,166.4h.01M458.7,149.9h.01M453.4,159.9h.01M448.2,169.9h.01M463.9,153.8h.01M458.7,163.6h.01M453.4,173.4h.01M474.4,150.5h.01M469.2,160.0h.01M463.9,169.4h.01M479.7,157.0h.01M474.4,166.1h.01M469.2,175.2h.01M484.9,163.6h.01M479.7,172.3h.01M490.2,170.1h.01M495.4,176.6h.01"/>
+<path class="nuage hm6" stroke-width="4.37" d="M469.2,144.0h.01"/>
+<path class="nuage hm0" stroke-width="1.92" d="M185.7,277.1h.01M180.4,280.1h.01M175.2,283.1h.01M196.2,275.7h.01M190.9,278.7h.01M185.7,281.7h.01M180.4,284.7h.01M206.7,274.4h.01M201.4,277.4h.01M196.2,280.4h.01M190.9,283.3h.01M185.7,286.3h.01M217.2,273.0h.01M211.9,276.0h.01M206.7,279.0h.01M201.4,282.0h.01M196.2,285.0h.01M227.7,271.7h.01M222.4,274.7h.01M217.2,277.7h.01M211.9,280.6h.01M206.7,283.6h.01M238.2,270.4h.01M232.9,273.3h.01M227.7,276.3h.01M222.4,279.3h.01M217.2,282.3h.01M243.4,272.0h.01M238.2,275.0h.01M232.9,278.0h.01M227.7,280.9h.01M248.7,273.6h.01M243.4,276.6h.01M238.2,279.6h.01M253.9,275.3h.01M248.7,278.3h.01M259.2,277.0h.01"/>
+<path class="nuage hm1" stroke-width="2.26" d="M248.7,269.0h.01M259.2,265.8h.01M253.9,270.7h.01M269.7,262.6h.01M264.4,267.5h.01M259.2,272.3h.01M280.2,259.5h.01M274.9,264.3h.01M269.7,269.1h.01M264.4,274.0h.01M290.7,256.3h.01M285.4,261.2h.01M280.2,266.0h.01M274.9,270.8h.01M269.7,275.7h.01M301.2,253.2h.01M295.9,258.0h.01M290.7,262.9h.01M285.4,267.7h.01M280.2,272.5h.01M311.7,250.2h.01M306.4,255.0h.01M301.2,259.8h.01M295.9,264.6h.01M290.7,269.4h.01M322.2,247.1h.01M316.9,251.9h.01M311.7,256.7h.01M306.4,261.5h.01M301.2,266.3h.01M327.4,248.9h.01M322.2,253.6h.01M316.9,258.4h.01M311.7,263.2h.01M332.7,250.6h.01M327.4,255.4h.01M322.2,260.1h.01M337.9,252.4h.01M332.7,257.1h.01M343.2,254.4h.01"/>
+<path class="nuage hm2" stroke-width="2.73" d="M332.7,244.1h.01M343.2,240.2h.01M337.9,245.8h.01M353.7,236.4h.01M348.4,242.0h.01M343.2,247.6h.01M364.2,233.1h.01M358.9,238.6h.01M353.7,244.2h.01M348.4,249.7h.01M374.7,229.8h.01M369.4,235.3h.01M364.2,240.8h.01M358.9,246.3h.01M353.7,251.8h.01M385.2,226.6h.01M379.9,232.1h.01M374.7,237.6h.01M369.4,243.0h.01M364.2,248.5h.01M390.4,228.9h.01M385.2,234.4h.01M379.9,239.8h.01M374.7,245.2h.01M395.7,231.3h.01M390.4,236.6h.01M385.2,242.0h.01M406.2,228.2h.01M400.9,233.6h.01M395.7,238.9h.01M411.4,230.6h.01M406.2,235.9h.01M416.7,232.9h.01M427.2,231.1h.01"/>
+<path class="nuage hm3" stroke-width="3.16" d="M395.7,223.5h.01M406.2,220.5h.01M400.9,225.9h.01M416.7,217.5h.01M411.4,222.9h.01M427.2,210.0h.01M421.9,220.0h.01M416.7,225.3h.01M437.7,202.8h.01M432.4,212.6h.01M427.2,222.4h.01M421.9,227.7h.01M442.9,207.1h.01M437.7,216.5h.01M432.4,226.0h.01M448.2,211.4h.01M442.9,220.5h.01M437.7,229.5h.01M458.7,207.0h.01M453.4,215.7h.01M448.2,224.4h.01M463.9,211.7h.01M458.7,220.0h.01M474.4,208.4h.01M469.2,216.3h.01M479.7,213.4h.01M490.2,211.3h.01M500.7,209.8h.01"/>
+<path class="nuage hm4" stroke-width="3.57" d="M448.2,197.7h.01M458.7,193.3h.01M453.4,202.3h.01M469.2,189.6h.01M463.9,198.3h.01M479.7,186.7h.01M474.4,195.0h.01M469.2,203.4h.01M490.2,184.6h.01M484.9,192.5h.01M479.7,200.5h.01M500.7,183.1h.01M495.4,190.7h.01M490.2,198.3h.01M484.9,205.9h.01M505.9,189.7h.01M500.7,196.9h.01M495.4,204.1h.01M511.2,196.2h.01M505.9,203.0h.01"/>
+<path class="nuage hm0" stroke-width="1.91" d="M190.9,288.0h.01M201.4,286.6h.01M196.2,289.6h.01M211.9,285.3h.01M206.7,288.2h.01M201.4,291.2h.01M222.4,283.9h.01M217.2,286.9h.01M211.9,289.9h.01M206.7,292.8h.01M232.9,282.6h.01M227.7,285.5h.01M222.4,288.5h.01M217.2,291.5h.01M211.9,294.5h.01M243.4,281.2h.01M238.2,284.2h.01M232.9,287.2h.01M227.7,290.2h.01M222.4,293.1h.01M217.2,296.1h.01M253.9,279.9h.01M248.7,282.9h.01M243.4,285.9h.01M238.2,288.8h.01M232.9,291.8h.01M227.7,294.8h.01M264.4,278.6h.01M259.2,281.6h.01M253.9,284.5h.01M248.7,287.5h.01M243.4,290.5h.01M238.2,293.4h.01M269.7,280.3h.01M264.4,283.2h.01M259.2,286.2h.01M253.9,289.2h.01M248.7,292.1h.01M274.9,281.9h.01M269.7,284.9h.01M264.4,287.9h.01M259.2,290.8h.01M280.2,283.6h.01M274.9,286.6h.01M269.7,289.5h.01M285.4,285.3h.01M280.2,288.2h.01M290.7,286.9h.01"/>
+<path class="nuage hm1" stroke-width="2.25" d="M274.9,277.3h.01M285.4,274.2h.01M280.2,279.0h.01M295.9,271.1h.01M290.7,275.9h.01M285.4,280.7h.01M306.4,268.0h.01M301.2,272.8h.01M295.9,277.5h.01M290.7,282.3h.01M316.9,264.9h.01M311.7,269.7h.01M306.4,274.5h.01M301.2,279.2h.01M295.9,284.0h.01M327.4,261.9h.01M322.2,266.6h.01M316.9,271.4h.01M311.7,276.2h.01M306.4,280.9h.01M301.2,285.7h.01M337.9,259.1h.01M332.7,263.9h.01M327.4,268.6h.01M322.2,273.3h.01M316.9,278.0h.01M311.7,282.7h.01M348.4,256.5h.01M343.2,261.2h.01M337.9,265.8h.01M332.7,270.5h.01M327.4,275.2h.01M322.2,279.8h.01M353.7,258.6h.01M348.4,263.2h.01M343.2,267.8h.01M337.9,272.4h.01M332.7,277.0h.01M358.9,260.7h.01M353.7,265.2h.01M348.4,269.8h.01M343.2,274.4h.01M364.2,262.7h.01M358.9,267.2h.01M353.7,271.8h.01M374.7,260.3h.01M369.4,264.8h.01M364.2,269.3h.01M379.9,262.5h.01M374.7,266.9h.01M385.2,264.6h.01"/>
+<path class="nuage hm2" stroke-width="2.71" d="M358.9,254.0h.01M369.4,250.7h.01M364.2,256.1h.01M379.9,247.4h.01M374.7,252.8h.01M369.4,258.2h.01M390.4,244.3h.01M385.2,249.6h.01M379.9,255.0h.01M400.9,241.2h.01M395.7,246.5h.01M390.4,251.8h.01M385.2,257.1h.01M411.4,238.2h.01M406.2,243.5h.01M400.9,248.8h.01M395.7,254.0h.01M390.4,259.3h.01M421.9,236.2h.01M416.7,241.4h.01M411.4,246.5h.01M406.2,251.6h.01M400.9,256.8h.01M395.7,261.9h.01M432.4,234.5h.01M427.2,239.5h.01M421.9,244.5h.01M416.7,249.5h.01M411.4,254.5h.01M406.2,259.5h.01M442.9,233.1h.01M437.7,237.9h.01M432.4,242.8h.01M427.2,247.7h.01M421.9,252.5h.01M416.7,257.4h.01M448.2,236.6h.01M442.9,241.4h.01M437.7,246.1h.01M432.4,250.8h.01M427.2,255.6h.01M453.4,240.2h.01M448.2,244.8h.01M442.9,249.4h.01M437.7,254.0h.01M463.9,236.2h.01M458.7,243.7h.01M453.4,248.2h.01M448.2,252.7h.01M469.2,240.1h.01M463.9,247.3h.01M458.7,251.6h.01M474.4,244.0h.01M469.2,250.9h.01"/>
+<path class="nuage hm3" stroke-width="3.09" d="M453.4,228.3h.01M463.9,224.3h.01M458.7,232.2h.01M474.4,221.0h.01M469.2,228.6h.01M484.9,218.5h.01M479.7,225.7h.01M474.4,232.9h.01M495.4,216.7h.01M490.2,223.5h.01M484.9,230.4h.01M479.7,237.2h.01"/>
+<path class="nuage hm0" stroke-width="1.92" d="M222.4,297.7h.01M232.9,296.4h.01M227.7,299.4h.01M243.4,295.1h.01M238.2,298.0h.01M232.9,301.0h.01M253.9,293.8h.01M248.7,296.7h.01M243.4,299.7h.01M238.2,302.6h.01M264.4,292.5h.01M259.2,295.4h.01M253.9,298.4h.01M248.7,301.3h.01M243.4,304.3h.01M274.9,291.2h.01M269.7,294.1h.01M264.4,297.1h.01M259.2,300.0h.01M253.9,302.9h.01M248.7,305.9h.01M285.4,289.9h.01M280.2,292.8h.01M274.9,295.8h.01M269.7,298.7h.01M264.4,301.6h.01M259.2,304.6h.01M295.9,288.6h.01M290.7,291.5h.01M285.4,294.5h.01M280.2,297.4h.01M274.9,300.3h.01M269.7,303.3h.01M306.4,287.4h.01M301.2,290.3h.01M295.9,293.3h.01M290.7,296.2h.01M285.4,299.1h.01M280.2,302.0h.01M311.7,289.1h.01M306.4,292.1h.01M301.2,295.0h.01M295.9,297.9h.01M290.7,300.8h.01M316.9,290.9h.01M311.7,293.8h.01M306.4,296.7h.01M301.2,299.6h.01M322.2,292.6h.01M316.9,295.5h.01M311.7,298.4h.01M327.4,294.4h.01M322.2,297.3h.01M332.7,296.1h.01"/>
+<path class="nuage hm1" stroke-width="2.28" d="M316.9,284.5h.01M327.4,281.7h.01M322.2,286.3h.01M337.9,278.9h.01M332.7,283.5h.01M327.4,288.1h.01M348.4,276.3h.01M343.2,280.8h.01M337.9,285.3h.01M332.7,289.9h.01M358.9,273.7h.01M353.7,278.2h.01M348.4,282.7h.01M343.2,287.2h.01M337.9,291.6h.01M369.4,271.3h.01M364.2,275.7h.01M358.9,280.2h.01M353.7,284.6h.01M348.4,289.0h.01M343.2,293.4h.01M379.9,268.9h.01M374.7,273.3h.01M369.4,277.7h.01M364.2,282.1h.01M358.9,286.5h.01M353.7,290.8h.01M390.4,267.1h.01M385.2,271.4h.01M379.9,275.7h.01M374.7,280.0h.01M369.4,284.3h.01M364.2,288.6h.01M395.7,269.5h.01M390.4,273.8h.01M385.2,278.0h.01M379.9,282.2h.01M374.7,286.5h.01M406.2,267.1h.01M400.9,272.0h.01M395.7,276.2h.01M390.4,280.3h.01M385.2,284.5h.01M411.4,269.8h.01M406.2,274.5h.01M400.9,278.6h.01M395.7,282.7h.01M416.7,272.4h.01M411.4,277.0h.01M406.2,281.0h.01M427.2,270.5h.01M421.9,275.0h.01M416.7,279.5h.01M432.4,273.3h.01M427.2,277.6h.01M442.9,271.8h.01M437.7,276.0h.01"/>
+<path class="nuage hm2" stroke-width="2.57" d="M400.9,264.5h.01M411.4,262.3h.01M421.9,260.3h.01M416.7,265.0h.01M432.4,258.6h.01M427.2,263.2h.01M421.9,267.8h.01M442.9,257.1h.01M437.7,261.6h.01M432.4,266.1h.01M453.4,256.0h.01M448.2,260.3h.01M442.9,264.6h.01M437.7,269.0h.01M463.9,255.1h.01M458.7,259.3h.01M453.4,263.4h.01M448.2,267.6h.01"/>
+<path class="nuage hm0" stroke-width="1.91" d="M253.9,307.5h.01M264.4,306.2h.01M259.2,309.1h.01M274.9,305.0h.01M269.7,307.9h.01M264.4,310.8h.01M285.4,303.7h.01M280.2,306.6h.01M274.9,309.5h.01M269.7,312.5h.01M295.9,302.5h.01M290.7,305.4h.01M285.4,308.3h.01M280.2,311.2h.01M274.9,314.1h.01M306.4,301.3h.01M301.2,304.2h.01M295.9,307.1h.01M290.7,310.0h.01M285.4,312.9h.01M280.2,315.8h.01M316.9,300.1h.01M311.7,303.0h.01M306.4,305.9h.01M301.2,308.8h.01M295.9,311.7h.01M290.7,314.6h.01M327.4,299.0h.01M322.2,301.9h.01M316.9,304.7h.01M311.7,307.6h.01M306.4,310.5h.01M301.2,313.4h.01M337.9,297.9h.01M332.7,300.7h.01M327.4,303.6h.01M322.2,306.4h.01M316.9,309.3h.01M311.7,312.2h.01M343.2,299.6h.01M337.9,302.4h.01M332.7,305.3h.01M327.4,308.2h.01M322.2,311.0h.01M348.4,301.5h.01M343.2,304.3h.01M337.9,307.1h.01M332.7,310.0h.01M353.7,303.4h.01M348.4,306.2h.01M343.2,309.0h.01M358.9,305.3h.01M353.7,308.1h.01M364.2,307.2h.01"/>
+<path class="nuage hm1" stroke-width="2.17" d="M348.4,295.2h.01M358.9,292.9h.01M353.7,297.2h.01M369.4,290.7h.01M364.2,294.9h.01M358.9,299.2h.01M379.9,288.7h.01M374.7,292.8h.01M369.4,297.0h.01M364.2,301.1h.01M390.4,286.8h.01M385.2,290.8h.01M379.9,294.9h.01M374.7,299.0h.01M369.4,303.1h.01M400.9,285.0h.01M395.7,289.0h.01M390.4,293.0h.01M385.2,297.0h.01M379.9,301.1h.01M374.7,305.1h.01M411.4,283.4h.01M406.2,287.3h.01M400.9,291.3h.01M395.7,295.2h.01M390.4,299.2h.01M385.2,303.1h.01M421.9,281.9h.01M416.7,285.8h.01M411.4,289.7h.01M406.2,293.5h.01M400.9,297.4h.01M395.7,301.3h.01M432.4,280.2h.01M427.2,284.4h.01M421.9,288.2h.01M416.7,292.0h.01M411.4,295.8h.01M406.2,299.6h.01"/>
+<path class="nuage hm0" stroke-width="1.90" d="M285.4,317.4h.01M295.9,316.2h.01M290.7,319.1h.01M306.4,315.0h.01M301.2,317.9h.01M295.9,320.8h.01M316.9,313.9h.01M311.7,316.7h.01M306.4,319.6h.01M301.2,322.4h.01M327.4,312.8h.01M322.2,315.6h.01M316.9,318.5h.01M311.7,321.3h.01M306.4,324.1h.01M337.9,311.8h.01M332.7,314.6h.01M327.4,317.4h.01M322.2,320.2h.01M316.9,323.0h.01M311.7,325.8h.01M348.4,310.8h.01M343.2,313.6h.01M337.9,316.4h.01M332.7,319.2h.01M327.4,322.0h.01M322.2,324.7h.01M358.9,309.9h.01M353.7,312.7h.01M348.4,315.4h.01M343.2,318.2h.01M337.9,320.9h.01M332.7,323.7h.01M369.4,309.1h.01M364.2,311.8h.01M358.9,314.5h.01M353.7,317.3h.01M348.4,320.0h.01M343.2,322.7h.01M379.9,307.0h.01M374.7,311.0h.01M369.4,313.7h.01M364.2,316.4h.01M358.9,319.1h.01M353.7,321.8h.01M385.2,309.0h.01M379.9,312.9h.01M374.7,315.6h.01M369.4,318.2h.01M364.2,320.9h.01M390.4,311.0h.01M385.2,314.8h.01M379.9,317.4h.01M374.7,320.1h.01"/>
+<path class="nuage hm1" stroke-width="2.07" d="M390.4,305.1h.01M400.9,303.4h.01M395.7,307.2h.01"/>
+<path class="nuage hm0" stroke-width="1.84" d="M316.9,327.5h.01M327.4,326.5h.01M322.2,329.2h.01M337.9,325.5h.01M332.7,328.2h.01M327.4,330.9h.01M348.4,324.5h.01M343.2,327.2h.01M337.9,329.9h.01M332.7,332.6h.01M358.9,323.6h.01M353.7,326.3h.01M348.4,328.9h.01M343.2,331.6h.01M337.9,334.3h.01M369.4,322.7h.01M364.2,325.4h.01M358.9,328.0h.01M353.7,330.7h.01M348.4,333.3h.01"/>
+<path class="nuage hm0" stroke-width="1.80" d="M343.2,336.0h.01"/>
+<circle class="noeud hm7" cx="343.2" cy="74.0" r="2.6"><title>1.215 pt/h</title></circle>
+<circle class="noeud hm3" cx="301.2" cy="173.2" r="2.6"><title>0.601 pt/h</title></circle>
+<circle class="noeud hm7" cx="385.2" cy="89.4" r="2.6"><title>1.198 pt/h</title></circle>
+<circle class="noeud hm2" cx="259.2" cy="220.2" r="2.6"><title>0.358 pt/h</title></circle>
+<circle class="noeud hm3" cx="343.2" cy="186.6" r="2.6"><title>0.598 pt/h</title></circle>
+<circle class="noeud hm7" cx="427.2" cy="110.9" r="2.6"><title>1.138 pt/h</title></circle>
+<circle class="noeud hm1" cx="217.2" cy="259.2" r="2.6"><title>0.173 pt/h</title></circle>
+<circle class="noeud hm2" cx="301.2" cy="233.5" r="2.6"><title>0.356 pt/h</title></circle>
+<circle class="noeud hm3" cx="385.2" cy="202.9" r="2.6"><title>0.574 pt/h</title></circle>
+<circle class="noeud hm6" cx="469.2" cy="144.0" r="2.6"><title>0.994 pt/h</title></circle>
+<circle class="noeud hm0" cx="175.2" cy="283.1" r="2.6"><title>0.095 pt/h</title></circle>
+<circle class="noeud hm1" cx="259.2" cy="272.3" r="2.6"><title>0.172 pt/h</title></circle>
+<circle class="noeud hm2" cx="343.2" cy="247.6" r="2.6"><title>0.348 pt/h</title></circle>
+<circle class="noeud hm3" cx="427.2" cy="222.4" r="2.6"><title>0.528 pt/h</title></circle>
+<circle class="noeud hm4" cx="511.2" cy="196.2" r="2.6"><title>0.715 pt/h</title></circle>
+<circle class="noeud hm0" cx="217.2" cy="296.1" r="2.6"><title>0.095 pt/h</title></circle>
+<circle class="noeud hm1" cx="301.2" cy="285.7" r="2.6"><title>0.170 pt/h</title></circle>
+<circle class="noeud hm1" cx="385.2" cy="264.6" r="2.6"><title>0.320 pt/h</title></circle>
+<circle class="noeud hm2" cx="469.2" cy="250.9" r="2.6"><title>0.418 pt/h</title></circle>
+<circle class="noeud hm0" cx="259.2" cy="309.1" r="2.6"><title>0.095 pt/h</title></circle>
+<circle class="noeud hm0" cx="343.2" cy="299.6" r="2.6"><title>0.163 pt/h</title></circle>
+<circle class="noeud hm1" cx="427.2" cy="284.4" r="2.6"><title>0.271 pt/h</title></circle>
+<circle class="noeud hm0" cx="301.2" cy="322.4" r="2.6"><title>0.093 pt/h</title></circle>
+<circle class="noeud hm0" cx="385.2" cy="314.8" r="2.6"><title>0.147 pt/h</title></circle>
+<circle class="noeud hm0" cx="343.2" cy="336.0" r="2.6"><title>0.089 pt/h</title></circle>
+<line class="ba" x1="141.2" y1="126.0" x2="141.2" y2="284.0"/>
+<line class="ba" x1="141.2" y1="282.4" x2="146.2" y2="282.4"/>
+<text class="tk" x="136.2" y="285.9" text-anchor="end">0,10</text>
+<line class="ba" x1="141.2" y1="240.3" x2="146.2" y2="240.3"/>
+<text class="tk" x="136.2" y="243.8" text-anchor="end">0,40</text>
+<line class="ba" x1="141.2" y1="198.3" x2="146.2" y2="198.3"/>
+<text class="tk" x="136.2" y="201.8" text-anchor="end">0,70</text>
+<line class="ba" x1="141.2" y1="156.2" x2="146.2" y2="156.2"/>
+<text class="tk" x="136.2" y="159.7" text-anchor="end">1,00</text>
+<line class="ba" x1="141.2" y1="128.1" x2="146.2" y2="128.1"/>
+<text class="tk" x="136.2" y="131.6" text-anchor="end">1,20</text>
+<text class="tk halo" x="164.2" y="299.0" text-anchor="end">0,0</text>
+<text class="tk halo" x="206.2" y="312.0" text-anchor="end">0,6</text>
+<text class="tk halo" x="248.2" y="325.0" text-anchor="end">3,9</text>
+<text class="tk halo" x="290.2" y="338.0" text-anchor="end">12,8</text>
+<text class="tk halo" x="332.2" y="351.0" text-anchor="end">35,5</text>
+<text class="tk halo" x="522.2" y="310.0">0,050 %</text>
+<text class="tk halo" x="480.2" y="323.0">0,075 %</text>
+<text class="tk halo" x="438.2" y="336.0">0,100 %</text>
+<text class="tk halo" x="396.2" y="349.0">0,150 %</text>
+<text class="tk halo" x="354.2" y="362.0">0,225 %</text>
+<text class="lg keep" x="0.0" y="396.0" text-anchor="start">arête gauche : kurtosis excédentaire · arête droite : largeur de stop, en pour-cent de l’indice</text>
+<text class="lg keep" x="0.0" y="412.0" text-anchor="start">le relief tombe 7,5 fois plus vite quand on élargit le stop que quand on épaissit les queues</text>
+
+</svg></div>
+      <p class="note">Le seuil est mesuré, non calculé : chaque cellule simule le temps de marché sous sa propre loi et sa propre géométrie, puis rend µ* = c/E[τ∧T]. Le long de l’arête de la géométrie le seuil est divisé par 12,7 ; le long de l’arête des queues, par 1,70 seulement. Le domaine de dérive que le document nº 1 appelle plausible s’arrête à 3,2 point par heure : le coin le plus haut du relief reste donc sous ce plafond, ce qui veut dire qu’aucune de ces configurations n’est impossible — c’est le stop de 0,150 % qui les sauve toutes, et non la forme du marché.</p>
+    </figure>
+
+  <p>La seconde surface porte le classement. Le long de l’axe de la géométrie, du stop de 0,050&nbsp;% au stop de 0,225&nbsp;%, le seuil est divisé par 12,7. Le long de l’axe des queues, de la gaussienne à une kurtosis excédentaire de 35,5, il est divisé par 1,70. <strong>L’opérateur déplace donc son seuil 7,5&nbsp;fois plus en choisissant sa géométrie qu’en changeant de marché.</strong></p>
+
+  <p>C’est le résultat du document, atteint par une autre porte. La critique des queues épaisses atterrit&nbsp;: elle est fondée, elle est mesurable, et elle déplace quelque chose. Elle ne déplace simplement pas ce qu’elle croyait — pas le signal, le seuil.</p>
+
+  <h2 id="s-lire-esperance">Le prix, en décisions, d’une espérance lue</h2>
+
+  <p>La campagne a produit un chiffre qui ne figurait dans aucune de ses questions, et il est plus dur que tous les autres. Vingt-quatre mille décisions par loi n’ont pas suffi à lire une espérance au centième de R près.</p>
+
+    <figure>
+      <figcaption><span class="lab">Table 34</span> — Le prix, en décisions, d’une espérance lue au centième de R.</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Loi</th><th>Écart-type de R</th><th>Décisions requises</th><th>Années à 504 décisions</th><th>Décisions simulées</th><th class="wrap">Résolution atteinte (R)</th></tr></thead>
+        <tbody>
+          <tr><td>Gaussienne</td><td>1,483</td><td>84,5 k</td><td>168</td><td>48 k</td><td class="wrap">0,013</td></tr>
+          <tr><td>Student, 5 degrés</td><td>1,501</td><td>86,5 k</td><td>172</td><td>48 k</td><td class="wrap">0,013</td></tr>
+          <tr><td>Student, 3 degrés</td><td>1,579</td><td>95,8 k</td><td>190</td><td>48 k</td><td class="wrap">0,014</td></tr>
+          <tr><td>Sauts de Merton</td><td>1,506</td><td>87,1 k</td><td>173</td><td>24 k</td><td class="wrap">0,019</td></tr>
+          <tr><td>Volatilité en grappes</td><td>1,396</td><td>74,9 k</td><td>149</td><td>48 k</td><td class="wrap">0,012</td></tr>
+          <tr><td>Baisse plafonnée</td><td>1,471</td><td>83,2 k</td><td>165</td><td>24 k</td><td class="wrap">0,019</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> La simulation elle-même n’atteint pas le centième de R : la dernière colonne dit ce qu’elle résout vraiment, et c’est 0,012 à 0,019 R. Ce n’est pas un défaut de la simulation, c’est le sujet. Un opérateur qui veut savoir si son espérance vaut zéro ou vaut la friction affronte le même mur, avec une décision par heure au lieu de vingt-quatre mille en deux minutes. Le nombre publié est un <strong>plancher</strong> : il suppose la moyenne déjà normale, ce que la Student à trois degrés met bien plus longtemps à devenir.</p>
+    </figure>
+
+  <p>84,5&nbsp;mille décisions pour lire son espérance à 0,01&nbsp;R près sous la loi la plus douce&nbsp;: 168&nbsp;ans à cinq cents décisions par an. Et le nombre est un <em>plancher</em>, puisqu’il suppose la moyenne déjà normale — ce que la Student à trois degrés met bien plus longtemps à devenir.</p>
+
+  <p>La lecture est directe, et elle vaut d’être posée à côté d’une figure qui circule beaucoup&nbsp;: celle de trois cents courbes d’équité simulées sur du bruit, où l’on demande si la courbe rouge est «&nbsp;trop chanceuse&nbsp;». La question est bonne et elle a une réponse, que la partie&nbsp;VIII a déjà donnée sous une autre forme&nbsp;: le meilleur de <span class="v">B</span> essais sur du bruit pur a un Sharpe attendu de <span class="v">√(2·ln&nbsp;B)</span>, et c’est ce seuil-là qu’il faut battre, pas zéro. Ce chapitre-ci donne l’autre moitié&nbsp;: même sans aucune sélection, même avec une seule courbe, il faut des dizaines de milliers de décisions avant que la moyenne cesse d’être un tirage. <strong>La courbe rouge est presque toujours trop chanceuse, et la courbe grise est presque toujours trop malchanceuse.</strong></p>
+
+  <h2 id="s-systematique">Systématique et discrétionnaire, alpha et bêta</h2>
+
+  <p>Une thèse circule, et elle mérite d’être démêlée plutôt que rejetée, parce que son noyau est juste. Elle s’énonce&nbsp;: les rendements systématiques sont explicables et s’écrivent en équations, donc ce sont des rendements de bêta&nbsp;; les rendements discrétionnaires sont inexplicables, donc de l’alpha&nbsp;; et un rendement inexplicable est le plus souvent de la variance, c’est-à-dire de la chance.</p>
+
+  <p>Deux identifications y sont fausses, et il faut les défaire avant d’arriver au noyau.</p>
+
+  <p><strong>«&nbsp;Explicable par une équation&nbsp;» n’est pas «&nbsp;bêta&nbsp;».</strong> Le bêta est une covariance avec un facteur de risque rémunéré&nbsp;; l’explicabilité est une propriété de la <em>description</em>. Un arbitrage de latence s’écrit entièrement et ne porte aucun bêta. Un opérateur discrétionnaire systématiquement acheteur porte du bêta sans le savoir, et c’est justement ce que l’attribution de la section&nbsp;<a href="#s-shapley">38</a> sépare, sans jamais avoir besoin du mot.</p>
+
+  <p><strong>«&nbsp;Inexplicable&nbsp;» n’est pas «&nbsp;alpha&nbsp;».</strong> Un rendement qu’on ne sait pas expliquer est un rendement qu’on ne sait pas expliquer&nbsp;; il peut être de l’alpha, du bêta mal mesuré, ou du bruit. Ranger l’inexplicable dans l’alpha, c’est faire de l’ignorance une catégorie de rendement.</p>
+
+  <p>Reste le noyau, et il est solide&nbsp;: <em>une règle écrite peut être confrontée à sa loi nulle&nbsp;; un jugement qui n’est pas écrit ne le peut pas.</em> Ce n’est pas une affaire d’alpha ni de bêta — c’est une affaire de réfutabilité et de taille d’échantillon. Et c’est très exactement ce que ce document existe pour chiffrer&nbsp;: 619&nbsp;décisions pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise, soit 1,2&nbsp;an à deux décisions par jour.</p>
+
+  <p>Quant à «&nbsp;un modèle systématique gagnera toujours&nbsp;», le document porte déjà le contre-exemple, et il est chiffré. Une règle écrite à <span class="v">k</span> réglages porte <span class="v">2<sup>k</sup></span> configurations et paie la taxe de sélection sur toutes. La section&nbsp;<a href="#s-versus">36</a> mesure la bascule&nbsp;: au-delà de 22&nbsp;configurations, la taxe passe devant le test ordinaire. <strong>Il suffit donc de 5&nbsp;réglages libres pour qu’une règle écrite soit plus difficile à établir qu’un opérateur discrétionnaire qui n’en déclare aucun.</strong> Le recensement de ce document en compte 16 — juste sous la bascule, et par construction, non par chance.</p>
+
+  <p>La conclusion n’est ni «&nbsp;le systématique gagne&nbsp;» ni «&nbsp;le discrétionnaire gagne&nbsp;». C’est que <em>les deux paient le même prix</em>, en décisions, et que ce prix se calcule&nbsp;: pour la règle écrite il se lit dans son budget de configurations, pour le jugement dans le nombre de ses écarts déclarés. Ce qui distingue les deux n’est pas la nature du rendement. C’est que l’un a déjà écrit son protocole et que l’autre doit encore le faire.</p>
+
+  <div class="part">
+    <span class="lab">Quinzième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n’est pas déclaré avant ne prouve rien après.</p>
   </div>

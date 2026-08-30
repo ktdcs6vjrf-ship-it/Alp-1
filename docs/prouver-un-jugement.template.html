@@ -686,8 +686,17 @@
           <li><a href="#s-bruit">Combien de bruit un trade supporte-t-il&nbsp;?</a></li>
         </ol>
       </li>
-      <li><span class="pt">Quatorzième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Quatorzième partie — Ce que le théorème ne suppose pas</span>
         <ol start="53">
+          <li><a href="#s-normalite">«&nbsp;Votre théorème suppose une loi normale&nbsp;»</a></li>
+          <li><a href="#s-invariance-lois">Six lois, une seule espérance</a></li>
+          <li><a href="#s-queues-seuil">Ce que les queues déplacent, et de combien</a></li>
+          <li><a href="#s-lire-esperance">Le prix, en décisions, d'une espérance lue</a></li>
+          <li><a href="#s-systematique">Systématique et discrétionnaire, alpha et bêta</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Quinzième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="58">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1619,6 +1628,102 @@
 
   <div class="part">
     <span class="lab">Quatorzième partie</span>
+    <h2>Ce que le théorème ne suppose pas</h2>
+    <p>Une objection sérieuse revient à chaque exposé&nbsp;: le résultat serait démontré sous une loi normale, et les marchés n'en suivent pas. Cette partie la prend au mot, remplace la loi des prix six fois, et publie ce qui bouge — l'espérance, ou autre chose.</p>
+  </div>
+
+  <h2 id="s-normalite">«&nbsp;Votre théorème suppose une loi normale&nbsp;»</h2>
+
+  <p>L'objection se formule ainsi&nbsp;: les rendements ne sont pas gaussiens, leurs queues sont épaisses, leurs deux côtés ne se ressemblent pas — donc un résultat établi sous loi normale ne dit rien du marché réel. La première moitié est vraie et il faut le dire avant de corriger la seconde&nbsp;: les queues <em>sont</em> épaisses, et les deux côtés ne se ressemblent <em>pas</em>.</p>
+
+  <p>La conclusion, elle, ne suit pas, et la raison tient en une ligne. <strong>L'identité de Wald ne demande pas la normalité.</strong> Elle demande que le prix soit une martingale de carré intégrable et que le temps d'arrêt soit borné par la séance. Un prix à sauts, à kurtosis infinie, à volatilité en grappes ou à baisse plafonnée reste une martingale dès lors que ses incréments sont centrés — et le théorème d'arrêt optionnel s'y applique mot pour mot, sans amendement.</p>
+
+  <p>Ce chapitre ne se contente pas de l'affirmer. Il remplace la loi des incréments six fois, à variance par minute <em>identique</em>, et mesure. Les six lois ne sont pas choisies pour être commodes&nbsp;: trois d'entre elles sont là parce qu'elles sont les pires cas de l'objection.</p>
+
+{{TABLE:robu_lois}}
+
+  <p>La troisième ligne est le cas limite. À trois degrés de liberté, la variance d'une Student existe encore mais <strong>son moment d'ordre quatre diverge</strong>&nbsp;: sa kurtosis n'est pas grande, elle est infinie. Si le résultat survit à celle-là, il ne doit rien à la forme des queues.</p>
+
+  <p>La sixième est l'objection elle-même, écrite en loi de probabilité. «&nbsp;La baisse est plafonnée, la hausse est illimitée&nbsp;»&nbsp;: un incrément exponentiel recentré ne descend jamais au-dessous de {{r_plancher_plafonnee}}&nbsp;écart-type, n'a aucune borne supérieure, et son asymétrie mesurée vaut {{r_asym_plafonnee}}. Si cette propriété créait de l'espérance, elle en créerait ici plus que nulle part ailleurs.</p>
+
+{{FIGURE:rqueues|Les deux queues de chaque loi, comptées séparément sur quatre cent mille tirages. Une fréquence comptée, jamais une densité tracée&nbsp;: c'est ce qui autorise à comparer six lois dont trois n'ont pas de forme fermée.}}
+
+  <p>Et la figure retourne l'affirmation sur un point de fait, qu'il vaut mieux établir que discuter. La loi qui imite un indice actions — une diffusion plus des sauts négatifs compensés, {{r_saut_seance}}&nbsp;saut par séance de {{r_saut_pts}}&nbsp;points, soit {{r_saut_part}}&nbsp;% du stop en une minute — tombe à {{r_queue_sigma}}&nbsp;écarts-types <strong>{{r_queue_facteur}}&nbsp;fois plus souvent à gauche qu'à droite</strong>. Son asymétrie vaut {{r_asym_merton}}. Sur un indice, ce qui est illimité n'est pas la hausse&nbsp;: c'est la baisse rapide. L'affirmation inverse décrit un actif à responsabilité limitée détenu au comptant, pas un contrat à terme sur indice tenu à la séance.</p>
+
+  <h2 id="s-invariance-lois">Six lois, une seule espérance</h2>
+
+  <p>La géométrie de l'épreuve est celle de la partie&nbsp;XI&nbsp;: un stop de {{r_stop_pct}}&nbsp;%, soit {{r_stop_pts}}&nbsp;points, une cible à {{r_rr}}&nbsp;fois le risque, une sortie à la clôture, {{r_friction}}&nbsp;point de friction. Le choix du stop élargi n'est pas de confort — à la largeur déclarée du document nº&nbsp;1, une minute de bruit vaut deux stops, si bien que la loi des incréments n'a pas le temps de s'exprimer avant que la barrière ne soit franchie. À {{r_stop_pct}}&nbsp;% elle a le temps, et c'est la seule condition sous laquelle la question posée ici a un sens.</p>
+
+{{TABLE:robu_invariance}}
+
+  <p>Six lignes, une seule prédiction&nbsp;: {{r_prediction}}&nbsp;R. La kurtosis infinie ne l'écarte pas, la queue gauche épaisse de la loi à sauts non plus, et le plancher de la loi asymétrique non plus. <strong>La forme des queues ne crée ni ne détruit d'espérance.</strong></p>
+
+  <p>Un mot sur le verdict, parce qu'il a failli dire autre chose. Le plus grand écart de la campagne vaut {{r_ecart_max_derive}}&nbsp;erreurs types, sur la loi à plancher&nbsp;: au seuil usuel de deux, une ligne aurait porté «&nbsp;réfutée&nbsp;». Elle ne le porte pas, et la raison n'est pas une indulgence. La campagne prononce {{r_tests}}&nbsp;verdicts&nbsp;; à cinq pour cent chacun, la probabilité qu'au moins un dépasse deux erreurs types <em>alors que le théorème tient partout</em> vaut {{r_faux_positif}}&nbsp;%. Le seuil est donc corrigé à {{r_z_seuil}} par Bonferroni, et il est calculé et non écrit. C'est la faute que ce document reproche ailleurs, et il n'y a aucune raison de se l'épargner à soi-même.</p>
+
+{{FIGURE:rinvariance|L'espérance mesurée de six lois de prix, chacune contre sa propre prédiction. Le trait horizontal est écrit avant de simuler&nbsp;; le point est la mesure&nbsp;; la barre vaut deux erreurs types.}}
+
+  <p>Sous dérive, la prédiction cesse d'être commune&nbsp;: elle vaut <span class="v">(µ·E[τ∧T]&nbsp;−&nbsp;c)/a</span>, et le temps de marché dépend de la loi. Les traits se déplacent donc, et les points se déplacent avec eux.</p>
+
+{{TABLE:robu_derive}}
+
+  <p>C'est exactement la façon dont la forme des queues entre dans le résultat&nbsp;: <strong>par le temps de marché, et par rien d'autre.</strong> Aucune loi ne donne un avantage&nbsp;; certaines donnent plus de minutes d'exposition pour la même friction.</p>
+
+  <h3>Le dépassement, et pourquoi il ne compte pas</h3>
+
+  <p>Il reste une objection plus fine, et elle est meilleure que la première&nbsp;: sous une loi à sauts, on <em>traverse</em> son stop. Le prix ne s'arrête pas à la barrière, il la franchit, et la perte réalisée dépasse la perte déclarée. La table le mesure&nbsp;: le dépassement moyen passe de {{r_dep_gauss}}&nbsp;point sous loi gaussienne à {{r_dep_merton}} sous la loi à sauts, un facteur {{r_dep_facteur}}.</p>
+
+  <p>Et l'espérance ne bouge pas. La raison est contre-intuitive et elle est exacte&nbsp;: <strong>on traverse son objectif aussi</strong>, et l'arrêt optionnel compte les deux traversées. Le prix de sortie reste centré, quelle que soit la brutalité avec laquelle on l'atteint. Ce que le dépassement emporte, ce n'est pas l'espérance&nbsp;: c'est la dispersion et la queue de perte, et la table suivante les publie.</p>
+
+  <h2 id="s-queues-seuil">Ce que les queues déplacent, et de combien</h2>
+
+  <p>Conclure que la forme des queues n'a aucune conséquence serait faux, et ce serait la faute symétrique de celle qu'on vient de corriger. Trois grandeurs bougent, et il faut les ranger par ce qu'elles coûtent.</p>
+
+{{TABLE:robu_deplacement}}
+
+  <p>Le sens de la première colonne surprend. À variance égale, <strong>une loi à queues épaisses fait <em>durer</em> les trades</strong>&nbsp;: {{r_tau_student3}}&nbsp;minutes sous la Student à trois degrés contre {{r_tau_gauss}} sous la gaussienne. La raison tient en une phrase — la variance étant fixée, ce qu'une loi met dans ses queues rares, elle le retire de sa minute ordinaire&nbsp;; le chemin typique bouge donc moins, et la barrière vient plus tard. Le seuil de rentabilité suit en sens inverse, puisqu'il vaut <span class="v">c/E[τ∧T]</span>.</p>
+
+{{FIGURE:rdeplacement|Temps de marché et seuil de rentabilité de six lois de même variance. Le filet horizontal est la gaussienne, prise pour repère.}}
+
+  <p>Reste à ranger les deux effets l'un par rapport à l'autre, et c'est ce que les deux surfaces font. La première pose l'espérance sur le plan de l'épaisseur de queue et de la dérive.</p>
+
+{{FIGURE:resperance|L'espérance par décision sur le plan de la kurtosis et de la dérive. Un plan incliné, dont la pente n'a qu'une direction.}}
+
+  <p>Le relief monte le long de l'axe de la dérive et reste plat le long de l'axe des queues. Sur l'arête la plus proche du lecteur, celle de la dérive nulle, l'espérance moyenne vaut {{r_surf_esp_nulle}}&nbsp;R pour une prédiction de {{r_prediction}}, et l'étendue de toute l'arête — d'une kurtosis excédentaire nulle à {{r_surf_kurt_max}} — vaut {{r_surf_esp_etendue}}&nbsp;R. C'est le théorème, dessiné.</p>
+
+{{FIGURE:rseuil|Le seuil de rentabilité sur le plan de la kurtosis et de la largeur de stop. Les deux axes le déplacent&nbsp;; ils ne le déplacent pas dans le même rapport.}}
+
+  <p>La seconde surface porte le classement. Le long de l'axe de la géométrie, du stop de {{r_surf_stop_min}}&nbsp;% au stop de {{r_surf_stop_max}}&nbsp;%, le seuil est divisé par {{r_surf_seuil_geo}}. Le long de l'axe des queues, de la gaussienne à une kurtosis excédentaire de {{r_surf_kurt_max}}, il est divisé par {{r_surf_seuil_queue}}. <strong>L'opérateur déplace donc son seuil {{r_surf_domine}}&nbsp;fois plus en choisissant sa géométrie qu'en changeant de marché.</strong></p>
+
+  <p>C'est le résultat du document, atteint par une autre porte. La critique des queues épaisses atterrit&nbsp;: elle est fondée, elle est mesurable, et elle déplace quelque chose. Elle ne déplace simplement pas ce qu'elle croyait — pas le signal, le seuil.</p>
+
+  <h2 id="s-lire-esperance">Le prix, en décisions, d'une espérance lue</h2>
+
+  <p>La campagne a produit un chiffre qui ne figurait dans aucune de ses questions, et il est plus dur que tous les autres. Vingt-quatre mille décisions par loi n'ont pas suffi à lire une espérance au centième de R près.</p>
+
+{{TABLE:robu_echantillon}}
+
+  <p>{{r_decisions_gauss}}&nbsp;mille décisions pour lire son espérance à {{r_resolution}}&nbsp;R près sous la loi la plus douce&nbsp;: {{r_annees_gauss}}&nbsp;ans à cinq cents décisions par an. Et le nombre est un <em>plancher</em>, puisqu'il suppose la moyenne déjà normale — ce que la Student à trois degrés met bien plus longtemps à devenir.</p>
+
+  <p>La lecture est directe, et elle vaut d'être posée à côté d'une figure qui circule beaucoup&nbsp;: celle de trois cents courbes d'équité simulées sur du bruit, où l'on demande si la courbe rouge est «&nbsp;trop chanceuse&nbsp;». La question est bonne et elle a une réponse, que la partie&nbsp;VIII a déjà donnée sous une autre forme&nbsp;: le meilleur de <span class="v">B</span> essais sur du bruit pur a un Sharpe attendu de <span class="v">√(2·ln&nbsp;B)</span>, et c'est ce seuil-là qu'il faut battre, pas zéro. Ce chapitre-ci donne l'autre moitié&nbsp;: même sans aucune sélection, même avec une seule courbe, il faut des dizaines de milliers de décisions avant que la moyenne cesse d'être un tirage. <strong>La courbe rouge est presque toujours trop chanceuse, et la courbe grise est presque toujours trop malchanceuse.</strong></p>
+
+  <h2 id="s-systematique">Systématique et discrétionnaire, alpha et bêta</h2>
+
+  <p>Une thèse circule, et elle mérite d'être démêlée plutôt que rejetée, parce que son noyau est juste. Elle s'énonce&nbsp;: les rendements systématiques sont explicables et s'écrivent en équations, donc ce sont des rendements de bêta&nbsp;; les rendements discrétionnaires sont inexplicables, donc de l'alpha&nbsp;; et un rendement inexplicable est le plus souvent de la variance, c'est-à-dire de la chance.</p>
+
+  <p>Deux identifications y sont fausses, et il faut les défaire avant d'arriver au noyau.</p>
+
+  <p><strong>«&nbsp;Explicable par une équation&nbsp;» n'est pas «&nbsp;bêta&nbsp;».</strong> Le bêta est une covariance avec un facteur de risque rémunéré&nbsp;; l'explicabilité est une propriété de la <em>description</em>. Un arbitrage de latence s'écrit entièrement et ne porte aucun bêta. Un opérateur discrétionnaire systématiquement acheteur porte du bêta sans le savoir, et c'est justement ce que l'attribution de la section&nbsp;<a href="#s-shapley">38</a> sépare, sans jamais avoir besoin du mot.</p>
+
+  <p><strong>«&nbsp;Inexplicable&nbsp;» n'est pas «&nbsp;alpha&nbsp;».</strong> Un rendement qu'on ne sait pas expliquer est un rendement qu'on ne sait pas expliquer&nbsp;; il peut être de l'alpha, du bêta mal mesuré, ou du bruit. Ranger l'inexplicable dans l'alpha, c'est faire de l'ignorance une catégorie de rendement.</p>
+
+  <p>Reste le noyau, et il est solide&nbsp;: <em>une règle écrite peut être confrontée à sa loi nulle&nbsp;; un jugement qui n'est pas écrit ne le peut pas.</em> Ce n'est pas une affaire d'alpha ni de bêta — c'est une affaire de réfutabilité et de taille d'échantillon. Et c'est très exactement ce que ce document existe pour chiffrer&nbsp;: {{d_mur_liant}}&nbsp;décisions pour un Sharpe de {{d_sharpe_cite}} par décision, taxe de multiplicité comprise, soit {{d_ans_liant}}&nbsp;an à deux décisions par jour.</p>
+
+  <p>Quant à «&nbsp;un modèle systématique gagnera toujours&nbsp;», le document porte déjà le contre-exemple, et il est chiffré. Une règle écrite à <span class="v">k</span> réglages porte <span class="v">2<sup>k</sup></span> configurations et paie la taxe de sélection sur toutes. La section&nbsp;<a href="#s-versus">36</a> mesure la bascule&nbsp;: au-delà de {{d_configs_bascule}}&nbsp;configurations, la taxe passe devant le test ordinaire. <strong>Il suffit donc de {{d_k_bascule}}&nbsp;réglages libres pour qu'une règle écrite soit plus difficile à établir qu'un opérateur discrétionnaire qui n'en déclare aucun.</strong> Le recensement de ce document en compte {{d_configs}} — juste sous la bascule, et par construction, non par chance.</p>
+
+  <p>La conclusion n'est ni «&nbsp;le systématique gagne&nbsp;» ni «&nbsp;le discrétionnaire gagne&nbsp;». C'est que <em>les deux paient le même prix</em>, en décisions, et que ce prix se calcule&nbsp;: pour la règle écrite il se lit dans son budget de configurations, pour le jugement dans le nombre de ses écarts déclarés. Ce qui distingue les deux n'est pas la nature du rendement. C'est que l'un a déjà écrit son protocole et que l'autre doit encore le faire.</p>
+
+  <div class="part">
+    <span class="lab">Quinzième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

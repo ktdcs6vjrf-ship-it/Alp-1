@@ -482,6 +482,14 @@ def values() -> dict[str, str]:
         "d_facteur_versus": num(n_geo / n10_liant, 1),
         "d_configs_bascule": num(math.exp(
             (float(trades_for_significance(0.10, 1.0)) * 0.01) / 2.0), 0),
+        # Combien de leviers réglables il faut pour franchir cette bascule.
+        # Le budget vaut 2^k configurations : la réponse est donc le plus
+        # petit k tel que 2^k dépasse le nombre ci-dessus, et elle est
+        # **calculée**. C'est le chiffre qui renverse l'idée qu'une règle
+        # écrite serait toujours plus facile à établir qu'un jugement : à
+        # partir de ce nombre de réglages, elle l'est moins.
+        "d_k_bascule": num(math.ceil(math.log2(math.exp(
+            (float(trades_for_significance(0.10, 1.0)) * 0.01) / 2.0))), 0),
         # Le chiffre que le bornage fabriquait, cité pour que la correction
         # soit vérifiable dans le document plutôt que seulement dans le dépôt.
         "d_mur_geometrie_ancien": num(

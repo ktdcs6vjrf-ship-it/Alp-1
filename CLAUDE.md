@@ -21,15 +21,14 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (≈1,51 Mo, 56 sections en
-quatorze parties, 29 tables, 53 figures dont douze surfaces en nuage de
-points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+**ALP nº 3** — `docs/prouver-un-jugement.html` (61 sections en quinze
+parties, 34 tables, 58 figures dont quatorze surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
 lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
 `report10/11/13/14.py` + `sorties.py` + `concepts.py` + `setups.py` +
-`figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` →
-`discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
+`robustesse.py` + `figrobu.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -60,8 +59,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/d5e2c22b-1f51-4c2b-951e-14a6bdc9aaf6
-  (précédents : 99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/dcb59260-5cd3-4b2d-a757-db38c2a3623d
+  (précédents : d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -110,6 +109,19 @@ Conséquences chiffrées, toutes dans ALP nº 3 partie X :
 0,941 % d'un bit : le marché peut être du bruit à 99,06 %. Au stop élargi,
 0,042 % — bruit à 99,958 %. Le prix : 474 décisions pour établir la première,
 10 568 pour la seconde. **Rendre l'exigence petite la rend indémontrable.**
+
+Sa **partie XIV** répond à l'objection de la loi normale — `robustesse.py` +
+`figrobu.py`. Six lois d'incrément à variance identique, dont une Student à
+trois degrés (moment d'ordre quatre divergent), une loi à sauts négatifs
+compensés (l'asymétrie réelle d'un indice, **négative**), et une loi
+exponentielle recentrée qui prend au mot « la baisse est plafonnée, la hausse
+est illimitée ». Résultat : *les six rendent `−c/a`*. Ce que les queues
+déplacent, c'est le temps de marché, donc le seuil — et la géométrie le
+déplace **7,5 fois plus** que la forme des queues. Deux pièges y sont
+enterrés : l'appariement antithétique est interdit sur une loi asymétrique
+(nier un incrément change sa loi), et le seuil de verdict est corrigé de
+Bonferroni sur les douze verdicts de la campagne, faute de quoi une ligne
+portait « réfutée » sur un faux positif attendu 46 % du temps.
 
 ## Carte des modules
 
@@ -181,6 +193,12 @@ Rendu
   et sa prédiction échoue tant qu'on prend le mauvais ; et la simulation tourne
   au stop de 0,150 %, parce qu'à 0,6 point une minute de bruit vaut deux fois
   le stop et qu'il n'y a alors *aucun* concept de sortie à discuter.
+- `robustesse.py` — **l'invariance sous six lois de prix.** `lois()`,
+  `moments()`, `queues()`, `mesurer(drift)`, `Z_SEUIL` (Bonferroni calculé),
+  `cellule()` et les deux surfaces. Le champ `symetrique` décide de
+  l'appariement antithétique et un test l'exige. **Toutes les cellules des
+  surfaces voient le même flux d'aléa** — la graine ne dépend que de l'indice
+  de trajectoire — et c'est ce qui rend le relief lisse sans lissage.
 - `pieds.py` — la prose de pied sort du SVG et se recompose sous la figure.
   **Les quatre documents y passent** ; `paper.py` et `paper2.py` ne le
   faisaient pas, faute de pouvoir importer `workingpaper` sans cycle. Deux règles y sont enterrées :
@@ -194,7 +212,7 @@ Rendu
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — treize modules, chacun expose `render_all()`. `figcat.py` porte
+- `fig*.py` — quatorze modules, chacun expose `render_all()`. `figcat.py` porte
   les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
@@ -343,6 +361,25 @@ contexte : le footprint se dessine en cellules, pas en bougies. Et chaque
 marque a besoin de son nom dans la figure — un cadre, un liseré, un point ne
 disent rien tant qu'une ligne ne dit pas ce qu'ils marquent.
 
+### Le libellé ARIA ne peut porter aucune apostrophe
+Il vit dans un attribut, et deux tests l'encadrent par les deux bouts : la
+passe typographique de `discpaper` ne visite jamais l'intérieur d'une balise,
+donc une apostrophe **droite** y survit et `test_aucune_apostrophe_droite`
+la trouve ; une apostrophe **courbe** écrite à la main y est refusée par
+`test_les_attributs_sont_epargnes`, qui protège les `href` et les classes.
+La seule sortie est de rédiger le libellé sans apostrophe. Idem pour les
+pieds de figure, qui ne passent pas par `report.inline` : un `**` y est
+publié tel quel, et un test le refuse.
+
+### Un texte barré par un tracé ne se voit à aucun balayage
+`rect.mjs` croise les boîtes de `text` **entre elles** ; il ne croise jamais
+un texte avec un `path`. Une étiquette posée au milieu d'un faisceau de
+courbes passe donc les trois balayages et reste illisible. Trois étiquettes
+de `figrobu` sont tombées dans ce trou. La parade n'est pas un quatrième
+balayage : c'est de ne poser un nom que là où la donnée n'est pas — le ras du
+plancher du cadre, la gouttière d'axe (une graduation peut porter un mot :
+« 1 × symétrique »), ou la légende sous la planche.
+
 ### Les pièges de rendu
 - `Panel.area` pose sa classe telle quelle : la feuille ne définit le
   remplissage que sur `.area.ar1`. Passer `"ar1"` seul donne un aplat **noir**.
@@ -380,7 +417,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 967 tests (compter ~35 min, --wp et setups sont lents)
+python main.py --tests      # 1004 tests (compter ~40 min, --wp, setups et robustesse sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
