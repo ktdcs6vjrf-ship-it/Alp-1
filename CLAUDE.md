@@ -49,8 +49,9 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/e49bcb16-0228-44f8-bf58-0255216b4d4e
-  (précédent : https://claude.ai/code/artifact/c360de80-7cdd-4001-a2b7-4a437ce8f0ad)
+- ALP nº 3 : https://claude.ai/code/artifact/4e95dfbc-e717-44e4-ba3e-97102aeafb92
+  (précédents : e49bcb16-0228-44f8-bf58-0255216b4d4e, puis
+  c360de80-7cdd-4001-a2b7-4a437ce8f0ad)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
