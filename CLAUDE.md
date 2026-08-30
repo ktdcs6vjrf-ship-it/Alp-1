@@ -49,9 +49,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/4e95dfbc-e717-44e4-ba3e-97102aeafb92
-  (précédents : e49bcb16-0228-44f8-bf58-0255216b4d4e, puis
-  c360de80-7cdd-4001-a2b7-4a437ce8f0ad)
+- ALP nº 3 : https://claude.ai/code/artifact/f9f5d005-c0e9-4818-a671-3130f43e8543
+  (précédents : 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -287,6 +286,19 @@ tracée.
 
 **Élargir une fenêtre oblige à relire sa légende.** Et une colonne constante
 sur sept lignes est un signal, pas un détail.
+
+### Une figure doit montrer ce que la section décrit
+La planche du flux posait trois bougies d'une minute et trois lignes de
+chiffres. Le code était juste, les nombres exacts, et **on n'y voyait ni les
+cellules bid × ask, ni le déséquilibre, ni le niveau absorbant, ni le bout
+épuisé** — c'est-à-dire rien de ce dont la section parlait. Le défaut ne s'est
+pas vu au balayage : aucun débordement, aucun chevauchement, un cadre bien
+occupé. Il s'est vu en lisant la légende à côté de la figure.
+
+Deux règles en sortent. Une figure de concept montre **l'objet**, pas son
+contexte : le footprint se dessine en cellules, pas en bougies. Et chaque
+marque a besoin de son nom dans la figure — un cadre, un liseré, un point ne
+disent rien tant qu'une ligne ne dit pas ce qu'ils marquent.
 
 ### Les pièges de rendu
 - `Panel.area` pose sa classe telle quelle : la feuille ne définit le
