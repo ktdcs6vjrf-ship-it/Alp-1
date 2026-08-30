@@ -25,7 +25,9 @@ import math
 
 from .figquant import surface
 from .figterm import Board, Panel, _num, _signed
+from . import horloge as H
 from . import sorties as S
+from . import seuil as SE
 from .report11 import DERIVE_TRAVAIL
 
 #: Dérives balayées par la surface, en points d'indice par heure.
@@ -208,9 +210,164 @@ def fig_sortie_surface() -> str:
         "la dérive du marché, avec la frontière du signe")
 
 
+#: Largeurs de stop et exposants de la carte du régime.
+STOPS_3D = (0.010, 0.015, 0.020, 0.030, 0.050)
+EXPOSANTS_3D = (0.46, 0.50, 0.55, 0.60, 0.70)
+
+
+def fig_gamma_horloge() -> str:
+    """Ce que le régime de gamma déplace, et la colonne qui ne bouge pas.
+
+    Le premier cadre porte la probabilité d'atteindre le target selon
+    l'exposant d'échelle. Elle est plate, et son domaine va de zéro à dix
+    pour cent — une fenêtre étroite ferait passer la platitude pour un choix
+    de cadrage, et le dépôt a déjà payé ce défaut une fois, sur une figure
+    qui affirmait le contraire de ce théorème.
+    """
+    exps = list(H.EXPOSANTS)
+    b = Board(660, 464)
+
+    # Les deux grandeurs partagent le cadre, et c'est le contraste qui est le
+    # contenu. Seule, la courbe plate occupait cinq pour cent de la hauteur —
+    # le balayage d'occupation l'a signalée — et la resserrer aurait fait
+    # passer sa platitude pour un cadrage. Elles tiennent toutes deux entre
+    # zéro et dix, l'une en pour-cent et l'autre en minutes.
+    p1 = Panel(b, 78, 52, 236, 156, title="Plate, et pas plate",
+               readout=f"p(target) = {_num(100.0 / (1.0 + H.RR), 3)} %")
+    p1.domain(0.44, 0.72, 0.0, 10.0)
+    p1.frame()
+    p1.grid_y([0, 2, 4, 6, 8, 10], lambda v: _num(v, 0),
+              label="p(target) en %  ·  E[τ] en min")
+    p1.grid_x([0.45, 0.55, 0.65], lambda v: _num(v, 2),
+              label="exposant d'échelle H")
+    hs = [0.44 + 0.28 * k / 60.0 for k in range(61)]
+    p1.path([(h, H.regime(h).exposition) for h in hs], "s2")
+    p1.path([(h, 100.0 * H.regime(h).p_target) for h in hs], "s1")
+    for h in exps:
+        r = H.regime(h)
+        p1.dot(h, 100.0 * r.p_target, "s1",
+               f"H = {h:.2f} : p(target) = {100 * r.p_target:.3f} %")
+        p1.dot(h, r.exposition, "s2",
+               f"H = {h:.2f} : E[τ] = {r.exposition:.2f} min")
+    p1.label(0.448, 8.6, "temps de position", dx=0, dy=0, cls="dl halo")
+    p1.label(0.448, 3.1, "probabilité de touche", dx=0, dy=0, cls="dl halo")
+
+    p2 = Panel(b, 372, 52, 220, 156, title="Ce qu'il déplace",
+               readout="µ* à la géométrie déclarée")
+    p2.domain(0.44, 0.72, 0.0, 10.5)
+    p2.frame()
+    p2.grid_y([0, 2, 4, 6, 8, 10], lambda v: _num(v, 0),
+              label="seuil µ* (pt/h)")
+    p2.grid_x([0.45, 0.55, 0.65], lambda v: _num(v, 2),
+              label="exposant d'échelle H")
+    p2.band_y(SE.PLAUSIBLE_DRIFT_PER_HOUR[0], SE.PLAUSIBLE_DRIFT_PER_HOUR[1],
+              "wash")
+    p2.path([(0.44 + 0.28 * k / 60.0, H.regime(0.44 + 0.28 * k / 60.0).seuil)
+             for k in range(61)], "s2")
+    for h in exps:
+        p2.dot(h, H.regime(h).seuil, "s2", f"H = {h:.2f}")
+    p2.label(0.70, SE.PLAUSIBLE_DRIFT_PER_HOUR[1], "dérive plausible",
+             dx=-4, dy=14, anchor="end", cls="lg halo")
+
+    p3 = Panel(b, 78, 288, 514, 108, title="La fenêtre où la lecture décide",
+               readout=f"dérive de travail {_num(DERIVE_TRAVAIL, 1)} pt/h")
+    p3.domain(0.008, 0.06, 0.05, 20.0, xlog=True, ylog=True)
+    p3.frame()
+    p3.grid_y([0.1, 1.0, 10.0], lambda v: _num(v, 1), label="µ* (pt/h)")
+    p3.grid_x([0.01, 0.02, 0.03, 0.05],
+              lambda v: _num(v, 3) + " %", label="largeur de stop")
+    # La bande vient **avant** les tracés. Posée après, elle recouvrait les
+    # deux courbes dans la seule région que ce cadre existe pour montrer.
+    bas, haut = H.fenetre()
+    p3.band_x(bas, haut, "wash")
+    pcts = [0.008 * (0.06 / 0.008) ** (k / 60.0) for k in range(61)]
+    p3.path([(x, H.seuil_par_stop(x, min(exps))) for x in pcts], "s1")
+    p3.path([(x, H.seuil_par_stop(x, max(exps))) for x in pcts], "s2")
+    p3.hline(DERIVE_TRAVAIL, "lvl strong")
+    p3.label(0.0092, 12.0, "perdue", dx=0, dy=0, cls="lg halo")
+    p3.label(haut, 12.0, "gagnée", dx=6, dy=0, cls="lg halo")
+    p3.label(bas, 0.075, "la fenêtre", dx=2, dy=0, cls="dl halo")
+    # Les couleurs ne portent pas la même chose ici que dans le premier
+    # cadre : les courbes se nomment donc sur place, et la légende de pied
+    # ne décrit plus que le premier.
+    p3.label(0.058, H.seuil_par_stop(0.058, min(exps)), "chop",
+             dx=-4, dy=-6, anchor="end", cls="dl halo")
+    p3.label(0.058, H.seuil_par_stop(0.058, max(exps)), "tendance",
+             dx=-4, dy=-6, anchor="end", cls="dl halo")
+
+    # Pas de légende de pied ici. Les quatre courbes se nomment déjà sur
+    # place, et une pastille commune aux trois cadres aurait fait porter à
+    # une même couleur deux grandeurs différentes — la probabilité de touche
+    # dans le premier cadre, le régime de chop dans le troisième.
+    b.caption(330, 442, "le régime déplace le temps de position et le seuil, "
+                        "jamais la probabilité de touche,")
+    b.caption(330, 456, "et il ne décide du signe de l'espérance que dans la "
+                        "bande étroite du troisième cadre")
+    return b.render(
+        "Probabilité d atteindre le target et seuil de rentabilité selon "
+        "l exposant d échelle, et fenêtre de largeur de stop où le régime "
+        "décide du signe de l espérance")
+
+
+def fig_gamma_carte() -> str:
+    """La carte du régime sur le plan (largeur de stop, exposant).
+
+    La couleur ne code pas la hauteur mais le verdict : une maille verte est
+    une configuration dont le seuil tombe sous la dérive de travail. La
+    frontière entre les deux est ce que la figure existe pour montrer, et la
+    rangée du stop déclaré reste entièrement rouge.
+    """
+    z = [[math.log10(H.seuil_par_stop(p, h)) for h in EXPOSANTS_3D]
+         for p in STOPS_3D]
+    plat = [v for ligne in z for v in ligne]
+    marge = (max(plat) - min(plat)) * 0.06
+    zlo, zhi = min(plat) - marge, max(plat) + marge
+    limite = math.log10(DERIVE_TRAVAIL)
+
+    def verdict(v: float) -> str:
+        return "dn" if v > limite else "up"
+
+    b = Board(660, 398)
+    b.add('<text class="hdr" x="0" y="18">Le seuil sur le plan du stop et du '
+          'régime</text>')
+    b.add('<text class="sub" x="0" y="34">hauteur : logarithme de µ* · '
+          'couleur : le seuil tombe-t-il sous la dérive de travail ?</text>')
+    b.add('<line class="ba" x1="0" y1="46" x2="660" y2="46"/>')
+    # Hauteur ramenée de 150 à 105, largeur de 40 à 32 : la nappe descendait
+    # vers l'avant-droit, c'est-à-dire exactement là où l'aide place les
+    # libellés de l'arête des colonnes, et les deux se chevauchaient sans
+    # qu'aucune boîte de texte n'en croise une autre — le balayage ne pouvait
+    # pas le voir, seul l'œil le pouvait.
+    surface(
+        b, 356.0, 158.0, z, zlo, zhi, cx=32.0, cy=13.0, cz=105.0,
+        row_labels=[_num(p, 3) for p in STOPS_3D[:-1]]
+                   + [_num(STOPS_3D[-1], 3) + " %"],
+        col_labels=[_num(h, 2) for h in EXPOSANTS_3D[:-1]]
+                   + ["H = " + _num(EXPOSANTS_3D[-1], 2)],
+        z_ticks=[(math.log10(v), _num(v, 1) + " pt/h")
+                 for v in (0.2, 1.0, DERIVE_TRAVAIL, 10.0)
+                 if zlo <= math.log10(v) <= zhi],
+        tip="µ* = {v:.2f} (log₁₀ des pt/h)", classify=verdict, zero=limite,
+    )
+    b.annotation(0, 300, "la rangée du stop déclaré reste rouge")
+    b.annotation(0, 314, "d'un bout à l'autre de la plage de régimes")
+    b.legend(0, 338, [("dn", "seuil au-dessus de la dérive de travail"),
+                      ("up", "seuil en dessous")], step=330, kind="swatch")
+    b.caption(330, 362, "l'arête gauche est la largeur du stop, l'arête "
+                        "droite le régime de gamma,")
+    b.caption(330, 376, "et la couleur dit si la configuration passe — le "
+                        "régime ne décide qu'où la frontière traverse une "
+                        "rangée")
+    return b.render(
+        "Surface du seuil de rentabilité sur le plan de la largeur de stop et "
+        "de l exposant d échelle, colorée par le verdict")
+
+
 ALL_FIGURES = {
     "sortiewald": fig_sortie_wald,
     "sortiesurface": fig_sortie_surface,
+    "gammahorloge": fig_gamma_horloge,
+    "gammacarte": fig_gamma_carte,
 }
 
 

@@ -113,6 +113,14 @@ Statistique
 - `discipline.py` — `k` écarts discrétionnaires valent `2^k` configurations.
 
 Flux d'ordres
+- `horloge.py` — le régime de gamma déplace l'horloge, et **seulement** elle.
+  À la géométrie déclarée `p(target)` vaut `1/(1+R:R)` à tout exposant, mais
+  **c'est conditionnel à ce que la séance ne borne rien** : à stop élargi,
+  `p_open` monte à 12 % en chop et la probabilité de touche varie d'un facteur
+  35. Quatre tests ont refusé la première version, qui affirmait l'invariance
+  sans sa condition. L'inversion : à géométrie fixe, le jour de tendance a la
+  **pire** espérance, et le régime ne décide du signe que dans une bande
+  étroite de largeurs de stop — sous laquelle la géométrie déclarée tombe.
 - `orderflow.py` — LPR, impact de Kyle, CVD, divergences.
 - `footprint.py` — déséquilibre diagonal (loi nulle **exacte**, binomiale),
   absorption (`z = Δprix/λ√V`, p-valeur **centrale**), épuisement (loi
@@ -276,7 +284,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 886 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 902 tests (compter ~25 min, --wp et figures sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html

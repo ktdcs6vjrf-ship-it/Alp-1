@@ -783,6 +783,7 @@
       </li>
       <li><span class="pt">Douzième partie — Lire le flux</span>
         <ol start="39">
+          <li><a href="#s-gamma-horloge">Le régime de gamma, et ce qu’il décide vraiment</a></li>
           <li><a href="#s-footprint">Le footprint, et ce qu’un déséquilibre vaut</a></li>
           <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n’observe</a></li>
           <li><a href="#s-tpo">Le profil de marché, et ses cinq lectures</a></li>
@@ -790,7 +791,7 @@
         </ol>
       </li>
       <li><span class="pt">Treizième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="43">
+        <ol start="44">
           <li><a href="#s-protocole">Ce qu’il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -5973,6 +5974,242 @@
     <p>Deux couches que l’opérateur regarde tous les jours, passées au même protocole que le reste.</p>
   </div>
 
+  <h2 id="s-gamma-horloge">Le régime de gamma, et ce qu’il décide vraiment</h2>
+
+  <p>C’est la couche que le document nº&nbsp;1 désigne comme la première à tester, et c’est aussi celle dont la vulgarisation circule le plus. Le mécanisme y est correctement décrit, et il faut le dire avant de le corriger&nbsp;: en gamma long, le teneur vend les hausses et achète les creux pour rester couvert, et le mouvement est étouffé&nbsp;; en gamma court, il achète les hausses et vend les creux, et le mouvement est amplifié. Rien à redire.</p>
+
+  <p>La conclusion qu’on en tire d’ordinaire est moins solide. Elle s’énonce «&nbsp;gamma long, journée de fourchette&nbsp;; gamma court, journée de tendance&nbsp;» et se termine par une recommandation d’entrée. La section&nbsp;<a href="#s-strategie">6</a> a déjà posé la réserve qui l’empêche&nbsp;: <strong>le mécanisme de couverture contraint la dispersion et laisse la direction indéterminée.</strong> Une exposition négative annonce des mouvements plus amples, pas des mouvements haussiers.</p>
+
+  <p>Ce chapitre va un cran plus loin, et pose la question que la réserve laisse ouverte&nbsp;: si le régime ne déplace que la dispersion, <em>que déplace-t-il dans la décision&nbsp;?</em></p>
+
+  <h3>Une colonne qui ne bouge pas</h3>
+
+  <p>La dispersion entre dans l’appareil par l’exposant d’échelle, et l’exposant n’agit que sur le temps d’atteinte. Or les probabilités de barrière n’en dépendent pas — c’est le théorème d’arrêt optionnel, qui fonde toute la série. La conséquence se lit dans une colonne.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 18</span> — Ce que le régime de gamma déplace à la géométrie déclarée, et ce qu’il ne déplace pas</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th class="wrap">Régime</th><th>H</th><th>GEX impliqué (10¹¹ $)</th><th>E[τ∧T] (min)</th><th>µ* (pt/h)</th><th>p(target)</th><th>p(clôture)</th><th>E[R] à 2,0 pt/h</th></tr></thead>
+        <tbody>
+          <tr><td class="wrap">gamma long, chop</td><td>0,46</td><td>1,22</td><td>6,06</td><td>3,27</td><td>4,762 %</td><td>0,0001 %</td><td>−0,2135</td></tr>
+          <tr><td class="wrap">neutre</td><td>0,50</td><td>0,00</td><td>4,61</td><td>4,30</td><td>4,762 %</td><td>0,0000 %</td><td>−0,2940</td></tr>
+          <tr><td class="wrap">gamma court</td><td>0,55</td><td>−0,90</td><td>3,53</td><td>5,60</td><td>4,762 %</td><td>0,0000 %</td><td>−0,3537</td></tr>
+          <tr><td class="wrap">gamma court</td><td>0,60</td><td>−1,39</td><td>2,86</td><td>6,93</td><td>4,762 %</td><td>0,0000 %</td><td>−0,3913</td></tr>
+          <tr><td class="wrap">gamma court, tendance</td><td>0,70</td><td>−1,82</td><td>2,10</td><td>9,44</td><td>4,762 %</td><td>0,0000 %</td><td>−0,4335</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> <strong>La colonne p(target) ne bouge pas d’un millième</strong> — elle vaut 4,762 %, soit exactement <span class="v">1/(1 + R:R)</span>. C’est le théorème d’arrêt optionnel : les probabilités de barrière du problème non borné ne dépendent que de la géométrie, jamais de l’exposant d’échelle. La colonne voisine dit à quelle condition : <span class="v">p(clôture)</span> est la part des trades qui sortent sans avoir touché de barrière, et elle reste ici sous un dix-millième. <strong>À cette géométrie, la séance ne borne rien, et le régime ne dit pas si le target sera touché.</strong> Élargir le stop retire cette condition — à 0,050 % de stop, 12 % des trades atteignent la clôture en chop contre presque aucun en tendance, et la probabilité de target passe d’un facteur 35 entre les deux régimes, parce que l’horloge décide alors si la séance est assez longue. Ce qu’il déplace est le temps, d’un facteur 2,9 entre le chop et la tendance, donc le seuil du même facteur. La dernière colonne porte l’inversion que la lecture courante manque : à géométrie fixe, le jour de tendance est celui dont l’espérance est la <strong>pire</strong>, parce qu’il résout les barrières plus vite et achète donc moins de temps de marché pour la même friction. « Tendance » au sens du gamma signifie mouvements amplifiés, c’est-à-dire variance — pas direction.</p>
+    </figure>
+
+  <p>À la géométrie déclarée, la probabilité d’atteindre le target vaut 4,762&nbsp;% à tous les régimes, soit exactement <span class="v">1/(1&nbsp;+&nbsp;R:R)</span>. <strong>Le régime de gamma n’y dit pas si vous toucherez votre target.</strong> Ce qu’il déplace est le temps&nbsp;: de 6,06 minutes en chop maximal à 2,10 en tendance maximale, un facteur 2,9 — donc le seuil de rentabilité du même facteur, de 3,27 à 9,44 points par heure.</p>
+
+  <p>La condition mérite d’être posée, parce qu’elle a failli passer sans l’être. Le théorème d’arrêt optionnel porte sur le problème <em>non borné</em>, et une séance finit&nbsp;: un trade qui n’a touché aucune barrière avant la clôture en sort par une troisième issue, et celle-là dépend bien du régime. À la géométrie déclarée elle est négligeable — le stop fait six dixièmes de point, les barrières se résolvent en quelques minutes, et la colonne <span class="v">p(clôture)</span> de la table reste sous un dix-millième. <strong>C’est ce qui autorise la phrase précédente, et rien d’autre.</strong></p>
+
+  <p>Élargissez le stop et la condition tombe. À 0,050&nbsp;% de largeur, 12&nbsp;% des trades atteignent la clôture en chop contre presque aucun en tendance, et la probabilité de target passe d’un facteur 35 entre les deux régimes. Le régime n’a pas cessé de n’agir que sur l’horloge&nbsp;: c’est l’horloge qui décide désormais si la séance est assez longue pour aller chercher le target. Quatre tests ont refusé la première version de ce chapitre, qui affirmait l’invariance sans sa condition.</p>
+
+  <p>La partie précédente a établi que le temps de position est la seule grandeur sur laquelle un concept de sortie agisse. Le régime de gamma agit sur la même. <strong>Il ne donne pas une direction, il donne une horloge</strong> — et c’est une information utile, à condition de ne pas la prendre pour l’autre.</p>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 30</span> — La probabilité d’atteindre le target selon l’exposant d’échelle, le seuil de rentabilité selon le même exposant, et la fenêtre de largeur de stop où le régime décide du signe de l’espérance. Le premier cadre porte un domaine de zéro à dix pour cent&nbsp;: une fenêtre étroite ferait passer la platitude pour un choix de cadrage, et ce document a déjà payé ce défaut sur une figure qui affirmait le contraire de son propre théorème.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 464" role="img" aria-label="Probabilité d atteindre le target et seuil de rentabilité selon l exposant d échelle, et fenêtre de largeur de stop où le régime décide du signe de l espérance" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="78.0" y="40.0">Plate, et pas plate</text>
+<text class="sub" x="314.0" y="27.0" text-anchor="end">p(target) = 4,762 %</text>
+<line class="hsep" x1="78.0" y1="46.0" x2="314.0" y2="46.0"/>
+<rect class="frame" x="78.0" y="52.0" width="236.0" height="156.0"/>
+<line class="gl" x1="78.0" y1="208.0" x2="314.0" y2="208.0"/>
+<text class="tk" x="73.0" y="207.0" text-anchor="end">0</text>
+<line class="gl" x1="78.0" y1="176.8" x2="314.0" y2="176.8"/>
+<text class="tk" x="73.0" y="179.8" text-anchor="end">2</text>
+<line class="gl" x1="78.0" y1="145.6" x2="314.0" y2="145.6"/>
+<text class="tk" x="73.0" y="148.6" text-anchor="end">4</text>
+<line class="gl" x1="78.0" y1="114.4" x2="314.0" y2="114.4"/>
+<text class="tk" x="73.0" y="117.4" text-anchor="end">6</text>
+<line class="gl" x1="78.0" y1="83.2" x2="314.0" y2="83.2"/>
+<text class="tk" x="73.0" y="86.2" text-anchor="end">8</text>
+<line class="gl" x1="78.0" y1="52.0" x2="314.0" y2="52.0"/>
+<text class="tk" x="73.0" y="55.0" text-anchor="end">10</text>
+<text class="ax" transform="translate(36.0,130.0) rotate(-90)" text-anchor="middle">p(target) en %  ·  E[τ] en min</text>
+<text class="tk" x="86.4" y="221.0" text-anchor="middle">0,45</text>
+<text class="tk" x="170.7" y="221.0" text-anchor="middle">0,55</text>
+<text class="tk" x="255.0" y="221.0" text-anchor="middle">0,65</text>
+<line class="ba" x1="78.0" y1="208.0" x2="314.0" y2="208.0"/>
+<text class="ax" x="196.0" y="236.0" text-anchor="middle">exposant d’échelle H</text>
+<path class="ln s2" d="M78.00,97.35 L81.93,101.52 L85.87,105.43 L89.80,109.11 L93.73,112.57 L97.67,115.83 L101.60,118.90 L105.53,121.79 L109.47,124.53 L113.40,127.11 L117.33,129.56 L121.27,131.87 L125.20,134.07 L129.13,136.15 L133.07,138.13 L137.00,140.00 L140.93,141.79 L144.87,143.49 L148.80,145.11 L152.73,146.66 L156.67,148.13 L160.60,149.53 L164.53,150.88 L168.47,152.16 L172.40,153.39 L176.33,154.56 L180.27,155.69 L184.20,156.77 L188.13,157.80 L192.07,158.79 L196.00,159.75 L199.93,160.66 L203.87,161.54 L207.80,162.38 L211.73,163.20 L215.67,163.98 L219.60,164.73 L223.53,165.46 L227.47,166.16 L231.40,166.83 L235.33,167.48 L239.27,168.11 L243.20,168.72 L247.13,169.30 L251.07,169.87 L255.00,170.41 L258.93,170.94 L262.87,171.45 L266.80,171.95 L270.73,172.43 L274.67,172.89 L278.60,173.34 L282.53,173.78 L286.47,174.20 L290.40,174.61 L294.33,175.01 L298.27,175.39 L302.20,175.77 L306.13,176.13 L310.07,176.48 L314.00,176.83"></path>
+<path class="ln s1" d="M78.00,133.73 L81.93,133.72 L85.87,133.72 L89.80,133.72 L93.73,133.72 L97.67,133.72 L101.60,133.71 L105.53,133.71 L109.47,133.71 L113.40,133.71 L117.33,133.71 L121.27,133.71 L125.20,133.71 L129.13,133.71 L133.07,133.71 L137.00,133.71 L140.93,133.71 L144.87,133.71 L148.80,133.71 L152.73,133.71 L156.67,133.71 L160.60,133.71 L164.53,133.71 L168.47,133.71 L172.40,133.71 L176.33,133.71 L180.27,133.71 L184.20,133.71 L188.13,133.71 L192.07,133.71 L196.00,133.71 L199.93,133.71 L203.87,133.71 L207.80,133.71 L211.73,133.71 L215.67,133.71 L219.60,133.71 L223.53,133.71 L227.47,133.71 L231.40,133.71 L235.33,133.71 L239.27,133.71 L243.20,133.71 L247.13,133.71 L251.07,133.71 L255.00,133.71 L258.93,133.71 L262.87,133.71 L266.80,133.71 L270.73,133.71 L274.67,133.71 L278.60,133.71 L282.53,133.71 L286.47,133.71 L290.40,133.71 L294.33,133.71 L298.27,133.71 L302.20,133.71 L306.13,133.71 L310.07,133.71 L314.00,133.71"></path>
+<circle class="pt s1" cx="94.86" cy="133.72" r="4"><title>H = 0.46 : p(target) = 4.762 %</title></circle>
+<circle class="pt s2" cx="94.86" cy="113.52" r="4"><title>H = 0.46 : E[τ] = 6.06 min</title></circle>
+<circle class="pt s1" cx="128.57" cy="133.71" r="4"><title>H = 0.50 : p(target) = 4.762 %</title></circle>
+<circle class="pt s2" cx="128.57" cy="136.12" r="4"><title>H = 0.50 : E[τ] = 4.61 min</title></circle>
+<circle class="pt s1" cx="170.71" cy="133.71" r="4"><title>H = 0.55 : p(target) = 4.762 %</title></circle>
+<circle class="pt s2" cx="170.71" cy="152.87" r="4"><title>H = 0.55 : E[τ] = 3.53 min</title></circle>
+<circle class="pt s1" cx="212.86" cy="133.71" r="4"><title>H = 0.60 : p(target) = 4.762 %</title></circle>
+<circle class="pt s2" cx="212.86" cy="163.42" r="4"><title>H = 0.60 : E[τ] = 2.86 min</title></circle>
+<circle class="pt s1" cx="297.14" cy="133.71" r="4"><title>H = 0.70 : p(target) = 4.762 %</title></circle>
+<circle class="pt s2" cx="297.14" cy="175.28" r="4"><title>H = 0.70 : E[τ] = 2.10 min</title></circle>
+<text class="dl halo" x="84.7" y="73.8" text-anchor="start">temps de position</text>
+<text class="dl halo" x="84.7" y="159.6" text-anchor="start">probabilité de touche</text>
+<text class="hdr" x="372.0" y="40.0">Ce qu’il déplace</text>
+<text class="sub" x="592.0" y="27.0" text-anchor="end">µ* à la géométrie déclarée</text>
+<line class="hsep" x1="372.0" y1="46.0" x2="592.0" y2="46.0"/>
+<rect class="frame" x="372.0" y="52.0" width="220.0" height="156.0"/>
+<line class="gl" x1="372.0" y1="208.0" x2="592.0" y2="208.0"/>
+<text class="tk" x="367.0" y="207.0" text-anchor="end">0</text>
+<line class="gl" x1="372.0" y1="178.3" x2="592.0" y2="178.3"/>
+<text class="tk" x="367.0" y="181.3" text-anchor="end">2</text>
+<line class="gl" x1="372.0" y1="148.6" x2="592.0" y2="148.6"/>
+<text class="tk" x="367.0" y="151.6" text-anchor="end">4</text>
+<line class="gl" x1="372.0" y1="118.9" x2="592.0" y2="118.9"/>
+<text class="tk" x="367.0" y="121.9" text-anchor="end">6</text>
+<line class="gl" x1="372.0" y1="89.1" x2="592.0" y2="89.1"/>
+<text class="tk" x="367.0" y="92.1" text-anchor="end">8</text>
+<line class="gl" x1="372.0" y1="59.4" x2="592.0" y2="59.4"/>
+<text class="tk" x="367.0" y="62.4" text-anchor="end">10</text>
+<text class="ax" transform="translate(330.0,130.0) rotate(-90)" text-anchor="middle">seuil µ* (pt/h)</text>
+<text class="tk" x="379.9" y="221.0" text-anchor="middle">0,45</text>
+<text class="tk" x="458.4" y="221.0" text-anchor="middle">0,55</text>
+<text class="tk" x="537.0" y="221.0" text-anchor="middle">0,65</text>
+<line class="ba" x1="372.0" y1="208.0" x2="592.0" y2="208.0"/>
+<text class="ax" x="482.0" y="236.0" text-anchor="middle">exposant d’échelle H</text>
+<rect class="wash" x="372.0" y="160.5" width="220.0" height="38.6"/>
+<path class="ln s2" d="M372.00,166.53 L375.67,164.90 L379.33,163.26 L383.00,161.59 L386.67,159.91 L390.33,158.21 L394.00,156.50 L397.67,154.77 L401.33,153.02 L405.00,151.27 L408.67,149.50 L412.33,147.72 L416.00,145.93 L419.67,144.13 L423.33,142.32 L427.00,140.51 L430.67,138.69 L434.33,136.86 L438.00,135.03 L441.67,133.19 L445.33,131.35 L449.00,129.51 L452.67,127.66 L456.33,125.82 L460.00,123.97 L463.67,122.12 L467.33,120.27 L471.00,118.43 L474.67,116.58 L478.33,114.74 L482.00,112.90 L485.67,111.06 L489.33,109.23 L493.00,107.40 L496.67,105.57 L500.33,103.75 L504.00,101.94 L507.67,100.13 L511.33,98.33 L515.00,96.53 L518.67,94.74 L522.33,92.96 L526.00,91.18 L529.67,89.42 L533.33,87.66 L537.00,85.91 L540.67,84.16 L544.33,82.43 L548.00,80.71 L551.67,78.99 L555.33,77.29 L559.00,75.59 L562.67,73.90 L566.33,72.23 L570.00,70.56 L573.67,68.91 L577.33,67.26 L581.00,65.63 L584.67,64.00 L588.33,62.39 L592.00,60.79"></path>
+<circle class="pt s2" cx="387.71" cy="159.43" r="4"><title>H = 0.46</title></circle>
+<circle class="pt s2" cx="419.14" cy="144.16" r="4"><title>H = 0.50</title></circle>
+<circle class="pt s2" cx="458.43" cy="124.76" r="4"><title>H = 0.55</title></circle>
+<circle class="pt s2" cx="497.71" cy="105.05" r="4"><title>H = 0.60</title></circle>
+<circle class="pt s2" cx="576.29" cy="67.73" r="4"><title>H = 0.70</title></circle>
+<text class="lg halo" x="572.3" y="174.5" text-anchor="end">dérive plausible</text>
+<text class="hdr" x="78.0" y="276.0">La fenêtre où la lecture décide</text>
+<text class="read" x="592.0" y="276.0" text-anchor="end">dérive de travail 2,0 pt/h</text>
+<line class="hsep" x1="78.0" y1="282.0" x2="592.0" y2="282.0"/>
+<rect class="frame" x="78.0" y="288.0" width="514.0" height="108.0"/>
+<line class="gl" x1="78.0" y1="383.5" x2="592.0" y2="383.5"/>
+<text class="tk" x="73.0" y="386.5" text-anchor="end">0,1</text>
+<line class="gl" x1="78.0" y1="342.0" x2="592.0" y2="342.0"/>
+<text class="tk" x="73.0" y="345.0" text-anchor="end">1,0</text>
+<line class="gl" x1="78.0" y1="300.5" x2="592.0" y2="300.5"/>
+<text class="tk" x="73.0" y="303.5" text-anchor="end">10,0</text>
+<text class="ax" transform="translate(36.0,342.0) rotate(-90)" text-anchor="middle">µ* (pt/h)</text>
+<text class="tk" x="134.9" y="409.0" text-anchor="middle">0,010 %</text>
+<text class="tk" x="311.7" y="409.0" text-anchor="middle">0,020 %</text>
+<text class="tk" x="415.2" y="409.0" text-anchor="middle">0,030 %</text>
+<text class="tk" x="545.5" y="409.0" text-anchor="middle">0,050 %</text>
+<line class="ba" x1="78.0" y1="396.0" x2="592.0" y2="396.0"/>
+<text class="ax" x="335.0" y="424.0" text-anchor="middle">largeur de stop</text>
+<rect class="wash" x="193.9" y="288.0" width="216.6" height="108.0"/>
+<path class="ln s1" d="M78.00,312.07 L86.57,313.35 L95.13,314.64 L103.70,315.93 L112.27,317.22 L120.83,318.51 L129.40,319.81 L137.97,321.11 L146.53,322.41 L155.10,323.71 L163.67,325.02 L172.23,326.32 L180.80,327.63 L189.37,328.93 L197.93,330.24 L206.50,331.54 L215.07,332.84 L223.63,334.14 L232.20,335.42 L240.77,336.70 L249.33,337.97 L257.90,339.23 L266.47,340.47 L275.03,341.70 L283.60,342.91 L292.17,344.09 L300.73,345.25 L309.30,346.39 L317.87,347.50 L326.43,348.58 L335.00,349.64 L343.57,350.66 L352.13,351.65 L360.70,352.62 L369.27,353.55 L377.83,354.45 L386.40,355.33 L394.97,356.17 L403.53,356.99 L412.10,357.78 L420.67,358.55 L429.23,359.29 L437.80,360.01 L446.37,360.71 L454.93,361.39 L463.50,362.05 L472.07,362.70 L480.63,363.33 L489.20,363.95 L497.77,364.56 L506.33,365.15 L514.90,365.74 L523.47,366.32 L532.03,366.90 L540.60,367.47 L549.17,368.03 L557.73,368.59 L566.30,369.15 L574.87,369.70 L583.43,370.25 L592.00,370.80"></path>
+<path class="ln s2" d="M78.00,295.91 L86.57,296.74 L95.13,297.58 L103.70,298.43 L112.27,299.27 L120.83,300.13 L129.40,300.98 L137.97,301.84 L146.53,302.69 L155.10,303.56 L163.67,304.42 L172.23,305.29 L180.80,306.15 L189.37,307.02 L197.93,307.89 L206.50,308.76 L215.07,309.64 L223.63,310.51 L232.20,311.38 L240.77,312.26 L249.33,313.13 L257.90,314.01 L266.47,314.88 L275.03,315.76 L283.60,316.63 L292.17,317.51 L300.73,318.38 L309.30,319.26 L317.87,320.13 L326.43,321.00 L335.00,321.88 L343.57,322.75 L352.13,323.62 L360.70,324.49 L369.27,325.36 L377.83,326.23 L386.40,327.10 L394.97,327.97 L403.53,328.84 L412.10,329.70 L420.67,330.57 L429.23,331.44 L437.80,332.30 L446.37,333.17 L454.93,334.03 L463.50,334.90 L472.07,335.76 L480.63,336.63 L489.20,337.49 L497.77,338.35 L506.33,339.22 L514.90,340.08 L523.47,340.95 L532.03,341.81 L540.60,342.67 L549.17,343.54 L557.73,344.40 L566.30,345.26 L574.87,346.12 L583.43,346.98 L592.00,347.84"></path>
+<line class="lvl strong" x1="78.0" y1="329.5" x2="592.0" y2="329.5"/>
+<text class="lg halo" x="113.7" y="297.2" text-anchor="start">perdue</text>
+<text class="lg halo" x="416.5" y="297.2" text-anchor="start">gagnée</text>
+<text class="dl halo" x="195.9" y="388.7" text-anchor="start">la fenêtre</text>
+<text class="dl halo" x="579.4" y="364.2" text-anchor="end">chop</text>
+<text class="dl halo" x="579.4" y="341.0" text-anchor="end">tendance</text>
+
+
+</svg></div>
+      <p class="note">Le régime déplace le temps de position et le seuil, jamais la probabilité de touche, et il ne décide du signe de l’espérance que dans la bande étroite du troisième cadre.</p>
+    </figure>
+
+  <h3>L’inversion</h3>
+
+  <p>La dernière colonne de la table porte un résultat que la lecture courante manque, et qui la renverse. À géométrie fixe, <strong>le jour de tendance est celui dont l’espérance est la pire</strong>&nbsp;: −0,433&nbsp;R contre −0,214 en chop, à dérive identique. La raison est mécanique — la tendance résout les barrières plus vite, achète donc moins de temps de marché, et paie la même friction sur moins d’exposition.</p>
+
+  <p>Le mot «&nbsp;tendance&nbsp;», au sens du gamma, désigne des mouvements amplifiés, c’est-à-dire de la <em>variance</em>. Amplifier la variance à géométrie fixe n’améliore pas le taux de touche — la colonne constante le prouve — et raccourcit le temps de position, qui est le terme qui décide. Un opérateur qui attend le gamma court pour entrer attend donc le régime qui lui laisse le moins de marché.</p>
+
+  <p>Un dernier chiffre ferme le cas à la géométrie déclarée. Le régime le plus favorable de toute la plage — chop maximal, gamma long — laisse le seuil à 3,27&nbsp;points par heure, contre un plafond de dérive plausible de 3,2. De justesse, mais dehors. <strong>Aucun régime de gamma ne ramène la géométrie déclarée dans le domaine où elle serait rentable.</strong></p>
+
+  <h3>La fenêtre où la lecture décide</h3>
+
+  <p>Reste la question utile, et elle est constructive&nbsp;: à quelle condition la lecture du régime change-t-elle une décision&nbsp;? Il suffit de comparer les deux seuils extrêmes à la dérive de travail, largeur de stop par largeur de stop.</p>
+
+    <figure class="wide">
+      <figcaption><span class="lab">Table 19</span> — À quelle largeur de stop la lecture du régime change une décision</figcaption>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Largeur de stop</th><th>µ* en chop (pt/h)</th><th>µ* en tendance (pt/h)</th><th class="wrap">Ce que le régime décide</th></tr></thead>
+        <tbody>
+          <tr class="sep"><td>0,010 %</td><td>3,27</td><td>9,44</td><td class="wrap">perdue à tout régime</td></tr>
+          <tr><td>0,013 %</td><td>1,86</td><td>6,49</td><td class="wrap"><strong>décidée par le régime</strong></td></tr>
+          <tr><td>0,020 %</td><td>0,77</td><td>3,48</td><td class="wrap"><strong>décidée par le régime</strong></td></tr>
+          <tr><td>0,025 %</td><td>0,53</td><td>2,53</td><td class="wrap"><strong>décidée par le régime</strong></td></tr>
+          <tr><td>0,030 %</td><td>0,41</td><td>1,94</td><td class="wrap">gagnée à tout régime</td></tr>
+          <tr><td>0,050 %</td><td>0,24</td><td>0,94</td><td class="wrap">gagnée à tout régime</td></tr>
+          <tr><td>0,150 %</td><td>0,09</td><td>0,24</td><td class="wrap">gagnée à tout régime</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note"><span class="lab">Lecture.</span> Le verdict de la dernière colonne compare les deux seuils extrêmes à la dérive de travail déclarée, 2,0 point par heure. Trois états seulement, et c’est le résultat : <strong>le régime ne décide du signe de l’espérance que dans une bande étroite</strong>, entre 0,0126 % et 0,0295 % de largeur de stop. En deçà, tout est perdu quel que soit le régime ; au-delà, tout est gagné quel que soit le régime, et la lecture ne change alors aucune décision. <strong>La géométrie déclarée par l’opérateur, 0,010 %, tombe sous cette bande</strong> : le régime n’y décide rien, parce que rien n’y est à décider. C’est la réponse chiffrée à la question « faut-il lire le gamma avant l’ouverture ? » — seulement si le stop tombe dans la bande, et il faut d’abord l’y mettre.</p>
+    </figure>
+
+    <figure class="plate">
+      <figcaption><span class="lab">Figure 31</span> — Le seuil de rentabilité sur le plan de la largeur de stop et du régime de gamma. La couleur ne code pas la hauteur mais le verdict&nbsp;: une maille verte est une configuration dont le seuil tombe sous la dérive de travail. La rangée du stop déclaré reste rouge d’un bout à l’autre de la plage de régimes.</figcaption>
+      <div class="scroll"><svg class="fig" viewBox="0 0 660 398" role="img" aria-label="Surface du seuil de rentabilité sur le plan de la largeur de stop et de l exposant d échelle, colorée par le verdict" preserveAspectRatio="xMidYMid meet">
+<text class="hdr" x="0" y="18">Le seuil sur le plan du stop et du régime</text>
+<text class="sub" x="0" y="34">hauteur : logarithme de µ* · couleur : le seuil tombe-t-il sous la dérive de travail ?</text>
+<line class="ba" x1="0" y1="46" x2="660" y2="46"/>
+<polygon class="floor" points="356.0,98.2 484.0,150.2 356.0,202.2 228.0,150.2"></polygon>
+<line class="post" x1="356.0" y1="98.2" x2="356.0" y2="85.7"/>
+<line class="post" x1="484.0" y1="150.2" x2="484.0" y2="204.4"/>
+<line class="post" x1="356.0" y1="202.2" x2="356.0" y2="221.5"/>
+<line class="post" x1="228.0" y1="150.2" x2="228.0" y2="110.6"/>
+<polygon class="mesh up" points="356.0,191.2 388.0,224.8 356.0,221.5 324.0,189.9"><title>µ* = 0.00 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh dn" points="324.0,161.0 356.0,191.2 324.0,189.9 292.0,162.1"><title>µ* = 0.30 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="388.0,187.5 420.0,219.5 388.0,224.8 356.0,191.2"><title>µ* = -0.20 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh dn" points="292.0,135.7 324.0,161.0 292.0,162.1 260.0,138.5"><title>µ* = 0.54 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="356.0,156.0 388.0,187.5 356.0,191.2 324.0,161.0"><title>µ* = 0.12 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="420.0,184.0 452.0,212.9 420.0,219.5 388.0,187.5"><title>µ* = -0.34 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh dn" points="260.0,105.5 292.0,135.7 260.0,138.5 228.0,110.6"><title>µ* = 0.77 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh dn" points="324.0,129.6 356.0,156.0 324.0,161.0 292.0,135.7"><title>µ* = 0.38 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="388.0,152.9 420.0,184.0 388.0,187.5 356.0,156.0"><title>µ* = -0.04 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="452.0,177.6 484.0,204.4 452.0,212.9 420.0,184.0"><title>µ* = -0.46 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh dn" points="292.0,97.9 324.0,129.6 292.0,135.7 260.0,105.5"><title>µ* = 0.64 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="356.0,125.4 388.0,152.9 356.0,156.0 324.0,129.6"><title>µ* = 0.24 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="420.0,148.5 452.0,177.6 420.0,184.0 388.0,152.9"><title>µ* = -0.18 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh dn" points="324.0,91.7 356.0,125.4 324.0,129.6 292.0,97.9"><title>µ* = 0.52 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh up" points="388.0,120.9 420.0,148.5 388.0,152.9 356.0,125.4"><title>µ* = 0.08 (log₁₀ des pt/h)</title></polygon>
+<polygon class="mesh dn" points="356.0,85.7 388.0,120.9 356.0,125.4 324.0,91.7"><title>µ* = 0.39 (log₁₀ des pt/h)</title></polygon>
+<text class="tk halo" x="217.0" y="165.2" text-anchor="end">0,010</text>
+<text class="tk halo" x="249.0" y="178.2" text-anchor="end">0,015</text>
+<text class="tk halo" x="281.0" y="191.2" text-anchor="end">0,020</text>
+<text class="tk halo" x="313.0" y="204.2" text-anchor="end">0,030</text>
+<text class="tk halo" x="345.0" y="217.2" text-anchor="end">0,050 %</text>
+<text class="tk halo" x="491.0" y="161.2">0,46</text>
+<text class="tk halo" x="459.0" y="174.2">0,50</text>
+<text class="tk halo" x="427.0" y="187.2">0,55</text>
+<text class="tk halo" x="395.0" y="200.2">0,60</text>
+<text class="tk halo" x="363.0" y="213.2">H = 0,70</text>
+<text class="tk" x="180.0" y="211.9" text-anchor="end">0,2 pt/h</text>
+<line class="gl" x1="185.0" y1="208.9" x2="196.0" y2="208.9"/>
+<text class="tk" x="180.0" y="170.9" text-anchor="end">1,0 pt/h</text>
+<line class="gl" x1="185.0" y1="167.9" x2="196.0" y2="167.9"/>
+<text class="tk" x="180.0" y="153.2" text-anchor="end">2,0 pt/h</text>
+<line class="gl" x1="185.0" y1="150.2" x2="196.0" y2="150.2"/>
+<text class="tk" x="180.0" y="112.2" text-anchor="end">10,0 pt/h</text>
+<line class="gl" x1="185.0" y1="109.2" x2="196.0" y2="109.2"/>
+<text class="lg keep" x="0.0" y="300.0" text-anchor="start">la rangée du stop déclaré reste rouge</text>
+<text class="lg keep" x="0.0" y="314.0" text-anchor="start">d’un bout à l’autre de la plage de régimes</text>
+<rect class="dn" x="0.0" y="332.5" width="11" height="11" rx="2"/>
+<text class="lg" x="17.0" y="341.5">seuil au-dessus de la dérive de travail</text>
+<rect class="up" x="330.0" y="332.5" width="11" height="11" rx="2"/>
+<text class="lg" x="347.0" y="341.5">seuil en dessous</text>
+
+
+</svg></div>
+      <p class="note">L’arête gauche est la largeur du stop, l’arête droite le régime de gamma, et la couleur dit si la configuration passe — le régime ne décide qu’où la frontière traverse une rangée.</p>
+    </figure>
+
+  <p>Trois états, et c’est le résultat. <strong>Le régime ne décide du signe de l’espérance que dans une bande étroite</strong>, entre 0,0126&nbsp;% et 0,0295&nbsp;% de largeur de stop. En deçà, tout est perdu quel que soit le régime&nbsp;; au-delà, tout est gagné quel que soit le régime, et la lecture ne change alors aucune décision. La géométrie déclarée, 0,010&nbsp;%, tombe <em>sous</em> la bande.</p>
+
+  <p>C’est la réponse chiffrée à la question «&nbsp;faut-il lire le gamma avant l’ouverture&nbsp;?&nbsp;»&nbsp;: <strong>seulement si le stop tombe dans la bande — et il faut d’abord l’y mettre.</strong> Lue à la géométrie déclarée, l’information est exacte et sans conséquence, ce qui est la façon la plus coûteuse de se tromper, puisqu’elle donne le sentiment d’avoir décidé.</p>
+
+  <h3>Deux réserves, et elles ne sont pas de forme</h3>
+
+  <p><strong>Le cadre tient la dérive fixe pendant que l’exposant varie.</strong> C’est légitime — le mécanisme de couverture agit sur la dispersion, et le document nº&nbsp;1 le modélise ainsi — mais quelqu’un peut soutenir qu’un jour de gamma court porte <em>aussi</em> une dérive plus forte. C’est une affirmation séparée, qui porte sur l’espérance et non sur la dispersion, et elle relève alors du mur d’échantillon de la septième partie&nbsp;: c’est précisément le type d’énoncé qu’on ne peut pas établir avec le nombre de séances dont un opérateur dispose. La distinction n’est pas une chicane. Elle sépare ce qui se calcule de ce qui se croit.</p>
+
+  <p><strong>L’exposition gamma n’est pas observée, elle est modélisée.</strong> Elle s’estime à partir des positions ouvertes en supposant de quel côté se tient le teneur, et personne ne publie la position réelle. Les diffuseurs qui la vendent le disent d’ailleurs eux-mêmes quand ils sont sérieux. Cela n’invalide rien de ce qui précède — le raisonnement porte sur ce que <em>ferait</em> un régime donné — mais cela ajoute une couche d’incertitude en amont de la table, et cette couche-là n’est pas chiffrée ici faute de vérité de référence.</p>
+
   <h2 id="s-footprint">Le footprint, et ce qu’un déséquilibre vaut</h2>
 
   <p>Un graphique en chandelles dit <em>où</em> le prix est allé. Un footprint dit <em>qui l’y a poussé</em>&nbsp;: pour chaque niveau de prix d’une barre, le volume exécuté au bid — un vendeur qui traverse le spread — et le volume exécuté à l’ask. La différence est le delta du niveau, sa somme le delta de barre. Trois lectures s’y sont installées, et chacune se mesure.</p>
@@ -5984,7 +6221,7 @@
   <p><strong>L’épuisement.</strong> Le volume s’effondre au dernier niveau atteint. C’est le seul des trois qui n’ait pas de forme fermée&nbsp;: le volume au niveau extrême d’une excursion est un temps local, et sa loi se simule.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 30</span> — Trois barres en footprint, construites à volumes et niveaux déclarés. À chaque niveau, le volume exécuté au bid à gauche et à l’ask à droite&nbsp;; les cadres marquent un déséquilibre diagonal de 3 pour 1. La barre neutre en attend 0,94 de sa seule loi nulle.</figcaption>
+      <figcaption><span class="lab">Figure 32</span> — Trois barres en footprint, construites à volumes et niveaux déclarés. À chaque niveau, le volume exécuté au bid à gauche et à l’ask à droite&nbsp;; les cadres marquent un déséquilibre diagonal de 3 pour 1. La barre neutre en attend 0,94 de sa seule loi nulle.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 396" role="img" aria-label="Trois barres en footprint : neutre, absorption et déséquilibre acheteur, avec leurs lois nulles" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">FOOTPRINT</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que le carnet laisse comme trace une fois exécuté</text>
@@ -6136,7 +6373,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 18</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
+      <figcaption><span class="lab">Table 20</span> — Trois barres en footprint, et ce que chacune donne à lire.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Barre</th><th>Volume</th><th>Δ</th><th>z d’impact</th><th>Déséquilibres</th><th>Attendus sous martingale</th><th>Rapport d’épuisement</th></tr></thead>
@@ -6159,7 +6396,7 @@
   <p>Si les contrats arrivaient un à un et indépendamment, l’ask d’un niveau à 240 contrats suivrait une binomiale d’écart-type huit&nbsp;: un rapport de 3 pour 1 exigerait plus de quinze écarts-types, c’est-à-dire jamais. <strong>Le déséquilibre serait un signal parfait</strong>, ce qu’il n’est manifestement pas. Ce qui sauve la lecture — et ce qui la limite — est que les contrats n’arrivent pas un à un&nbsp;: un ordre de vingt lots est <em>un</em> tirage, pas vingt. L’échantillon effectif d’un niveau est son volume divisé par la taille de grappe.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 31</span> — À gauche, la fréquence d’un déséquilibre diagonal sous martingale selon la taille de grappe, sur deux niveaux à 240 contrats. À droite, la loi nulle du rapport d’épuisement, simulée sur des excursions sans dérive.</figcaption>
+      <figcaption><span class="lab">Figure 33</span> — À gauche, la fréquence d’un déséquilibre diagonal sous martingale selon la taille de grappe, sur deux niveaux à 240 contrats. À droite, la loi nulle du rapport d’épuisement, simulée sur des excursions sans dérive.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 414" role="img" aria-label="Fréquence nulle du déséquilibre diagonal selon la taille de grappe, et loi nulle du rapport d épuisement" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LOIS NULLES DU FOOTPRINT</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que les deux lectures valent contre leur bruit</text>
@@ -6252,7 +6489,7 @@
   <p>Le résultat est inconfortable et il faut le nommer. Sur deux niveaux à 240 contrats, la fréquence nulle d’un déséquilibre de 3 pour 1 vaut 0,000 % pour une grappe de cinq contrats, 1,7 % pour une grappe de vingt, 9,4 % pour une grappe de cinquante. <strong>La même barre est un événement à une chance sur mille ou une banalité à une sur dix, selon un paramètre que le flux agrégé ne donne pas.</strong> Toutes ces tailles de grappe sont plausibles sur un future indiciel.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 32</span> — La fréquence nulle du déséquilibre sur ses deux axes. Arête gauche&nbsp;: la taille de grappe, une hypothèse. Arête droite&nbsp;: le seuil de lecture, un choix. La surface descend d’un facteur cinq le long du second et monte d’un facteur mille le long du premier.</figcaption>
+      <figcaption><span class="lab">Figure 34</span> — La fréquence nulle du déséquilibre sur ses deux axes. Arête gauche&nbsp;: la taille de grappe, une hypothèse. Arête droite&nbsp;: le seuil de lecture, un choix. La surface descend d’un facteur cinq le long du second et monte d’un facteur mille le long du premier.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 344" role="img" aria-label="Surface de la fréquence nulle du déséquilibre diagonal selon la taille de grappe et le seuil de lecture" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">LE SEUIL NE DÉCIDE PRESQUE RIEN</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Fréquence nulle du déséquilibre sur ses deux axes</text>
@@ -6326,7 +6563,7 @@
   <p>Le profil TPO compte les <em>périodes</em> et non les contrats. La séance est découpée en tranches de trente minutes, chacune reçoit une lettre, et la lettre est imprimée à tous les prix que la tranche a traversés. Steidlmayer l’a publié en 1984 pour le Chicago Board of Trade&nbsp;; son vocabulaire est passé tel quel dans toutes les plateformes. Le POC est le prix le plus longtemps visité, l’aire de valeur la tranche contenant soixante-dix pour cent des TPO, un tirage simple un prix qu’une seule période a touché, un extrême pauvre un haut ou un bas où deux périodes au moins ont imprimé — donc sans mèche.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 33</span> — Le profil d’une séance <em>sans dérive</em>, découpée en 13 périodes de trente minutes, sur des rangées de 3 points. Tout ce qu’on y reconnaît a été produit sans intention. À droite, la fréquence de trois lectures sous cette même loi, et ce qui décide la rareté de l’extrême pauvre.</figcaption>
+      <figcaption><span class="lab">Figure 35</span> — Le profil d’une séance <em>sans dérive</em>, découpée en 13 périodes de trente minutes, sur des rangées de 3 points. Tout ce qu’on y reconnaît a été produit sans intention. À droite, la fréquence de trois lectures sous cette même loi, et ce qui décide la rareté de l’extrême pauvre.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 430" role="img" aria-label="Profil TPO d une séance sans dérive, avec la fréquence nulle de cinq de ses lectures" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">PROFIL TPO</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Le temps passé à chaque prix, et ce qu’on croit y lire</text>
@@ -6452,7 +6689,7 @@
     </figure>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 19</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
+      <figcaption><span class="lab">Table 21</span> — Les cinq lectures du profil de marché, et leur fréquence sur une séance sans dérive.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Lecture</th><th>Sur la séance construite</th><th>Sous un prix sans dérive</th><th class="wrap">Ce qu’elle vaut</th></tr></thead>
@@ -6475,7 +6712,7 @@
   <p>Mais sa rareté ne tient pas au marché. À une rangée de 3 points, un extrême haut pauvre arrive dans 37 % des séances sans dérive&nbsp;; à un quart de point, dans 5 %. Un facteur 7, sans qu’aucune propriété du marché ne change — seul le nombre de rangées que la séance parcourt a changé.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 34</span> — La fréquence nulle d’un extrême pauvre sur le plan du pas de cotation et de la volatilité de séance. Seul leur rapport décide&nbsp;: deux marchés très différents peuvent tomber au même endroit, et le même marché change de verdict quand on change la rangée d’affichage.</figcaption>
+      <figcaption><span class="lab">Figure 36</span> — La fréquence nulle d’un extrême pauvre sur le plan du pas de cotation et de la volatilité de séance. Seul leur rapport décide&nbsp;: deux marchés très différents peuvent tomber au même endroit, et le même marché change de verdict quand on change la rangée d’affichage.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 352" role="img" aria-label="Surface de la fréquence nulle d un extrême pauvre selon le pas de cotation et la volatilité de séance" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">CE QUI DÉCIDE LA RARETÉ</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Fréquence nulle d’un extrême pauvre</text>
@@ -6551,7 +6788,7 @@
   <p>Le taux de réussite d’équilibre sans friction vaut <span class="v">1/(R+1)</span>&nbsp;; avec friction il vaut <span class="v">(1 + c/L)/(R+1)</span>. À la géométrie déclarée, cela fait passer le taux requis de 4,76 % à 7,38 % — une hausse relative de 55 %, ce qui paraît énorme. La divergence de Kullback-Leibler en donne le prix réel, en bits&nbsp;: <strong>0,941 % d’un bit par décision</strong>. Une décision binaire en porte un au plus.</p>
 
       <figure class="wide">
-      <figcaption><span class="lab">Table 20</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
+      <figcaption><span class="lab">Table 22</span> — Ce qu’une décision doit porter d’information, et ce qu’il en coûte de l’établir.</figcaption>
       <div class="scroll">
       <table>
         <thead><tr><th class="wrap">Géométrie</th><th>Stop</th><th>Friction c/L</th><th>Information exigée</th><th>Bruit toléré</th><th>Décisions pour le prouver</th></tr></thead>
@@ -6568,7 +6805,7 @@
   <p>La réponse est donc oui, et le chiffre est presque exactement celui de l’intuition&nbsp;: <strong>le marché peut être du bruit à 99,06 % et la géométrie déclarée tenir</strong>. En élargissant le stop, la friction tombe à onze pour cent du risque nominal et l’exigence à 0,042 % d’un bit&nbsp;: le marché peut alors être du bruit à 99,958 %.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 35</span> — L’information exigée par décision selon la friction rapportée au risque nominal, pour trois cibles, et l’échantillon requis pour l’établir. Les deux cadres partagent leur abscisse et disent la même tension en sens inverse.</figcaption>
+      <figcaption><span class="lab">Figure 37</span> — L’information exigée par décision selon la friction rapportée au risque nominal, pour trois cibles, et l’échantillon requis pour l’établir. Les deux cadres partagent leur abscisse et disent la même tension en sens inverse.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 420" role="img" aria-label="Information exigée par décision selon la friction rapportée au risque, et échantillon requis pour la détecter" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">BUDGET D’INFORMATION</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Combien de bruit un trade supporte-t-il ?</text>
@@ -6641,7 +6878,7 @@
   <p>Le second cadre porte le prix de cette bonne nouvelle, et il faut le lire en même temps que le premier. <strong>Moins un trade exige d’information, plus il faut de décisions pour établir qu’il l’a.</strong> À la géométrie déclarée, 474&nbsp;décisions suffisent&nbsp;; au stop élargi, il en faut 10 568, soit 22 fois plus. La géométrie qui rend l’avantage facile à obtenir est celle qui le rend difficile à prouver.</p>
 
       <figure class="plate">
-      <figcaption><span class="lab">Figure 36</span> — Le budget d’information sur ses deux axes, la cible et la friction — les deux grandeurs que l’opérateur fixe entièrement. La surface couvre trois ordres de grandeur sans qu’aucun signal n’entre dans le calcul.</figcaption>
+      <figcaption><span class="lab">Figure 38</span> — Le budget d’information sur ses deux axes, la cible et la friction — les deux grandeurs que l’opérateur fixe entièrement. La surface couvre trois ordres de grandeur sans qu’aucun signal n’entre dans le calcul.</figcaption>
       <div class="scroll"><svg class="fig" viewBox="0 0 660 352" role="img" aria-label="Surface de l information exigée par décision selon la cible et la friction rapportée au risque" preserveAspectRatio="xMidYMid meet">
 <text class="tk" x="0" y="11" style="letter-spacing:.11em">BUDGET D’INFORMATION, SUR DEUX AXES</text>
 <text class="hdr" x="0" y="31" style="letter-spacing:0;text-transform:none;font-size:13px">Ce que la géométrie exige du signal, en bits</text>

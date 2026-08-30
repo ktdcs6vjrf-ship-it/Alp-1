@@ -18,8 +18,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import (figdisc, figflux, figsortie, report10, report11,
-               report13, report14, sorties)
+from . import (figdisc, figflux, figsortie, horloge, report10,
+               report11, report13, report14, sorties)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
 from .report import Table
@@ -42,7 +42,8 @@ def values() -> dict[str, str]:
         raise KeyError(f"clés en collision entre report10 et report11 : "
                        f"{sorted(collisions)}")
     fusion.update(report11.values())
-    for autre in (report13.values(), report14.values(), sorties.values()):
+    for autre in (report13.values(), report14.values(),
+                  sorties.values(), horloge.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -57,7 +58,7 @@ def tables() -> dict[str, Table]:
         raise KeyError(f"tables en collision : {sorted(collisions)}")
     fusion.update(report11.all_tables())
     for autre in (report13.all_tables(), report14.all_tables(),
-                  sorties.all_tables()):
+                  sorties.all_tables(), horloge.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")

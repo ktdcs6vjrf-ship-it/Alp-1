@@ -664,6 +664,7 @@
       </li>
       <li><span class="pt">Douzième partie — Lire le flux</span>
         <ol start="39">
+          <li><a href="#s-gamma-horloge">Le régime de gamma, et ce qu'il décide vraiment</a></li>
           <li><a href="#s-footprint">Le footprint, et ce qu'un déséquilibre vaut</a></li>
           <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n'observe</a></li>
           <li><a href="#s-tpo">Le profil de marché, et ses cinq lectures</a></li>
@@ -671,7 +672,7 @@
         </ol>
       </li>
       <li><span class="pt">Treizième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="43">
+        <ol start="44">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1332,6 +1333,56 @@
     <h2>Lire le flux</h2>
     <p>Deux couches que l'opérateur regarde tous les jours, passées au même protocole que le reste.</p>
   </div>
+
+  <h2 id="s-gamma-horloge">Le régime de gamma, et ce qu'il décide vraiment</h2>
+
+  <p>C'est la couche que le document nº&nbsp;1 désigne comme la première à tester, et c'est aussi celle dont la vulgarisation circule le plus. Le mécanisme y est correctement décrit, et il faut le dire avant de le corriger&nbsp;: en gamma long, le teneur vend les hausses et achète les creux pour rester couvert, et le mouvement est étouffé&nbsp;; en gamma court, il achète les hausses et vend les creux, et le mouvement est amplifié. Rien à redire.</p>
+
+  <p>La conclusion qu'on en tire d'ordinaire est moins solide. Elle s'énonce «&nbsp;gamma long, journée de fourchette&nbsp;; gamma court, journée de tendance&nbsp;» et se termine par une recommandation d'entrée. La section&nbsp;<a href="#s-strategie">6</a> a déjà posé la réserve qui l'empêche&nbsp;: <strong>le mécanisme de couverture contraint la dispersion et laisse la direction indéterminée.</strong> Une exposition négative annonce des mouvements plus amples, pas des mouvements haussiers.</p>
+
+  <p>Ce chapitre va un cran plus loin, et pose la question que la réserve laisse ouverte&nbsp;: si le régime ne déplace que la dispersion, <em>que déplace-t-il dans la décision&nbsp;?</em></p>
+
+  <h3>Une colonne qui ne bouge pas</h3>
+
+  <p>La dispersion entre dans l'appareil par l'exposant d'échelle, et l'exposant n'agit que sur le temps d'atteinte. Or les probabilités de barrière n'en dépendent pas — c'est le théorème d'arrêt optionnel, qui fonde toute la série. La conséquence se lit dans une colonne.</p>
+
+{{TABLE:horloge}}
+
+  <p>À la géométrie déclarée, la probabilité d'atteindre le target vaut {{g_p_target}}&nbsp;% à tous les régimes, soit exactement <span class="v">1/(1&nbsp;+&nbsp;R:R)</span>. <strong>Le régime de gamma n'y dit pas si vous toucherez votre target.</strong> Ce qu'il déplace est le temps&nbsp;: de {{g_tau_chop}} minutes en chop maximal à {{g_tau_trend}} en tendance maximale, un facteur {{g_facteur}} — donc le seuil de rentabilité du même facteur, de {{g_mu_chop}} à {{g_mu_trend}} points par heure.</p>
+
+  <p>La condition mérite d'être posée, parce qu'elle a failli passer sans l'être. Le théorème d'arrêt optionnel porte sur le problème <em>non borné</em>, et une séance finit&nbsp;: un trade qui n'a touché aucune barrière avant la clôture en sort par une troisième issue, et celle-là dépend bien du régime. À la géométrie déclarée elle est négligeable — le stop fait six dixièmes de point, les barrières se résolvent en quelques minutes, et la colonne <span class="v">p(clôture)</span> de la table reste sous un dix-millième. <strong>C'est ce qui autorise la phrase précédente, et rien d'autre.</strong></p>
+
+  <p>Élargissez le stop et la condition tombe. À {{g_stop_large}}&nbsp;% de largeur, {{g_open_chop}}&nbsp;% des trades atteignent la clôture en chop contre presque aucun en tendance, et la probabilité de target passe d'un facteur {{g_facteur_target}} entre les deux régimes. Le régime n'a pas cessé de n'agir que sur l'horloge&nbsp;: c'est l'horloge qui décide désormais si la séance est assez longue pour aller chercher le target. Quatre tests ont refusé la première version de ce chapitre, qui affirmait l'invariance sans sa condition.</p>
+
+  <p>La partie précédente a établi que le temps de position est la seule grandeur sur laquelle un concept de sortie agisse. Le régime de gamma agit sur la même. <strong>Il ne donne pas une direction, il donne une horloge</strong> — et c'est une information utile, à condition de ne pas la prendre pour l'autre.</p>
+
+{{FIGURE:gammahorloge|La probabilité d'atteindre le target selon l'exposant d'échelle, le seuil de rentabilité selon le même exposant, et la fenêtre de largeur de stop où le régime décide du signe de l'espérance. Le premier cadre porte un domaine de zéro à dix pour cent&nbsp;: une fenêtre étroite ferait passer la platitude pour un choix de cadrage, et ce document a déjà payé ce défaut sur une figure qui affirmait le contraire de son propre théorème.}}
+
+  <h3>L'inversion</h3>
+
+  <p>La dernière colonne de la table porte un résultat que la lecture courante manque, et qui la renverse. À géométrie fixe, <strong>le jour de tendance est celui dont l'espérance est la pire</strong>&nbsp;: {{g_er_trend}}&nbsp;R contre {{g_er_chop}} en chop, à dérive identique. La raison est mécanique — la tendance résout les barrières plus vite, achète donc moins de temps de marché, et paie la même friction sur moins d'exposition.</p>
+
+  <p>Le mot «&nbsp;tendance&nbsp;», au sens du gamma, désigne des mouvements amplifiés, c'est-à-dire de la <em>variance</em>. Amplifier la variance à géométrie fixe n'améliore pas le taux de touche — la colonne constante le prouve — et raccourcit le temps de position, qui est le terme qui décide. Un opérateur qui attend le gamma court pour entrer attend donc le régime qui lui laisse le moins de marché.</p>
+
+  <p>Un dernier chiffre ferme le cas à la géométrie déclarée. Le régime le plus favorable de toute la plage — chop maximal, gamma long — laisse le seuil à {{g_mu_chop}}&nbsp;points par heure, contre un plafond de dérive plausible de {{g_plafond}}. De justesse, mais dehors. <strong>Aucun régime de gamma ne ramène la géométrie déclarée dans le domaine où elle serait rentable.</strong></p>
+
+  <h3>La fenêtre où la lecture décide</h3>
+
+  <p>Reste la question utile, et elle est constructive&nbsp;: à quelle condition la lecture du régime change-t-elle une décision&nbsp;? Il suffit de comparer les deux seuils extrêmes à la dérive de travail, largeur de stop par largeur de stop.</p>
+
+{{TABLE:fenetre_gamma}}
+
+{{FIGURE:gammacarte|Le seuil de rentabilité sur le plan de la largeur de stop et du régime de gamma. La couleur ne code pas la hauteur mais le verdict&nbsp;: une maille verte est une configuration dont le seuil tombe sous la dérive de travail. La rangée du stop déclaré reste rouge d'un bout à l'autre de la plage de régimes.}}
+
+  <p>Trois états, et c'est le résultat. <strong>Le régime ne décide du signe de l'espérance que dans une bande étroite</strong>, entre {{g_fenetre_bas}}&nbsp;% et {{g_fenetre_haut}}&nbsp;% de largeur de stop. En deçà, tout est perdu quel que soit le régime&nbsp;; au-delà, tout est gagné quel que soit le régime, et la lecture ne change alors aucune décision. La géométrie déclarée, {{g_stop_declare}}&nbsp;%, tombe <em>sous</em> la bande.</p>
+
+  <p>C'est la réponse chiffrée à la question «&nbsp;faut-il lire le gamma avant l'ouverture&nbsp;?&nbsp;»&nbsp;: <strong>seulement si le stop tombe dans la bande — et il faut d'abord l'y mettre.</strong> Lue à la géométrie déclarée, l'information est exacte et sans conséquence, ce qui est la façon la plus coûteuse de se tromper, puisqu'elle donne le sentiment d'avoir décidé.</p>
+
+  <h3>Deux réserves, et elles ne sont pas de forme</h3>
+
+  <p><strong>Le cadre tient la dérive fixe pendant que l'exposant varie.</strong> C'est légitime — le mécanisme de couverture agit sur la dispersion, et le document nº&nbsp;1 le modélise ainsi — mais quelqu'un peut soutenir qu'un jour de gamma court porte <em>aussi</em> une dérive plus forte. C'est une affirmation séparée, qui porte sur l'espérance et non sur la dispersion, et elle relève alors du mur d'échantillon de la septième partie&nbsp;: c'est précisément le type d'énoncé qu'on ne peut pas établir avec le nombre de séances dont un opérateur dispose. La distinction n'est pas une chicane. Elle sépare ce qui se calcule de ce qui se croit.</p>
+
+  <p><strong>L'exposition gamma n'est pas observée, elle est modélisée.</strong> Elle s'estime à partir des positions ouvertes en supposant de quel côté se tient le teneur, et personne ne publie la position réelle. Les diffuseurs qui la vendent le disent d'ailleurs eux-mêmes quand ils sont sérieux. Cela n'invalide rien de ce qui précède — le raisonnement porte sur ce que <em>ferait</em> un régime donné — mais cela ajoute une couche d'incertitude en amont de la table, et cette couche-là n'est pas chiffrée ici faute de vérité de référence.</p>
 
   <h2 id="s-footprint">Le footprint, et ce qu'un déséquilibre vaut</h2>
 
