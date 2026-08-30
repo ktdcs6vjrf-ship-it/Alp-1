@@ -152,22 +152,75 @@ def _scale_legend(board: Board, x: float, y: float, lo: str, hi: str,
               f'{_esc(label)}</text>')
 
 
+def _bilineaire(z: list[list[float]], facteur: int) -> list[list[float]]:
+    """Densifie une grille par interpolation bilinéaire.
+
+    Le nuage de points a besoin de bien plus d'échantillons que la grille de
+    données n'en porte : c'est la densité qui dessine la forme. L'interpolation
+    n'invente rien — entre deux mailles connues, elle ne fait que rendre la
+    surface que la projection en mailles pleines aurait peinte.
+    """
+    ni, nj = len(z), len(z[0])
+    mi, mj = (ni - 1) * facteur + 1, (nj - 1) * facteur + 1
+    out = []
+    for a in range(mi):
+        fa, ra = divmod(a, facteur)
+        fa = min(fa, ni - 2) if ni > 1 else 0
+        ta = (a - fa * facteur) / facteur
+        ligne = []
+        for b in range(mj):
+            fb = min(b // facteur, nj - 2) if nj > 1 else 0
+            tb = (b - fb * facteur) / facteur
+            v = ((1 - ta) * (1 - tb) * z[fa][fb]
+                 + ta * (1 - tb) * z[fa + 1][fb]
+                 + (1 - ta) * tb * z[fa][fb + 1]
+                 + ta * tb * z[fa + 1][fb + 1])
+            ligne.append(v)
+        out.append(ligne)
+    return out
+
+
+#: Échantillons visés par axe dans le nuage. Trente-quatre suffisent à ce que
+#: la surface se lise comme un relief continu ; au-delà, le poids du document
+#: monte sans que la forme gagne.
+NUAGE_CIBLE = 34
+
+#: Bandes de profondeur peintes de l'arrière vers l'avant. Le nuage est groupé
+#: par bande et par classe de rampe, ce qui remplace des milliers de cercles
+#: par quelques dizaines de tracés — sans quoi une seule surface pèserait
+#: davantage qu'un chapitre entier.
+NUAGE_BANDES = 12
+
+
 def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
              zlo: float, zhi: float, *, cx: float, cy: float, cz: float,
              row_labels: list[str], col_labels: list[str],
              z_ticks: list[tuple[float, str]], tip: str = "{v:+.3f}",
              classify=None, zero: float = 0.0) -> None:
-    """Surface isométrique munie d'une échine de hauteur.
+    """Surface en **nuage de points**, munie d'une échine de hauteur.
 
-    Trois choses distinguent ce rendu d'une simple projection. Le **sol** est
-    une grille de filets et non un aplat, ce qui laisse voir la position des
-    mailles sans peser. L'**échine** verticale à gauche porte les graduations
-    de hauteur&nbsp;: sans elle une projection isométrique est ambiguë, et le
-    lecteur ne peut convertir une élévation en grandeur. Les **mailles** sont
-    séparées par un filet couleur papier, jamais par une bordure sombre.
+    Le relief n'est pas peint en mailles pleines mais échantillonné : quelques
+    centaines de points posés sur la surface, dont la taille et la teinte
+    suivent la hauteur. Deux raisons, et aucune n'est décorative.
 
-    Le remplissage suit par défaut la rampe séquentielle, la hauteur étant une
-    grandeur ordonnée. Les surfaces signées passent un `classify` divergent.
+    La première est que le nuage **laisse voir à travers**. Une maille pleine
+    cache ce qui est derrière elle ; un versant arrière plus haut que le
+    versant avant disparaît. Le nuage, lui, laisse le relief lointain
+    transparaître entre les points du relief proche, et c'est exactement ce
+    qu'une surface à deux bosses demande.
+
+    La seconde est qu'un point n'a pas de bordure. Les mailles pleines
+    devaient être séparées par un filet couleur papier, faute de quoi la
+    surface se lisait comme un aplat ; ce filet mangeait la moitié de la
+    surface dès que la grille était fine, et interdisait donc de raffiner.
+
+    Trois repères restent, et ils portent toute la lecture chiffrée : le
+    **sol** en grille de filets, les **montants** aux quatre coins, et
+    l'**échine** verticale graduée à gauche. Sans elle, une projection
+    isométrique est ambiguë et aucune élévation ne se convertit en grandeur.
+
+    Les sommets de la grille de données gardent chacun un cercle et son
+    infobulle : le nuage donne la forme, les sommets donnent les nombres.
     """
     ni, nj = len(z), len(z[0])
     span = (zhi - zlo) or 1.0
@@ -201,19 +254,39 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
         board.add(f'<line class="post" x1="{fx:.1f}" y1="{fy:.1f}" '
                   f'x2="{sx:.1f}" y2="{sy:.1f}"/>')
 
-    # Mailles peintes de l'arrière vers l'avant : occultation correcte sans
-    # moteur de rendu.
-    quads = []
-    for i in range(ni - 1):
-        for j in range(nj - 1):
-            corners = [(i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1)]
-            pts = [proj(a, bb, z[a][bb]) for a, bb in corners]
-            mean = sum(z[a][bb] for a, bb in corners) / 4.0
-            quads.append((i + j, pts, mean))
-    for _, pts, val in sorted(quads, key=lambda q: -q[0]):
-        pt = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
-        board.add(f'<polygon class="mesh {classify(val)}" points="{pt}">'
-                  f'<title>{_esc(tip.format(v=val))}</title></polygon>')
+    # Le nuage. Densification bilinéaire, puis regroupement par bande de
+    # profondeur et par classe : l'arrière est peint avant l'avant.
+    facteur = max(1, round(NUAGE_CIBLE / max(ni - 1, nj - 1, 1)))
+    dense = _bilineaire(z, facteur)
+    mi, mj = len(dense), len(dense[0])
+    seaux: dict[tuple[int, str], list[tuple[float, float, float]]] = {}
+    for a in range(mi):
+        for b in range(mj):
+            val = dense[a][b]
+            u = (min(max(val, zlo), zhi) - zlo) / span
+            x, y = proj(a / facteur, b / facteur, val)
+            bande = int((a + b) / (mi + mj - 2 or 1) * (NUAGE_BANDES - 1))
+            seaux.setdefault((bande, classify(val)), []).append((x, y, u))
+    for (bande, cls), pts in sorted(seaux.items()):
+        # Un point par « M x,y h.01 » : le bout rond du trait fait le disque,
+        # et l'épaisseur porte la hauteur. Quelques dizaines de tracés
+        # remplacent ainsi des milliers de cercles.
+        r = 0.9 + 1.6 * (sum(p[2] for p in pts) / len(pts))
+        d = "".join(f"M{x:.1f},{y:.1f}h.01" for x, y, _ in pts)
+        board.add(f'<path class="nuage {cls}" stroke-width="{2 * r:.2f}" '
+                  f'd="{d}"/>')
+
+    # Les sommets de la grille de données : le nuage donne la forme, ces
+    # points donnent les nombres.
+    sommets = []
+    for i in range(ni):
+        for j in range(nj):
+            sommets.append((i + j, i, j))
+    for _, i, j in sorted(sommets):
+        x, y = proj(i, j, z[i][j])
+        board.add(f'<circle class="noeud {classify(z[i][j])}" cx="{x:.1f}" '
+                  f'cy="{y:.1f}" r="2.6">'
+                  f'<title>{_esc(tip.format(v=z[i][j]))}</title></circle>')
 
     # L'échine de hauteur, à gauche du coin le plus à gauche. Sans
     # graduation, on ne la trace pas : un axe nu se lit comme inachevé. Le

@@ -15,7 +15,7 @@ Le document complet :
 > *Série ALP, nº 3.* JEL : C12, C44, C52, G11, G14.
 
 [`docs/prouver-un-jugement.html`](docs/prouver-un-jugement.html) —
-47 sections en treize parties, 22 tables, 38 figures.
+52 sections en quatorze parties, 26 tables, 47 figures.
 
 Il part d'une question — combien de décisions faut-il pour établir la valeur
 d'un jugement qui n'existe pas sous forme écrite ? — et la retourne. Le
@@ -26,7 +26,20 @@ ce seuil vaut 8,19 point par heure quand le domaine de dérive plausible
 s'arrête à 3,2 — la rentabilité n'y est pas improbable, elle est
 arithmétiquement impossible. Élargir le stop la déplace d'un facteur 53.
 
-Deux parties récentes s'y ajoutent. **Lire le flux** passe le footprint et le
+**Le catalogue** ordonne les quinze lectures du dispositif — footprint,
+carnet, CVD, bandes VWAP, Fibonacci, profil de volume, profil de marché,
+régime de gamma, structure de Dow — par leur horizon d'observation, qui est
+calculé et non écrit. Chacune reçoit sa fréquence sous un prix sans dérive, un
+exemple tiré d'une séance sans dérive, la réaction du prix ensuite, et le délai
+qu'il faudrait pour l'établir. Deux faits en sortent. Aucun de ces motifs n'est
+rare : le déséquilibre diagonal se produit une fois sur neuf par pur hasard, la
+structure de Dow neuf fois sur dix. Et le produit de ce qu'une lecture exige du
+marché par le nombre de décisions qu'il faut pour l'établir vaut le même nombre
+d'un bout à l'autre du catalogue, à un pour mille et demi près — une
+preuve coûte le même nombre de bits à tout horizon, et il n'existe aucun
+horizon avantageux.
+
+Deux parties plus anciennes complètent l'appareil. **Lire le flux** passe le footprint et le
 profil de marché au même protocole que le reste : chaque lecture reçoit sa loi
 nulle, et le paramètre non observable dont cette loi dépend est nommé plutôt
 que caché. **Le budget d'information** répond en bits à la question du bruit :

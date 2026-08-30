@@ -199,10 +199,17 @@ def fig_mcnull() -> str:
                r=3.0)
     for t, z in list(zip(fr, plan.futility))[:-1]:
         p1.dot(t, z, "s1f", f"abandon à t = {_num(t, 2)} : z ≤ {_num(z, 3)}", r=3.0)
-    for path in mcp.trace_paths(0.0):
-        p1.path([(t, max(-3.0, min(5.0, z))) for t, z in path], "s3")
-    for path in mcp.trace_paths(ref):
-        p1.path([(t, max(-3.0, min(5.0, z))) for t, z in path], "s2")
+    # Une trajectoire qui s'arrête à la première analyse ne porte qu'un point,
+    # et une polyligne d'un point ne trace rien : ces essais-là — ceux que le
+    # protocole abandonne le plus tôt, donc les plus intéressants — étaient
+    # absents de la figure. On les marque d'un point.
+    for cls, derive in (("s3", 0.0), ("s2", ref)):
+        for chemin in mcp.trace_paths(derive):
+            pts = [(t, max(-3.0, min(5.0, z))) for t, z in chemin]
+            if len(pts) < 2:
+                p1.dot(pts[0][0], pts[0][1], cls + "f", r=2.2)
+            else:
+                p1.path(pts, cls)
     b.legend(56, 300, [("s1", "frontières"), ("s3", "sans dérive"),
                        ("s2", "hypothèse empruntée")], step=104, kind="line")
 

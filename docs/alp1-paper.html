@@ -404,6 +404,25 @@
   rect.area { stroke: none; }
 
   .fig .mesh  { stroke: var(--paper); stroke-width: 1; }
+
+  /* Nuage de points d'une surface : un point est un trait de longueur nulle
+     à bout rond, ce qui permet d'en grouper des centaines dans un seul
+     tracé. La classe de rampe porte la teinte, l'épaisseur porte la
+     hauteur. Les nœuds sont les sommets de la grille de données, et eux
+     seuls portent une infobulle. */
+  .fig .nuage { fill: none; stroke-linecap: round; }
+  .fig .noeud { stroke: var(--paper); stroke-width: 0.8; }
+  .fig .nuage.hm0 { stroke: var(--hm0); }  .fig .noeud.hm0 { fill: var(--hm0); }
+  .fig .nuage.hm1 { stroke: var(--hm1); }  .fig .noeud.hm1 { fill: var(--hm1); }
+  .fig .nuage.hm2 { stroke: var(--hm2); }  .fig .noeud.hm2 { fill: var(--hm2); }
+  .fig .nuage.hm3 { stroke: var(--hm3); }  .fig .noeud.hm3 { fill: var(--hm3); }
+  .fig .nuage.hm4 { stroke: var(--hm4); }  .fig .noeud.hm4 { fill: var(--hm4); }
+  .fig .nuage.hm5 { stroke: var(--hm5); }  .fig .noeud.hm5 { fill: var(--hm5); }
+  .fig .nuage.hm6 { stroke: var(--hm6); }  .fig .noeud.hm6 { fill: var(--hm6); }
+  .fig .nuage.hm7 { stroke: var(--hm7); }  .fig .noeud.hm7 { fill: var(--hm7); }
+  .fig .nuage.up  { stroke: var(--s1); }   .fig .noeud.up  { fill: var(--s1); }
+  .fig .nuage.dn  { stroke: var(--dv-neg); } .fig .noeud.dn { fill: var(--dv-neg); }
+  .fig .nuage.ze  { stroke: var(--mid); }  .fig .noeud.ze  { fill: var(--mid); }
   .fig .up    { fill: var(--s1); }
   .fig .dn    { fill: var(--dv-neg); }
   .fig .ze    { fill: var(--mid); }

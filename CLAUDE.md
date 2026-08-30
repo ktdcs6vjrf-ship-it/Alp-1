@@ -21,13 +21,24 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (≈800 ko, 46 sections en treize
-parties, 20 tables, 36 figures dont onze surfaces isométriques). L'évaluation
-d'un opérateur discrétionnaire dont l'avantage n'est pas codable, puis le
-seuil de rentabilité, puis **les concepts de sortie**, puis la lecture du flux.
+**ALP nº 3** — `docs/prouver-un-jugement.html` (≈1,28 Mo, 52 sections en
+quatorze parties, 26 tables, 47 figures dont onze surfaces en nuage de
+points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+codable, puis **le catalogue des quinze lectures**, puis le seuil de
+rentabilité, puis les concepts de sortie, puis la lecture du flux.
 Chaîne : `journal.py` → `operator.py` → `attribution.py` →
-`report10/11/13/14.py` + `sorties.py` + `figdisc.py` + `figflux.py` +
-`figsortie.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`report10/11/13/14.py` + `sorties.py` + `concepts.py` + `figdisc.py` +
+`figflux.py` + `figsortie.py` + `figcat.py` → `discpaper.py`. Titre courant :
+*Le seuil, et non le signal*.
+
+Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
+VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
+rangées par horizon **calculé**, chacune avec sa fréquence sous prix sans
+dérive, un exemple tiré d'une séance sans dérive, la réaction du prix ensuite,
+et le délai qu'il faudrait pour l'établir. Elle répond à la question d'ordre
+que posait le document : le footprint y vient en premier, non par importance
+mais parce qu'il est la seule famille prouvable à l'échelle d'une carrière.
+Les lois nulles détaillées du flux restent en partie XIII.
 
 Deux autres builds existent — `docs/alp1-paper.html` (`--paper`), version
 plus ancienne et plus courte d'ALP nº 1, et `docs/alp2-paper.html`
@@ -38,7 +49,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/c360de80-7cdd-4001-a2b7-4a437ce8f0ad
+- ALP nº 3 : https://claude.ai/code/artifact/e49bcb16-0228-44f8-bf58-0255216b4d4e
+  (précédent : https://claude.ai/code/artifact/c360de80-7cdd-4001-a2b7-4a437ce8f0ad)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -130,6 +142,12 @@ Flux d'ordres
 - `vprofile.py` — profil de volume, POC, HVN/LVN.
 
 Rendu
+- `concepts.py` — **le catalogue des quinze lectures.** `CATALOGUE`, `ordre()`
+  (tri par horizon, jamais écrit), `frequence_nulle` (loi du module quand elle
+  existe, détecteur simulé sinon), `exigence` (µ* requis, décisions, délai,
+  verdict calculé), `reaction` / `eventail` (simulation appariée, exactement
+  symétrique sous dérive nulle), `invariant`. **Rien n'y postule l'efficacité
+  d'une lecture** — un test l'exige du type lui-même.
 - `sorties.py` — **douze concepts de sortie simulés sur trajectoires
   appariées.** Sous prix sans dérive ils rendent tous `−c/a` ; sous dérive ils
   tombent tous sur `(µ·E[τ]−c)/a`. Deux pièges y sont enterrés : l'identité de
@@ -151,7 +169,8 @@ Rendu
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — douze modules, chacun expose `render_all()`. `figterm.py` porte
+- `fig*.py` — treize modules, chacun expose `render_all()`. `figcat.py` porte
+  les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
 - `workingpaper.py` / `discpaper.py` / `paper.py` — construisent les
@@ -213,6 +232,27 @@ cacher :
 - **TPO** : la fréquence nulle d'un extrême pauvre passe de 5 % à 37 % entre
   un quart de point et trois points de rangée. Un réglage d'affichage décide
   de la rareté de ce qu'on lit.
+
+### Les surfaces sont des nuages de points, plus des mailles
+`figdisc._surface` ne peint plus de mailles pleines : il échantillonne la
+surface en quelques centaines de points, dont la teinte et la taille suivent la
+hauteur. Deux raisons, et aucune n'est décorative. Une maille pleine **cache ce
+qui est derrière elle**, si bien qu'un versant arrière plus haut que le versant
+avant disparaissait. Et une maille devait porter un filet couleur papier pour
+ne pas se lire comme un aplat, filet qui mangeait la moitié de la surface dès
+qu'on raffinait la grille.
+
+Trois repères portent la lecture chiffrée et ne doivent pas disparaître : le
+sol en grille de filets, les montants aux quatre coins, l'échine graduée à
+gauche. Les sommets de la grille de données gardent chacun leur infobulle.
+
+**Le maximum se met au fond, jamais au premier plan.** En projection
+isométrique le coin `(0, 0)` est le plus éloigné ; y placer le maximum fait
+monter le relief vers l'horizon, ce qui se lit. À l'ordre inverse, le sommet
+tombe au premier plan, où il paraît à la même hauteur d'écran que le coin
+lointain — deux points de profondeur différente ne se comparent pas par leur
+ordonnée. C'est pour cela que `figcat.HORIZONS` et `figcat.DERIVES` sont
+écrits en ordre **décroissant**.
 
 ## Les figures se regardent, elles ne se relisent pas
 

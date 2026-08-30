@@ -18,8 +18,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import (figdisc, figflux, figsortie, horloge, report10,
-               report11, report13, report14, sorties)
+from . import (concepts, figcat, figdisc, figflux, figsortie, horloge,
+               report10, report11, report13, report14, sorties)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
 from .report import Table
@@ -43,7 +43,7 @@ def values() -> dict[str, str]:
                        f"{sorted(collisions)}")
     fusion.update(report11.values())
     for autre in (report13.values(), report14.values(),
-                  sorties.values(), horloge.values()):
+                  sorties.values(), horloge.values(), concepts.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -58,7 +58,8 @@ def tables() -> dict[str, Table]:
         raise KeyError(f"tables en collision : {sorted(collisions)}")
     fusion.update(report11.all_tables())
     for autre in (report13.all_tables(), report14.all_tables(),
-                  sorties.all_tables(), horloge.all_tables()):
+                  sorties.all_tables(), horloge.all_tables(),
+                  concepts.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")
@@ -70,11 +71,11 @@ def figures() -> dict[str, str]:
     """Les figures des deux modules, avec garde-fou de collision.
 
     `figflux` a été ajouté pour la partie sur le flux d'ordres, `figsortie`
-    pour celle sur les concepts de sortie ; deux clés identiques y feraient
-    disparaître une figure en silence.
+    pour celle sur les concepts de sortie, `figcat` pour le catalogue ; deux
+    clés identiques y feraient disparaître une figure en silence.
     """
     fusion = dict(figdisc.render_all())
-    for module in (figflux, figsortie):
+    for module in (figflux, figsortie, figcat):
         rendu = module.render_all()
         heurts = set(fusion) & set(rendu)
         if heurts:
