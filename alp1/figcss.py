@@ -45,6 +45,17 @@ FIGURE_CSS = """
      tracé. La classe de rampe porte la teinte, l'épaisseur porte la
      hauteur. Les nœuds sont les sommets de la grille de données, et eux
      seuls portent une infobulle. */
+  /* Footprint : le cadre d'une cellule en déséquilibre, et la rangée lue.
+     Le cadre ordinaire est un filet de structure, trop discret pour marquer
+     une cellule au milieu d'un damier de nombres ; celui-ci est à l'encre du
+     document et se voit. */
+  .fig .imb { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+
+  /* Zone de prix mise en avant : `wash` est une teinte de fond, trop
+     discrète pour désigner une zone que la légende commente. */
+  .fig .zone { fill: var(--s1); fill-opacity: 0.16; stroke: none; }
+  .fig .rang { fill: none; stroke: var(--s2); stroke-width: 1.2; }
+
   .fig .nuage { fill: none; stroke-linecap: round; }
   .fig .noeud { stroke: var(--paper); stroke-width: 0.8; }
   .fig .nuage.hm0 { stroke: var(--hm0); }  .fig .noeud.hm0 { fill: var(--hm0); }

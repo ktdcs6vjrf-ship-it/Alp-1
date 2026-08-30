@@ -287,65 +287,205 @@ def _utile() -> float:
     return W - MARGE_G - MARGE_D
 
 
-def fig_flux() -> str:
-    """Les trois lectures de la barre, et ce qu'elles annoncent.
+def _niveau_absorbant(barre) -> float | None:
+    """Le niveau où le déséquilibre de volume est le plus fort, à prix immobile.
 
-    Rangée du haut : la situation, en bougies d'une minute, la barre lue
-    encadrée. Sous chaque cadre, le détail chiffré de la barre. Rangée du
-    bas : le cône des issues sur les cinq minutes qui suivent, commun aux
-    trois puisque leur horizon l'est.
+    L'absorption ne se lit pas sur un niveau isolé mais sur la conjonction de
+    deux faits : un côté écrase l'autre, et la barre ne se déplace pas. Le
+    niveau rendu est celui du plus grand écart entre les deux côtés ; il n'a
+    de sens que si le `z` d'impact de la barre est petit, ce que la planche
+    affiche à côté.
+    """
+    if not barre.cells:
+        return None
+    cellule = max(barre.cells, key=lambda c: abs(c.ask - c.bid))
+    return cellule.price if abs(cellule.ask - cellule.bid) > 0 else None
+
+
+def _niveau_epuise(barre) -> tuple[float, int] | None:
+    """L'extrémité dont le volume s'est effondré, et le sens de l'excursion.
+
+    On compare les deux bouts et on garde le plus creux, le rapport
+    d'épuisement étant précisément le volume du bout rapporté à la médiane
+    de la barre.
+    """
+    haut = fp.exhaustion_ratio(barre, +1)
+    bas = fp.exhaustion_ratio(barre, -1)
+    if min(haut, bas) >= SEUIL_EPUISE:
+        return None
+    return ((barre.cells[-1].price, +1) if haut <= bas
+            else (barre.cells[0].price, -1))
+
+
+#: Rapport d'épuisement sous lequel la planche marque le bout de la barre.
+#: C'est le seuil déclaré du catalogue, repris ici pour que la figure et la
+#: table ne puissent pas diverger.
+SEUIL_EPUISE = C.SEUIL_EPUISEMENT
+
+
+def _cellule(b: Board, x: float, y: float, w: float, h: float, valeur: int,
+             vmax: int, encadre: bool = False) -> None:
+    """Une demi-cellule de footprint : un fond gradué et son nombre.
+
+    Le fond code le volume du côté, jamais son signe : le signe est déjà porté
+    par le côté où la cellule se trouve. Le nombre est cerné de la couleur du
+    fond, sans quoi il disparaît dans les cellules les plus chargées.
+    """
+    part = valeur / vmax if vmax else 0.0
+    b.add(f'<rect class="{_ramp(0.10 + 0.80 * part)}" x="{x:.1f}" '
+          f'y="{y - h / 2:.1f}" width="{w:.1f}" height="{h:.1f}" '
+          f'opacity="0.42"/>')
+    if encadre:
+        b.add(f'<rect class="imb" x="{x + 0.8:.1f}" y="{y - h / 2 + 0.8:.1f}" '
+              f'width="{w - 1.6:.1f}" height="{h - 1.6:.1f}" rx="2"/>')
+    b.add(f'<text class="tk halo" x="{x + w / 2:.1f}" y="{y + 3.5:.1f}" '
+          f'text-anchor="middle">{valeur}</text>')
+
+
+def fig_flux() -> str:
+    """Les trois lectures de la barre, montrées comme une plateforme les montre.
+
+    La rangée du haut n'est pas un graphique de bougies&nbsp;: c'est le
+    **footprint** lui-même — à chaque niveau de prix, le volume exécuté au bid
+    à gauche et à l'ask à droite. La bougie de la barre est dessinée à côté, à
+    la même échelle de prix, et le rapprochement est le propos de la planche.
+
+    La barre d'absorption est un doji&nbsp;: sa bougie n'a pas de corps et ne
+    dit rien. Son footprint dit qu'il s'y est échangé trois fois le volume
+    d'une barre ordinaire, dont cinq cent trente-huit contrats pris à l'ask
+    sur un seul niveau, sans que le prix bouge d'un tick. C'est exactement ce
+    que la bougie ne peut pas montrer.
+
+    **Les libellés de repère ne sortent pas de leur colonne.** La première
+    version posait « absorption ici » à droite de la dernière cellule, où le
+    texte venait couvrir la colonne voisine. Le niveau lu est donc marqué par
+    une bande sur toute sa rangée, et nommé sous l'intitulé de la colonne.
     """
     lam = fp.IMPACT_PER_ROOT_VOLUME
-    kinds = (("absorption", "Absorption", "absorption"),
-             ("epuisement", "Épuisement", "epuisement"),
-             ("desequilibre", "Déséquilibre", "desequilibre"))
+    kinds = (("absorption", "Absorption"),
+             ("epuisement", "Épuisement"),
+             ("desequilibre", "Déséquilibre acheteur"))
+    barres = {cle: fp.synthesise(cle) for cle, _ in kinds}
+    neutre = fp.synthesise("neutre")
+    vmax = max(max(c.bid, c.ask) for b_ in barres.values() for c in b_.cells)
 
-    b = _plate(520.0, "Catalogue · le flux",
-               "Trois lectures de la barre, sur un prix sans dérive",
-               "bougies d'une minute")
+    prix = [c.price for c in barres["absorption"].cells]
+    n = len(prix)
+    pas = 21.0
+    haut = 140.0
+    bas = haut + (n - 1) * pas
 
-    chemin, i0 = _exemple("absorption")
-    ecart = 30.0
-    lw = (_utile() - 2 * ecart) / 3.0
-    for col, (cle, titre, sy) in enumerate(kinds):
-        x = MARGE_G + col * (lw + ecart)
-        deb = max(0, i0 + col * 27 - 14)
-        bougies = _bougies(chemin, deb, deb + 25, 1)
-        e = C.exigence(cle)
-        p = _cadre_bougies(b, x, 86.0, lw, 118.0, titre,
-                           _num(100.0 * C.frequence_nulle(cle), 1) + " %",
-                           bougies, surligne=(11.5, 16.5))
-        p.grid_x([1.0, 12.0, len(bougies) - 2.0],
-                 fmt=lambda v: _num(v - 12.0, 0), label="minutes")
-        barre = fp.synthesise(sy)
-        desq = fp.diagonal_imbalances(barre)
+    b = _plate(600.0, "Catalogue · le flux",
+               "Trois barres en footprint, et la bougie qui n'en montre rien",
+               "bid à gauche · ask à droite")
+
+    def y_de(p: float) -> float:
+        return haut + (prix[-1] - p) / (prix[-1] - prix[0]) * (bas - haut)
+
+    largeur_cell = 56.0
+    ecart_col = 200.0
+    largeur_col = 26.0 + 2 * largeur_cell
+
+    # Les filets de rangée relient les trois colonnes à l'échelle de prix, qui
+    # n'est écrite qu'une fois. Sans eux, les deux colonnes de droite
+    # flottent : rien ne dit qu'elles partagent la même graduation.
+    for p in prix:
+        y = y_de(p)
+        b.add(f'<text class="tk" x="{MARGE_G - 8:.1f}" y="{y + 3.5:.1f}" '
+              f'text-anchor="end">{_num(p, 2)}</text>')
+        b.add(f'<line class="gl" x1="{MARGE_G:.1f}" y1="{y:.1f}" '
+              f'x2="{MARGE_G + 2 * ecart_col + largeur_col:.1f}" '
+              f'y2="{y:.1f}"/>')
+
+    for col, (cle, titre) in enumerate(kinds):
+        barre = barres[cle]
+        x0 = MARGE_G + 6.0 + col * ecart_col
+        x_bid, x_ask = x0 + 26.0, x0 + 26.0 + largeur_cell
+        desq = dict(fp.diagonal_imbalances(barre))
+        absorbant = _niveau_absorbant(barre) if cle == "absorption" else None
+        epuise = _niveau_epuise(barre) if cle == "epuisement" else None
+
+        marque = None
+        if absorbant is not None:
+            marque = (absorbant, "absorption au niveau " + _num(absorbant, 2))
+        elif epuise is not None:
+            marque = (epuise[0], "épuisement au niveau " + _num(epuise[0], 2))
+        elif desq:
+            marque = (max(desq), _num(len(desq), 0) + " déséquilibres 3:1")
+
+        b.add(f'<text class="hdr" x="{x0:.1f}" y="{haut - 44:.1f}">'
+              f'{_esc(titre)}</text>')
+        if marque is not None:
+            b.add(f'<text class="lg" x="{x0:.1f}" y="{haut - 30:.1f}">'
+                  f'{_esc(marque[1])}</text>')
+        b.add(f'<line class="hsep" x1="{x0:.1f}" y1="{haut - 22:.1f}" '
+              f'x2="{x0 + largeur_col:.1f}" y2="{haut - 22:.1f}"/>')
+
+        # La bougie de la barre, à la même échelle de prix que le footprint.
+        cx = x0 + 12.0
+        y_h, y_b = y_de(barre.high), y_de(barre.low)
+        b.add(f'<line class="ln s3" x1="{cx:.1f}" y1="{y_h:.1f}" '
+              f'x2="{cx:.1f}" y2="{y_b:.1f}" stroke-width="1.4"/>')
+        y_o, y_c = y_de(barre.open_price), y_de(barre.close_price)
+        cls = "s1f" if barre.close_price >= barre.open_price else "negf"
+        b.add(f'<rect class="{cls}" x="{cx - 7:.1f}" '
+              f'y="{min(y_o, y_c):.1f}" width="14" '
+              f'height="{max(abs(y_c - y_o), 2.0):.1f}"/>')
+
+        for cellule in barre.cells:
+            y = y_de(cellule.price)
+            cote = desq.get(cellule.price)
+            _cellule(b, x_bid, y, largeur_cell, 18.0, cellule.bid, vmax,
+                     encadre=cote == "vendeur")
+            _cellule(b, x_ask, y, largeur_cell, 18.0, cellule.ask, vmax,
+                     encadre=cote == "acheteur")
+
+        # La rangée lue est cerclée **après** les cellules : un aplat posé
+        # dessous disparaissait sous leurs fonds gradués.
+        if marque is not None:
+            y = y_de(marque[0])
+            b.add(f'<rect class="rang" x="{x0 + 1:.1f}" y="{y - 10:.1f}" '
+                  f'width="{largeur_col - 2:.1f}" height="20" rx="2"/>')
+
         lignes = [
-            f"z d'impact {_num(fp.absorption_z(barre, lam), 2)}",
-            f"déséquilibres {len(desq)}, attendus "
+            f"volume {barre.volume} · "
+            f"{_num(barre.volume / neutre.volume, 1)}× l'ordinaire",
+            f"déplacement {_num(barre.displacement, 2)} pt · "
+            f"z {_num(fp.absorption_z(barre, lam), 2)}",
+            f"déséq. {len(desq)}, attendus "
             f"{_num(fp.expected_imbalances(barre), 2)}",
-            f"une fois sur {_num(1.0 / C.frequence_nulle(cle), 0)} sans dérive",
-            f"établie en {C._ans(e.annees)}",
+            f"sans dérive : {_num(100.0 * C.frequence_nulle(cle), 1)} % du "
+            f"temps",
         ]
         for k, texte in enumerate(lignes):
             cls = "tk" if k == 3 else "lg"
-            b.add(f'<text class="{cls}" x="{x:.1f}" y="{250.0 + 13 * k:.1f}">'
-                  f'{_esc(texte)}</text>')
+            b.add(f'<text class="{cls}" x="{x0:.1f}" '
+                  f'y="{bas + 26.0 + 13 * k:.1f}">{_esc(texte)}</text>')
 
-    _eventail(b, MARGE_G, 342.0, _utile(), 116.0, 5.0,
-              "Les cinq minutes qui suivent")
+    b.annotation(MARGE_G, haut - 78.0,
+                 "une rangée par niveau de prix : à gauche le volume vendu au "
+                 "bid, à droite celui acheté à l'ask")
+    b.annotation(MARGE_G, haut - 65.0,
+                 "le cadre marque un déséquilibre 3:1 ; la rangée cerclée est "
+                 "le niveau que la lecture retient")
 
-    _source(b, "Les trois situations sont extraites d'une même séance "
-               "simulée sans la moindre dérive : le motif s'y produit parce que le "
-               "bruit le produit, et non parce qu'une information l'a causé. "
-               "La bande grise marque la barre lue ; le chiffre en tête de "
-               "cadre est la fréquence du motif sous cette absence de dérive, "
-               "et le détail chiffré vient des barres construites du module de "
-               "footprint. Le cône du bas est commun aux trois, leur horizon "
-               "étant le même : sur cinq minutes, la dérive la plus forte que "
-               "le domaine plausible autorise déplace la médiane d'un quart "
-               "de point, quand l'enveloppe des déciles en fait sept.")
-    return b.render("Trois lectures de footprint sur une séance sans dérive, "
-                    "et le cône des issues à cinq minutes")
+    _eventail(b, MARGE_G, 452.0, _utile(), 92.0, 5.0,
+              "Les cinq minutes qui suivent, pour les trois lectures")
+
+    _source(b, "Les trois barres sont construites à volumes et niveaux "
+               "déclarés, comme celles du module de footprint. La bougie de "
+               "gauche et le footprint de droite décrivent la même barre. "
+               "Celle d'absorption est un doji : sa bougie n'a pas de corps "
+               "et ne dit rien, quand son footprint montre trois fois le "
+               "volume d'une barre ordinaire et cinq cent trente-huit "
+               "contrats pris à l'ask sur un seul niveau, sans que le prix "
+               "bouge d'un tick. Le cadre autour d'une cellule marque un "
+               "déséquilibre diagonal de trois pour un — l'ask d'un niveau "
+               "comparé au bid du niveau du dessous, jamais du même niveau. "
+               "La barre ordinaire en attend déjà un de sa seule loi nulle : "
+               "en relever un ne dit rien.")
+    return b.render("Trois barres en footprint — absorption, épuisement, "
+                    "déséquilibre — avec leur bougie et le cône des issues")
 
 
 FIGURES["catflux"] = fig_flux
@@ -384,7 +524,7 @@ def fig_profil() -> str:
     prix — et deux attentes opposées : traverser vite là où personne n'a
     traité, revenir là où tout le monde a traité.
     """
-    b = _plate(524.0, "Catalogue · le prix-volume",
+    b = _plate(534.0, "Catalogue · le prix-volume",
                "Ce que l'histogramme du temps passé permet d'espérer",
                "bougies de cinq minutes")
 
@@ -403,6 +543,11 @@ def fig_profil() -> str:
         _profil_lateral(p, chemin, len(chemin) // 2)
         p.hline(niveau, "lvl strong")
         p.tag(niveau, "POC" if cle == "poc" else "LVN", side="left")
+        # Le point de la situation, posé là où le détecteur s'est déclenché :
+        # sans lui, la bande grise dit qu'il se passe quelque chose sans dire
+        # quoi ni exactement où.
+        p.dot(i0 / 5.0, chemin[i0], "s2", r=4.0,
+              tip="le prix aborde le niveau")
         p.grid_x([0.0, 39.0, 77.0], fmt=lambda v: _num(v * 5.0 / 60.0, 1) + " h",
                  label="heures de séance")
         e = C.exigence(cle)
@@ -416,7 +561,10 @@ def fig_profil() -> str:
             b.add(f'<text class="lg" x="{x:.1f}" y="{280.0 + 13 * k:.1f}">'
                   f'{_esc(texte)}</text>')
 
-    _eventail(b, MARGE_G, 350.0, _utile(), 116.0, 60.0,
+    b.annotation(MARGE_G, 330.0,
+                 "le point marque la minute où le prix aborde le niveau ; "
+                 "la bande grise couvre les dix minutes autour")
+    _eventail(b, MARGE_G, 358.0, _utile(), 116.0, 60.0,
               "L'heure qui suit, pour les deux lectures")
 
     _source(b, "Le profil de la demi-séance est posé contre le bord droit de "
@@ -473,7 +621,7 @@ def fig_vwap() -> str:
     passé, et une attente de retour vers lui. Elles diffèrent par l'horizon,
     donc par le nombre d'occasions, donc par leur prouvabilité.
     """
-    b = _plate(524.0, "Catalogue · les niveaux construits",
+    b = _plate(534.0, "Catalogue · les niveaux construits",
                "Un repère bâti sur le passé, et l'attente d'un retour",
                "bougies de cinq minutes")
 
@@ -486,6 +634,7 @@ def fig_vwap() -> str:
                        _num(100.0 * C.frequence_nulle("vwap"), 1) + " %",
                        bougies, surligne=(i0 / 5.0 - 1.0, i0 / 5.0 + 1.0))
     _bandes_vwap(p, chemin, 5)
+    p.dot(i0 / 5.0, chemin[i0], "s2", r=4.0, tip="touche de la deuxième bande")
     p.grid_x([0.0, 39.0, 77.0], fmt=lambda v: _num(v * 5.0 / 60.0, 1) + " h",
              label="heures de séance")
 
@@ -497,7 +646,8 @@ def fig_vwap() -> str:
                         _num(100.0 * C.frequence_nulle("ote"), 1) + " %",
                         bougies2)
     bas, haut = min(chemin[debut:fin]), max(chemin[debut:fin])
-    p2.band_y(haut - 0.79 * (haut - bas), haut - 0.618 * (haut - bas))
+    p2.band_y(haut - 0.79 * (haut - bas), haut - 0.618 * (haut - bas),
+              cls="zone")
     for r, lab in ((0.618, "0,618"), (0.79, "0,79")):
         niveau = haut - r * (haut - bas)
         p2.hline(niveau)
@@ -518,7 +668,11 @@ def fig_vwap() -> str:
             b.add(f'<text class="lg" x="{x:.1f}" y="{280.0 + 13 * k:.1f}">'
                   f'{_esc(texte)}</text>')
 
-    _eventail(b, MARGE_G, 350.0, _utile(), 116.0, 45.0,
+    b.annotation(MARGE_G, 322.0,
+                 "à gauche, le point marque la touche de la deuxième bande")
+    b.annotation(MARGE_G, 335.0,
+                 "à droite, la zone teintée est le retracement 0,618–0,79")
+    _eventail(b, MARGE_G, 358.0, _utile(), 116.0, 45.0,
               "Les trois quarts d'heure qui suivent")
 
     _source(b, "À gauche, le VWAP de séance et ses deux premières bandes "
@@ -570,7 +724,7 @@ def fig_structure() -> str:
     heures à trois séances, et leur prouvabilité s'échelonne de sept siècles à
     trois millénaires et demi.
     """
-    b = _plate(540.0, "Catalogue · la structure",
+    b = _plate(552.0, "Catalogue · la structure",
                "Ce que la forme du prix laisse croire, sur un prix sans dérive",
                "du quart d'heure à la séance")
 
@@ -604,17 +758,31 @@ def fig_structure() -> str:
     p2.grid_x([0.0, 7.0, 14.0], fmt=lambda v: _num(v, 0), label="séances")
 
     # Plus haut plus haut : les pivots de la même série.
+    # La marge de ce cadre est plus large que celle des deux autres : les
+    # étiquettes de pivot se posent au-dessus des sommets, et à la marge
+    # ordinaire la plus haute sortait de la planche.
     p3 = _cadre_bougies(b, MARGE_G + 2 * (lw + ecart), 86.0, lw, 146.0,
                         "Plus haut plus haut",
                         _num(100.0 * C.frequence_nulle("structure"), 1) + " %",
-                        jour)
+                        jour, marge=0.20)
     pivots = _pivots([c[4] for c in jour])
-    for k, (idx, sens) in enumerate(pivots):
+    for idx, sens in pivots:
         p3.dot(float(idx), jour[idx][2] if sens > 0 else jour[idx][3],
-               "s2" if sens > 0 else "s3", r=3.0)
+               "s2" if sens > 0 else "s3", r=3.5,
+               tip=("sommet" if sens > 0 else "creux") + f" à la séance {idx}")
     if len(pivots) >= 2:
-        p3.path([(float(i), jour[i][2] if s > 0 else jour[i][3])
-                 for i, s in pivots], "s2", dash="4 3")
+        p3.path([(float(i), jour[i][2] if sg > 0 else jour[i][3])
+                 for i, sg in pivots], "s2", dash="4 3")
+    # Les deux derniers sommets, nommés : c'est la structure que la lecture
+    # prétend lire, et sans étiquette le lecteur ne sait pas lesquels compter.
+    sommets = [i for i, sg in pivots if sg > 0][-2:]
+    for rang, idx in enumerate(sommets):
+        p3.label(float(idx), jour[idx][2], "S" + str(rang + 1),
+                 dx=0.0, dy=-9.0, anchor="middle", cls="tk halo")
+    creux = [i for i, sg in pivots if sg < 0][-2:]
+    for rang, idx in enumerate(creux):
+        p3.label(float(idx), jour[idx][3], "C" + str(rang + 1),
+                 dx=0.0, dy=14.0, anchor="middle", cls="tk halo")
     p3.grid_x([0.0, 7.0, 14.0], fmt=lambda v: _num(v, 0), label="séances")
 
     for col, cle in enumerate(("retest", "meche", "structure")):
@@ -630,7 +798,13 @@ def fig_structure() -> str:
             b.add(f'<text class="{cls}" x="{x:.1f}" y="{276.0 + 13 * k:.1f}">'
                   f'{_esc(texte)}</text>')
 
-    _eventail(b, MARGE_G, 366.0, _utile(), 116.0, 1170.0,
+    b.annotation(MARGE_G, 336.0,
+                 "à droite, S1 et S2 sont les deux derniers sommets, C1 et C2 "
+                 "les deux derniers creux")
+    b.annotation(MARGE_G, 349.0,
+                 "la structure de Dow tient si S2 dépasse S1 et si C2 dépasse "
+                 "C1 — ici les deux")
+    _eventail(b, MARGE_G, 374.0, _utile(), 116.0, 1170.0,
               "Les trois séances qui suivent")
 
     _source(b, "Les trois cadres sont tirés des mêmes séances simulées sans "
@@ -701,7 +875,7 @@ def _tpo_blocs(p: Panel, profil, marquer=None) -> None:
 
 def fig_tpo() -> str:
     """Les deux lectures du profil de marché, sur une séance sans dérive."""
-    b = _plate(520.0, "Catalogue · le profil de marché",
+    b = _plate(540.0, "Catalogue · le profil de marché",
                "Deux lectures du profil, et ce qu'elles annoncent",
                "périodes de trente minutes")
 
@@ -744,7 +918,11 @@ def fig_tpo() -> str:
             b.add(f'<text class="{cls}" x="{x:.1f}" y="{282.0 + 13 * k:.1f}">'
                   f'{_esc(texte)}</text>')
 
-    _eventail(b, MARGE_G, 348.0, _utile(), 116.0, 390.0,
+    b.legend(MARGE_G, 336.0,
+             [("s1f", "rangée ordinaire"),
+              ("s2f", "rangée que la lecture retient")],
+             step=0.42 * _utile())
+    _eventail(b, MARGE_G, 366.0, _utile(), 116.0, 390.0,
               "La séance qui suit")
 
     _source(b, "Une même séance simulée sans dérive, lue deux fois. À gauche, "
@@ -984,9 +1162,12 @@ def fig_mur() -> str:
                       (2.0, "1 siècle"), (4.0, "100 siècles")],
              tip="{v:.2f} en log d'années")
 
-    b.annotation(0.0, 462.0,
+    b.annotation(0.0, 450.0,
                  "arête gauche : horizon de la lecture · arête droite : "
                  "occasions par séance")
+    b.annotation(0.0, 466.0,
+                 "plus le relief est haut, plus il faut d'années pour établir "
+                 "la lecture ; au premier plan, quelques mois suffisent")
     _source(b, "La hauteur est le délai d'établissement, en échelle "
                "logarithmique : chaque graduation vaut dix fois la "
                "précédente. Le relief n'a qu'une pente, et c'est le fait à "
@@ -1019,7 +1200,7 @@ def fig_gain() -> str:
     prix soit plus haut à l'horizon. Elle se calcule en forme fermée — la loi
     du déplacement est normale — et ne doit donc rien à une simulation.
     """
-    b = _plate(524.0, "Catalogue · le gain",
+    b = _plate(540.0, "Catalogue · le gain",
                "Ce que la dérive ajoute à la chance d'avoir raison",
                "hauteur : points au-dessus de 50 %")
 
@@ -1033,9 +1214,14 @@ def fig_gain() -> str:
                       (30.0, "+30"), (45.0, "+45")],
              tip="{v:+.1f} points")
 
-    b.annotation(0.0, 462.0,
+    b.annotation(0.0, 450.0,
                  "arête gauche : horizon de la lecture · arête droite : "
                  "dérive du marché, en points par heure")
+    b.annotation(0.0, 466.0,
+                 "plus le relief est haut, plus la dérive fait pencher le "
+                 "prix du bon côté")
+    b.annotation(0.0, 482.0,
+                 "au premier plan, elle ne le fait pas pencher du tout")
     _source(b, "Le coin le plus proche est la lecture de cinq minutes sans "
                "dérive : le gain y est nul, et c'est la situation de "
                "l'opérateur intraday. Le coin du fond est la lecture de trois "
