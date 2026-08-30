@@ -21,15 +21,15 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (≈1,28 Mo, 52 sections en
-quatorze parties, 26 tables, 47 figures dont onze surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (≈1,51 Mo, 56 sections en
+quatorze parties, 29 tables, 53 figures dont douze surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
-codable, puis **le catalogue des quinze lectures**, puis le seuil de
-rentabilité, puis les concepts de sortie, puis la lecture du flux.
-Chaîne : `journal.py` → `operator.py` → `attribution.py` →
-`report10/11/13/14.py` + `sorties.py` + `concepts.py` + `figdisc.py` +
-`figflux.py` + `figsortie.py` + `figcat.py` → `discpaper.py`. Titre courant :
-*Le seuil, et non le signal*.
+codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
+setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
+lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
+`report10/11/13/14.py` + `sorties.py` + `concepts.py` + `setups.py` +
+`figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` →
+`discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -40,6 +40,17 @@ que posait le document : le footprint y vient en premier, non par importance
 mais parce qu'il est la seule famille prouvable à l'échelle d'une carrière.
 Les lois nulles détaillées du flux restent en partie XIII.
 
+Ses quatre dernières sections (14 à 17) sont **la grammaire du setup** —
+`setups.py` + `figsetup.py`. Un motif n'est pas un setup : un setup est un
+niveau **calculé**, un contact, une confirmation écrite d'avance, une
+invalidation. Six niveaux × trois confirmations = douze setups, mesurés sur
+900 séances sans dérive simulées **à la barre** (12 sous-pas, volume, coupe
+bid/ask, footprint rejouable). Résultat : *la confirmation ne déplace pas
+l'espérance, elle divise l'échantillon* — 49,4 % contre 50,1 % dans le sens
+attendu, pour 89 à 98 % d'occasions en moins et un délai multiplié d'autant.
+Le coût se convertit en dérive compensatrice (0,24 à 1,60 pt/h), et le verdict
+qui la compare au domaine plausible est **calculé, jamais écrit**.
+
 Deux autres builds existent — `docs/alp1-paper.html` (`--paper`), version
 plus ancienne et plus courte d'ALP nº 1, et `docs/alp2-paper.html`
 (`--paper2`), la bande de bruit. Il partage `report*.py` : **une correction
@@ -49,8 +60,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/f9f5d005-c0e9-4818-a671-3130f43e8543
-  (précédents : 4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/99a53614-87c2-4272-bc27-ddba6e988429
+  (précédents : f9f5d005, 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -142,6 +153,20 @@ Flux d'ordres
 - `vprofile.py` — profil de volume, POC, HVN/LVN.
 
 Rendu
+- `setups.py` — **la grammaire du setup.** `NIVEAUX` (6, causaux, calculés sur
+  la première demi-séance ou sur le passé à la minute), `CONFIRMATIONS` (3,
+  cinq seuils déclarés), `SETUPS` (12), `seances()` à la barre avec graine
+  **par minute** — c'est ce qui rend `footprint(seance, minute)` rejouable et
+  interdit à une figure de montrer autre chose que ce que la table mesure.
+  `criteres()` est la source unique : `_confirme` en découle, et les cases
+  cochées d'une planche aussi. `_independants()` porte l'embargo (voir le
+  piège plus bas). `poule()` met les douze en commun — c'est là, et pas dans
+  une cellule isolée, que le résultat se lit.
+- `figsetup.py` — les six planches du setup. `setfoot` (le footprint au point
+  de contrôle, trois confirmations, critères cochés par la mesure),
+  `setprofil`, `setdow`, `setvwap`, `setcout` (le délai, de brut à confirmé),
+  `setrelief` (la surface). `_seance_temoin` choisit la séance montrée par une
+  règle calculée : la première qui porte un exemple de chaque confirmation.
 - `concepts.py` — **le catalogue des quinze lectures.** `CATALOGUE`, `ordre()`
   (tri par horizon, jamais écrit), `frequence_nulle` (loi du module quand elle
   existe, détecteur simulé sinon), `exigence` (µ* requis, décisions, délai,
@@ -216,6 +241,24 @@ Depuis, les deux routes du mur sont données séparément et c'est leur **maximu
 qui lie. Le fait qui en sort est plus fort : il faut dépasser 22 configurations
 pour que la taxe passe devant le test ordinaire, donc **les quatre leviers
 recensés ne coûtent rien de plus que ce qu'il faut de toute façon**.
+
+### Le chevauchement des fenêtres — trois cents chemins comptés mille fois
+Un nœud de faible volume donne onze contacts par demi-séance ; leurs fenêtres
+d'une heure se recouvrent presque toutes. Mesurée sur le lot brut, l'excursion
+favorable médiane s'écartait de la défavorable d'un bon point — assez pour
+qu'on croie lire un effet là où il n'y a que le même chemin recompté.
+`setups._independants` applique l'embargo du module `overfit` : dans une
+séance, on garde le premier contact puis le premier suivant dont la fenêtre ne
+recouvre plus la précédente. **Les fréquences, elles, continuent de se compter
+sur le lot entier** — le débit d'occasions n'a rien à voir avec l'indépendance
+des observations, et les confondre diviserait le débit par trois.
+
+### La divergence figure/table
+Une planche qui coche une case que la mesure aurait refusée est indétectable à
+la relecture. La parade est une source unique : `setups.criteres()` rend la
+liste des conditions avec leur valeur et leur verdict, `_confirme` n'est que le
+« tous » de cette liste, et la figure lit la même liste. Un test l'exige sur
+deux cents contacts par niveau.
 
 ### L'échantillon
 Le contrôle d'échantillon doit partir de `REFERENCE_BITS` — l'effet à
@@ -337,7 +380,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 935 tests (compter ~25 min, --wp et figures sont lents)
+python main.py --tests      # 967 tests (compter ~35 min, --wp et setups sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
@@ -348,7 +391,7 @@ python main.py --disc       # journal de décision, lois nulles, attribution
 
 Modules exécutables directement pour inspecter leurs chiffres :
 `python -c "from alp1 import footprint; footprint.main()"` — idem pour `tpo`,
-`spectrum`, `seuil`, `report11`, `report14`.
+`spectrum`, `seuil`, `report11`, `report14`, `concepts`, `setups`.
 
 ## Contraintes d'environnement
 

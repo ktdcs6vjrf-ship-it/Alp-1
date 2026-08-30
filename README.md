@@ -15,7 +15,7 @@ Le document complet :
 > *Série ALP, nº 3.* JEL : C12, C44, C52, G11, G14.
 
 [`docs/prouver-un-jugement.html`](docs/prouver-un-jugement.html) —
-52 sections en quatorze parties, 26 tables, 47 figures.
+56 sections en quatorze parties, 29 tables, 53 figures.
 
 Il part d'une question — combien de décisions faut-il pour établir la valeur
 d'un jugement qui n'existe pas sous forme écrite ? — et la retourne. Le
@@ -38,6 +38,24 @@ marché par le nombre de décisions qu'il faut pour l'établir vaut le même nom
 d'un bout à l'autre du catalogue, à un pour mille et demi près — une
 preuve coûte le même nombre de bits à tout horizon, et il n'existe aucun
 horizon avantageux.
+
+**La grammaire du setup** prolonge le catalogue là où il s'arrêtait. Un
+opérateur ne prend pas un motif : il prend un motif à un endroit, tenu par une
+condition écrite d'avance et abandonné sur une autre. Six niveaux calculés —
+point de contrôle, bornes de l'aire de valeur, nœud de faible volume, bande
+VWAP, pivot de structure, zone d'entrée optimale — croisés avec trois
+confirmations — absorption, rejet en mèche, exécution — donnent douze setups,
+mesurés de bout en bout sur neuf cents séances sans dérive simulées à la barre,
+footprint compris. Le résultat tient en une phrase : la confirmation ne déplace
+pas l'espérance, elle divise l'échantillon. Sur les fenêtres disjointes
+retenues, le prix va dans le sens attendu 49,4 % du temps avec confirmation
+contre 50,1 % sans — un demi de part et d'autre — tandis que la confirmation
+retire de 89 % à 98 % des occasions et multiplie d'autant le délai
+d'établissement. Ce délai a un prix chiffrable : pour se rembourser, une
+confirmation devrait apporter de 0,24 à 1,60 point de dérive par heure, ce qui
+est jouable mais nullement acquis. La conséquence pratique est que **le nombre
+de conditions exigées avant d'entrer est le paramètre le plus coûteux du
+dispositif**, et c'est aussi celui qu'on ajuste le plus librement.
 
 Deux parties plus anciennes complètent l'appareil. **Lire le flux** passe le footprint et le
 profil de marché au même protocole que le reste : chaque lecture reçoit sa loi
@@ -962,7 +980,7 @@ python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
 python main.py --disc             # journal de décision, lois nulles, attribution
 python main.py --discpaper        # reconstruit docs/prouver-un-jugement.html
-python main.py --tests            # 935 tests unitaires du noyau
+python main.py --tests            # 967 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
@@ -1055,6 +1073,10 @@ La production du document :
 | `alp1/figpower.py` | Planches de puissance, de durée et de trajectoires séquentielles |
 | `alp1/sorties.py` | Douze concepts de sortie simulés sur trajectoires appariées, et leur loi nulle |
 | `alp1/figsortie.py` | Planches des sorties : l'identité de Wald mesurée, et sa frontière |
+| `alp1/concepts.py` | Le catalogue des quinze lectures, rangées par un horizon calculé |
+| `alp1/setups.py` | La grammaire du setup : niveau, contact, confirmation, invalidation, et leur coût |
+| `alp1/figcat.py` | Planches du catalogue : les situations, les issues, le mur, l'invariant |
+| `alp1/figsetup.py` | Planches du setup : footprint au niveau, profil, structure, bande, coût |
 | `alp1/pieds.py` | Sortie de la prose de pied hors du SVG, partagée par les trois documents |
 | `alp1/paper.py` | Assemblage du document depuis `docs/alp1-paper.template.html` |
 | `alp1/workingpaper.py` | Assemblage du document de travail complet |

@@ -546,6 +546,8 @@
 
     <p>La trace est un journal de décision, dont ce document spécifie les sept champs et la frontière temporelle qui les sépare. Trois de ces champs manquent à la plupart des journaux et portent l'essentiel de l'information&nbsp;: le contexte au moment de la décision, la conviction annoncée avant l'issue, et surtout les <strong>abstentions</strong> — les setups vus et refusés. Sans elles, la moitié de la table de contingence reste vide et la compétence de refus n'est pas identifiable, alors que c'est souvent là que loge l'avantage d'un discrétionnaire.</p>
 
+    <p>Deux parties arment ce dispositif sur le terrain de l'opérateur. Le <strong>catalogue</strong> range les quinze lectures du dispositif par leur horizon d'observation, qui est calculé et non écrit, et montre qu'aucun de ces motifs n'est rare sous un prix sans dérive. La <strong>grammaire du setup</strong> va un cran plus loin&nbsp;: un opérateur ne prend pas un motif, il prend un motif à un endroit, tenu par une condition écrite d'avance et abandonné sur une autre. {{u_niveaux}}&nbsp;niveaux calculés croisés avec {{u_confirmations}}&nbsp;confirmations donnent {{u_setups}}&nbsp;setups, mesurés sur {{u_seances}}&nbsp;séances sans dérive simulées à la barre, footprint compris. Le prix va dans le sens attendu {{u_pool}} du temps une fois la confirmation exigée, contre {{u_pool_brut}} au contact brut&nbsp;: <strong>la confirmation ne déplace pas l'espérance, elle divise l'échantillon</strong> — elle ne retient que {{u_part_min}} à {{u_part_max}} des contacts et multiplie le délai d'établissement d'un facteur {{u_facteur_min}} à {{u_facteur_max}}. Le nombre de conditions exigées avant d'entrer est ainsi le paramètre le plus coûteux du dispositif, et c'est aussi celui qu'on ajuste le plus librement.</p>
+
     <p>Cinq lois nulles sont construites, chacune réfutant une prétention distincte&nbsp;: la sélection au sort, les issues permutées dans la séance, la règle scellée, l'indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l'abstention&nbsp;; la troisième est la plus dure, car elle ne demande pas si l'opérateur gagne mais s'il fait mieux qu'une règle qu'on écrit en dix lignes. L'appareil est calibré contre une vérité plantée de taille connue&nbsp;: sur un opérateur sans compétence il ne déclare rien&nbsp;; à {{d_bits_forte}}&nbsp;bit par décision il déclare&nbsp;; entre les deux il refuse, et ce refus est le sujet du document.</p>
 
     <p>Le chiffre tient à deux propriétés. La liberté de décider se paie&nbsp;: {{d_leviers}}&nbsp;leviers engendrent {{d_configs}}&nbsp;configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme&nbsp;: le premier levier fait tout le prix — il porte le seuil de zéro à {{d_seuil_k1}} — et les trois suivants ne le multiplient que par&nbsp;{{d_facteur_1_4}}. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur. Le seuil monte, donc&nbsp;; mais l'exigence d'échantillon, elle, ne bouge pas — tant que la taxe reste sous celle du test ordinaire, et il faudrait dépasser {{d_configs_bascule}}&nbsp;configurations pour l'en faire sortir, <strong>ouvrir un levier ne coûte rien de plus que ce qu'il faut de toute façon</strong>.</p>
@@ -556,7 +558,7 @@
 
     <p>Ce chapitre corrige un défaut du document nº&nbsp;1, et il faut le nommer. La dérive de référence y était <em>dérivée de la friction</em> — deux fois le seuil de rentabilité — donc supposée exactement au niveau qui rend la stratégie rentable, et à {{s_ref_circulaire}}&nbsp;points par heure, soit {{s_ref_facteur}}&nbsp;fois la borne haute du plausible. Les chapitres de risque refaits sous une dérive déclarée et une géométrie corrigée donnent de <em>meilleures</em> grandeurs qu'en gardant l'hypothèse&nbsp;: Sharpe par trade {{r_sharpe_opt}} contre {{r_sharpe_ref}}, fraction de Kelly {{r_kelly_opt}}&nbsp;% contre {{r_kelly_ref}}&nbsp;%, coefficient de Lundberg {{r_theta_opt}} contre {{r_theta_ref}} — à une dérive cinq fois plus faible.</p>
 
-    <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; théorème d'arrêt optionnel</p>
+    <p class="keywords"><span>Mots-clés —</span> décision discrétionnaire&nbsp;; lois nulles&nbsp;; Sharpe déflaté&nbsp;; tests multiples&nbsp;; valeur de Shapley&nbsp;; information mutuelle&nbsp;; analyse de puissance&nbsp;; journal de décision&nbsp;; abstention&nbsp;; pré-enregistrement&nbsp;; évaluation de gérants&nbsp;; grammaire du setup&nbsp;; théorème d'arrêt optionnel</p>
     <p class="jel"><span>Classification JEL —</span> C12, C44, C52, G11, G14</p>
   </div>
 
@@ -603,10 +605,14 @@
           <li><a href="#s-cat-situations">Quinze situations, et ce que le prix en fait</a></li>
           <li><a href="#s-cat-exigence">Ce qu'il faudrait pour que la lecture paie</a></li>
           <li><a href="#s-cat-invariant">Le produit qui ne bouge pas</a></li>
+          <li><a href="#s-setup-grammaire">Un motif n'est pas un setup</a></li>
+          <li><a href="#s-setup-lire">Lire un setup, famille par famille</a></li>
+          <li><a href="#s-setup-mesure">Ce que la confirmation change, et ce qu'elle ne change pas</a></li>
+          <li><a href="#s-setup-cout">Le prix d'une confirmation</a></li>
         </ol>
       </li>
       <li><span class="pt">Quatrième partie — L'instrument</span>
-        <ol start="14">
+        <ol start="18">
           <li><a href="#s-journal">Le journal de décision</a></li>
           <li><a href="#s-champs">Sept champs, et une frontière temporelle</a></li>
           <li><a href="#s-abstention">Les refus sont la moitié de l'information</a></li>
@@ -614,14 +620,14 @@
         </ol>
       </li>
       <li><span class="pt">Cinquième partie — La vérité de référence</span>
-        <ol start="18">
+        <ol start="22">
           <li><a href="#s-univers">L'univers des setups, sur un prix sans dérive</a></li>
           <li><a href="#s-invariance">L'invariance, transposée du choix des barrières au choix des trades</a></li>
           <li><a href="#s-plantee">Planter une compétence de taille connue</a></li>
         </ol>
       </li>
       <li><span class="pt">Sixième partie — Les cinq lois nulles</span>
-        <ol start="21">
+        <ol start="25">
           <li><a href="#s-pourquoi-cinq">Pourquoi une seule loi nulle ne suffit pas</a></li>
           <li><a href="#s-catalogue">Le catalogue, et ce que chaque loi réfute</a></li>
           <li><a href="#s-mecanique">Faire mieux que dix lignes de code</a></li>
@@ -629,7 +635,7 @@
         </ol>
       </li>
       <li><span class="pt">Septième partie — La taxe du jugement</span>
-        <ol start="25">
+        <ol start="29">
           <li><a href="#s-multiplicite">k leviers, 2<sup>k</sup> configurations</a></li>
           <li><a href="#s-recensement">Le recensement d'un opérateur réel</a></li>
           <li><a href="#s-concavite">Le quatrième levier coûte moins cher que le premier</a></li>
@@ -637,27 +643,27 @@
         </ol>
       </li>
       <li><span class="pt">Huitième partie — Le mur d'échantillon</span>
-        <ol start="29">
+        <ol start="33">
           <li><a href="#s-routes">Trois routes indépendantes</a></li>
           <li><a href="#s-convergence">Le mur, en décisions puis en années</a></li>
           <li><a href="#s-puissance">Où la détection devient acquise</a></li>
         </ol>
       </li>
       <li><span class="pt">Neuvième partie — Comparaison des deux régimes de preuve</span>
-        <ol start="32">
+        <ol start="36">
           <li><a href="#s-versus">Pourquoi le jugement est prouvable là où la géométrie ne l'est pas</a></li>
           <li><a href="#s-consequence">Ce que cela change pour l'opérateur</a></li>
         </ol>
       </li>
       <li><span class="pt">Dixième partie — Décomposer l'avantage</span>
-        <ol start="34">
+        <ol start="38">
           <li><a href="#s-shapley">Shapley, et les seize coalitions</a></li>
           <li><a href="#s-validation">Une décomposition réfutable</a></li>
           <li><a href="#s-fermer">Quels leviers fermer</a></li>
         </ol>
       </li>
       <li><span class="pt">Onzième partie — Le seuil, et non le signal</span>
-        <ol start="37">
+        <ol start="41">
           <li><a href="#s-mauvaise-question">La question posée n’était pas la bonne</a></li>
           <li><a href="#s-effondrement">Le seuil s’effondre quand le stop s’élargit</a></li>
           <li><a href="#s-circularite">Une hypothèse qui supposait sa conclusion</a></li>
@@ -666,13 +672,13 @@
         </ol>
       </li>
       <li><span class="pt">Douzième partie — Sortir</span>
-        <ol start="42">
+        <ol start="46">
           <li><a href="#s-sortir">Douze concepts, et ce qu'ils font vraiment</a></li>
           <li><a href="#s-sortir-choix">Ce qu'il reste alors à décider</a></li>
         </ol>
       </li>
       <li><span class="pt">Treizième partie — Lire le flux</span>
-        <ol start="44">
+        <ol start="48">
           <li><a href="#s-gamma-horloge">Le régime de gamma, et ce qu'il décide vraiment</a></li>
           <li><a href="#s-footprint">Le footprint, et ce qu'un déséquilibre vaut</a></li>
           <li><a href="#s-grappe">Ce qui décide la fréquence nulle, et que personne n'observe</a></li>
@@ -681,7 +687,7 @@
         </ol>
       </li>
       <li><span class="pt">Quatorzième partie — Protocole, limites, et ce qui reste ouvert</span>
-        <ol start="49">
+        <ol start="53">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -734,7 +740,7 @@
 
   <p><strong>L'étude construit un appareil de mesure et en établit la sensibilité.</strong> Elle spécifie cinq lois nulles et la prétention que chacune adresse, mesure le nombre de décisions requis pour les battre à un effet donné, et rapporte le taux de déclaration de l'appareil à compétence nulle. Ces résultats sont reproductibles par les modules du dépôt.</p>
 
-  <p><strong>L'étude ne porte sur aucun journal réel.</strong> Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l'appareil à une valeur connue. Un registre réel au format de la section&nbsp;<a href="#s-champs">15</a> est traité par les mêmes modules, sans modification du code.</p>
+  <p><strong>L'étude ne porte sur aucun journal réel.</strong> Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l'appareil à une valeur connue. Un registre réel au format de la section&nbsp;<a href="#s-champs">19</a> est traité par les mêmes modules, sans modification du code.</p>
 
 
   <h2 id="s-notions">Six notions, et ce qu'elles décident</h2>
@@ -959,6 +965,74 @@
   <p>Ce que l'opérateur peut en tirer tient en deux gestes. Le premier est de <strong>ne rien attendre d'une lecture qu'il ne pourra jamais contrôler</strong>&nbsp;: sur les quinze, {{c_prouvables}} se vérifient à l'échelle d'une carrière et {{c_hors_portee}} ne s'y vérifieront pas. Ces dernières gardent leur utilité comme contexte — elles disent où l'on se trouve — mais aucune décision ne devrait reposer sur leur seule prétention prédictive, puisque cette prétention restera indécidable. Le second geste est de porter l'effort là où il paie. La partie&nbsp;XI établit qu'élargir le stop déplace le seuil de rentabilité d'un facteur 53&nbsp;; la meilleure lecture de ce catalogue, sur son horizon le plus favorable, ne déplace la probabilité d'avoir raison que de {{c_lent_gain}}&nbsp;points — et il faut {{c_lent_delai}} pour l'établir. <strong>La géométrie est un levier arithmétique, la lecture un pari statistique.</strong> Le premier se règle en un après-midi, le second demande des siècles.</p>
 
   <p>Ce catalogue ne remplace aucune des parties qui suivent&nbsp;: il les ordonne. Le régime de gamma, le footprint et le profil de marché y reviennent en partie&nbsp;XIII, avec le détail de leurs lois nulles et des paramètres non observables qui les décident. Ce que la présente partie ajoute est un cadre commun où ces lectures se comparent — et où l'on voit que ce qui les sépare n'est presque jamais leur finesse, mais le nombre d'occasions que le marché leur donne.</p>
+
+  <h2 id="s-setup-grammaire">Un motif n'est pas un setup</h2>
+
+  <p>Le catalogue vient de ranger quinze motifs. Aucun opérateur ne prend un motif. Il prend un motif <strong>à un endroit</strong>, tenu par une condition qu'il a écrite avant de la voir, et abandonné sur une autre. Entre «&nbsp;une absorption&nbsp;» et «&nbsp;une absorption sur le point de contrôle, tenue par un volume de {{u_mult_volume}} fois la médiane, un <span class="v">z</span> d'impact sous {{u_z}} et une clôture qui ne franchit pas le niveau, abandonnée si une clôture le franchit d'un écart-type dans le quart d'heure&nbsp;», il y a exactement la distance qui sépare une observation d'une règle. Cette partie écrit cette distance, puis la mesure.</p>
+
+  <p>La grammaire a quatre termes et elle n'en a que quatre. <strong>Le niveau</strong> — un prix calculé sur le passé, et jamais sur autre chose. <strong>Le contact</strong> — la minute où le prix vient le toucher. <strong>La confirmation</strong> — ce qui doit se produire à ce contact pour tenir la lecture. <strong>L'invalidation</strong> — ce qui la dément ensuite. Croiser {{u_niveaux}}&nbsp;niveaux, tirés de {{u_familles}}&nbsp;familles, avec {{u_confirmations}}&nbsp;confirmations donne les {{u_setups}}&nbsp;setups que cette partie mesure.</p>
+
+  <p>Cinq seuils numériques suffisent à écrire les trois confirmations, et les voici avant toute mesure&nbsp;: un volume de {{u_mult_volume}}&nbsp;fois le volume médian de la séance, un <span class="v">z</span> d'impact sous {{u_z}}, une mèche occupant {{u_meche}}&nbsp;% de l'étendue de la barre, un dépassement d'un écart-type d'une minute, un delta portant {{u_delta}}&nbsp;% du volume. Les mêmes cinq servent aux {{u_familles}}&nbsp;familles&nbsp;: sans quoi comparer un rejet de bande VWAP à un rejet de pivot reviendrait à comparer deux façons de compter.</p>
+
+  {{TABLE:grammaire}}
+
+  <p>La mesure porte sur {{u_seances}}&nbsp;séances sans dérive, simulées à la barre — {{u_sous_pas}}&nbsp;sous-pas par minute, de quoi donner à chaque barre une ouverture, un haut, un bas, une clôture et une coupe entre le volume vendu au bid et celui acheté à l'ask. La corrélation entre le delta d'une barre et son déplacement y vaut {{u_correlation}}, au voisinage du {{u_correlation_cvd}} que le module de flux retient pour le CVD&nbsp;: c'est le contrôle qui autorise à lire les confirmations de delta comme une plateforme les affiche.</p>
+
+  <p>Deux réglages décident ici de fréquences sans être observables, et il vaut mieux les écrire que les cacher. Le premier est l'échelle d'impact qui sert au <span class="v">z</span> d'absorption&nbsp;; elle est calibrée sur la séance elle-même, de sorte que le <span class="v">z</span> soit centré réduit quand il n'y a rien à lire. Le second est l'indépendance déclarée entre le volume d'une minute et son amplitude&nbsp;: elle est fausse dans le vrai marché, où les deux vont ensemble, et elle rend l'absorption <em>plus</em> fréquente ici qu'en séance — donc plus favorable à la lecture qu'on s'apprête à contester. C'est le même piège que la taille de grappe du footprint et le pas de rangée du profil de marché, dont la partie&nbsp;XIII détaille les effets.</p>
+
+  <h2 id="s-setup-lire">Lire un setup, famille par famille</h2>
+
+  <p>Les planches qui suivent obéissent à une règle simple, et elle vient d'un défaut&nbsp;: <strong>une figure de setup montre l'objet, pas son contexte</strong>. Un footprint se dessine en cellules bid&nbsp;× ask, jamais en bougies&nbsp;; un profil de volume se dessine avec son histogramme&nbsp;; une structure de Dow se dessine avec les pivots que le module a calculés, portant le nom qu'il leur donne. Chaque marque porte en outre son nom dans la figure&nbsp;: un cadre, un liseré, une bande ne disent rien tant qu'une ligne ne dit pas ce qu'ils marquent.</p>
+
+  <p>Une seconde règle vaut pour tous les exemples&nbsp;: aucun n'est choisi. Un exemple est le premier que le détecteur retient dans l'ordre des graines, et les cases cochées sous chaque colonne sont celles que la mesure a cochées — figure et table lisent la même liste de critères, ce qui leur interdit de diverger. Il en résulte que certains exemples sont démentis dans le quart d'heure, et c'est tant mieux&nbsp;: c'est la proportion ordinaire, et une planche qui ne montrerait que des confirmations tenues mentirait par sélection.</p>
+
+  {{FIGURE:setfoot|Le point de contrôle de la première demi-séance abordé trois fois, et les trois lectures que le footprint autorise. Chaque bande montre l'approche en bougies, puis le footprint de la barre du contact — une rangée par tick, le volume vendu au bid à gauche, acheté à l'ask à droite — puis les critères de la confirmation, cochés par la mesure elle-même.}}
+
+  <p>La première planche répond à la question posée le plus souvent devant un footprint&nbsp;: <em>que faut-il voir, exactement, pour dire qu'il y a absorption&nbsp;?</em> La réponse tient en trois lignes qui ne dépendent d'aucun jugement — un volume d'au moins {{u_mult_volume}}&nbsp;fois la médiane, un <span class="v">z</span> d'impact sous {{u_z}}, une clôture qui ne franchit pas le niveau. Le rejet en demande deux, l'exécution deux autres. Ce que la figure ajoute à la table, c'est de montrer que ces trois barres ne se ressemblent pas&nbsp;: la barre absorbante est chargée et immobile, la barre de rejet porte une mèche de plus des deux tiers de son étendue, la barre d'exécution ferme au-delà avec un delta massif. Elles se distinguent à l'œil, et c'est bien le problème — elles se distinguent aussi bien sur un prix qui ne contient rien.</p>
+
+  {{FIGURE:setprofil|Une séance et son profil de volume. Les niveaux — point de contrôle, bornes de l'aire de valeur, nœuds de faible volume — sont calculés sur la première demi-séance et arrêtés à la minute que marque le trait vertical&nbsp;; les contacts sont comptés sur la seconde. Les deux cadres du bas prennent de près une traversée de nœud et un rejet de bord de valeur.}}
+
+  <p>La planche du profil de volume montre ce qu'aucune table ne montre&nbsp;: <strong>d'où viennent les niveaux</strong>. L'histogramme posé contre le bord droit est le temps que le prix a passé à chaque hauteur pendant la première moitié de la séance&nbsp;; son sommet est le point de contrôle, ses bornes à 70&nbsp;% l'aire de valeur, ses creux les nœuds de faible volume. Rien n'y est choisi, et rien de ce qui suit le trait vertical ne les modifie — c'est la condition pour que les contacts comptés soient ceux qu'un opérateur aurait pu voir.</p>
+
+  {{FIGURE:setdow|Les pivots d'une séance, détectés par un zigzag de seuil déclaré et nommés par le module de structure, puis les deux lectures contraires qu'ils autorisent&nbsp;: le retest qui attend que le niveau tienne, la rupture qui attend qu'il cède.}}
+
+  <p>La structure de Dow pose un problème que les autres familles n'ont pas&nbsp;: elle se lit d'ordinaire sur un graphique achevé, où le sommet retenu est celui qui sert la thèse du moment. Le zigzag l'interdit. Un extrême devient pivot quand le prix s'en écarte de {{u_pivot}}&nbsp;points en sens contraire, jamais avant, et le nom du pivot — sommet plus haut, creux plus haut, sommet plus bas, creux plus bas — vient de la comparaison au pivot précédent de même nature. Les deux setups qui en découlent sont exactement contraires, et le prix sans dérive leur donne raison aussi souvent à l'un qu'à l'autre. Ce que la théorie de Dow apporte ici n'est donc pas une direction&nbsp;: c'est un endroit où poser le stop.</p>
+
+  {{FIGURE:setvwap|Le VWAP d'une séance et ses bandes à un et deux écarts-types. C'est le seul niveau mobile du catalogue&nbsp;: il se recalcule à chaque minute sur tout le passé de la séance, si bien que le prix ne revient pas sur la bande — la bande vient à lui autant qu'il va vers elle.}}
+
+  <p>La bande VWAP est la famille la plus généreuse en occasions, et c'est la seule raison pour laquelle ses setups s'établissent en dizaines d'années plutôt qu'en siècles. Elle illustre aussi une confusion courante&nbsp;: la deuxième bande est rare, donc on la croit informative. Elle est rare parce que deux écarts-types sont rares, ce qui est une propriété de la loi normale et non du marché.</p>
+
+  <h2 id="s-setup-mesure">Ce que la confirmation change, et ce qu'elle ne change pas</h2>
+
+  <p>Vient alors la mesure, et elle se lit en deux temps. Le premier temps concerne ce que la confirmation <em>ne</em> change <em>pas</em>.</p>
+
+  {{TABLE:confirmation}}
+
+  <p>Sur {{u_pool_brut_n}}&nbsp;contacts à fenêtres disjointes, le prix va dans le sens attendu {{u_pool_brut}} du temps. Sur les {{u_pool_n}}&nbsp;contacts que les confirmations retiennent, {{u_pool}} — soit un demi à {{u_pool_demi}}&nbsp;point de pourcentage près, ce qui est la précision de l'échantillon. <strong>Exiger la confirmation ne déplace pas la suite du prix.</strong> Ce n'est pas un défaut des conditions retenues&nbsp;: c'est le théorème d'arrêt optionnel, qui ne connaît pas les conditions d'entrée. Une règle qui décide <em>quand</em> entrer ne peut pas créer d'espérance là où la dérive est nulle, et aucune finesse de lecture n'y changera rien.</p>
+
+  <p>Une cellule isolée de la table s'écarte parfois nettement de la moitié — jusqu'à {{u_ecart}}&nbsp;points de pourcentage. C'est pourquoi la table publie ses effectifs, et pourquoi ces effectifs ne comptent que des <strong>fenêtres disjointes</strong>. Un nœud de faible volume donne onze contacts par demi-séance, dont les fenêtres d'une heure se recouvrent presque toutes&nbsp;; mille contacts ne portent pas mille fois l'information d'un seul. Comptés sans cet embargo, les excursions faisaient apparaître un écart d'un point entier entre le favorable et le défavorable, là où la mise en commun donne un rapport de {{u_pool_rapport}}.</p>
+
+  <p>Le second temps concerne ce que la confirmation change bel et bien, et ce n'est pas ce qu'on espérait. Elle retire des occasions&nbsp;: de {{u_part_max}} des contacts pour la plus permissive à {{u_part_min}} pour la plus sévère. Et elle est démentie souvent — entre {{u_dementi_min}} et {{u_dementi_max}} des confirmations sont annulées dans les {{u_fenetre}}&nbsp;minutes qui suivent, <em>alors même qu'elles viennent d'être obtenues</em>.</p>
+
+  <p>Un dernier contrôle mérite d'être fait, et son résultat est plus utile que tout ce qui précède. Sous la dérive haute du domaine plausible, la probabilité d'aller dans le sens attendu passe à {{u_derive_poursuite}} pour les setups de poursuite et tombe à {{u_derive_rejet}} pour ceux de rejet — soit {{u_derive_gain}}&nbsp;points gagnés d'un côté, {{u_derive_perte}} perdus de l'autre. La dérive existe, elle se voit&nbsp;; mais un setup orienté par le sens de l'<em>approche</em> la reçoit dans un sens une fois sur deux et contre lui l'autre fois. <strong>La dérive récompense le sens, pas la lecture.</strong> Un opérateur qui tient une confirmation pour son pouvoir prédictif tient en réalité une pièce, et la dérive n'en biaise que la moitié des tirages.</p>
+
+  <h2 id="s-setup-cout">Le prix d'une confirmation</h2>
+
+  <p>Si la confirmation ne déplace pas l'espérance et divise les occasions, alors elle a un prix, et ce prix se calcule exactement. Le nombre de décisions requises pour établir la rentabilité d'une géométrie ne dépend que de cette géométrie — stop à l'écart-type d'horizon, cible à deux fois le stop, friction de référence. La confirmation n'en touche aucun terme. Elle ne change que la vitesse à laquelle le marché fournit ces décisions, et le délai est leur quotient.</p>
+
+  {{TABLE:cout}}
+
+  <p>Le facteur va de ×{{u_facteur_min}} à ×{{u_facteur_max}}. En clair&nbsp;: le setup le plus coûteux du tableau, {{u_long}}, demande {{u_long_brut}} sans confirmation et {{u_long_retenu}} avec. Le moins coûteux part de {{u_court_brut}}. Aucun opérateur ne vit assez longtemps pour trancher la seconde question, et c'est la confirmation seule qui l'a rendue indécidable.</p>
+
+  {{FIGURE:setcout|Le délai d'établissement de chaque setup, sans puis avec sa confirmation, en échelle logarithmique&nbsp;; le segment qui joint les deux points est le coût. Le cadre du bas convertit ce coût en la seule monnaie qui compte — la dérive que la confirmation devrait apporter pour se rembourser — et la compare au domaine que le document&nbsp;n<sup>o</sup>&nbsp;1 tient pour plausible.}}
+
+  <p>Reste à savoir si l'échange peut se justifier, et la question a une réponse chiffrée. Pour que le délai revienne à ce qu'il était, il faudrait que la confirmation divise le nombre de décisions requises par ce même facteur&nbsp;; ce nombre variant comme l'inverse du carré de l'écart de taux à établir, il faudrait qu'elle multiplie cet écart par la racine du facteur. Traduit en dérive, cela donne de {{u_mu_min}} à {{u_mu_max}}&nbsp;point par heure selon le setup — des valeurs qui tiennent dans le domaine plausible, {{u_ordinaire}} d'entre elles sous sa borne basse de {{u_derive_basse}}, et {{u_irremboursable}} au-dessus de sa borne haute de {{u_derive_haute}}.</p>
+
+  <p>C'est donc jouable, et c'est la seule bonne nouvelle de cette partie. Mais l'affaire se lit dans les deux sens. Exiger une confirmation revient à <strong>parier</strong> qu'elle sélectionne des moments où la dérive vaut au moins ce chiffre, et rien dans les {{u_pool_n}}&nbsp;fenêtres mesurées ici ne dit qu'une confirmation déplace la dérive d'un centième de point. Le pari n'est pas absurde&nbsp;; il est simplement non vérifié, et le vérifier coûte précisément le délai qu'on vient de calculer. La confirmation la plus exigeante du tableau, {{u_pire}}, est aussi celle qui réclame le plus en retour&nbsp;: <strong>filtrer plus dur ne rend pas la lecture meilleure, cela déplace la charge de la preuve vers un marché qu'il faut supposer plus favorable</strong>.</p>
+
+  {{FIGURE:setrelief|Le relief du délai d'établissement, selon la part de contacts que la confirmation retient et le nombre de contacts que le niveau offre par séance. Les deux axes poussent dans le même sens&nbsp;: il n'existe aucune façon de rattraper une confirmation sévère par un niveau plus fréquenté.}}
+
+  <p>Le relief conclut la partie comme celui du catalogue concluait la précédente, et il dit la même chose sur d'autres axes&nbsp;: une seule pente, aucune compensation possible. Durcir la confirmation et raréfier les contacts poussent tous deux le délai vers le haut, et le plan de la carrière coupe la surface tout juste au bord de ce que les familles les plus fournies atteignent. La conséquence pratique est nette et elle ne demande aucune finesse d'interprétation. <strong>Le nombre de conditions qu'un opérateur exige avant d'entrer est le paramètre le plus coûteux de son dispositif</strong>, et c'est aussi celui qu'il ajuste le plus librement, souvent après une série de pertes, sans jamais compter ce qu'il vient de payer. La partie&nbsp;XI montre qu'élargir le stop déplace le seuil de rentabilité d'un facteur&nbsp;53&nbsp;; ajouter une condition d'entrée multiplie le délai de preuve par un facteur du même ordre, mais dans le mauvais sens.</p>
 
   <div class="part">
     <span class="lab">Quatrième partie</span>
@@ -1567,7 +1641,7 @@
 
   <p><strong>Les chiffres rapportés sont des propriétés de l'appareil de mesure</strong>, établies sur journaux synthétiques. Ils ne constituent pas la mesure d'une compétence observée.</p>
 
-  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">35</a> l'établit. Sa part inclut une composante d'interaction que le contrefactuel retenu n'isole pas.</p>
+  <p><strong>Le levier de chronométrage n'est pas séparable du levier d'entrée</strong>, comme la section&nbsp;<a href="#s-validation">39</a> l'établit. Sa part inclut une composante d'interaction que le contrefactuel retenu n'isole pas.</p>
 
   <p><strong>L'analyse suppose une compétence constante sur la période.</strong> Sous compétence variable — apprentissage, fatigue, changement de régime —, l'estimateur agrège des états distincts. Les méthodes de mesure à compétence variable dans le temps existent dans la littérature citée&nbsp;; elles ne sont pas mobilisées ici.</p>
 
@@ -1581,7 +1655,7 @@
 
   <p>L'exigence d'échantillon se chiffre&nbsp;: {{d_mur_liant}}&nbsp;décisions, soit {{d_ans_liant}}&nbsp;an à deux décisions par jour, pour un Sharpe de {{d_sharpe_cite}} par décision, taxe de multiplicité comprise. Cette exigence est {{d_facteur_versus}}&nbsp;fois inférieure à celle qui porte sur un avantage de géométrie, l'écart tenant au rapport de l'effet revendiqué au bruit dans chacun des deux cas.</p>
 
-  <p>L'ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">15</a>, dont les champs antérieurs à l'issue ne sont pas reconstituables après coup. C'est la condition d'application du dispositif.</p>
+  <p>L'ensemble de ces mesures suppose un journal conforme à la section&nbsp;<a href="#s-champs">19</a>, dont les champs antérieurs à l'issue ne sont pas reconstituables après coup. C'est la condition d'application du dispositif.</p>
 
   <hr class="rule">
 
