@@ -200,7 +200,7 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
              zlo: float, zhi: float, *, cx: float, cy: float, cz: float,
              row_labels: list[str], col_labels: list[str],
              z_ticks: list[tuple[float, str]], tip: str = "{v:+.3f}",
-             classify=None, zero: float = 0.0) -> None:
+             classify=None, zero: float = 0.0, tip_value=None) -> None:
     """Surface en **nuage de points**, munie d'une échine de hauteur.
 
     Le relief n'est pas peint en mailles pleines mais échantillonné : quelques
@@ -288,9 +288,14 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
             sommets.append((i + j, i, j))
     for _, i, j in sorted(sommets):
         x, y = proj(i, j, z[i][j])
+        # `tip_value` existe pour les reliefs dont la hauteur est une
+        # transformée — un logarithme, par exemple. La forme se lit sur la
+        # hauteur transformée, le nombre se lit dans l'unité d'origine, et
+        # l'infobulle ne doit jamais publier l'échelle interne.
+        brut = z[i][j] if tip_value is None else tip_value(z[i][j])
         board.add(f'<circle class="noeud {classify(z[i][j])}" cx="{x:.1f}" '
                   f'cy="{y:.1f}" r="2.6">'
-                  f'<title>{_esc(tip.format(v=z[i][j]))}</title></circle>')
+                  f'<title>{_esc(tip.format(v=brut))}</title></circle>')
 
     # L'échine de hauteur, à gauche du coin le plus à gauche. Sans
     # graduation, on ne la trace pas : un axe nu se lit comme inachevé. Le

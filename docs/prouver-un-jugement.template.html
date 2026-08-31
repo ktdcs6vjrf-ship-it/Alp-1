@@ -781,8 +781,18 @@
           <li><a href="#s-emp-transfert">Ce qui transfère, et ce qui ne transfère pas</a></li>
         </ol>
       </li>
-      <li><span class="pt">Dix-septième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Dix-septième partie — Ce qu'un fonds fait, et ce qui en reste à un seul homme</span>
         <ol start="71">
+          <li><a href="#s-fds-ampleur">Ce que la loi fondamentale exige, décision par décision</a></li>
+          <li><a href="#s-fds-preuve">Le même avantage, et deux dénominateurs</a></li>
+          <li><a href="#s-fds-panier">Le plafond d'un panier de lectures</a></li>
+          <li><a href="#s-fds-capacite">La capacité, et le seul terrain où le petit gagne</a></li>
+          <li><a href="#s-fds-execution">Payer le spread, ou l'encaisser</a></li>
+          <li><a href="#s-fds-transfert">Ce qui transfère à un opérateur seul</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Dix-huitième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="77">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2082,6 +2092,130 @@
 
   <div class="part">
     <span class="lab">Dix-septième partie</span>
+    <h2>Ce qu'un fonds fait, et ce qui en reste à un seul homme</h2>
+    <p>La partie précédente empruntait des disciplines. Celle-ci emprunte un adversaire&nbsp;: un programme quantitatif qui n'embauche aucun opérateur de marché, dont trois nombres circulent publiquement. On ne cherche pas à savoir s'ils sont vrais — on cherche ce qu'il faut pour qu'ils le soient, et lequel de ces prérequis un opérateur seul possède.</p>
+  </div>
+
+  <h2 id="s-fds-ampleur">Ce que la loi fondamentale exige, décision par décision</h2>
+
+  <p>Trois nombres, repris tels quels et cités une seule fois. Un rendement brut annualisé d'environ {{f_brut}}&nbsp;% sur {{f_annees_pub}}&nbsp;ans, avancé par une étude académique. Une part de transactions gagnantes de {{f_taux_pub}}&nbsp;%, rapportée par un livre d'enquête sous la forme d'une phrase de l'un des dirigeants du fonds. Une capacité plafonnée autour de {{f_capacite_pub}}&nbsp;milliards de dollars, largement commentée.</p>
+
+  <p>La posture est celle de la partie&nbsp;<a href="#s-on-affirmation">XV</a> et elle mérite d'être répétée, parce qu'elle est ce qui rend l'exercice honnête&nbsp;: <strong>rien de ce qui suit ne conteste ces nombres.</strong> Ils sont les données de l'affaire. La question est de savoir ce qu'ils imposent.</p>
+
+  <p>Ce qu'ils imposent tient dans une relation d'une ligne, celle de Grinold&nbsp;: <span class="mono">IR = IC·√N</span>. La qualité d'un gestionnaire est le produit de la finesse de sa prévision par la racine du nombre de paris qu'il prend. Elle est presque toujours citée à l'envers.</p>
+
+{{TABLE:fonds_ampleur}}
+
+{{FIGURE:fdsampleur|La finesse de prévision exigée par la loi fondamentale, à gauche&nbsp;; la même exigence traduite en taux de réussite, à droite, avec le seuil de vraisemblance et le point où la courbe le traverse.}}
+
+  <p>La lecture se fait par la quatrième colonne, et elle est brutale. Un opérateur à deux décisions par séance qui vise un ratio d'information de {{f_ir_ref}} doit avoir raison {{f_exigence_operateur}}&nbsp;points de pour-cent de plus que le hasard. Une infrastructure à dix mille décisions par séance n'en a besoin que de {{f_exigence_fonds}}. <strong>Le premier chiffre est visible de tous et se ferait compéter en un trimestre&nbsp;; le second est invisible et incontestable.</strong></p>
+
+  <p>Le basculement se calcule&nbsp;: il tombe à {{f_n_min}}&nbsp;décisions par an, soit {{f_n_min_seance}}&nbsp;par séance. Au-dessous de ce rythme, revendiquer ce ratio revient à revendiquer un avantage que personne d'autre n'aurait remarqué.</p>
+
+{{FIGURE:fdsexigence|L'exigence par décision sur le plan du ratio d'information visé et du nombre de décisions annuelles. Les deux axes n'agissent pas du tout de la même façon, et c'est le fait de la planche.}}
+
+  <h3>Ce que l'ampleur n'achète pas</h3>
+
+  <p>Il faut tuer tout de suite le contresens le plus répandu, parce qu'il est <em>séduisant</em>&nbsp;: prendre plus de décisions ne rend pas la démonstration plus rapide.</p>
+
+{{TABLE:fonds_invariance}}
+
+  <p>Les deux colonnes de droite le disent par deux routes indépendantes — un test d'information sur la table de contingence, un test de moyenne sur le ratio. Elles ne donnent pas exactement le même nombre, et il n'y a aucune raison qu'elles le fassent&nbsp;: elles ne testent pas la même statistique. Ce qui compte est qu'<em>aucune des deux ne bouge</em> d'une ligne à l'autre. C'est le résultat de la section&nbsp;<a href="#s-emp-unite">63</a>, retrouvé dans l'unité de la gestion. L'information par décision, elle, tombe de quatre ordres de grandeur d'une ligne à l'autre.</p>
+
+  <p><strong>Ce que l'ampleur achète n'est pas la vitesse de la preuve&nbsp;: c'est la petitesse de l'exigence.</strong> Autrement dit, elle ne rend pas l'hypothèse plus démontrable — elle la rend plausible.</p>
+
+  <h2 id="s-fds-preuve">Le même avantage, et deux dénominateurs</h2>
+
+  <p>Reste à appliquer au chiffre publié la machinerie que le document applique à tout le reste.</p>
+
+{{TABLE:fonds_preuve}}
+
+{{FIGURE:fdspreuve|Le nombre de décisions requis pour distinguer un taux de réussite du hasard, à gauche&nbsp;; le même axe converti en années aux deux rythmes de décision, à droite. Le trait vertical est le taux publié.}}
+
+  <p>Le taux rapporté demande {{f_decisions_pub}}&nbsp;décisions pour être distingué du hasard. Cela fait {{f_annees_pub_operateur}}&nbsp;ans pour un opérateur à deux décisions par séance, et {{f_jours_pub_fonds}}&nbsp;jours pour une infrastructure à dix mille.</p>
+
+  <p><strong>L'avantage n'est pas différent&nbsp;: c'est le dénominateur qui l'est.</strong> Un opérateur qui affiche ce taux de réussite sur son propre relevé n'a rien montré du tout — non parce qu'il se trompe, mais parce que la statistique ne peut rien en dire avant qu'il ait dépassé l'espérance de vie.</p>
+
+  <p>La dernière ligne de la table dit l'inverse et il faut la lire aussi&nbsp;: un taux franchement élevé s'établit en quelques centaines de décisions. C'est atteignable. Simplement, aucun marché liquide n'en laisse traîner un.</p>
+
+  <h2 id="s-fds-panier">Le plafond d'un panier de lectures</h2>
+
+  <p>La deuxième pratique attribuée à ce genre de programme est la combinaison de signaux individuellement faibles. Elle est vraie et elle est mal comprise, parce qu'on la résume par «&nbsp;le gain croît comme la racine du nombre de signaux&nbsp;» — ce qui n'est exact qu'à corrélation <em>exactement</em> nulle.</p>
+
+  <p>Le gain réel d'un panier de <span class="mono">k</span> lectures de qualité égale et de corrélation moyenne <span class="mono">ρ</span> vaut <span class="mono">√(k/(1 + (k−1)ρ))</span>. Il sature, et son plafond est <span class="mono">1/√ρ</span>.</p>
+
+{{TABLE:fonds_combinaison}}
+
+{{FIGURE:fdscombinaison|Le gain d'un panier selon le nombre de lectures et leur corrélation, avec les plafonds. La promesse en racine du nombre n'existe que sur la courbe du haut, à corrélation nulle.}}
+
+  <p>À une corrélation de {{f_rho_ref}} — modeste, pour deux lectures qui regardent le même flux d'ordres — les quinze lectures du <a href="#s-cat-ordre">catalogue de la partie&nbsp;III</a> valent {{f_panier_quinze}}&nbsp;fois une lecture seule. Pas quinze fois. Pas non plus {{f_panier_promesse}}, la racine de quinze. Et {{f_k_quatre_vingt_dix}}&nbsp;lectures en captent déjà les neuf dixièmes.</p>
+
+  <p><strong>Le plafond est fixé par la corrélation, jamais par le nombre.</strong> Les lectures suivantes n'ajoutent plus rien à la prévision et ajoutent tout au budget de configurations à déflater — la comptabilité de la partie&nbsp;<a href="#s-emp-unite">XVI</a> joue donc contre le collectionneur de lectures.</p>
+
+{{FIGURE:fdspanier|Le gain d'un panier sur le plan du nombre de lectures et de leur corrélation. Une arête étroite là où la corrélation s'annule, un plateau bas partout ailleurs.}}
+
+  <h2 id="s-fds-capacite">La capacité, et le seul terrain où le petit gagne</h2>
+
+  <p>Voici le retournement de la partie, et il est agréable pour une fois.</p>
+
+  <p>L'impact d'un ordre ne croît pas comme sa taille mais comme sa <strong>racine</strong> — c'est le résultat empirique le plus reproduit de la microstructure, vérifié sur des actions, des futures et des devises. Doubler la taille ne double pas le coût&nbsp;; mais il le multiplie, et la friction finit par dépasser ce que la géométrie peut porter.</p>
+
+{{TABLE:fonds_capacite}}
+
+{{FIGURE:fdscapacite|L'impact d'un ordre comparé à la friction de base, à gauche&nbsp;; le seuil de rentabilité qui en découle, à droite, avec le domaine de dérive plausible et la capacité de la géométrie.}}
+
+  <p>À un contrat, l'impact vaut {{f_impact_un}}&nbsp;point par sens et pèse {{f_part_impact_un}}&nbsp;% de la friction totale. La capacité de cette géométrie — la taille où <span class="mono">µ*</span> sort du domaine plausible — vaut {{f_capacite}}&nbsp;contrats, soit {{f_capacite_musd}}&nbsp;millions de dollars de notionnel.</p>
+
+  <p>Un opérateur seul travaille quatre ordres de grandeur au-dessous, dans un régime où la taille est <em>gratuite</em>. Le seuil qu'il doit franchir vaut {{f_mu_un}}&nbsp;point par heure quand celui d'un programme à sa capacité en vaut {{f_mu_capacite}}. <strong>C'est la seule chose qu'un fonds ne peut pas lui acheter</strong>, et c'est aussi ce qui explique qu'un tel fonds plafonne ses encours au lieu de les faire croître.</p>
+
+{{FIGURE:fdsrelief|Le seuil de rentabilité sur le plan de la taille de position et de la largeur de stop, en hauteur logarithmique. Deux versants, deux causes&nbsp;: l'impact d'un côté, l'effondrement du temps de marché de l'autre.}}
+
+  <p>Il faut lire ce relief comme un avertissement sur les <em>combinaisons</em>, pas sur les réglages pris un à un. Chacun des deux gestes qu'il porte est raisonnable seul et se défend en une phrase&nbsp;: resserrer le stop pour risquer moins, grossir la taille pour gagner plus. Faits ensemble, ils déplacent l'opérateur vers le coin du fond sur les deux axes à la fois, et les deux versants s'ajoutent au lieu de se compenser. <em>Aucune des deux tables ne pouvait le montrer, parce qu'aucune ne varie les deux axes en même temps.</em></p>
+
+  <h2 id="s-fds-execution">Payer le spread, ou l'encaisser</h2>
+
+  <p>La dernière pratique est celle que le document a déjà nommée sans jamais la chiffrer&nbsp;: traiter le coût d'exécution comme un modèle à part entière, et non comme une correction qu'on applique après coup.</p>
+
+  <p>Le seuil vaut <span class="mono">µ* = c/E[τ∧T]</span>. Une conduite qui divise <span class="mono">c</span> divise <span class="mono">µ*</span> d'autant, et l'opérateur contrôle <span class="mono">c</span> entièrement.</p>
+
+{{TABLE:fonds_execution}}
+
+{{FIGURE:fdsexecution|Le seuil de rentabilité par conduite d'entrée, avec la dérive adverse qui reprendrait le gain&nbsp;; et ce qu'un ordre limite attend, selon sa profondeur et la patience qu'on lui accorde.}}
+
+  <p>Une remarque de méthode d'abord, parce qu'elle décide de la moitié du résultat. La sortie est identique sur les trois lignes et elle n'est pas posée à la main&nbsp;: elle vaut {{f_glissement_sortie}}&nbsp;tick, produit de la probabilité de finir sur le stop — {{f_p_cible}}&nbsp;% des trades atteignent la cible, donc les deux tiers finissent sur le stop — par le glissement d'un ordre au marché. <em>Écrire un glissement de sortie plus faible, c'est sous-facturer précisément l'issue la plus probable.</em></p>
+
+  <p>Changer d'entrée, et rien d'autre, fait passer <span class="mono">c</span> de {{f_c_marche}} à {{f_c_passif}}&nbsp;point et divise <span class="mono">µ*</span> par {{f_facteur_execution}}. <strong>C'est plus que ce que le reste du document obtient en changeant de signal.</strong></p>
+
+  <h3>La contrepartie, et pourquoi elle n'est pas mesurable sans protocole</h3>
+
+  <p>Un ordre passif est rempli <em>parce que</em> le prix est venu le chercher. Sous un prix sans dérive, cela n'apprend rien sur la suite — la propriété de Markov forte l'interdit — et l'économie de spread est donc intégrale. Sur un marché réel, un flux informé peut rendre le remplissage sélectif.</p>
+
+  <p>Le module calcule la dérive défavorable qui reprendrait exactement le gain&nbsp;: {{f_adverse}}&nbsp;point par heure. Ce chiffre est <strong>au-dessous</strong> du plancher du domaine de dérive plausible. Autrement dit, la sélection adverse peut manger tout le gain sans qu'aucune mesure ordinaire ne s'en aperçoive.</p>
+
+{{TABLE:fonds_remplissage}}
+
+  <p>Le tableau de remplissage dit la seconde contrepartie, et elle est plus subtile qu'il n'y paraît. Une limite posée au meilleur prix est servie {{f_remplissage_court}}&nbsp;% du temps en cinq minutes&nbsp;: l'entrée passive ne coûte presque aucune occasion. Une limite posée à seize ticks n'est servie que {{f_remplissage_profond}}&nbsp;% du temps — et <strong>les occasions manquées ne sont pas un échantillon quelconque</strong>. Ce sont exactement les séances où le prix est parti sans revenir. Attendre un meilleur prix, c'est choisir de ne pas être là quand le mouvement a lieu.</p>
+
+{{FIGURE:fdsadverse|Le gain annuel d'une entrée passive sur le plan du taux de remplissage et de la sélection adverse, sol posé à zéro. Les deux axes ne coûtent pas la même chose, et c'est le fait de la planche.}}
+
+  <p>Le relief range les deux risques dans le bon ordre. Perdre la moitié des remplissages divise le gain par deux&nbsp;; une sélection adverse de quelques dixièmes de point par heure le fait passer sous zéro. <em>Ce n'est pas le taux de remplissage qu'il faut surveiller, c'est ce qui arrive après les remplissages</em> — et c'est la mesure que personne ne fait. Le protocole tient en une ligne&nbsp;: enregistrer les ordres annulés au même titre que les ordres remplis, et comparer les deux issues.</p>
+
+  <h2 id="s-fds-transfert">Ce qui transfère à un opérateur seul</h2>
+
+{{TABLE:fonds_transfert}}
+
+{{FIGURE:fdstransfert|Le facteur mesuré de chaque pratique et le verdict de transfert, en échelle logarithmique. Une seule barre reste hors de portée, et elle échoue sur le nombre de décisions.}}
+
+  <p>Le verdict de la dernière colonne est calculé et non écrit&nbsp;: une pratique transfère si elle est à la portée d'un opérateur à {{f_occasions}}&nbsp;décisions par an et un contrat, <em>et</em> si elle déplace son terme d'au moins {{f_seuil_transfert}}&nbsp;%. {{f_transferts}}&nbsp;des cinq y parviennent.</p>
+
+  <p>La seule qui échoue est celle qui fait le rendement du fonds, et elle échoue sur un critère que ni le talent ni le travail ne déplacent&nbsp;: le nombre de décisions. C'est une contrainte d'infrastructure, pas de compétence, et aucune quantité de lecture de graphique ne la lève.</p>
+
+  <p>Les quatre qui réussissent agissent sur la friction, sur la taille, ou sur le plafond d'un panier de lectures. <strong>Aucune ne touche à la direction du prochain mouvement.</strong></p>
+
+  <p>C'est la conclusion des seize parties précédentes, obtenue cette fois en partant d'un objet entièrement extérieur au document — et c'est la raison pour laquelle elle vaut d'être écrite une dernière fois. Le marché ne concède que <span class="mono">µ</span>. Tout le reste — le temps de marché, la friction, la largeur du stop, la taille de la position, la patience d'un ordre limite — appartient à l'opérateur, se mesure vite, et décide du signe de son compte bien avant que <span class="mono">µ</span> n'ait eu son mot à dire.</p>
+
+  <div class="part">
+    <span class="lab">Dix-huitième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

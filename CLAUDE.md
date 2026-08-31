@@ -21,15 +21,15 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (74 sections en dix-sept
-parties, 57 tables, 78 figures dont vingt-deux surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+**ALP nº 3** — `docs/prouver-un-jugement.html` (80 sections en dix-huit
+parties, 65 tables, 88 figures dont vingt-six surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
 lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
 `report10/11/13/14.py` + `sorties.py` + `concepts.py` + `setups.py` +
 `figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
-`emprunts.py` + `figemp.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -60,9 +60,9 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/c2cbc5ee-e3c4-4867-8aff-da269f7c6021
-  (précédents : d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614,
-  f9f5d005, 4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/a990ef0e-c959-4839-8399-f35217e115be
+  (précédents : c2cbc5ee, d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b,
+  99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -158,6 +158,32 @@ Palm. ④ **Valeurs extrêmes** : loi de l'arc sinus pour l'heure du haut, GPD e
 tracé de Hill. ⑤ **La détection** : `d′` et le critère, la seule des cinq qui
 touche `µ`. Verdict calculé : **quatre déplacent l'horloge ou le risque, une
 seule le sens.**
+
+Sa **partie XVII** part d'un objet extérieur : les trois nombres publics d'un
+fonds quantitatif qui n'embauche aucun opérateur — `fonds.py` + `figfds.py`.
+Elle ne conteste rien ; elle demande ce que ces nombres exigent. La loi
+fondamentale `IR = IC·√N` répond, et à l'envers de ce qu'on en dit d'habitude :
+le nombre d'années requis pour établir un ratio ne dépend **pas** de `N`
+(1,55 an par la route de l'information, 1,96 par celle du Sharpe, et aucune
+des deux ne bouge avec `N`) — ce que l'ampleur achète est la **petitesse de
+l'exigence**, qui tombe de 4,45 points de taux à 0,06. Le seuil de crédibilité
+se calcule : **9,9 décisions par séance**, au-dessous desquelles revendiquer
+un ratio de 2 revient à revendiquer un avantage que personne n'aurait
+remarqué. Le taux publié de 50,75 % demande 27 477 décisions pour être
+distingué du hasard — 55 ans pour un opérateur, 4 jours pour une
+infrastructure.
+
+Puis le retournement, en trois pratiques que l'opérateur seul possède. Le
+**panier de lectures** sature : à corrélation 0,15, quinze lectures valent
+2,20 fois une seule et non 3,87 — le plafond est `1/√ρ`, fixé par la
+corrélation et jamais par le nombre. La **capacité** est le seul axe où le
+petit est structurellement en avance : l'impact croît en `√Q`, il pèse 13 %
+de la friction à un contrat et la capacité de la géométrie vaut 888 contrats.
+L'**exécution** divise `µ*` par 2,22 en changeant l'entrée seule — plus que
+tout ce que le document obtient en changeant de signal — et la dérive adverse
+qui reprendrait ce gain vaut 0,45 pt/h, **au-dessous du plancher plausible**,
+donc invisible sans un protocole écrit d'avance. Verdict calculé : quatre des
+cinq pratiques transfèrent, aucune ne touche à la direction.
 
 ## Carte des modules
 
@@ -258,6 +284,15 @@ Rendu
   d'Ogata ; `fenetre_temoin()` choisit la fenêtre montrée par une règle
   calculée. Six surfaces, toutes maximum au fond.
 - `figemp.py` — les quinze planches de la partie XVI, dont six reliefs.
+- `fonds.py` — **ce qu'un fonds fait, et ce qui en reste.** `ANNONCES` (les
+  trois nombres publics, cités une seule fois), `ic_requis`, `taux_de_ic`
+  (conversion **exacte** pour un pari binaire), `seuil_de_credibilite`,
+  `ic_combine` et son `plafond`, `impact_racine` (loi en `√Q`, `Y` déclaré),
+  `capacite()` par bissection, `glissement_sortie()` — qui n'est **pas** posé
+  à la main mais vaut `(1 − p_cible)·1,5` tick, et sous-facturer cette
+  quantité est l'erreur de budget la plus fréquente. Huit tables, quatre
+  surfaces.
+- `figfds.py` — les dix planches de la partie XVII, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
@@ -498,6 +533,14 @@ sépare pas à l'œil au-delà de trois. La parade est le motif de tiret, et
 sans quoi la légende montre quatre traits pleins identiques et ne légende
 plus rien.
 
+### Un relief dont la hauteur est une transformée
+Deux surfaces de la partie XVII portent un logarithme en hauteur, parce que
+leur grandeur parcourt trois ordres et demi de grandeur. `figdisc._surface`
+accepte pour cela un `tip_value` : la forme se lit sur la hauteur
+transformée, le nombre se lit dans l'unité d'origine, et **l'infobulle ne
+publie jamais l'échelle interne**. Sans ce paramètre, un lecteur qui survole
+un sommet lisait « 2,73 » là où la grandeur vaut 537 points par heure.
+
 ### Les pièges de rendu
 - `Panel.area` pose sa classe telle quelle : la feuille ne définit le
   remplissage que sur `.area.ar1`. Passer `"ar1"` seul donne un aplat **noir**.
@@ -560,7 +603,7 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # 1107 tests (compter ~50 min ; --wp, setups,
+python main.py --tests      # 1161 tests (compter ~50 min ; --wp, setups,
                             # robustesse, overnight et emprunts sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
@@ -573,7 +616,7 @@ python main.py --disc       # journal de décision, lois nulles, attribution
 Modules exécutables directement pour inspecter leurs chiffres :
 `python -c "from alp1 import footprint; footprint.main()"` — idem pour `tpo`,
 `spectrum`, `seuil`, `report11`, `report14`, `concepts`, `setups`,
-`emprunts`.
+`emprunts`, `fonds`.
 
 ## Contraintes d'environnement
 
