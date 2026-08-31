@@ -147,7 +147,10 @@ def fig_on_conditionnel() -> str:
     # passe dessous, et un texte barré par un tracé ne se voit à aucun balayage.
     p.label(0.03, 0.53, "loi d'arrêt : 1 − distance", dx=0, dy=0,
             cls="dl halo")
-    for i, v in enumerate(c.par_decile):
+    # Le cadre annonce « parmi les séances qui cassent » : il doit tracer cette
+    # colonne-là et pas l'autre. Une planche qui affiche une série sous
+    # l'intitulé d'une autre est indétectable à la relecture.
+    for i, v in enumerate(c.par_decile_casse):
         p.dot((i + 0.5) * 0.05, v, "hm6",
               "mesuré : " + _pct(v, 1) + " à "
               + _pct((i + 0.5) * 0.05, 1) + " du bord", r=4.0)
@@ -171,9 +174,12 @@ def fig_on_conditionnel() -> str:
                "publication ne le dit pas, et l'écart entre les deux vaut "
              + _num((lectures[0][1] - lectures[1][1]) * 100.0, 1) + " points. "
                "Les deux tombent dans la bande que la loi d'arrêt traverse "
-               "déjà. Le décrochage des derniers points tient à la séance, qui "
-               "borne le problème : au-delà d'un cinquième de range, une part "
-               "des séances ne touche plus rien avant la clôture.")
+               "déjà. Les points s'en écartent de "
+             + _num(O._ecart_arret()[0] * 100.0, 1) + " point en moyenne, et le "
+               "décrochage se concentre aux deux premières positions : la "
+               "trajectoire avance par minute, et la première minute de séance "
+               "porte une amplitude comparable aux distances mesurées là. La "
+               "loi continue est la limite d'un pas qui tend vers zéro.")
     return b.render("Probabilité de toucher le bord proche en premier selon la "
                     "distance à ce bord, mesurée sous loi nulle et comparée "
                     "à la loi de barrière.")

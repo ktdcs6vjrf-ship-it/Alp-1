@@ -605,6 +605,19 @@ def table_position() -> Table:
     )
 
 
+def _ecart_arret() -> tuple[float, float]:
+    """Écart moyen et écart maximal à la loi d'arrêt, sur la colonne conditionnée.
+
+    Les deux nombres sont mesurés et non qualifiés : « à quelques dixièmes de
+    point » était faux aux courtes distances, et une note qui décrit ce qu'on
+    espérait plutôt que ce qu'on a mesuré est le défaut que ce dépôt traque.
+    """
+    c = retenue()
+    ecarts = [abs(p - (1.0 - (i + 0.5) * 0.05))
+              for i, p in enumerate(c.par_decile_casse)]
+    return sum(ecarts) / len(ecarts), max(ecarts)
+
+
 def table_conditionnel() -> Table:
     """La probabilité de toucher le bord proche, selon la distance à ce bord."""
     c = retenue()
@@ -628,9 +641,17 @@ def table_conditionnel() -> Table:
         note=("La quatrième colonne n'est pas une simulation : c'est le "
               "théorème d'arrêt optionnel, qui donne la probabilité de toucher "
               "une barrière avant l'autre comme le rapport des distances "
-              "inverses. La troisième la retrouve à quelques dixièmes de "
-              "point. **Il n'y a donc rien à prédire** : la probabilité "
-              "annoncée est la distance, lue à l'envers.\n\n"
+              "inverses. La troisième la suit de bout en bout, "
+              + num(_ecart_arret()[0] * 100.0, 1) + " point d'écart moyen, et "
+              "le décrochage se concentre aux deux premières lignes, où il "
+              "atteint " + num(_ecart_arret()[1] * 100.0, 1) + " points. La "
+              "raison n'est pas le marché mais le **pas de temps** : la "
+              "trajectoire avance par minute, et la première minute de séance "
+              "porte une amplitude comparable à la distance qu'on mesure ici. "
+              "La loi continue est la limite d'un pas qui tend vers zéro, et "
+              "une minute d'ouverture n'est pas un pas qui tend vers zéro. "
+              "**Il n'y a donc rien à prédire** : la probabilité annoncée est "
+              "la distance, lue à l'envers.\n\n"
               "La deuxième colonne est la même chose comptée sur *toutes* les "
               "séances, et elle est plus basse d'un montant qui ne dépend pas "
               "de la distance — exactement les "
@@ -898,6 +919,8 @@ def values() -> dict[str, str]:
         "o_nul_casse": num((c.haut_si_dessus_casse + c.bas_si_dessous_casse)
                            / 2.0 * 100.0, 1),
         "o_ecart_lectures": num((_lectures()[0][1] - _lectures()[1][1]) * 100.0, 1),
+        "o_ecart_arret_moyen": num(_ecart_arret()[0] * 100.0, 1),
+        "o_ecart_arret_max": num(_ecart_arret()[1] * 100.0, 1),
         "o_wald": num(c.wald, 4, signed=True),
         "o_tau": num(c.exposition, 0),
         "o_friction": num(friction(), 2),

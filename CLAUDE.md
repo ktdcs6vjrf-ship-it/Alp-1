@@ -60,9 +60,9 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/601106cf-377d-4968-bb9e-edb413b64236
-  (précédents : dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16,
-  c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/82bd1a42-c5c7-4a2e-9acd-11a5aba57288
+  (précédents : 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc,
+  e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -398,6 +398,20 @@ La seule sortie est de rédiger le libellé sans apostrophe. Idem pour les
 pieds de figure, qui ne passent pas par `report.inline` : un `**` y est
 publié tel quel, et un test le refuse.
 
+### Une planche qui trace une série sous l'intitulé d'une autre
+`figon.fig_on_conditionnel` annonçait « parmi les séances qui cassent » et
+traçait la colonne comptée sur *toutes* les séances. Rien ne le signalait :
+aucun balayage ne le voit, le code était juste, les nombres exacts, et la
+figure montrait un décrochage systématique de cinq points qui n'avait rien à
+voir avec son sujet. La parade est celle des setups — la **source unique** —
+et son test : lire les infobulles du SVG rendu et les comparer à la mesure.
+C'est la seule vérification qui traverse vraiment le rendu.
+
+Corollaire, du même défaut vu de l'autre bout : **une note qui qualifie au
+lieu de mesurer finit par mentir**. « La troisième colonne retrouve la
+deuxième à quelques dixièmes de point » était faux de trois points aux
+courtes distances. Un écart se publie chiffré, et le chiffre se calcule.
+
 ### Un texte barré par un tracé ne se voit à aucun balayage
 `rect.mjs` croise les boîtes de `text` **entre elles** ; il ne croise jamais
 un texte avec un `path`. Une étiquette posée au milieu d'un faisceau de
@@ -444,7 +458,7 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 1035 tests (compter ~45 min ; --wp, setups,
+python main.py --tests      # 1037 tests (compter ~45 min ; --wp, setups,
                             # robustesse et overnight sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)

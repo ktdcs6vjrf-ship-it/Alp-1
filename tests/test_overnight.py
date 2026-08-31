@@ -228,6 +228,39 @@ class TestLaBoite(unittest.TestCase):
         self.assertEqual(z[0][0], max(max(l) for l in z))
 
 
+class TestLaPlancheDitCeQuElleTrace(unittest.TestCase):
+    """Une planche qui affiche une série sous l'intitulé d'une autre est
+    indétectable à la relecture, et aucun des trois balayages ne la voit.
+
+    La parade du dépôt est la source unique : la planche du conditionnel
+    annonce « parmi les séances qui cassent », elle doit donc porter cette
+    colonne-là. Le test lit les infobulles du SVG rendu et les compare à la
+    mesure — c'est la seule vérification qui traverse vraiment le rendu.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        from alp1 import figon
+        cls.svg = figon.fig_on_conditionnel()
+        cls.c = O.retenue()
+
+    def test_les_points_traces_sont_ceux_annonces_par_l_intitule(self):
+        import re
+        trouves = [float(x.replace(",", ".")) / 100.0 for x in
+                   re.findall(r"mesuré\s*:\s*([\d,]+)\s*%", self.svg)]
+        self.assertEqual(len(trouves), len(self.c.par_decile_casse))
+        for i, (vu, attendu) in enumerate(zip(trouves,
+                                              self.c.par_decile_casse)):
+            with self.subTest(decile=i):
+                self.assertAlmostEqual(vu, attendu, delta=0.001)
+
+    def test_la_planche_ne_trace_pas_l_autre_colonne(self):
+        """Le test doit pouvoir échouer : les deux colonnes diffèrent assez."""
+        ecart = max(abs(a - b) for a, b in zip(self.c.par_decile,
+                                               self.c.par_decile_casse))
+        self.assertGreater(ecart, 0.01)
+
+
 class TestLesTables(unittest.TestCase):
     def test_toutes_les_tables_se_rendent(self):
         tables = O.all_tables()

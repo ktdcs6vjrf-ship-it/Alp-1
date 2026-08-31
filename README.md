@@ -980,7 +980,7 @@ python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
 python main.py --disc             # journal de décision, lois nulles, attribution
 python main.py --discpaper        # reconstruit docs/prouver-un-jugement.html
-python main.py --tests            # 1035 tests unitaires du noyau
+python main.py --tests            # 1037 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.
