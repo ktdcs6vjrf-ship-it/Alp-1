@@ -21,15 +21,15 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (66 sections en seize
-parties, 41 tables, 63 figures dont seize surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+**ALP nº 3** — `docs/prouver-un-jugement.html` (74 sections en dix-sept
+parties, 57 tables, 78 figures dont vingt-deux surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
 lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
 `report10/11/13/14.py` + `sorties.py` + `concepts.py` + `setups.py` +
 `figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
-`robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` →
-`discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
+`emprunts.py` + `figemp.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -60,9 +60,9 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/d1e5eca9-d493-4d06-b7b7-288339f7c3b3
-  (précédents : 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005,
-  4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/c2cbc5ee-e3c4-4867-8aff-da269f7c6021
+  (précédents : d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614,
+  f9f5d005, 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -142,6 +142,22 @@ est **réfutée par la mesure et publiée comme telle**. Et le verdict bascule s
 un **dénominateur que la publication n'écrit pas** : selon que les 76 % portent
 sur toutes les séances ou sur les seules qui cassent, l'espérance vaut +0,0439
 ou −0,0202 R. Le taux d'équilibre de cette géométrie vaut **77,4 %**.
+
+Sa **partie XVI** emprunte cinq disciplines constituées et publie, pour
+chacune, la fréquence de son motif sous prix sans dérive — `emprunts.py` +
+`figemp.py`. L'ordre est celui de ce qu'elles touchent dans
+`E[R] = (µ·E[τ∧T] − c)/a`. ① **L'unité d'observation** : le nombre d'années
+requis pour établir un Sharpe ne dépend **pas** du pas de temps observé — la
+colonne est constante et c'est le résultat — et la multiplicité ne coûte que
+le logarithme du nombre de candidats (4,66 pour 262 144 configurations).
+② **L'analyse de survie** : taux de hasard d'un extrême, censure à droite par
+la sortie de l'opérateur, Kaplan-Meier, loi nulle **fermée** par le principe
+de réflexion, courbe de calibration. ③ **Hawkes** : noyau d'Omori, ratio de
+branchement 0,75, rapport de Fano contre sa bande de Poisson, intensité de
+Palm. ④ **Valeurs extrêmes** : loi de l'arc sinus pour l'heure du haut, GPD et
+tracé de Hill. ⑤ **La détection** : `d′` et le critère, la seule des cinq qui
+touche `µ`. Verdict calculé : **quatre déplacent l'horloge ou le risque, une
+seule le sens.**
 
 ## Carte des modules
 
@@ -233,6 +249,15 @@ Rendu
   la ponctue et coupe la phrase ; et toute phrase qui commence prend sa
   majuscule, sauf si elle ouvre sur une lettre grecque — `µ` capitalisé
   donnerait `Μ`.
+- `emprunts.py` — **les cinq disciplines empruntées.** Seize tables. Trois
+  formes fermées y sont contrôlées contre la simulation et c'est ce qui les
+  rend publiables : `survie_minute` (correction de continuité de
+  Broadie-Glasserman-Kou, `β₁ = 0,5826`), `amplitude_palm`
+  (`α(2β−α)/2(β−α)`, dont l'intégrale doit rendre le rapport de Fano) et
+  `pic_hasard` (voir le piège plus bas). `hawkes()` simule par amincissement
+  d'Ogata ; `fenetre_temoin()` choisit la fenêtre montrée par une règle
+  calculée. Six surfaces, toutes maximum au fond.
+- `figemp.py` — les quinze planches de la partie XVI, dont six reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
@@ -409,8 +434,11 @@ donc une apostrophe **droite** y survit et `test_aucune_apostrophe_droite`
 la trouve ; une apostrophe **courbe** écrite à la main y est refusée par
 `test_les_attributs_sont_epargnes`, qui protège les `href` et les classes.
 La seule sortie est de rédiger le libellé sans apostrophe. Idem pour les
-pieds de figure, qui ne passent pas par `report.inline` : un `**` y est
-publié tel quel, et un test le refuse.
+pieds de figure et les annotations, qui ne passent pas par `report.inline` :
+un `**` **et une apostrophe inverse** y sont publiés tels quels, et deux
+tests les refusent. Le second a été trouvé par `test_discpaper` après coup,
+sur un pied qui écrivait une formule entre apostrophes inverses ; le test de
+module le voit maintenant sans attendre la construction du document.
 
 ### Une planche qui trace une série sous l'intitulé d'une autre
 `figon.fig_on_conditionnel` annonçait « parmi les séances qui cassent » et
@@ -434,6 +462,41 @@ de `figrobu` sont tombées dans ce trou. La parade n'est pas un quatrième
 balayage : c'est de ne poser un nom que là où la donnée n'est pas — le ras du
 plancher du cadre, la gouttière d'axe (une graduation peut porter un mot :
 « 1 × symétrique »), ou la légende sous la planche.
+
+### Une constante fausse qu'aucune relecture n'attrape
+`pic_hasard` posait `m* = d²/3σ²`, obtenu en dérivant `u³φ(u)` et en oubliant
+que le dénominateur `2Φ(u)−1` dépend lui aussi de `u`. La vraie constante est
+la racine de `3/u − u = 2φ(u)/(2Φ(u)−1)`, soit `u* = 1,615` et donc
+`d²/2,61σ²` — quinze pour cent d'écart, assez petit pour que les nombres
+publiés paraissent plausibles. **C'est un test comparant la forme fermée au
+maximum balayé numériquement qui l'a trouvée.** Une forme fermée se contrôle
+contre la simulation, sans exception, et le test coûte quatre lignes.
+
+### Une graduation hors domaine ne se voit dans aucun balayage
+`Panel.grid_y` et `grid_x` ne découpent pas. Une graduation écrite à la main
+au-delà du domaine est tout de même tracée, et elle atterrit **hors du cadre
+mais dans la boîte du SVG** — donc invisible au balayage de débordement, qui
+ne compare qu'à la boîte du SVG. Deux planches de `figemp` en portaient une,
+posée au-dessus de leur en-tête. La parade est un test qui enveloppe les deux
+méthodes et refuse toute graduation hors du domaine ; il est dans
+`tests/test_emprunts.py` et il faudrait l'étendre aux autres modules.
+
+### Un relief à trop grande dynamique ne montre plus rien
+La surface du taux de hasard parcourt deux ordres de grandeur : tracée brute,
+elle se réduisait à une aiguille au coin des sommets proches, et l'arête que
+la section décrit — le lieu `m = d²/u*²σ²` — n'y était **pas visible**. La
+légende décrivait donc un fait que la figure ne montrait pas. Rapportée à son
+maximum ligne par ligne, la même surface montre exactement ce dont on parle.
+Même remède pour la transition de Baik-Ben Arous-Péché : la valeur propre
+brute cache le plat, parce que le bord du bruit varie lui aussi avec `γ` ;
+`λ − λ₊` pose la région sous le seuil **exactement au sol**.
+
+### Quatre courbes de la même rampe sont quatre courbes indistinguables
+Le tracé de Hill en porte quatre. La rampe séquentielle de `figcss` ne les
+sépare pas à l'œil au-delà de trois. La parade est le motif de tiret, et
+`Board.legend` accepte désormais un troisième champ pour le reproduire —
+sans quoi la légende montre quatre traits pleins identiques et ne légende
+plus rien.
 
 ### Les pièges de rendu
 - `Panel.area` pose sa classe telle quelle : la feuille ne définit le
@@ -497,8 +560,8 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # 1037 tests (compter ~45 min ; --wp, setups,
-                            # robustesse et overnight sont lents)
+python main.py --tests      # 1107 tests (compter ~50 min ; --wp, setups,
+                            # robustesse, overnight et emprunts sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
@@ -509,7 +572,8 @@ python main.py --disc       # journal de décision, lois nulles, attribution
 
 Modules exécutables directement pour inspecter leurs chiffres :
 `python -c "from alp1 import footprint; footprint.main()"` — idem pour `tpo`,
-`spectrum`, `seuil`, `report11`, `report14`, `concepts`, `setups`.
+`spectrum`, `seuil`, `report11`, `report14`, `concepts`, `setups`,
+`emprunts`.
 
 ## Contraintes d'environnement
 

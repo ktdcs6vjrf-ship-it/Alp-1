@@ -114,8 +114,12 @@ def _plate(height: float, eyebrow: str, title: str, readout: str = "",
           f'style="letter-spacing:0;text-transform:none;font-size:13px">'
           f'{_esc(title)}</text>')
     if readout:
-        b.add(f'<text class="tk" x="{width:.1f}" y="31" text-anchor="end">'
-              f'{_esc(readout)}</text>')
+        # Un pixel de retrait, et il n'est pas décoratif : le dernier glyphe
+        # d'une lecture chiffrée déborde de son avance selon la lettre — un
+        # « R » final sort du cadre, un « e » non. Le balayage de débordement
+        # trouvait donc une planche sur quinze, au hasard du mot choisi.
+        b.add(f'<text class="tk" x="{width - 1.0:.1f}" y="31" '
+              f'text-anchor="end">{_esc(readout)}</text>')
     b.add(f'<line class="ba" x1="0" y1="{HEAD - 8:.1f}" '
           f'x2="{width:.1f}" y2="{HEAD - 8:.1f}"/>')
     return b

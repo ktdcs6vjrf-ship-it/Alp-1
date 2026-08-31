@@ -131,13 +131,22 @@ class Board:
         self.add(f'<text class="lg keep" x="{x:.1f}" y="{y:.1f}" '
                  f'text-anchor="{anchor}">{_esc(text)}</text>')
 
-    def legend(self, x: float, y: float, items: list[tuple[str, str]],
-               step: float = 132.0, kind: str = "swatch") -> None:
-        for i, (cls, text) in enumerate(items):
+    def legend(self, x: float, y: float, items, step: float = 132.0,
+               kind: str = "swatch") -> None:
+        """Légende à plat. Un item est `(classe, texte)` ou `(classe, texte,
+        tirets)` — le troisième champ est indispensable dès qu'une planche
+        distingue ses courbes par le motif de tiret autant que par la teinte :
+        sans lui, la légende montre quatre traits pleins identiques et ne
+        légende plus rien.
+        """
+        for i, item in enumerate(items):
+            cls, text = item[0], item[1]
+            dash = item[2] if len(item) > 2 else ""
             cx = x + i * step
             if kind == "line":
+                extra = f' stroke-dasharray="{dash}"' if dash else ""
                 self.add(f'<line class="ln {cls}" x1="{cx:.1f}" y1="{y:.1f}" '
-                         f'x2="{cx + 14:.1f}" y2="{y:.1f}"/>')
+                         f'x2="{cx + 14:.1f}" y2="{y:.1f}"{extra}/>')
                 off = 20.0
             else:
                 self.add(f'<rect class="{cls}" x="{cx:.1f}" y="{y - 5.5:.1f}" '

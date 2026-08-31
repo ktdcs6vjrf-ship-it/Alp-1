@@ -769,8 +769,20 @@
           <li><a href="#s-on-verdict">Le dénominateur que personne n'écrit</a></li>
         </ol>
       </li>
-      <li><span class="pt">Seizième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Seizième partie — Cinq disciplines empruntées</span>
         <ol start="63">
+          <li><a href="#s-emp-unite">Ce que le pas de temps ne change pas</a></li>
+          <li><a href="#s-emp-survie">Un extrême de séance a un taux de hasard</a></li>
+          <li><a href="#s-emp-calibration">Ce qu'une probabilité annoncée doit prouver</a></li>
+          <li><a href="#s-emp-hawkes">L'activité appelle l'activité</a></li>
+          <li><a href="#s-emp-extremes">L'heure du haut, et ce qui vit au-delà du stop</a></li>
+          <li><a href="#s-emp-detection">La sensibilité, et le critère</a></li>
+          <li><a href="#s-emp-spectre">Combien de lectures peut-on suivre</a></li>
+          <li><a href="#s-emp-transfert">Ce qui transfère, et ce qui ne transfère pas</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Dix-septième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="71">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1888,6 +1900,188 @@
 
   <div class="part">
     <span class="lab">Seizième partie</span>
+    <h2>Cinq disciplines empruntées</h2>
+    <p>Un fonds qui n'embauche aucun opérateur de marché n'a pas remplacé le jugement par de la puissance de calcul&nbsp;: il a reformulé la question dans une discipline qui savait déjà y répondre. Cette partie fait le trajet inverse — cinq disciplines constituées, ce que chacune mesure sur une séance, et la fréquence de son motif sous un prix sans dérive.</p>
+  </div>
+
+  <h2 id="s-emp-unite">Ce que le pas de temps ne change pas</h2>
+
+  <p>La première question à poser n'appartient à aucune des cinq disciplines&nbsp;: c'est celle de l'unité d'observation. Un opérateur qui veut prouver quelque chose peut regarder la minute, l'épisode de volatilité, l'extrême de séance, sa propre décision, ou la séance entière. L'intuition veut que le pas le plus fin donne le plus de matière — cinq cent mille minutes contre mille deux cent soixante séances — et qu'il permette donc de prouver bien davantage.</p>
+
+  <p>L'intuition est vraie sur l'effet <em>par unité</em>, et fausse sur la conclusion.</p>
+
+{{TABLE:emp_unites}}
+
+{{FIGURE:empunite|L'effet minimal détectable selon l'unité d'observation, à gauche&nbsp;; la même exigence traduite en Sharpe annuel, à droite. Cinq barres identiques, et une sixième qui ne l'est pas pour une raison qui n'a rien à voir avec le pas de temps.}}
+
+  <p>La quatrième colonne parcourt quatre ordres de grandeur&nbsp;: à la minute, un effet de {{e_dmin_minute}} écart-type suffit&nbsp;; au relevé réel, il en faut {{e_dmin_releve}}. La cinquième ne bouge pas. Elle vaut {{e_sharpe_invariant}} partout, parce que l'effet et le bruit se composent tous deux en racine du nombre d'unités et que le rapport des deux ne dépend que de la <strong>durée</strong>. Une colonne constante est un signal, jamais un détail&nbsp;: celle-ci dit que le choix du pas de temps n'achète aucune preuve.</p>
+
+  <p>Il faut {{e_annees_sharpe}}&nbsp;ans pour établir un Sharpe de {{e_sharpe_ref}}, et aucune finesse d'échantillonnage ne raccourcit ce délai.</p>
+
+{{FIGURE:emppuissance|La puissance d'un test de Sharpe sur le plan du Sharpe vrai et du nombre d'années. Ni instrument, ni loi de rendement, ni géométrie n'entrent dans ce relief&nbsp;: c'est une borne, pas un modèle.}}
+
+  <h3>Le seul endroit où l'unité coûte quelque chose</h3>
+
+  <p>Elle coûte par la <em>multiplicité</em> qu'elle introduit. Choisir son unité après avoir regardé, c'est chercher parmi des candidats, et la comptabilité du <a href="#s-recensement">recensement des leviers</a> s'applique&nbsp;: {{d_leviers}} leviers valent {{d_configs}} configurations.</p>
+
+{{TABLE:emp_multiplicite}}
+
+  <p>Le résultat est plus doux qu'on ne le craint. Passer d'une configuration à plus de deux cent mille ne multiplie le nombre d'années requis que par {{e_cout_multiplicite}}, parce que le quantile déflaté croît comme la racine du logarithme du nombre de candidats. Chercher coûte cher&nbsp;; cela coûte beaucoup moins cher que ne le suggère le nombre de candidats. Au-delà de {{e_leviers_carriere}}&nbsp;leviers, en revanche, la démonstration sort d'une carrière de {{e_carriere}}&nbsp;ans, et c'est une limite dure.</p>
+
+  <h2 id="s-emp-survie">Un extrême de séance a un taux de hasard</h2>
+
+  <p>L'analyse de survie est la discipline qui étudie la durée avant un événement, quand certaines durées ne sont pas observées jusqu'au bout. C'est exactement la situation d'un opérateur qui demande&nbsp;: <em>le haut du jour va-t-il tenir&nbsp;?</em></p>
+
+  <p>Elle apporte trois objets. Le <strong>taux de hasard</strong>, qui est le risque instantané que l'extrême tombe dans la minute qui vient sachant qu'il a tenu jusque-là. La <strong>censure à droite</strong>, qui est le sort des observations que la clôture — ou la sortie de l'opérateur — interrompt avant leur terme. Et l'<strong>estimateur de Kaplan-Meier</strong>, qui traite la seconde sans supposer aucune loi.</p>
+
+  <p>Le cas est plus favorable ici qu'en médecine, et il faut le dire tout de suite&nbsp;: <strong>la loi nulle est fermée.</strong> Par le principe de réflexion, la probabilité qu'un sommet distant de&nbsp;<span class="mono">d</span> tienne&nbsp;<span class="mono">m</span> minutes sous un prix sans dérive vaut <span class="mono">2Φ(d/σ√m) − 1</span>. Aucune simulation n'est requise pour savoir ce qu'un sommet vaut.</p>
+
+{{TABLE:emp_hasard}}
+
+{{FIGURE:empsurvie|À gauche, quatre réponses à la même question, dont deux fausses&nbsp;: l'estimateur de Kaplan-Meier retrouve la forme fermée, la facilité qui écarte les observations non résolues ne la retrouve pas. À droite, le risque instantané pour trois distances, chacun avec son pic.}}
+
+  <p>Deux faits sortent de cette table, et le second n'était pas attendu.</p>
+
+  <p>Le premier est une question de <em>pas d'observation</em>. La forme fermée décrit une barrière surveillée en temps continu&nbsp;; un opérateur regarde une bougie d'une minute. Une barrière surveillée à intervalle&nbsp;<span class="mono">Δt</span> se comporte comme une barrière continue déplacée de {{e_beta_continuite}}&nbsp;<span class="mono">σ√Δt</span> vers l'extérieur, soit {{e_decalage}}&nbsp;point ici — la constante est universelle et n'est pas ajustée. C'est le troisième visage d'un piège que le document connaît&nbsp;: la taille de grappe décide de la rareté d'un déséquilibre de footprint, la hauteur de rangée de celle d'un extrême pauvre, le pas d'observation de la survie d'un sommet. La différence est qu'ici la correction se calcule.</p>
+
+  <p>Le second est le <strong>pic de risque</strong>. Un sommet n'est pas le plus menacé à l'instant où il est posé&nbsp;: il l'est <span class="mono">d²/{{e_coef_pic}}σ²</span> minutes plus tard, soit {{e_pic_neuf}}&nbsp;minutes pour un sommet à neuf points. La constante n'a pas de forme fermée&nbsp;— c'est la racine de <span class="mono">3/u − u = 2φ(u)/(2Φ(u)−1)</span>, soit {{e_u_pic}} — et une première version du module la posait à trois, ce qu'un test a trouvé en comparant la formule au maximum balayé. Juste après, la distance est trop grande pour le bruit accumulé&nbsp;; longtemps après, la survie a déjà éliminé les trajectoires qui montaient. Entre les deux se trouve un maximum, et il se calcule d'une ligne.</p>
+
+{{FIGURE:emphasard|Le risque instantané sur tout le plan distance × temps écoulé. La crête suit <span class="mono">d²/{{e_coef_pic}}σ²</span>&nbsp;: à chaque distance correspond un instant de danger maximal, et cet instant recule comme le carré de la distance.}}
+
+  <h3>Ce que coûte le fait d'écarter ce qui n'a pas fini</h3>
+
+  <p>La censure n'est pas un raffinement de méthode. Sur ces séances, {{e_censure}}&nbsp;% des observations sont interrompues avant terme, la plupart par la sortie de l'opérateur lui-même&nbsp;: sa position fermée, le sort du sommet lui devient inobservable.</p>
+
+{{TABLE:emp_censure}}
+
+  <p>Écarter ces observations revient à ne garder que les sommets qui sont tombés, donc à répondre à une autre question que celle posée. Kaplan-Meier ne suppose aucune loi et retrouve la référence — qui est ici calculable, ce qui est le luxe de ce cas et sa raison d'être dans ce document&nbsp;: <em>la discipline se vérifie là où l'on connaît la réponse, puis s'emploie là où on ne la connaît pas.</em></p>
+
+  <h2 id="s-emp-calibration">Ce qu'une probabilité annoncée doit prouver</h2>
+
+  <p>Une probabilité annoncée se juge à sa <strong>calibration</strong>&nbsp;: parmi les cas où l'on a dit soixante-dix pour cent, soixante-dix pour cent doivent se réaliser. C'est l'épreuve la plus simple, la plus dure à truquer, et celle qu'aucune lecture de graphique ne se voit jamais imposer.</p>
+
+{{TABLE:emp_calibration}}
+
+{{FIGURE:empcalibration|La courbe de calibration de la probabilité de survie annoncée, et la loi de la distance dont elle se déduit. La diagonale est la seule chose à regarder&nbsp;; l'annonce en temps continu s'en écarte systématiquement, l'annonce corrigée du pas d'observation ne s'en écarte plus.}}
+
+  <p>La conclusion est double, et la seconde moitié compte plus que la première. La formule est exacte, donc utilisable telle quelle comme loi nulle de tout énoncé du type «&nbsp;ce niveau va tenir&nbsp;». Et elle est exacte <em>sans rien savoir du marché</em> — donc une lecture qui se contente de la retrouver n'a rien démontré. C'est la barre que doit franchir toute méthode qui prétend annoncer la tenue d'un extrême.</p>
+
+  <h2 id="s-emp-hawkes">L'activité appelle l'activité</h2>
+
+  <p>Un processus <strong>auto-excitant</strong> est un processus dont chaque événement relève la probabilité du suivant. La sismologie l'a formalisé la première — une secousse fait des répliques, et leur taux décroît selon la loi d'Omori — et la microstructure l'a repris tel quel pour le flux d'ordres.</p>
+
+  <p>Trois objets, et une loi nulle. Le <strong>noyau d'excitation</strong> <span class="mono">α·e^{−βt}</span>, qui dit de combien un événement relève l'intensité et à quelle vitesse cela s'oublie. Le <strong>ratio de branchement</strong> <span class="mono">n = α/β</span>, qui est la part de l'activité fille d'une autre activité — ici déclaré à {{e_hawkes_n}}, l'ordre de grandeur que la littérature mesure sur un indice liquide. Le <strong>rapport de Fano</strong>, variance sur moyenne des comptes par fenêtre, qui vaut un sous Poisson et <span class="mono">1/(1−n)²</span> sous Hawkes. Et la loi nulle est le <strong>Poisson homogène</strong> de même taux, simulé plutôt que supposé.</p>
+
+{{TABLE:emp_hawkes}}
+
+{{FIGURE:emphawkes|À gauche, la fenêtre la plus chargée du processus auto-excitant et celle de son Poisson témoin, choisies l'une et l'autre par balayage. À droite, le taux d'événements après un événement, contre la forme fermée et contre le un plat du Poisson.}}
+
+  <p>Le rapport de Fano converge vers {{e_fano_asymptote}} et rend le ratio déclaré à trois millièmes près, sans qu'aucune vraisemblance ait été ajustée. La bande du Poisson est ce qui rend le verdict possible&nbsp;: sans elle, un rapport de 1,2 se lirait comme de l'excitation alors qu'il n'est que du comptage.</p>
+
+{{TABLE:emp_omori}}
+
+  <p>Une subtilité mérite d'être nommée, parce qu'elle se trompe facilement d'un facteur deux et demi. L'amplitude du relèvement mesuré après un événement n'est pas <span class="mono">α</span>&nbsp;: conditionner sur un événement ajoute sa descendance, <em>mais sélectionne aussi un instant où l'intensité était déjà haute</em>. L'intensité de Palm vaut <span class="mono">λ̄ + A·e^{−(β−α)t}</span> avec <span class="mono">A = α(2β−α)/2(β−α)</span>, et le contrôle est immédiat&nbsp;: intégrée sur le temps, cette amplitude doit rendre le rapport de Fano, ce qu'un test vérifie.</p>
+
+  <h3>Ce que l'excitation déplace, et ce qu'elle ne déplace pas</h3>
+
+  <p>Reste la seule question qui intéresse un compte. Sous l'hypothèse déclarée — chaque événement déplace le prix d'un pas de taille fixe, donc <span class="mono">σ ∝ √λ</span> — une bouffée d'activité multiplie la variance par {{e_saut_intensite}} juste après un événement. Le temps de marché <span class="mono">E[τ∧T]</span> diminue d'autant, et le seuil <span class="mono">µ* = c/E[τ∧T]</span> monte.</p>
+
+{{TABLE:emp_excitation}}
+
+{{FIGURE:empexcitation|Le seuil de rentabilité sur le plan du ratio de branchement et du temps écoulé depuis un événement. Le relief est entièrement une affaire d'horloge&nbsp;: la part de hausses après un événement vaut {{e_direction}}&nbsp;% sur {{e_direction_n}} occasions.}}
+
+  <p>Le seuil est multiplié par {{e_facteur_seuil}} juste après un événement, et le verdict de la dernière colonne change avec lui. La lecture courante — <em>ça bouge, c'est le moment d'agir</em> — a donc le signe exact du contraire.</p>
+
+  <p>Il faut mesurer l'autre moitié pour avoir le droit de conclure, et le module le fait&nbsp;: sur {{e_direction_n}}&nbsp;occasions, la part de hausses dans les dix minutes qui suivent un événement vaut {{e_direction}}&nbsp;%, à {{e_direction_sd}}&nbsp;point d'écart-type près. <strong>L'auto-excitation déplace l'horloge, jamais la boussole</strong> — et c'est exactement ce que disait déjà, à la partie&nbsp;<a href="#s-on-conditionnel">XV</a>, le profil de variance de l'ouverture&nbsp;: il rend le <em>quand</em> d'une cassure et jamais son <em>côté</em>.</p>
+
+  <h2 id="s-emp-extremes">L'heure du haut, et ce qui vit au-delà du stop</h2>
+
+  <p>La théorie des valeurs extrêmes apporte deux choses au dossier, et elles n'ont presque rien à voir l'une avec l'autre.</p>
+
+  <p>La première est la <strong>loi de l'arc sinus</strong>, qui donne l'instant où une marche sans dérive atteint son maximum. Sa densité est en&nbsp;U&nbsp;: elle diverge aux deux bords de l'intervalle et creuse au milieu.</p>
+
+{{TABLE:emp_arcsin}}
+
+{{FIGURE:emparcsin|La densité et la fréquence cumulée de l'heure du plus haut de séance, comparées à la loi de l'arc sinus et à la loi uniforme. Aucune donnée de marché n'entre dans cette planche.}}
+
+  <p>Le rapport à la loi plate atteint deux aux deux bords, et le premier ou le dernier quart d'heure de séance portent à eux seuls {{e_arc_quart}}&nbsp;% des sommets. Une affirmation du type «&nbsp;le haut du jour se fait à l'ouverture ou en clôture&nbsp;» est donc <strong>vraie et sans contenu</strong>. Le document a déjà croisé cette loi à la partie&nbsp;<a href="#s-on-position">XV</a>, où elle donnait la position d'ouverture dans le range overnight&nbsp;: c'est la même loi, lue cette fois sur l'axe du temps, et il vaut la peine de noter qu'elle explique deux affirmations de marché sans partage — l'une sur l'heure, l'autre sur le prix.</p>
+
+  <p>La seconde est la <strong>loi de Pareto généralisée</strong> des dépassements de seuil, avec son indice de queue <span class="mono">ξ</span> et son estimateur de Hill. Elle dit ce qui vit au-delà du stop — c'est-à-dire ce que le stop ne protège pas.</p>
+
+{{TABLE:emp_evt}}
+
+  <p>La table porte son propre contrôle, et c'est ce qui la rend utilisable. La colonne empirique dit ce que l'extrapolation coûte <em>là où elle est encore vérifiable</em>, et l'écart y atteint déjà trente pour cent sur la loi à sauts — dont les queues ne sont pas de Pareto du tout, ce que rien dans l'ajustement ne signale. Au-delà, l'extrapolation ne se vérifie plus et ne doit se lire que comme un ordre de grandeur.</p>
+
+{{TABLE:emp_hill}}
+
+{{FIGURE:emphill|Le tracé de Hill de l'indice de queue pour quatre lois d'incrément, avec les indices vrais en tirets. Aucune des quatre courbes n'a de plateau, et la gaussienne — dont l'indice vrai est nul — se voit attribuer une queue lourde à toute fraction retenue.}}
+
+  <p>C'est le piège habituel sous une nouvelle forme&nbsp;: <em>un réglage non observable décide de ce que la mesure déclare rare.</em> Toutes les fractions du tracé sont défendables et aucune n'est canonique.</p>
+
+{{FIGURE:empqueue|Le rapport de VaR entre une queue de Pareto et une queue exponentielle, selon l'indice et le niveau de confiance. Près du seuil, l'indice ne change rien&nbsp;; loin du seuil, il change tout — et c'est là que le tracé de Hill ne sait plus l'estimer.}}
+
+  <p>La conclusion se tient en deux phrases. La forme de la queue <strong>ne change pas l'espérance</strong> — la partie&nbsp;<a href="#s-invariance-lois">XIV</a> l'a montré sur six lois. Elle change ce que le stop ne protège pas, et cela se dimensionne au lieu de se craindre.</p>
+
+  <h2 id="s-emp-detection">La sensibilité, et le critère</h2>
+
+  <p>Voici la seule des cinq disciplines qui touche à&nbsp;<span class="mono">µ</span>.</p>
+
+  <p>La théorie de la détection est née en psychophysique, pour une raison qui s'applique mot pour mot ici&nbsp;: un observateur qui dit «&nbsp;j'ai vu le signal&nbsp;» mélange deux choses que le taux de bonnes réponses ne sépare pas. Sa <strong>sensibilité</strong> <span class="mono">d′</span>, qu'il ne choisit pas, et son <strong>critère</strong>, qu'il choisit entièrement.</p>
+
+  <p>Le modèle&nbsp;: à chaque occasion, la cible tombera avant le stop ou l'inverse&nbsp;; l'opérateur reçoit une évidence gaussienne centrée en <span class="mono">±d′/2</span> selon le cas, et agit si elle dépasse son critère. La géométrie entre par la porte du taux de base, qui n'est pas un demi mais {{e_base_rate}}&nbsp;% — c'est <span class="mono">1/(1+RR)</span>, et cela change tout.</p>
+
+{{TABLE:emp_critere}}
+
+{{FIGURE:empdetection|À gauche, la courbe ROC&nbsp;: cinq opérateurs de compétence identique occupent cinq points de la même courbe. À droite, ce que ces cinq points rapportent réellement sur une année, avec le maximum intérieur que le critère optimal atteint.}}
+
+  <p>Les cinq lignes ont exactement la même sensibilité, donc la même aire sous la courbe ROC — {{e_auc_ref}}&nbsp;% — et la même erreur de Bayes, {{e_bayes_ref}}&nbsp;%. Leur taux de réussite affiché va pourtant de {{e_taux_bas}}&nbsp;% à {{e_taux_haut}}&nbsp;%, soit {{e_taux_amplitude}}&nbsp;points d'amplitude. <strong>Cinq relevés de trades qui n'ont rien en commun, produits par la même compétence.</strong></p>
+
+  <p>Le gain annuel, lui, passe par un maximum intérieur, en {{e_critere_opt}}, à {{e_gain_opt}}&nbsp;R par an. La <a href="#s-setup-mesure">grammaire du setup</a> mesurait ce fait sur douze setups et neuf cents séances&nbsp;; il se lit ici en une ligne d'arithmétique, et le critère optimal se <em>calcule</em> au lieu de se chercher à tâtons.</p>
+
+{{TABLE:emp_sensibilite}}
+
+{{FIGURE:empcritere|L'espérance annuelle sur le plan de la sensibilité et du critère. La rangée du fond est la loi nulle&nbsp;: à sensibilité nulle, tout le profil est sous le sol et le meilleur choix est de ne rien faire. La crête se déplace vers la gauche quand la sensibilité monte.}}
+
+  <p>La première ligne de la table est la loi nulle et elle se lit seule&nbsp;: à sensibilité nulle, le critère optimal part vers l'infini et le meilleur gain possible est de ne rien faire, la friction étant le seul terme qui reste. Le balayage le trouve sans qu'on le lui souffle.</p>
+
+  <h3>Ce qu'un relevé court ne peut pas dire</h3>
+
+{{TABLE:emp_dprime_nul}}
+
+  <p>Un opérateur à <span class="mono">d′ = {{e_d_ref}}</span> a besoin de {{e_decisions_ref}}&nbsp;décisions pour l'établir, soit {{e_annees_ref}}&nbsp;ans, et son relevé en compte {{e_releve_reel}}. Vu de l'autre bout&nbsp;: sur {{e_releve_reel}}&nbsp;décisions, le bruit seul produit une sensibilité apparente qui dépasse {{e_dprime_q95_30}} une fois sur vingt — soit {{e_dprime_rapport}}&nbsp;fois celle qu'on cherche à établir. C'est la dernière ligne de la première table de cette partie, dite dans la langue de la détection.</p>
+
+  <h2 id="s-emp-spectre">Combien de lectures peut-on suivre</h2>
+
+  <p>La dernière discipline répond à une question que le <a href="#s-cat-ordre">catalogue de la partie&nbsp;III</a> pose sans la formuler&nbsp;: suivre quinze lectures à la fois, est-ce que cela fabrique de la structure à partir de rien&nbsp;?</p>
+
+  <p>La loi de Marchenko-Pastur donne le spectre d'une matrice de corrélation de séries indépendantes — il n'est pas concentré sur un, il occupe une plage entière — et la transition de Baik-Ben Arous-Péché donne le seuil&nbsp;: un facteur de force inférieure à <span class="mono">√γ</span>, avec <span class="mono">γ = k/n</span>, ne se voit <strong>pas du tout</strong>.</p>
+
+{{TABLE:emp_spectre}}
+
+{{FIGURE:empspectre|À gauche, le spectre de quinze séries indépendantes&nbsp;: la forme fermée de Marchenko-Pastur et la simulation à effectif fini. À droite, la transition de Baik-Ben Arous-Péché, exactement plate sous le seuil.}}
+
+  <p>La réponse est rassurante, et c'est rare dans ce document. Suivre les quinze lectures du catalogue sur une année de séances place le seuil à {{e_bbp_quinze}}, et il ne faut que {{e_seances_spectre}}&nbsp;séances pour qu'un facteur de force {{e_s_ref}} en sorte. <strong>Le coût du nombre de lectures n'est pas spectral&nbsp;: il est de multiplicité</strong>, et la deuxième table de cette partie l'a chiffré.</p>
+
+{{FIGURE:empbbp|La valeur propre observée sur le plan de la force du facteur et du rapport de dimension. La frontière n'est pas une pente, c'est une arête&nbsp;: sous le seuil, deux facteurs de forces très différentes donnent exactement la même valeur propre.}}
+
+  <p>La conséquence pratique tient en une phrase&nbsp;: ajouter des lectures sans ajouter des séances déplace la frontière et fait disparaître ce qu'on voyait la veille.</p>
+
+  <h2 id="s-emp-transfert">Ce qui transfère, et ce qui ne transfère pas</h2>
+
+  <p>Il reste à ranger. L'identité qui gouverne tout le document a quatre termes, <span class="mono">E[R] = (µ·E[τ∧T] − c)/a</span>, et la seule question qui vaille pour chaque discipline est&nbsp;: <em>lequel déplace-t-elle, et de combien&nbsp;?</em></p>
+
+{{TABLE:emp_transfert}}
+
+{{FIGURE:emptransfert|Le déplacement mesuré de chaque discipline sur le terme qu'elle touche, rangé par ampleur. Une seule barre porte la teinte forte, et c'est la plus courte des quatre qui transfèrent.}}
+
+  <p>Le verdict de l'avant-dernière colonne est calculé et non écrit&nbsp;: une discipline transfère si elle déplace son terme d'au moins {{e_seuil_transfert}}&nbsp;%, règle posée avant les mesures. {{e_transferts}}&nbsp;des cinq y parviennent.</p>
+
+  <p>La dernière colonne ne porte qu'un seul oui. <strong>Quatre disciplines déplacent l'horloge, le risque ou le budget de preuve&nbsp;; une seule touche au sens.</strong> Et l'ordre de difficulté est exactement l'inverse de l'ordre d'utilité&nbsp;: la survie, l'excitation, les extrêmes et le spectre se mesurent sur des dizaines de milliers d'observations qui existent déjà, quand la sensibilité de l'opérateur demande {{e_decisions_ref}}&nbsp;décisions qui n'existent pas encore.</p>
+
+  <p>C'est, dit autrement, la thèse de tout ce document. Le marché ne concède que&nbsp;<span class="mono">µ</span>, et&nbsp;<span class="mono">µ</span> est cher. Tout le reste — le temps de marché, la friction, la largeur du stop — appartient à l'opérateur, se mesure vite, et décide du signe du compte avant que <span class="mono">µ</span> n'ait eu son mot à dire.</p>
+
+  <div class="part">
+    <span class="lab">Dix-septième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
