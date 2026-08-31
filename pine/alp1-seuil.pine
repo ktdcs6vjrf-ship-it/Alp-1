@@ -67,6 +67,12 @@ commPct  = input.float(0.10, "Commission, en % du notionnel", group = gF,
 gM = "③ Marché"
 volLen  = input.int(100, "Fenêtre de volatilité, en barres", group = gM,
      minval = 20, maxval = 1000)
+volShort = input.int(20, "Fenêtre courte, en barres", group = gM,
+     minval = 5, maxval = 200,
+     tooltip = "Le rapport des deux fenêtres est le régime de volatilité. " +
+               "C'est la seule chose qu'un modèle de régime détecte vraiment : " +
+               "la borne de Bayes sur la direction laisse 44 % d'erreur, quel " +
+               "que soit le classifieur, quand la volatilité, elle, se voit.")
 sessMin = input.int(1440, "Durée de séance, en minutes", group = gM,
      minval = 30, maxval = 1440,
      tooltip = "1440 pour un marché continu, 390 pour la séance régulière " +
@@ -119,13 +125,23 @@ sigBar    = ta.stdev(close - close[1], volLen)
 sigOk     = not na(sigBar) and sigBar > 0.0
 sigMin    = sigOk ? sigBar / math.sqrt(minPerBar) : na
 
+// La fenetre courte estime ce qui se passe *maintenant* — et c'est elle qui
+// doit entrer dans E[tau], puisque le trade a lieu maintenant et non en
+// moyenne. Le rapport des deux fenetres est le regime : il ne dit aucun sens,
+// il dit une vitesse, et une vitesse deplace le seuil.
+sigBarS  = ta.stdev(close - close[1], volShort)
+sigNowOk = not na(sigBarS) and sigBarS > 0.0
+sigNow   = sigNowOk ? sigBarS / math.sqrt(minPerBar) : sigMin
+regime   = sigOk and sigNowOk ? sigNow / sigMin : na
+regimeNom = na(regime) ? "—" : regime >= 1.25 ? "agité" : regime <= 0.80 ? "calme" : "normal"
+
 // ═══════════════════════════════════════════════════════════════════════════
 //  Les trois quantites exactes
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Temps de sortie moyen entre deux barrieres, prix sans derive :
 // E[tau] = a*b / sigma^2. Resultat classique du probleme a deux barrieres.
-tauMin = sigOk ? a * b / (sigMin * sigMin) : na
+tauMin = sigNowOk or sigOk ? a * b / (sigNow * sigNow) : na
 
 // Probabilite de toucher la cible en premier. Elle ne depend que du rapport
 // des distances : c'est le theoreme d'arret optionnel, et rien d'autre.
@@ -198,6 +214,49 @@ deriveSignif      = not na(zObs) and math.abs(zObs) >= 2.0
 deriveSuffit      = not na(muObs) and not na(muStar) and math.abs(muObs) >= muStar
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  Les extremes du jour, et la seule question qui se repond exactement
+//
+//  « Quand change-t-on de regime ? » n'a pas de reponse : l'instant du plus
+//  haut d'une seance suit une loi de l'arc sinus, qui le place le plus souvent
+//  au tout debut ou a la toute fin, et jamais la ou on le cherche.
+//
+//  « Le plus haut courant va-t-il tenir ? » en a une, et elle est fermee. Par
+//  le principe de reflexion, la probabilite qu'une marche sans derive ne
+//  depasse pas une distance d en m minutes vaut
+//
+//        P = 2*Phi( d / (sigma*racine(m)) ) - 1
+//
+//  Aucun modele, aucun apprentissage, aucun reglage. Les deux seules choses
+//  qui comptent y sont : la distance au sommet, et le temps qui reste.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Abramowitz-Stegun 26.2.17, erreur maximale 7,5e-8. Pine n'a pas de loi
+// normale ; celle-ci suffit tres largement a trois chiffres de pour-cent.
+normCdf(float x) =>
+    float ax = math.abs(x)
+    float t  = 1.0 / (1.0 + 0.2316419 * ax)
+    float d  = 0.3989422804014327 * math.exp(-ax * ax / 2.0)
+    float pp = 1.0 - d * t * (0.319381530 + t * (-0.356563782 + t *
+      (1.781477937 + t * (-1.821255978 + t * 1.330274429))))
+    x >= 0.0 ? pp : 1.0 - pp
+
+tient(float d, float m) =>
+    na(m) or m <= 0.0 or not sigNowOk ? na :
+      d <= 0.0 ? 0.0 : 2.0 * normCdf(d / (sigNow * math.sqrt(m))) - 1.0
+
+var float hod = na
+var float lod = na
+if newDay or na(hod)
+    hod := high
+    lod := low
+else
+    hod := math.max(hod, high)
+    lod := math.min(lod, low)
+
+tientHaut = tient(hod - close, remainMin)
+tientBas  = tient(close - lod, remainMin)
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  Les rails
 //
 //  Deux segments courts au bord droit, reutilises d'une barre a l'autre :
@@ -235,7 +294,7 @@ if showRail and barstate.islast
 
 fmt(float v, simple string f) => na(v) ? "—" : str.tostring(v, f)
 
-var table tb = table.new(tPos, 2, 8, bgcolor = color.new(#0E0E12, 10),
+var table tb = table.new(tPos, 2, 10, bgcolor = color.new(#0E0E12, 10),
      border_color = color.new(#2A2A34, 30), border_width = 1,
      frame_color = color.new(#2A2A34, 30), frame_width = 1)
 
@@ -256,32 +315,44 @@ if barstate.islast
          fmt(c / a * 100.0, "0.0") + " % du stop",
          text_color = colInk, text_size = tSize, text_halign = text.align_right)
 
-    table.cell(tb, 0, 3, "Temps de marché", text_color = colDim, text_size = tSize,
+    table.cell(tb, 0, 3, "Régime de vol", text_color = colDim, text_size = tSize,
          text_halign = text.align_left)
-    table.cell(tb, 1, 3, fmt(tauMin, "0") + " min  /  " + fmt(remainMin, "0") + " min",
+    table.cell(tb, 1, 3, fmt(regime, "0.00") + " ×   " + regimeNom,
+         text_color = regimeNom == "normal" ? colInk : colKey, text_size = tSize,
+         text_halign = text.align_right)
+
+    table.cell(tb, 0, 4, "Temps de marché", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 4, fmt(tauMin, "0") + " min  /  " + fmt(remainMin, "0") + " min",
          text_color = tientDansLaSeance ? colInk : colBad, text_size = tSize,
          text_halign = text.align_right)
 
-    table.cell(tb, 0, 4, "Seuil µ*", text_color = colDim, text_size = tSize,
+    table.cell(tb, 0, 5, "Seuil µ*", text_color = colDim, text_size = tSize,
          text_halign = text.align_left)
-    table.cell(tb, 1, 4, fmt(muStar, "0.###") + " / h",
+    table.cell(tb, 1, 5, fmt(muStar, "0.###") + " / h",
          text_color = colKey, text_size = tSize, text_halign = text.align_right)
 
-    table.cell(tb, 0, 5, "Exigence", text_color = colDim, text_size = tSize,
+    table.cell(tb, 0, 6, "Exigence", text_color = colDim, text_size = tSize,
          text_halign = text.align_left)
-    table.cell(tb, 1, 5, fmt(exigSigma * 100.0, "0.0") + " % d'un σ   " +
+    table.cell(tb, 1, 6, fmt(exigSigma * 100.0, "0.0") + " % d'un σ   " +
          fmt(bits * 100.0, "0.00") + " % d'un bit",
          text_color = colKey, text_size = tSize, text_halign = text.align_right)
 
-    table.cell(tb, 0, 6, "Échantillon", text_color = colDim, text_size = tSize,
+    table.cell(tb, 0, 7, "Échantillon", text_color = colDim, text_size = tSize,
          text_halign = text.align_left)
-    table.cell(tb, 1, 6, fmt(nTrades, "0") + " décisions   " +
+    table.cell(tb, 1, 7, fmt(nTrades, "0") + " décisions   " +
          fmt(nYears, "0.0") + " ans",
          text_color = colInk, text_size = tSize, text_halign = text.align_right)
 
-    table.cell(tb, 0, 7, "Dérive observée", text_color = colDim, text_size = tSize,
+    table.cell(tb, 0, 8, "Extrêmes du jour", text_color = colDim, text_size = tSize,
          text_halign = text.align_left)
-    table.cell(tb, 1, 7, fmt(muObs, "0.###") + " / h   z " + fmt(zObs, "+0.0"),
+    table.cell(tb, 1, 8, "haut " + fmt(tientHaut * 100.0, "0") + " %   bas " +
+         fmt(tientBas * 100.0, "0") + " %",
+         text_color = colKey, text_size = tSize, text_halign = text.align_right)
+
+    table.cell(tb, 0, 9, "Dérive observée", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 9, fmt(muObs, "0.###") + " / h   z " + fmt(zObs, "+0.0"),
          text_color = deriveSignif ? colKey : colDim, text_size = tSize,
          text_halign = text.align_right)
 
