@@ -253,12 +253,26 @@ Rendu
 Hors du noyau Python
 - `pine/alp0.pine` — indicateur TradingView (Pine v6) : VWAP ancré, bandes σ,
   zones d'accumulation, confluence. Barre fermée, sans repeinture.
+- `pine/alp1-seuil.pine` — **le seul des trois qui vienne du paper.** Il ne
+  donne aucun signal : il affiche `E[τ] = a·b/σ²`, `p(cible) = a/(a+b)`,
+  `µ* = c/E[τ]`, l'exigence sans dimension `c/√(a·b)`, le budget en bits et
+  l'échantillon requis. Les trois premières sont exactes, pas estimées ; la
+  quatrième ne dépend ni de la volatilité ni de l'instrument. La constante
+  d'échantillon vaut **4,460 = λ/(2·ln2)** avec λ unilatéral — c'est celle de
+  `entropy.trades_for_information`, et l'accord a été vérifié à l'unité près
+  sur trois géométries. Aucun `request.*` : il tourne sur le plan gratuit.
+  Piège enterré : une friction en ticks seuls sous-estime d'un ordre de
+  grandeur le coût sur un actif à cinq chiffres, d'où la ligne en % du
+  notionnel.
 - `pine/alp0-gex.pine` — report de niveaux gamma. On colle la réponse d'un
   robot Discord ; l'indicateur mesure lui-même la base `NQ − NDX` et la lisse.
   **Ne jamais convertir NDX→NQ à la main : la base saute à chaque roll.**
   Voir `docs/gex-discord-vers-tradingview.md`.
-- Ces deux fichiers ne participent ni aux documents ni aux tests : ils n'ont
-  pas de loi nulle et n'en revendiquent aucune.
+- Ces trois fichiers ne participent ni aux documents ni aux tests : ils n'ont
+  pas de loi nulle et n'en revendiquent aucune. **La version déployée sur le
+  graphique peut donc diverger de celle du dépôt sans que rien ne le
+  signale** — c'est arrivé sur `alp0.pine`, dont le panneau imprimait une
+  chaîne absente du fichier. Resynchroniser avant de tirer une conclusion.
 
 ## Les pièges déjà tombés dedans
 

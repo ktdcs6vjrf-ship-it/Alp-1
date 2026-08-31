@@ -1,0 +1,298 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════
+//  Alp-1 · Le seuil
+//  ---------------------------------------------------------------------------
+//  Cet indicateur ne donne aucun signal, et c'est le point.
+//
+//  Le resultat structurant de la serie ALP est l'identite de Wald a temps
+//  borne par la seance :
+//
+//        E[R] = (mu * E[tau] - c) / a
+//
+//  d'ou un seuil de rentabilite qui ne depend que de la geometrie :
+//
+//        mu* = c / E[tau]
+//
+//  mu appartient au marche, c au courtier, a et b a la declaration de risque.
+//  Aucune geometrie ne cree d'esperance : elle achete du temps de marche.
+//  L'operateur ne choisit donc pas s'il a raison — il choisit **combien de
+//  derive il lui faut pour avoir raison**, et c'est ce nombre-la que ce
+//  panneau affiche, avant la premiere decision plutot qu'apres la centieme.
+//
+//  Trois quantites sont exactes, pas estimees :
+//
+//    1. E[tau] = a*b / sigma^2      temps de sortie moyen entre deux barrieres
+//    2. p(cible) = a / (a + b)      probabilite de toucher la cible en premier
+//    3. c / sqrt(a*b)               ce que la derive doit valoir, en ecarts-types
+//
+//  La troisieme est **sans dimension** : ni la volatilite, ni l'instrument,
+//  ni l'unite de temps n'y entrent. C'est la seule facon honnete de comparer
+//  deux geometries, et elle tient en une division.
+//
+//  Ce qui est peint : deux rails pointilles au bord droit, une etiquette, un
+//  panneau de sept lignes. Rien d'autre. Aucune donnee externe n'est appelee,
+//  aucune unite de temps inferieure n'est demandee : le script tourne sur le
+//  plan gratuit de TradingView, sur n'importe quel symbole, et n'occupe qu'un
+//  seul des deux emplacements disponibles.
+// ═══════════════════════════════════════════════════════════════════════════
+
+indicator("Alp-1 · Le seuil", "Alp-1 · Seuil", overlay = true,
+     max_lines_count = 10, max_labels_count = 10)
+
+// ─── ① Geometrie declaree ─────────────────────────────────────────────────
+gG = "① Géométrie"
+stopMode = input.string("% du prix", "Largeur du stop", group = gG,
+     options = ["Ticks", "% du prix", "ATR"],
+     tooltip = "La seule grandeur que vous fixez entièrement. Tout le reste " +
+               "du panneau en découle.")
+stopVal  = input.float(0.15, "Valeur", group = gG, minval = 0.0001, step = 0.01)
+atrLen   = input.int(14, "Longueur ATR", group = gG, minval = 2, maxval = 200)
+rr       = input.float(2.0, "Rapport gain-risque  (cible = R:R × stop)",
+     group = gG, minval = 0.1, step = 0.1)
+
+// ─── ② Friction, aller-retour ─────────────────────────────────────────────
+gF = "② Friction"
+spreadTk = input.float(2.0, "Fourchette, en ticks", group = gF, minval = 0.0,
+     step = 0.5, tooltip = "Coût de traversée, aller-retour compris.")
+commTk   = input.float(0.0, "Commission, en ticks", group = gF, minval = 0.0,
+     step = 0.5)
+commPct  = input.float(0.10, "Commission, en % du notionnel", group = gF,
+     minval = 0.0, step = 0.01,
+     tooltip = "Aller-retour compris. 0,10 pour un preneur crypto à 0,05 % " +
+               "par côté ; 0 sur un contrat à terme où tout est en ticks. " +
+               "Sans cette ligne la friction d'un actif à cinq chiffres est " +
+               "sous-estimée d'un ordre de grandeur.")
+
+// ─── ③ Marche ─────────────────────────────────────────────────────────────
+gM = "③ Marché"
+volLen  = input.int(100, "Fenêtre de volatilité, en barres", group = gM,
+     minval = 20, maxval = 1000)
+sessMin = input.int(1440, "Durée de séance, en minutes", group = gM,
+     minval = 30, maxval = 1440,
+     tooltip = "1440 pour un marché continu, 390 pour la séance régulière " +
+               "actions. Sert à dire si la cible tient dans la séance.")
+perDay  = input.float(2.0, "Décisions par jour", group = gM, minval = 0.1,
+     step = 0.5, tooltip = "Convertit l'échantillon requis en années.")
+
+// ─── ④ Affichage ──────────────────────────────────────────────────────────
+gA = "④ Affichage"
+showRail = input.bool(true, "Rails du stop et de la cible", group = gA)
+posName  = input.string("Haut droite", "Position du panneau", group = gA,
+     options = ["Haut droite", "Haut gauche", "Bas droite", "Bas gauche"])
+sizeName = input.string("Petit", "Taille du texte", group = gA,
+     options = ["Minuscule", "Petit", "Normal"])
+colInk = input.color(#D6D8E0, "Texte",  group = gA, inline = "col")
+colDim = input.color(#8A8FA0, "Second", group = gA, inline = "col")
+colKey = input.color(#8B7BE8, "Accent", group = gA, inline = "col")
+colBad = input.color(#E06A6A, "Alerte", group = gA, inline = "col")
+
+tPos = posName == "Haut gauche" ? position.top_left :
+       posName == "Bas droite"  ? position.bottom_right :
+       posName == "Bas gauche"  ? position.bottom_left : position.top_right
+
+tSize = sizeName == "Minuscule" ? size.tiny :
+        sizeName == "Normal"    ? size.normal : size.small
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  La geometrie, en points de prix
+// ═══════════════════════════════════════════════════════════════════════════
+
+atrVal = ta.atr(atrLen)
+
+a = stopMode == "Ticks"     ? stopVal * syminfo.mintick :
+    stopMode == "% du prix" ? stopVal / 100.0 * close : stopVal * atrVal
+
+b = rr * a
+c = (spreadTk + commTk) * syminfo.mintick + commPct / 100.0 * close
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  La volatilite, ramenee a la minute
+//
+//  Un ecart-type d'increment par barre, divise par la racine du nombre de
+//  minutes qu'une barre dure. C'est la seule estimation du panneau, et elle
+//  ne sert qu'a convertir un temps : les trois quantites exactes citees en
+//  tete ne l'utilisent pas.
+// ═══════════════════════════════════════════════════════════════════════════
+
+minPerBar = math.max(timeframe.in_seconds() / 60.0, 1.0 / 60.0)
+sigBar    = ta.stdev(close - close[1], volLen)
+sigOk     = not na(sigBar) and sigBar > 0.0
+sigMin    = sigOk ? sigBar / math.sqrt(minPerBar) : na
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Les trois quantites exactes
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Temps de sortie moyen entre deux barrieres, prix sans derive :
+// E[tau] = a*b / sigma^2. Resultat classique du probleme a deux barrieres.
+tauMin = sigOk ? a * b / (sigMin * sigMin) : na
+
+// Probabilite de toucher la cible en premier. Elle ne depend que du rapport
+// des distances : c'est le theoreme d'arret optionnel, et rien d'autre.
+pTarget = a / (a + b)
+
+// Seuil de rentabilite, en points par heure.
+tauOk  = not na(tauMin) and tauMin > 0.0
+muStar = tauOk ? c / (tauMin / 60.0) : na
+
+// Le meme seuil, sans dimension : la part d'un ecart-type du deplacement sur
+// la duree du trade que la derive doit fournir.
+exigSigma = c / math.sqrt(a * b)
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Le budget d'information
+//
+//  Taux de reussite sans derive : q = 1/(R+1). Taux d'equilibre avec
+//  friction : p = (1 + c/a)/(R+1). L'ecart entre les deux est ce que le
+//  signal doit financer, et la divergence de Kullback-Leibler en donne le
+//  prix en bits. Moins un trade exige d'information, plus il faut de
+//  decisions pour etablir qu'il l'a : c'est la tension que la serie mesure.
+// ═══════════════════════════════════════════════════════════════════════════
+
+klBits(float p, float q) =>
+    float out = na
+    if p > 0.0 and p < 1.0 and q > 0.0 and q < 1.0
+        out := (p * math.log(p / q) + (1.0 - p) * math.log((1.0 - p) / (1.0 - q))) / math.log(2.0)
+    out
+
+qHit = 1.0 / (rr + 1.0)
+pHit = (1.0 + c / a) / (rr + 1.0)
+bits = pHit >= 1.0 ? na : klBits(pHit, qHit)
+
+// N >= lambda(alpha, puissance, 1 ddl) / (2 * bits * ln 2). A un degre de
+// liberte, lambda = (z(1-alpha) + z(puissance))^2, soit 6,183 pour un test
+// unilateral a 5 % et 80 % de puissance. Le quotient lambda/(2 ln2) vaut
+// 4,460, et c'est exactement la constante du noyau Python de la serie :
+// l'indicateur et le document ne peuvent donc pas diverger sur ce chiffre.
+bitsOk  = not na(bits) and bits > 0.0
+nTrades = bitsOk ? 4.460 / bits : na
+nYears  = bitsOk ? nTrades / (perDay * 252.0) : na
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  La derive observee, et sa loi nulle
+//
+//  Un chiffre sans son bruit ne dit rien. Le deplacement depuis l'ancrage
+//  vaut z ecarts-types de la loi sans derive, avec
+//  z = deplacement / (sigma * racine des minutes ecoulees).
+//  C'est le meme test que la serie applique partout : jamais une mesure sans
+//  la frequence a laquelle le hasard seul la produit.
+// ═══════════════════════════════════════════════════════════════════════════
+
+newDay = ta.change(time("D")) != 0
+var float anchorPx = na
+var int   anchorTs = na
+if newDay or na(anchorPx)
+    anchorPx := open
+    anchorTs := time
+
+elapsedMin = na(anchorTs) ? na : math.max((time - anchorTs) / 60000.0, 1.0)
+moved      = na(anchorPx) ? na : close - anchorPx
+elapsedOk  = not na(elapsedMin)
+muObs      = elapsedOk and not na(moved) ? moved / (elapsedMin / 60.0) : na
+zObs       = elapsedOk and sigOk and not na(moved) ? moved / (sigMin * math.sqrt(elapsedMin)) : na
+remainMin  = elapsedOk ? math.max(sessMin - elapsedMin, 0.0) : na
+
+// Verdicts — calcules, jamais ecrits.
+tientDansLaSeance = tauOk and elapsedOk and tauMin <= remainMin
+deriveSignif      = not na(zObs) and math.abs(zObs) >= 2.0
+deriveSuffit      = not na(muObs) and not na(muStar) and math.abs(muObs) >= muStar
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Les rails
+//
+//  Deux segments courts au bord droit, reutilises d'une barre a l'autre :
+//  aucun objet n'est cree en boucle, et l'historique reste vierge.
+// ═══════════════════════════════════════════════════════════════════════════
+
+var line railStop = na
+var line railTgt  = na
+var label railLab = na
+
+if showRail and barstate.islast
+    x1 = bar_index + 1
+    x2 = bar_index + 8
+    yS = close - a
+    yT = close + b
+    if na(railStop)
+        railStop := line.new(x1, yS, x2, yS, color = color.new(colBad, 45),
+             width = 1, style = line.style_dotted)
+        railTgt  := line.new(x1, yT, x2, yT, color = color.new(colKey, 45),
+             width = 1, style = line.style_dotted)
+        railLab  := label.new(x2, yT, "", style = label.style_label_left,
+             color = color.new(colKey, 92), textcolor = colDim, size = size.tiny)
+    else
+        line.set_xy1(railStop, x1, yS)
+        line.set_xy2(railStop, x2, yS)
+        line.set_xy1(railTgt,  x1, yT)
+        line.set_xy2(railTgt,  x2, yT)
+    label.set_xy(railLab, x2, yT)
+    label.set_text(railLab, "1 : " + str.tostring(rr, "0.#") + "   p " +
+         str.tostring(pTarget * 100.0, "0.0") + " %")
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Le panneau
+// ═══════════════════════════════════════════════════════════════════════════
+
+fmt(float v, string f) => na(v) ? "—" : str.tostring(v, f)
+
+var table tb = table.new(tPos, 2, 8, bgcolor = color.new(#0E0E12, 10),
+     border_color = color.new(#2A2A34, 30), border_width = 1,
+     frame_color = color.new(#2A2A34, 30), frame_width = 1)
+
+if barstate.islast
+    table.cell(tb, 0, 0, "Alp-1", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 0, "Le seuil", text_color = colInk, text_size = tSize,
+         text_halign = text.align_right)
+
+    table.cell(tb, 0, 1, "Géométrie", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 1, fmt(a, format.mintick) + "  →  " + fmt(b, format.mintick),
+         text_color = colInk, text_size = tSize, text_halign = text.align_right)
+
+    table.cell(tb, 0, 2, "Friction", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 2, fmt(c, format.mintick) + "   " +
+         fmt(c / a * 100.0, "0.0") + " % du stop",
+         text_color = colInk, text_size = tSize, text_halign = text.align_right)
+
+    table.cell(tb, 0, 3, "Temps de marché", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 3, fmt(tauMin, "0") + " min  /  " + fmt(remainMin, "0") + " min",
+         text_color = tientDansLaSeance ? colInk : colBad, text_size = tSize,
+         text_halign = text.align_right)
+
+    table.cell(tb, 0, 4, "Seuil µ*", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 4, fmt(muStar, "0.###") + " / h",
+         text_color = colKey, text_size = tSize, text_halign = text.align_right)
+
+    table.cell(tb, 0, 5, "Exigence", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 5, fmt(exigSigma * 100.0, "0.0") + " % d'un σ   " +
+         fmt(bits * 100.0, "0.00") + " % d'un bit",
+         text_color = colKey, text_size = tSize, text_halign = text.align_right)
+
+    table.cell(tb, 0, 6, "Échantillon", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 6, fmt(nTrades, "0") + " décisions   " +
+         fmt(nYears, "0.0") + " ans",
+         text_color = colInk, text_size = tSize, text_halign = text.align_right)
+
+    table.cell(tb, 0, 7, "Dérive observée", text_color = colDim, text_size = tSize,
+         text_halign = text.align_left)
+    table.cell(tb, 1, 7, fmt(muObs, "0.###") + " / h   z " + fmt(zObs, "+0.0"),
+         text_color = deriveSignif ? colKey : colDim, text_size = tSize,
+         text_halign = text.align_right)
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Une seule alerte — le plan gratuit n'en autorise qu'une active.
+//
+//  Elle ne dit pas d'acheter. Elle dit que la derive realisee depuis
+//  l'ancrage depasse ce que la geometrie declaree exige, **et** que cet ecart
+//  ne s'explique plus par le hasard seul. Les deux conditions ensemble,
+//  jamais l'une sans l'autre.
+// ═══════════════════════════════════════════════════════════════════════════
+
+alertcondition(deriveSuffit and deriveSignif, "Alp-1 · dérive au-dessus du seuil",
+     "La dérive réalisée dépasse le seuil de rentabilité de la géométrie déclarée, et sort du bruit.")
