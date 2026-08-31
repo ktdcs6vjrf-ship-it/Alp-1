@@ -60,9 +60,9 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/82bd1a42-c5c7-4a2e-9acd-11a5aba57288
-  (précédents : 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc,
-  e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/d1e5eca9-d493-4d06-b7b7-288339f7c3b3
+  (précédents : 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005,
+  4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -468,6 +468,31 @@ c'est le balayage étendu à ce troisième build qui l'a montré. Le balayage
 d'occupation ne laisse que des faux positifs connus (les six cadres de terminal
 de la figure 7, les lettres du profil TPO, les niveaux de stop de la figure de
 Roll).
+
+## La direction artistique du document nº 3
+
+Trois règles, et elles se tiennent.
+
+**Un seul accent, et c'est celui des planches.** `--accent: #9B8CFF` est
+**exactement** le `--s1` de `figcss.py` en fond sombre. Il porte le numéro
+d'une partie, celui d'une section, celui d'une table ou d'une figure — et
+rien d'autre. Le document et ses figures cessent ainsi d'être deux objets :
+le numéro « Figure 6 » a la teinte de la courbe qu'il commente. Jamais plus
+de trois occurrences par page ; une couleur qui se répète cesse d'accentuer.
+
+**Un lever de partie est une respiration, pas un titre plus gros.** La barre
+pleine largeur qui l'ouvrait le *barrait* — elle fermait la page précédente
+au lieu d'ouvrir la suivante. Un filet court de 2,6 rem en accent fait
+l'inverse. Le titre de partie est à 2,35 rem contre 1,46 pour une section :
+il faut **entendre la marche**, sinon seize parties et soixante-six sections
+se lisent comme une seule masse.
+
+**La marge n'est pas une perte.** Au-delà de 74 rem, le numéro de section
+descend dans le blanc de gauche, en chasse fixe et en accent : la ligne de
+titre se libère. En dessous il revient dans le fil, ce qui évite tout
+débordement. Le chapeau d'une partie est en italique, **non justifié et non
+césuré** : trois lignes coupées sur un motif de césure se lisent comme un
+accident de mise en page.
 
 ## Commandes
 
