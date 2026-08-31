@@ -21,14 +21,15 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (61 sections en quinze
-parties, 34 tables, 58 figures dont quatorze surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+**ALP nº 3** — `docs/prouver-un-jugement.html` (66 sections en seize
+parties, 41 tables, 63 figures dont seize surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
 lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
 `report10/11/13/14.py` + `sorties.py` + `concepts.py` + `setups.py` +
 `figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
-`robustesse.py` + `figrobu.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` →
+`discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -59,8 +60,9 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/dcb59260-5cd3-4b2d-a757-db38c2a3623d
-  (précédents : d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/601106cf-377d-4968-bb9e-edb413b64236
+  (précédents : dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16,
+  c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -122,6 +124,24 @@ enterrés : l'appariement antithétique est interdit sur une loi asymétrique
 (nier un incrément change sa loi), et le seuil de verdict est corrigé de
 Bonferroni sur les douze verdicts de la campagne, faute de quoi une ligne
 portait « réfutée » sur un faux positif attendu 46 % du temps.
+
+Sa **partie XV** applique le protocole à une affirmation venue **du dehors** —
+`overnight.py` + `figon.py`. Sept nombres publiés sur les extrêmes de la
+session 18:00–09:30 du NQ, dont le fameux « ouverture au-dessus du milieu →
+le haut casse en premier 76,2 % ». Le mécanisme tient en une phrase :
+l'ouverture de 9:30 **est** le dernier point de la session overnight, et le
+point terminal d'une marche tombe près d'un bord de son propre range (loi de
+l'arc sinus) — distance médiane **20,9 %** contre 79,1 % à l'autre bord. La loi
+d'arrêt rend alors le 76 % sans qu'aucune donnée de marché n'entre.
+
+Trois pièges y sont enterrés. Le modèle nul a deux paramètres non observables,
+**calibrés sur les deux nombres sans direction** (les deux côtés cassés, aucun
+cassé) pour qu'il ne reste aucun degré de liberté sur les nombres de direction.
+Une hypothèse séduisante — la dispersion de volatilité comblerait le résidu —
+est **réfutée par la mesure et publiée comme telle**. Et le verdict bascule sur
+un **dénominateur que la publication n'écrit pas** : selon que les 76 % portent
+sur toutes les séances ou sur les seules qui cassent, l'espérance vaut +0,0439
+ou −0,0202 R. Le taux d'équilibre de cette géométrie vaut **77,4 %**.
 
 ## Carte des modules
 
@@ -193,6 +213,13 @@ Rendu
   et sa prédiction échoue tant qu'on prend le mauvais ; et la simulation tourne
   au stop de 0,150 %, parce qu'à 0,6 point une minute de bruit vaut deux fois
   le stop et qu'il n'y a alors *aucun* concept de sortie à discuter.
+- `overnight.py` — **une affirmation venue du dehors, passée au protocole.**
+  `ANNONCES` (les sept nombres publiés, cités une seule fois), `nuits()` (la
+  position d'ouverture, grandeur **sans dimension**), `profil()` (pic de
+  variance d'ouverture, à variance totale identique), `calibrer()` sur
+  `CALIBRAGE` — et un test exige que les cibles de calibration ne portent
+  aucune direction. `taux_equilibre()` et `esperance_au_taux()` permettent de
+  **supposer le chiffre publié vrai** plutôt que d'avoir à le croire.
 - `robustesse.py` — **l'invariance sous six lois de prix.** `lois()`,
   `moments()`, `queues()`, `mesurer(drift)`, `Z_SEUIL` (Bonferroni calculé),
   `cellule()` et les deux surfaces. Le champ `symetrique` décide de
@@ -212,7 +239,7 @@ Rendu
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — quatorze modules, chacun expose `render_all()`. `figcat.py` porte
+- `fig*.py` — quinze modules, chacun expose `render_all()`. `figcat.py` porte
   les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
@@ -417,7 +444,8 @@ Roll).
 ## Commandes
 
 ```
-python main.py --tests      # 1004 tests (compter ~40 min, --wp, setups et robustesse sont lents)
+python main.py --tests      # 1035 tests (compter ~45 min ; --wp, setups,
+                            # robustesse et overnight sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html

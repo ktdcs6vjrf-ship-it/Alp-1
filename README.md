@@ -15,7 +15,7 @@ Le document complet :
 > *Série ALP, nº 3.* JEL : C12, C44, C52, G11, G14.
 
 [`docs/prouver-un-jugement.html`](docs/prouver-un-jugement.html) —
-61 sections en quinze parties, 34 tables, 58 figures.
+66 sections en seize parties, 41 tables, 63 figures.
 
 Il part d'une question — combien de décisions faut-il pour établir la valeur
 d'un jugement qui n'existe pas sous forme écrite ? — et la retourne. Le
@@ -980,7 +980,7 @@ python main.py --paper            # reconstruit docs/alp1-paper.html
 python main.py --paper2           # reconstruit docs/alp2-paper.html
 python main.py --disc             # journal de décision, lois nulles, attribution
 python main.py --discpaper        # reconstruit docs/prouver-un-jugement.html
-python main.py --tests            # 1004 tests unitaires du noyau
+python main.py --tests            # 1035 tests unitaires du noyau
 ```
 
 Aucune dépendance : stdlib uniquement, Python 3.11+.

@@ -695,8 +695,17 @@
           <li><a href="#s-systematique">Systématique et discrétionnaire, alpha et bêta</a></li>
         </ol>
       </li>
-      <li><span class="pt">Quinzième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Quinzième partie — Une affirmation venue du dehors</span>
         <ol start="58">
+          <li><a href="#s-on-affirmation">Sept nombres, et ce qu'ils prétendent</a></li>
+          <li><a href="#s-on-position">Où le prix ouvre dans le range qu'il vient de creuser</a></li>
+          <li><a href="#s-on-conditionnel">Le taux annoncé est la distance, lue à l'envers</a></li>
+          <li><a href="#s-on-residu">Ce qui survit, et ce qu'une hypothèse lui donne</a></li>
+          <li><a href="#s-on-verdict">Le dénominateur que personne n'écrit</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Seizième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="63">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -1724,6 +1733,96 @@
 
   <div class="part">
     <span class="lab">Quinzième partie</span>
+    <h2>Une affirmation venue du dehors</h2>
+    <p>Tout ce qui précède a été construit ici. Cette partie fait l'inverse&nbsp;: elle prend une affirmation à large diffusion, chiffrée et vérifiable, et lui applique le protocole sans rien y ajouter. C'est le seul test qui vaille pour une méthodologie — elle doit trancher un cas qu'elle n'a pas choisi.</p>
+  </div>
+
+  <h2 id="s-on-affirmation">Sept nombres, et ce qu'ils prétendent</h2>
+
+  <p>Une publication à large diffusion avance sept nombres sur le contrat NQ, tirés de {{o_annees}}&nbsp;ans et {{o_sessions}}&nbsp;séances. On les reprend ici tels quels, comme des <em>données à expliquer</em> et non comme des résultats à défendre&nbsp;: l'un des deux extrêmes de la session 18:00–09:30 est franchi pendant les heures régulières sur {{o_ann_un}}&nbsp;% des séances&nbsp;; les deux sur {{o_ann_deux}}&nbsp;%&nbsp;; aucun sur {{o_ann_aucun}}&nbsp;%. Puis vient l'affirmation qui porte le tout&nbsp;: une ouverture <strong>au-dessus</strong> du milieu du range annonce que le haut cassera en premier {{o_ann_haut}}&nbsp;% du temps, une ouverture au-dessous que le bas cassera en premier {{o_ann_bas}}&nbsp;%. Enfin le timing&nbsp;: première cassure médiane {{o_ann_median}}&nbsp;minutes après 9:30, et {{o_ann_dix}}&nbsp;% des séances ont cassé un côté avant 10:00.</p>
+
+  <p>La conclusion qui les accompagne est qu'on peut «&nbsp;prédire quel niveau sera touché en premier&nbsp;», et s'en servir de biais quand on n'en a pas.</p>
+
+  <p>La question posée ici n'est jamais «&nbsp;ces chiffres sont-ils vrais&nbsp;?&nbsp;» — ils le sont probablement, et rien de ce qui suit ne les conteste. C'est toujours celle de la section&nbsp;<a href="#s-catalogue">26</a>&nbsp;: <strong>à quelle fréquence ces chiffres apparaissent-ils sous un prix sans dérive&nbsp;?</strong></p>
+
+{{TABLE:on_annonces}}
+
+  <p>Le modèle nul a deux paramètres, et il faut dire tout de suite comment ils sont fixés, faute de quoi l'exercice ne prouverait rien. Ils sont calibrés sur les <em>deux nombres qui ne portent aucune direction</em> — la part des séances qui cassent les deux côtés, celle qui n'en casse aucun. Il ne reste donc <strong>aucun degré de liberté</strong> pour les nombres de direction, qui sont prédits et non ajustés. C'est la règle&nbsp;6 du dépôt&nbsp;: un paramètre déclaré n'est jamais dérivé de ce qu'il sert à évaluer.</p>
+
+  <h2 id="s-on-position">Où le prix ouvre dans le range qu'il vient de creuser</h2>
+
+  <p>Avant toute simulation, une remarque de structure décide de l'essentiel. L'ouverture de 9:30 <em>est</em> le dernier point de la session overnight, et le range overnight est celui de cette même session. La position de l'ouverture dans le range est donc la position du point terminal d'une marche dans son propre range&nbsp;: une grandeur <strong>sans dimension</strong>, qui ne dépend d'aucune volatilité, d'aucun instrument et d'aucune époque.</p>
+
+  <p>Sa loi n'est pas uniforme.</p>
+
+{{TABLE:on_position}}
+
+{{FIGURE:onposition|La densité de la position d'ouverture dans le range overnight, et la fréquence cumulée de la distance au bord le plus proche. Les deux cadres sont obtenus sans aucune donnée de marché.}}
+
+  <p>Elle est <strong>en U</strong>&nbsp;: les bords chargés, le milieu creusé. La raison est classique et se dit en une phrase — l'instant où une marche atteint son maximum suit une loi de l'arc sinus, qui charge les extrémités du trajet, si bien qu'un des deux extrêmes du range est très souvent posé près de la fin. La conséquence est chiffrée&nbsp;: la distance médiane de l'ouverture au bord le plus proche vaut {{o_proche}}&nbsp;% du range, contre {{o_loin}}&nbsp;% à l'autre bord, et {{o_extremes}}&nbsp;% des séances ouvrent dans le dernier sixième d'un bord.</p>
+
+  <p>Un rapport de un à quatre entre les deux distances. <strong>Le soixante-seize pour cent est déjà là</strong>, et aucune donnée de marché n'a encore été consultée.</p>
+
+  <h2 id="s-on-conditionnel">Le taux annoncé est la distance, lue à l'envers</h2>
+
+  <p>Il ne reste qu'à appliquer le théorème qui fonde toute la série. Sous un prix sans dérive, la probabilité de toucher une barrière avant l'autre vaut le rapport des distances inverses. À distance médiane, le bord proche est à un cinquième et le bord opposé à quatre&nbsp;: la probabilité de toucher le proche en premier vaut donc quatre cinquièmes.</p>
+
+{{TABLE:on_conditionnel}}
+
+{{FIGURE:onconditionnel|La probabilité mesurée de toucher le bord proche en premier, posée sur le théorème d'arrêt optionnel. La droite n'est pas un ajustement&nbsp;: c'est la loi.}}
+
+  <p>La colonne de droite de la table n'est pas une simulation, c'est le théorème&nbsp;; la colonne du milieu la retrouve. <strong>Il n'y a donc rien à prédire</strong>&nbsp;: la probabilité annoncée <em>est</em> la distance, lue à l'envers. Le décrochage des dernières lignes tient à la séance, qui borne le problème — au-delà d'un cinquième de range, une part des séances ne touche plus rien avant la clôture, et c'est le seul endroit où la durée de séance entre dans le calcul.</p>
+
+  <h3>Le seul nombre que le bruit ne rend pas</h3>
+
+  <p>Un nombre sur sept résiste, et il faut le dire plutôt que de le lisser&nbsp;: le timing. Une marche à volatilité constante casse son premier bord vers la {{o_plat_median}}<sup>e</sup> minute quand la publication en annonce {{o_ann_median}}. Ce n'est pas un défaut du modèle nul, c'est une propriété réelle et connue du marché — la variance de la première demi-heure.</p>
+
+{{TABLE:on_horloge}}
+
+  <p>Le profil déclaré concentre {{o_part_variance}}&nbsp;% de la variance de la séance sur la première demi-heure, <strong>à variance totale identique</strong>&nbsp;: rien n'est ajouté, tout est déplacé. Il rend le timing — {{o_pic_median}}&nbsp;minutes contre {{o_ann_median}} annoncées, {{o_pic_dix}}&nbsp;% avant 10:00 contre {{o_ann_dix}}. Et il ne déplace ni la direction ni l'espérance, ce qui est l'essentiel&nbsp;: <em>la variance de l'ouverture dit quand la cassure arrive, jamais de quel côté.</em></p>
+
+  <h2 id="s-on-residu">Ce qui survit, et ce qu'une hypothèse lui donne</h2>
+
+  <p>Il faut maintenant énoncer ce que la loi nulle ne rend pas, sans l'arrondir. Sur la convention qui compte toutes les séances, elle place le conditionnel à {{o_nul_moy}}&nbsp;% là où la publication annonce {{o_ann_moy}}&nbsp;%. <strong>{{o_residu}}&nbsp;points survivent.</strong></p>
+
+  <p>Une hypothèse séduisante les explique mal, et le dépôt publie sa réfutation plutôt que de la taire. On pourrait croire que la dispersion de volatilité d'une séance à l'autre comble l'écart, puisqu'elle corrige la part des séances qui ne cassent rien — c'était la prédiction faite avant de mesurer. Elle l'aggrave&nbsp;: en ajoutant des séances mortes, elle retire du conditionnel précisément les jours où le bord proche aurait été touché.</p>
+
+  <p>Deux choses bornent alors ce résidu, et la seconde le tue.</p>
+
+{{TABLE:on_sensibilite}}
+
+{{FIGURE:onboite|Le conditionnel prédit par la loi nulle sur toute la boîte des deux paramètres non observables. Le relief y parcourt une amplitude comparable à l'effet revendiqué.}}
+
+  <p><strong>La première est un paramètre que personne n'observe.</strong> Sur la boîte plausible du rapport de volatilité nuit/jour et de la dispersion de séance, la prédiction nulle se promène de {{o_boite_lo}}&nbsp;% à {{o_boite_hi}}&nbsp;% — une amplitude de {{o_boite_amplitude}}&nbsp;points, quand le résidu en vaut {{o_residu}}. Le dépôt connaît déjà cette figure&nbsp;: la fréquence nulle d'un déséquilibre de footprint dépend d'une taille de grappe que personne n'observe, celle d'un extrême pauvre dépend d'une hauteur de rangée qui est un réglage d'affichage. <em>Un résidu plus petit que l'amplitude de son hypothèse n'est pas un résultat.</em></p>
+
+  <h2 id="s-on-verdict">Le dénominateur que personne n'écrit</h2>
+
+  <p><strong>La seconde n'a pas besoin du résidu</strong>, et c'est elle qui tranche. La géométrie que l'affirmation impose — viser le bord proche, poser le stop sur le bord opposé — a un taux de réussite d'équilibre, et il se calcule sans rien simuler.</p>
+
+{{TABLE:on_esperance}}
+
+{{FIGURE:onlecture|L'espérance par décision en fonction du taux de réussite. La droite coupe zéro au taux que la géométrie exige&nbsp;; les trois points sont la loi nulle et les deux lectures du chiffre publié.}}
+
+  <p>Le taux d'équilibre vaut {{o_seuil}}&nbsp;%. Viser un bord à un cinquième du range en risquant les quatre autres cinquièmes impose un rapport gain-risque de un pour {{o_rapport}}, et un tel rapport exige de gagner quatre fois sur cinq avant même de payer la friction. <strong>Le taux de réussite n'a pas été volé&nbsp;: il a été acheté.</strong></p>
+
+  <p>Et c'est ici qu'apparaît le point le plus dérangeant de toute l'analyse. La publication écrit «&nbsp;ouverture au-dessus du milieu, le haut casse en premier {{o_ann_haut}}&nbsp;%&nbsp;» <em>sans dire de quoi ce pour-cent est la part</em>. Deux dénominateurs sont défendables&nbsp;: toutes les séances de ce côté, ou les seules qui cassent quelque chose.</p>
+
+{{TABLE:on_lecture}}
+
+  <p>L'écart entre les deux lectures vaut {{o_ecart_lectures}}&nbsp;points de taux — <strong>plus que l'effet revendiqué</strong> — et il change le signe du verdict. Sous la lecture&nbsp;B, la loi nulle rend le chiffre publié à {{o_lec_b_residu}}&nbsp;point près et l'espérance vaut {{o_lec_b_esp}}&nbsp;R&nbsp;: il n'y a alors strictement rien à expliquer, et la stratégie perd. Sous la lecture&nbsp;A, il reste {{o_lec_a_residu}}&nbsp;points de résidu et l'espérance vaut {{o_lec_a_esp}}&nbsp;R&nbsp;: la stratégie gagne, mais le résidu est plus petit que l'amplitude que la boîte des paramètres lui donne déjà.</p>
+
+{{FIGURE:onplan|L'espérance sur le plan du taux de réussite et du rapport gain-risque, le sol posé à l'espérance nulle. Aucune propriété du marché n'entre dans ce relief.}}
+
+  <p>Le plan de jeu équitable range tout cela d'un coup, et il n'a que deux axes. Le même {{o_ann_moy}}&nbsp;% est excellent sur un rapport de un pour un et perdant sur un rapport de un pour {{o_rapport}}. <em>La publication donne le taux et tait le rapport.</em></p>
+
+  <h3>Ce qu'il faut en retenir</h3>
+
+  <p>L'affirmation est <strong>vraie et sans avantage</strong>, et les deux mots comptent. Six de ses sept nombres sont rendus par une marche sans dérive à deux paramètres déclarés. Le septième — le timing — porte une vraie propriété de marché, la variance de l'ouverture, qui dit quand et jamais dans quel sens. Le conditionnel qui fait tout l'intérêt de la publication est la loi d'arrêt optionnel appliquée à une distance que la structure du problème rend petite d'un côté et grande de l'autre.</p>
+
+  <p>Reste la seule question qui décide d'un compte&nbsp;: ce taux paie-t-il la géométrie qu'il impose&nbsp;? Sous une des deux lectures possibles, non — et sous l'autre, la marge est plus mince que l'incertitude sur une hypothèse invérifiable. <strong>Un taux de réussite ne s'interprète jamais sans la géométrie qui l'a produit</strong>, et c'est le résultat structurant du document nº&nbsp;1, retrouvé sur un cas d'espèce que personne n'avait construit pour lui.</p>
+
+  <div class="part">
+    <span class="lab">Seizième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

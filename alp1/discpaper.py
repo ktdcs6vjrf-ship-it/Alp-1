@@ -18,9 +18,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import (concepts, figcat, figdisc, figflux, figrobu, figsetup,
-               figsortie, horloge, report10, report11, report13, report14,
-               robustesse, setups, sorties)
+from . import (concepts, figcat, figdisc, figflux, figon, figrobu, figsetup,
+               figsortie, horloge, overnight, report10, report11, report13,
+               report14, robustesse, setups, sorties)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
 from .report import Table
@@ -45,7 +45,8 @@ def values() -> dict[str, str]:
     fusion.update(report11.values())
     for autre in (report13.values(), report14.values(),
                   sorties.values(), horloge.values(), concepts.values(),
-                  setups.values(), robustesse.values()):
+                  setups.values(), robustesse.values(),
+                  overnight.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -62,7 +63,7 @@ def tables() -> dict[str, Table]:
     for autre in (report13.all_tables(), report14.all_tables(),
                   sorties.all_tables(), horloge.all_tables(),
                   concepts.all_tables(), setups.all_tables(),
-                  robustesse.all_tables()):
+                  robustesse.all_tables(), overnight.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")
@@ -75,12 +76,13 @@ def figures() -> dict[str, str]:
 
     `figflux` a été ajouté pour la partie sur le flux d'ordres, `figsortie`
     pour celle sur les concepts de sortie, `figcat` pour le catalogue,
-    `figsetup` pour la grammaire du setup et `figrobu` pour la partie qui
-    éprouve le théorème sous six lois ; deux clés identiques y feraient
+    `figsetup` pour la grammaire du setup, `figrobu` pour la partie qui
+    éprouve le théorème sous six lois et `figon` pour l'affirmation venue du
+    dehors ; deux clés identiques y feraient
     disparaître une figure en silence.
     """
     fusion = dict(figdisc.render_all())
-    for module in (figflux, figsortie, figcat, figsetup, figrobu):
+    for module in (figflux, figsortie, figcat, figsetup, figrobu, figon):
         rendu = module.render_all()
         heurts = set(fusion) & set(rendu)
         if heurts:
