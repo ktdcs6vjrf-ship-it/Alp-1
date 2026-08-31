@@ -91,7 +91,7 @@ tPos = posName == "Haut gauche" ? position.top_left :
        posName == "Bas gauche"  ? position.bottom_left : position.top_right
 
 tSize = sizeName == "Minuscule" ? size.tiny :
-        sizeName == "Normal"    ? size.normal : size.small
+      sizeName == "Normal" ? size.normal : size.small
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  La geometrie, en points de prix
@@ -99,8 +99,8 @@ tSize = sizeName == "Minuscule" ? size.tiny :
 
 atrVal = ta.atr(atrLen)
 
-a = stopMode == "Ticks"     ? stopVal * syminfo.mintick :
-    stopMode == "% du prix" ? stopVal / 100.0 * close : stopVal * atrVal
+a = stopMode == "Ticks" ? stopVal * syminfo.mintick :
+      stopMode == "% du prix" ? stopVal / 100.0 * close : stopVal * atrVal
 
 b = rr * a
 c = (spreadTk + commTk) * syminfo.mintick + commPct / 100.0 * close
@@ -233,7 +233,7 @@ if showRail and barstate.islast
 //  Le panneau
 // ═══════════════════════════════════════════════════════════════════════════
 
-fmt(float v, string f) => na(v) ? "—" : str.tostring(v, f)
+fmt(float v, simple string f) => na(v) ? "—" : str.tostring(v, f)
 
 var table tb = table.new(tPos, 2, 8, bgcolor = color.new(#0E0E12, 10),
      border_color = color.new(#2A2A34, 30), border_width = 1,
