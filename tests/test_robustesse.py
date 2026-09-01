@@ -60,9 +60,20 @@ class TestLesSixLois(unittest.TestCase):
         self.assertGreater(self.moments["plafonnee"].asymetrie, 1.8)
 
     def test_le_plancher_est_exact(self):
-        """« La baisse est plafonnée » : à un écart-type, jamais au-delà."""
-        self.assertAlmostEqual(self.moments["plafonnee"].borne_basse, -1.0,
-                               delta=1e-6)
+        """« La baisse est plafonnée » : à un écart-type, jamais au-delà.
+
+        Deux assertions et pas une, parce qu'elles ne disent pas la même
+        chose. La première est la propriété de la loi et ne souffre aucune
+        tolérance : **rien** ne passe sous le plancher. La seconde dit que le
+        plancher est atteint, et elle porte sur le minimum d'un échantillon,
+        donc sur une quantité qui s'approche de la borne sans jamais l'égaler.
+        Elle avait été écrite à 10⁻⁶, ce qui la faisait dépendre du tirage
+        d'un seul point — et le tirage n'était pas reproductible, voir
+        `robustesse._graine`.
+        """
+        borne = self.moments["plafonnee"].borne_basse
+        self.assertGreaterEqual(borne, -1.0)
+        self.assertAlmostEqual(borne, -1.0, delta=1e-4)
 
     def test_les_queues_epaisses_le_sont(self):
         for cle in ("student5", "student3", "melange", "merton"):

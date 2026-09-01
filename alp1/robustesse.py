@@ -78,6 +78,7 @@ l'interprète à sa façon. Les écarts entre lois sont donc appariés à la sou
 from __future__ import annotations
 
 import math
+import zlib
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -242,6 +243,20 @@ class Loi:
     par_seance: bool = False
 
 
+def _graine(cle: str) -> int:
+    """La graine d'une loi, dérivée de son nom **de façon reproductible**.
+
+    Le `hash` intégré de Python est randomisé par processus depuis la 3.3 :
+    deux exécutions du dépôt en tiraient deux graines différentes, donc deux
+    jeux de chiffres différents pour toute la partie XIV. Rien ne le
+    signalait — les nombres restaient plausibles et les tolérances des tests
+    les absorbaient — jusqu'à ce qu'un contrôle de borne à 10⁻⁶ tombe d'un
+    côté puis de l'autre. Un CRC de la chaîne rend la même valeur partout et
+    toujours, ce qu'exige la règle du dépôt sur l'aléa.
+    """
+    return SEED ^ (zlib.crc32(cle.encode("utf-8")) & 0xFFFF)
+
+
 def lois() -> tuple[Loi, ...]:
     return (
         Loi("gauss", "Gaussienne",
@@ -289,7 +304,7 @@ def moments(n: int = N_MOMENTS) -> tuple[Moments, ...]:
     """
     out = []
     for loi in lois():
-        rng = Rng(SEED ^ (hash(loi.cle) & 0xFFFF))
+        rng = Rng(_graine(loi.cle))
         s1 = s2 = s3 = s4 = 0.0
         pire = math.inf
         etat: dict = {}
@@ -327,7 +342,7 @@ def queues(n: int = N_MOMENTS) -> dict[str, tuple[tuple[float, float, float], ..
     """
     out: dict[str, tuple[tuple[float, float, float], ...]] = {}
     for loi in lois():
-        rng = Rng(SEED ^ (hash(loi.cle) & 0xFFFF))
+        rng = Rng(_graine(loi.cle))
         bas = [0] * len(SEUILS_QUEUE)
         haut = [0] * len(SEUILS_QUEUE)
         etat: dict = {}

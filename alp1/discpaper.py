@@ -19,9 +19,9 @@ import re
 from pathlib import Path
 
 from . import (concepts, emprunts, figcat, figdisc, figemp, figfds, figflux,
-               figon, figrobu, figsetup, figsortie, fonds, horloge, overnight,
-               report10, report11, report13, report14, robustesse, setups,
-               sorties)
+               figon, figrev, figrobu, figsetup, figsortie, fonds, horloge,
+               overnight, report10, report11, report13, report14, revue,
+               robustesse, setups, sorties)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
 from .report import Table
@@ -48,7 +48,7 @@ def values() -> dict[str, str]:
                   sorties.values(), horloge.values(), concepts.values(),
                   setups.values(), robustesse.values(),
                   overnight.values(), emprunts.values(),
-                  fonds.values()):
+                  fonds.values(), revue.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -66,7 +66,8 @@ def tables() -> dict[str, Table]:
                   sorties.all_tables(), horloge.all_tables(),
                   concepts.all_tables(), setups.all_tables(),
                   robustesse.all_tables(), overnight.all_tables(),
-                  emprunts.all_tables(), fonds.all_tables()):
+                  emprunts.all_tables(), fonds.all_tables(),
+                  revue.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")
@@ -81,13 +82,14 @@ def figures() -> dict[str, str]:
     pour celle sur les concepts de sortie, `figcat` pour le catalogue,
     `figsetup` pour la grammaire du setup, `figrobu` pour la partie qui
     éprouve le théorème sous six lois, `figon` pour l'affirmation venue du
-    dehors, `figemp` pour les cinq disciplines empruntées et `figfds` pour
-    la partie qui regarde un fonds ; deux clés identiques y feraient
+    dehors, `figemp` pour les cinq disciplines empruntées, `figfds` pour
+    la partie qui regarde un fonds et `figrev` pour la revue de deux
+    documents extérieurs ; deux clés identiques y feraient
     disparaître une figure en silence.
     """
     fusion = dict(figdisc.render_all())
     for module in (figflux, figsortie, figcat, figsetup, figrobu, figon,
-                   figemp, figfds):
+                   figemp, figfds, figrev):
         rendu = module.render_all()
         heurts = set(fusion) & set(rendu)
         if heurts:

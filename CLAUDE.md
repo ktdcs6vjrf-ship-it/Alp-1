@@ -21,15 +21,16 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (80 sections en dix-huit
-parties, 65 tables, 88 figures dont vingt-six surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+**ALP nº 3** — `docs/prouver-un-jugement.html` (86 sections en dix-neuf
+parties, 74 tables, 98 figures dont trente surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
 lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
 `report10/11/13/14.py` + `sorties.py` + `concepts.py` + `setups.py` +
 `figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
-`emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
+`figrev.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -60,9 +61,9 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/a990ef0e-c959-4839-8399-f35217e115be
-  (précédents : c2cbc5ee, d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b,
-  99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/614afa35-4f3c-4ea4-914e-1ce60096f0df
+  (précédents : 213dccda, a990ef0e, c2cbc5ee, d1e5eca9, 82bd1a42, 601106cf,
+  dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -185,6 +186,45 @@ qui reprendrait ce gain vaut 0,45 pt/h, **au-dessous du plancher plausible**,
 donc invisible sans un protocole écrit d'avance. Verdict calculé : quatre des
 cinq pratiques transfèrent, aucune ne touche à la direction.
 
+Sa **partie XVIII** applique le protocole à deux résumés de performance venus
+du dehors — `revue.py` + `figrev.py`. Aucune donnée, aucun code : rien que les
+nombres publiés. Quatre questions, et elles se posent à n'importe quelle note.
+① **La redondance interne** : les métriques d'un résumé se déduisent les unes
+des autres, et sept recalculs se referment. Le plus instructif ne coûte rien à
+personne — le rapport Sortino sur Sharpe tombe à 0,1 % de `√2`, la valeur
+exacte d'une loi **symétrique**, donc *le Sortino publié n'ajoute rien au
+Sharpe publié* ; et inverser l'alpha de Jensen sort du document un rendement
+de marché que personne n'a besoin du document pour vérifier. ② **La bande du
+Calmar** : son dénominateur est un maximum, et il n'y a qu'un seul maximum
+dans une série quelle que soit sa longueur. Sous la loi la plus favorable qui
+soit — rendements indépendants et gaussiens, donc une **borne inférieure** de
+l'incertitude — la bande à 90 % mesure 139 % de sa médiane, et l'amélioration
+de 0,22 point que le document revendique en occupe 26 %. Elle demanderait 61
+ans pour sortir du bruit. ③ **La corrélation de Pearson ne voit pas ce qui
+compte** : un krach commun de huit écarts-types tous les dix ans n'induit que
+ρ = 0,025, quand 4 964 séances n'établissent que |ρ| ≥ 0,040 — la limite de
+visibilité est à un krach partagé tous les 6,1 ans. Sur le maximum de perte,
+cette dépendance coûte quelques points ; sur la **pire séance**, un facteur
+2,98. *La diversification protège toutes les séances sauf celle qui compte.*
+④ **Ce qui n'est pas publié décide** : deux Calmar contraignent la réduction
+de maximum et le budget de prime à un lieu d'une dimension, que la partie
+parcourt ; et la capacité d'une stratégie intraday décroît comme le **carré**
+de la rotation, jusqu'à s'annuler au-delà de 45 aller-retours par séance, un
+nombre qu'aucun des deux documents n'écrit. Verdict calculé : les cinq
+lectures se récupèrent sans les données, et **aucune ne donne un avantage
+négociable** — ce qui se récupère est une méthode de lecture, jamais une
+direction.
+
+Deux pièges y sont enterrés. Un ajustement postulé — la demi-largeur de la
+bande décroît « en racine de l'horizon, la vitesse de toute moyenne » — est
+**réfuté par la mesure** : l'exposant vaut 0,61, et la racine manque les
+points simulés de 19 %. L'exposant est donc ajusté, coefficient et puissance,
+et un test refuse le demi. Et le balayage d'horizons tenait dix minutes avant
+qu'on remarque que le maximum de perte des `T` premières années est une
+statistique de **préfixe** : une seule simulation à l'horizon le plus long,
+relue à ses jalons, rend exactement le même résultat en vingt secondes — et
+aligne les colonnes sur le même aléa, ce qu'on voulait voir de toute façon.
+
 ## Carte des modules
 
 Mesure et géométrie
@@ -293,6 +333,22 @@ Rendu
   quantité est l'erreur de budget la plus fréquente. Huit tables, quatre
   surfaces.
 - `figfds.py` — les dix planches de la partie XVII, dont quatre reliefs.
+- `revue.py` — **deux documents venus du dehors, et rien que leurs nombres.**
+  `DOC_A` / `DOC_B` (les deux jeux publiés, recopiés une seule fois), et
+  quatre familles de mesures. Les identités de cohérence (`vol_implicite`,
+  `marche_implicite`, `n_implicite` — un couple corrélation/statistique publie
+  la taille d'échantillon sans le vouloir, et elle tombe sur la période
+  annoncée). La bande d'échantillonnage du Calmar : `tirages`, `bande_calmar`,
+  `bandes_par_prefixe` (l'astuce du préfixe, voir plus haut), `loi_de_bande`
+  qui **ajuste** l'exposant au lieu de le postuler, `annees_pour_ecart`. La
+  dépendance de queue : `rho_du_saut`, `n_pour_rho` / `rho_detectable` par
+  Fisher, `melange` où le saut est **compensé** — sans quoi la dépendance
+  changerait aussi le rendement — et `taille_invisible`, le nombre qui manque
+  à toute note concluant à l'indépendance. Le portage : `cout_admissible`,
+  `marge_de_cagr`, `facteur_fatal = 1 + marge/budget`, qui **décroît** avec le
+  budget. La capacité : `capacite_pure` en `ν⁻²` exact, `capacite` avec la
+  friction fixe, `rotation_fatale`. Neuf tables, quatre surfaces.
+- `figrev.py` — les dix planches de la partie XVIII, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
@@ -335,6 +391,25 @@ Hors du noyau Python
   chaîne absente du fichier. Resynchroniser avant de tirer une conclusion.
 
 ## Les pièges déjà tombés dedans
+
+### Le `hash` intégré n'est pas une graine
+`robustesse.moments` et `robustesse.queues` amorçaient leur générateur sur
+`SEED ^ (hash(loi.cle) & 0xFFFF)`. Le `hash` d'une chaîne est **randomisé par
+processus** depuis Python 3.3 : deux exécutions du dépôt tiraient deux jeux de
+chiffres différents pour toute la partie XIV, et le README qui promet « deux
+exécutions produisent le même document, au bit près » était faux de cette
+partie. Rien ne le signalait — les nombres restaient plausibles et les
+tolérances des tests les absorbaient — jusqu'à ce qu'un contrôle de borne à
+10⁻⁶ tombe d'un côté puis de l'autre sur deux exécutions de la même suite.
+`_graine` prend maintenant un CRC de la chaîne. **Toute graine dérivée d'un
+nom doit passer par un digest explicite** ; `hash`, `id` et l'ordre d'un `set`
+n'en sont pas.
+
+Le test qui l'a trouvé était lui-même mal écrit, et c'est la seconde leçon :
+il comparait le minimum d'un échantillon à la borne de la loi avec une
+tolérance de 10⁻⁶, donc il dépendait du tirage d'un seul point. Il porte
+maintenant deux assertions distinctes — rien ne passe sous le plancher, sans
+tolérance aucune ; et le plancher est approché, à 10⁻⁴.
 
 ### La circularité — le pire, et il a survécu longtemps
 `quant.reference_drift()` vaut `DRIFT_MULTIPLE × c/E[τ]`, soit **deux fois le
@@ -475,6 +550,15 @@ tests les refusent. Le second a été trouvé par `test_discpaper` après coup,
 sur un pied qui écrivait une formule entre apostrophes inverses ; le test de
 module le voit maintenant sans attendre la construction du document.
 
+### Une bande peinte après les barres qu'elle commente
+`band_x` pose un `rect.wash` **plein**. Appelée après l'histogramme, elle
+recouvre les barres qui tombent dedans : une loi parfaitement unimodale se
+lisait comme deux bosses séparées par un creux, et le creux était la bande.
+Deux planches de `figrev` en portaient une. Aucun balayage ne le voit — le
+code est juste, les nombres exacts, rien ne déborde et rien ne se croise. **Il
+s'est vu en regardant la figure.** La règle est d'ordre : tout fond — bande,
+aplat, zone — se peint avant ce qu'il souligne, jamais après.
+
 ### Une planche qui trace une série sous l'intitulé d'une autre
 `figon.fig_on_conditionnel` annonçait « parmi les séances qui cassent » et
 traçait la colonne comptée sur *toutes* les séances. Rien ne le signalait :
@@ -514,7 +598,20 @@ mais dans la boîte du SVG** — donc invisible au balayage de débordement, qui
 ne compare qu'à la boîte du SVG. Deux planches de `figemp` en portaient une,
 posée au-dessus de leur en-tête. La parade est un test qui enveloppe les deux
 méthodes et refuse toute graduation hors du domaine ; il est dans
-`tests/test_emprunts.py` et il faudrait l'étendre aux autres modules.
+`tests/test_emprunts.py` et `tests/test_revue.py`, et il faudrait l'étendre
+aux autres modules.
+
+La faute symétrique existe et se voit encore moins. L'échine d'un relief prend
+ses graduations d'une liste écrite à la main : `figrev` en avait une plafonnée
+à deux cents pour cent sous un sommet à cinq cent cinquante, une autre partant
+de zéro quand le sol du relief était à 2,67, et une troisième posant les
+décades `0,1 · 1 · 10 · 1 000 · 10 000` — la centaine manquait, et un axe
+logarithmique auquel il manque une décade se lit comme un axe dont l'échelle
+change en cours de route. Une graduation *hors* du domaine est en plus ramenée
+au sol par la projection, où elle se lit comme une valeur du sol : elle ne
+manque pas, elle ment. `figrev._echine` déduit maintenant les deux du relief,
+au plus quatre graduations — au-delà, la première étiquette d'arête se pose à
+la hauteur du coin gauche du sol et l'échine la heurte.
 
 ### Un relief à trop grande dynamique ne montre plus rien
 La surface du taux de hasard parcourt deux ordres de grandeur : tracée brute,
@@ -603,8 +700,9 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # 1161 tests (compter ~50 min ; --wp, setups,
-                            # robustesse, overnight et emprunts sont lents)
+python main.py --tests      # 1238 tests (compter ~55 min ; --wp, setups,
+                            # robustesse, overnight, emprunts et revue
+                            # sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html

@@ -791,8 +791,18 @@
           <li><a href="#s-fds-transfert">Ce qui transfère à un opérateur seul</a></li>
         </ol>
       </li>
-      <li><span class="pt">Dix-huitième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Dix-huitième partie — Deux documents venus du dehors</span>
         <ol start="77">
+          <li><a href="#s-rev-coherence">Ce qu'un résumé dit de lui-même</a></li>
+          <li><a href="#s-rev-calmar">Le Calmar est un rapport dont le dénominateur est un maximum</a></li>
+          <li><a href="#s-rev-correlation">La corrélation quotidienne n'est pas celle qui décide</a></li>
+          <li><a href="#s-rev-portage">Ce qu'un prix physique ne contient pas</a></li>
+          <li><a href="#s-rev-rotation">La capacité décroît comme le carré de la rotation</a></li>
+          <li><a href="#s-rev-recuperer">Ce qu'on peut en récupérer</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Dix-neuvième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="83">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2216,6 +2226,124 @@
 
   <div class="part">
     <span class="lab">Dix-huitième partie</span>
+    <h2>Deux documents venus du dehors</h2>
+    <p>Une dernière fois, un objet que ce document n'a pas construit&nbsp;: deux notes de recherche dont on ne connaît que les résumés. On ne cherche pas à savoir si leurs chiffres sont vrais — on cherche ce que ces chiffres, à eux seuls, permettent et interdisent d'établir.</p>
+  </div>
+
+  <h2 id="s-rev-coherence">Ce qu'un résumé dit de lui-même</h2>
+
+  <p>Deux documents. Le premier étudie un recouvrement d'options de volatilité posé sur une stratégie de momentum longue&nbsp;: {{v_cagr_a}}&nbsp;% de rendement annualisé depuis 2006, Sharpe {{v_sharpe_a}}, maximum de perte {{v_mdd_a}}&nbsp;%, Calmar {{v_calmar_a}} qui passerait à {{v_calmar_couvert}} sous le recouvrement. Le second combine deux stratégies décorrélées&nbsp;: {{v_cagr_b}}&nbsp;% net de frais, Sharpe {{v_sharpe_b}}, Sortino {{v_sortino_b}}, maximum de perte {{v_mdd_b}}&nbsp;%, corrélation quotidienne {{v_rho}} d'intervalle de confiance [{{v_ci_bas}}&nbsp;; {{v_ci_haut}}].</p>
+
+  <p><strong>Rien de ce qui suit ne conteste ces chiffres.</strong> Ils sont les données de l'affaire, exactement comme les sept nombres de la partie&nbsp;<a href="#s-on-affirmation">XV</a> et les trois de la partie&nbsp;<a href="#s-fds-ampleur">XVII</a>. La question est de savoir ce qu'ils imposent.</p>
+
+  <p>Le premier contrôle ne demande aucune donnée, et il est presque toujours omis&nbsp;: les métriques d'une note de performance sont <em>redondantes</em>. Le Calmar est le rapport de deux autres, le Treynor un troisième, la statistique de corrélation publie l'effectif sans le vouloir.</p>
+
+{{TABLE:rev_coherence}}
+
+{{FIGURE:revcoherence|L'écart entre chaque métrique annoncée et son recalcul à partir des autres, à gauche&nbsp;; le rapport du Sortino au Sharpe comparé à la valeur d'une loi symétrique, à droite.}}
+
+  <p>Les six recalculs se referment à moins de deux pour cent près. C'est une bonne nouvelle pour les documents, et c'est le point de départ obligé de toute lecture&nbsp;: une note dont l'arithmétique ne se referme pas n'a pas besoin d'être discutée plus loin. La cinquième ligne est la plus utile — le couple corrélation-statistique publie {{v_seances_implicites}}&nbsp;séances, et la période annoncée en compte {{v_seances_b}}.</p>
+
+  <p>Une ligne apprend davantage. Le rapport du Sortino au Sharpe vaut {{v_rapport_sortino}}, quand la valeur d'une distribution <strong>symétrique</strong> est exactement <span class="mono">√2 = {{v_racine_deux}}</span> — un écart de {{v_ecart_sortino}}&nbsp;%. La déviation à la baisse d'une loi symétrique vaut en effet <span class="mono">σ/√2</span>, ce qui fixe le rapport une fois pour toutes. <em>Le Sortino publié n'ajoute donc rien au Sharpe publié</em>, ce qui ne l'invalide pas mais interdit de le compter comme une mesure de plus.</p>
+
+  <h2 id="s-rev-calmar">Le Calmar est un rapport dont le dénominateur est un maximum</h2>
+
+  <p>Le premier document met en titre une amélioration de Calmar, de {{v_calmar_a}} à {{v_calmar_couvert}}. Avant de se demander si le recouvrement la produit, il faut se demander si un écart de cette taille est mesurable.</p>
+
+  <p>Il ne l'est pas, et la raison tient à la nature du dénominateur. <strong>Une série n'a qu'un seul maximum de perte, quelle que soit sa longueur.</strong> Allonger l'archive ajoute des observations à la moyenne du numérateur, mais n'ajoute qu'une occasion de battre le record au dénominateur.</p>
+
+{{TABLE:rev_calmar}}
+
+{{FIGURE:revcalmar|La loi du Calmar sous une hypothèse plus favorable que la réalité — rendements indépendants et gaussiens — avec les deux valeurs que le document oppose posées dessus&nbsp;; et la vitesse à laquelle cette bande se referme avec l'horizon.}}
+
+  <p>Sous une loi nulle de <em>même rendement et de même Sharpe</em>, le Calmar du premier document se promène de {{v_bande_a_bas}} à {{v_bande_a_haut}} — une bande large de {{v_bande_a_largeur}}&nbsp;% de sa médiane. L'écart revendiqué, {{v_gain_calmar}}, en occupe {{v_part_bande}}&nbsp;%. <strong>Il tient tout entier à l'intérieur d'un seul tirage.</strong></p>
+
+  <p>Deux remarques d'honnêteté. La loi nulle employée ici est <em>plus favorable</em> que la réalité — elle ignore les grappes de pertes, et le maximum annoncé, {{v_mdd_a}}&nbsp;%, tombe d'ailleurs au-delà du quatre-vingt-quinzième centile de la bande [{{v_mdd_a_bas}}&nbsp;; {{v_mdd_a_haut}}], ce qui est la signature attendue d'une stratégie qui perd en grappes. Et le document arrive de son côté à la même conclusion par une route indépendante&nbsp;: son bootstrap apparié place le premier quartile de la différence à zéro.</p>
+
+{{TABLE:rev_detecter}}
+
+  <p>L'écart revendiqué demanderait {{v_annees_gain}}&nbsp;ans pour sortir du bruit, et le document en a {{v_annees_a}}. <strong>Ce n'est pas une critique du document&nbsp;: c'est une propriété du Calmar</strong>, et elle vaut pour toute note qui met une amélioration de Calmar en titre — y compris les parties de celui-ci.</p>
+
+  <p>Une précision, parce qu'elle a d'abord été prise pour acquise et qu'elle était fausse. On attend de la demi-largeur qu'elle décroisse comme la <em>racine</em> de l'horizon, puisque c'est la vitesse de toute moyenne. La mesure dit {{v_exposant_bande}}, et la racine manque les horizons simulés de {{v_ecart_racine}}&nbsp;%. La raison est que les deux membres du rapport se resserrent&nbsp;: le rendement annualisé aussi, pas seulement le maximum. <strong>L'exposant publié ici est donc ajusté sur les horizons simulés, coefficient et puissance</strong>, et un test refuse la valeur d'un demi.</p>
+
+{{FIGURE:revbande|La largeur de la bande du Calmar sur le plan du Sharpe et du nombre d'années observées. Les deux axes ne la resserrent pas à la même vitesse, et le coin où le Calmar devient une mesure est étroit.}}
+
+  <h2 id="s-rev-correlation">La corrélation quotidienne n'est pas celle qui décide</h2>
+
+  <p>Le second document fonde son allocation sur une corrélation quotidienne de {{v_rho}}, statistiquement indistinguable de zéro. La conclusion est correcte et la méthode l'est aussi. Le problème est ailleurs&nbsp;: <em>la corrélation de Pearson est une moyenne sur toutes les séances</em>, et les séances ordinaires y noient exactement ce qui fabrique les pertes.</p>
+
+{{TABLE:rev_queue}}
+
+{{FIGURE:revqueue|La corrélation qu'un krach partagé induit, contre sa fréquence, avec la limite de détection de l'échantillon disponible&nbsp;; et ce que cette dépendance invisible fait à la pire séance d'un mélange.}}
+
+  <p>Un krach commun de {{v_saut}}&nbsp;écarts-types frappant les deux stratégies le même jour une fois par décennie n'induit qu'une corrélation de {{v_rho_dix_ans}}. L'échantillon disponible — {{v_seances_b}}&nbsp;séances — ne distingue de zéro que les corrélations supérieures à {{v_rho_limite}}, ce qui place la limite de visibilité à un krach partagé tous les {{v_freq_limite}}&nbsp;ans. <strong>Au-delà, la dépendance existe et le test ne la voit pas.</strong></p>
+
+  <p>L'intervalle de confiance publié est donc parfaitement compatible avec un krach partagé une fois par décennie.</p>
+
+{{TABLE:rev_melange}}
+
+  <p>Ce que cette dépendance invisible coûte se lit sur deux colonnes, et il faut les lire dans cet ordre. Sur le <em>maximum de perte</em>, elle coûte quelques points&nbsp;: c'est réel et modéré, et le dire ainsi est plus honnête que de l'exagérer. Sur la <em>pire séance</em>, elle coûte un facteur {{v_facteur_pire}}, parce que ce jour-là les deux jambes perdent ensemble et que le mélange n'amortit rien. <strong>La diversification protège toutes les séances sauf celle qui compte</strong>, et aucune de ces lignes n'est distinguable de la première par un test de corrélation.</p>
+
+{{FIGURE:revinvisible|La taille du krach partagé qu'une archive donnée ne peut pas détecter, sur le plan de la fréquence et de la longueur de l'archive. Le relief est celui d'une limite de mesure, pas d'un marché.}}
+
+  <p>Le relief donne le nombre qui manque à toute note concluant à l'indépendance. Il ne s'agit pas de dire «&nbsp;la corrélation est nulle&nbsp;» mais «&nbsp;voici le choc partagé que mes données n'auraient pas vu&nbsp;». Même avec cent soixante ans d'archive, un choc de {{v_invisible}}&nbsp;écarts-types survenant tous les soixante-sept ans reste indétectable — et il ne coûte qu'une ligne à publier.</p>
+
+  <h2 id="s-rev-portage">Ce qu'un prix physique ne contient pas</h2>
+
+  <p>Le premier document énonce lui-même sa limite, et il faut lui en donner acte&nbsp;: il valorise ses options sur le VIX <em>comptant</em>, sous une calibration physique, sans structure par terme. Il manque donc la prime de risque de variance, et le portage réel de la protection est plus lourd que le portage modélisé.</p>
+
+  <p>Personne ne sait de combien sans les données. Mais on peut calculer <strong>la marge dont le résultat dispose</strong>, et c'est le seul nombre opposable. Le document publie deux Calmar et ne publie ni la réduction du maximum de perte, ni le budget de prime&nbsp;; or les deux premiers contraignent les deux seconds à un lieu d'une dimension.</p>
+
+{{TABLE:rev_locus}}
+
+{{FIGURE:revlocus|Le coût net que le recouvrement peut se permettre selon la réduction du maximum qu'il obtient, à gauche&nbsp;; et ce que l'amélioration revendiquée vaut en points de rendement annuel, à droite.}}
+
+  <p>Le premier fait est qualitatif&nbsp;: au-dessous de {{v_reduction_min}}&nbsp;points de réduction, <strong>il ne suffit pas que le recouvrement coûte peu, il doit rapporter</strong> — ce que le document revendique d'ailleurs par un effet de taxe de volatilité, mais qui mérite d'être dit explicitement.</p>
+
+  <p>Le second est quantitatif. L'amélioration revendiquée vaut de {{v_marge_min}} à {{v_marge_max}}&nbsp;points de rendement annuel selon la réduction obtenue. <em>Toute sous-estimation de prime supérieure à cette marge l'efface entièrement.</em></p>
+
+{{TABLE:rev_prime}}
+
+  <p>À la réduction retenue — {{v_reduction_retenue}}&nbsp;points, prise au milieu du lieu admissible — la marge vaut {{v_erreur_fatale}}&nbsp;points de rendement. À un budget de prime de 5&nbsp;% par an, le facteur fatal vaut {{v_facteur_fatal}}. Et la dernière colonne porte un fait contre-intuitif&nbsp;: <strong>un gros budget de prime laisse <em>moins</em> de place à l'erreur, pas plus.</strong></p>
+
+{{FIGURE:revportage|Le Calmar couvert sur le plan du budget de prime et du facteur de sous-estimation, sol posé au Calmar nu. La ligne de niveau traverse la boîte en diagonale : c'est le produit des deux qui décide.}}
+
+  <h2 id="s-rev-rotation">La capacité décroît comme le carré de la rotation</h2>
+
+  <p>Reste la question que ni l'un ni l'autre document ne pose, et qui décide de tout ce qu'ils décrivent&nbsp;: <em>à quelle taille&nbsp;?</em></p>
+
+  <p>La partie&nbsp;<a href="#s-fds-capacite">XVII</a> a établi que l'impact d'un ordre croît comme la <strong>racine</strong> de sa taille. Il en découle une loi exacte pour une stratégie à forte rotation. À budget de coût fixé, l'impact admissible par aller-retour est inversement proportionnel au nombre d'aller-retours&nbsp;; la taille admissible varie donc comme l'inverse du <strong>carré</strong> de la rotation.</p>
+
+  <p>Doubler le nombre d'aller-retours divise la capacité par quatre. Ce n'est pas une approximation.</p>
+
+{{TABLE:rev_rotation}}
+
+{{FIGURE:revrotation|La capacité d'une stratégie intraday contre sa rotation, avec la loi pure de pente moins deux et la courbe réelle que la friction fixe fait chuter&nbsp;; et la part du budget que cette friction consomme à elle seule.}}
+
+  <p>À dix aller-retours par séance — un rythme modeste pour une stratégie de retour à la moyenne intraday — la capacité vaut {{v_capacite_dix}}&nbsp;contrats, soit {{v_notionnel_dix}}&nbsp;millions de dollars de notionnel. Et la friction fixe, qui ne dépend pas de la taille, impose une seconde limite plus dure&nbsp;: au-delà de {{v_rotation_fatale}}&nbsp;aller-retours par séance, <strong>aucune taille ne convient</strong>, parce que le coût ne vient plus de ce qu'on trade mais du nombre de fois qu'on le trade.</p>
+
+{{FIGURE:revdrag|Le coût annuel sur le plan de la taille et de la rotation, en hauteur logarithmique. Deux versants pour deux causes, et un seul des deux se corrige en tradant moins gros.}}
+
+  <p>Le relief sépare les deux versants, et la distinction est celle qui compte pour un opérateur. Celui de la taille se corrige en tradant moins gros, et un opérateur seul y est structurellement à l'abri — c'est le résultat de la partie précédente. Celui de la rotation ne se corrige pas&nbsp;: réduire la taille n'y change rien, puisque la fourchette se paie au même prix sur un contrat que sur mille. <em>Une stratégie à forte rotation paie un coût qu'elle ne peut pas fuir, et il croît avec ce qui la définit.</em></p>
+
+  <h2 id="s-rev-recuperer">Ce qu'on peut en récupérer</h2>
+
+  <p>Il faut répondre à la question directement, parce qu'elle est la seule qui intéresse quiconque lit un document qu'il n'a pas écrit.</p>
+
+  <p><strong>On ne récupère aucun avantage négociable d'un résumé.</strong> Un résumé ne contient ni signal, ni règle, ni série&nbsp;; il n'y a rien à en extraire qui puisse être passé à un carnet d'ordres. C'est vrai des deux documents examinés ici, et ce serait vrai de n'importe quel autre.</p>
+
+  <p>Ce qu'on en récupère est un protocole de lecture — cinq calculs qui s'appliquent à toute note de performance et qui décident, <em>sans accès aux données</em>, de ce que ses chiffres peuvent établir.</p>
+
+{{TABLE:rev_recuperer}}
+
+{{FIGURE:revrecuperer|Les cinq lectures récupérables, ce que chacune rend, et la colonne qu'aucune ne remplit.}}
+
+  <p>Les {{v_lectures}} lectures se calculent sur les seuls nombres publiés. Aucune ne donne un avantage négociable, et il n'y a là aucune ruse&nbsp;: <strong>ce qui se récupère est une méthode de lecture, jamais une direction.</strong></p>
+
+  <p>C'est, à un objet près, la conclusion des dix-sept parties précédentes. Le marché ne concède que&nbsp;<span class="mono">µ</span>, et&nbsp;<span class="mono">µ</span> ne se lit pas dans le résumé de quelqu'un d'autre. Ce qui se lit, en revanche — la bande d'un maximum, l'aveuglement d'un test de corrélation, la marge d'une amélioration, la capacité qu'impose une rotation — se lit vite, se calcule sans rien demander à personne, et suffit presque toujours à savoir s'il vaut la peine de poser la question suivante.</p>
+
+  <div class="part">
+    <span class="lab">Dix-neuvième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
