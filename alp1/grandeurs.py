@@ -81,7 +81,9 @@ from . import niveaux as nv
 from . import quant as q
 from . import seuil
 from .costs import COST_BASE, ES, norm_cdf
+from .emprunts import BETA_CONTINUITE
 from .horizon import outcome
+from .mc import Rng
 from .report import Table, num
 
 SEED = 20260908
@@ -257,6 +259,290 @@ def table_cout() -> Table:
              "de part et d'autre du seuil qui décide.*",
         wrap_cols=[0, 1],
     )
+
+
+# ---------------------------------------------------------------------------
+# I bis. Les trois, sur des trajectoires
+# ---------------------------------------------------------------------------
+#
+# Les trois formes fermées ci-dessus n'avaient, dans le premier jet de ce
+# module, aucun contrôle par simulation — et la règle du dépôt est sans
+# exception sur ce point. C'est ce contrôle, et c'est aussi l'exemple : on ne
+# comprend pas pourquoi les trois nombres diffèrent tant qu'on n'a pas vu une
+# trajectoire qui touche la cible **après** avoir pris le stop.
+
+#: Sous-pas par minute de la simulation. Déclaré, parce qu'il décide de tout :
+#: une barrière surveillée à pas fini est franchie moins souvent qu'une
+#: barrière continue, et l'écart vaut `β₁·σ√Δt`.
+SOUS_PAS = 12
+
+N_SESSIONS = 1500
+
+#: La géométrie de contrôle. Son stop est assez large pour qu'une grille au
+#: douzième de minute le résolve, ce qui n'est pas le cas de la géométrie
+#: déclarée — et c'est le fait de la section.
+STOP_CONTROLE = 6.0
+CIBLE_CONTROLE = 24.0
+
+
+@dataclass(frozen=True)
+class Issues:
+    """Le décompte des quatre issues d'une séance, et les deux fréquences."""
+
+    #: La cible avant le stop : le trade gagne.
+    avant: float
+    #: Le stop d'abord, **puis** la cible : le trade perd, et le graphique
+    #: montre pourtant que « le prix y est allé ».
+    apres: float
+    #: Le stop, et la cible jamais atteinte.
+    jamais: float
+    #: Ni l'une ni l'autre barrière avant la clôture.
+    ni: float
+    #: La cible touchée à un moment quelconque, et la clôture au-delà.
+    touche: float
+    cloture: float
+
+
+def decalage_continuite(sous_pas: int = SOUS_PAS,
+                        sigma: float = q.SIGMA_1MIN) -> float:
+    """`β₁·σ√Δt` — de combien une barrière surveillée à pas fini s'éloigne.
+
+    La constante est celle de la partie XVI, et elle n'est pas recopiée : le
+    module l'importe. Une barrière discrète se comporte comme une barrière
+    continue **plus loin**, et les deux barrières s'éloignent ensemble.
+    """
+    return BETA_CONTINUITE * sigma * math.sqrt(1.0 / sous_pas)
+
+
+def p_avant_stop_discret(stop_pts: float, cible_pts: float,
+                         sous_pas: int = SOUS_PAS) -> float:
+    """La forme fermée corrigée du pas d'observation."""
+    d = decalage_continuite(sous_pas)
+    return (stop_pts + d) / (stop_pts + cible_pts + 2.0 * d)
+
+
+@lru_cache(maxsize=8)
+def simuler_issues(stop_pts: float, cible_pts: float, n: int = N_SESSIONS,
+                   sous_pas: int = SOUS_PAS, seed: int = SEED) -> Issues:
+    """Le décompte mesuré sur `n` séances sans dérive.
+
+    Rien n'y est approché : chaque séance est parcourue au sous-pas déclaré,
+    et les quatre issues sont exclusives. La quantité intéressante est la
+    deuxième — le stop d'abord, la cible ensuite — parce qu'elle est
+    exactement ce qui sépare la probabilité qui décide de celle que l'œil
+    retient.
+    """
+    rng = Rng(seed)
+    pas = int(q.SESSION_MIN * sous_pas)
+    sd = q.SIGMA_1MIN / math.sqrt(sous_pas)
+    avant = apres = jamais = ni = touche = clot = 0
+    for _ in range(n):
+        x = mx = 0.0
+        au_stop = a_la_cible = cible_avant = False
+        for _ in range(pas):
+            x += sd * rng.gauss()
+            if x > mx:
+                mx = x
+            if not au_stop and not a_la_cible:
+                if x <= -stop_pts:
+                    au_stop = True
+                elif x >= cible_pts:
+                    a_la_cible = cible_avant = True
+            elif au_stop and not a_la_cible and x >= cible_pts:
+                a_la_cible = True
+        if mx >= cible_pts:
+            touche += 1
+        if x >= cible_pts:
+            clot += 1
+        if cible_avant:
+            avant += 1
+        elif au_stop and a_la_cible:
+            apres += 1
+        elif au_stop:
+            jamais += 1
+        else:
+            ni += 1
+    return Issues(avant / n, apres / n, jamais / n, ni / n, touche / n,
+                  clot / n)
+
+
+#: Les deux géométries de la table de contrôle. La première est déclarée par
+#: le document, la seconde est celle qu'une grille résout.
+CONTROLES: tuple[tuple[str, float, float], ...] = (
+    ("Géométrie déclarée", q.STOP_PTS, q.RR_REF * q.STOP_PTS),
+    ("Géométrie de contrôle", STOP_CONTROLE, CIBLE_CONTROLE),
+)
+
+
+def table_verification() -> Table:
+    d = decalage_continuite()
+    rows = []
+    for nom, st, ci in CONTROLES:
+        m = simuler_issues(st, ci)
+        for quoi, mesure, ferme in (
+                ("Touchée avant le stop", m.avant,
+                 p_avant_stop_discret(st, ci)),
+                ("Touchée à un moment", m.touche, p_touche(ci)),
+                ("Clôture au-delà", m.cloture, p_cloture(ci))):
+            rows.append([
+                nom,
+                quoi,
+                num(100 * mesure, 2),
+                num(100 * ferme, 2),
+                num(100 * (mesure - ferme), 2, signed=True),
+                num(100 * d / st, 0),
+            ])
+    return Table(
+        key="gr_verification",
+        caption="Les trois formes fermées, mesurées sur des séances simulées",
+        headers=["Géométrie", "Quantité", "Mesurée (%)",
+                 "Forme fermée corrigée (%)", "Écart (points)",
+                 "Décalage de continuité, en % du stop"],
+        rows=rows,
+        note=num(N_SESSIONS, 0) + " séances sans dérive par géométrie, "
+             "parcourues au " + num(SOUS_PAS, 0) + "ᵉ de minute. La forme "
+             "fermée est corrigée du **pas d'observation** : une barrière "
+             "surveillée à pas fini se comporte comme une barrière continue "
+             "plus lointaine de `β₁·σ√Δt`, et la constante est celle de la "
+             "partie XVI, importée et non recopiée. La dernière colonne est "
+             "le fait de la table, et il est gênant pour la géométrie du "
+             "document : **le stop déclaré est si étroit que la correction "
+             "vaut " + num(100 * d / q.STOP_PTS, 0) + " % de sa largeur.** "
+             "Aucune grille raisonnable ne résout une barrière à six dixièmes "
+             "de point ; les deux quantités lointaines, elles, sont "
+             "confirmées sans correction sensible. La seconde géométrie "
+             "existe pour cela : son stop est assez large pour être résolu, "
+             "et les trois formes fermées y tombent sur la mesure. *Une forme "
+             "fermée ne se publie pas sans ce contrôle, et le premier jet de "
+             "cette partie l'avait omis.*",
+    )
+
+
+def table_issues() -> Table:
+    a = q.STOP_PTS
+    b = q.RR_REF * a
+    m = simuler_issues(a, b)
+    lignes = (
+        ("La cible avant le stop", m.avant,
+         "le trade gagne, et le graphique est d'accord"),
+        ("Le stop, puis la cible", m.apres,
+         "le trade perd, et le graphique montre que le prix y est allé"),
+        ("Le stop, la cible jamais", m.jamais,
+         "le trade perd, et le graphique est d'accord"),
+        ("Ni l'une ni l'autre", m.ni,
+         "sortie à la clôture, sans barrière touchée"),
+    )
+    rows = []
+    for nom, f, lecture in lignes:
+        rows.append([nom, num(100 * f, 1), lecture])
+    return Table(
+        key="gr_issues",
+        caption="Les quatre issues d'une séance, et celle qui explique tout",
+        headers=["Issue", "Fréquence (%)", "Ce qu'un graphique en montre"],
+        rows=rows,
+        note="Les quatre issues sont exclusives et couvrent tout. La deuxième "
+             "est celle qui explique la partie, et elle vaut "
+             + num(100 * m.apres, 1) + " % des séances&nbsp;: **le prix "
+             "atteint la cible après avoir pris le stop.** Un graphique "
+             "relu après coup montre alors une belle course jusqu'à la "
+             "cible ; le compte en banque montre une perte. La somme des deux "
+             "premières lignes est la probabilité que l'œil retient, "
+             + num(100 * (m.avant + m.apres), 1) + " %, et la première seule "
+             "est celle qui décide, " + num(100 * m.avant, 2) + " %. *Tout "
+             "l'écart de la section est dans la deuxième ligne*, et c'est "
+             "elle que la planche montre sur des trajectoires.",
+        wrap_cols=[2],
+    )
+
+
+N_TEMOINS = 400
+
+#: Minutes du zoom. Le stop déclaré se résout en quelques minutes, la cible en
+#: quelques heures : les deux événements ne vivent pas à la même échelle, et
+#: c'est pour cela que la planche en porte deux.
+MINUTES_ZOOM = 8
+
+
+@lru_cache(maxsize=4)
+def trajectoires_temoins(stop_pts: float = q.STOP_PTS,
+                         cible_pts: float = q.RR_REF * q.STOP_PTS,
+                         n: int = N_TEMOINS, sous_pas: int = SOUS_PAS,
+                         seed: int = SEED + 5
+                         ) -> tuple[tuple[str, tuple[float, ...],
+                                          tuple[float, ...]], ...]:
+    """Une trajectoire par issue, choisie par une **règle calculée**.
+
+    On garde la première séance qui réalise chaque issue, dans l'ordre où
+    elles se présentent, et rien n'est choisi à la main — c'est la règle de
+    `setups._seance_temoin`, et elle existe pour que la planche ne puisse pas
+    montrer autre chose que ce que la table mesure.
+
+    Chaque trajectoire est rendue deux fois : au sous-pas sur les premières
+    minutes, et à la minute sur la séance entière. Ce n'est pas un confort de
+    tracé — le stop déclaré se résout en quelques minutes, et une trajectoire
+    à la minute ne le montrerait pas être franchi.
+    """
+    rng = Rng(seed)
+    pas = int(q.SESSION_MIN * sous_pas)
+    pas_zoom = int(MINUTES_ZOOM * sous_pas)
+    sd = q.SIGMA_1MIN / math.sqrt(sous_pas)
+    trouve: dict[str, tuple[tuple[float, ...], tuple[float, ...]]] = {}
+    for _ in range(n):
+        x = 0.0
+        zoom = [0.0]
+        minute = [0.0]
+        au_stop = a_la_cible = cible_avant = False
+        for i in range(pas):
+            x += sd * rng.gauss()
+            if not au_stop and not a_la_cible:
+                if x <= -stop_pts:
+                    au_stop = True
+                elif x >= cible_pts:
+                    a_la_cible = cible_avant = True
+            elif au_stop and not a_la_cible and x >= cible_pts:
+                a_la_cible = True
+            if i < pas_zoom:
+                zoom.append(x)
+            if (i + 1) % sous_pas == 0:
+                minute.append(x)
+        if cible_avant:
+            cle = "avant"
+        elif au_stop and a_la_cible:
+            cle = "apres"
+        elif au_stop:
+            cle = "jamais"
+        else:
+            cle = "ni"
+        trouve.setdefault(cle, (tuple(zoom), tuple(minute)))
+        if len(trouve) == 4:
+            break
+    ordre = ("avant", "apres", "jamais", "ni")
+    return tuple((c, trouve[c][0], trouve[c][1]) for c in ordre
+                 if c in trouve)
+
+
+def minute_de_la_cible(chemin: tuple[float, ...],
+                       cible_pts: float = q.RR_REF * q.STOP_PTS) -> int:
+    """La **première** minute où la trajectoire atteint la cible.
+
+    Elle n'est pas la minute du maximum, et le premier jet de la planche
+    avait publié la seconde en croyant publier la première — un nombre faux
+    dans une annotation, c'est-à-dire exactement le défaut que ce document
+    reproche aux autres.
+    """
+    for i, x in enumerate(chemin):
+        if x >= cible_pts:
+            return i
+    return -1
+
+
+#: Le libellé de chaque issue, pour les légendes.
+LIBELLES: dict[str, str] = {
+    "avant": "la cible avant le stop",
+    "apres": "le stop, puis la cible",
+    "jamais": "le stop, la cible jamais",
+    "ni": "ni l'une ni l'autre",
+}
 
 
 SURF_STOP_PTS: tuple[float, ...] = (0.3, 0.6, 1.2, 2.5, 5.0, 10.0)
@@ -922,6 +1208,20 @@ def values() -> dict[str, str]:
         "g_p_cloture": num(100 * p3, 1),
         "g_facteur_touche": num(p2 / p1, 0),
         "g_facteur_cloture": num(p3 / p1, 1),
+        "g_apres_stop": num(100 * simuler_issues(a, b).apres, 1),
+        "g_jamais_stop": num(100 * simuler_issues(a, b).jamais, 1),
+        "g_minute_cible": num(minute_de_la_cible(
+            next(mm for c, _, mm in trajectoires_temoins() if c == "apres")),
+            0),
+        "g_avant_mesure": num(100 * simuler_issues(a, b).avant, 2),
+        "g_touche_mesure": num(100 * simuler_issues(a, b).touche, 1),
+        "g_sessions": num(N_SESSIONS, 0),
+        "g_sous_pas": num(SOUS_PAS, 0),
+        "g_decalage_pct": num(100 * decalage_continuite() / q.STOP_PTS, 0),
+        "g_stop_pts": num(a, 1),
+        "g_stop_controle": num(STOP_CONTROLE, 0),
+        "g_decalage_controle": num(
+            100 * decalage_continuite() / STOP_CONTROLE, 0),
         "g_cible_pts": num(b, 0),
         "g_cible_sigma": num(b / SIGMA_SEANCE, 2),
         "g_sigma_seance": num(SIGMA_SEANCE, 1),
@@ -962,8 +1262,9 @@ def values() -> dict[str, str]:
 
 def all_tables() -> dict[str, Table]:
     tables = [
-        table_probas(), table_cout(), table_deltas(), table_charm(),
-        table_livre(), table_convention(), table_reste(),
+        table_probas(), table_verification(), table_issues(), table_cout(),
+        table_deltas(), table_charm(), table_livre(), table_convention(),
+        table_reste(),
     ]
     return {t.key: t for t in tables}
 

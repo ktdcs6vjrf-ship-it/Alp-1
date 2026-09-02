@@ -2507,11 +2507,27 @@
     <li><span class="mono">Φ(−b/σ√T)</span> — <strong>clôturer au-delà</strong>. C'est ce qu'un backtest naïf rapporte, et c'est exactement la moitié de la précédente. Elle vaut {{g_p_cloture}}&nbsp;%.</li>
   </ul>
 
+  <p>La liste ne fait pas comprendre le mécanisme&nbsp;; une séance le fait. Sur mille cinq cents séances sans dérive parcourues au douzième de minute, la première de chaque issue est reproduite ci-dessous, choisie par une règle calculée et jamais à la main.</p>
+
+{{FIGURE:grexemple|Trois séances sans dérive, aux deux échelles où les deux événements vivent, et les trois issues qu'elles portent.}}
+
+  <p>La séance du milieu est toute la partie&nbsp;: elle prend le stop dans la première minute, puis atteint la cible à la minute&nbsp;{{g_minute_cible}}. Elle compte pour une perte, et le graphique relu après coup y montre une course réussie jusqu'à la cible. Elle n'est pas rare — c'est le cas le plus fréquent des quatre.</p>
+
+{{TABLE:gr_issues}}
+
 {{TABLE:gr_probas}}
 
 {{FIGURE:grprobas|Les trois probabilités d'une même cible contre l'ambition de celle-ci, et le rapport des deux extrêmes.}}
 
   <p><strong>Un facteur {{g_facteur_touche}} sépare la première de la troisième</strong>, et l'écart n'est pas un accident de réglage&nbsp;: il croît avec l'ambition de la cible, c'est-à-dire précisément là où la confusion est la plus tentante. Rien dans cette section ne dépend d'une donnée de marché.</p>
+
+  <p>Trois formes fermées ne se publient pas sans être confrontées à une simulation, et la règle vaut pour ce document comme pour ceux qu'il examine. Le contrôle porte ici une difficulté propre&nbsp;: une barrière surveillée à pas fini est franchie moins souvent qu'une barrière continue, et l'écart vaut <span class="mono">β₁·σ√Δt</span> — la constante de Broadie, Glasserman et Kou, celle de la seizième partie, importée et non recopiée.</p>
+
+{{TABLE:gr_verification}}
+
+{{FIGURE:grverif|Les trois formes fermées contre la mesure, sur la géométrie déclarée et sur une géométrie que la grille résout.}}
+
+  <p>Le résultat est celui qu'on veut d'un contrôle, et il porte un fait gênant pour la géométrie du document. Sur un stop de {{g_stop_controle}}&nbsp;points, les trois formes tombent sur la mesure. Sur le stop déclaré de {{g_stop_pts}}&nbsp;point, la correction de continuité vaut {{g_decalage_pct}}&nbsp;% de la largeur du stop&nbsp;: <em>aucune grille raisonnable ne résout une barrière à six dixièmes de point</em>, et seules les deux quantités lointaines y sont confirmées. C'est un fait sur cette géométrie, non sur les formules.</p>
 
   <h2 id="s-gr-cout">Ce que la confusion coûte</h2>
 

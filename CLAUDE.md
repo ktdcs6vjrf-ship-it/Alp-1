@@ -22,7 +22,7 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 « la circularité » plus bas.
 
 **ALP nº 3** — `docs/prouver-un-jugement.html` (101 sections en vingt-et-une
-parties, 89 tables, 122 figures dont trente-huit surfaces en nuage de
+parties, 91 tables, 124 figures dont trente-huit surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -277,6 +277,10 @@ d'abord que l'observation le concerne.
 ① **Une cible a trois probabilités**, toutes exactes et toutes appelées de la
 même façon : la toucher avant le stop (`a/(a+b)` = 4,76 %), la toucher à un
 moment (`2Φ(−b/σ√T)` = 62,7 %), clôturer au-delà (31,3 %). **Un facteur 13.**
+Le mécanisme ne se comprend pas d'une liste : la partie montre **trois séances
+simulées**, dont celle qui prend le stop dans la première minute puis atteint
+la cible à la minute 360. Ce cas-là n'est pas une curiosité — il vaut **55,5 %
+des séances**, contre 6,6 % pour la cible atteinte avant le stop.
 ② **Le coût est calculable et énorme.** Portée dans l'identité de Wald, la
 deuxième rend +11,61 R quand la vraie rend −0,550 R : **12,2 R d'écart par
 décision**, et il ne dépend pas de la friction. Le taux d'équilibre (7,38 %)
@@ -300,7 +304,20 @@ donne 0,40 point, l'ajustement de prime 7,0 et jusqu'à 47,5. **Et
 `V/S = Δ − N(d₂)` exactement à la monnaie** — les deux confusions de la partie
 sont un seul nombre portant deux noms, et l'identité tombe hors de la monnaie.
 
-Trois pièges y sont enterrés. Les deux livres n'étaient **pas** à delta nul :
+Cinq pièges y sont enterrés. Les trois probabilités étaient publiées **sans
+contrôle par simulation**, ce que la règle du dépôt interdit sans exception :
+mille cinq cents séances au douzième de minute les confirment maintenant, et
+elles rendent un fait gênant. Une barrière surveillée à pas fini est franchie
+moins souvent qu'une barrière continue — l'écart vaut `β₁·σ√Δt`, la constante
+de la partie XVI, importée et non recopiée — et **le stop déclaré est si
+étroit que cette correction vaut 35 % de sa largeur** : aucune grille
+raisonnable ne le résout, et seules les deux quantités lointaines y sont
+confirmées. La géométrie de contrôle (stop 6 points) existe pour cela, et les
+trois formes y tombent sur la mesure. Le quatrième piège est dans la planche
+d'exemple : la minute où la trajectoire atteint la cible est la **première
+traversée**, jamais la minute du maximum, et le premier jet publiait la
+seconde en croyant publier la première (378 au lieu de 360). Et les deux
+livres n'étaient **pas** à delta nul :
 le delta d'un straddle s'annule un peu au-dessous du strike, et le premier jet
 avait écrit « +0,00 » à la main au lieu de le calculer ; les livres sont
 maintenant couverts et le zéro est recalculé. Le relief du charm portait
@@ -465,8 +482,14 @@ Rendu
   différence finie sur le strike), `charm` (contrôlé contre une différence
   finie), `d1_du_pic` / `moneyness_du_pic` / `amplitude_asymptotique`, les deux
   livres couverts (`delta_straddle`, `pl_livre`, `delta_net_couvert`), les
-  trois conventions et `identite_prime_gap`. Sept tables, quatre surfaces.
-- `figgra.py` — les douze planches de la partie XX, dont quatre reliefs. Elle
+  trois conventions et `identite_prime_gap`. Le contrôle par simulation :
+  `simuler_issues` (les quatre issues d'une séance, appariées),
+  `decalage_continuite` / `p_avant_stop_discret` (la correction de
+  Broadie-Glasserman-Kou, importée de `emprunts`), `CONTROLES` (les deux
+  géométries), `trajectoires_temoins` (une séance par issue, choisie par une
+  règle calculée) et `minute_de_la_cible` — **la première traversée, jamais la
+  minute du maximum**. Neuf tables, quatre surfaces.
+- `figgra.py` — les quatorze planches de la partie XX, dont quatre reliefs. Elle
   importe `_echine`, `_ticks` et `_dec` de `fignv` plutôt que de les recopier :
   une troisième copie serait une troisième occasion de les faire diverger.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :

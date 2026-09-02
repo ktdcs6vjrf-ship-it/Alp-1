@@ -84,6 +84,100 @@ class TestTroisProbabilites(unittest.TestCase):
         self.assertGreater(G.p_touche(3.0), G.p_touche(12.0))
 
 
+class TestControleParSimulation(unittest.TestCase):
+    """Une forme fermée se contrôle contre la simulation, sans exception."""
+
+    def test_les_quatre_issues_font_un(self):
+        for _, st, ci in G.CONTROLES:
+            m = G.simuler_issues(st, ci)
+            self.assertAlmostEqual(m.avant + m.apres + m.jamais + m.ni, 1.0,
+                                   places=9)
+
+    def test_la_geometrie_de_controle_confirme_les_trois_formes(self):
+        """Sur un stop que la grille résout, l'écart tient dans le bruit.
+
+        Mille cinq cents séances donnent un écart-type d'un point de
+        pourcentage au plus ; on exige moins de trois points, ce qui est
+        large et ce qui suffit à distinguer une forme juste d'une fausse.
+        """
+        _, st, ci = G.CONTROLES[1]
+        m = G.simuler_issues(st, ci)
+        for mesure, ferme in ((m.avant, G.p_avant_stop_discret(st, ci)),
+                              (m.touche, G.p_touche(ci)),
+                              (m.cloture, G.p_cloture(ci))):
+            self.assertLess(abs(mesure - ferme), 0.03)
+
+    def test_la_correction_de_continuite_agit_dans_le_bon_sens(self):
+        """Une barrière surveillée à pas fini est franchie moins souvent."""
+        for _, st, ci in G.CONTROLES:
+            self.assertGreater(G.p_avant_stop_discret(st, ci),
+                               G.p_avant_stop(st, ci))
+        self.assertGreater(G.decalage_continuite(), 0.0)
+
+    def test_le_stop_declare_est_sous_la_resolution_de_la_grille(self):
+        """Le fait gênant de la partie, et il se vérifie plutôt qu'il s'écrit."""
+        self.assertGreater(G.decalage_continuite() / q.STOP_PTS, 0.20)
+        self.assertLess(G.decalage_continuite() / G.STOP_CONTROLE, 0.10)
+
+    def test_les_deux_quantites_lointaines_sont_confirmees_partout(self):
+        """Elles ne dépendent pas du stop, donc pas de sa résolution."""
+        for _, st, ci in G.CONTROLES:
+            m = G.simuler_issues(st, ci)
+            self.assertLess(abs(m.touche - G.p_touche(ci)), 0.03)
+            self.assertLess(abs(m.cloture - G.p_cloture(ci)), 0.03)
+
+    def test_prendre_le_stop_puis_la_cible_est_le_cas_frequent(self):
+        """Le fait que la planche d'exemple existe pour montrer."""
+        m = G.simuler_issues(q.STOP_PTS, q.RR_REF * q.STOP_PTS)
+        self.assertGreater(m.apres, m.avant)
+        self.assertGreater(m.apres, m.jamais)
+        self.assertAlmostEqual(m.avant + m.apres, m.touche, delta=0.02)
+
+    def test_les_trois_temoins_portent_trois_issues_distinctes(self):
+        temoins = G.trajectoires_temoins()
+        cles = [c for c, _, _ in temoins]
+        self.assertEqual(cles, ["avant", "apres", "jamais"])
+        for _, zoom, minute in temoins:
+            self.assertEqual(len(minute), q.SESSION_MIN + 1)
+            self.assertEqual(len(zoom), G.MINUTES_ZOOM * G.SOUS_PAS + 1)
+
+    def test_chaque_temoin_verifie_son_issue(self):
+        b = q.RR_REF * q.STOP_PTS
+        for cle, _, minute in G.trajectoires_temoins():
+            m = G.minute_de_la_cible(minute, b)
+            if cle == "jamais":
+                self.assertEqual(m, -1)
+                self.assertLess(max(minute), b)
+            else:
+                self.assertGreaterEqual(m, 0)
+                self.assertGreaterEqual(minute[m], b)
+
+    def test_la_minute_de_la_cible_n_est_pas_celle_du_maximum(self):
+        """Le premier jet publiait la seconde en croyant publier la première.
+
+        Elles diffèrent sur la séance qui prend le stop puis la cible, et
+        c'est exactement la séance dont la planche parle.
+        """
+        _, _, minute = next(t for t in G.trajectoires_temoins()
+                            if t[0] == "apres")
+        m = G.minute_de_la_cible(minute)
+        self.assertNotEqual(m, minute.index(max(minute)))
+        self.assertLess(m, minute.index(max(minute)))
+
+    def test_le_temoin_du_milieu_prend_le_stop_avant_la_cible(self):
+        _, zoom, _ = next(t for t in G.trajectoires_temoins()
+                          if t[0] == "apres")
+        self.assertLessEqual(min(zoom), -q.STOP_PTS)
+
+    def test_la_simulation_est_reproductible(self):
+        a, b = q.STOP_PTS, q.RR_REF * q.STOP_PTS
+        G.simuler_issues.cache_clear()
+        un = G.simuler_issues(a, b)
+        G.simuler_issues.cache_clear()
+        deux = G.simuler_issues(a, b)
+        self.assertEqual(un, deux)
+
+
 class TestCoutDeLaConfusion(unittest.TestCase):
 
     def test_avec_la_bonne_l_esperance_vaut_moins_la_friction(self):
@@ -448,8 +542,8 @@ class TestLesTables(unittest.TestCase):
     def setUp(self):
         self.tables = G.all_tables()
 
-    def test_les_sept_tables_sont_la(self):
-        self.assertEqual(len(self.tables), 7)
+    def test_les_neuf_tables_sont_la(self):
+        self.assertEqual(len(self.tables), 9)
         for cle in self.tables:
             self.assertTrue(cle.startswith("gr_"), cle)
 
@@ -477,8 +571,8 @@ class TestLesPlanches(unittest.TestCase):
     def setUp(self):
         self.rendus = figgra.render_all()
 
-    def test_les_douze_planches_sont_la(self):
-        self.assertEqual(len(self.rendus), 12)
+    def test_les_quatorze_planches_sont_la(self):
+        self.assertEqual(len(self.rendus), 14)
 
     def test_aucun_libelle_aria_ne_porte_d_apostrophe(self):
         for cle, svg in self.rendus.items():

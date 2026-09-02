@@ -1,6 +1,6 @@
 """Les planches de « la grandeur qu'on cite n'est pas celle qui décide ».
 
-Douze planches, huit à plat et quatre en relief. Aucune ne montre un signal :
+Quatorze planches, dix à plat et quatre en relief. Aucune ne montre un signal :
 toutes montrent deux nombres qu'un seul mot désigne, et la distance entre eux.
 
 Les fonctions d'échine, de graduation et de décade sont importées de `fignv`
@@ -109,6 +109,189 @@ def fig_gr_probas() -> str:
                 "donnée de marché.")
     return b_.render("Trois probabilites d une meme cible contre le rapport "
                      "gain sur risque, et le rapport des deux extremes.")
+
+
+def fig_gr_exemple() -> str:
+    """Trois séances, et la seule chose que les trois nombres veulent dire.
+
+    Le mécanisme entier tient dans une trajectoire : le prix prend le stop en
+    deux minutes, puis atteint la cible trois heures plus tard. Le trade a
+    perdu ; le graphique relu après coup montre une belle course. Aucune
+    courbe de probabilité ne fait comprendre cela, et c'est pour cette raison
+    que la planche existe.
+
+    Les deux cadres portent **les mêmes trois séances à deux échelles**, parce
+    que les deux événements ne vivent pas à la même : le stop déclaré se
+    résout en minutes, la cible en heures.
+    """
+    a = q.STOP_PTS
+    b = q.RR_REF * a
+    temoins = V.trajectoires_temoins()
+    m = V.simuler_issues(a, b)
+    freqs = {"avant": m.avant, "apres": m.apres, "jamais": m.jamais,
+             "ni": m.ni}
+    # Trois teintes ecartees sur la rampe *et* trois motifs : deux courbes
+    # pleines de teintes voisines ne se distinguent pas, et la planche vit
+    # justement de la distinction entre la premiere et la deuxieme.
+    classes = {"avant": "hm7", "apres": "hm5", "jamais": "hm3",
+               "ni": "hm6"}
+    dashes = {"avant": "", "apres": "6 3", "jamais": "2 3", "ni": "1 4"}
+
+    b_ = _plate(510, "Grandeurs · trois séances, trois issues",
+                "Le prix atteint la cible après avoir pris le stop",
+                _pct(m.apres, 1) + " des séances")
+
+    # Le titre reste court pour que la lecture chiffree tienne sur sa ligne :
+    # au-dela, Panel la remonte d une ligne et les deux cadres cessent d etre
+    # symetriques. Le cadre dit lui-meme jusqu ou il va.
+    p1 = Panel(b_, PX1, 92, PW, 214,
+               title="Les premières minutes", readout="points")
+    zlo = min(min(z) for _, z, _ in temoins) - 0.4
+    zhi = max(max(z) for _, z, _ in temoins) + 0.4
+    p1.domain(0.0, V.MINUTES_ZOOM, zlo, zhi)
+    p1.frame()
+    p1.grid_y(_ticks(math.ceil(zlo), math.floor(zhi), 1.0),
+              lambda v: _signed(v, 0), dx=26.0)
+    p1.grid_x(_ticks(0.0, V.MINUTES_ZOOM, 2.0), lambda v: _num(v, 0),
+              label="minutes depuis l'entrée")
+    p1.hline(0.0, "lvl")
+    p1.hline(-a, "lvl")
+    for cle, zoom, _ in temoins:
+        pts = [(i / V.SOUS_PAS, x) for i, x in enumerate(zoom)]
+        p1.path(pts, classes[cle], dash=dashes[cle],
+                tip=V.LIBELLES[cle])
+    p1.label(V.MINUTES_ZOOM, -a, "stop, " + _num(-a, 1), dx=-6, dy=-6,
+             anchor="end")
+
+    p2 = Panel(b_, PX2, 92, PW, 214, title="La séance entière",
+               readout="points")
+    hi = max(max(mm) for _, _, mm in temoins) * 1.15
+    lo = min(min(mm) for _, _, mm in temoins) * 1.15
+    p2.domain(0.0, q.SESSION_MIN, lo, hi)
+    p2.frame()
+    p2.grid_y(_ticks(-15.0, 25.0, 10.0), lambda v: _signed(v, 0), dx=30.0)
+    p2.grid_x([0, 100, 200, 300], lambda v: _num(v, 0),
+              label="minutes depuis l'entrée")
+    p2.hline(0.0, "lvl")
+    p2.hline(b, "lvl")
+    for cle, _, minute in temoins:
+        p2.path(list(enumerate(minute)), classes[cle], dash=dashes[cle],
+                tip=V.LIBELLES[cle])
+    # Le nom se pose dans la seule fenetre ou la bande au-dessus de la ligne
+    # est vide : au bord droit, trois courbes la traversent et le texte
+    # serait barre sans qu'aucun balayage ne le voie.
+    p2.label(270.0, b, "cible, " + _signed(b, 0), dx=0, dy=-7,
+             anchor="start")
+
+    b_.legend(0.0, 352.0,
+              [(classes[c], V.LIBELLES[c] + ", " + _pct(freqs[c], 1),
+                dashes[c]) for c, _, _ in temoins],
+              step=222.0, kind="line")
+    b_.annotation(0.0, 376.0,
+                  "les mêmes trois séances dans les deux cadres, à deux "
+                  "échelles : le stop se résout en minutes, la cible en heures")
+    b_.annotation(0.0, 392.0,
+                  "la séance en tirets longs prend le stop dans la "
+                  "première minute, puis atteint la cible à la minute "
+                  + _num(V.minute_de_la_cible(
+                      next(mm for c, _, mm in temoins if c == "apres")), 0))
+    b_.annotation(0.0, 408.0,
+                  "elle compte pour une perte, et un graphique relu après "
+                  "coup y montre une course réussie jusqu'à la cible")
+    b_.annotation(0.0, 424.0,
+                  "c'est l'écart entre " + _pct(m.avant, 2) + " et "
+                  + _pct(m.touche, 1) + ", et il n'a pas d'autre contenu que "
+                  "celui-là")
+
+    _source(b_, "Trois séances sans dérive, choisies par une règle calculée : "
+                "la première de chaque issue dans l'ordre où elles se "
+                "présentent, jamais à la main. Le cadre de gauche montre les "
+                "huit premières minutes au douzième de minute, parce qu'un "
+                "stop de six dixièmes de point se joue là et qu'une "
+                "trajectoire à la minute ne le montrerait pas franchi. Le "
+                "cadre de droite montre la séance entière, où la cible est "
+                "atteinte par deux des trois séances — dont une qui avait "
+                "déjà perdu. Toute la partie tient dans cette séance-là, et "
+                "aucune courbe de probabilité ne la remplace.")
+    return b_.render("Trois seances sans derive a deux echelles, montrant une "
+                     "cible atteinte apres que le stop a ete pris.")
+
+
+def fig_gr_verification() -> str:
+    """Les trois formes fermées, contre la mesure.
+
+    La planche est un contrôle, et c'est ce qui la rend nécessaire : le
+    premier jet de cette partie publiait trois formes fermées sans les avoir
+    confrontées à une simulation, ce que la règle du dépôt interdit.
+    """
+    b_ = _plate(494, "Grandeurs · le contrôle par simulation",
+                "Trois formes fermées, et ce que la mesure en dit",
+                _num(V.N_SESSIONS, 0) + " séances par géométrie")
+
+    quantites = ("Touchée avant le stop", "Touchée à un moment",
+                 "Clôture au-delà")
+    n = len(quantites)
+
+    for k, (nom, st, ci) in enumerate(V.CONTROLES):
+        mes = V.simuler_issues(st, ci)
+        paires = ((mes.avant, V.p_avant_stop_discret(st, ci)),
+                  (mes.touche, V.p_touche(ci)),
+                  (mes.cloture, V.p_cloture(ci)))
+        px = PX1 if k == 0 else PX2
+        pan = Panel(b_, px, 92, PW, 214, title=nom, readout="probabilité")
+        haut = max(max(x) for x in paires) * 1.25
+        pan.domain(0.0, haut, -0.6, n - 0.4)
+        pan.frame()
+        pan.grid_x(_ticks(0.0, haut, 0.2), lambda v: _num(v, 1))
+        for i, (mesure, ferme) in enumerate(paires):
+            y = n - 1 - i
+            pan.hbar(y + 0.16, 0.0, mesure, 9.0, "hm6",
+                     tip="mesuré : " + _pct(mesure, 2))
+            pan.hbar(y - 0.16, 0.0, ferme, 9.0, "hm3",
+                     tip="forme fermée corrigée : " + _pct(ferme, 2))
+            pan.label(max(mesure, ferme), y, _pct(mesure, 1), dx=7, dy=4)
+            pan.label(0.0, y + 0.40, quantites[i], dx=4, dy=0)
+            # Deux barres presque egales ne disent pas de combien elles
+            # different : l ecart se publie chiffre, sur la ligne du nom,
+            # ou aucune barre ne passe.
+            ecart = 100 * (mesure - ferme)
+            pan.label(haut, y + 0.40,
+                      "écart " + ("moins de 0,1 pt" if abs(ecart) < 0.05
+                                  else _signed(ecart, 1) + " pt"),
+                      dx=-4, dy=0, anchor="end")
+
+    b_.legend(PX1, 352.0,
+              [("hm6", "mesuré sur les séances simulées"),
+               ("hm3", "forme fermée, corrigée du pas d'observation")],
+              step=290.0)
+    b_.annotation(0.0, 376.0,
+                  "à gauche, le stop déclaré de " + _num(q.STOP_PTS, 1)
+                  + " point, où la correction de continuité vaut "
+                  + _pct(V.decalage_continuite() / q.STOP_PTS, 0)
+                  + " de la largeur du stop")
+    b_.annotation(0.0, 392.0,
+                  "à droite, un stop de " + _num(V.STOP_CONTROLE, 0)
+                  + " points, que la grille résout : les trois formes "
+                  "fermées y tombent sur la mesure")
+    b_.annotation(0.0, 408.0,
+                  "les deux quantités lointaines sont confirmées dans les "
+                  "deux cas ; la proche ne l'est que dans le second")
+
+    _source(b_, "Une forme fermée ne se publie pas sans être confrontée à une "
+                "simulation, et le premier jet de cette partie l'avait omis "
+                "pour ses trois probabilités. Le contrôle porte une "
+                "difficulté propre : une barrière surveillée à pas fini est "
+                "franchie moins souvent qu'une barrière continue, et l'écart "
+                "vaut beta un fois sigma racine du pas — la constante de la "
+                "seizième partie, importée et non recopiée. Sur la géométrie "
+                "de contrôle, dont le stop est assez large pour être résolu, "
+                "les trois formes tombent sur la mesure. Sur la géométrie "
+                "déclarée, dont le stop vaut six dixièmes de point, la "
+                "correction pèse le tiers du stop lui-même et le contrôle "
+                "n'est plus qu'un ordre de grandeur — ce qui est un fait sur "
+                "cette géométrie, non sur les formules.")
+    return b_.render("Formes fermees contre mesure pour les trois "
+                     "probabilites, sur deux geometries.")
 
 
 def fig_gr_cout() -> str:
@@ -803,6 +986,8 @@ def fig_gr_reste() -> str:
 
 FIGURES = {
     "grprobas": fig_gr_probas,
+    "grexemple": fig_gr_exemple,
+    "grverif": fig_gr_verification,
     "grcout": fig_gr_cout,
     "grconfusion": fig_gr_confusion,
     "grrelief": fig_gr_relief_cout,
