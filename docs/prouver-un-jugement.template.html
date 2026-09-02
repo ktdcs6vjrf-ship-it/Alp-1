@@ -801,8 +801,20 @@
           <li><a href="#s-rev-recuperer">Ce qu'on peut en récupérer</a></li>
         </ol>
       </li>
-      <li><span class="pt">Dix-neuvième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Dix-neuvième partie — Un niveau a une largeur</span>
         <ol start="83">
+          <li><a href="#s-niv-temoin">Le contrôle apparié en distance</a></li>
+          <li><a href="#s-niv-definition">La définition fabrique le taux</a></li>
+          <li><a href="#s-niv-exigence">Ce qu'un niveau doit battre, et ce que la preuve coûte</a></li>
+          <li><a href="#s-niv-largeur">Un niveau a une largeur, et elle se calcule</a></li>
+          <li><a href="#s-niv-forcee">La géométrie que la largeur impose</a></li>
+          <li><a href="#s-niv-identite">L'identité gamma-thêta</a></li>
+          <li><a href="#s-niv-signe">Le signe que la reconstruction jette</a></li>
+          <li><a href="#s-niv-reste">Ce qui reste du gamma</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingtième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="91">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2344,6 +2356,130 @@
 
   <div class="part">
     <span class="lab">Dix-neuvième partie</span>
+    <h2>Un niveau a une largeur</h2>
+    <p>Un prix exact n'a pas de largeur. Ce qu'il marque en a une, et elle se calcule.</p>
+  </div>
+
+  <p class="chapeau">Cette partie part d'un objet extérieur, comme les trois précédentes&nbsp;: un guide d'options consacré au gamma des teneurs de marché. Il fait une chose que la vulgarisation ne fait jamais — il publie le résultat de son propre test. Sur plusieurs années de séances de futures sur indice, l'issue de retournement mesurée <em>contre un niveau témoin placé à la même distance de l'ouverture</em>, aucun niveau dérivé du gamma ne porte d'information mesurable&nbsp;: ni le niveau de bascule, ni la classification de régime, ni la concentration de gamma par strike. Le protocole du dépôt reprend ce contrôle, qui manquait au catalogue de la troisième partie, et en tire quatre choses que le guide ne calcule pas.</p>
+
+  <h2 id="s-niv-temoin">Le contrôle apparié en distance</h2>
+
+  <p>Une statistique de niveau se lit presque toujours sous cette forme&nbsp;: <em>le prix a retourné sur ce niveau soixante-deux pour cent du temps.</em> La phrase paraît vérifiable. Elle ne l'est pas, et il manque deux choses pour qu'elle le devienne.</p>
+
+  <p>La première est la distance. Un niveau placé à un demi écart-type de séance de l'ouverture est touché {{n_touche_demi}}&nbsp;% des séances&nbsp;; à un écart-type entier, {{n_touche_un}}&nbsp;%. Le principe de réflexion donne ces nombres exactement, et ils ne dépendent d'<em>aucune</em> propriété du niveau — seulement de l'endroit où on l'a posé. Deux méthodes qui placent leurs lignes à des distances différentes produisent des fréquences très différentes sans qu'aucune des deux ne sache quoi que ce soit.</p>
+
+{{TABLE:niv_temoin}}
+
+{{FIGURE:nvtemoin|Le taux de touche contre la distance, et le taux de réussite du trade pris sur le niveau, qui ne bouge pas.}}
+
+  <p>La seconde est ce que le niveau doit battre. Un trade pris sur un niveau, avec la géométrie déclarée du document, réussit {{n_taux_temoin}}&nbsp;% du temps sous prix sans dérive&nbsp;: c'est <span class="mono">1/(1+R:R)</span>, le théorème d'arrêt optionnel, et cette colonne est <strong>constante à toute distance</strong>. <em>Un niveau ne se juge que contre un témoin placé à la même distance de l'ouverture</em>, et c'est exactement le protocole que le guide extérieur applique — pour ne rien trouver.</p>
+
+  <h2 id="s-niv-definition">La définition fabrique le taux</h2>
+
+  <p>Il reste une troisième chose, et c'est la plus embarrassante. «&nbsp;Le prix a retourné&nbsp;» n'est pas une observation tant que deux distances ne sont pas déclarées&nbsp;: de combien faut-il qu'il recule pour qu'on dise que le niveau a tenu, et de combien qu'il étende pour qu'on dise qu'il a cédé.</p>
+
+  <p>Sous prix sans dérive, l'arrêt optionnel donne le taux de tenue exactement&nbsp;: <span class="mono">e/(r+e)</span>. Il dépasse un demi dès que l'extension exigée dépasse le recul exigé, et il n'y a là aucun niveau.</p>
+
+{{TABLE:niv_definition}}
+
+{{FIGURE:nvdefinition|Le taux de tenue contre l'asymétrie des deux distances, et les cinq définitions déclarées.}}
+
+  <p>Un recul d'un tick avant une extension de quatre points rend quatre-vingt-quatorze pour cent de tenue sur du bruit pur. <strong>C'est la raison pour laquelle tout niveau publié «&nbsp;fonctionne&nbsp;»</strong>&nbsp;: la définition du retournement est presque toujours asymétrique, et l'asymétrie suffit. Une statistique de niveau qui ne publie pas ses deux distances ne publie rien, et un taux de soixante-quinze pour cent y est le résultat <em>attendu sous l'hypothèse nulle</em>.</p>
+
+  <h2 id="s-niv-exigence">Ce qu'un niveau doit battre, et ce que la preuve coûte</h2>
+
+  <p>Le témoin étant posé, l'excès qu'un niveau doit montrer se calcule en une ligne. Le taux nul vaut <span class="mono">1/(1+R:R)</span> et le taux d'équilibre <span class="mono">(1+c/a)/(1+R:R)</span>&nbsp;: leur différence ne dépend que de la friction relative.</p>
+
+  <p class="formule"><span class="mono">δ = (c/a)/(1 + R:R)</span> &nbsp;&nbsp;et&nbsp;&nbsp; <span class="mono">n = z²·(R:R)·(a/c)²</span></p>
+
+  <p>La seconde identité est le résultat de la partie. L'excès requis décroît comme la friction relative, et l'échantillon qui l'établit croît comme <strong>son carré</strong>. À la géométrie déclarée, un niveau doit battre son témoin de {{n_exces_declare}}&nbsp;points de taux et {{n_touches_declare}}&nbsp;touches suffisent à le trancher. Au stop élargi, l'exigence tombe à {{n_exces_elargi}}&nbsp;point — divisée par {{n_facteur_exces}} — mais il faut {{n_touches_elargi}}&nbsp;touches, multipliées par {{n_facteur_touches}}.</p>
+
+{{TABLE:niv_exigence}}
+
+{{FIGURE:nvexigence|L'excès requis sur le témoin et les touches requises pour l'établir, contre la largeur du stop, par deux routes indépendantes.}}
+
+  <p>Le contrôle qui autorise à publier cette forme fermée est son accord avec le budget d'information de la <a href="#s-information">quatrième partie</a>, calculé par une route entièrement différente&nbsp;: {{n_touches_declare}} contre {{n_info_declare}} à la géométrie déclarée, soit {{n_accord_declare}}&nbsp;% d'écart. <em>Rendre l'exigence petite la rend indémontrable</em> — le résultat de la partie&nbsp;IV, retrouvé sans jamais parler d'information.</p>
+
+{{FIGURE:nvrelief|Le relief des touches requises sur le plan de la largeur du stop et du rapport gain sur risque. Les deux axes agissent dans le même sens et par le même mécanisme.}}
+
+  <h2 id="s-niv-largeur">Un niveau a une largeur, et elle se calcule</h2>
+
+  <p>Le guide extérieur écrit une phrase que personne ne convertit en nombre&nbsp;: <em>gamma n'est pas un nombre, c'est un lieu.</em> La courbure d'une option vit à moins d'un écart-type du strike et s'annule au-delà. Cet écart-type se calcule&nbsp;: la demi-largeur à mi-hauteur de <span class="mono">φ(d₁)</span> vaut <span class="mono">√(2 ln 2)·σ√T</span>, soit {{n_demi_hauteur}}&nbsp;σ√T en log-moneyness.</p>
+
+  <p>À deux heures de l'échéance, cette demi-largeur vaut encore {{n_largeur_0dte}}&nbsp;points, soit {{n_largeur_0dte_pct}}&nbsp;% du niveau. À un jour, {{n_largeur_1j}}&nbsp;points. La géométrie déclarée du document a un stop de {{n_stop_declare}}&nbsp;point&nbsp;: <strong>la bande de gamma à un jour vaut {{n_rapport_1j}} fois le stop qui prétend la trader.</strong></p>
+
+{{FIGURE:nvbande|La demi-largeur de la bande de gamma sur le plan de l'échéance et de la volatilité. Les deux axes n'entrent que par le produit σ√T.}}
+
+  <p>La largeur n'est pas propre au gamma, et c'est ce qui rend la mesure utile. Elle a trois origines, et elles ne se corrigent pas de la même façon.</p>
+
+  <ul>
+    <li>Une largeur <strong>mécanique</strong> est une propriété du phénomène. Celle du gamma, celle de la bande d'un VWAP. Elle ne se négocie pas.</li>
+    <li>Un <strong>réglage d'affichage</strong> est une largeur qu'on choisit sans le savoir&nbsp;: la hauteur d'une rangée de profil. La troisième partie a déjà montré qu'il décide de la rareté de ce qu'on lit.</li>
+    <li>Un <strong>choix d'ancrage</strong> est une largeur que la méthode fabrique elle-même. Un retracement est un prix exact, mais le balancement retenu ne l'est pas&nbsp;: l'écart entre les balancements plausibles d'une même séance vaut {{n_largeur_ancrage}}&nbsp;points, et c'est une largeur comme une autre.</li>
+  </ul>
+
+{{TABLE:niv_largeur}}
+
+{{FIGURE:nvlargeur|La demi-largeur de chaque lecture, en échelle logarithmique, contre les deux géométries du document.}}
+
+  <p>La dernière colonne est le nombre qu'aucune méthode de niveaux ne publie. Depuis le niveau, sous prix sans dérive, la probabilité de toucher le stop <em>avant de sortir de la bande</em> vaut <span class="mono">w/(a+w)</span> par arrêt optionnel. Au-dessus de cinquante pour cent, <strong>l'invalidation ne mesure plus le niveau&nbsp;: elle mesure le bruit à l'intérieur de sa bande.</strong> Au stop élargi, elle vaut {{n_inval_0dte}}&nbsp;% pour une bande de gamma à deux heures et {{n_inval_1j}}&nbsp;% à un jour.</p>
+
+{{FIGURE:nvinvalidation|La probabilité que le stop parle avant le niveau, sur le plan de la largeur du niveau et de celle du stop. La ligne de niveau à un demi est la diagonale.}}
+
+  <h2 id="s-niv-forcee">La géométrie que la largeur impose</h2>
+
+  <p>Si l'invalidation doit appartenir au marché et non à la bande, alors le stop vaut la largeur, et la largeur choisit tout le reste — le temps de marché, le seuil de rentabilité, l'échantillon. Les deux conséquences vont en sens contraire, et c'est le résultat de la section.</p>
+
+{{TABLE:niv_forcee}}
+
+{{FIGURE:nvforcee|Le seuil de rentabilité forcé par la largeur et les touches requises pour l'établir. Les deux conditions se croisent rarement.}}
+
+  <p>Un niveau large <em>abaisse</em> le seuil de rentabilité, parce qu'un stop large achète du temps de marché&nbsp;: c'est le levier de la <a href="#s-seuil">dixième partie</a>, et il joue ici aussi. Mais il fait exploser l'échantillon, parce que l'exigence devient minuscule et que la preuve croît comme son carré. <strong>La largeur d'un niveau ne rend pas le trade impossible&nbsp;: elle rend impossible de savoir s'il marche.</strong> Sur les {{n_lectures}} lectures du catalogue, la fenêtre où les deux verdicts passent ensemble tient en {{n_passent}} ligne — {{n_qui_passe}} — et le compte est recalculé à chaque construction du document.</p>
+
+  <h2 id="s-niv-identite">L'identité gamma-thêta</h2>
+
+  <p>Il reste à dire ce que le gamma <em>fait</em>, puisque la mécanique de couverture est réelle et que son effet sur la volatilité réalisée est documenté. L'équation de Black-Scholes se réduit, pour un livre couvert en delta à taux nul, à une seule identité&nbsp;:</p>
+
+  <p class="formule"><span class="mono">Θ + ½σ²S²Γ + (r−q)SΔ = rV</span> &nbsp;&nbsp;donc&nbsp;&nbsp; <span class="mono">Θ = −½σ²S²Γ</span></p>
+
+  <p>Le thêta payé chaque jour est <em>exactement</em> la courbure reçue, facturée au prix de la volatilité implicite. Le mouvement d'équilibre quotidien vaut donc <span class="mono">σ/√365</span> = {{n_equilibre}}&nbsp;%, <strong>à toute échéance et à tout strike</strong>. C'est le théorème d'arrêt optionnel du marché d'options, et il dit la même chose que l'identité de ce document&nbsp;: aucune géométrie ne crée d'espérance, elle achète du temps.</p>
+
+{{TABLE:niv_identite}}
+
+{{FIGURE:nvidentite|Trois routes vers le mouvement quotidien d'équilibre, et le gamma par un pour cent contre l'échéance.}}
+
+  <p>Les deux autres colonnes tiennent compte de ce qu'un opérateur détient une nuit et non un instant, et <strong>elles encadrent la vérité par les deux côtés</strong>. L'approximation quadratique — celle que tout le monde écrit — surestime&nbsp;; la réévaluation exacte est la mesure. Leur rapport vaut {{n_rapport_routes_1j}} au dernier jour contre {{n_rapport_routes_long}} à six mois. <em>L'approximation qui fonde tout le discours sur le gamma échoue exactement là où le gamma est le plus grand</em>, c'est-à-dire le dernier jour, celui dont le guide extérieur dit lui-même qu'il est un pari sur la loi terminale.</p>
+
+  <h2 id="s-niv-signe">Le signe que la reconstruction jette</h2>
+
+  <p>Reste l'objet le plus cité de tous&nbsp;: le niveau de bascule, construit par la somme <span class="mono">GEX = Σ Γᵢ·OIᵢ·m·S²·(1&nbsp;%)·signᵢ</span>. Chaque terme y est observable sauf un. <strong>L'intérêt ouvert ne porte aucun signe.</strong> Le teneur peut être d'un côté ou de l'autre de n'importe quelle ligne, et la reconstruction courante suppose qu'il est long les calls et court les puts à <em>tous</em> les strikes.</p>
+
+  <p>Cette section ne conteste pas la supposition. Elle mesure ce qu'elle vaut, en n'en retenant qu'une fraction et en tirant le reste à pile ou face.</p>
+
+{{TABLE:niv_signe}}
+
+{{FIGURE:nvgex|Le profil d'intérêt ouvert déclaré, l'exposition nette sous l'hypothèse habituelle, et la bande où la bascule se promène quand le signe n'est pas observé.}}
+
+  <p>À signe entièrement connu, la bascule est un point&nbsp;: {{n_bascule_ref}}. À signe entièrement inconnu, elle occupe {{n_bascule_largeur}}&nbsp;points — {{n_bascule_pct}}&nbsp;% du niveau, soit {{n_bascule_rapport}}&nbsp;fois le stop élargi du document — et dans {{n_bascule_absent}}&nbsp;% des tirages <em>il n'existe aucune bascule du tout</em>, une issue que la publication d'un nombre unique ne peut pas représenter.</p>
+
+{{FIGURE:nvbascule|La largeur de la bande de bascule sur le plan de la part de signes connus et de l'asymétrie du profil. Ni l'un ni l'autre axe n'est à la portée de qui lit un chiffre publié.}}
+
+  <p>C'est le mécanisme du résultat négatif du guide, <strong>calculé plutôt qu'affirmé</strong>, et il n'y a là aucune affirmation sur l'efficience du marché&nbsp;: c'est de l'arithmétique sur ce que la reconstruction jette. <em>Si vous n'observez pas le signe de l'inventaire du teneur, vous ne mesurez pas son gamma. Vous mesurez où l'intérêt ouvert se trouve.</em></p>
+
+  <h2 id="s-niv-reste">Ce qui reste du gamma</h2>
+
+  <p>Il faut conclure honnêtement, et la conclusion n'est pas que la mécanique est fictive.</p>
+
+{{TABLE:niv_reste}}
+
+{{FIGURE:nvreste|Les cinq affirmations, ce que chacune déplace, et la colonne qu'aucune ne remplit.}}
+
+  <p>Sur cinq affirmations, {{n_horloge}} déplacent l'horloge, une déplace le risque, {{n_rien}} ne déplacent rien à la résolution où on les trade, et <strong>{{n_directionnelles}} ne donne le sens</strong>. C'est le même verdict que les quinze lectures de la troisième partie et que les cinq disciplines de la seizième, obtenu sur un objet que ni l'une ni l'autre n'avait examiné.</p>
+
+  <p>Ce qui se récupère, en revanche, est le contrôle lui-même. <em>Le témoin apparié en distance est la loi nulle correcte de toute méthode de niveaux</em>, et il manquait au catalogue de ce document. Il ne coûte rien, il s'applique à une ligne de VWAP comme à un niveau de bascule, et il transforme la question «&nbsp;ce niveau marche-t-il&nbsp;?&nbsp;» — qui n'a pas de réponse — en «&nbsp;de combien bat-il un niveau quelconque placé au même endroit, et combien de touches faut-il pour le savoir&nbsp;?&nbsp;», qui en a une, chiffrée, et souvent décourageante.</p>
+
+  <div class="part">
+    <span class="lab">Vingtième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

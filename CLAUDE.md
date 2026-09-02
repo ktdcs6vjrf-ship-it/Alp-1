@@ -21,8 +21,9 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (86 sections en dix-neuf
-parties, 74 tables, 98 figures dont trente surfaces en nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+**ALP nº 3** — `docs/prouver-un-jugement.html` (94 sections en vingt
+parties, 82 tables, 110 figures dont trente-quatre surfaces en nuage de
+points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
 lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
@@ -30,7 +31,7 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
-`figrev.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`figrev.py` + `niveaux.py` + `fignv.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -61,9 +62,10 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/614afa35-4f3c-4ea4-914e-1ce60096f0df
-  (précédents : 213dccda, a990ef0e, c2cbc5ee, d1e5eca9, 82bd1a42, 601106cf,
-  dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/e5f06e51-b712-4b74-9d0d-2ed2a5025c68
+  (précédents : 614afa35, 213dccda, a990ef0e, c2cbc5ee, d1e5eca9, 82bd1a42,
+  601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16,
+  c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -225,6 +227,58 @@ statistique de **préfixe** : une seule simulation à l'horizon le plus long,
 relue à ses jalons, rend exactement le même résultat en vingt secondes — et
 aligne les colonnes sur le même aléa, ce qu'on voulait voir de toute façon.
 
+Sa **partie XIX** part d'un guide d'options extérieur consacré au gamma des
+teneurs — `niveaux.py` + `fignv.py`. Le guide fait ce que la vulgarisation ne
+fait jamais : il publie le résultat de son propre test, mesuré **contre un
+niveau témoin placé à la même distance de l'ouverture**, et il ne trouve rien.
+Le dépôt reprend ce contrôle, qui lui **manquait**, et en tire quatre choses.
+
+① **Le témoin apparié en distance.** Le taux de touche est celui du principe
+de réflexion et ne dit que la distance ; le taux de réussite d'un trade pris
+sur le niveau vaut `1/(1+R:R)` — **constant à toute distance**. D'où l'identité
+de la partie : l'excès requis vaut `δ = (c/a)/(1+R:R)` et l'échantillon
+`n = z²·(R:R)·(a/c)²`. *L'exigence décroît comme la friction relative et la
+preuve croît comme son carré* — le budget d'information de la partie IV,
+retrouvé par une route entièrement différente, et les deux s'accordent à 9 %
+(519 contre 474). Un piège y est enterré : `a/(a+b)` est le taux du problème
+**non borné**, et la table publie `p_open` en colonne parce qu'aux stops
+larges la séance borne et que les deux dernières lignes ne sont plus qu'un
+ordre de grandeur.
+② **La définition fabrique le taux.** « Tenir » se définit par deux distances,
+et l'arrêt optionnel rend `e/(r+e)`. Un recul d'un tick avant une extension de
+quatre points rend **94 %** de tenue sur du bruit pur : *c'est pour cela que
+tout niveau publié « fonctionne »*.
+③ **Un niveau a une largeur.** Celle du gamma vaut `√(2 ln 2)·σ√T` = 1,177 σ√T
+— 93 points à un jour, soit **155 fois** le stop déclaré. Trois natures :
+mécanique, réglage d'affichage, choix d'ancrage (le retracement est un prix
+exact, mais le balancement retenu ne l'est pas : 3,39 points d'écart mesurés).
+La probabilité que le stop parle avant le niveau vaut `w/(a+w)`, et **une seule
+des neuf lectures passe les deux verdicts** (µ* dans le domaine *et* preuve à
+portée) : le nœud de faible volume.
+④ **L'identité gamma-thêta.** `Θ = −½σ²S²Γ` : le mouvement d'équilibre vaut
+`σ/√365` à toute échéance et à tout strike — le théorème d'arrêt optionnel du
+marché d'options. Les deux façons de tenir compte d'une nuit **encadrent la
+vérité par les deux côtés**, et leur rapport vaut 1,77 au dernier jour :
+*l'approximation quadratique échoue exactement là où le gamma est le plus
+grand.*
+⑤ **Le signe que la reconstruction jette.** `GEX` suppose le teneur long les
+calls et court les puts à tous les strikes ; l'intérêt ouvert ne porte aucun
+signe. À signe inconnu la bascule occupe 1 219 points — 135 fois le stop
+élargi — et **dans la moitié des tirages elle n'existe pas du tout**. Verdict
+calculé : deux affirmations déplacent l'horloge, une le risque, deux rien, et
+aucune le sens.
+
+Deux pièges y sont enterrés. Le relief du signe portait d'abord l'asymétrie du
+profil en second axe, avec un mécanisme plausible écrit d'avance — la masse
+d'un côté devrait finir par dominer. **La mesure rend une surface plate** (975
+à 1 072 points sur toute la plage), l'axe a été remplacé par l'échéance, qui
+agit, et un test exige désormais que l'asymétrie ne resserre rien. Et la
+largeur de bande est **censurée** : une configuration sans bascule n'entre
+dans aucun quantile, donc la bande mesurée est une borne inférieure de
+l'incertitude — et elle l'est le plus là où l'incertitude est la plus grande.
+Le relief porte donc la part d'absence, la seule grandeur que la censure ne
+fausse pas.
+
 ## Carte des modules
 
 Mesure et géométrie
@@ -349,6 +403,18 @@ Rendu
   budget. La capacité : `capacite_pure` en `ν⁻²` exact, `capacite` avec la
   friction fixe, `rotation_fatale`. Neuf tables, quatre surfaces.
 - `figrev.py` — les dix planches de la partie XVIII, dont quatre reliefs.
+- `niveaux.py` — **la largeur d'un niveau, et le témoin apparié en distance.**
+  `taux_de_touche` (réflexion), `taux_de_reussite` / `_ferme` (les deux routes,
+  et leur accord est le contrôle du module), `taux_de_tenue` = `e/(r+e)`,
+  `cloture_avant_barriere` (la condition, publiée en colonne), `exces_requis`
+  et `touches_requises` (les deux identités, contrôlées contre `entropy`),
+  `largeur_gamma` (`√(2 ln 2)·σ√T`), `invalidation_prematuree` = `w/(a+w)`,
+  `largeur_d_ancrage` (simulée), `niveaux()` **trié par largeur calculée**,
+  `geometrie_forcee` / `passe_les_deux`, l'identité gamma-thêta par trois
+  routes (`equilibre_instantane` / `_quadratique` / `_exact`), et le bloc GEX
+  (`profil_oi`, `gex`, `bascule`, `bande_de_bascule`, `surface_absence`).
+  Huit tables, quatre surfaces.
+- `fignv.py` — les douze planches de la partie XIX, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
@@ -700,9 +766,9 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # 1238 tests (compter ~55 min ; --wp, setups,
-                            # robustesse, overnight, emprunts et revue
-                            # sont lents)
+python main.py --tests      # 1319 tests (compter ~60 min ; --wp, setups,
+                            # robustesse, overnight, emprunts, revue et
+                            # niveaux sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
