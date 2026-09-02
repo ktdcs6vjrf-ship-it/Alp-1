@@ -19,9 +19,9 @@ import re
 from pathlib import Path
 
 from . import (concepts, emprunts, figcat, figdisc, figemp, figfds, figflux,
-               fignv, figon, figrev, figrobu, figsetup, figsortie, fonds,
-               horloge, niveaux, overnight, report10, report11, report13,
-               report14, revue,
+               figgra, fignv, figon, figrev, figrobu, figsetup, figsortie,
+               fonds, grandeurs, horloge, niveaux, overnight, report10,
+               report11, report13, report14, revue,
                robustesse, setups, sorties)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
@@ -49,7 +49,8 @@ def values() -> dict[str, str]:
                   sorties.values(), horloge.values(), concepts.values(),
                   setups.values(), robustesse.values(),
                   overnight.values(), emprunts.values(),
-                  fonds.values(), revue.values(), niveaux.values()):
+                  fonds.values(), revue.values(), niveaux.values(),
+                  grandeurs.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -68,7 +69,8 @@ def tables() -> dict[str, Table]:
                   concepts.all_tables(), setups.all_tables(),
                   robustesse.all_tables(), overnight.all_tables(),
                   emprunts.all_tables(), fonds.all_tables(),
-                  revue.all_tables(), niveaux.all_tables()):
+                  revue.all_tables(), niveaux.all_tables(),
+                  grandeurs.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")
@@ -85,12 +87,13 @@ def figures() -> dict[str, str]:
     éprouve le théorème sous six lois, `figon` pour l'affirmation venue du
     dehors, `figemp` pour les cinq disciplines empruntées, `figfds` pour
     la partie qui regarde un fonds, `figrev` pour la revue de deux
-    documents extérieurs et `fignv` pour la largeur d'un niveau ; deux clés
-    identiques y feraient disparaître une figure en silence.
+    documents extérieurs, `fignv` pour la largeur d'un niveau et `figgra`
+    pour les grandeurs qu'un seul mot désigne ; deux clés identiques y
+    feraient disparaître une figure en silence.
     """
     fusion = dict(figdisc.render_all())
     for module in (figflux, figsortie, figcat, figsetup, figrobu, figon,
-                   figemp, figfds, figrev, fignv):
+                   figemp, figfds, figrev, fignv, figgra):
         rendu = module.render_all()
         heurts = set(fusion) & set(rendu)
         if heurts:

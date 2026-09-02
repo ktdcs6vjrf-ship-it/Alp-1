@@ -813,8 +813,19 @@
           <li><a href="#s-niv-reste">Ce qui reste du gamma</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingtième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingtième partie — La grandeur qu'on cite n'est pas celle qui décide</span>
         <ol start="91">
+          <li><a href="#s-gr-probas">Une cible a trois probabilités</a></li>
+          <li><a href="#s-gr-cout">Ce que la confusion coûte</a></li>
+          <li><a href="#s-gr-deltas">Un delta en a trois aussi</a></li>
+          <li><a href="#s-gr-charm">Ce qui bouge pendant qu'on ne fait rien</a></li>
+          <li><a href="#s-gr-livre">Le résumé qui cache</a></li>
+          <li><a href="#s-gr-convention">La convention qu'on n'attache pas</a></li>
+          <li><a href="#s-gr-reste">Le décompte</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-et-unième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="98">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2398,7 +2409,7 @@
 
 {{FIGURE:nvexigence|L'excès requis sur le témoin et les touches requises pour l'établir, contre la largeur du stop, par deux routes indépendantes.}}
 
-  <p>Le contrôle qui autorise à publier cette forme fermée est son accord avec le budget d'information de la <a href="#s-information">quatrième partie</a>, calculé par une route entièrement différente&nbsp;: {{n_touches_declare}} contre {{n_info_declare}} à la géométrie déclarée, soit {{n_accord_declare}}&nbsp;% d'écart. <em>Rendre l'exigence petite la rend indémontrable</em> — le résultat de la partie&nbsp;IV, retrouvé sans jamais parler d'information.</p>
+  <p>Le contrôle qui autorise à publier cette forme fermée est son accord avec le budget d'information de la <a href="#s-convergence">quatrième partie</a>, calculé par une route entièrement différente&nbsp;: {{n_touches_declare}} contre {{n_info_declare}} à la géométrie déclarée, soit {{n_accord_declare}}&nbsp;% d'écart. <em>Rendre l'exigence petite la rend indémontrable</em> — le résultat de la partie&nbsp;IV, retrouvé sans jamais parler d'information.</p>
 
 {{FIGURE:nvrelief|Le relief des touches requises sur le plan de la largeur du stop et du rapport gain sur risque. Les deux axes agissent dans le même sens et par le même mécanisme.}}
 
@@ -2434,7 +2445,7 @@
 
 {{FIGURE:nvforcee|Le seuil de rentabilité forcé par la largeur et les touches requises pour l'établir. Les deux conditions se croisent rarement.}}
 
-  <p>Un niveau large <em>abaisse</em> le seuil de rentabilité, parce qu'un stop large achète du temps de marché&nbsp;: c'est le levier de la <a href="#s-seuil">dixième partie</a>, et il joue ici aussi. Mais il fait exploser l'échantillon, parce que l'exigence devient minuscule et que la preuve croît comme son carré. <strong>La largeur d'un niveau ne rend pas le trade impossible&nbsp;: elle rend impossible de savoir s'il marche.</strong> Sur les {{n_lectures}} lectures du catalogue, la fenêtre où les deux verdicts passent ensemble tient en {{n_passent}} ligne — {{n_qui_passe}} — et le compte est recalculé à chaque construction du document.</p>
+  <p>Un niveau large <em>abaisse</em> le seuil de rentabilité, parce qu'un stop large achète du temps de marché&nbsp;: c'est le levier de la <a href="#s-effondrement">dixième partie</a>, et il joue ici aussi. Mais il fait exploser l'échantillon, parce que l'exigence devient minuscule et que la preuve croît comme son carré. <strong>La largeur d'un niveau ne rend pas le trade impossible&nbsp;: elle rend impossible de savoir s'il marche.</strong> Sur les {{n_lectures}} lectures du catalogue, la fenêtre où les deux verdicts passent ensemble tient en {{n_passent}} ligne — {{n_qui_passe}} — et le compte est recalculé à chaque construction du document.</p>
 
   <h2 id="s-niv-identite">L'identité gamma-thêta</h2>
 
@@ -2480,6 +2491,122 @@
 
   <div class="part">
     <span class="lab">Vingtième partie</span>
+    <h2>La grandeur qu'on cite n'est pas celle qui décide</h2>
+    <p>Un mot, plusieurs nombres. Celui qu'on répète décrit le présent&nbsp;; celui qui décide est un autre.</p>
+  </div>
+
+  <p class="chapeau">Cette partie part du premier document de la série d'options dont la partie précédente a examiné le second. Il est consacré au delta, et il tient dans une observation que son auteur formule sans en tirer toutes les conséquences&nbsp;: <em>les opérateurs emploient un seul mot pour au moins trois grandeurs différentes, et confondre les trois est la première source d'erreur de dimensionnement.</em> Le dépôt reprend l'observation et découvre d'abord qu'elle le concerne — avant de regarder le delta de quiconque, il faut regarder le sien.</p>
+
+  <h2 id="s-gr-probas">Une cible a trois probabilités</h2>
+
+  <p>Une cible posée à {{g_cible_pts}}&nbsp;points de l'entrée, avec la géométrie déclarée du document, porte trois nombres. Tous trois sont exacts, tous trois se calculent en une ligne, et tous trois s'appellent, dans la bouche de tout le monde, «&nbsp;la probabilité que ma cible soit touchée&nbsp;».</p>
+
+  <ul>
+    <li><span class="mono">a/(a+b)</span> — la toucher <strong>avant le stop</strong>. C'est le théorème d'arrêt optionnel, elle ne fait intervenir aucune volatilité, et <em>c'est la seule qui décide d'un trade</em>. Elle vaut {{g_p_avant}}&nbsp;%.</li>
+    <li><span class="mono">2Φ(−b/σ√T)</span> — la toucher <strong>à un moment</strong>. C'est le principe de réflexion, et c'est ce qu'un graphique donne à l'œil&nbsp;: le prix est passé là. Elle vaut {{g_p_touche}}&nbsp;%.</li>
+    <li><span class="mono">Φ(−b/σ√T)</span> — <strong>clôturer au-delà</strong>. C'est ce qu'un backtest naïf rapporte, et c'est exactement la moitié de la précédente. Elle vaut {{g_p_cloture}}&nbsp;%.</li>
+  </ul>
+
+{{TABLE:gr_probas}}
+
+{{FIGURE:grprobas|Les trois probabilités d'une même cible contre l'ambition de celle-ci, et le rapport des deux extrêmes.}}
+
+  <p><strong>Un facteur {{g_facteur_touche}} sépare la première de la troisième</strong>, et l'écart n'est pas un accident de réglage&nbsp;: il croît avec l'ambition de la cible, c'est-à-dire précisément là où la confusion est la plus tentante. Rien dans cette section ne dépend d'une donnée de marché.</p>
+
+  <h2 id="s-gr-cout">Ce que la confusion coûte</h2>
+
+  <p>L'identité de Wald prend la probabilité qu'on lui donne et ne vérifie pas laquelle. C'est tout le problème.</p>
+
+{{TABLE:gr_cout}}
+
+{{FIGURE:grcout|L'espérance contre la probabilité employée, et les trois espérances qui en découlent.}}
+
+  <p>Avec la bonne, elle rend {{g_er_vraie}}&nbsp;R, c'est-à-dire exactement&nbsp;<span class="mono">−c/a</span>. Avec celle d'un backtest naïf, {{g_er_cloture}}&nbsp;R. Avec celle que l'œil retient, {{g_er_touche}}&nbsp;R. <strong>L'écart entre la vérité et la croyance vaut {{g_ecart_r}}&nbsp;R par décision</strong>, et il ne vient d'aucune erreur de marché&nbsp;: il vient de la question qui a été posée.</p>
+
+  <p>Reste à expliquer pourquoi une erreur de cette taille survit. Le taux d'équilibre vaut {{g_equilibre}}&nbsp;%&nbsp;: il est <em>au-dessus</em> de la vraie probabilité et <em>au-dessous</em> des deux autres. La confusion ne déplace donc pas un chiffre à la marge — <strong>elle retourne le verdict</strong>, et un opérateur qui l'a commise ne voit pas un résultat un peu trop beau, il voit un résultat qui change de signe.</p>
+
+{{FIGURE:grconfusion|Le relief du rapport des deux probabilités, sur le plan de la largeur du stop et du rapport gain sur risque.}}
+
+{{FIGURE:grrelief|Le relief du coût en R par décision. Il ne dépend pas de la friction, et il est maximal exactement pour les géométries qu'un opérateur discrétionnaire préfère.}}
+
+  <h2 id="s-gr-deltas">Un delta en a trois aussi</h2>
+
+  <p>Le document extérieur fait le même constat sur son propre objet, et il en nomme trois&nbsp;: le delta de couverture <span class="mono">e^{−qT}N(d₁)</span>, la probabilité terminale <span class="mono">N(d₂)</span>, et le dual delta <span class="mono">−∂V/∂K</span>. Le raccourci populaire — «&nbsp;le delta est la probabilité de finir dans la monnaie&nbsp;» — confond les deux premiers.</p>
+
+{{TABLE:gr_deltas}}
+
+{{FIGURE:grdeltas|Les trois deltas contre le comptant, et l'écart entre delta et probabilité terminale contre la volatilité.}}
+
+  <p>Ils sont proches à échéance courte et près de la monnaie, ce qui explique la survie du raccourci&nbsp;; <strong>ils se séparent exactement là où l'on s'appuie le plus dessus</strong>. À {{g_vol_ref}}&nbsp;% de volatilité et six mois l'écart vaut {{g_gap_ref}}&nbsp;points de delta&nbsp;; à quatre-vingts pour cent, {{g_gap_gros}}. Le document extérieur annonçait «&nbsp;plus de {{g_gap_annonce}}&nbsp;points&nbsp;»&nbsp;: son annonce était prudente.</p>
+
+  <p>La coupure est celle de la première section, à l'identique, et ce n'est pas une analogie. <span class="mono">N(d₁)</span> pondère par le chemin, <span class="mono">N(d₂)</span> ne regarde que le terme&nbsp;; <span class="mono">a/(a+b)</span> pondère par le chemin, <span class="mono">Φ(−b/σ√T)</span> ne regarde que le terme. <em>Deux domaines, une seule confusion.</em></p>
+
+{{FIGURE:grgap|Le relief de l'écart entre delta et probabilité terminale. Les deux axes n'entrent que par le produit σ√T, comme la bande de gamma de la partie précédente.}}
+
+  <h2 id="s-gr-charm">Ce qui bouge pendant qu'on ne fait rien</h2>
+
+  <p>Le charm est la dérivée du delta par rapport au temps <em>seul</em>. C'est la seule grandeur de cette partie qui déplace une position sans qu'il se passe quoi que ce soit sur le marché, et c'est à ce titre qu'elle appartient à ce document&nbsp;: comme le temps de marché de la <a href="#s-effondrement">dixième partie</a>, elle agit pendant qu'on ne fait rien.</p>
+
+  <p>Le document extérieur écrit qu'il «&nbsp;domine dans les derniers jours&nbsp;». La mesure raffine, et l'écart vaut d'être publié.</p>
+
+{{TABLE:gr_charm}}
+
+{{FIGURE:grcharm|Le bleed du delta contre la moneyness pour trois échéances, et l'amplitude à son maximum contre l'échéance, avec sa forme limite.}}
+
+  <p><strong>À la monnaie le bleed est quasi nul</strong> — {{g_bleed_atm}}&nbsp;millièmes de delta par jour à un jour de l'échéance, contre {{g_bleed_pic}} à son maximum, soit un facteur {{g_rapport_bleed}}. La raison est simple&nbsp;: le delta d'une option à la monnaie reste à un demi quoi qu'il arrive. Le maximum vit hors de la monnaie, et il se referme sur le strike à mesure que l'échéance approche&nbsp;: de {{g_pic_60j}}&nbsp;% du strike à soixante jours à {{g_pic_1j}}&nbsp;% à un jour.</p>
+
+  <p>Le lieu de ce maximum a une forme fermée. Elle sort en annulant la dérivée de <span class="mono">φ(d₁)·d₂</span>, ce qui donne <span class="mono">u² − uv − 1 = 0</span> avec <span class="mono">v = σ√T</span>, soit&nbsp;:</p>
+
+  <p class="formule"><span class="mono">d₁* = (σ√T ± √(σ²T + 4))/2</span></p>
+
+  <p>Elle est contrôlée contre un balayage numérique, comme l'exige la règle du dépôt — c'est ce contrôle-là qui avait attrapé la constante fausse du pic de hasard de la <a href="#s-emp-survie">seizième partie</a>, et il coûte quatre lignes. <em>Le bleed ne domine pas les derniers jours&nbsp;: il domine une bande qui se referme sur le strike, et il est exactement nul au strike.</em></p>
+
+{{FIGURE:grlieu|Le relief du lieu du bleed maximal. Le premier essai portait son amplitude, et la mesure a montré que l'échéance y pèse cent fois plus que la volatilité.}}
+
+  <h2 id="s-gr-livre">Le résumé qui cache</h2>
+
+  <p>Le delta d'un livre s'additionne&nbsp;: <span class="mono">Δ = Σ qᵢmᵢΔᵢ</span>. C'est ce qui le rend commode, et c'est ce qui le rend dangereux comme statistique de synthèse.</p>
+
+{{TABLE:gr_livre}}
+
+{{FIGURE:grlivre|Le P/L de deux livres de delta net nul contre le mouvement du comptant, et l'écart entre les deux.}}
+
+  <p>Les deux livres sont couverts en delta à l'ouverture, donc à delta net nul, et un résumé de risque qui ne publie que cette grandeur les décrit de façon identique. Sur un mouvement de deux pour cent leurs P/L diffèrent de {{g_livre_ecart}}&nbsp;% du notionnel, et l'écart croît comme le carré du mouvement. <strong>Le delta ne dit rien de la façon dont il va lui-même changer.</strong></p>
+
+  <p>C'est la faute des parties précédentes sur un autre objet&nbsp;: publier un premier moment en croyant décrire une distribution. Le Calmar de la <a href="#s-rev-calmar">dix-huitième partie</a> cachait sa bande d'échantillonnage&nbsp;; le delta net cache sa courbure.</p>
+
+  <h2 id="s-gr-convention">La convention qu'on n'attache pas</h2>
+
+  <p>Delta comptant, delta forward, delta ajusté de la prime&nbsp;: trois nombres pour un mot. Les trois sont corrects et répondent à trois questions différentes.</p>
+
+{{TABLE:gr_convention}}
+
+{{FIGURE:grconvention|Les trois conventions contre l'échéance, et les deux mécanismes qui les écartent.}}
+
+  <p>Ce que la table sépare, et qu'on ne sépare jamais, ce sont les <strong>deux mécanismes</strong>, parce qu'ils n'ont pas le même ordre de grandeur. L'écart entre comptant et forward ne vient que du dividende, s'annule avec lui, et vaut {{g_conv_cptfwd}}&nbsp;point de delta sur un indice à six mois. L'ajustement de prime, lui, ne dépend ni du taux ni du dividende&nbsp;: il vaut {{g_conv_prime}}&nbsp;points dans le même cas et jusqu'à {{g_conv_prime_max}} à deux ans et forte volatilité.</p>
+
+  <p>Et il y a mieux, qui n'était pas cherché. À la monnaie et à portage nul, le prix d'un call vaut <span class="mono">S·(N(d₁) − N(d₂))</span>, donc&nbsp;:</p>
+
+  <p class="formule"><span class="mono">V/S = Δ − N(d₂)</span></p>
+
+  <p><strong>La quantité qu'on retranche pour changer de convention est exactement celle dont le delta dépasse la probabilité terminale.</strong> Les deux confusions de cette partie, qui n'ont l'air de rien avoir en commun, sont un seul nombre portant deux noms. L'identité est conditionnelle à la monnaie&nbsp;: elle tombe dès qu'on s'en écarte, et la planche le montre plutôt que de le dire.</p>
+
+{{FIGURE:gridentite|L'ajustement de prime et l'écart delta contre probabilité terminale, à la monnaie où ils coïncident puis hors de la monnaie où ils divergent.}}
+
+  <h2 id="s-gr-reste">Le décompte</h2>
+
+{{TABLE:gr_reste}}
+
+{{FIGURE:grreste|Les cinq confusions, rangées par l'erreur relative de la grandeur citée — la seule échelle que cinq unités différentes puissent partager.}}
+
+  <p>Les {{g_confusions}} lignes ont la même forme, et c'est le résultat de la partie. La première est du dépôt et non du document extérieur&nbsp;: elle concerne une cible et un stop, elle ne fait intervenir aucune option, et <em>elle coûte plus que les quatre autres réunies</em>. Les quatre suivantes sont celles du document, recalculées et deux fois corrigées.</p>
+
+  <p>La dernière colonne ne porte que des oui, et c'est ce qui rend la partie utile&nbsp;: <strong>aucun de ces écarts ne demande une série de prix</strong>. Ils se calculent sur une feuille, avant la première décision, au moment exact où une erreur de dimensionnement ne coûte encore rien.</p>
+
+  <p>Le document extérieur clôt son propre chapitre par une phrase qui vaut pour les cinq lignes, et qu'il applique au delta seul&nbsp;: <em>il décrit le présent avec exactitude et ne prévoit rien.</em> Il rapporte d'ailleurs, pour les agrégats dérivés du delta, le <strong>même résultat nul</strong> que la partie précédente a repris pour ceux dérivés du gamma, et avec le même protocole — le contrôle apparié en distance. C'est une seconde application indépendante, sur une famille différente, par le même auteur et sur les mêmes données&nbsp;; ce n'est pas une réplication au sens strict, mais c'est ce qui fait passer un contrôle du statut d'astuce à celui de méthode.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-et-unième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

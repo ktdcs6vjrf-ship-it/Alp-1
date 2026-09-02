@@ -13,10 +13,10 @@ import unittest
 from alp1 import discpaper
 
 #: Ce que le gabarit déclare. Toute modification de structure passe par ici.
-N_SECTIONS = 94
-N_PARTIES = 20
-N_TABLES = 82
-N_FIGURES = 110
+N_SECTIONS = 101
+N_PARTIES = 21
+N_TABLES = 89
+N_FIGURES = 122
 
 
 class TestConstruction(unittest.TestCase):

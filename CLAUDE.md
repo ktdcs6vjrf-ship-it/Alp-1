@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (94 sections en vingt
-parties, 82 tables, 110 figures dont trente-quatre surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (101 sections en vingt-et-une
+parties, 89 tables, 122 figures dont trente-huit surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -31,7 +31,8 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
-`figrev.py` + `niveaux.py` + `fignv.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py`
+→ `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -62,10 +63,10 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/e5f06e51-b712-4b74-9d0d-2ed2a5025c68
-  (précédents : 614afa35, 213dccda, a990ef0e, c2cbc5ee, d1e5eca9, 82bd1a42,
-  601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16,
-  c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/b40a2d6b-19f7-458d-8fbc-39487746afb9
+  (précédents : e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee, d1e5eca9,
+  82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc,
+  e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -268,6 +269,48 @@ signe. À signe inconnu la bascule occupe 1 219 points — 135 fois le stop
 calculé : deux affirmations déplacent l'horloge, une le risque, deux rien, et
 aucune le sens.
 
+Sa **partie XX** part du premier document de la même série d'options, celui
+consacré au delta — `grandeurs.py` + `figgra.py`. Il observe que les
+opérateurs emploient un seul mot pour trois grandeurs, et le dépôt découvre
+d'abord que l'observation le concerne.
+
+① **Une cible a trois probabilités**, toutes exactes et toutes appelées de la
+même façon : la toucher avant le stop (`a/(a+b)` = 4,76 %), la toucher à un
+moment (`2Φ(−b/σ√T)` = 62,7 %), clôturer au-delà (31,3 %). **Un facteur 13.**
+② **Le coût est calculable et énorme.** Portée dans l'identité de Wald, la
+deuxième rend +11,61 R quand la vraie rend −0,550 R : **12,2 R d'écart par
+décision**, et il ne dépend pas de la friction. Le taux d'équilibre (7,38 %)
+tombe *entre* les trois — c'est pourquoi l'erreur survit : elle ne déplace pas
+un chiffre, elle retourne le verdict.
+③ **Un delta en a trois aussi** — `e^{−qT}N(d₁)`, `N(d₂)`, `−∂V/∂K`. L'écart
+vaut 22,3 points de delta à 80 % et six mois, quand le document extérieur
+annonçait « plus de 15 » : son annonce était prudente. La coupure est celle de
+① à l'identique — `N(d₁)` pondère par le chemin, `N(d₂)` ne regarde que le
+terme.
+④ **Le charm**, seule grandeur qui déplace une position sans que le marché
+bouge. Le document dit qu'il « domine dans les derniers jours » ; la mesure
+raffine : **à la monnaie il est 94 fois plus petit qu'à son pic**, et le pic
+se referme sur le strike (9,7 % à 60 jours, 1,3 % à un jour). Lieu en forme
+fermée `d₁* = (σ√T ± √(σ²T+4))/2`, contrôlée contre un balayage.
+⑤ **Deux livres de delta net nul, paris opposés**, 0,55 % de notionnel d'écart
+sur 2 %. Le Calmar de la partie XVIII cachait sa bande ; le delta net cache sa
+courbure.
+⑥ **Trois conventions**, et deux mécanismes d'ordres différents : le portage
+donne 0,40 point, l'ajustement de prime 7,0 et jusqu'à 47,5. **Et
+`V/S = Δ − N(d₂)` exactement à la monnaie** — les deux confusions de la partie
+sont un seul nombre portant deux noms, et l'identité tombe hors de la monnaie.
+
+Trois pièges y sont enterrés. Les deux livres n'étaient **pas** à delta nul :
+le delta d'un straddle s'annule un peu au-dessous du strike, et le premier jet
+avait écrit « +0,00 » à la main au lieu de le calculer ; les livres sont
+maintenant couverts et le zéro est recalculé. Le relief du charm portait
+d'abord l'amplitude contre la volatilité, et la mesure a corrigé la phrase :
+l'axe n'est pas mort, il est **cent fois plus faible** que celui de l'échéance
+(facteur 154 contre 1,6), et un test compare désormais les deux étendues au
+lieu d'affirmer la platitude de l'une. Et la table des conventions balayait le
+portage en rendant une colonne constante, parce que l'ajustement de prime — qui
+domine — ne dépend ni du taux ni du dividende.
+
 Deux pièges y sont enterrés. Le relief du signe portait d'abord l'asymétrie du
 profil en second axe, avec un mécanisme plausible écrit d'avance — la masse
 d'un côté devrait finir par dominer. **La mesure rend une surface plate** (975
@@ -415,6 +458,17 @@ Rendu
   (`profil_oi`, `gex`, `bascule`, `bande_de_bascule`, `surface_absence`).
   Huit tables, quatre surfaces.
 - `fignv.py` — les douze planches de la partie XIX, dont quatre reliefs.
+- `grandeurs.py` — **un mot, plusieurs nombres.** Les trois probabilités d'une
+  cible (`p_avant_stop` / `_ferme`, `p_touche`, `p_cloture`), `esperance_r` et
+  `cout_de_confusion` (qui ne dépend pas de la friction), les trois deltas
+  (`delta_comptant`, `proba_terminale`, `dual_delta` — contrôlé contre une
+  différence finie sur le strike), `charm` (contrôlé contre une différence
+  finie), `d1_du_pic` / `moneyness_du_pic` / `amplitude_asymptotique`, les deux
+  livres couverts (`delta_straddle`, `pl_livre`, `delta_net_couvert`), les
+  trois conventions et `identite_prime_gap`. Sept tables, quatre surfaces.
+- `figgra.py` — les douze planches de la partie XX, dont quatre reliefs. Elle
+  importe `_echine`, `_ticks` et `_dec` de `fignv` plutôt que de les recopier :
+  une troisième copie serait une troisième occasion de les faire diverger.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
@@ -766,7 +820,7 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # 1319 tests (compter ~60 min ; --wp, setups,
+python main.py --tests      # 1382 tests (compter ~60 min ; --wp, setups,
                             # robustesse, overnight, emprunts, revue et
                             # niveaux sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
