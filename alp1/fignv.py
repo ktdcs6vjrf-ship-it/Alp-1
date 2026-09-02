@@ -49,7 +49,11 @@ def _dec(v: float) -> str:
     jusque dans le cadre voisin ; la puissance en mesure trois.
     """
     k = int(round(math.log10(v)))
-    return "10" + "".join(_EXPOSANTS[int(c)] for c in str(abs(k)))
+    # Le signe de l exposant se perd si on ne l ecrit pas : « 10¹ » pour un
+    # dixieme et « 10¹ » pour dix se lisent pareil, et un axe dont deux
+    # graduations portent la meme etiquette ne gradue plus rien.
+    signe = "\u207b" if k < 0 else ""
+    return "10" + signe + "".join(_EXPOSANTS[int(c)] for c in str(abs(k)))
 
 
 def _echine(zlo: float, zhi: float, mini: int = 3,

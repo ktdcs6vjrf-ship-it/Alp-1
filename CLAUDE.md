@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (101 sections en vingt-et-une
-parties, 91 tables, 124 figures dont trente-huit surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (108 sections en vingt-deux
+parties, 101 tables, 139 figures dont quarante-deux surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -31,8 +31,8 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `figdisc.py` + `figflux.py` + `figsortie.py` + `figcat.py` + `figsetup.py` +
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
-`figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py`
-→ `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
+`theta.py` + `figth.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -63,10 +63,10 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/b40a2d6b-19f7-458d-8fbc-39487746afb9
-  (précédents : e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee, d1e5eca9,
-  82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc,
-  e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/9e0ef040-cb2a-49fe-8ba2-d5895e7d61bf
+  (précédents : 8edc727c, b40a2d6b, e5f06e51, 614afa35, 213dccda, a990ef0e,
+  c2cbc5ee, d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614,
+  f9f5d005, 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -78,7 +78,7 @@ nouveau chemin de fichier, jamais republier le même.
    Python 3.11+. Tout aléa est déterministe et amorcé par une graine explicite.
    (C'est pourquoi `spectrum.py` porte son propre Jacobi.)
 2. **Les figures n'écrivent aucune couleur en dur.** Elles passent par les
-   jetons CSS de `alp1/figcss.py`. `tests/test_figures_all.py` balaie les douze
+   jetons CSS de `alp1/figcss.py`. `tests/test_figures_all.py` balaie les
    modules `fig*.py` et refuse tout `#rrggbb` — y compris les entités HTML de
    la forme `&#8202;`, qui doivent être écrites en caractère littéral. Ajouter
    un module de figures sans l'inscrire dans `MODULES` fait échouer le premier
@@ -339,6 +339,68 @@ l'incertitude — et elle l'est le plus là où l'incertitude est la plus grande
 Le relief porte donc la part d'absence, la seule grandeur que la censure ne
 fausse pas.
 
+Sa **partie XXI** ferme la série d'options par le guide consacré au thêta —
+`theta.py` + `figth.py`. Il s'ouvre sur la phrase la plus juste des trois :
+*le thêta est le loyer de la convexité, et les deux ne se séparent pas.* Le
+dépôt souscrit et va là où le guide s'arrête : si les deux ne se séparent pas,
+le vendeur n'encaisse pas un revenu, **il encaisse une fréquence.**
+
+① **La loi nulle d'un vendeur de prime**, et c'est le résultat structurant.
+Sur un intervalle de couverture, le vendeur gagne si `Z² < 1` : la fréquence
+vaut **2Φ(1) − 1 = 68,3 %**, sans référence au strike, à l'échéance, à la
+volatilité ni au niveau, et le mécanisme est la médiane d'un khi-deux à un
+degré (0,455) comparée à sa moyenne (1). Mais la fréquence **descend vers un
+demi** quand les séances s'empilent — forme fermée `P(χ²ₘ < m)`, contrôlée
+par simulation — et la position de trente jours y est déjà (51,0 % mesuré).
+*Le relevé du soir et la position ne sont pas le même objet, et c'est le
+premier qu'on regarde.* Le vendeur nu, lui, garde 57,5 % parce que son
+résultat est un événement terminal et non une somme.
+② **Ce que la couverture achète.** À couverture continue et réalisée égale à
+l'implicite, le résultat est *identiquement* nul : toute la dispersion vient
+de la discrétisation. L'exposant est **ajusté et non postulé** (0,487) — la
+partie XVIII a payé pour cette règle — et ni l'espérance ni la fréquence de
+gain de la position ne bougent avec le pas de couverture.
+③ **Les deux horloges.** Le guide publie son propre test — trois jours de
+décroissance annoncés sur un week-end, « plutôt un » observé — et cette
+observation **calibre** le seul paramètre non observable du modèle,
+`ω = 0,2566`, exactement comme les deux nombres sans direction calibraient la
+partie XV. La prédiction qui en sort est que le nombre de jours apparents ne
+dépend **pas** de l'échéance, parce que la valeur décroît comme la racine du
+temps — *et c'est le point où le guide se contredit, ayant consacré une
+section entière à cette racine.* À poids calibré, la hausse d'implicite du
+lundi se réduit à `√((D−1)/(D−3)) − 1`, contrôlée contre la route générale :
+3,6 % à trente jours, 73 % à quatre, et elle dépasse une fourchette d'un point
+de volatilité **sous 28 jours**.
+④ **Le signe.** La frontière du thêta positif se calcule, et la région a une
+propriété que le guide n'écrit pas : **à taux nul elle est vide**, exactement,
+puisque le terme qui la crée est proportionnel à `r`. L'avertissement « vérifiez
+le signe » n'a rien coûté à personne pendant la décennie des taux nuls.
+⑤ **Le budget d'information d'une prime de variance.** Un point d'écart
+implicite-réalisé demande 55 expirations, soit 4,5 ans à une par mois — le
+budget de la partie IV, rencontré sur un objet entièrement différent. Et le
+croisement calculé : il faut **1,6 point d'avantage** pour qu'un mois affiche
+ce qu'une soirée sans le moindre avantage affiche déjà.
+⑥ **Le décompte**, compté et non écrit : quatre affirmations déplacent
+l'horloge, trois le risque, une rien, **une seule touche à la direction — et
+c'est celle qui dit qu'il n'y en a pas.** Sur les dix-neuf affirmations des
+trois parties d'options, aucune ne donne un sens.
+
+Cinq pièges y sont enterrés, et quatre n'ont été vus qu'en regardant la page.
+L'**appariement antithétique** y est légitime — la loi est symétrique — et
+**parfaitement inutile** : la corrélation entre un chemin et son symétrique
+vaut 0,98, parce que le bilan d'une couverture delta est une fonctionnelle
+presque paire ; il ne réduisait aucune variance et divisait l'échantillon
+effectif par deux. C'est l'autre piège du geste que la partie XIV interdit sur
+une loi asymétrique. L'**épaisseur d'une barre est en pixels**, jamais en
+unités de donnée : passée en unités de donnée elle valait trois centièmes de
+pixel et les deux histogrammes se réduisaient à des cheveux — invisible aux
+trois balayages. Un **domaine écrit à la main** posait la courbe de gamma
+*entièrement hors du cadre*, et c'est le test d'enveloppe de `Panel.path` qui
+l'a trouvée, pas l'œil. `_dec` **perdait le signe de l'exposant** : « 10¹ »
+pour un dixième et « 10¹ » pour dix, sur le même axe. Et le titre d'un cadre
+est mis en capitales par la feuille, donc **`σ` s'y publie `Σ`** — la formule
+va dans la lecture chiffrée, qui reste en bas de casse.
+
 ## Carte des modules
 
 Mesure et géométrie
@@ -492,13 +554,27 @@ Rendu
 - `figgra.py` — les quatorze planches de la partie XX, dont quatre reliefs. Elle
   importe `_echine`, `_ticks` et `_dec` de `fignv` plutôt que de les recopier :
   une troisième copie serait une troisième occasion de les faire diverger.
+- `theta.py` — **le loyer de la convexité.** `termes_call` / `termes_put` (les
+  trois termes séparés, contrôlés contre `theta_numerique`),
+  `rapport_theta_gamma`, `taux_par_intervalle` = `2Φ(1) − 1`, `mediane_khi2`,
+  `taux_du_vendeur_nu`, `simuler_vendeur` (le couvert, le nu et le relevé
+  quotidien, sur les mêmes chemins ; **le bilan d'un intervalle télescope
+  jusqu'au résultat de la position**, ce qui rend les deux échelles
+  rigoureusement le même objet), `taux_de_m_intervalles` (par `_gamma_p`, la
+  gamma incomplète en stdlib), `loi_de_dispersion` (l'exposant **ajusté**),
+  `jours_apparents` / `poids_pour_apparents` / `derive_implicite`,
+  `frontiere_signe` / `part_positive`, `campagne_prime`,
+  `avantage_pour_egaler_la_soiree`, `familles` et `compte_par_grandeur` — les
+  décomptes viennent des modules, jamais d'une main. Dix tables, quatre
+  surfaces.
+- `figth.py` — les quinze planches de la partie XXI, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — quinze modules, chacun expose `render_all()`. `figcat.py` porte
+- `fig*.py` — vingt-trois modules, chacun expose `render_all()`. `figcat.py` porte
   les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
@@ -843,9 +919,9 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # 1382 tests (compter ~60 min ; --wp, setups,
-                            # robustesse, overnight, emprunts, revue et
-                            # niveaux sont lents)
+python main.py --tests      # ~1450 tests (compter ~60 min ; --wp, setups,
+                            # robustesse, overnight, emprunts, revue,
+                            # niveaux et theta sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
@@ -857,7 +933,7 @@ python main.py --disc       # journal de décision, lois nulles, attribution
 Modules exécutables directement pour inspecter leurs chiffres :
 `python -c "from alp1 import footprint; footprint.main()"` — idem pour `tpo`,
 `spectrum`, `seuil`, `report11`, `report14`, `concepts`, `setups`,
-`emprunts`, `fonds`.
+`emprunts`, `fonds`, `theta`.
 
 ## Contraintes d'environnement
 

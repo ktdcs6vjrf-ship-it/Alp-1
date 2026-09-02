@@ -824,8 +824,19 @@
           <li><a href="#s-gr-reste">Le décompte</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingt-et-unième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingt-et-unième partie — Le loyer de la convexité</span>
         <ol start="98">
+          <li><a href="#s-th-loyer">Le loyer, et ses trois termes</a></li>
+          <li><a href="#s-th-nulle">La loi nulle d'un vendeur de prime</a></li>
+          <li><a href="#s-th-couverture">Ce que coûte la couverture discrète</a></li>
+          <li><a href="#s-th-horloges">Les deux horloges</a></li>
+          <li><a href="#s-th-signe">Le signe</a></li>
+          <li><a href="#s-th-preuve">Ce qu'il faudrait pour établir une prime</a></li>
+          <li><a href="#s-th-reste">Le décompte</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-deuxième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="105">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2623,6 +2634,120 @@
 
   <div class="part">
     <span class="lab">Vingt-et-unième partie</span>
+    <h2>Le loyer de la convexité</h2>
+    <p>Le troisième document de la même série d'options s'ouvre sur la phrase la plus juste des trois&nbsp;: <em>le thêta est le loyer de la convexité, et les deux ne se séparent pas.</em> Le dépôt souscrit, et va là où le guide s'arrête. Car si les deux ne se séparent pas, alors le vendeur n'encaisse pas un revenu&nbsp;: il encaisse une fréquence.</p>
+  </div>
+
+  <h2 id="s-th-loyer">Le loyer, et ses trois termes</h2>
+
+  <p>Le thêta d'un call porte trois effets empilés, et les confondre est la source de la plupart des légendes qui l'entourent. Le premier est la décroissance de valeur temps, <span class="mono">−Se<sup>−qT</sup>φ(d₁)σ/2√T</span>, toujours négative pour une position longue. Le deuxième est l'intérêt sur le strike, <span class="mono">−rKe<sup>−rT</sup>N(d₂)</span>, négatif pour un call et <strong>positif pour un put</strong>. Le troisième est le portage du dividende, <span class="mono">+qSe<sup>−qT</sup>N(d₁)</span>.</p>
+
+{{TABLE:th_termes}}
+
+{{FIGURE:thtermes|Les trois termes du thêta contre la moneyness, et le total pour un call et pour un put.}}
+
+  <p>La dernière colonne mesure le poids des deux termes que le mot «&nbsp;thêta&nbsp;» oublie, et il n'est pas anecdotique&nbsp;: {{th_part_oubliee}}&nbsp;% du total à un an et à la monnaie. Mais c'est le premier terme qui porte le résultat de la section, parce qu'il n'est pas indépendant du gamma — il <em>est</em> le gamma, au facteur près.</p>
+
+{{TABLE:th_invariant}}
+
+{{FIGURE:thinvariant|Le thêta et le gamma sur trois ordres de grandeur, et leur rapport, qui ne bouge pas.}}
+
+  <p>Le rapport vaut <span class="mono">½σ²S²</span> exactement, à toute échéance et à tout strike. La partie&nbsp;XIX l'établit par trois routes et en tire le mouvement d'équilibre quotidien&nbsp;; il est rappelé ici pour ce qu'il interdit. <em>Citer un thêta sans son gamma revient à citer un nombre deux fois.</em> La seconde courbe du cadre de droite ajoute ce que l'identité ne dit pas&nbsp;: elle est exacte <strong>à l'instant</strong>, et le loyer d'une journée entière — celle qu'un vendeur détient réellement — vaut le double de l'instantané au dernier jour.</p>
+
+  <h2 id="s-th-nulle">La loi nulle d'un vendeur de prime</h2>
+
+  <p>Le guide écrit que sur un grand échantillon, si l'implicite égale le réalisé, le profit espéré est nul. C'est exact, et c'est un point de départ plutôt qu'une conclusion&nbsp;: <em>à espérance nulle, le vendeur gagne quand même la majorité du temps</em>, et c'est cette fréquence-là qui se prend pour un revenu.</p>
+
+  <p>Elle se calcule, et elle ne dépend de rien. Sur un intervalle de couverture, le vendeur encaisse <span class="mono">½ΓS²(σ²Δt − ΔS²/S²)</span>&nbsp;: il gagne si le mouvement réalisé est inférieur au mouvement facturé, c'est-à-dire si <span class="mono">Z² &lt; 1</span>. La fréquence vaut donc <strong>2Φ(1) − 1 = {{th_taux_intervalle}}&nbsp;%</strong>, sans référence au strike, à l'échéance, à la volatilité ni au niveau. Le mécanisme est la médiane d'un khi-deux à un degré, {{th_mediane_khi2}}, comparée à sa moyenne, 1.</p>
+
+{{FIGURE:thintervalle|La densité du khi-deux à un degré, et la fréquence de gain en fonction du nombre de séances accumulées.}}
+
+  <p>Ce que la courbe de droite ajoute est le cœur de la partie. La fréquence descend vers un demi à mesure que les séances s'empilent&nbsp;: <strong>le relevé du soir et la position ne sont pas le même objet</strong>, et c'est le premier qu'un vendeur regarde. Sur les trente séances d'une option mensuelle, il n'en reste rien — la position mesurée est à {{th_taux_couvert}}&nbsp;%.</p>
+
+{{TABLE:th_frequence}}
+
+  <p>Le vendeur qui ne couvre pas, lui, garde une fréquence élevée pour une raison différente&nbsp;: son résultat est un événement terminal unique et non une somme. Un straddle à la monnaie est gagnant si <span class="mono">|S<sub>T</sub> − K|</span> reste sous la prime, ce qui vaut {{th_taux_nu}}&nbsp;% et ne dépend, là encore, ni de la volatilité ni de l'échéance.</p>
+
+{{FIGURE:thexemple|Trois vies d'un vendeur couvert, aux mêmes conditions, et les trois chemins de sous-jacent correspondants.}}
+
+  <p>La planche ci-dessus est la partie entière. Le chemin du bas encaisse son loyer pendant vingt-huit séances, presque en ligne droite, puis en rend {{th_perte_jour}}&nbsp;% dans la seule séance&nbsp;{{th_jour_perte}} — et le cadre de droite montre que rien d'extraordinaire n'arrive au sous-jacent ce jour-là.</p>
+
+{{TABLE:th_distribution}}
+
+{{FIGURE:thfrequence|Les lois du résultat d'un vendeur couvert et d'un vendeur nu, avec leurs moyennes et leurs médianes.}}
+
+  <p>Les deux lois ont la même espérance et deux formes qui n'ont rien à voir. La médiane est positive des deux côtés, la moyenne est nulle des deux côtés, et l'écart est payé par la queue de gauche&nbsp;: le pire chemin du vendeur nu perd {{th_pire_nu}}&nbsp;% de la prime encaissée. <em>Ce que la couverture achète est la largeur, jamais le centre.</em></p>
+
+  <h2 id="s-th-couverture">Ce que coûte la couverture discrète</h2>
+
+  <p>À couverture continue et volatilité réalisée égale à l'implicite, le résultat n'est pas seulement d'espérance nulle&nbsp;: il est <strong>identiquement nul</strong>. Toute la dispersion d'un livre de prime vient donc de la discrétisation, et elle a une loi. Le module ne la postule pas — la partie&nbsp;XVIII a payé pour cette erreur-là&nbsp;: il l'ajuste, coefficient et puissance.</p>
+
+{{TABLE:th_couverture}}
+
+{{FIGURE:thcouverture|La dispersion du vendeur contre la fréquence de couverture, et les grandeurs que la couverture ne déplace pas.}}
+
+  <p>L'exposant mesuré vaut {{th_exposant}}&nbsp;: la racine est la bonne réponse, mais elle est vérifiée avant d'être écrite. La conséquence de pupitre est immédiate — <em>diviser la dispersion par deux coûte quatre fois plus de rééquilibrages</em>, et il en faut {{th_couvertures_pour_5}} par jour pour la ramener à cinq pour cent de la prime. Les deux dernières colonnes sont le résultat de la section&nbsp;: ni l'espérance ni la fréquence de gain de la position ne bougent.</p>
+
+{{FIGURE:threlief|Le relief de la dispersion du vendeur, en couvertures par jour et en jours à l'échéance.}}
+
+  <h2 id="s-th-horloges">Les deux horloges</h2>
+
+  <p>Black-Scholes a une horloge, les marchés en ont deux&nbsp;: la variance s'accumule les {{th_bourse}} jours de bourse, l'escompte sur les 365 jours calendaires. Le guide en tire une prédiction vérifiable — un thêta calendaire annonce trois jours de décroissance sur un week-end, on en observe «&nbsp;plutôt un&nbsp;» — et le dépôt la mesure.</p>
+
+  <p>Le modèle a un paramètre, et il n'est <strong>pas observable</strong>&nbsp;: le poids d'un jour non ouvré. À un, l'horloge est calendaire et le week-end coûte trois jours&nbsp;; à zéro, elle est de bourse et il ne coûte rien. Les deux conventions que le guide oppose sont les deux bouts du même curseur. Le dépôt refuse de choisir et calibre sur l'observation que le guide publie lui-même, ce qui fixe <span class="mono">ω = {{th_poids}}</span> et ne laisse plus aucun degré de liberté.</p>
+
+{{TABLE:th_poids}}
+
+{{FIGURE:thpoids|Les jours apparents de décroissance et la hausse d'implicite requise, contre le poids d'un jour non ouvré.}}
+
+  <p>La prédiction qui en sort est que le nombre de jours apparents ne dépend <strong>pas</strong> de l'échéance, parce que la valeur décroît comme la racine du temps et que la racine se simplifie dans le rapport. C'est le point où le guide se contredit lui-même&nbsp;: il vient de consacrer une section entière à cette racine, et son «&nbsp;plutôt un jour&nbsp;» compte des jours et non des racines de jours.</p>
+
+{{TABLE:th_horloges}}
+
+{{FIGURE:thhorloges|La décote de week-end sur les deux horloges, et la hausse d'implicite qu'elle impose au lundi.}}
+
+  <p>À poids calibré, la hausse d'implicite requise se réduit à une forme fermée que le module contrôle contre sa route générale&nbsp;: <span class="mono">√((D−1)/(D−3)) − 1</span>. Elle vaut {{th_derive30}}&nbsp;% à trente jours, {{th_derive7}}&nbsp;% à sept, et {{th_derive4}}&nbsp;% à quatre. Le seuil utile est calculé&nbsp;: au-dessous de {{th_critique}}&nbsp;jours, l'effet dépasse une fourchette d'un point de volatilité, et une implicite courte cotée un vendredi cesse d'être comparable à la même cotée un lundi.</p>
+
+{{FIGURE:threliefh|Le relief de la hausse d'implicite de week-end, en poids de jour non ouvré et en jours à l'échéance.}}
+
+  <h2 id="s-th-signe">Le signe</h2>
+
+  <p>«&nbsp;Une option profondément dans la monnaie peut avoir un thêta positif. Vérifiez le signe, ne le supposez pas.&nbsp;» L'avertissement est juste&nbsp;; le dépôt en fait une carte, et la carte a une propriété que le guide n'écrit pas.</p>
+
+{{TABLE:th_signe}}
+
+{{FIGURE:thsigne|Le thêta d'un put contre la moneyness à quatre taux, et la part du plan à thêta positif contre le taux.}}
+
+  <p><strong>À taux nul, la région n'existe pas</strong> — exactement, et pas approximativement, puisque le terme qui la crée est proportionnel à <span class="mono">r</span>. Le thêta positif n'est donc pas une curiosité d'option&nbsp;: c'est un fait de taux. L'avertissement du guide n'a rien coûté à personne pendant la décennie où les taux étaient nuls, et il redevient une règle de pupitre dès qu'ils ne le sont plus. À {{th_taux_pct}}&nbsp;%, la frontière est à {{th_frontiere30}} de moneyness à trente jours, ce qui n'est pas si profond.</p>
+
+{{FIGURE:threliefs|Le relief de la frontière du thêta positif, en taux sans risque et en jours à l'échéance.}}
+
+  <h2 id="s-th-preuve">Ce qu'il faudrait pour établir une prime</h2>
+
+  <p>Le guide conclut que le profit persistant d'un vendeur vient de l'écart entre implicite et réalisé, et non du passage du temps. Le dépôt accepte l'énoncé et pose sa question habituelle&nbsp;: combien de décisions pour l'établir&nbsp;? La dispersion est celle de la section précédente, mesurée et non postulée, et elle <strong>ne bouge pas</strong> avec l'avantage — c'est ce qui rend le compte aussi sensible.</p>
+
+{{TABLE:th_preuve}}
+
+{{FIGURE:thpreuve|Les années requises pour établir un avantage contre son ampleur, et la fréquence de gain correspondante.}}
+
+  <p>Un point de volatilité d'avantage demande {{th_expirations_1pt}} expirations, soit {{th_annees_1pt}}&nbsp;ans à une par mois. C'est le budget d'information de la quatrième partie, rencontré sur un objet entièrement différent et par une route qui ne lui doit rien.</p>
+
+  <p>Le croisement marqué sur le cadre de droite est le fait de la section. Un vendeur <em>sans le moindre avantage</em> gagne {{th_taux_intervalle}}&nbsp;% de ses soirées&nbsp;; un vendeur qui a un avantage réel d'un point gagne {{th_taux_1pt}}&nbsp;% de ses mois. Il faut {{th_avantage_soiree}}&nbsp;point d'avantage pour qu'un mois affiche ce qu'une soirée affiche sans rien — parce que les deux nombres ne comptent pas le même objet.</p>
+
+{{FIGURE:threliefp|Le relief des années requises pour établir un avantage, en couvertures par jour et en points de volatilité.}}
+
+  <h2 id="s-th-reste">Le décompte</h2>
+
+{{TABLE:th_reste}}
+
+{{FIGURE:threste|Le décompte des affirmations par ce qu'elles déplacent, et les totaux des trois parties d'options.}}
+
+  <p>{{th_horloge_n}} affirmations déplacent l'horloge, {{th_risque_n}} le risque, une ne déplace rien, et <strong>une seule touche à la direction</strong>. C'est celle qui dit qu'il n'y en a pas&nbsp;: à implicite égale au réalisé, l'espérance d'un vendeur est nulle. C'est le théorème d'arrêt optionnel du marché d'options, et c'est la conclusion des trois parties de cette série.</p>
+
+  <p>Sur les {{th_total_options}}&nbsp;affirmations examinées sur le gamma, le delta et le thêta, aucune ne donne un sens. Ce n'est pas un reproche adressé à ces guides&nbsp;: ils décrivent correctement des grandeurs qui existent. C'est un fait sur ce que ces grandeurs <em>sont</em> — des propriétés de la géométrie et de l'horloge, jamais du sens.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-deuxième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
