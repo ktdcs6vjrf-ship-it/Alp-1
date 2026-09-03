@@ -558,12 +558,9 @@ def fig_ch_cout() -> str:
            abs(CH.bleed(S * G.moneyness_du_pic(V, CH.SEUIL_ANNONCE / AN), S,
                         CH.SEUIL_ANNONCE / AN)), "hm4", "deux semaines",
            r=4.5)
-    p2.label(CH.SEUIL_ANNONCE,
-             abs(CH.bleed(S * G.moneyness_du_pic(V, CH.SEUIL_ANNONCE / AN), S,
-                          CH.SEUIL_ANNONCE / AN)),
-             "à deux semaines, encore "
+    p2.label(0.0, hi * 0.88, "à deux semaines, le coût vaut encore "
              + _num(CH.cout_du_delta_du_soir(CH.SEUIL_ANNONCE) / CH.FRICTION,
-                    1) + " frictions", dx=10, dy=-6)
+                    1) + " frictions", dx=8, dy=0)
 
     b.legend(0.0, 352.0,
              [("hm6", "au pic, à gauche"),
