@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (108 sections en vingt-deux
-parties, 101 tables, 139 figures dont quarante-deux surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (115 sections en vingt-trois
+parties, 111 tables, 154 figures dont quarante-six surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -32,7 +32,7 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
-`theta.py` + `figth.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`theta.py` + `figth.py` + `vega.py` + `figvg.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -339,7 +339,7 @@ l'incertitude — et elle l'est le plus là où l'incertitude est la plus grande
 Le relief porte donc la part d'absence, la seule grandeur que la censure ne
 fausse pas.
 
-Sa **partie XXI** ferme la série d'options par le guide consacré au thêta —
+Sa **partie XXI** poursuit la série d'options par le guide consacré au thêta —
 `theta.py` + `figth.py`. Il s'ouvre sur la phrase la plus juste des trois :
 *le thêta est le loyer de la convexité, et les deux ne se séparent pas.* Le
 dépôt souscrit et va là où le guide s'arrête : si les deux ne se séparent pas,
@@ -400,6 +400,62 @@ l'a trouvée, pas l'œil. `_dec` **perdait le signe de l'exposant** : « 10¹ »
 pour un dixième et « 10¹ » pour dix, sur le même axe. Et le titre d'un cadre
 est mis en capitales par la feuille, donc **`σ` s'y publie `Σ`** — la formule
 va dans la lecture chiffrée, qui reste en bas de casse.
+
+Sa **partie XXII** ferme la série d'options par le guide du véga —
+`vega.py` + `figvg.py`. Il s'ouvre sur une phrase que les trois autres n'ont
+pas : *le véga mesure la sensibilité à un paramètre que le modèle suppose
+constant.* C'est un aveu de circularité, et le dépôt en connaît le prix.
+
+① **Trois nombres publiés, deux réfutés.** Le véga croît en `√T` — vrai, les
+deux courbes sont indiscernables — mais le rapport d'un an à deux semaines
+vaut **5,07** et non 5,5. « Le gamma est une pointe, le véga une colline » est
+**faux** : les deux pics partagent `φ(d₁)` et mesurent la même largeur à un
+pour cent près ; ce qui s'inverse est la hauteur, et leur rapport est une
+identité — `Γ/V = 1/(S²σT)`, **indépendante du strike**, qui composée avec
+celle de la partie XIX donne `|Θ₁|/V = σ/2T`.
+② **Deux livres à véga net calculé nul**, comme les deux livres de delta de la
+partie XX. Chacun vit d'un mode de surface et reste aveugle à celui de
+l'autre ; et sous un choc de **niveau**, où le véga annonce zéro à juste
+titre, le livre d'ailes perd **0,284 point d'indice** sur les dix points de
+l'exemple du guide. Cette perte-là n'a aucun véga.
+③ **La pondération en `√(30/T)`**, que le guide appelle le correctif standard,
+est un exposant **postulé** — la faute de la partie XVIII. Le verdict porte
+plus loin que sa valeur : sous une volatilité à retour à la moyenne, la
+sensibilité d'un ténor vaut `(1 − e^{−κT})/(κT)`, dont l'exposant local passe
+de zéro à un et ne vaut un demi qu'à **un seul** ténor. *Une loi de puissance
+n'a pas d'échelle et cette courbe en a une* : le minimum de l'écart maximal
+est atteint à κ = 7,77/an et laisse encore **39 %** d'écart aux deux bouts.
+Aucune vitesse ne sauve la règle.
+④ **La bande où la courbure change de signe** est `[e^{−σ²T/2}, e^{+σ²T/2}]`,
+donc `σ²T` de large : **0,51 % du spot à trente jours**, et aucun strike d'une
+grille au pas d'un pour cent n'y tombe au-dessous de quinze jours. *Au sens de
+la courbure, il n'existe pas d'option à la monnaie sur le tableau.*
+⑤ **Le seuil d'un vendeur de véga**, et c'est l'identité du document sur un
+quatrième objet : `µ*_σ = −½·(volga/V)·s²`, la baisse d'implicite qu'il faut
+rien que pour ne rien perdre. Nulle à la monnaie, **0,55 point par mois** sur
+une aile à quatre-vingt-dix jours. La forme fermée, du second ordre, la
+sous-estime de 17 % — le défaut de la partie XIX, au même endroit.
+⑥ **« Cela paie la plupart du temps, et les pertes sont concentrées »** : les
+deux moitiés tombent. Le prix d'une option est **monotone** en volatilité,
+donc la fréquence vaut **exactement un demi** à toute moneyness et à toute vol
+de vol, pour une espérance négative. Et les cinq pour cent de pires mois
+portent 26,9 % des pertes contre 25,7 % sous une gaussienne de même
+dispersion : *sous une variation d'implicite gaussienne, la concentration d'un
+vendeur est celle d'une gaussienne* — la phrase décrit la queue de
+l'implicite, pas la position.
+⑦ **Le budget**, le plus lourd des quatre : un point d'avantage par mois
+au-delà du seuil demande **10,5 ans**, et à cet avantage-là la fréquence de
+gain ne monte qu'à 60 %. Sur les **vingt-huit** affirmations des quatre
+parties d'options, aucune ne donne un sens.
+
+Deux pièges y sont enterrés, et le premier est le plus instructif de la
+session. Le domaine d'un cadre se déclare **avant** les tracés : déclaré
+après, les courbes se dessinent dans le domaine par défaut et le découpage les
+réduit à un point — ni le balayage de débordement ni celui d'occupation ne le
+voient, et c'est le test d'enveloppe de `Panel.path` qui l'a trouvé. Et un
+cadre borné à la main affichait un **plateau qui n'existait pas** sur la
+courbe de l'écart maximal, parce que `min(1.05, ...)` écrasait tout ce qui
+dépassait.
 
 ## Carte des modules
 
@@ -568,13 +624,27 @@ Rendu
   décomptes viennent des modules, jamais d'une main. Dix tables, quatre
   surfaces.
 - `figth.py` — les quinze planches de la partie XXI, dont quatre reliefs.
+- `vega.py` — **le prix de l'incertitude.** `vega` / `volga` / `vanna`
+  (contrôlés contre des différences finies), `rapport_gamma_vega` =
+  `1/(S²σT)` et `rapport_theta_vega` = `σ/2T`, `largeur_du_pic` et
+  `largeur_du_pic_gamma` (la réfutation de la colline), `Ligne` et
+  `_neutraliser` (le véga net est **résolu**, jamais écrit), les trois modes
+  de surface et `pl_livre` / `pl_au_premier_ordre`, `poids_regle` /
+  `poids_modele` / `exposant_effectif` / `kappa_minimax` (aucune vitesse ne
+  sauve la règle), `bande_de_courbure` et `strikes_dans_la_bande`,
+  `derive_equilibre` et `derive_equilibre_exacte` (les deux routes du seuil),
+  `simuler_vendeur` sur **tirages fixés** — ce qui rend l'espérance une
+  fonction lisse de la dérive, donc inversible —, `concentration` et
+  `concentration_temoin`, `campagne`, `familles` et `compte_par_grandeur`.
+  Dix tables, quatre surfaces.
+- `figvg.py` — les quinze planches de la partie XXII, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — vingt-trois modules, chacun expose `render_all()`. `figcat.py` porte
+- `fig*.py` — vingt-quatre modules, chacun expose `render_all()`. `figcat.py` porte
   les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
@@ -921,7 +991,7 @@ accident de mise en page.
 ```
 python main.py --tests      # ~1450 tests (compter ~60 min ; --wp, setups,
                             # robustesse, overnight, emprunts, revue,
-                            # niveaux et theta sont lents)
+                            # niveaux, theta et vega sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
 python main.py --paper      # reconstruit docs/alp1-paper.html (version courte)
 python main.py --discpaper  # reconstruit docs/prouver-un-jugement.html
@@ -933,7 +1003,7 @@ python main.py --disc       # journal de décision, lois nulles, attribution
 Modules exécutables directement pour inspecter leurs chiffres :
 `python -c "from alp1 import footprint; footprint.main()"` — idem pour `tpo`,
 `spectrum`, `seuil`, `report11`, `report14`, `concepts`, `setups`,
-`emprunts`, `fonds`, `theta`.
+`emprunts`, `fonds`, `theta`, `vega`.
 
 ## Contraintes d'environnement
 

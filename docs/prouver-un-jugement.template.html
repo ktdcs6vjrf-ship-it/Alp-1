@@ -835,8 +835,19 @@
           <li><a href="#s-th-reste">Le décompte</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingt-deuxième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingt-deuxième partie — Le prix de l'incertitude</span>
         <ol start="105">
+          <li><a href="#s-vg-echelle">Deux conventions, et un facteur cent</a></li>
+          <li><a href="#s-vg-modes">Le véga n'est pas un risque</a></li>
+          <li><a href="#s-vg-ponderation">La pondération qu'on postule</a></li>
+          <li><a href="#s-vg-bande">Où la courbure change de signe</a></li>
+          <li><a href="#s-vg-seuil">Le seuil d'un vendeur de véga</a></li>
+          <li><a href="#s-vg-preuve">Ce qu'il faudrait pour l'établir</a></li>
+          <li><a href="#s-vg-reste">Le décompte</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-troisième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="112">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2748,6 +2759,118 @@
 
   <div class="part">
     <span class="lab">Vingt-deuxième partie</span>
+    <h2>Le prix de l'incertitude</h2>
+    <p>Le quatrième document de la même série s'ouvre sur une phrase que les trois autres n'ont pas&nbsp;: <em>le véga mesure la sensibilité à un paramètre que le modèle suppose constant.</em> C'est un aveu de circularité, et ce dépôt en connaît le prix — il en porte une, nommée dans sa propre mémoire de projet.</p>
+  </div>
+
+  <h2 id="s-vg-echelle">Deux conventions, et un facteur cent</h2>
+
+  <p><span class="mono">V = ∂V/∂σ = Se<sup>−qT</sup>φ(d₁)√T</span>, identique pour un call et un put par la parité. La forme fermée est <strong>par unité de volatilité</strong>, donc par cent points&nbsp;; les systèmes de négociation cotent par point. Le guide écrit que mélanger les deux est une erreur d'un facteur cent et qu'elle arrive plus souvent qu'on ne l'admet&nbsp;: c'est la seule erreur de cette série qui coûte deux ordres de grandeur d'un coup.</p>
+
+{{TABLE:vg_echelle}}
+
+{{FIGURE:vgechelle|Le véga contre le spot à quatre échéances, et la croissance mesurée contre la racine du temps.}}
+
+  <p>Le guide publie deux nombres, et le dépôt les vérifie. La croissance en racine du temps est une excellente approximation — les deux courbes du cadre de droite sont indiscernables. Le rapport d'un an à deux semaines, en revanche, vaut {{vg_rapport}} et non {{vg_rapport_annonce}}&nbsp;: la racine seule rendrait {{vg_rapport_racine}}, et le facteur de densité retire le reste.</p>
+
+  <p>La seconde formule du guide — <em>là où le gamma est une pointe, le véga est une colline</em> — est plus séduisante et elle est fausse. Les deux pics partagent <span class="mono">φ(d₁)</span> et mesurent la même largeur à un pour cent près&nbsp;: {{vg_pic_vega}}&nbsp;% du spot contre {{vg_pic_gamma}}&nbsp;% à trente jours.</p>
+
+{{FIGURE:vgcolline|Les pics de véga et de gamma ramenés à leur maximum, et le rapport des deux contre l'échéance.}}
+
+  <p>Ce qui va en sens inverse n'est pas la largeur mais la hauteur, et le rapport des deux est une identité&nbsp;: <span class="mono">Γ/V = 1/(S²σT)</span>, <strong>indépendante du strike</strong>. Elle chute d'un facteur {{vg_gv_facteur}} entre la semaine et l'année. Composée avec celle de la partie&nbsp;XIX, elle donne <span class="mono">|Θ₁|/V = σ/2T</span>&nbsp;: trois grandeurs grecques, deux rapports fixes, et aucun des trois ne contient une direction.</p>
+
+  <h2 id="s-vg-modes">Le véga n'est pas un risque</h2>
+
+  <p>Un livre à véga net nul peut perdre lourdement, parce que la surface a au moins trois modes indépendants — le niveau, le terme, la peau — et qu'un véga net additionne des sensibilités à des paramètres qui ne bougent pas ensemble. Le dépôt fait ici ce que la partie&nbsp;XX a fait pour le delta&nbsp;: il construit deux livres dont le véga net est <strong>calculé</strong> nul, et les fait marcher sur chacun des trois modes.</p>
+
+{{TABLE:vg_modes}}
+
+{{FIGURE:vgmodes|Le résultat de deux livres à véga net nul sous trois modes de surface, exact et au premier ordre.}}
+
+  <p>Chaque livre vit du mode qui le concerne et reste aveugle à celui de l'autre&nbsp;: le livre calendrier gagne {{vg_cal_terme}}&nbsp;points d'indice sur le mode de terme, le livre de peau {{vg_peau_peau}} sur le mode de peau, et le nombre résumé n'en dit rien. <em>Un véga net est à un livre de volatilité ce qu'un delta net est à un livre d'options&nbsp;: exact et inopérant.</em></p>
+
+  <p>Le second aveuglement est d'un autre ordre, et il survit à la mise en seaux. Sous un choc de <strong>niveau</strong>, où le véga annonce zéro et le dit correctement, le livre de peau perd tout de même {{vg_peau_niveau}}&nbsp;point d'indice sur les dix points de l'exemple du guide. Cette perte-là n'a aucun véga.</p>
+
+{{FIGURE:vgcourbure|Le résultat d'un livre à véga nul contre l'amplitude du choc, par réévaluation et au premier ordre.}}
+
+  <p>La planche montre pourquoi&nbsp;: le véga est la dérivée première, il est exact à l'origine et faux partout ailleurs, et ce qu'il manque croît à peu près comme le carré du choc. Un pupitre qui couvre au véga seul est couvert pour les mouvements qui n'arrivent pas.</p>
+
+  <h2 id="s-vg-ponderation">La pondération qu'on postule</h2>
+
+  <p>Le guide propose le correctif de pupitre habituel&nbsp;: pondérer chaque seau d'échéance par <span class="mono">√(30/T)</span>, pour tenir compte du fait que les implicites du mois bougent plus que celles de l'année. C'est un exposant <strong>postulé</strong>, et la partie&nbsp;XVIII a payé pour cette faute — une demi-largeur y était supposée décroître en racine, la mesure a rendu 0,61.</p>
+
+  <p>Ici le verdict porte plus loin que la valeur de l'exposant. Sous la seule famille de surfaces qui ait un sens — une volatilité instantanée revenant vers sa moyenne à la vitesse <span class="mono">κ</span> — la sensibilité du ténor <span class="mono">T</span> vaut <span class="mono">(1 − e<sup>−κT</sup>)/(κT)</span>, dont l'exposant local passe de <strong>zéro</strong> aux ténors courts à <strong>un</strong> aux ténors longs.</p>
+
+{{TABLE:vg_ponderation}}
+
+{{FIGURE:vgponderation|Les deux poids en échelle logarithmique, et l'exposant effectif contre le ténor.}}
+
+  <p>Il ne vaut un demi qu'à <em>un seul</em> ténor. Une loi de puissance n'a pas d'échelle et cette courbe en a une&nbsp;: les deux ne se rencontrent qu'en un point, et ce point est l'ancrage que le pupitre a choisi.</p>
+
+{{TABLE:vg_kappa}}
+
+{{FIGURE:vgkappa|L'écart maximal de la règle contre la vitesse de retour, et le ténor où elle est exacte.}}
+
+  <p>Le contrôle de la section est le fond de la courbe de gauche&nbsp;: il ne suffit pas de dire que la règle est fausse pour une vitesse donnée, il faut montrer qu'<strong>aucune vitesse ne la sauve</strong>. Le minimum est atteint à {{vg_kappa}} par an — une demi-vie de {{vg_demivie}}&nbsp;jours — et il laisse encore {{vg_ecart_regle}}&nbsp;% d'écart aux deux bouts de la plage. <em>La règle n'approxime pas mal une surface&nbsp;: elle en décrit une autre.</em></p>
+
+{{FIGURE:vgreliefp|Le relief de l'écart de la règle en racine, en vitesse de retour et en ténor.}}
+
+  <h2 id="s-vg-bande">Où la courbure change de signe</h2>
+
+  <p>Le guide écrit que le véga est quasi linéaire en <span class="mono">σ</span> près de la monnaie et nettement convexe dans les ailes, et que cette convexité — la volga — interdit de compenser le véga d'une aile par celui d'une option à la monnaie. C'est exact. La mesure ajoute à quel point «&nbsp;près de la monnaie&nbsp;» est près.</p>
+
+{{TABLE:vg_bande}}
+
+{{FIGURE:vgbande|La courbure au ras de la monnaie à trois échéances, et la largeur de la bande contre l'échéance.}}
+
+  <p><span class="mono">volga = V·d₁d₂/σ</span> est négative entre les deux racines, donc sur la bande <span class="mono">[e<sup>−σ²T/2</sup>, e<sup>+σ²T/2</sup>]</span> — une forme fermée sans paramètre libre, dont la largeur vaut <span class="mono">σ²T</span> au premier ordre. Elle fait {{vg_bande_30}}&nbsp;% du spot à trente jours et {{vg_bande_365}}&nbsp;% à un an. Sur une grille au pas d'un pour cent, il y tombe {{vg_strikes_30}} strike à trente jours et <strong>aucun au-dessous de quinze</strong>&nbsp;: au sens de la courbure, il n'existe pas d'option à la monnaie sur le tableau.</p>
+
+{{FIGURE:vgreliefb|Le relief de la largeur de la bande de courbure négative, en volatilité et en échéance.}}
+
+  <h2 id="s-vg-seuil">Le seuil d'un vendeur de véga</h2>
+
+  <p>De là sort le résultat structurant, et c'est l'identité de ce document rencontrée sur un quatrième objet. À espérance nulle sur la variation d'implicite, un vendeur perd <span class="mono">½·volga·s²</span> par période. Pour revenir à zéro il lui faut une <strong>baisse d'implicite</strong> de <span class="mono">µ*<sub>σ</sub> = −½·(volga/V)·s²</span>, qui ne dépend d'aucune vue et que la position fixe entièrement — exactement comme <span class="mono">µ* = c/E[τ∧T]</span> est une propriété de la géométrie et non du marché.</p>
+
+{{TABLE:vg_seuil}}
+
+{{FIGURE:vgseuil|Le seuil d'un vendeur de véga contre la moneyness, et l'espérance contre la dérive d'implicite.}}
+
+  <p>Le seuil est <strong>nul à la monnaie</strong>, où la courbure change de signe, et vaut {{vg_seuil_mesure}}&nbsp;point par mois sur une aile à quatre-vingt-dix jours. Un livre qui compense une aile par une position à la monnaie compense donc un péage par un zéro. Le cadre de droite est le contrôle&nbsp;: la courbe y coupe l'axe, et l'abscisse de ce point est le seuil mesuré. La forme fermée, qui est du second ordre, le sous-estime de {{vg_seuil_ecart}}&nbsp;% — le même défaut que la partie&nbsp;XIX a trouvé sur le mouvement d'équilibre, et au même endroit&nbsp;: là où la courbure est la plus grande.</p>
+
+{{TABLE:vg_volofvol}}
+
+{{FIGURE:vgreliefs|Le relief du seuil d'un vendeur de véga, en volatilité de la volatilité et en écart à la monnaie.}}
+
+  <h2 id="s-vg-preuve">Ce qu'il faudrait pour l'établir</h2>
+
+  <p>«&nbsp;Vendre du véga est un portage. Cela paie la plupart du temps et les pertes sont concentrées.&nbsp;» Les deux moitiés de la phrase se mesurent, et aucune ne survit telle quelle.</p>
+
+{{TABLE:vg_loi}}
+
+{{FIGURE:vgloi|La loi du résultat d'un vendeur de véga, et la part des pertes que portent ses pires mois.}}
+
+  <p>La première est fausse d'une position de véga et vraie d'un portage. Le prix d'une option est <strong>monotone</strong> en volatilité&nbsp;: un vendeur gagne exactement quand l'implicite baisse, donc {{vg_taux}}&nbsp;% du temps, à toute moneyness et à toute volatilité de la volatilité. Son espérance, elle, vaut {{vg_moyenne}}&nbsp;point d'indice par mois — ce que la courbure lui prend. Ce qui paie la plupart du temps n'est pas la vente&nbsp;: c'est la dérive, et la dérive est précisément ce qu'il faut établir.</p>
+
+  <p>La seconde ne parle pas du véga. Les cinq pour cent de pires mois portent {{vg_conc5}}&nbsp;% des pertes, contre {{vg_conc5_temoin}}&nbsp;% sous une loi normale de même dispersion&nbsp;: un point d'écart. <em>Sous une variation d'implicite gaussienne, la concentration d'un vendeur de véga est celle d'une gaussienne.</em> La phrase du guide est vraie et elle décrit la queue de la volatilité implicite, pas la position — c'est là qu'il faudrait la mesurer.</p>
+
+{{TABLE:vg_preuve}}
+
+{{FIGURE:vgpreuve|Les années requises pour établir un portage de volatilité, et la fréquence de gain correspondante.}}
+
+  <p>L'avantage se compte <strong>au-delà du seuil</strong>, et c'est la seule définition honnête&nbsp;: la baisse d'implicite qui ramène l'espérance à zéro n'est pas un gain, c'est un péage, et un vendeur qui l'encaisse croit gagner ce qu'il ne fait que rendre. Un point par mois demande {{vg_annees_1}}&nbsp;ans, un demi-point {{vg_annees_demi}}. C'est le budget le plus lourd des quatre parties d'options, et le cadre de droite dit pourquoi on s'en aperçoit si tard&nbsp;: à un point d'avantage réel, la fréquence de gain ne monte qu'à {{vg_taux_1}}&nbsp;%.</p>
+
+{{FIGURE:vgreliefpr|Le relief des années requises pour établir un portage de volatilité, en vol de vol et en avantage.}}
+
+  <h2 id="s-vg-reste">Le décompte</h2>
+
+{{TABLE:vg_reste}}
+
+{{FIGURE:vgreste|Le décompte des affirmations par ce qu'elles déplacent, et le cumul des quatre parties d'options.}}
+
+  <p>Sur les {{vg_total_options}}&nbsp;affirmations examinées dans les quatre parties consacrées aux options, <strong>aucune ne donne un sens</strong>. Ce n'est pas un reproche adressé à ces guides&nbsp;: ils décrivent correctement des grandeurs qui existent, et le dernier va jusqu'à nommer la circularité de la sienne — ce que ce dépôt a mis longtemps à faire pour la sienne propre. C'est un fait sur ce que ces grandeurs <em>sont</em>&nbsp;: des propriétés de la géométrie, de l'horloge et du risque, jamais du sens.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-troisième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
