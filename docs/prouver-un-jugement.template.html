@@ -868,8 +868,19 @@
           <li><a href="#s-va-reste">Le décompte</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingt-cinquième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingt-cinquième partie — La saignée du delta, et les deux horloges d'un week-end</span>
         <ol start="126">
+          <li><a href="#s-ch-accel">L'accélération, et la puissance qu'on lui prête</a></li>
+          <li><a href="#s-ch-pic">Le pic n'est pas à vingt-cinq deltas</a></li>
+          <li><a href="#s-ch-monnaie">La ligne à la monnaie n'est pas nulle</a></li>
+          <li><a href="#s-ch-weekend">Le week-end, et les deux horloges de la même série</a></li>
+          <li><a href="#s-ch-cout">Ce que coûte de couvrir au delta du soir</a></li>
+          <li><a href="#s-ch-strangle">Aucune structure symétrique n'est neutre</a></li>
+          <li><a href="#s-ch-reste">Le décompte, et la seule affirmation d'agrégation qui tienne</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-sixième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="133">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -3113,6 +3124,112 @@
 
   <div class="part">
     <span class="lab">Vingt-cinquième partie</span>
+    <h2>La saignée du delta, et les deux horloges d'un week-end</h2>
+    <p>Le septième document de la même série est le premier dont l'usage recommandé <em>ne demande aucun signe</em>&nbsp;: il dit comment votre propre exposition bougera si vous ne faites rien. Sur ce point, ce dépôt n'a rien à corriger et le dit sans réserve. Sur le reste, la correction la plus lourde n'oppose pas ce guide à ce dépôt — <strong>elle l'oppose au guide du thêta de la même série.</strong></p>
+  </div>
+
+  <h2 id="s-ch-accel">L'accélération, et la puissance qu'on lui prête</h2>
+
+  <p><span class="mono">charm = ∂Δ/∂t</span>&nbsp;: la vitesse à laquelle le delta change parce que le temps passe, rien d'autre. Le guide écrit que le <span class="mono">T<sup>3/2</sup></span> de son dénominateur fait que le charm «&nbsp;accélère fort dans les dernières séances&nbsp;». Le dénominateur porte bien cette puissance ; le numérateur porte <span class="mono">d₂σ√T</span>, et le <span class="mono">√T</span> en annule la moitié.</p>
+
+{{TABLE:ch_acceleration}}
+
+{{FIGURE:chaccel|La saignée du delta contre le comptant à quatre échéances, et l'exposant mesuré de son amplitude.}}
+
+  <p>L'exposant local de l'amplitude au pic vaut {{ch_exposant_30}} à trente jours et {{ch_exposant_1}} à un jour&nbsp;: c'est <strong>l'inverse du temps</strong>, pas sa puissance trois demis, et l'écart entre les deux lectures est un facteur <span class="mono">√T</span> sur toute la description. La colonne de l'asymptote est la forme fermée que la partie&nbsp;XX avait établie, <span class="mono">φ(1)/(2T)</span>, et elle serre la mesure de mieux en mieux quand l'échéance raccourcit. <em>L'accélération que le guide décrit est réelle ; sa puissance est lue dans une formule sans avoir été dérivée.</em></p>
+
+  <h2 id="s-ch-pic">Le pic n'est pas à vingt-cinq deltas</h2>
+
+  <p>«&nbsp;Le charm est le plus grand vers vingt-cinq et soixante-quinze deltas, pas à la monnaie.&nbsp;» La seconde moitié est juste, la première non.</p>
+
+{{TABLE:ch_pic}}
+
+{{FIGURE:chpic|Le lieu du pic de la saignée contre son contrôle par balayage, et le delta de l'option qui s'y tient.}}
+
+  <p>Le lieu est en forme fermée — <span class="mono">d₁* = (σ√T − √(σ²T + 4))/2</span>, la racine que la partie&nbsp;XX avait établie et que la partie&nbsp;XXIV a retrouvée sur le pic du <strong>vanna</strong>, les deux grandeurs valant <span class="mono">φ(d₁)</span> multipliée par une fonction affine de <span class="mono">d₁</span>. Le delta au pic vaut {{ch_pic_delta_1}}&nbsp;% à un jour et {{ch_pic_delta_60}}&nbsp;% à deux mois, jamais vingt-cinq ; le second pic est à son image, vers {{ch_pic_delta_haut}}.</p>
+
+  <p>Le guide illustre pourtant son propre mécanisme sur un call à quatre pour cent hors de la monnaie, qui à un jour porte {{ch_delta_illustration}} de delta&nbsp;: <em>il n'a plus rien à perdre</em>, et la phrase «&nbsp;il perd l'essentiel de son delta&nbsp;» y est vraie sans rien dire. Le phénomène vit à {{ch_pic_ecart_1}}&nbsp;% de la monnaie, où l'option porte {{ch_delta_du_pic_soir}} de delta au soir et rien au matin.</p>
+
+{{FIGURE:chreliefs|Relief du module de la saignée du delta, en échéance et en moneyness.}}
+
+  <h2 id="s-ch-monnaie">La ligne à la monnaie n'est pas nulle</h2>
+
+  <p>Le guide explique que sa courbe à la monnaie «&nbsp;reste près de zéro parce qu'une vraie option à la monnaie garde 0,50 delta jusqu'au coup de cloche&nbsp;». La conclusion sur la <strong>limite</strong> est juste ; celle sur la <strong>vitesse</strong> ne l'est pas.</p>
+
+{{TABLE:ch_monnaie}}
+
+{{FIGURE:chmonnaie|Les amplitudes au pic et à la monnaie en échelle logarithmique, et le rapport des deux.}}
+
+  <p>À la monnaie, <span class="mono">d₁</span> vaut <span class="mono">(r − q + σ²/2)√T/σ</span> et la dérivée du delta porte un <span class="mono">1/√T</span>&nbsp;: elle <strong>diverge</strong>, comme celle du pic, deux fois moins vite — exposant {{ch_atm_exposant}} contre {{ch_exposant_1}}. <em>Ce qui reste près de zéro n'est donc pas une quantité, c'est un rapport</em>, et ce rapport s'effondre&nbsp;: {{ch_rapport_1}} à un jour, {{ch_rapport_30}} à trente. Sur une option d'un mois, négliger la saignée à la monnaie revient à négliger un dixième de l'objet.</p>
+
+  <h2 id="s-ch-weekend">Le week-end, et les deux horloges de la même série</h2>
+
+  <p>«&nbsp;Le charm court sur le temps calendaire, le gamma paie sur le temps de bourse. Sur un week-end les deux se découplent&nbsp;: un livre de vendredi après-midi porte trois jours de saignée de delta jusqu'à lundi pour un seul jour de variance.&nbsp;» C'est le résultat structurant du guide, et <strong>le guide du thêta de la même série a publié l'observation qui le contredit</strong>&nbsp;: sur un week-end on voit passer plutôt un jour de décroissance, pas trois. La partie&nbsp;XXI a employé cette observation pour calibrer le seul paramètre non observable du modèle, <span class="mono">ω = {{ch_omega}}</span>, et ce module l'importe plutôt que de le récrire.</p>
+
+{{TABLE:ch_weekend}}
+
+{{FIGURE:chplan|Le delta de trois positions sur dix jours sous les deux horloges, calendaire et calibrée.}}
+
+  <p>Trois positions, aucun trade, aucun mouvement de prix&nbsp;: tout ce qui bouge est le calendrier. Sur l'horloge calibrée, la volatilité implicite monte de {{ch_we_hausse}}&nbsp;% pour que la variance restant à courir ne tombe que d'un jour apparent, et cette hausse <strong>retient</strong> le delta&nbsp;: les courbes s'aplatissent en traversant la bande du week-end. La saignée mesurée vaut alors {{ch_we_horloge}} au lieu de {{ch_we_calendaire}}, un facteur {{ch_we_facteur}}.</p>
+
+{{FIGURE:chweekend|La saignée d'un week-end contre la moneyness sous les deux horloges, et le facteur de surestimation par échéance.}}
+
+  <p>L'écart est le plus grand <strong>sur les ailes</strong> — c'est-à-dire exactement là où le guide dit que les positions dérivent le plus — et il tombe à {{ch_we_facteur_atm}} à la monnaie, où le delta est immobile de toute façon.</p>
+
+{{TABLE:ch_horloges}}
+
+{{FIGURE:chhorloges|Le facteur de surestimation du calendrier contre le poids d'un jour non ouvré, et les jours apparents.}}
+
+  <p>Le poids d'un jour non ouvré n'est pas observable dans ce dépôt, donc il est balayé plutôt que choisi. Les deux bouts de la table sont les deux conventions&nbsp;: à un, le week-end vaut trois jours pleins et <strong>on retrouve exactement la lecture du guide du charm</strong>, facteur un. <em>Le désaccord entre les deux documents n'est donc pas une question de fait mais de paramètre, et l'un des deux a publié la mesure qui le fixe.</em> Il reste que la lecture calendaire est le bout le plus défavorable de toute la plage&nbsp;: un pupitre qui l'emploie surestime sa dérive de delta quelle que soit la vraie valeur.</p>
+
+{{FIGURE:chreliefh|Relief du facteur de surestimation du calendrier, en poids d'un jour non ouvré et en échéance.}}
+
+  <h2 id="s-ch-cout">Ce que coûte de couvrir au delta du soir</h2>
+
+  <p>«&nbsp;Calculez le delta de demain, pas celui d'aujourd'hui&nbsp;: pour tout ce qui est à moins de deux semaines, réévaluez le livre à <span class="mono">T − 1</span> avant de décider la couverture du soir.&nbsp;» C'est la seule note de pupitre des sept documents qui se convertisse directement dans l'unité de celui-ci.</p>
+
+{{TABLE:ch_cout}}
+
+{{FIGURE:chcout|Le coût de couvrir au delta du soir en unités de friction, et l'erreur de delta d'une séance.}}
+
+  <p>L'erreur de couverture est la saignée d'une séance ; ce qu'elle coûte est cette erreur multipliée par le déplacement du lendemain, dont l'espérance absolue vaut <span class="mono">√(2/π)</span> écart-type. La règle est juste et <strong>son seuil est trop court</strong>&nbsp;: le coût ne tombe sous la friction déclarée qu'à {{ch_seuil}}&nbsp;jours, et à deux semaines il vaut encore {{ch_cout_14}}&nbsp;fois ce que l'opérateur paie déjà sans y penser. <em>C'est la troisième fois de la série qu'un guide se sous-estime.</em></p>
+
+{{FIGURE:chreliefc|Relief du coût de couvrir au delta du soir, en échéance et en moneyness.}}
+
+  <h2 id="s-ch-strangle">Aucune structure symétrique n'est neutre</h2>
+
+  <p>«&nbsp;Il s'inverse de part et d'autre du strike&nbsp;: un strangle saigne son delta symétriquement vers l'extérieur, un écart vertical non.&nbsp;» La première moitié se réfute en une ligne.</p>
+
+{{TABLE:ch_strangle}}
+
+{{FIGURE:chstrangle|Les deux jambes d'un strangle et leur somme contre le delta, et le contrôle de la forme fermée à portage nul.}}
+
+  <p>Les deux jambes d'un strangle symétrique en delta ont des <span class="mono">d₁</span> <strong>opposés</strong> par construction, et le charm vaut <span class="mono">φ(d₁)(d₁ − σ√T)/2T</span> à portage nul&nbsp;: leur somme laisse <span class="mono">−φ(z)·σ/√T</span>, qui <em>n'est nulle à aucun delta et à aucune échéance</em>. Les deux jambes perdent bien leur delta, mais <strong>le livre devient plus court en le faisant</strong>, et la part non compensée passe de {{ch_str_part_basse}}&nbsp;% à {{ch_str_part_haute}}&nbsp;% selon le delta et l'échéance.</p>
+
+{{TABLE:ch_vertical}}
+
+{{FIGURE:chvertical|La part non compensée du charm d'un strangle et d'un écart vertical contre l'échéance, et le rapport des deux nets.}}
+
+  <p>La seconde moitié de la note tient, et elle est moins tranchée qu'annoncé&nbsp;: la différence entre les deux structures est un rapport de deux ou trois, qui se resserre avec l'échéance et finit par s'inverser. La bonne formulation est celle-ci&nbsp;: <em>aucune structure symétrique en delta n'est neutre en charm, et il faut le calculer pour chacune plutôt que de le déduire de sa forme.</em></p>
+
+{{FIGURE:chreliefstr|Relief de la part non compensée du charm d'un strangle, en delta et en échéance.}}
+
+  <h2 id="s-ch-reste">Le décompte, et la seule affirmation d'agrégation qui tienne</h2>
+
+  <p>Reste l'encadré que le guide place au milieu de sa page, et qui est la meilleure chose des sept documents. <em>Contrairement aux agrégats de gamma et de vanna, le charm ne demande pas de savoir qui est long ou court&nbsp;: il dit comment votre propre exposition bougera si vous ne faites rien, ce qui est un outil de planification et non une prévision.</em> C'est exact.</p>
+
+{{FIGURE:chagregation|Le nombre de paramètres non observables des trois agrégats, et la largeur de bande qui en résulte.}}
+
+  <p>Le gamma agrégé de la partie&nbsp;XIX demandait le signe d'un inventaire qu'on n'observe pas, et faisait errer son niveau sur cent trente-cinq stops élargis&nbsp;; le vanna de la partie&nbsp;XXIV en demandait deux, et rendait le plus souvent trois lignes au lieu d'une. La question que le charm pose n'en comporte aucun, parce qu'elle porte sur un livre qu'on connaît. Le guide ajoute que le même objet employé comme niveau de marché hérite de tous les défauts du document sur le gamma, et il a raison là aussi. <strong>Sur les sept documents, c'est la seule affirmation d'agrégation que ce dépôt reprend.</strong></p>
+
+{{TABLE:ch_reste}}
+
+{{FIGURE:chreste|Le décompte des affirmations par ce qu'elles déplacent, et le cumul des sept parties d'options.}}
+
+  <p>Sur les {{ch_total_options}}&nbsp;affirmations examinées dans les sept parties consacrées aux options, <strong>aucune ne donne un sens</strong>. Ce n'est pas un reproche adressé à ces guides&nbsp;: ils décrivent correctement des grandeurs qui existent, et le dernier fait mieux que les six autres sur deux points — il nomme l'usage où son objet est fiable, et celui où il ne l'est pas. <em>C'est un protocole, et c'est ce que ce document demande depuis sa quatrième partie.</em></p>
+
+  <div class="part">
+    <span class="lab">Vingt-sixième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

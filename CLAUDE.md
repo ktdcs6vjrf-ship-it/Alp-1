@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (129 sections en vingt-cinq
-parties, 131 tables, 184 figures dont cinquante-quatre surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (136 sections en vingt-six
+parties, 140 tables, 199 figures dont cinquante-huit surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -33,7 +33,7 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
 `theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` + `vanna.py` +
-`figva.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`figva.py` + `charm.py` + `figch.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -64,10 +64,10 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/340834bd-fdde-438d-bf9d-606286b15e1e
-  (précédents : 5a666d3a, 9e0ef040, 8edc727c, b40a2d6b, e5f06e51, 614afa35,
-  213dccda, a990ef0e, c2cbc5ee, d1e5eca9, 82bd1a42, 601106cf, dcb59260,
-  d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/6aa40bf9-2f8a-4f62-8249-9033d4112679
+  (précédents : 340834bd, 5a666d3a, 9e0ef040, 8edc727c, b40a2d6b, e5f06e51,
+  614afa35, 213dccda, a990ef0e, c2cbc5ee, d1e5eca9, 82bd1a42, 601106cf,
+  dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
@@ -538,7 +538,7 @@ vallée, et un plafond « à soixante ans » qui ne mord nulle part : les deux
 sont remplacés par des comptes calculés. Et l'arête d'un relief étiquetait
 quatre-vingt-dix jours **« 0 »** année, faute d'une décimale.
 
-Sa **partie XXIV** ferme la série d'options par le guide du vanna —
+Sa **partie XXIV** poursuit la série d'options par le guide du vanna —
 `vanna.py` + `figva.py`. C'est le seul des six à publier **le résultat de son
 propre test**, contre un niveau témoin placé à la même distance de
 l'ouverture : exactement le contrôle que la partie XIX avait dû ajouter au
@@ -618,6 +618,67 @@ second inobservable — la volatilité vraie par strike — élargisse la bande.
 ne l'élargit pas, le signe la domine entièrement ; il fait autre chose, qui
 n'avait pas été prévu, et que la table publie : il **multiplie les lignes**,
 de 57 % à 88 % de tirages à trois lignes ou plus.
+
+Sa **partie XXV** ferme la série d'options par le guide du charm —
+`charm.py` + `figch.py`. C'est le seul des sept dont l'usage recommandé **ne
+demande aucun signe**, et l'encadré qui le dit est la meilleure chose des sept
+documents. La correction la plus lourde, elle, n'oppose pas ce guide au
+dépôt : **elle l'oppose au guide du thêta de la même série.**
+
+① **L'accélération, et la puissance qu'on lui prête.** Le guide lit le
+`T^{3/2}` de son dénominateur et en conclut que le charm « accélère fort ».
+Le numérateur porte `d₂σ√T`, qui en annule la moitié : l'exposant mesuré de
+l'amplitude au pic vaut **−0,99**, c'est `1/T`, et l'asymptote est la forme
+fermée `φ(1)/(2T)` que la partie XX avait déjà établie.
+② **Le pic n'est pas à vingt-cinq deltas** mais à **seize et quatre-vingt-cinq**,
+en forme fermée : `d₁* = (σ√T − √(σ²T+4))/2`, la racine de la partie XX, **la
+même que le pic du vanna** de la partie XXIV. Et le guide illustre son propre
+mécanisme sur un call à 4 % hors de la monnaie qui, à un jour, porte `0,0009`
+de delta — *il n'a plus rien à perdre*. Le phénomène vit à 1,3 % de la monnaie.
+③ **« La ligne à la monnaie reste près de zéro »** : elle **diverge** aussi, en
+`1/√T` quand le pic diverge en `1/T`. Ce qui reste près de zéro n'est pas une
+quantité, c'est un rapport — 51 à un jour, **10 à trente**.
+④ **Le week-end, et c'est le résultat de la partie.** Le charm guide dit trois
+jours de saignée pour un jour de variance ; le **guide du thêta de la même
+série** a publié l'observation qu'un week-end fait voir *un* jour, et la
+partie XXI en a tiré `ω = 0,2566`. Sous cette horloge la saignée vaut **le
+tiers au quart** de la lecture calendaire, et l'écart est le plus grand **sur
+les ailes** — là où le guide dit que les positions dérivent le plus. À `ω = 1`
+on retrouve exactement sa lecture, facteur un : *c'est le plancher du relief,
+donc toute autre hypothèse la rend surestimée.*
+⑤ **Le coût de couvrir au delta du soir.** « Réévaluez sous deux semaines » :
+la règle est juste et le seuil trop court — le coût passe sous la friction
+déclarée à **31 jours**. Troisième fois de la série qu'un guide se
+sous-estime, après les 22,3 points de delta de la partie XX et les 41 deltas
+de la partie XXIV.
+⑥ **Le strangle ne saigne pas symétriquement.** Les deux jambes ont des `d₁`
+opposés, donc leur somme laisse **`−φ(z)·σ/√T`** — une forme fermée nulle à
+aucun delta ni à aucune échéance, contrôlée à huit décimales. Les deux jambes
+perdent leur delta et *le livre raccourcit en le faisant* ; la part non
+compensée va de 5 % à **89 %**. Le vertical ne compense pas davantage : la
+différence est un rapport de deux ou trois, qui s'inverse au-delà de quelques
+mois.
+⑦ **L'agrégation, et la seule affirmation de la série qui tienne.** Le gamma
+agrégé demandait **un** inobservable et faisait errer son niveau sur 135 stops
+élargis ; le vanna en demandait **deux** et rendait trois lignes ; le charm
+n'en demande **aucun**, parce qu'il s'emploie sur un livre qu'on connaît. Le
+guide le dit, et il dit aussi que le même objet employé comme niveau de marché
+hérite de tout. **Sur les sept documents, c'est la seule affirmation
+d'agrégation que le dépôt reprend.**
+⑧ **Le décompte** : trois affirmations déplacent le risque, trois l'horloge,
+deux rien, **aucune la direction** — troisième partie consécutive dans ce cas.
+Sur les **cinquante et une** affirmations des sept parties d'options, aucune
+ne donne un sens.
+
+Deux pièges y sont enterrés. Le premier est un **pas de quadrature** : la
+première version de `temps_de_marche` intégrait l'horloge par pas de 0,05
+jour, et la quantisation faisait sauter le delta d'un dixième au bord du
+cadre ; la fonction est maintenant analytique, et c'est en regardant la
+planche qu'on l'a vu. Le second est le **dernier instant d'une option** : à
+`T → 0` le delta est une marche, et une formule y rend une valeur gouvernée
+par le portage plutôt que par la position — la planche s'arrête donc un
+dixième de jour avant l'échéance, faute de quoi la ligne à la monnaie
+publiait un saut de 0,50 à 0,80 qui n'existe pas.
 
 ## Carte des modules
 
@@ -829,6 +890,20 @@ Rendu
   `compte_de_lignes` ; `risk_reversal`, dont le véga net est nul par parité.
   Douze tables, quatre surfaces.
 - `figva.py` — les quinze planches de la partie XXIV, dont quatre reliefs.
+- `charm.py` — **la saignée du delta, et les deux horloges.** `bleed` et son
+  contrôle `bleed_numerique` (le temps calendaire s'écoule à l'envers de
+  l'échéance, et c'est la seule subtilité) ; `exposant_du_pic` et
+  `exposant_a_la_monnaie`, qui mesurent au lieu de postuler ;
+  `part_perdue_dans_la_nuit` ; **`POIDS_CALIBRE`, importé de
+  `theta.poids_pour_apparents(1.0)`** — le paramètre qui tranche entre les
+  deux guides ne vient pas d'ici ; `temps_de_marche` (analytique),
+  `delta_sur_horloge`, `saignee_calendaire` / `saignee_horloge` et
+  `facteur_du_calendrier`, dont le test exige qu'il vaille **un** à `ω = 1` ;
+  `cout_du_delta_du_soir` et `echeance_du_seuil`, rapportés à `FRICTION` ;
+  `strangle` et **`strangle_ferme` = `−φ(z)·σ/√T`**, contrôlée à huit
+  décimales contre la mesure à portage nul ; `vertical`. Neuf tables, quatre
+  surfaces.
+- `figch.py` — les quinze planches de la partie XXV, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
