@@ -95,6 +95,34 @@ class TestLesFormesFermees(unittest.TestCase):
             self.assertLess(abs(r - 1.0), 0.06, j)
 
 
+    def test_le_vanna_egale_ses_deux_derivees_croisees(self):
+        """Le contrôle qui manquait : `∂Δ/∂σ` et `∂V/∂S` sont le même nombre.
+
+        La première version de `vanna` oubliait un `√T` au dénominateur, et
+        rien ne l'avait vu — la fonction n'était consommée par aucune table,
+        aucune figure et aucun test. C'est le cas que la règle du dépôt vise :
+        une forme fermée se contrôle contre une route indépendante, même
+        quand personne ne s'en sert encore.
+        """
+        h = 1e-5
+        for j in (7.0, 30.0, 90.0, 365.0):
+            t = j / V.JOURS_AN
+            for m in (0.85, 0.95, 1.0, 1.05, 1.15):
+                s = V.S_REF * m
+                par_delta = (G.delta_comptant(s, V.S_REF, V.VOL_REF + h, t,
+                                              V.TAUX, V.DIVIDENDE)
+                             - G.delta_comptant(s, V.S_REF, V.VOL_REF - h, t,
+                                                V.TAUX, V.DIVIDENDE)) / (2 * h)
+                par_vega = (V.vega(s + 0.01, V.S_REF, V.VOL_REF, t, V.TAUX,
+                                   V.DIVIDENDE)
+                            - V.vega(s - 0.01, V.S_REF, V.VOL_REF, t, V.TAUX,
+                                     V.DIVIDENDE)) / 0.02
+                ferme = V.vanna(s, V.S_REF, V.VOL_REF, t, V.TAUX,
+                                V.DIVIDENDE)
+                self.assertAlmostEqual(ferme, par_delta, places=4)
+                self.assertAlmostEqual(ferme, par_vega, places=4)
+
+
 class TestLesModes(unittest.TestCase):
     """Un véga net nul ne protège de rien."""
 

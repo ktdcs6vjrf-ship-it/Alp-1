@@ -857,8 +857,19 @@
           <li><a href="#s-rh-reste">Le décompte</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingt-quatrième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingt-quatrième partie — Là où le delta et la volatilité se rencontrent</span>
         <ol start="119">
+          <li><a href="#s-va-routes">Deux lectures, un nombre, et un contrôle qui manquait</a></li>
+          <li><a href="#s-va-demi">Ce que le vanna fait au delta, et les deux endroits où il fait l'inverse</a></li>
+          <li><a href="#s-va-deplacement">Le déplacement annoncé</a></li>
+          <li><a href="#s-va-pic">Où le vanna est le plus grand, et pourquoi la réponse dépend de la fenêtre</a></li>
+          <li><a href="#s-va-grec">La formule qui nomme le mauvais grec</a></li>
+          <li><a href="#s-va-test">Ce que le test rend, et pourquoi ce dépôt le croit</a></li>
+          <li><a href="#s-va-reste">Le décompte</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-cinquième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="126">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2984,6 +2995,124 @@
 
   <div class="part">
     <span class="lab">Vingt-quatrième partie</span>
+    <h2>Là où le delta et la volatilité se rencontrent</h2>
+    <p>Le sixième document de la même série est le seul à publier <em>le résultat de son propre test</em>, contre un niveau témoin placé à la même distance de l'ouverture — exactement le contrôle que la partie&nbsp;XIX avait dû ajouter au guide du gamma. Sur ce point, ce dépôt n'a rien à corriger&nbsp;: il a de quoi chiffrer. Sur le reste, la vérification a d'abord trouvé un défaut <strong>ici</strong>.</p>
+  </div>
+
+  <h2 id="s-va-routes">Deux lectures, un nombre, et un contrôle qui manquait</h2>
+
+  <p><span class="mono">vanna = ∂Δ/∂σ = ∂𝒱/∂S = −e<sup>−qT</sup>φ(d₁)·d₂/σ</span>. Les deux dérivées croisées sont le même nombre par la symétrie des dérivées secondes, ce qui en fait un contrôle idéal&nbsp;: <em>il ne peut échouer que si une implémentation est fausse.</em> Elle l'était. La fonction de ce dépôt écrivait <span class="mono">−𝒱·d₂/(Sσ)</span>, dont le dénominateur oublie <span class="mono">√T</span>&nbsp;: elle rendait le vanna multiplié par la racine de l'échéance, un facteur {{va_facteur_racine}} à trente jours.</p>
+
+{{TABLE:va_deux_routes}}
+
+{{FIGURE:vadeux|Le vanna contre le comptant à quatre échéances, et le facteur que la forme fermée du dépôt portait.}}
+
+  <p>Rien ne l'avait vu parce que <strong>rien ne la consommait</strong>&nbsp;: aucune table, aucune figure, aucun test. La règle du dépôt — une forme fermée se contrôle contre une route indépendante — avait été appliquée au véga et à la volga, mais pas à leur dérivée croisée. <em>Elle vaut aussi pour ce dont personne ne se sert encore.</em></p>
+
+{{TABLE:va_zero}}
+
+{{FIGURE:vazero|Le lieu du zéro du vanna contre l'échéance, et le côté de la monnaie que le taux décide.}}
+
+  <p>Le guide écrit que le vanna s'annule «&nbsp;légèrement au-dessus de la monnaie&nbsp;». C'est exact, et la condition se calcule&nbsp;: le zéro est au-dessus si et seulement si <span class="mono">r &lt; q + σ²/2</span>. Ce taux vaut {{va_taux_pic}}&nbsp;%, et c'est <strong>le même nombre</strong> que la partie&nbsp;XXIII a trouvé sur un objet entièrement différent — le seul taux où le maximum du rho tombe sur l'inverse du taux. Deux routes sans rien de commun butent sur la même égalité entre le taux, le rendement et la moitié de la variance.</p>
+
+{{FIGURE:vareliefv|Relief du module du vanna, en échéance et en moneyness.}}
+
+  <h2 id="s-va-demi">Ce que le vanna fait au delta, et les deux endroits où il fait l'inverse</h2>
+
+  <p>«&nbsp;Le vanna ramène toujours le delta vers 0,50&nbsp;; la volatilité haute fait ressembler toute option à un tirage à pile ou face.&nbsp;» La règle vaut si et seulement si <span class="mono">d₁</span> et <span class="mono">d₂</span> ont le même signe, et elle échoue donc sur <span class="mono">d₂ &lt; 0 &lt; d₁</span>.</p>
+
+{{TABLE:va_desobeissance}}
+
+{{FIGURE:vabande|La largeur de la bande où la règle s'inverse, comparée à sigma carré T, et sa portée sur un tableau de strikes.}}
+
+  <p>Cette condition est <span class="mono">d₁d₂ &lt; 0</span>, c'est-à-dire <strong>la volga négative de la partie&nbsp;XXII</strong>&nbsp;: les deux guides décrivent le même intervalle sans le savoir, et la largeur en logarithme vaut <span class="mono">σ²T</span> dans les deux cas. Elle mesure {{va_bande_30}}&nbsp;% du comptant à trente jours — sous le pas d'une grille de strikes. <em>L'exception existe, elle est exacte, et personne ne peut la négocier.</em></p>
+
+{{FIGURE:vareliefb|Relief de la largeur de la bande où la règle s'inverse, en volatilité et en échéance.}}
+
+  <p>La seconde moitié de la phrase tombe pour une autre raison, et celle-là se négocie. À volatilité qui croît, <span class="mono">d₁</span> part vers l'infini <strong>positif</strong>&nbsp;: le delta d'un call descend, s'arrête, puis remonte vers <span class="mono">e<sup>−qT</sup></span>. Le lieu du retournement est en forme fermée, <span class="mono">σ* = √(2·ln(F/K)/T)</span>, et le plancher aussi, <span class="mono">e<sup>−qT</sup>·N(√(2·ln(F/K)))</span>.</p>
+
+{{TABLE:va_retournement}}
+
+{{FIGURE:varetournement|Le delta contre la volatilité à quatre moneyness, et le plancher du delta contre son contrôle par balayage.}}
+
+  <p><strong>Aucune option dans la monnaie n'atteint jamais un demi.</strong> Sur un call à cinq pour cent dans la monnaie et un an d'échéance, le plancher vaut {{va_retour_plancher}} — le balayage rend {{va_retour_controle}} — et il est atteint à {{va_retour_vol}}&nbsp;% de volatilité, un régime que l'indice a visité plusieurs fois.</p>
+
+{{FIGURE:vareliefr|Relief de la volatilité du retournement du delta, en moneyness et en échéance.}}
+
+  <h2 id="s-va-deplacement">Le déplacement annoncé</h2>
+
+  <p>Le guide illustre le mécanisme par un nombre&nbsp;: monter la volatilité de 15&nbsp;% à 45&nbsp;% porte un call de vingt deltas à «&nbsp;trente environ&nbsp;».</p>
+
+{{TABLE:va_deplacement}}
+
+{{FIGURE:vadeplacement|Le delta d'un call de vingt deltas contre la volatilité, et le choc qui le porte à trente deltas.}}
+
+  <p>La mesure rend {{va_delta_exact}}. Sa propre formule, elle, en rendrait {{va_delta_lineaire}}, la tangente prise au départ surestimant parce que le vanna décroît vite quand la volatilité monte. <em>Le nombre publié n'est donc ni la mesure ni son approximation&nbsp;: il tombe entre les deux.</em> Trente deltas s'atteignent à {{va_vol_du_trente}}&nbsp;%, soit {{va_choc_requis}}&nbsp;points de choc et non trente&nbsp;: l'effet décrit est <strong>plus grand</strong> que ce qu'on en dit, et c'est la seconde fois de la série qu'un guide se sous-estime.</p>
+
+  <h2 id="s-va-pic">Où le vanna est le plus grand, et pourquoi la réponse dépend de la fenêtre</h2>
+
+  <p>Le lieu du pic est en forme fermée&nbsp;: <span class="mono">d₁* = (σ√T − √(σ²T + 4))/2</span>, et c'est <strong>la même racine que le pic du charm</strong> de la partie&nbsp;XX, parce que les deux grandeurs valent <span class="mono">φ(d₁)</span> multipliée par une fonction affine de <span class="mono">d₁</span>. Le module importe la racine plutôt que de la recopier.</p>
+
+{{TABLE:va_pic}}
+
+{{FIGURE:vapic|Le module du vanna contre la moneyness à quatre échéances, et le maximum vrai contre celui que la fenêtre du guide laisse voir.}}
+
+  <p>Le pic se tient à un <strong>delta presque constant</strong> — {{va_pic_delta_court}}&nbsp;% à un jour, {{va_pic_delta_long}}&nbsp;% à cinq ans — donc juste en dehors de la bande que le guide nomme, et symétriquement au-dessus. À la monnaie le vanna est nul&nbsp;: «&nbsp;le plus grand dans la bande des vingt à quatre-vingts deltas&nbsp;» décrit en fait ses deux bords.</p>
+
+  <p>Reste «&nbsp;aux échéances intermédiaires&nbsp;», et c'est là que la table tranche. Le maximum <strong>croît de bout en bout</strong> — {{va_pic_vanna_court}} à un jour, {{va_pic_vanna_long}} à cinq ans. Ce qui décroît est ce qu'on voit à travers la fenêtre <span class="mono">0,80–1,20</span> de la planche du guide, d'où l'arête sort par le côté&nbsp;: {{va_pic_fenetre_long}} à cinq ans. <em>«&nbsp;Aux échéances intermédiaires&nbsp;» n'est pas une propriété du vanna, c'est une propriété du cadre</em> — le piège que ce dépôt a trouvé six fois dans ses propres figures.</p>
+
+  <h2 id="s-va-grec">La formule qui nomme le mauvais grec</h2>
+
+  <p>La section&nbsp;2 du guide écrit <span class="mono">Δ<sub>effectif</sub> ≈ Δ + vanna·∂σ/∂S</span>. Le membre de droite n'est pas un delta&nbsp;: <span class="mono">vanna</span> se compte en inverse de volatilité, <span class="mono">∂σ/∂S</span> en volatilité par point, leur produit en inverse de point.</p>
+
+{{TABLE:va_mauvais_grec}}
+
+{{FIGURE:vagrec|Les quatre lectures du delta le long de la peau, et la part de la correction que la formule du guide capte.}}
+
+  <p>La correction juste porte le <strong>véga</strong>, et elle reproduit une réévaluation complète le long de la peau à la quatrième décimale. La formule du guide en capte {{va_part_captee}}&nbsp;% au comptant de référence, et elle <em>change de signe</em> au-dessus de la monnaie&nbsp;: elle ne corrige pas trop peu, elle corrige dans la mauvaise direction sur la moitié du domaine. L'écart qu'elle manque vaut {{va_correction}} de delta sur une seule option à trois mois.</p>
+
+{{TABLE:va_gamma_effectif}}
+
+{{FIGURE:vagamma|Le gamma le long de la peau contre sa réévaluation, et l'apport de chaque terme de la correction.}}
+
+  <p>Le vanna entre bel et bien dans une correction de peau, mais dans celle du <strong>gamma</strong>&nbsp;: <span class="mono">Γ + 2·vanna·σ′ + volga·σ′²</span> reproduit le gamma réévalué à la sixième décimale. Deux choses séparent cette identité de la formule du guide, et aucune n'est décorative&nbsp;: le facteur <strong>deux</strong>, qui vient de ce que la peau entre à la fois par le delta et par le véga, et le terme de <strong>volga</strong>, celui de la partie&nbsp;XXII. <em>Le guide a pris le bon grec et l'a mis dans la mauvaise équation</em>, et comme il a par ailleurs tracé la bonne courbe, rien dans sa page ne le signale.</p>
+
+{{FIGURE:vareliefp|Relief de la correction de peau du delta, en pente de peau et en échéance.}}
+
+  <h2 id="s-va-test">Ce que le test rend, et pourquoi ce dépôt le croit</h2>
+
+  <p>Le guide fait ici ce que la vulgarisation ne fait jamais&nbsp;: il publie le résultat de son propre test. Les niveaux tirés du vanna agrégé n'ont pas battu <strong>un niveau témoin placé à la même distance de l'ouverture</strong>, sur plusieurs années de séances. C'est le contrôle que la partie&nbsp;XIX avait dû ajouter au guide du gamma, et ce dépôt n'a qu'à le rejouer.</p>
+
+{{TABLE:va_temoin}}
+
+{{FIGURE:vatemoin|Le taux de touche et le taux de réussite contre la distance, et les touches requises pour battre le témoin.}}
+
+  <p>Le taux de touche est celui du principe de réflexion et <em>ne dit que la distance</em>&nbsp;; le taux de réussite d'un trade pris sur le niveau vaut <span class="mono">1/(1+R:R)</span>, constant à toute distance. Un niveau agrégé ne peut donc battre son témoin qu'en déplaçant <span class="mono">µ</span>, et à un demi pour cent de l'ouverture il lui faudrait {{va_temoin_exces}}&nbsp;point de taux de réussite en plus et {{va_temoin_touches}}&nbsp;touches pour l'établir. <em>Le résultat négatif du guide n'est pas une surprise à expliquer&nbsp;: c'est ce que la loi nulle prédisait avant l'expérience.</em></p>
+
+{{TABLE:va_agregation}}
+
+{{FIGURE:vaagregation|Les profils agrégés de vanna et de gamma ramenés à leur maximum, et le décompte des lignes sous signe inconnu.}}
+
+  <p>Reste le mécanisme que le guide nomme&nbsp;: l'agrégation demande le signe de l'inventaire et la volatilité vraie de chaque strike, et les reconstructions grand public n'ont ni l'un ni l'autre. Le premier résultat vient avant tout tirage&nbsp;: <strong>sous l'hypothèse de signe du guide lui-même, le profil agrégé traverse zéro {{va_lignes_ref}}&nbsp;fois</strong>, quand celui du gamma n'en traverse qu'une. Le gamma est positif à tous les strikes&nbsp;; le vanna change de signe en chacun. <em>«&nbsp;La&nbsp;» ligne de vanna n'est pas un objet défini</em>, et le premier jet de ce module est tombé dans le trou que cela creuse — sa bissection a rendu «&nbsp;pas de ligne&nbsp;» là où il y en avait deux.</p>
+
+  <p>Signe inconnu, le résultat est <strong>l'inverse de celui de la partie&nbsp;XIX</strong>. Le GEX y échouait par absence&nbsp;: dans la moitié des tirages, aucune bascule n'existait. Le vanna échoue par abondance&nbsp;: {{va_lignes_aucune}}&nbsp;% des tirages n'en portent aucune, et {{va_lignes_trois}}&nbsp;% en portent trois ou plus, sur une bande de {{va_bande_lignes}}&nbsp;points — {{va_bande_stops}}&nbsp;fois le stop élargi de la partie&nbsp;X. <em>Un niveau qui n'existe pas se remarque&nbsp;; un niveau qui existe en trois exemplaires se choisit</em>, et le choix est un levier de plus.</p>
+
+  <p>Une hypothèse écrite d'avance est <strong>réfutée par la mesure</strong> et publiée telle quelle&nbsp;: on attendait que le second inobservable élargisse la bande. Il ne l'élargit pas — le signe la domine entièrement — mais il fait autre chose, qui n'avait pas été prévu&nbsp;: il multiplie les lignes, la part des tirages à trois lignes ou plus passant de {{va_lignes_trois}}&nbsp;% à {{va_lignes_trois_haut}}&nbsp;%.</p>
+
+  <h2 id="s-va-reste">Le décompte</h2>
+
+{{TABLE:va_pratique}}
+
+  <p>Des quatre notes de pupitre, la première se <strong>renforce</strong> au lieu de se corriger&nbsp;: le véga net d'un risk reversal symétrique en delta n'est pas «&nbsp;quasi nul&nbsp;», il vaut {{va_vega_net}} — <em>identiquement</em> nul, à toute échéance et à toute volatilité, parce que le véga ne dépend de <span class="mono">d₁</span> que par la fonction paire <span class="mono">φ</span> et que les deux strikes ont des <span class="mono">d₁</span> opposés. La troisième, elle, tombe sur le piège que la quatrième annonce&nbsp;: sous la convention que le guide définit lui-même, une aile de put vendue est <strong>longue</strong> de vanna, non courte. Le mécanisme qu'il décrit est réel, et le signe est celui contre lequel il met en garde deux lignes plus bas.</p>
+
+{{TABLE:va_reste}}
+
+{{FIGURE:vareste|Le décompte des affirmations par ce qu'elles déplacent, et le cumul des six parties d'options.}}
+
+  <p>Sur les {{va_total_options}}&nbsp;affirmations examinées dans les six parties consacrées aux options, <strong>aucune ne donne un sens</strong>. Ce sixième guide est pourtant le meilleur de tous sur le point qui compte plus que ses formules&nbsp;: <em>il publie le protocole qui l'aurait réfuté, et son résultat.</em> C'est la seule chose qu'une note de marché puisse offrir qui vaille d'être reprise, et c'est exactement ce que la partie&nbsp;XXV va demander à ce document.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-cinquième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

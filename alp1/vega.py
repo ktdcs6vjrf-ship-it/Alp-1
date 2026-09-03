@@ -153,11 +153,21 @@ def volga_numerique(s: float, k: float, vol: float, t: float, r: float = 0.0,
 
 def vanna(s: float, k: float, vol: float, t: float, r: float = 0.0,
           div: float = 0.0) -> float:
-    """`∂²V/∂S∂σ = −V·d₂/(Sσ)` — ce que la peau déplace."""
+    """`∂Δ/∂σ = ∂V/∂S = −e^{−qT}φ(d₁)·d₂/σ` — ce que la peau déplace.
+
+    La première version de cette fonction écrivait `−V·d₂/(Sσ)`, où le
+    dénominateur oublie `√T` : elle rendait le vanna **multiplié par la racine
+    de l'échéance**, soit un facteur trois et demi à trente jours. Rien ne
+    l'avait vu parce que rien ne la consommait — aucune table, aucune figure,
+    aucun test — et la règle du dépôt, qui veut qu'une forme fermée se
+    contrôle contre une route indépendante, avait été appliquée au véga et à
+    la volga mais pas à elle. La partie XXIV la contrôle par ses deux routes,
+    qui sont les deux dérivées croisées.
+    """
     if t <= 0.0:
         return 0.0
-    _, d2 = G._d(s, k, vol, t, r, div)
-    return -vega(s, k, vol, t, r, div) * d2 / (s * vol)
+    d1, d2 = G._d(s, k, vol, t, r, div)
+    return -math.exp(-div * t) * _phi(d1) * d2 / vol
 
 
 def rapport_de_tenors(jours_long: float = 365.0, jours_court: float = 14.0,

@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (122 sections en vingt-quatre
-parties, 119 tables, 169 figures dont cinquante surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (129 sections en vingt-cinq
+parties, 131 tables, 184 figures dont cinquante-quatre surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -32,7 +32,8 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
-`theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` + `vanna.py` +
+`figva.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -457,7 +458,7 @@ cadre borné à la main affichait un **plateau qui n'existait pas** sur la
 courbe de l'écart maximal, parce que `min(1.05, ...)` écrasait tout ce qui
 dépassait.
 
-Sa **partie XXIII** ferme la série d'options par le guide du rho —
+Sa **partie XXIII** poursuit la série d'options par le guide du rho —
 `rho.py` + `figrh.py`. C'est le plus honnête des cinq sur son propre objet :
 il s'ouvre en disant que pour un opérateur intrajournalier sur indice liquide,
 *rho est négligeable et le traiter comme tel est correct*, puis il explique où
@@ -523,7 +524,7 @@ format : la part de friction d'une position intrajournalière publiait
 de la table au lieu de le montrer ; `_part` donne maintenant deux chiffres
 significatifs, et un test refuse le zéro trompeur.
 
-Quatre autres n'ont été vus qu'en **regardant la page**, et aucun ne l'aurait
+Quatre autres n'ont été vus qu'en **regardant la page** (partie XXIII), et aucun ne l'aurait
 été autrement. Les trois risques du croisement parcourent trois ordres de
 grandeur : tracés en échelle linéaire, le plus grand écrasait les deux qui se
 croisent, et *le croisement — le sujet du cadre — était invisible*. Le
@@ -536,6 +537,87 @@ le croisement passe sous quelques années » sur une surface qui n'a pas de
 vallée, et un plafond « à soixante ans » qui ne mord nulle part : les deux
 sont remplacés par des comptes calculés. Et l'arête d'un relief étiquetait
 quatre-vingt-dix jours **« 0 »** année, faute d'une décimale.
+
+Sa **partie XXIV** ferme la série d'options par le guide du vanna —
+`vanna.py` + `figva.py`. C'est le seul des six à publier **le résultat de son
+propre test**, contre un niveau témoin placé à la même distance de
+l'ouverture : exactement le contrôle que la partie XIX avait dû ajouter au
+guide du gamma. Sur ce point le dépôt n'a rien à corriger ; il a de quoi
+chiffrer. Et la vérification a d'abord trouvé un défaut **ici**.
+
+⓪ **Le défaut du dépôt, et pourquoi la règle existe.** `vega.vanna` écrivait
+`−𝒱·d₂/(Sσ)`, dont le dénominateur oublie `√T` : elle rendait le vanna
+multiplié par la racine de l'échéance — trop petit d'un facteur **3,5** à
+trente jours, juste à un an, trop grand au-delà. *Rien ne l'avait vu parce que
+rien ne la consommait* : aucune table, aucune figure, aucun test. La règle du
+dépôt — une forme fermée se contrôle contre une route indépendante — avait été
+appliquée au véga et à la volga mais pas à leur dérivée croisée. **Elle vaut
+aussi pour ce dont personne ne se sert encore**, et le contrôle idéal était là
+depuis le début : `∂Δ/∂σ` et `∂𝒱/∂S` sont le même nombre par la symétrie des
+dérivées secondes, donc l'égalité ne peut échouer que si le code est faux.
+① **Le zéro, et le taux qui décide de son côté.** Il tombe où `d₂ = 0`, donc
+au-dessus de la monnaie **si et seulement si `r < q + σ²/2`** — le même
+`4,42 %` que la partie XXIII a trouvé sur le maximum du rho, par une route
+sans rien de commun.
+② **« Le vanna ramène le delta vers un demi » échoue deux fois.** D'abord sur
+`d₂ < 0 < d₁`, qui est *exactement* la bande de volga négative de la partie
+XXII : les deux guides décrivent le même ensemble sans le savoir, largeur
+`σ²T`, 0,52 % du comptant à trente jours — donc sous le pas d'une grille de
+strikes. *Une réfutation qui confirme.* Ensuite parce qu'à volatilité qui
+croît le delta tend vers `e^{−qT}`, pas vers un demi : il descend, s'arrête
+sur un plancher `e^{−qT}N(√(2 ln(F/K)))`, puis remonte. Le retournement se
+calcule — `σ* = √(2 ln(F/K)/T)` — et il tombe à **38,9 %** sur un call à cinq
+pour cent dans la monnaie et un an, *dans le domaine plausible*.
+③ **Le déplacement annoncé.** « De 15 % à 45 %, un vingt-deltas en vaut trente
+environ » : la mesure rend **41**, la propre tangente du guide en rendrait 69,
+et trente s'atteignent à **23,2 %** — huit points de choc et non trente.
+L'effet est *plus grand* que ce qu'il en dit.
+④ **Le pic, et la fenêtre.** Son lieu est `d₁* = (σ√T − √(σ²T+4))/2`, **la même
+racine que le pic du charm** de la partie XX (les deux valent `φ(d₁)` fois une
+fonction affine de `d₁`), importée et non recopiée. Il se tient à un **delta
+presque constant** (16 % à un jour, 21 % à cinq ans) et migre donc vers
+l'extérieur en `√T`. Le module croît **de bout en bout** : « aux échéances
+intermédiaires » décrit la fenêtre `0,80–1,20` de la planche du guide, d'où
+l'arête sort par le côté. *Le piège de la légende écrite devant un cadre
+borné, trouvé cette fois dans une figure qui n'est pas la nôtre.*
+⑤ **La formule nomme le mauvais grec.** `Δ + vanna·∂σ/∂S` n'est pas un delta —
+inverse de volatilité fois volatilité par point donne un inverse de point. La
+correction juste porte le **véga** et reproduit une réévaluation le long de la
+peau à la quatrième décimale ; celle du guide en capte **0,07 %**, et *change
+de signe* au-dessus de la monnaie. Sa formule est celle du **gamma** effectif
+portant le nom du delta, et même là il lui manque un facteur deux et le terme
+de volga : `Γ + 2·vanna·σ′ + volga·σ′²` referme l'écart à la sixième décimale.
+Le graphique posé dessous, lui, est juste.
+⑥ **Le test, et l'agrégation.** Le témoin apparié en distance de la partie XIX
+rejoué : le taux de touche ne dit que la distance, le taux de réussite vaut
+`1/(1+R:R)` partout, donc un niveau agrégé ne bat son témoin qu'en déplaçant
+`µ`. *Le résultat négatif du guide est ce que la loi nulle prédisait.* Puis un
+fait qui vient avant tout tirage : **sous l'hypothèse de signe du guide, le
+profil agrégé traverse zéro deux fois** quand le GEX n'en traverse qu'une — le
+gamma est positif à tous les strikes, le vanna change de signe en chacun.
+« La » ligne de vanna n'est pas un objet défini. Signe inconnu, le verdict est
+**l'inverse de celui de la partie XIX** : le GEX échouait par *absence* (la
+moitié des tirages sans bascule), le vanna échoue par *abondance* — 57 % des
+tirages en portent trois ou plus, sur 1 381 points, 153 fois le stop élargi.
+⑦ **Les notes de pupitre.** La première se **renforce** : le véga net d'un risk
+reversal symétrique en delta n'est pas « quasi nul », il est *identiquement*
+nul, parce que le véga ne dépend de `d₁` que par la fonction **paire** `φ` et
+que les deux strikes ont des `d₁` opposés. La troisième tombe sur le piège que
+la quatrième annonce : sous la convention que le guide définit lui-même, une
+aile de put vendue est **longue** de vanna, non courte.
+⑧ **Le décompte** : cinq affirmations déplacent le risque, trois rien, aucune
+l'horloge, **aucune la direction**. Sur les **quarante-trois** affirmations
+des six parties d'options, aucune ne donne un sens.
+
+Deux pièges y sont enterrés, en plus de celui du dépôt. Une bissection posée
+sur une boîte dont les deux bouts sont du même signe rend « pas de ligne » là
+où il y en a deux : le premier jet de `ligne_de_vex` l'a fait, et le remède est
+`lignes_de_vex`, qui **balaie et rend toutes les traversées**. Et une
+hypothèse écrite d'avance est **réfutée par la mesure** : on attendait que le
+second inobservable — la volatilité vraie par strike — élargisse la bande. Il
+ne l'élargit pas, le signe la domine entièrement ; il fait autre chose, qui
+n'avait pas été prévu, et que la table publie : il **multiplie les lignes**,
+de 57 % à 88 % de tirages à trois lignes ou plus.
 
 ## Carte des modules
 
@@ -732,6 +814,21 @@ Rendu
   `cout_de_rho` / `echeance_du_cout` rapportés à `FRICTION`, et `_part`, le
   format qui refuse de publier un zéro trompeur. Huit tables, quatre surfaces.
 - `figrh.py` — les quinze planches de la partie XXIII, dont quatre reliefs.
+- `vanna.py` — **la dérivée croisée, et le contrôle qui manquait.** `vanna`
+  (dans `vega`, corrigée ici) et ses deux routes `vanna_par_delta` /
+  `vanna_par_vega`, dont l'égalité est la symétrie des dérivées secondes ;
+  `moneyness_du_zero` et `zero_au_dessus`, qui importe `rho.taux_du_pic_exact`
+  plutôt que de le récrire ; `bande_de_desobeissance` et sa largeur, contrôlée
+  contre `vega.bande_de_courbure` ; `vol_du_retournement` et
+  `plancher_du_delta`, contrôlé par `plancher_balaye` ; `deplacement` (les
+  trois nombres du guide au même endroit) ; `moneyness_du_pic`, qui importe
+  `grandeurs.d1_du_pic`, et `vanna_max_fenetre`, qui mesure ce que la fenêtre
+  du guide laisse voir ; `delta_reevalue` / `delta_par_vega` /
+  `delta_par_vanna` et `gamma_par_vanna`, les quatre lectures de la
+  correction de peau ; `lignes_de_vex`, qui **balaie** au lieu de bissecter, et
+  `compte_de_lignes` ; `risk_reversal`, dont le véga net est nul par parité.
+  Douze tables, quatre surfaces.
+- `figva.py` — les quinze planches de la partie XXIV, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :
