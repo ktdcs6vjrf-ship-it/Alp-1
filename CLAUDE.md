@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (115 sections en vingt-trois
-parties, 111 tables, 154 figures dont quarante-six surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (122 sections en vingt-quatre
+parties, 119 tables, 169 figures dont cinquante surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -32,7 +32,7 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `robustesse.py` + `figrobu.py` + `overnight.py` + `figon.py` +
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
-`theta.py` + `figth.py` + `vega.py` + `figvg.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -401,7 +401,7 @@ pour un dixième et « 10¹ » pour dix, sur le même axe. Et le titre d'un cadr
 est mis en capitales par la feuille, donc **`σ` s'y publie `Σ`** — la formule
 va dans la lecture chiffrée, qui reste en bas de casse.
 
-Sa **partie XXII** ferme la série d'options par le guide du véga —
+Sa **partie XXII** poursuit la série d'options par le guide du véga —
 `vega.py` + `figvg.py`. Il s'ouvre sur une phrase que les trois autres n'ont
 pas : *le véga mesure la sensibilité à un paramètre que le modèle suppose
 constant.* C'est un aveu de circularité, et le dépôt en connaît le prix.
@@ -456,6 +456,86 @@ voient, et c'est le test d'enveloppe de `Panel.path` qui l'a trouvé. Et un
 cadre borné à la main affichait un **plateau qui n'existait pas** sur la
 courbe de l'écart maximal, parce que `min(1.05, ...)` écrasait tout ce qui
 dépassait.
+
+Sa **partie XXIII** ferme la série d'options par le guide du rho —
+`rho.py` + `figrh.py`. C'est le plus honnête des cinq sur son propre objet :
+il s'ouvre en disant que pour un opérateur intrajournalier sur indice liquide,
+*rho est négligeable et le traiter comme tel est correct*, puis il explique où
+ce raisonnement casse. Le dépôt ne le conteste pas — il le chiffre, et la
+correction la plus lourde ne porte sur aucun nombre.
+
+① **`ρ = KTe^{−rT}N(d₂)`, et la proportionnalité qui s'use.** L'exposant local
+vaut un jusqu'à trois mois, **0,95 à un an, 0,91 à deux ans**, et la droite du
+mois s'écarte de cinq pour cent dès 403 jours. Rho passe par un **maximum** à
+24,1 ans. Le premier jet écrivait que ce maximum vaut `1/r` ; **un test l'a
+refusé** — à 2 % la phrase se trompe d'un tiers — et la correction est le
+résultat de la section : le lieu ne vaut `1/r` qu'au seul taux
+`r* = q + σ²/2` = 4,42 %, celui auquel une option à la monnaie a la même
+chance d'être exercée à toute échéance ; au-dessous il vient plus tôt,
+au-dessus plus tard, et **il existe encore à taux nul** (45 ans), poussé par
+la seule décroissance de la probabilité d'exercice. Les deux nombres publiés
+sont justes — 0,0408 à un mois, 0,9054 à deux ans — mais leur rapport vaut
+**22,2** et non les deux ordres de grandeur annoncés.
+② **Le croisement avec le véga, et la faute qui décide de tout.** Trois routes,
+trois siècles. Point de taux contre point de volatilité : **237 jours**. Mais
+un point de taux et un point d'implicite ne se produisent pas à la même
+fréquence — l'implicite du mois bouge 19 fois plus — et pondéré par la
+dispersion de chaque moteur, le croisement **sort de toute échéance
+négociée**. Il n'y revient qu'en tenant compte de ce que le guide n'écrit
+pas : la volatilité longue bouge moins que la courte. Avec le poids ajusté de
+la partie XXII, il tombe entre **1,2 et 4,1 ans**. *L'affirmation est vraie
+sur une route des trois, et le guide ne dit pas laquelle.* La leçon dépasse le
+rho : comparer deux sensibilités, c'est comparer deux moteurs.
+③ **« Un risque ignoré à 0 % n'est pas ignorable à 5 % »** est la même faute
+vue de l'autre bout. La sensibilité croît de **23 %** sur toute la plage de
+taux, et dans le sens inverse de ce que la phrase suggère. Ce qui a changé de
+plusieurs ordres est la dispersion du moteur.
+④ **Le rho change de signe** selon la variable qu'on tient fixe, et le guide
+s'arrête juste avant de l'écrire. À spot fixe, +0,905 sur deux ans ; à forward
+fixe, **−0,321**, soit exactement `−T·V` — contrôlé en bougeant le taux et le
+spot ensemble. L'écart vaut 1,226 point par point de taux sur une seule
+option, et les deux lectures ne convergent nulle part.
+⑤ **Une option très dans la monnaie est une action financée**, et c'est exact :
+à deux fois le strike l'écart vaut 0,28 % et le rho atteint 97 % de son
+plafond `KTe^{−rT}`. Le plafond éclaire la forme entière — la part atteinte
+**est** `N(d₂)` — et le fait le moins attendu en sort : à la monnaie, cette
+part *décroît* avec l'échéance.
+⑥ **Ce que rho coûte à l'opérateur de ce document** : le rho d'une position
+ouverte et fermée dans la séance déplace **22 086 fois** moins que la friction
+déclarée. Ce n'est pas un petit terme, c'est un terme qui n'existe pas — et il
+n'atteint la friction qu'au-delà de dix ans d'échéance dans un régime de
+resserrement.
+⑦ **Le décompte** : quatre affirmations déplacent le risque, une l'horloge,
+deux rien, et **aucune la direction**. C'est la première des cinq parties dont
+cette colonne est vide, et rho est aussi le seul des grecs dont le moteur ne
+soit pas le prix. Sur les **trente-cinq** affirmations de la série d'options,
+aucune ne donne un sens.
+
+Trois pièges y sont enterrés. Le premier est celui du `1/r` ci-dessus, et sa
+leçon est générale : **une forme fermée qui « tombe à peu près » quelque part
+n'en est pas une** — ici la vraie condition est une égalité exacte entre le
+taux, le rendement et la moitié de la variance, et c'est un test écrit avant
+d'y croire qui l'a fait apparaître. Le second est une bissection dont la borne
+haute (200 ans) coupait le maximum à taux nul, qui tombe à 45 ans mais monte
+au-delà de la borne pour des volatilités plus basses. Le troisième est un
+format : la part de friction d'une position intrajournalière publiait
+**« 0,0000 »** sur quatre décimales, c'est-à-dire qu'elle effaçait le résultat
+de la table au lieu de le montrer ; `_part` donne maintenant deux chiffres
+significatifs, et un test refuse le zéro trompeur.
+
+Quatre autres n'ont été vus qu'en **regardant la page**, et aucun ne l'aurait
+été autrement. Les trois risques du croisement parcourent trois ordres de
+grandeur : tracés en échelle linéaire, le plus grand écrasait les deux qui se
+croisent, et *le croisement — le sujet du cadre — était invisible*. Le
+contrôle par différence finie du rho à forward fixe se superpose exactement à
+la forme fermée, ce qui est le résultat du cadre ; tracé en pointillé sombre
+sous un trait clair, il disparaissait et la planche ne montrait plus qu'une
+courbe — il passe maintenant **dessous**, en clair, et la forme fermée
+par-dessus en pointillé sombre. Une légende de relief annonçait « la vallée où
+le croisement passe sous quelques années » sur une surface qui n'a pas de
+vallée, et un plafond « à soixante ans » qui ne mord nulle part : les deux
+sont remplacés par des comptes calculés. Et l'arête d'un relief étiquetait
+quatre-vingt-dix jours **« 0 »** année, faute d'une décimale.
 
 ## Carte des modules
 
@@ -638,6 +718,20 @@ Rendu
   `concentration_temoin`, `campagne`, `familles` et `compte_par_grandeur`.
   Dix tables, quatre surfaces.
 - `figvg.py` — les quinze planches de la partie XXII, dont quatre reliefs.
+- `rho.py` — **le taux, et la variable qu'on tient fixe.** `rho_call` /
+  `rho_put` / `rho_par_point` et leur contrôle `rho_numerique` ;
+  `exposant_effectif` (`d ln ρ/d ln T`), `echeance_du_pic` par bissection et
+  **`taux_du_pic_exact` = `q + σ²/2`**, le seul taux où ce maximum vaut `1/r` ;
+  `echeance_de_l_ecart`, qui chiffre une approximation au lieu de la
+  qualifier. Le croisement avec le véga par trois routes — `croisement_unite`,
+  `croisement_brut`, `croisement_structure` — dont la troisième importe
+  `vg.poids_modele` et `vg.kappa_minimax` plutôt que de les recopier.
+  `rho_forward_fixe` = `−T·V` et son contrôle `rho_forward_numerique`, qui
+  bouge le taux **en compensant le spot** : c'est la seule façon de vérifier
+  une dérivée à variable tenue fixe. `action_financee`, `rho_plafond`,
+  `cout_de_rho` / `echeance_du_cout` rapportés à `FRICTION`, et `_part`, le
+  format qui refuse de publier un zéro trompeur. Huit tables, quatre surfaces.
+- `figrh.py` — les quinze planches de la partie XXIII, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :

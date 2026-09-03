@@ -846,8 +846,19 @@
           <li><a href="#s-vg-reste">Le décompte</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingt-troisième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingt-troisième partie — Le taux, et la variable qu'on tient fixe</span>
         <ol start="112">
+          <li><a href="#s-rh-echelle">La proportionnalité au temps, et où elle s'use</a></li>
+          <li><a href="#s-rh-croisement">Quand rho rivalise avec le véga, et sous quelle unité</a></li>
+          <li><a href="#s-rh-regime">Ce qui a changé entre zéro et cinq pour cent</a></li>
+          <li><a href="#s-rh-forward">À spot fixe ou à forward fixe</a></li>
+          <li><a href="#s-rh-financee">Une option très dans la monnaie est une action financée</a></li>
+          <li><a href="#s-rh-cout">Ce que rho coûte à l'opérateur de ce document</a></li>
+          <li><a href="#s-rh-reste">Le décompte</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-quatrième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="119">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -2871,6 +2882,108 @@
 
   <div class="part">
     <span class="lab">Vingt-troisième partie</span>
+    <h2>Le taux, et la variable qu'on tient fixe</h2>
+    <p>Le cinquième et dernier document de la même série est le plus honnête des cinq sur son propre objet&nbsp;: il commence par dire que pour un opérateur intrajournalier sur indice liquide, <em>rho est négligeable et le traiter comme tel est correct</em>, puis il explique où ce raisonnement casse. Ce dépôt ne le conteste pas — il le chiffre.</p>
+  </div>
+
+  <h2 id="s-rh-echelle">La proportionnalité au temps, et où elle s'use</h2>
+
+  <p><span class="mono">ρ = KTe<sup>−rT</sup>N(d₂)</span> pour un call, l'opposé sur <span class="mono">N(−d₂)</span> pour un put&nbsp;: le premier diffère un paiement et gagne à la hausse des taux, le second diffère une recette et y perd. Le guide écrit que rho est proportionnel au temps et non à sa racine, ce qui l'oppose au véga de la partie précédente. C'est vrai là où l'on négocie.</p>
+
+{{TABLE:rh_echelle}}
+
+{{FIGURE:rhechelle|Le rho d'un call et d'un put contre l'échéance, et l'exposant local de la proportionnalité au temps.}}
+
+  <p>L'exposant local vaut un jusqu'à trois mois, {{rh_exposant_365}} à un an et {{rh_exposant_730}} à deux ans&nbsp;: <em>la règle est excellente là où le guide dit qu'elle sert, et elle s'use exactement là où il dit qu'il faut la regarder.</em> La droite calée sur le mois s'écarte de cinq pour cent dès {{rh_ecart5}}&nbsp;jours et de dix pour cent à {{rh_ecart10}}.</p>
+
+{{FIGURE:rhpic|Le maximum de rho contre l'échéance, et son lieu contre le niveau du taux.}}
+
+  <p>Trois facteurs se composent, pas deux&nbsp;: le temps qui croît, l'escompte qui décroît, et la probabilité d'exercice qui dérive. Leur produit passe par un <strong>maximum</strong> à {{rh_pic}}&nbsp;ans. La première version de ce module écrivait que ce maximum vaut l'inverse du taux&nbsp;; un test l'a refusée, et la correction est le résultat de la section. Le lieu ne vaut <span class="mono">1/r</span> qu'à un seul taux, et il se calcule&nbsp;: <span class="mono">r* = q + σ²/2</span> = {{rh_taux_pic}}&nbsp;%, celui auquel une option à la monnaie a la même chance d'être exercée à toute échéance. Au-dessous le maximum vient plus tôt, au-dessus plus tard — et il <strong>existe encore à taux nul</strong>, à {{rh_pic_nul}}&nbsp;ans.</p>
+
+{{TABLE:rh_deux_nombres}}
+
+{{FIGURE:rhdeux|Les deux rhos publiés par le guide, et le rapport mesuré contre le rapport annoncé.}}
+
+  <p>Les deux nombres que le guide publie sont <strong>exacts</strong>&nbsp;: {{rh_court}} à un mois, {{rh_long}} à deux ans, par point de taux. Le rapport qu'il en tire ne l'est pas. Il vaut {{rh_rapport}} et non {{rh_rapport_annonce}} — un facteur {{rh_facteur_annonce}} sur la conclusion. <em>C'est le mode de défaillance le plus discret de la série&nbsp;: deux mesures justes, et une comparaison fausse écrite entre elles.</em></p>
+
+{{FIGURE:rhreliefu|Le relief de l'usure de la proportionnalité au temps, en taux et en échéance.}}
+
+  <h2 id="s-rh-croisement">Quand rho rivalise avec le véga, et sous quelle unité</h2>
+
+  <p>Le guide écrit qu'au-delà d'un an, rho peut rivaliser avec le véga comme risque dominant. Trois routes le vérifient, et <strong>elles ne donnent pas le même siècle</strong>.</p>
+
+{{TABLE:rh_croisement}}
+
+{{FIGURE:rhcroisement|Le croisement entre rho et véga, comparé unité contre unité puis pondéré par la dispersion des moteurs.}}
+
+  <p>Comparés unité contre unité — un point de taux contre un point de volatilité — les deux se croisent à {{rh_croisement_unite}}&nbsp;jours, bien avant l'an. Mais cette comparaison n'a pas d'unité&nbsp;: un point de taux et un point d'implicite ne se produisent pas à la même fréquence, et l'implicite du mois bouge ici {{rh_rapport_moteurs}}&nbsp;fois plus. Pondérée par la dispersion de chaque moteur, elle renverse le verdict et sort de toute échéance négociée.</p>
+
+{{FIGURE:rhmoteurs|La dispersion mensuelle des deux moteurs, et le croisement rho-véga qui en dépend.}}
+
+  <p>Elle n'y revient qu'en tenant compte de ce que le guide n'écrit pas&nbsp;: <em>l'implicite d'une option de deux ans ne bouge pas autant que celle du mois.</em> Avec le poids ajusté de la partie&nbsp;XXII, le croisement tombe entre {{rh_croisement_bas}} et {{rh_croisement_haut}}&nbsp;ans — jamais sous l'an, qui demanderait {{rh_sigma_un_an}}&nbsp;point de taux par mois, au-delà de toute la plage balayée. L'affirmation est donc vraie sur cette route et fausse sur les deux autres, et le guide ne dit pas laquelle il emprunte. <em>La leçon dépasse le rho&nbsp;: comparer deux sensibilités, c'est comparer deux moteurs.</em></p>
+
+{{FIGURE:rhreliefc|Le relief du croisement rho-véga, en dispersion du taux et en vitesse de retour de la surface.}}
+
+  <h2 id="s-rh-regime">Ce qui a changé entre zéro et cinq pour cent</h2>
+
+  <p>«&nbsp;Un risque ignoré à 0&nbsp;% n'est pas ignorable à 5&nbsp;%&nbsp;» est la phrase la plus citable du guide, et c'est la même faute vue de l'autre bout.</p>
+
+{{TABLE:rh_regime}}
+
+{{FIGURE:rhregime|Le rho contre le niveau du taux, et le risque contre la dispersion du moteur.}}
+
+  <p>La <strong>sensibilité</strong> n'a presque pas bougé&nbsp;: le rho d'une option de deux ans croît de {{rh_regime_hausse}}&nbsp;% sur toute la plage de taux que la période couvre, et le sens de la variation est l'inverse de ce que la phrase suggère — <em>rho est plus grand quand les taux sont hauts, pas quand ils viennent de monter.</em> Ce qui a changé de plusieurs ordres est la volatilité du moteur, pas la dérivée. La phrase est juste dans sa conclusion et fausse dans son sujet.</p>
+
+  <h2 id="s-rh-forward">À spot fixe ou à forward fixe</h2>
+
+  <p>Le guide propose ici la bonne lecture&nbsp;: une option d'indice est écrite sur le forward <span class="mono">F = Se<sup>(r−q)T</sup></span>, et rien n'y entre que la combinaison <span class="mono">r − q</span> et l'escompte. Puis il s'arrête avant d'en tirer la conséquence.</p>
+
+{{TABLE:rh_forward}}
+
+{{FIGURE:rhforward|Le rho à spot fixe et à forward fixe, et le contrôle de la forme fermée par différence finie.}}
+
+  <p>La voici&nbsp;: <strong>le rho change de signe</strong> selon la variable qu'on tient fixe. À spot fixe, monter le taux monte le forward et le call vaut plus — {{rh_spot_2ans}} à deux ans. À forward fixe, le taux ne touche plus que l'escompte et le call vaut moins — {{rh_fwd_2ans}}, soit exactement <span class="mono">−T·V</span>. Le contrôle bouge le taux et le spot ensemble, et les deux tracés se superposent. <em>Un pupitre qui couvre son rho sans dire laquelle des deux il tient fixe couvre dans une direction sur deux</em>, et l'écart vaut {{rh_ecart_2ans}}&nbsp;point d'indice par point de taux sur une seule option.</p>
+
+{{FIGURE:rhreliefe|Le relief de l'écart entre le rho à spot fixe et le rho à forward fixe, en échéance et en moneyness.}}
+
+  <h2 id="s-rh-financee">Une option très dans la monnaie est une action financée</h2>
+
+  <p>C'est exact, et ce document chiffre la convergence plutôt que de l'illustrer.</p>
+
+{{TABLE:rh_financee}}
+
+{{FIGURE:rhfinancee|La convergence du call vers l'action financée, et la part du rho maximal atteinte.}}
+
+  <p>À deux fois le strike, l'écart entre le call et l'action achetée à crédit vaut {{rh_financee_ecart}}&nbsp;point sur {{rh_financee_call}}, soit {{rh_financee_relatif}}&nbsp;%, et le rho a rejoint {{rh_financee_part}}&nbsp;% de son plafond <span class="mono">KTe<sup>−rT</sup></span> — celui d'une option certaine d'être exercée. <em>Ce qui reste du call à ce niveau n'est plus une option, c'est un emprunt&nbsp;:</em> le rho ne mesure alors aucune optionalité, il mesure la durée d'un prêt. C'est le seul endroit des cinq parties d'options où un grec cesse d'être une sensibilité.</p>
+
+{{FIGURE:rhplafond|Le rho contre son plafond, en monnaie et en échéance.}}
+
+  <p>La part atteinte est exactement <span class="mono">N(d₂)</span>, et le cadre de droite en tire le fait le moins attendu de la section&nbsp;: <strong>l'éventail se referme</strong>. Le terme de moneyness est divisé par la racine de l'échéance, donc il s'efface&nbsp;: à trente ans, une option profondément dans la monnaie et une option hors de la monnaie ne sont plus séparées que de {{rh_eventail_long}}&nbsp;points de probabilité d'exercice, contre {{rh_eventail_court}} à trois mois. <em>Une option longue ne sait plus où est son strike</em>, et son rho, qui n'est que ce nombre multiplié par un plafond, l'oublie avec elle.</p>
+
+  <h2 id="s-rh-cout">Ce que rho coûte à l'opérateur de ce document</h2>
+
+  <p>Reste la phrase d'ouverture, et c'est la plus juste des cinq guides. Une négligence chiffrée est une décision&nbsp;; une négligence affirmée est un pari.</p>
+
+{{TABLE:rh_cout}}
+
+{{FIGURE:rhcout|Le coût de rho sur une séance rapporté à la friction déclarée, et l'échéance qui l'égale.}}
+
+  <p>Le rho d'une position ouverte et fermée dans la séance déplace {{rh_intra}}&nbsp;fois moins que la friction de la géométrie déclarée ne coûte. <em>Ce n'est pas un petit terme, c'est un terme qui n'existe pas.</em> Et le renversement est du même ordre&nbsp;: même à dix ans d'échéance, le coût d'une séance ne vaut que {{rh_cout_10ans}} friction sous une dispersion de taux ordinaire, et il ne l'atteint que dans un régime de resserrement.</p>
+
+{{FIGURE:rhreliefco|Le relief du coût de rho sur une séance, en dispersion du taux et en échéance.}}
+
+  <h2 id="s-rh-reste">Le décompte</h2>
+
+{{TABLE:rh_reste}}
+
+{{FIGURE:rhreste|Le décompte des affirmations de la partie et le cumul des cinq parties d'options.}}
+
+  <p>C'est la première des cinq parties d'options dont la colonne de direction est <strong>vide</strong>, et ce n'est pas un hasard&nbsp;: rho est le seul des grecs dont le moteur ne soit pas le prix. Deux de ses sept affirmations sont justes et utiles — le forward et l'action financée — et elles ne changent rien au verdict&nbsp;: elles disent comment compter, pas où aller.</p>
+
+  <p>Sur les {{rh_total_options}}&nbsp;affirmations examinées dans les cinq parties consacrées aux options, <strong>aucune ne donne un sens</strong>. La série se ferme là où la partie&nbsp;IV l'avait posée&nbsp;: ce qui se récupère d'un document extérieur est une méthode de lecture, jamais une direction.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-quatrième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
