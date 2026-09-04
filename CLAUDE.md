@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (136 sections en vingt-six
-parties, 140 tables, 199 figures dont cinquante-huit surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (143 sections en vingt-sept
+parties, 148 tables, 214 figures dont soixante-deux surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -33,7 +33,8 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
 `theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` + `vanna.py` +
-`figva.py` + `charm.py` + `figch.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`figva.py` + `charm.py` + `figch.py` + `volga.py` + `figvo.py` →
+`discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -620,7 +621,7 @@ ne l'élargit pas, le signe la domine entièrement ; il fait autre chose, qui
 n'avait pas été prévu, et que la table publie : il **multiplie les lignes**,
 de 57 % à 88 % de tirages à trois lignes ou plus.
 
-Sa **partie XXV** ferme la série d'options par le guide du charm —
+Sa **partie XXV** poursuit la série d'options par le guide du charm —
 `charm.py` + `figch.py`. C'est le seul des sept dont l'usage recommandé **ne
 demande aucun signe**, et l'encadré qui le dit est la meilleure chose des sept
 documents. La correction la plus lourde, elle, n'oppose pas ce guide au
@@ -680,6 +681,80 @@ planche qu'on l'a vu. Le second est le **dernier instant d'une option** : à
 par le portage plutôt que par la position — la planche s'arrête donc un
 dixième de jour avant l'échéance, faute de quoi la ligne à la monnaie
 publiait un saut de 0,50 à 0,80 qui n'existe pas.
+
+Sa **partie XXVI** ferme la série d'options par le guide du volga —
+`volga.py` + `figvo.py`. C'est celui qui va le plus loin des huit : il ne
+décrit pas une sensibilité, il en tire **une forme de marché**. Le sourire,
+dit-il, sort d'une inégalité de Jensen et de rien d'autre — ni peau supposée,
+ni flux modélisé. *Le mécanisme est juste.* La route par laquelle il le chiffre
+ne l'est pas, et l'écart vaut un facteur.
+
+① **La bande, pour la troisième fois.** `volga = 𝒱·d₁d₂/σ`, contrôlé contre la
+dérivée du véga et contre la différence seconde du prix. Le creux « près de la
+monnaie » que le guide ne chiffre pas est **exactement** la bande de courbure
+de la partie XXII et la bande de désobéissance de la partie XXIV : `σ²T` de
+large en logarithme, **0,52 % du comptant à trente jours**, soit 0,51 strike
+d'une grille au pour cent. Une nuance que le test a imposée : les trois bandes
+ont la **même largeur exactement** et **pas le même centre** — la partie XXII
+écrit la sienne en moneyness comptant, celle-ci en moneyness à terme, et
+l'écart vaut le portage (0,22 % à trente jours, 2,7 % à un an). *C'est la
+question de la partie XXIII sur un quatrième objet : quelle variable tient-on
+fixe ?*
+② **Le prix à la monnaie est une droite, pas presque.** Sur la plage que le
+guide dessine lui-même — cinq à soixante-dix pour cent de volatilité — il
+s'écarte de sa corde de **0,10 %** de sa valeur ; à trente pour cent de la
+monnaie, de **34,5 %**. La première moitié de l'affirmation se **renforce**.
+③ **Trois routes, trois sourires.** Au strike soixante-dix et un mois :
+l'inversion au premier ordre rend **53 %**, le second ordre correctement
+inversé **29 %**, l'espérance exacte réinvertie **34 %**. Le sourire honnête
+vaut **9 points**. Le guide publie la route la plus courte comme une
+conclusion.
+④ **Le retournement appartient à l'approximation.** La planche du guide montre
+trois sourires qui culminent et redescendent ; le sommet du second ordre tombe
+au strike **79,5** sur un mois, *dans la fenêtre qu'il dessine*, parce que la
+correction de prix est bornée et que le véga qui la reconvertit décroît plus
+vite. L'espérance exacte, elle, continue de monter.
+⑤ **Le critère de validité pointe à l'envers**, et c'est le fait de la partie.
+On borne d'ordinaire un développement du second ordre en exigeant que sa
+correction reste petite devant ce qu'elle corrige : ici elle ne dépasse jamais
+**1,01 % du prix**, et ce maximum tombe au strike 92,7, *là où les deux routes
+sont exactes à deux centièmes de point*. Dans l'aile, où elles se trompent de
+quatre et de seize points, elle pèse **0,0002 %**. L'inversion divise par le
+véga, et le véga s'annule plus vite que la correction.
+⑥ **Vingt points ne coûtent pas deux fois dix** — vrai, c'est le volga — mais
+le rapport vaut **4,18 à deux semaines** et **2,08 à six mois**, et le guide
+illustre à six mois. *L'exemple affaiblit l'affirmation qu'il illustre*, comme
+le strike sans delta du guide du charm.
+⑦ **Le papillon n'est pas neutre en véga.** Le véga est maximal à la monnaie,
+donc deux ailes ne valent jamais deux corps : un un-deux-un vend **20 %** du
+véga du corps à vingt-cinq deltas, **56 %** à dix, et le défaut grandit
+précisément quand on croit acheter le plus de convexité. Pondérer les ailes au
+rapport des végas (×1,24) annule le véga net **et augmente le volga**, de 57 à
+71. La correction ne coûte rien.
+⑧ **Le décompte** : six affirmations déplacent le risque, deux rien, aucune
+l'horloge, **aucune la direction** — cinquième partie consécutive. Sur les
+**cinquante-neuf** affirmations des huit parties d'options, aucune ne donne un
+sens.
+
+Trois pièges y sont enterrés, et deux n'ont été vus qu'en regardant la page.
+Le premier est un **plancher numérique**, et il est nouveau dans ce dépôt :
+sous vingt jours, au strike soixante-dix, la correction du second ordre tombe
+**au-dessous de la résolution d'un flottant double** — le prix corrigé est le
+même nombre que le prix de départ, et la volatilité implicite qu'on en tire
+est du bruit d'arrondi. Le premier jet traçait ce bruit, et la planche le
+montrait comme une chute verticale. `tenor_inversible` publie désormais ce
+ténor et un test exige que le raccourci soit mort en deçà ; le mois du
+document, lui, est mille fois au-dessus du plancher. Le deuxième est **le
+domaine déclaré après les tracés** — le piège de la partie XXII, retrouvé
+identique : les trois courbes du prix contre la volatilité se dessinaient dans
+le domaine par défaut et sortaient du cadre à mi-parcours, ce qu'aucun
+balayage ne voit ; un test enveloppe maintenant `Panel.domain` et refuse tout
+tracé posé avant elle. Le troisième est **une légende écrite devant un cadre
+borné**, pour la septième fois : la grille du relief du volga s'arrêtait à 1,20
+de moneyness quand la crête de six mois tombe à 1,28, si bien que le titre
+annonçait une crête qui s'éloigne au-dessus d'une rampe monotone ; la grille
+va maintenant à 1,45 et un test exige qu'elle encadre la crête à toutes les
+échéances de la surface.
 
 ## Carte des modules
 
@@ -905,6 +980,21 @@ Rendu
   décimales contre la mesure à portage nul ; `vertical`. Neuf tables, quatre
   surfaces.
 - `figch.py` — les quinze planches de la partie XXV, dont quatre reliefs.
+- `volga.py` — **la courbure en volatilité, et le sourire qu'on en tire.**
+  `volga` et ses deux contrôles `volga_par_vega` / `volga_par_prix` ;
+  `bande_negative`, qui **importe** celle du vanna plutôt que de la récrire, et
+  `decalage_de_portage`, qui chiffre ce qui la sépare de celle de la partie
+  XXII ; `ecart_a_la_corde` (la droite et la crosse) ; `crete_du_volga`, balayé
+  et non résolu ; les trois routes du sourire — `sourire_naif`,
+  `sourire_second_ordre`, `sourire_exact` par `prix_exact` en quadrature —
+  et `retournement`, qui exige un véga non négligeable ;
+  `poids_de_la_correction` et `pic_du_poids`, dont la mesure **retourne** le
+  critère usuel de validité ; `PLANCHER_INVERSION` et `tenor_inversible`, le
+  ténor sous lequel une inversion ne rend plus qu'un bruit d'arrondi ;
+  `perte_du_vendeur` / `rapport_des_chocs` / `part_du_second_ordre` ; et
+  `Papillon`, dont `poids_neutre` **résout** le véga net au lieu de l'écrire.
+  Huit tables, quatre surfaces.
+- `figvo.py` — les quinze planches de la partie XXVI, dont quatre reliefs.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :

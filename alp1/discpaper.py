@@ -21,11 +21,11 @@ from pathlib import Path
 from . import (charm, concepts, emprunts, figcat, figch, figdisc, figemp,
                figfds, figflux,
                figgra, fignv, figon, figrev, figrh, figrobu, figsetup,
-               figsortie, figth, figva, figvg,
+               figsortie, figth, figva, figvg, figvo,
                fonds, grandeurs, horloge, niveaux, overnight, report10,
                report11, report13, report14, revue,
                rho, robustesse, setups, sorties, theta, vanna,
-               vega)
+               vega, volga)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
 from .report import Table
@@ -54,7 +54,8 @@ def values() -> dict[str, str]:
                   overnight.values(), emprunts.values(),
                   fonds.values(), revue.values(), niveaux.values(),
                   grandeurs.values(), theta.values(), vega.values(),
-                  rho.values(), vanna.values(), charm.values()):
+                  rho.values(), vanna.values(), charm.values(),
+                  volga.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -76,7 +77,8 @@ def tables() -> dict[str, Table]:
                   revue.all_tables(), niveaux.all_tables(),
                   grandeurs.all_tables(), theta.all_tables(),
                   vega.all_tables(), rho.all_tables(),
-                  vanna.all_tables(), charm.all_tables()):
+                  vanna.all_tables(), charm.all_tables(),
+                  volga.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")
@@ -96,13 +98,14 @@ def figures() -> dict[str, str]:
     documents extérieurs, `fignv` pour la largeur d'un niveau, `figgra`
     pour les grandeurs qu'un seul mot désigne, `figth` pour le loyer de la
     convexité, `figvg` pour le prix de l'incertitude, `figrh` pour le taux,
-    `figva` pour la dérivée croisée et `figch` pour la saignée du delta ;
+    `figva` pour la dérivée croisée, `figch` pour la saignée du delta et
+    `figvo` pour la convexité en volatilité ;
     deux clés identiques y feraient disparaître une figure en silence.
     """
     fusion = dict(figdisc.render_all())
     for module in (figflux, figsortie, figcat, figsetup, figrobu, figon,
                    figemp, figfds, figrev, fignv, figgra, figth,
-                   figvg, figrh, figva, figch):
+                   figvg, figrh, figva, figch, figvo):
         rendu = module.render_all()
         heurts = set(fusion) & set(rendu)
         if heurts:

@@ -879,8 +879,19 @@
           <li><a href="#s-ch-reste">Le décompte, et la seule affirmation d'agrégation qui tienne</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingt-sixième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingt-sixième partie — La convexité en volatilité, et le sourire qu'on en tire</span>
         <ol start="133">
+          <li><a href="#s-vo-profil">Le facteur qui décide de tout, et la bande qu'on ne peut pas coter</a></li>
+          <li><a href="#s-vo-corde">Le prix à la monnaie est une droite, pas presque</a></li>
+          <li><a href="#s-vo-sourire">Trois routes vers le même sourire, et trois sourires</a></li>
+          <li><a href="#s-vo-retour">Le retournement appartient à l'approximation, pas au modèle</a></li>
+          <li><a href="#s-vo-chocs">Vingt points ne coûtent pas deux fois dix</a></li>
+          <li><a href="#s-vo-papillon">Le trade de volga pur vend un cinquième de son véga</a></li>
+          <li><a href="#s-vo-reste">Le décompte, et les trois objets que la série partage</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-septième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="140">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -3230,6 +3241,124 @@
 
   <div class="part">
     <span class="lab">Vingt-sixième partie</span>
+    <h2>La convexité en volatilité, et le sourire qu'on en tire</h2>
+    <p>Le huitième document de la série est celui qui va le plus loin&nbsp;: il ne décrit pas une sensibilité, il en tire <em>une forme de marché</em>. Le sourire de volatilité, dit-il, sort d'une inégalité de Jensen et de rien d'autre — ni peau supposée, ni flux modélisé. <strong>Le mécanisme est juste.</strong> La route par laquelle il le chiffre ne l'est pas, et ce qui suit mesure l'écart.</p>
+  </div>
+
+  <h2 id="s-vo-profil">Le facteur qui décide de tout, et la bande qu'on ne peut pas coter</h2>
+
+  <p>Le volga est la dérivée seconde du prix en volatilité, et il s'écrit <span class="mono">𝒱·d₁d₂/σ</span>&nbsp;: le véga multiplié par le produit des deux arguments. Ce produit décide de tout. Il est petit et de signes opposés au centre, grand et de même signe aux ailes — d'où le profil à deux bosses que le guide dessine, et le creux entre elles.</p>
+
+{{TABLE:vo_deux_routes}}
+
+{{FIGURE:voprofil|Le volga contre le comptant à quatre échéances, et la largeur de la bande où il est négatif.}}
+
+  <p>La forme fermée est contrôlée contre deux routes indépendantes — la dérivée du véga et la différence seconde du prix — et les trois colonnes se referment. Ce n'est pas une formalité&nbsp;: la partie&nbsp;XXIV avait trouvé dans ce dépôt une dérivée croisée fausse d'un facteur <span class="mono">√T</span>, restée invisible parce que rien ne la consommait.</p>
+
+  <p>Le guide écrit que le volga est «&nbsp;légèrement négatif ou nul près de la monnaie&nbsp;» sans chiffrer «&nbsp;près&nbsp;». Ce document l'a déjà chiffré deux fois, pour deux motifs sans rapport&nbsp;: la partie&nbsp;XXII comme la bande où l'on ne peut pas compenser une aile par une option à la monnaie, la partie&nbsp;XXIV comme celle où le vanna cesse d'obéir à sa règle. <strong>C'est le même intervalle</strong>, borné par les deux racines <span class="mono">d₁ = 0</span> et <span class="mono">d₂ = 0</span>, et sa largeur en logarithme vaut <span class="mono">σ²T</span> exactement dans les trois cas.</p>
+
+{{TABLE:vo_bande}}
+
+  <p>Elle mesure {{vo_bande_30}}&nbsp;% du comptant à trente jours, soit {{vo_strikes_30}}&nbsp;strike d'une grille au pour cent&nbsp;: <em>aucune option cotée ne tombe dedans.</em> La bande existe, elle est exacte, et elle n'est pas cotable — comme le «&nbsp;à la monnaie&nbsp;» de la partie&nbsp;XXII, dont elle est le même objet.</p>
+
+  <p>Une nuance mérite d'être écrite, parce qu'elle est la question de la partie&nbsp;XXIII posée sur un autre objet. Les trois bandes ont <strong>exactement</strong> la même largeur, mais pas le même centre&nbsp;: la partie&nbsp;XXII écrit la sienne en moneyness comptant, celle-ci en moneyness à terme, et le forward dérive. L'écart vaut le portage — {{vo_portage_30}}&nbsp;% du comptant à trente jours, {{vo_portage_365}}&nbsp;% à un an. <em>Le même ensemble ne tombe pas au même endroit du tableau des strikes selon la variable qu'on tient fixe.</em></p>
+
+{{FIGURE:vorelief|Relief du volga, en échéance et en moneyness.}}
+
+  <p>Le relief ajoute le second axe. La crête ne reste pas où elle est&nbsp;: elle s'éloigne de la monnaie quand l'échéance s'allonge, de {{vo_crete_10}} à dix jours à {{vo_crete_180}} à six mois, parce que la largeur de la zone convexe croît comme la racine du temps. Le sol, lui, longe la monnaie et ce n'est pas un artefact de grille — le volga y est exactement nul.</p>
+
+{{FIGURE:voratio|Le rapport du volga au véga contre le comptant, et le sourire exact qui en résulte.}}
+
+  <p>La grandeur utile n'est pas le volga mais son rapport au véga&nbsp;: la courbure par unité de pente, donc ce qui se convertit directement en points de volatilité implicite. Il vaut {{vo_rapport_aile}} à trente pour cent de la monnaie et trois mois, et il croît sans borne dans les ailes. <strong>C'est ce dernier fait qui rend la route courte du guide si trompeuse</strong>, et les trois sections suivantes ne disent que cela.</p>
+
+  <h2 id="s-vo-corde">Le prix à la monnaie est une droite, pas presque</h2>
+
+  <p>«&nbsp;L'option à la monnaie est presque linéaire en volatilité, l'aile fortement convexe.&nbsp;» Les deux moitiés tiennent, et la première <em>se renforce</em>.</p>
+
+{{TABLE:vo_courbure}}
+
+{{FIGURE:vocourbure|Le prix contre la volatilité à trois moneyness, et l'écart maximal à la corde.}}
+
+  <p>Sur la plage que le guide dessine lui-même — de {{vo_vol}}&nbsp;% autour, cinq à soixante-dix pour cent de volatilité — le prix à la monnaie s'écarte de sa corde de {{vo_corde_atm}}&nbsp;% de sa valeur. Ce n'est pas «&nbsp;presque&nbsp;» une droite&nbsp;: c'est une droite, à un millième près, sur une plage de volatilité que personne ne verra jamais en entier. À trente pour cent de la monnaie, le même écart vaut {{vo_corde_aile}}&nbsp;%, et c'est cela que le marché facture.</p>
+
+{{FIGURE:vojensen|L'inégalité de Jensen sur le prix d'une aile, et l'espérance exacte contre le terme de volga.}}
+
+  <p>Le mécanisme du guide tient dans une corde au-dessus d'une courbe, et il n'a besoin de rien d'autre. Une fonction convexe est au-dessous de ses cordes&nbsp;; donc l'espérance du prix sous une volatilité incertaine dépasse le prix pris à la volatilité moyenne&nbsp;; donc l'aile vaut plus que ce que le modèle à volatilité constante en dit, et le corps ne bouge pas. <strong>Le sourire ne demande ni peau supposée ni flux modélisé.</strong> Le cadre de droite dit jusqu'où le seul terme de volga suffit à le décrire, et la section suivante mesure ce qu'il en coûte de s'arrêter là.</p>
+
+  <h2 id="s-vo-sourire">Trois routes vers le même sourire, et trois sourires</h2>
+
+  <p>Le guide chiffre son sourire par la route la plus courte&nbsp;: il ajoute le terme de volga au prix, puis divise l'écart de prix par le véga pour le lire en points de volatilité. Deux approximations se superposent dans ce geste, et chacune a son domaine.</p>
+
+{{TABLE:vo_sourire}}
+
+{{FIGURE:vosourire|Le sourire par trois routes au strike de la planche du guide, et ce qu'il vaut vraiment par ténor.}}
+
+  <p>Au strike soixante-dix et un mois, sous la volatilité de volatilité de {{vo_nu}}&nbsp;% que le guide déclare — soit {{vo_ecart_vol}} points d'écart-type sur la volatilité elle-même —, les trois routes rendent {{vo_naif_70}}, {{vo_ordre2_70}} et {{vo_exact_70}}&nbsp;pour cent. <em>Un facteur qui n'est pas un détail sur un chiffre que le guide publie comme une conclusion.</em> Seule la troisième n'approxime rien&nbsp;: elle prend l'espérance exacte du prix par quadrature et la réinvertit. Le sourire honnête vaut {{vo_lift_70}}&nbsp;points au strike soixante-dix, {{vo_lift_130}} au strike cent trente, et {{vo_lift_an}} au même strike soixante-dix à un an.</p>
+
+  <p>Le cadre de droite enterre un piège que la planche a trouvé et qu'aucune relecture n'aurait vu. Sous {{vo_tenor_inversible}}&nbsp;jours, à ce strike-là, la correction du second ordre tombe <strong>au-dessous de la résolution d'un flottant double</strong>&nbsp;: le prix corrigé est le même nombre que le prix de départ, et la volatilité implicite qu'on en tire n'est plus un résultat mais du bruit d'arrondi. Le premier jet traçait ce bruit. Le module publie désormais ce ténor, et un test exige que le raccourci soit effectivement mort en deçà.</p>
+
+{{FIGURE:voreliefs|Relief du sourire exact en points de volatilité implicite, en échéance et en moneyness.}}
+
+  <p>Le relief montre ce que le guide ne montre pas&nbsp;: le sourire se raidit quand l'échéance raccourcit, et c'est bien la forme qualitative que les marchés portent. <em>Le mécanisme est donc juste&nbsp;; c'est la route qui ne l'était pas.</em></p>
+
+  <h2 id="s-vo-retour">Le retournement appartient à l'approximation, pas au modèle</h2>
+
+  <p>La planche du guide montre trois sourires qui montent, atteignent un sommet et <em>redescendent</em> dans l'aile. Sa légende en fait une propriété du mécanisme. C'en est une de son développement.</p>
+
+{{TABLE:vo_retournement}}
+
+{{FIGURE:voretournement|Le sourire du second ordre et l'espérance exacte au même ténor, et ce que l'inversion au premier ordre ajoute.}}
+
+  <p>Le sommet du second ordre tombe au strike {{vo_retour_strike}} sur un mois, soit {{vo_retour_ecart}}&nbsp;% de la monnaie&nbsp;: <strong>dans la fenêtre que la planche dessine.</strong> Le mécanisme en est simple — la correction de prix est bornée, le véga par lequel on la reconvertit décroît plus vite qu'elle, et leur rapport finit par se retourner. L'espérance exacte, au même endroit, continue de monter. Un sourire réel ne redescend pas dans les ailes, et celui de la planche redescend parce qu'il est tracé avec un développement hors de son domaine.</p>
+
+{{FIGURE:voroutes|L'écart de chaque route à l'espérance exacte, et le poids de la correction dans le prix.}}
+
+  <p>Le critère qu'on emploie d'ordinaire pour borner un développement du second ordre — il vaut tant que sa correction reste petite devant ce qu'elle corrige — <strong>pointe ici à l'envers</strong>, et c'est la mesure qui le dit. La correction ne dépasse jamais {{vo_poids_pic}}&nbsp;% du prix, et son maximum tombe au strike {{vo_poids_strike}}, là où les deux routes sont exactes à deux centièmes de point près. Dans l'aile, où elles se trompent de quatre et de seize points, elle ne pèse plus que {{vo_poids_aile}}&nbsp;% du prix. La raison tient en une ligne&nbsp;: <em>l'inversion divise par le véga, et le véga s'annule plus vite que la correction.</em> Une erreur de prix invisible y devient une erreur de volatilité implicite énorme.</p>
+
+{{FIGURE:voreliefa|Relief de ce que l'inversion au premier ordre ajoute à l'espérance exacte, en échéance et en moneyness.}}
+
+  <p>Le relief de l'excès est nul à la monnaie, et ce n'est pas un hasard&nbsp;: c'est exactement là que le prix est linéaire en volatilité, donc là que diviser une correction de prix par le véga est légitime. Il explose au coin du fond, où le prix est le moins linéaire. <em>Le raccourci est valide précisément là où il ne sert à rien, et faux partout où on l'emploie</em> — c'est la forme la plus pure du défaut que ce document cherche, et il vient d'un guide qui a par ailleurs raison sur le fond.</p>
+
+  <h2 id="s-vo-chocs">Vingt points ne coûtent pas deux fois dix</h2>
+
+  <p>«&nbsp;Un vendeur d'aile qui prend vingt points de volatilité perd bien plus que deux fois ce qu'il perd à dix.&nbsp;» C'est vrai, c'est le volga, et c'est la seule des huit affirmations du guide dont l'illustration se retourne contre elle.</p>
+
+{{TABLE:vo_chocs}}
+
+{{FIGURE:vochocs|La perte d'un vendeur d'aile contre la hausse de volatilité à trois ténors, et le rapport des deux chocs contre l'échéance.}}
+
+  <p>Un modèle de risque linéaire en véga donnerait exactement deux&nbsp;; tout ce qui dépasse est du volga. Le rapport vaut {{vo_choc_court}} à deux semaines, {{vo_choc_moyen}} à deux mois et {{vo_choc_long}} à six mois — et le guide illustre son mécanisme à six mois, <strong>le ténor où il est le plus faible des trois</strong>. La part que le terme de volga explique passe de {{vo_part_court}}&nbsp;% à {{vo_part_long}}&nbsp;% entre les deux bouts. C'est le même défaut que le guide du charm de la partie&nbsp;XXV, qui choisissait le strike où son effet était le plus petit&nbsp;: <em>l'exemple affaiblit l'affirmation qu'il illustre.</em></p>
+
+  <h2 id="s-vo-papillon">Le trade de volga pur vend un cinquième de son véga</h2>
+
+  <p>«&nbsp;Le papillon est le trade de volga pur&nbsp;: véga quasi nul, volga grand et positif.&nbsp;» La seconde moitié tient. La première non, et le calcul qui le montre tient en une ligne.</p>
+
+{{TABLE:vo_papillon}}
+
+{{FIGURE:vopapillon|Le véga net d'un papillon contre le delta de ses ailes, et le volga net avant et après pondération.}}
+
+  <p>Le véga vaut le comptant fois la densité normale prise en son argument&nbsp;: il est <strong>maximal à la monnaie</strong>. Deux ailes ne valent donc jamais deux corps, et un papillon un-deux-un vend structurellement du véga sans que personne l'ait voulu — {{vo_pap_defaut_25}}&nbsp;% du véga du corps à vingt-cinq deltas, {{vo_pap_defaut_10}}&nbsp;% à dix. Le défaut grandit à mesure que les ailes s'éloignent, <em>c'est-à-dire précisément quand on croit acheter le plus de convexité</em>.</p>
+
+  <p>La correction ne coûte rien. En achetant les ailes dans le rapport des végas — un poids de {{vo_pap_poids}} à vingt-cinq deltas et trois mois — le véga net devient exactement nul, et le volga net <strong>monte</strong>, de {{vo_pap_volga}} à {{vo_pap_volga_neutre}}. Le papillon pondéré est à la fois plus propre et plus exposé à ce qu'il prétend acheter&nbsp;; il n'y a aucune raison de ne pas le faire.</p>
+
+{{FIGURE:voreliefp|Relief du véga net d'un papillon un-deux-un, en delta des ailes et en échéance.}}
+
+  <p>Le relief dit la seconde chose utile&nbsp;: la surface est plate le long de l'axe de l'échéance et raide le long de celui du delta. <em>Le défaut est donc gouverné par la seule chose qu'un pupitre croit choisir librement.</em> Le coin du fond est le papillon large, celui qu'on achète pour sa convexité, et c'est là que trois quarts du véga du corps partent sans qu'on les compte.</p>
+
+  <h2 id="s-vo-reste">Le décompte, et les trois objets que la série partage</h2>
+
+{{TABLE:vo_reste}}
+
+{{FIGURE:vocarte|Les trois objets que plusieurs parties d'options partagent, et la valeur que chacune mesure.}}
+
+  <p>Huit guides écrits séparément, et trois objets qui reviennent sous des noms différents, par des routes sans rien de commun. La bande où le produit des deux arguments est négatif a été mesurée par la partie&nbsp;XXII comme la zone de courbure négative du véga, par la partie&nbsp;XXIV comme celle où le vanna cesse d'obéir à sa règle, et ici comme le creux du volga. La racine d'une même équation du second degré donne le pic du charm, celui du vanna et la forme du volga. Et le taux où le rendement plus la demi-variance égale le taux sans risque décide à la fois du maximum du rho et du côté où le vanna s'annule. <em>Ce ne sont pas des coïncidences de calcul&nbsp;: ce sont trois structures, et chaque guide en décrit une face sans savoir qu'il partage l'objet.</em></p>
+
+{{FIGURE:voreste|Le décompte des affirmations par ce qu'elles déplacent, et le cumul des huit parties d'options.}}
+
+  <p>Sur les {{vo_total_options}}&nbsp;affirmations examinées dans les huit parties consacrées aux options, <strong>aucune ne donne un sens</strong>. La colonne de la direction est vide pour la cinquième partie consécutive. Ce huitième guide est celui qui va le plus loin de tous&nbsp;: il produit une forme de marché entière — le sourire — à partir d'une inégalité et de rien d'autre. Et cette forme, une fois calculée honnêtement, <em>ne dit toujours pas de quel côté le prix va</em>. Elle dit ce que l'incertitude coûte, ce qui est le sujet de ce document depuis sa première page.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-septième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

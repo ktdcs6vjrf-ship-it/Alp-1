@@ -15,7 +15,7 @@ Le document complet :
 > *Série ALP, nº 3.* JEL : C12, C44, C52, G11, G14.
 
 [`docs/prouver-un-jugement.html`](docs/prouver-un-jugement.html) —
-136 sections en vingt-six parties, 140 tables, 199 figures.
+143 sections en vingt-sept parties, 148 tables, 214 figures.
 
 Il part d'une question — combien de décisions faut-il pour établir la valeur
 d'un jugement qui n'existe pas sous forme écrite ? — et la retourne. Le
