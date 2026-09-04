@@ -65,11 +65,11 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/9131a050-4cb4-471a-96f1-186be73aceb4
-  (précédents : 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040, 8edc727c, b40a2d6b,
-  e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee, d1e5eca9, 82bd1a42,
-  601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc, e49bcb16,
-  c360de80)
+- ALP nº 3 : https://claude.ai/code/artifact/96060108-3a4f-40eb-92d1-43c710839cd1
+  (précédents : 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040, 8edc727c,
+  b40a2d6b, e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee, d1e5eca9,
+  82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005, 4e95dfbc,
+  e49bcb16, c360de80)
 - ALP nº 1 : https://claude.ai/code/artifact/d6e866f5-1875-4cda-b639-11da99cae35c
 
 L'utilisateur veut **un nouveau lien à chaque amélioration** — publier sous un
