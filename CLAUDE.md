@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (143 sections en vingt-sept
-parties, 148 tables, 214 figures dont soixante-deux surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (150 sections en vingt-huit
+parties, 157 tables, 229 figures dont soixante-six surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -33,8 +33,8 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `emprunts.py` + `figemp.py` + `fonds.py` + `figfds.py` + `revue.py` +
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
 `theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` + `vanna.py` +
-`figva.py` + `charm.py` + `figch.py` + `volga.py` + `figvo.py` →
-`discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`figva.py` + `charm.py` + `figch.py` + `volga.py` + `figvo.py` +
+`speculation.py` + `figspec.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -756,6 +756,75 @@ annonçait une crête qui s'éloigne au-dessus d'une rampe monotone ; la grille
 va maintenant à 1,45 et un test exige qu'elle encadre la crête à toutes les
 échéances de la surface.
 
+Sa **partie XXVII** est la feuille de spéculation — `speculation.py` +
+`figspec.py`. Les vingt-six parties qui précèdent décrivent ; celle-ci
+décide. Chaque mesure du document y est convertie en la seule chose qu'un
+opérateur ait à savoir avant d'entrer : si je prends position ici, dans un
+sens ou dans l'autre, quelle probabilité, quel coût, et quelle dérive
+faudrait-il. **Rien n'y est inventé** — la chaîne existait, il fallait la
+brancher sur les deux sens. Et deux faits en sortent qui n'étaient nulle part.
+
+① **Une position a trois fins, pas deux.** Le stop et l'objectif se
+déclarent ; la sortie au marché parce que la séance se ferme, non. Elle vaut
+zéro au stop déclaré et **28,5 %** au stop élargi.
+② **`a/(a+b)` ne tient que tant que l'objectif reste dans la portée de la
+séance**, et c'est la contrainte que la partie X n'avait pas relevée. Une
+séance parcourt 24,7 points ; à un rapport d'un pour vingt, un stop de
+0,150 % en demande **7,29 écarts-types**. La probabilité d'objectif n'y vaut
+donc pas 4,76 % mais **zéro**, et le rapport que la séance autorise
+réellement à cinq pour cent vaut **5,2 et non 20**. *Élargir le stop divise
+le seuil par cinquante-trois — le résultat de la partie X, intact — et le même
+geste rend l'objectif inatteignable si l'on garde le rapport : les deux
+leviers ne se règlent pas séparément.*
+③ **À dérive nulle les deux sens rendent le même nombre à la précision
+machine**, et un test l'exige. Tout écart publié entre les deux sens est donc,
+par construction, la dérive et rien d'autre — c'est une règle de lecture, et
+la partie XV avait rencontré le défaut qu'elle interdit.
+④ **L'écart directionnel passe par un maximum, et il se calcule** : 43,4
+points de taux à **102 minutes**, contre 12,6 à cinq minutes et 18,2 sur la
+séance entière. Le fait qui le rend publiable est qu'à cet horizon
+**l'objectif vaut exactement un écart-type de séance** (1,02 mesuré) : la
+seule échelle où la dérive dispose de toute la séance sans que la séance lui
+reprenne l'objectif. La frontière est nommée — au-delà de la séance l'écart
+remonte sans limite, donc l'optimum est celui d'un opérateur
+intrajournalier.
+⑤ **Le seuil a deux routes qui ne s'accordent pas.** Wald borné par la séance
+donne 8,19 pt/h au stop déclaré ; le problème à deux barrières non borné,
+3,75. Une affirmation écrite d'avance — le raccourci retournerait le verdict —
+est **réfutée par la mesure** : les deux routes excluent la géométrie
+déclarée partout. Ce qu'il change est l'ampleur, dix-sept pour cent au-dessus
+du plafond au lieu d'un facteur 2,6. *Il ne retourne pas le verdict, il le
+rend discutable, ce qui suffit à faire vivre une géométrie que la mesure
+condamne.*
+⑥ **Le catalogue relu comme des positions** rend 33,33 % exactement jusqu'à
+quinze minutes puis décroche d'un facteur **7,3**. Les lectures longues ne
+sont pas moins fiables : à rapport égal, elles sont innégociables dans une
+séance.
+⑦ **Le bandeau.** Chaque figure du document porte désormais sous sa légende ce
+qu'une position y coûterait dans les deux sens, recalculé à la construction
+par `pieds.figure_html` — le seul point d'entrée commun aux documents. Les
+deux autres builds ne le passent pas et sont rendus comme avant.
+⑧ **Aucune géométrie ne passe les deux conditions.** La déclarée échoue sur la
+dérive, les deux élargies sur la portée. Le réglage que la partie propose —
+102 min, stop 12,66 pt, un pour deux — *ne promet aucun avantage* : il dit où
+une dérive, si elle existait, serait la plus vite prouvée ou réfutée.
+
+Deux pièges y sont enterrés. Le premier ne se serait **jamais signalé** : la
+table de préfixes qui associe une figure à sa famille avait été *devinée* et
+non relevée sur les clés réelles, et trente-sept figures sur deux cent
+quatorze n'accrochaient aucune famille — les treize du delta, les neuf du
+flux, les sept couches du catalogue, les cinq de la robustesse. Le bandeau se
+serait tu, et une planche muette ressemble à une planche sans objet
+directionnel. Un test lit maintenant toutes les clés du gabarit et refuse la
+moindre orpheline. Le second est **une barre sans unité commune** : la
+première planche du décompte alignait horizon, stop, objectif et rapport sur
+un même axe en pour cent, chacun divisé par un dénominateur choisi à la
+main — de la décoration, que le dépôt interdit. Elle publie maintenant
+l'écart directionnel en points de taux, une seule unité, où le réglage
+proposé rend 43,4 contre 4,4 au mieux des trois géométries déclarées. Une
+troisième planche alignait dix-neuf barres anonymes ; elle en publie six,
+nommées, et le regroupement est calculé.
+
 ## Carte des modules
 
 Mesure et géométrie
@@ -995,6 +1064,23 @@ Rendu
   `Papillon`, dont `poids_neutre` **résout** le véga net au lieu de l'écrire.
   Huit tables, quatre surfaces.
 - `figvo.py` — les quinze planches de la partie XXVI, dont quatre reliefs.
+- `speculation.py` — **ce qu'une lecture vaut si l'on prend position.**
+  `Issue` et `lire` (les trois issues, session comprise, dans les deux sens) ;
+  `portee_de_seance` et `rr_atteignable`, les deux nombres qui disent si un
+  rapport déclaré existe ; `stop_de_portee_un`, la frontière en forme
+  fermée ; `derive_de_wald` / `derive_non_bornee` / `ecart_des_routes`, les
+  deux seuils et le facteur qui les sépare ; `ecart_directionnel` et
+  `horizon_optimal`, **borné par la séance** parce que l'affirmation l'est,
+  avec `portee_de_l_optimum` qui vaut un ; `HYPOTHESES` et `bandeau`, la
+  source unique du bandeau de chaque figure, dont l'avantage déclaré vaut
+  zéro partout **parce que les modules qui l'ont mesuré rendent zéro** ;
+  `_PREFIXES`, relevée sur les clés réelles et gardée par un test ;
+  `familles_par_geometrie`, qui **calcule** le regroupement au lieu de
+  l'écrire. Neuf tables, quatre surfaces.
+- `figspec.py` — les quinze planches de la partie XXVII, dont quatre reliefs.
+- `pieds.py` porte en plus `bandeau_html` : la ligne de spéculation sous
+  chaque figure, passée par `figure_html` avec la clé de la figure. Seul
+  `discpaper` la passe ; les deux autres documents sont rendus comme avant.
 - `report*.py` — chacun fournit `values()` et `all_tables()`. `report9` :
   stratégie. `report10` : ALP nº 3. `report11` : le seuil. `report13` : le
   risque refait. `report14` : flux, TPO, information, spectre. `report15` :

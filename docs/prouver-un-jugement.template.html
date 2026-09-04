@@ -920,8 +920,19 @@
           <li><a href="#s-vo-reste">Le décompte, et les trois objets que la série partage</a></li>
         </ol>
       </li>
-      <li><span class="pt">Vingt-septième partie — Protocole, limites, et ce qui reste ouvert</span>
+      <li><span class="pt">Vingt-septième partie — Ce qu'une position coûte, dans les deux sens</span>
         <ol start="140">
+          <li><a href="#s-spec-issues">Une position a trois fins, et la troisième ne se déclare pas</a></li>
+          <li><a href="#s-spec-sens">À dérive nulle, les deux sens sont le même pari</a></li>
+          <li><a href="#s-spec-optimum">Il existe un horizon optimal, et la séance le fixe</a></li>
+          <li><a href="#s-spec-routes">Le seuil se calcule de deux façons, et l'une oublie la séance</a></li>
+          <li><a href="#s-spec-lectures">Les quinze lectures, prises comme des positions</a></li>
+          <li><a href="#s-spec-bandeau">Le bandeau que chaque planche porte désormais</a></li>
+          <li><a href="#s-spec-feuille">Trois géométries, deux conditions, et aucune ne passe</a></li>
+        </ol>
+      </li>
+      <li><span class="pt">Vingt-huitième partie — Protocole, limites, et ce qui reste ouvert</span>
+        <ol start="147">
           <li><a href="#s-protocole">Ce qu'il faut déclarer avant la première décision</a></li>
           <li><a href="#s-arret">Quand on a le droit de regarder ses résultats</a></li>
           <li><a href="#s-limites">Limites</a></li>
@@ -3389,6 +3400,132 @@
 
   <div class="part">
     <span class="lab">Vingt-septième partie</span>
+    <h2>Ce qu'une position coûte, dans les deux sens</h2>
+    <p>Vingt-six parties décrivent. Celle-ci décide. Chaque mesure du document est reprise et convertie en la seule chose qu'un opérateur ait à savoir avant d'entrer&nbsp;: <em>si je prends position ici, à la hausse ou à la baisse, quelle est la probabilité, que coûte l'erreur, et quelle dérive faudrait-il pour que cela vaille la peine.</em> Rien n'y est inventé — la chaîne de mesure existait, il fallait la brancher sur les deux sens. <strong>Deux faits en sortent, et aucun n'était dans le document.</strong></p>
+  </div>
+
+  <h2 id="s-spec-issues">Une position a trois fins, et la troisième ne se déclare pas</h2>
+
+  <p>Un dispositif déclare deux sorties&nbsp;: le stop et l'objectif. Il en a trois. La troisième est la sortie au marché parce que la séance se ferme, et c'est celle que personne n'écrit — ni dans un plan de trading, ni dans un journal, ni dans la statistique qu'on en tire.</p>
+
+{{TABLE:spec_geometries}}
+
+{{FIGURE:specissues|Les trois issues d'une position par géométrie, et la portée que la séance autorise.}}
+
+  <p>La colonne qui décide est la quatrième de la table&nbsp;: l'objectif, mesuré en écarts-types de ce qu'une séance parcourt. Une séance de l'indice en parcourt {{spec_ecart_seance}}&nbsp;points, et c'est une quantité qui ne se règle pas. Au stop déclaré, l'objectif vaut {{spec_portee_declaree}}&nbsp;écart-type&nbsp;: il tient largement, et l'identité <span class="mono">a/(a+b)</span> de la partie&nbsp;X s'y applique exactement — {{spec_p_nulle}}. Au stop élargi de 0,150&nbsp;%, le même rapport d'un pour {{spec_rr_declare}} demande <strong>{{spec_portee_elargie}}&nbsp;écarts-types</strong>. La probabilité d'objectif n'y vaut pas {{spec_p_nulle}} mais {{spec_p_elargie}}, et la position se termine {{spec_ouvert_elargie}} du temps ouverte au coup de cloche.</p>
+
+  <p>Ce n'est pas une correction de degré à la partie&nbsp;X, dont le résultat sur <span class="mono">µ*</span> reste intact&nbsp;: c'est une contrainte qu'elle n'avait pas relevée. <em>Élargir le stop divise le seuil de rentabilité par cinquante-trois, et le même geste rend l'objectif inatteignable si l'on garde le rapport.</em> Les deux leviers que le dispositif traite comme indépendants sont liés par une quantité qu'il ne déclare nulle part.</p>
+
+{{TABLE:spec_portee}}
+
+{{FIGURE:specportee|Le rapport que la séance autorise contre la largeur du stop, et ce que le rapport déclaré devient.}}
+
+  <p>À cinq pour cent de probabilité d'objectif, le stop élargi n'autorise plus qu'un rapport de un pour {{spec_rr_atteignable}}, et le stop intermédiaire un pour {{spec_rr_atteignable_moyen}}, quand le dispositif en déclare un pour {{spec_rr_declare}} à toutes les largeurs. <strong>Le rapport objectif sur risque est le paramètre le moins vérifié d'un dispositif</strong>, parce qu'il se déclare en un nombre et ne se contrôle contre rien.</p>
+
+{{FIGURE:specreliefsurvie|Relief de la part du théorème qui survit à la séance, en largeur de stop et en rapport.}}
+
+  <p>Le relief donne la carte complète. Sa hauteur est la probabilité d'objectif rapportée à ce que le théorème annonce, et elle a un plafond à un&nbsp;: le plateau du fond est la région où ce document a raison sans réserve, la falaise est le seul endroit où il faut corriger ce qu'il dit. La falaise tombe exactement où l'objectif franchit la portée d'une séance.</p>
+
+  <h2 id="s-spec-sens">À dérive nulle, les deux sens sont le même pari</h2>
+
+  <p>Le sens d'une position entre dans la dérive et jamais dans la géométrie. À dérive nulle, acheter et vendre rendent donc <strong>le même nombre à la précision machine</strong> — ce n'est pas une observation, c'est une identité, et un test l'exige à douze décimales.</p>
+
+{{TABLE:spec_sens}}
+
+{{FIGURE:specsens|Les deux sens contre la dérive, et l'écart entre eux par géométrie.}}
+
+  <p>C'est ce qui rend tout le reste lisible&nbsp;: <em>tout écart entre les deux sens est, par construction, la dérive et rien d'autre.</em> Un document qui publie un taux de réussite directionnel sans publier son symétrique ne dit rien du marché ; il dit sa géométrie. La partie&nbsp;XV avait rencontré ce défaut sur les sept nombres d'une publication overnight ; ici il devient une règle de lecture.</p>
+
+  <p>Sous la dérive haute du domaine plausible, l'écart vaut {{spec_ecart_declare}}&nbsp;points de taux au stop déclaré et {{spec_ecart_haut}} au stop intermédiaire — deux nombres voisins. L'espérance, elle, passe de {{spec_er_nul}} à {{spec_er_haut}}&nbsp;R sur la même plage. <strong>Une dérive ne change pas beaucoup la fréquence des gains&nbsp;; elle change ce qu'ils rapportent</strong>, et c'est l'identité de Wald vue du côté de l'opérateur.</p>
+
+  <h2 id="s-spec-optimum">Il existe un horizon optimal, et la séance le fixe</h2>
+
+  <p>L'écart entre les deux sens n'est ni croissant ni décroissant avec l'horizon de la lecture. <strong>Il passe par un maximum</strong>, et le maximum se calcule.</p>
+
+{{TABLE:spec_optimum}}
+
+{{FIGURE:specoptimum|L'écart directionnel contre l'horizon de la lecture, et la portée qui explique son maximum.}}
+
+  <p>Le compromis a deux côtés et les deux se mesurent. Sous l'horizon optimal, la dérive n'a pas le temps d'agir&nbsp;: elle déplace le prix proportionnellement au temps quand le bruit le déplace comme la racine du temps, et à cinq minutes le bruit gagne — l'écart n'y vaut que {{spec_ecart_court}}&nbsp;points de taux. Au-dessus, l'objectif sort de la portée de la séance et l'écart retombe à {{spec_ecart_seance_entiere}} sur la séance entière. Le maximum vaut <strong>{{spec_ecart_optimal}}&nbsp;points de taux à {{spec_horizon_optimal}}&nbsp;minutes</strong>.</p>
+
+  <p>Le fait qui rend ce nombre publiable est ailleurs. À cet horizon, <strong>l'objectif vaut exactement un écart-type de séance</strong> — {{spec_portee_optimale}} mesuré. Ce n'est pas un artefact de balayage&nbsp;: c'est la seule échelle où la dérive dispose de toute la séance sans que la séance lui reprenne l'objectif. La géométrie qui en découle est un stop de {{spec_stop_optimal}}&nbsp;points, un objectif de {{spec_objectif_optimal}}, et un rapport d'un pour deux.</p>
+
+  <p>L'affirmation a une frontière, et le module la nomme plutôt que de la cacher&nbsp;: au-delà de la séance, la position n'est plus fermée au coup de cloche, la dérive agit plus longtemps que la volatilité ne s'étale, et l'écart remonte sans limite. <em>L'optimum est celui d'un opérateur intrajournalier, et il cesse d'en être un dès qu'on lève cette contrainte.</em></p>
+
+{{FIGURE:specreliefecart|Relief de l'écart entre les deux sens, en largeur de stop et en dérive.}}
+
+  <p>Le sol de ce relief est un résultat et non un artefact&nbsp;: l'arête de dérive nulle est plate à zéro sur toute sa longueur, quelle que soit la largeur du stop. Ce qu'une spéculation directionnelle achète est la hauteur au-dessus de ce sol, et elle ne s'achète pas en élargissant le stop indéfiniment.</p>
+
+  <h2 id="s-spec-routes">Le seuil se calcule de deux façons, et l'une oublie la séance</h2>
+
+  <p>La dérive qui annule l'espérance a deux routes. L'identité de Wald bornée par la séance donne <span class="mono">µ* = c/E[τ∧T]</span>, le nombre que la partie&nbsp;X publie. Le problème à deux barrières <em>non borné</em> en donne un autre, plus petit, parce qu'il laisse au prix un temps que la séance ne lui laisse pas.</p>
+
+{{TABLE:spec_routes}}
+
+{{FIGURE:specroutes|La dérive d'équilibre par deux routes contre la largeur du stop, et le facteur qui les sépare.}}
+
+  <p>La route non bornée a une forme fermée et ne demande pas de choisir un horizon, ce qui est exactement pourquoi on l'emploie sans y penser. Elle est plus optimiste partout, d'un facteur {{spec_ecart_routes_declare}} au stop déclaré et {{spec_ecart_routes_elargi}} au plus large, et l'écart croît précisément quand la séance se met à border.</p>
+
+  <p>Une affirmation avait été écrite avant d'être mesurée&nbsp;: on attendait que le raccourci retourne le verdict de la géométrie déclarée, la rangeant dans le domaine plausible quand la route bornée l'en exclut. <strong>La mesure l'a réfutée</strong> — les deux routes excluent la géométrie déclarée sur toute la grille. Ce que le raccourci change est l'ampleur du dépassement&nbsp;: {{spec_libre_declare}}&nbsp;points par heure au lieu de {{spec_wald_declare}}, soit dix-sept pour cent au-dessus du plafond plausible au lieu d'un facteur deux et demi. <em>Il ne retourne pas le verdict&nbsp;; il le rend discutable, ce qui suffit à faire vivre une géométrie que la mesure condamne.</em></p>
+
+{{TABLE:spec_esperance}}
+
+{{FIGURE:specesperance|L'espérance contre la dérive aux trois géométries, et les deux sens à la dérive haute.}}
+
+{{FIGURE:specwald|Le temps d'exposition contre la largeur du stop, et la dérive requise qui en est l'inverse.}}
+
+  <p>Les deux cadres de cette dernière planche sont la même quantité lue dans les deux sens&nbsp;: le temps qu'une position reste exposée, et la dérive qu'il faut pour couvrir la friction, qui est ce temps à l'envers. C'est toute l'identité de Wald, et c'est ce que ce document répète depuis sa dixième partie — <strong>une géométrie de sortie ne crée aucune espérance, elle achète du temps de marché.</strong></p>
+
+{{FIGURE:specreliefesp|Relief de l'espérance d'une position, en largeur de stop et en dérive.}}
+
+  <p>Le relief ajoute un fait que la table ne montre pas&nbsp;: l'espérance en R n'est <em>pas</em> monotone en largeur de stop. Elle culmine à une largeur intermédiaire et redescend, parce qu'élargir allonge le temps d'exposition mais agrandit aussi le dénominateur, et que le second finit par l'emporter.</p>
+
+  <h2 id="s-spec-lectures">Les quinze lectures, prises comme des positions</h2>
+
+  <p>Le catalogue de la partie&nbsp;III range quinze lectures par leur horizon. Passées par la feuille, elles rendent un fait que le catalogue n'avait pas.</p>
+
+{{TABLE:spec_lectures}}
+
+{{FIGURE:speclectures|Les quinze lectures du catalogue placées par leur portée, et les deux sens lecture par lecture.}}
+
+  <p>La probabilité d'objectif vaut {{spec_p_courte}} — exactement <span class="mono">a/(a+b)</span> au rapport du catalogue — sur les cinq lectures les plus courtes. Puis elle décroche, et ce qui explique le décrochage n'est pas le motif&nbsp;: c'est la portée. Les lectures dont l'horizon remplit la séance tombent à {{spec_p_longue}}, soit un facteur <strong>{{spec_facteur_horloge}}</strong>. <em>Les lectures longues du catalogue ne sont pas moins fiables que les courtes&nbsp;: à rapport égal, elles sont innégociables dans une séance.</em></p>
+
+  <p>Aucune des quinze ne se détache de la courbe. C'est le résultat de la partie&nbsp;III retrouvé sur un objet différent&nbsp;: à rapport fixé, la probabilité d'objectif ne dépend ni du motif reconnu ni de sa rareté, mais uniquement de la distance que l'objectif demande à la séance.</p>
+
+{{FIGURE:specreliefportee|Relief de ce que la géométrie demande à la séance de parcourir, en stop et en rapport.}}
+
+  <h2 id="s-spec-bandeau">Le bandeau que chaque planche porte désormais</h2>
+
+  <p>Une figure décrit&nbsp;; elle ne dit pas ce qu'il en coûterait d'en tirer une position. Depuis cette partie, chacune des figures de ce document porte sous sa légende une ligne qui le dit, dans les deux sens, entièrement recalculée à la construction depuis la géométrie de la lecture qu'elle illustre.</p>
+
+{{TABLE:spec_bandeaux}}
+
+{{FIGURE:specbandeau|Les deux sens et la dérive requise, par géométrie de lecture.}}
+
+  <p>{{spec_familles}}&nbsp;familles de figures, et six géométries seulement&nbsp;: deux familles se regroupent quand leur horizon de lecture est le même, donc quand leur bandeau porte les mêmes nombres. Ce qui sépare une ligne de la suivante n'est jamais le sujet traité mais la distance de son objectif.</p>
+
+  <p>Ce que la table ne contient pas mérite d'être dit&nbsp;: il n'y a pas de colonne d'avantage mesuré. Elle vaudrait zéro sur toutes les lignes, et <strong>ce zéro n'est pas une convention de ce module</strong> — il vient de ceux qui l'ont mesuré, nommés en regard de chaque famille dans le code. Le jour où une lecture en produirait un, il se déclarerait à un seul endroit et tous les bandeaux du document le porteraient sans qu'on touche à une seule figure.</p>
+
+  <p>Un défaut a été trouvé et corrigé avant publication, et il mérite d'être écrit parce que rien ne l'aurait signalé. La table de préfixes qui associe une figure à sa famille avait été <em>devinée</em> plutôt que relevée sur les clés réelles&nbsp;: trente-sept figures sur deux cent quatorze n'accrochaient aucune famille, dont les treize de la partie sur le delta et les neuf de celle sur le flux. Le bandeau se serait simplement tu, et une planche muette ressemble à une planche sans objet directionnel. Un test lit désormais toutes les clés du gabarit et refuse la moindre orpheline.</p>
+
+  <h2 id="s-spec-feuille">Trois géométries, deux conditions, et aucune ne passe</h2>
+
+  <p>Deux conditions indépendantes, et il faut les deux&nbsp;: la dérive requise doit tomber dans le domaine plausible, et l'objectif doit rester dans la portée d'une séance.</p>
+
+{{TABLE:spec_reste}}
+
+{{FIGURE:specfeuille|La dérive requise et la portée demandée par les trois géométries, et les deux conditions.}}
+
+  <p>Les trois géométries que ce document compare depuis sa partie&nbsp;X échouent chacune sur une condition, et jamais sur la même&nbsp;: la déclarée sur la dérive, les deux élargies sur la portée. Ce n'est donc pas qu'une des trois soit meilleure que les autres — <strong>c'est que le réglage se cherche à deux dimensions et non à une</strong>, et qu'un opérateur n'a pas trois paramètres à choisir mais deux, la séance fixant le troisième.</p>
+
+{{FIGURE:specreste|Ce que la feuille tranche par géométrie, et le réglage qu'elle propose.}}
+
+  <p>Le réglage que cette partie propose — {{spec_horizon_optimal}}&nbsp;minutes, un stop de {{spec_stop_optimal}}&nbsp;points, un rapport d'un pour deux — <em>ne promet aucun avantage</em>. Il dit seulement où une dérive, si un opérateur en avait une, serait la plus visible, donc la plus vite prouvée ou réfutée&nbsp;: {{spec_ecart_optimal}}&nbsp;points de taux d'écart entre les deux sens, contre {{spec_ecart_haut}} au mieux des trois géométries déclarées. C'est moins qu'une stratégie et c'est plus qu'un avis, parce que c'est le seul des deux qui se calcule.</p>
+
+  <p>La ligne qui manque à toute cette partie est celle qu'aucune des vingt-six précédentes n'a trouvée. Ni les quinze lectures du catalogue, ni les douze setups, ni les cinquante-neuf affirmations des huit parties d'options n'apportent de dérive. <strong>Ce document n'a jamais rencontré d'avantage directionnel</strong>, et ce qu'il offre à la place est le seul objet qu'on puisse construire sans en avoir un&nbsp;: la géométrie où l'on saurait le plus vite s'il existe.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-huitième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
