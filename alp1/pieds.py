@@ -109,20 +109,64 @@ def joindre(pieds: list[str]) -> str:
     return " ".join(sortie)
 
 
+def bandeau_html(cle: str) -> str:
+    """La ligne de spéculation d'une figure, entièrement calculée.
+
+    Une figure décrit ; elle ne dit pas ce qu'il en coûterait d'en tirer une
+    position. Cette ligne le dit, et elle le dit dans les deux sens, sous
+    chaque planche du document. Rien n'y est écrit : le module `speculation`
+    la recalcule à chaque construction depuis la géométrie de la lecture, si
+    bien qu'une correction de mesure s'y propage sans qu'on touche à une
+    seule figure.
+
+    Elle est délibérément muette de mise en forme. Deux cent quatorze
+    exemplaires d'un bandeau voyant détruiraient la page ; ce qu'on veut est
+    qu'on puisse le lire quand on le cherche et l'ignorer sinon.
+
+    Renvoie la chaîne vide si la clé n'appartient à aucune famille déclarée,
+    ce qui laisse les documents qui n'ont pas de feuille de spéculation
+    exactement comme ils étaient.
+    """
+    from . import speculation as sp
+
+    module = sp.module_d_une_figure(cle)
+    if not module:
+        return ""
+    b = sp.bandeau(module)
+    pc = sp._pc
+    return (
+        f'\n      <p class="spec"><span class="lab">Spéculation</span>'
+        f' · {b.objet}'
+        f' · à dérive nulle {pc(b.p_hausse[0], 1)} dans les deux sens'
+        f' · à {sp.num(sp.DERIVES[-1], 1)} pt/h '
+        f'{pc(b.p_hausse[-1], 1)} à la hausse contre '
+        f'{pc(b.p_baisse[-1], 1)} à la baisse'
+        f' · µ requis {sp.num(b.derive_requise, 2)} pt/h'
+        f' · objectif à {sp.num(b.portee, 2)} σ de séance</p>'
+    )
+
+
 def figure_html(svg: str, numero: int, legende: str,
-                classe: str = "plate") -> str:
+                classe: str = "plate", cle: str = "") -> str:
     """Le bloc `<figure>` complet, prose de pied sortie et rendue dessous.
 
     Les trois documents composaient ce bloc chacun de leur côté, à quelques
     espaces près. Le rassembler ici est ce qui garantit qu'ils le composent
     pareil — c'est la divergence, et non le code, qui avait produit le défaut.
+
+    `cle` est la clé de la figure. Quand elle est donnée, le bloc porte en
+    plus la ligne de spéculation : c'est ce qui fait qu'aucune planche du
+    troisième document ne se regarde sans qu'on sache ce qu'une position y
+    coûterait. Les deux autres documents ne la passent pas et sont donc
+    rendus à l'octet près comme avant.
     """
     propre, pieds = extraire(svg)
     note = f'\n      <p class="note">{joindre(pieds)}</p>' if pieds else ""
+    spec = bandeau_html(cle) if cle else ""
     return (
         f'    <figure class="{classe}">\n'
         f'      <figcaption><span class="lab">Figure {numero}</span>'
         f' — {legende}</figcaption>\n'
-        f'      <div class="scroll">{propre}</div>{note}\n'
+        f'      <div class="scroll">{propre}</div>{note}{spec}\n'
         '    </figure>'
     )

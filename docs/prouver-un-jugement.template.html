@@ -111,7 +111,7 @@
 
   hr.rule {
     border: 0;
-    border-top: 1px solid var(--rule);
+    border-top: 1px solid var(--hair);
     margin: 2.2rem 0;
   }
 
@@ -335,6 +335,36 @@
     hyphens: auto;
   }
   .note .lab { font-style: italic; }
+
+  /* La ligne de spéculation : ce qu'une position coûterait sous la planche
+     qu'on vient de regarder. Elle se répète sous chacune des figures du
+     document, ce qui interdit toute mise en forme voyante — une couleur, un
+     filet ou un fond répétés deux cent quatorze fois détruiraient la page.
+     Elle est donc en chasse fixe, plus petite que la note, et posée sur un
+     filet de cheveu — jamais `--rule`, qui est clair et ferait deux cent
+     quatorze barres blanches. Le mot d'appel prend l'accent **assourdi** et
+     non l'accent : la règle du document limite celui-ci à trois occurrences
+     par page, et une figure en dépense déjà deux avec son numéro. */
+  .spec {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    line-height: 1.5;
+    color: var(--soft);
+    margin-top: 0.5rem;
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--rule);
+    font-variant-numeric: tabular-nums lining-nums;
+    max-width: 44rem;
+  }
+  figure.plate .spec, figure.wide .spec { margin-left: auto;
+                                          margin-right: auto; }
+  .spec .lab {
+    color: var(--accent-dim);
+    font-style: normal;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.92em;
+  }
 
   code {
     font-family: var(--mono);

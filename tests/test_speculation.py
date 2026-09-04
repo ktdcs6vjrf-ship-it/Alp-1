@@ -242,6 +242,47 @@ class TestLesBandeaux(unittest.TestCase):
         modules = {m for _, m in S._PREFIXES}
         self.assertEqual(modules, set(S.HYPOTHESES))
 
+    def test_aucune_figure_du_gabarit_n_est_orpheline(self):
+        """Le test qui aurait trouvé le premier jet des préfixes.
+
+        Trente-sept figures sur deux cent quatorze n'accrochaient aucune
+        famille, dont les treize du delta et les neuf du flux. Rien ne
+        l'aurait signalé : le bandeau se serait tu, et une planche muette
+        ressemble à une planche sans objet directionnel.
+        """
+        import re
+        from pathlib import Path
+        racine = Path(__file__).resolve().parent.parent
+        gabarit = (racine / "docs" / "prouver-un-jugement.template.html"
+                   ).read_text("utf-8")
+        cles = re.findall(r"\{\{FIGURE:([a-z0-9_]+)\|", gabarit)
+        self.assertGreater(len(cles), 200)
+        orphelines = [k for k in cles if not S.module_d_une_figure(k)]
+        self.assertEqual(orphelines, [])
+
+    def test_chaque_famille_declaree_recoit_au_moins_une_figure(self):
+        """Une famille déclarée mais jamais atteinte est un préfixe mort."""
+        import re
+        from pathlib import Path
+        racine = Path(__file__).resolve().parent.parent
+        gabarit = (racine / "docs" / "prouver-un-jugement.template.html"
+                   ).read_text("utf-8")
+        cles = re.findall(r"\{\{FIGURE:([a-z0-9_]+)\|", gabarit)
+        vues = {S.module_d_une_figure(k) for k in cles}
+        manquantes = set(S.HYPOTHESES) - vues - {"figspec"}
+        self.assertEqual(manquantes, set())
+
+    def test_le_bandeau_est_une_ligne_et_porte_ses_deux_sens(self):
+        from alp1 import pieds
+        for cle in ("vosourire", "catordre", "grexemple", "flowfootprint",
+                    "rqueues", "couche_dow"):
+            html = pieds.bandeau_html(cle)
+            self.assertIn('class="spec"', html, cle)
+            self.assertIn("à la hausse", html, cle)
+            self.assertIn("à la baisse", html, cle)
+            self.assertEqual(html.count("<p"), 1, cle)
+            self.assertNotIn("'", html, cle)
+
 
 class TestLesSurfaces(unittest.TestCase):
     def test_les_quatre_surfaces_sont_rectangulaires(self):
@@ -302,6 +343,134 @@ class TestLesTables(unittest.TestCase):
         """Un « 0,00 » efface un résultat au lieu de le montrer."""
         for cle, t in self.tables.items():
             self.assertNotIn("0,00 %,", t.note or "", cle)
+
+
+class TestLesGroupes(unittest.TestCase):
+    def test_chaque_groupe_porte_un_nom(self):
+        for nom, _n, _b in S.familles_par_geometrie():
+            self.assertNotIn("fig", nom, nom)
+
+    def test_les_groupes_couvrent_toutes_les_familles(self):
+        total = sum(n for _, n, _ in S.familles_par_geometrie())
+        self.assertEqual(total, len(S.HYPOTHESES))
+
+    def test_ils_sont_tries_par_stop_croissant(self):
+        stops = [b.stop for _, _, b in S.familles_par_geometrie()]
+        for x, y in zip(stops, stops[1:]):
+            self.assertLess(x, y)
+
+    def test_le_reglage_propose_bat_les_trois_geometries(self):
+        propose = S.ecart_directionnel(S.horizon_optimal())
+        for pct in S.GEOMETRIES:
+            self.assertGreater(propose, 4.0 * S.ecart_d_un_stop(pct), pct)
+
+
+class TestLesPlanches(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from alp1 import figspec
+        cls.figspec = figspec
+        cls.rendus = figspec.render_all()
+
+    def test_les_quinze_planches_sont_la(self):
+        self.assertEqual(len(self.rendus), 15)
+
+    def test_aucune_couleur_n_est_ecrite_en_dur(self):
+        for cle, svg in self.rendus.items():
+            self.assertEqual(re.findall(r"#[0-9a-fA-F]{6}", svg), [], cle)
+
+    def test_aucune_entite_html_n_est_ecrite(self):
+        for cle, svg in self.rendus.items():
+            self.assertEqual(re.findall(r"&#\d+;", svg), [], cle)
+
+    def test_aucun_libelle_aria_ne_porte_d_apostrophe(self):
+        for cle, svg in self.rendus.items():
+            for aria in re.findall(r'aria-label="([^"]*)"', svg):
+                self.assertNotIn("'", aria, cle)
+                self.assertNotIn("\u2019", aria, cle)
+
+    def test_aucun_pied_ne_porte_de_marque(self):
+        for cle, svg in self.rendus.items():
+            for classe in ("lg cap", "lg keep"):
+                for texte in re.findall(
+                        r'<text[^>]*class="' + classe + r'"[^>]*>([^<]*)<',
+                        svg):
+                    self.assertNotIn("**", texte, cle)
+                    self.assertNotIn("*", texte, cle)
+                    self.assertNotIn("`", texte, cle)
+
+    def test_les_quatre_reliefs_portent_leur_echine(self):
+        for cle in ("specreliefsurvie", "specreliefecart", "specreliefesp",
+                    "specreliefportee"):
+            self.assertIn('class="post"', self.rendus[cle], cle)
+            self.assertIn('class="nuage', self.rendus[cle], cle)
+
+    def test_toutes_les_graduations_tombent_dans_leur_domaine(self):
+        """Le test qui a trouvé la graduation logarithmique hors cadre."""
+        from alp1.figterm import Panel
+
+        hits = []
+        og_y, og_x = Panel.grid_y, Panel.grid_x
+
+        def enveloppe(nom, orig, lo_a, hi_a):
+            def f(self, ticks, *a, **k):
+                lo, hi = sorted((getattr(self, lo_a), getattr(self, hi_a)))
+                dehors = [t for t in ticks
+                          if not (lo - 1e-9 <= t <= hi + 1e-9)]
+                if dehors:
+                    hits.append((nom, self.title, dehors, (lo, hi)))
+                return orig(self, ticks, *a, **k)
+            return f
+
+        Panel.grid_y = enveloppe("grid_y", og_y, "y0", "y1")
+        Panel.grid_x = enveloppe("grid_x", og_x, "x0", "x1")
+        try:
+            self.figspec.render_all()
+        finally:
+            Panel.grid_y, Panel.grid_x = og_y, og_x
+        self.assertEqual(hits, [])
+
+    def test_aucun_trace_n_est_reduit_par_le_decoupage(self):
+        from alp1.figterm import Panel
+
+        hits = []
+        og = Panel.path
+
+        def f(self, pts, *a, **k):
+            pts = list(pts)
+            dedans = [p for p in pts if self._in_domain(*p)]
+            if len(pts) > 2 and len(dedans) < 0.5 * len(pts):
+                hits.append((self.title, len(pts), len(dedans)))
+            return og(self, pts, *a, **k)
+
+        Panel.path = f
+        try:
+            self.figspec.render_all()
+        finally:
+            Panel.path = og
+        self.assertEqual(hits, [])
+
+    def test_le_domaine_est_declare_avant_les_traces(self):
+        from alp1.figterm import Panel
+
+        hits = []
+        og_path, og_dom = Panel.path, Panel.domain
+
+        def path(self, pts, *a, **k):
+            if not getattr(self, "_domaine_declare", False):
+                hits.append(self.title)
+            return og_path(self, pts, *a, **k)
+
+        def domain(self, *a, **k):
+            self._domaine_declare = True
+            return og_dom(self, *a, **k)
+
+        Panel.path, Panel.domain = path, domain
+        try:
+            self.figspec.render_all()
+        finally:
+            Panel.path, Panel.domain = og_path, og_dom
+        self.assertEqual(hits, [])
 
 
 if __name__ == "__main__":

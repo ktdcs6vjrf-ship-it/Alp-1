@@ -24,7 +24,7 @@ from . import (charm, concepts, emprunts, figcat, figch, figdisc, figemp,
                figsortie, figth, figva, figvg, figvo,
                fonds, grandeurs, horloge, niveaux, overnight, report10,
                report11, report13, report14, revue,
-               rho, robustesse, setups, sorties, theta, vanna,
+               rho, robustesse, setups, sorties, speculation, theta, vanna,
                vega, volga)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
@@ -55,7 +55,7 @@ def values() -> dict[str, str]:
                   fonds.values(), revue.values(), niveaux.values(),
                   grandeurs.values(), theta.values(), vega.values(),
                   rho.values(), vanna.values(), charm.values(),
-                  volga.values()):
+                  volga.values(), speculation.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -78,7 +78,7 @@ def tables() -> dict[str, Table]:
                   grandeurs.all_tables(), theta.all_tables(),
                   vega.all_tables(), rho.all_tables(),
                   vanna.all_tables(), charm.all_tables(),
-                  volga.all_tables()):
+                  volga.all_tables(), speculation.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")
@@ -228,7 +228,7 @@ def build() -> str:
         key, caption = m.group(1), m.group(2).strip()
         if key not in figs:
             raise KeyError(f"figure inconnue : {key}")
-        return figure_html(figs[key], fig_counter["n"], caption)
+        return figure_html(figs[key], fig_counter["n"], caption, cle=key)
 
     text = re.sub(r"\{\{FIGURE:([a-z0-9_]+)\|(.+?)\}\}", sub_figure, text,
                   flags=re.S)

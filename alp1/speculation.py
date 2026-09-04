@@ -110,6 +110,9 @@ ECART_SEANCE = SIGMA_MIN * math.sqrt(SEANCE_MIN)
 
 FRICTION = seuil.COST_BASE.friction_points(seuil.ES)
 
+#: Le plafond du domaine de dérive plausible, en points par heure.
+PLAUSIBLE_HAUTE = seuil.PLAUSIBLE_DRIFT_PER_HOUR[1]
+
 
 def nom_du_sens(sens: int) -> str:
     return "hausse" if sens > 0 else "baisse"
@@ -189,6 +192,19 @@ def portee_de_seance(stop_pct: float, reward_risk: float = RR) -> float:
     """
     g = seuil.geometry(stop_pct, reward_risk=reward_risk)
     return reward_risk * g.stop_points / ECART_SEANCE
+
+
+def stop_de_portee_un(reward_risk: float = RR) -> float:
+    """La largeur de stop dont l'objectif vaut exactement une séance.
+
+    Forme fermée, et elle n'a rien de subtile : l'objectif vaut `RR·a` et la
+    séance parcourt `σ√T`, donc `a = σ√T/RR` et le stop en pour cent suit du
+    niveau de l'indice. C'est la frontière du négociable au rapport déclaré,
+    et elle est **plus basse que le stop déclaré du dispositif** — ce qui est
+    la seule bonne nouvelle de la partie.
+    """
+    a = ECART_SEANCE / reward_risk
+    return 100.0 * a / q.INDEX_LEVEL
 
 
 def rr_atteignable(stop_pct: float, seuil_p: float = 0.05,
@@ -405,6 +421,57 @@ def hypothese(cle_module: str) -> Hypothese:
     return HYPOTHESES.get(cle_module, DEFAUT)
 
 
+#: Le nom lisible d'un groupe de familles, par la famille qui le mène. Le
+#: regroupement lui-même est **calculé** — deux familles tombent ensemble si
+#: et seulement si leur géométrie de lecture est la même — et ce dictionnaire
+#: ne fait que nommer le groupe obtenu. Une planche qui alignerait dix-neuf
+#: barres sans étiquette ne dirait rien à personne ; six lignes nommées, si.
+NOMS_DE_GROUPE: dict[str, str] = {
+    "fignv": "les huit parties d'options",
+    "figflux": "le flux d'ordres",
+    "figcat": "le catalogue des lectures",
+    "figsetup": "la grammaire du setup",
+    "figdisc": "le dispositif et ses épreuves",
+    "figon": "la session overnight",
+}
+
+
+def familles_par_geometrie() -> tuple[tuple[str, int, "Bandeau"], ...]:
+    """Les familles de figures, regroupées par la géométrie qu'elles lisent.
+
+    Deux familles tombent dans le même groupe quand leur horizon de lecture
+    est le même, donc quand leur bandeau porte les mêmes nombres. Le nom du
+    groupe vient de `NOMS_DE_GROUPE`, et un test exige que chaque groupe
+    obtenu en ait un — sans quoi une planche publierait une ligne anonyme.
+
+    Renvoyé trié par distance de stop croissante.
+    """
+    groupes: dict[float, list[str]] = {}
+    for cle in HYPOTHESES:
+        groupes.setdefault(round(bandeau(cle).stop, 6), []).append(cle)
+    sortie = []
+    for a in sorted(groupes):
+        cles = sorted(groupes[a])
+        nom = next((NOMS_DE_GROUPE[c] for c in cles if c in NOMS_DE_GROUPE),
+                   cles[0])
+        sortie.append((nom, len(cles), bandeau(cles[0])))
+    return tuple(sortie)
+
+
+def ecart_d_un_stop(stop_pct: float,
+                    derive_par_heure: float | None = None) -> float:
+    """L'écart entre les deux sens, à la géométrie déclarée d'un stop.
+
+    C'est la même grandeur que `ecart_directionnel`, prise sur une géométrie
+    de dispositif — stop en pour cent et rapport déclaré — plutôt que sur une
+    géométrie de lecture. Les deux se comparent, et la comparaison est le
+    dernier fait de la partie.
+    """
+    d = (PLAUSIBLE_HAUTE if derive_par_heure is None else derive_par_heure)
+    return 100.0 * (lire(stop_pct, d, 1).p_objectif
+                    - lire(stop_pct, d, -1).p_objectif)
+
+
 @dataclass(frozen=True)
 class Bandeau:
     """Ce qu'une figure autorise à spéculer, dans les deux sens."""
@@ -478,17 +545,28 @@ def module_d_une_figure(cle: str) -> str:
     return ""
 
 
-#: Le préfixe des clés de chaque module de figures. L'ordre compte : les
-#: préfixes longs se testent avant les courts, sans quoi `set` capturerait
-#: `setfoot` mais aussi tout ce qui commence par `se`.
+#: Le préfixe des clés de chaque module de figures. **L'ordre compte** : le
+#: premier préfixe qui accroche gagne, donc les longs se testent avant les
+#: courts. La dernière entrée est un `r` seul, qui ramasse les cinq clés de
+#: `figrobu` — elles n'ont pas de préfixe commun plus long — et elle ne peut
+#: venir qu'après `rev` et `rh`, qui l'auraient sinon perdue.
+#:
+#: Cette liste a été **relevée sur les clés réelles et non devinée**, et le
+#: premier jet ne l'était pas : trente-sept figures sur deux cent quatorze
+#: tombaient dans aucune famille, dont les treize du delta et les neuf du
+#: flux. Aucune ne l'aurait signalé — le bandeau se serait simplement tu.
+#: Un test lit désormais toutes les clés du gabarit et refuse la moindre
+#: orpheline.
 _PREFIXES: tuple[tuple[str, str], ...] = (
-    ("disc", "figdisc"), ("flux", "figflux"), ("sortie", "figsortie"),
-    ("cat", "figcat"), ("set", "figsetup"), ("robu", "figrobu"),
-    ("on", "figon"), ("emp", "figemp"), ("fds", "figfds"),
-    ("rev", "figrev"), ("nv", "fignv"), ("gra", "figgra"),
-    ("th", "figth"), ("vg", "figvg"), ("rh", "figrh"),
-    ("va", "figva"), ("ch", "figch"), ("vo", "figvo"),
-    ("spec", "figspec"),
+    ("couche_", "figdisc"), ("disc", "figdisc"),
+    ("flow", "figflux"), ("gamma", "figflux"),
+    ("sortie", "figsortie"), ("set", "figsetup"), ("cat", "figcat"),
+    ("emp", "figemp"), ("fds", "figfds"),
+    ("rev", "figrev"), ("rh", "figrh"),
+    ("nv", "fignv"), ("gr", "figgra"), ("th", "figth"),
+    ("vg", "figvg"), ("va", "figva"), ("vo", "figvo"),
+    ("ch", "figch"), ("on", "figon"), ("spec", "figspec"),
+    ("r", "figrobu"),
 )
 
 
