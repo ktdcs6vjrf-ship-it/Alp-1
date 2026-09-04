@@ -365,6 +365,37 @@ class TestLesGroupes(unittest.TestCase):
             self.assertGreater(propose, 4.0 * S.ecart_d_un_stop(pct), pct)
 
 
+class TestLeCablage(unittest.TestCase):
+    """Le test qui aurait évité une construction de quinze minutes perdue.
+
+    `figspec` était inscrit dans le balayage des figures et absent de la
+    liste de `discpaper.figures()`. Rien ne le disait avant la construction,
+    qui s'arrêtait sur la première figure de la partie — après avoir rendu
+    les deux cent quatorze autres.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import inspect
+        from alp1 import discpaper
+        cls.discpaper = discpaper
+        cls.source_figures = inspect.getsource(discpaper.figures)
+
+    def test_chaque_famille_est_importee_par_le_document(self):
+        for cle in S.HYPOTHESES:
+            self.assertTrue(hasattr(self.discpaper, cle), cle)
+
+    def test_chaque_famille_entre_dans_la_fusion_des_figures(self):
+        for cle in S.HYPOTHESES:
+            self.assertIn(cle, self.source_figures, cle)
+
+    def test_le_module_entre_dans_les_valeurs_et_les_tables(self):
+        import inspect
+        for nom in ("values", "tables"):
+            src = inspect.getsource(getattr(self.discpaper, nom))
+            self.assertIn("speculation", src, nom)
+
+
 class TestLesPlanches(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

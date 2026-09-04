@@ -21,7 +21,7 @@ from pathlib import Path
 from . import (charm, concepts, emprunts, figcat, figch, figdisc, figemp,
                figfds, figflux,
                figgra, fignv, figon, figrev, figrh, figrobu, figsetup,
-               figsortie, figth, figva, figvg, figvo,
+               figsortie, figspec, figth, figva, figvg, figvo,
                fonds, grandeurs, horloge, niveaux, overnight, report10,
                report11, report13, report14, revue,
                rho, robustesse, setups, sorties, speculation, theta, vanna,
@@ -98,14 +98,15 @@ def figures() -> dict[str, str]:
     documents extérieurs, `fignv` pour la largeur d'un niveau, `figgra`
     pour les grandeurs qu'un seul mot désigne, `figth` pour le loyer de la
     convexité, `figvg` pour le prix de l'incertitude, `figrh` pour le taux,
-    `figva` pour la dérivée croisée, `figch` pour la saignée du delta et
-    `figvo` pour la convexité en volatilité ;
+    `figva` pour la dérivée croisée, `figch` pour la saignée du delta,
+    `figvo` pour la convexité en volatilité et `figspec` pour ce qu'une
+    position coûte dans les deux sens ;
     deux clés identiques y feraient disparaître une figure en silence.
     """
     fusion = dict(figdisc.render_all())
     for module in (figflux, figsortie, figcat, figsetup, figrobu, figon,
                    figemp, figfds, figrev, fignv, figgra, figth,
-                   figvg, figrh, figva, figch, figvo):
+                   figvg, figrh, figva, figch, figvo, figspec):
         rendu = module.render_all()
         heurts = set(fusion) & set(rendu)
         if heurts:
