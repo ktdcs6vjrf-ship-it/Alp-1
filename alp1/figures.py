@@ -304,7 +304,8 @@ def fig_expectancy_plane() -> str:
             if g not in (0.5, 4.0):
                 continue
             x, y = proj(ni - 1, k, 0.0)
-            parts.append(f'<text class="tk halo" x="{x + 16:.1f}" y="{y + 14:.1f}">BE {g:g} R</text>')
+            parts.append(f'<text class="tk halo" x="{x + 16:.1f}" '
+                         f'y="{y + 14:.1f}">BE {_num(g, 1)} R</text>')
 
         edge = ox - (nj - 1) * cx
         for val, lab in ((0.0, "0"), (-FRICTION / a, "−c/L")):
