@@ -408,6 +408,8 @@ HYPOTHESES: dict[str, Hypothese] = {
                        "charm, aucune ne donne un sens"),
     "figvo": Hypothese(0.0, "la convexité en volatilité",
                        "volga, aucune ne donne un sens"),
+    "figord": Hypothese(0.0, "un grec du troisième ordre",
+                        "ordres, aucune ne donne un sens"),
     "figspec": Hypothese(390.0, "la feuille elle-même",
                          "speculation, les deux sens à trois dérives"),
 }
@@ -424,10 +426,13 @@ def hypothese(cle_module: str) -> Hypothese:
 #: Le nom lisible d'un groupe de familles, par la famille qui le mène. Le
 #: regroupement lui-même est **calculé** — deux familles tombent ensemble si
 #: et seulement si leur géométrie de lecture est la même — et ce dictionnaire
-#: ne fait que nommer le groupe obtenu. Une planche qui alignerait dix-neuf
-#: barres sans étiquette ne dirait rien à personne ; six lignes nommées, si.
+#: ne fait que nommer le groupe obtenu. Une planche qui alignerait une barre
+#: par famille sans étiquette ne dirait rien à personne ; six lignes nommées,
+#: si. **Aucun de ces noms ne porte de compte** : le compte est la deuxième
+#: colonne, et il se calcule — un nom qui aurait dit « les huit parties
+#: d'options » aurait vieilli d'une partie à la suivante.
 NOMS_DE_GROUPE: dict[str, str] = {
-    "fignv": "les huit parties d'options",
+    "fignv": "les parties consacrées aux options",
     "figflux": "le flux d'ordres",
     "figcat": "le catalogue des lectures",
     "figsetup": "la grammaire du setup",
@@ -565,7 +570,8 @@ _PREFIXES: tuple[tuple[str, str], ...] = (
     ("rev", "figrev"), ("rh", "figrh"),
     ("nv", "fignv"), ("gr", "figgra"), ("th", "figth"),
     ("vg", "figvg"), ("va", "figva"), ("vo", "figvo"),
-    ("ch", "figch"), ("on", "figon"), ("spec", "figspec"),
+    ("ch", "figch"), ("on", "figon"), ("ord", "figord"),
+    ("spec", "figspec"),
     ("r", "figrobu"),
 )
 

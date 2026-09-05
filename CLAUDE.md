@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (150 sections en vingt-huit
-parties, 157 tables, 229 figures dont soixante-six surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (157 sections en vingt-neuf
+parties, 163 tables, 243 figures dont soixante-dix surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -34,7 +34,7 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
 `theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` + `vanna.py` +
 `figva.py` + `charm.py` + `figch.py` + `volga.py` + `figvo.py` +
-`speculation.py` + `figspec.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`ordres.py` + `figord.py` + `speculation.py` + `figspec.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -65,8 +65,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/9d9ad6dc-1d64-47ca-8d47-9b450add2e97
-  (précédents : 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
+- ALP nº 3 : https://claude.ai/code/artifact/0bf1fb72-2a2d-4b19-8569-ac60d0e4d877
+  (précédents : 9d9ad6dc, 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
   8edc727c, b40a2d6b, e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee,
   d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005,
   4e95dfbc, e49bcb16, c360de80)
@@ -756,8 +756,82 @@ annonçait une crête qui s'éloigne au-dessus d'une rampe monotone ; la grille
 va maintenant à 1,45 et un test exige qu'elle encadre la crête à toutes les
 échéances de la surface.
 
-Sa **partie XXVII** est la feuille de spéculation — `speculation.py` +
-`figspec.py`. Les vingt-six parties qui précèdent décrivent ; celle-ci
+Sa **partie XXVII** ferme la série d'options par le guide des grecs du
+troisième ordre — `ordres.py` + `figord.py`. C'est le seul des neuf dont la
+dernière section écrive elle-même la conclusion que les huit autres laissent
+croire l'inverse : *ces grandeurs décrivent comment votre exposition va
+changer ; elles ne disent rien de la direction du prix.* Le dépôt ne la
+conteste donc pas — il la chiffre, et il fait le contrôle qu'aucun des neuf
+guides ne fait.
+
+① **Le contrôle, et c'est la règle du dépôt appliquée à cinq objets neufs.**
+Speed, Zomma et Ultima sont écrits à côté de la dérivée numérique de la
+grandeur dont ils dérivent, et les colonnes se referment à toutes les
+décimales publiées. La partie XXIV avait montré ce que coûte de ne pas le
+faire : une dérivée croisée a vécu une partie entière ici avec un
+dénominateur faux d'une racine, *parce que rien ne la consommait*.
+② **Deux des cinq n'ont aucun paramètre libre.** À la monnaie le gamma vaut
+une constante sur la racine de l'échéance et le véga cette constante fois la
+racine, donc Color et Veta ne dépendent **ni de la volatilité, ni du niveau,
+ni du taux** : `√(T/(T−Δt))` et `1 − √((T−Δt)/T)`, mesurés à quatre
+décimales. Le guide dit « substantiellement plus de gamma demain » et « le
+véga du mois avant se volatilise » ; les deux sont justes, et ce que la
+mesure ajoute est qu'ils *se calculent sans rien savoir du marché*. La
+lecture simple laisse deux termes, et **le portage domine partout** : la
+question de la partie XXIII sur un cinquième objet.
+③ **Le premier des neuf guides qui se surestime.** « Le dernier jour, le
+gamma peut être divisé par deux sur une fraction de pour cent » : le
+mouvement se résout et vaut `√(2 ln 2)·σ√T` — **la constante de la largeur
+d'un niveau de gamma de la partie XIX**, retrouvée sur un objet sans rapport.
+À un jour il faut 1,52 % du comptant, et le seuil n'est franchi que dans les
+**10,3 dernières heures**. Les cinq guides qui précèdent se sous-estimaient.
+④ **Ultima a exactement deux bascules, et cela se démontre.** Son facteur est
+un trinôme du second degré en `d₁d₂`, de racines `(3 ± √(9+4σ²T))/2`. La
+seconde borne la bande négative ; **la première n'est jamais atteinte**,
+parce que `min(d₁d₂) = −σ²T/4` tombe au-dessus d'elle — et ce minimum est au
+**forward**, pas à la monnaie (`e^{−(r−q)T}`). L'affirmation du guide se
+démontre donc au lieu de se vérifier.
+⑤ **Trois seuils, trois bandes emboîtées, et la première qui soit cotable.**
+Le même produit borne le creux du volga (seuil zéro), la bande de Zomma
+(seuil un) et celle d'Ultima (seuil trois) : 0,51 %, 14,3 % et 24,8 % du
+comptant à trente jours, un facteur **48** entre les extrêmes. Les parties
+XXII, XXIV et XXVI avaient chacune conclu que leur bande tombait sous le pas
+d'une grille de strikes ; *celle d'Ultima le dépasse*. « Reflète la structure
+du volga » est juste de la forme et faux de l'échelle, et l'échelle décide si
+un objet existe sur un tableau de cotation.
+⑥ **Les quatre-vingt-dix-neuf pour cent sont sous-estimés.** Sur 20 000
+tirages joints, la part de variance que delta, gamma, thêta et véga
+expliquent ne descend jamais sous **99,7 %** pour un livre nu ni **97,8 %**
+pour un livre couvert en delta, et dans le cas que le guide décrit lui-même
+le résidu vaut **0,9 millionième**. Le livre couvert, qu'il donne comme le
+premier des trois cas où les termes supérieurs comptent, se dégrade
+réellement et pas jusqu'à l'effondrement : *retirer le delta ne fait pas
+apparaître les termes supérieurs, cela retire le terme qui les écrasait.* Et
+la variable n'est pas celle qu'on croit — c'est la **durée de détention**,
+pas la maturité.
+⑦ **Le décompte** : trois affirmations déplacent le risque, deux l'horloge,
+deux rien, **aucune la direction** — sixième partie consécutive. Sur les
+**soixante-sept** affirmations des neuf parties d'options, aucune ne donne un
+sens.
+
+Trois pièges y sont enterrés, et deux n'ont été vus qu'en regardant la page.
+Le premier est **une barre à baseline tronquée**, et le dépôt l'interdit : la
+part expliquée vit entre 97,8 et 100 %, tracée en barres partant du bord
+gauche du cadre elle donnait des longueurs proportionnelles à `part − 94 %`,
+c'est-à-dire à rien. La planche publie maintenant des **haltères** — un point
+par livre, un trait entre les deux — et le cadre de droite passe en échelle
+logarithmique, la seule qui tienne trois ordres et demi de grandeur. Le
+deuxième est **un axe linéaire sur une loi de puissance** : les deux courbes
+de l'horloge s'effondraient contre le bord gauche, quatre-vingt-dix pour cent
+du cadre vide et toute la forme dans une lisière de deux jours ; le balayage
+d'occupation ne le voit pas, *le cadre est plein, c'est la donnée qui est
+écrasée*. Le troisième est **un point posé sur la ligne de zéro** : la valeur
+d'Ultima à la monnaie vaut 235 fois moins que son pic, donc son point tombait
+exactement sur la ligne à côté des deux vraies bascules et la planche
+montrait trois traversées là où il y en a deux.
+
+Sa **partie XXVIII** est la feuille de spéculation — `speculation.py` +
+`figspec.py`. Les vingt-sept parties qui précèdent décrivent ; celle-ci
 décide. Chaque mesure du document y est convertie en la seule chose qu'un
 opérateur ait à savoir avant d'entrer : si je prends position ici, dans un
 sens ou dans l'autre, quelle probabilité, quel coût, et quelle dérive
@@ -1064,6 +1138,32 @@ Rendu
   `Papillon`, dont `poids_neutre` **résout** le véga net au lieu de l'écrire.
   Huit tables, quatre surfaces.
 - `figvo.py` — les quinze planches de la partie XXVI, dont quatre reliefs.
+- `ordres.py` — **les cinq grecs du troisième ordre, et leur contrôle.**
+  `speed`, `zomma`, `color`, `veta`, `ultima`, chacun avec sa route
+  indépendante (`speed_numerique`, `zomma_numerique`, `ultima_numerique`) —
+  la règle du dépôt appliquée à cinq objets neufs. `DEMI_HAUTEUR` =
+  `√(2 ln 2)`, **importé de l'idée de la partie XIX**, avec
+  `mouvement_de_demi_gamma` / `_mesure` et `echeance_du_pour_cent` (0,429 j).
+  Les deux lois d'horloge sans paramètre : `gamma_demain_simple` = `√(T/(T−Δt))`
+  et `vega_perdu_simple`, leurs mesures, et `ecart_de_portage` — la loi en
+  racine n'est exacte **qu'à portage nul**, et c'est le portage qui domine les
+  deux écarts. `racines_ultima` = `(3 ± √(9+4σ²T))/2`, `minimum_de_d1d2` =
+  `−σ²T/4` et `moneyness_du_minimum` = `e^{−(r−q)T}` — le minimum est au
+  **forward**, ce qui rend la racine négative inatteignable et règle le nombre
+  de bascules sans balayage. `bande_zomma` / `bande_ultima` /
+  `rapport_au_volga`, les trois seuils du même produit ; `_traversees`, qui
+  balaie **puis affine par bissection**. `campagne` sur `COUPLES` et
+  `pire_part` : la part de variance que quatre grecs expliquent, livre nu et
+  livre couvert, sur tirage joint à corrélation déclarée. Six tables, quatre
+  surfaces.
+- `figord.py` — les quatorze planches de la partie XXVII, dont quatre
+  reliefs. Trois pièges de rendu y sont refermés : la planche de variance
+  publie des **haltères** et non des barres (l'axe est tronqué, une barre y
+  mentirait), celle de l'horloge porte un **axe logarithmique** (deux lois de
+  puissance s'effondrent contre le bord gauche d'un axe linéaire), et la
+  planche d'Ultima ne pose plus de point à la monnaie sur la ligne de zéro
+  (il y valait 235 fois moins que le pic et se lisait comme une troisième
+  bascule).
 - `speculation.py` — **ce qu'une lecture vaut si l'on prend position.**
   `Issue` et `lire` (les trois issues, session comprise, dans les deux sens) ;
   `portee_de_seance` et `rr_atteignable`, les deux nombres qui disent si un
@@ -1077,7 +1177,7 @@ Rendu
   `_PREFIXES`, relevée sur les clés réelles et gardée par un test ;
   `familles_par_geometrie`, qui **calcule** le regroupement au lieu de
   l'écrire. Neuf tables, quatre surfaces.
-- `figspec.py` — les quinze planches de la partie XXVII, dont quatre reliefs.
+- `figspec.py` — les quinze planches de la partie XXVIII, dont quatre reliefs.
 - `pieds.py` porte en plus `bandeau_html` : la ligne de spéculation sous
   chaque figure, passée par `figure_html` avec la clé de la figure. Seul
   `discpaper` la passe ; les deux autres documents sont rendus comme avant.
@@ -1087,7 +1187,7 @@ Rendu
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — vingt-quatre modules, chacun expose `render_all()`. `figcat.py` porte
+- `fig*.py` — vingt-cinq modules, chacun expose `render_all()`. `figcat.py` porte
   les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.

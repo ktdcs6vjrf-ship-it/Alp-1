@@ -511,6 +511,19 @@ def minimum_de_d1d2(t: float, vol: float = VOL_REF) -> float:
     return -0.25 * vol * vol * t
 
 
+def moneyness_du_minimum(t: float, r: float = TAUX,
+                         div: float = DIVIDENDE) -> float:
+    """Où le produit des deux arguments atteint son minimum, en `S/K`.
+
+    Le minimum tombe à `d₂ = −σ√T/2`, donc à `ln(S/K) = −(r−q)T` : c'est le
+    **forward**, et pas la monnaie. La distinction est invisible à trente
+    jours — deux dixièmes de pour cent — et c'est tout de même elle qui place
+    le point sur la courbe plutôt qu'à côté. Quatrième fois que la question
+    de la partie XXIII décide d'un détail.
+    """
+    return math.exp(-(r - div) * t)
+
+
 def bande_ultima(t: float, vol: float = VOL_REF, n: int = 4000
                  ) -> tuple[float, float]:
     """La bande de moneyness où Ultima est négatif, balayée.
@@ -776,7 +789,7 @@ def compte_par_grandeur() -> dict[str, int]:
 
 
 def familles() -> tuple[tuple[str, int], ...]:
-    return vo.familles() + (("Ordres supérieurs, partie XXVIII",
+    return vo.familles() + (("Ordres supérieurs, partie XXVII",
                              len(affirmations())),)
 
 

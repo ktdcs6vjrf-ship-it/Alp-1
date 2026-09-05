@@ -3400,8 +3400,96 @@
 
   <div class="part">
     <span class="lab">Vingt-septième partie</span>
+    <h2>Les grecs du troisième ordre, et le guide qui conclut lui-même</h2>
+    <p>Neuvième et dernier document de la série d'options, et le seul dont la dernière section dise ce que les huit autres laissent le lecteur croire l'inverse&nbsp;: <em>ces grandeurs décrivent comment votre exposition va changer, elles ne disent rien de la direction du prix.</em> C'est la thèse de la quatrième partie de ce document, écrite par un praticien, dans une note destinée à vendre l'objet qu'elle refuse de survendre. <strong>Ce qui suit ne la conteste donc pas&nbsp;: il la chiffre, et il contrôle ce que les neuf guides ne contrôlent jamais.</strong></p>
+  </div>
+
+  <h2 id="s-ord-famille">Cinq dérivées troisièmes, et le fil qui les tient</h2>
+
+  <p>Speed est la dérivée du gamma par le comptant, Zomma sa dérivée par la volatilité, Color sa dérivée par le temps&nbsp;; Veta est la dérivée du véga par le temps et Ultima sa dérivée troisième par la volatilité. Le guide les présente ensemble et il a raison de le faire, parce qu'elles partagent une propriété que sa première page nomme correctement&nbsp;: <strong>elles s'aiguisent toutes quand l'échéance se referme</strong>. C'est pour cela qu'un livre du jour en a besoin et qu'un livre mensuel presque pas.</p>
+
+{{FIGURE:ordfamille|Speed et Zomma contre le comptant à trois échéances, et le signe que le guide annonce.}}
+
+  <p>Les deux changent de signe et le guide donne les deux signes justes&nbsp;: Speed est positif sous le strike et négatif au-dessus, Zomma négatif près de la monnaie. Les trois courbes de chaque cadre sont la même forme, d'autant plus aiguë que l'échéance est courte. <em>C'est la définition d'un phénomène de fin de vie&nbsp;: la grandeur n'est pas petite partout, elle est nulle partout sauf dans un coin.</em></p>
+
+{{FIGURE:ordreliefsp|Relief de Speed, en échéance et en moneyness&nbsp;: la couverture de gamma ne se périme que dans un coin.}}
+
+  <h2 id="s-ord-controle">Une forme fermée qu'aucune route ne contrôle est une hypothèse</h2>
+
+  <p>Aucun des neuf guides de la série ne compare une formule à la dérivée qu'elle prétend être, et ce n'est pas un reproche de forme. La partie&nbsp;XXIV a trouvé dans <em>ce</em> dépôt une dérivée croisée dont le dénominateur oubliait une racine, restée fausse pendant une partie entière parce qu'aucune table et aucune figure ne la consommaient. Le contrôle coûte quatre lignes.</p>
+
+{{TABLE:ord_famille}}
+
+{{FIGURE:ordcontrole|Speed et Ultima, forme fermée contre différence finie&nbsp;: le pointillé sombre est posé par-dessus le trait clair.}}
+
+  <h2 id="s-ord-horloge">Deux des cinq n'ont aucun paramètre libre</h2>
+
+  <p>À la monnaie, le gamma vaut une constante divisée par la racine de l'échéance et le véga cette même constante multipliée par elle. Leurs dérivées en temps ne dépendent donc <strong>ni de la volatilité, ni du niveau de l'indice, ni du taux</strong>&nbsp;: le gamma de demain vaut la racine du rapport des échéances, et la part de véga qu'une journée emporte vaut un moins cette racine. Le guide écrit «&nbsp;substantiellement plus de gamma demain&nbsp;» et «&nbsp;le véga du mois avant se volatilise&nbsp;»&nbsp;; les deux sont justes, et ce que la mesure ajoute est qu'ils <em>se calculent sans rien savoir du marché</em>.</p>
+
+{{TABLE:ord_horloge}}
+
+{{FIGURE:ordhorloge|Le gamma de demain et le véga qu'une journée emporte, forme fermée contre mesure, en échelle logarithmique de jours.}}
+
+  <p>La veille de l'échéance, une option à la monnaie porte {{ord_gamma_veille}}&nbsp;% de gamma en plus le lendemain&nbsp;; à trente jours, {{ord_gamma_mois}}&nbsp;%. Le véga perd {{ord_veta_court}}&nbsp;% par jour à une semaine et {{ord_veta_long}}&nbsp;% à un an, un facteur&nbsp;{{ord_veta_facteur}}. <strong>Color et Veta décrivent un calendrier, et un calendrier ne se prévoit pas&nbsp;: il se lit.</strong></p>
+
+  <p>La lecture simple n'est pourtant pas exacte, et les deux écarts se nomment. Le premier vient de ce que l'argument de la densité n'est pas nul à la monnaie mais vaut la moitié de la racine de la variance&nbsp;; le second est le portage, qui déplace la monnaie elle-même. <em>Le second domine partout</em>, et c'est la troisième partie de suite où la question décisive est celle de la variable qu'on tient fixe.</p>
+
+{{FIGURE:ordcorrections|Les deux termes que la lecture simple laisse, et ce qu'ils valent aux ténors courts.}}
+
+{{FIGURE:ordreliefco|Relief de Color, en échéance et en moneyness&nbsp;: la gestion du risque du jour même est un coin, pas une plage.}}
+
+{{FIGURE:ordreliefve|Relief de Veta, en échéance et en moneyness&nbsp;: raide le long du temps, plat le long du prix.}}
+
+  <h2 id="s-ord-speed">Le mouvement qui divise le gamma par deux, et le seul guide qui se surestime</h2>
+
+  <p>Le guide écrit que le dernier jour, le gamma peut être divisé par deux sur un mouvement d'une fraction de pour cent. Le mouvement se résout&nbsp;: le gamma est proportionnel à une densité normale prise en son argument, donc il est divisé par deux quand cet argument vaut {{ord_constante}}, la racine de deux fois le logarithme de deux. <strong>C'est exactement la constante de la largeur d'un niveau de gamma que la partie&nbsp;XIX avait établie</strong>, rencontrée ici sur un objet sans rapport.</p>
+
+{{TABLE:ord_speed}}
+
+{{FIGURE:orddemigamma|Le mouvement qui divise le gamma par deux, et les heures pendant lesquelles il passe sous le pour cent.}}
+
+  <p>À un jour de l'échéance il faut {{ord_speed_1j}}&nbsp;% du comptant, et le seuil du guide n'est franchi que dans les {{ord_speed_heures}}&nbsp;dernières heures. <em>C'est le premier des neuf guides qui surestime son propre objet</em>&nbsp;; les cinq qui l'ont précédé le sous-estimaient, chacun d'une manière différente — les {{g_gap_gros}}&nbsp;points de delta de la partie&nbsp;XX, les {{va_delta_exact}}&nbsp;deltas de la partie&nbsp;XXIV, les jours du seuil de la partie&nbsp;XXV.</p>
+
+  <h2 id="s-ord-ultima">Deux changements de signe, et cela se démontre</h2>
+
+  <p>Le facteur d'Ultima se réduit à un trinôme du second degré en le produit des deux arguments, dès qu'on remarque que la somme de leurs carrés vaut la variance plus deux fois leur produit. Ses deux racines sont donc en forme fermée. La seconde est atteinte et borne la bande négative&nbsp;; <strong>la première ne l'est jamais</strong>, parce que le produit a lui-même un minimum et que ce minimum tombe au-dessus d'elle. L'affirmation du guide se démontre donc plutôt qu'elle ne se vérifie, ce qui est une meilleure façon d'avoir raison.</p>
+
+{{TABLE:ord_ultima}}
+
+{{FIGURE:ordultima|Ultima contre le comptant, ses deux bascules, et la racine négative que le produit n'atteint jamais.}}
+
+  <p>Ce qui ne tient pas est l'échelle. «&nbsp;Reflète la structure du volga&nbsp;» suggère deux bandes semblables&nbsp;; elles sont <strong>emboîtées et séparées par un facteur&nbsp;{{ord_rapport_bandes}}</strong>. Le même produit borne trois régions à trois seuils — zéro pour le volga, un pour Zomma, une racine voisine de trois pour Ultima — et seule la dernière dépasse le pas d'une grille de strikes&nbsp;: {{ord_bande_ultima}}&nbsp;% du comptant à trente jours contre {{ord_bande_volga}}&nbsp;%. <em>C'est le premier membre de cette famille qui existe sur un tableau de cotation</em>, après trois parties qui avaient toutes conclu l'inverse sur la leur.</p>
+
+{{FIGURE:ordbandes|Les trois largeurs bornées par le même produit, et le pas d'une grille de strikes.}}
+
+{{FIGURE:ordrelieful|Relief d'Ultima, en échéance et en moneyness&nbsp;: la seule des cinq dont la crête n'est pas à la monnaie.}}
+
+  <h2 id="s-ord-variance">Les quatre-vingt-dix-neuf pour cent, et ils sont sous-estimés</h2>
+
+  <p>La seule affirmation chiffrée de la section honnête du guide est que delta, gamma, thêta et véga décrivent plus de quatre-vingt-dix-neuf pour cent de la variance de P/L d'un opérateur directionnel. Elle se mesure&nbsp;: {{ord_tirages}}&nbsp;tirages joints, la volatilité implicite bougeant avec le comptant à corrélation&nbsp;{{ord_rho}} déclarée et jamais ajustée, le résidu portant vanna, volga, charm, veta, speed, zomma, color, ultima et tous les ordres au-delà.</p>
+
+{{TABLE:ord_variance}}
+
+{{FIGURE:ordvariance|Ce que quatre grecs expliquent et ce que les termes supérieurs laissent, livre nu et livre couvert.}}
+
+  <p>L'affirmation tient sur toute la grille et elle tient <strong>largement</strong>&nbsp;: jamais moins de {{ord_part_nu}}&nbsp;% pour un livre nu, {{ord_part_couvert}}&nbsp;% pour un livre couvert en delta, et dans le cas que le guide décrit lui-même le résidu vaut {{ord_residu_guide}}&nbsp;millionièmes de la variance. Le livre couvert, qu'il donne comme le premier des trois cas où les termes supérieurs comptent, se dégrade réellement — et pas jusqu'à l'effondrement. <em>Retirer le delta ne fait pas apparaître les termes supérieurs&nbsp;; cela retire le terme qui les écrasait.</em></p>
+
+{{FIGURE:ordresidu|Le résidu contre la durée de détention, à trois échéances, en part de variance et en points d'indice.}}
+
+  <p>Et la variable n'est pas celle qu'on croit. Une option très courte tenue une heure laisse un résidu négligeable&nbsp;; la même option tenue une journée en laisse cent fois plus. <strong>C'est la durée de détention qui décide, et non la maturité du contrat</strong> — ce qui rend exact, pour une raison que le guide n'écrit pas, le conseil qu'il donne à l'opérateur tenant des options quelques heures.</p>
+
+  <h2 id="s-ord-reste">Le décompte, et le guide qui écrit lui-même la conclusion</h2>
+
+{{TABLE:ord_reste}}
+
+{{FIGURE:ordreste|Le décompte des affirmations par ce qu'elles déplacent, et le cumul des neuf parties d'options.}}
+
+  <p>Sur les {{ord_total_options}}&nbsp;affirmations examinées dans les neuf parties consacrées aux options, <strong>aucune ne donne un sens</strong>. La colonne de la direction est vide pour la sixième partie consécutive. Ce qui distingue ce neuvième guide des huit autres n'est pas la qualité de ses formules, qui est comparable&nbsp;: c'est qu'il publie lui-même la conclusion. <em>Vendre ces grandeurs comme un signal intrajournalier est une erreur de catégorie.</em> Neuf documents écrits pour être utiles à un pupitre, et le dernier d'entre eux formule la thèse de la quatrième partie de celui-ci mieux qu'elle ne l'était.</p>
+
+  <div class="part">
+    <span class="lab">Vingt-huitième partie</span>
     <h2>Ce qu'une position coûte, dans les deux sens</h2>
-    <p>Vingt-six parties décrivent. Celle-ci décide. Chaque mesure du document est reprise et convertie en la seule chose qu'un opérateur ait à savoir avant d'entrer&nbsp;: <em>si je prends position ici, à la hausse ou à la baisse, quelle est la probabilité, que coûte l'erreur, et quelle dérive faudrait-il pour que cela vaille la peine.</em> Rien n'y est inventé — la chaîne de mesure existait, il fallait la brancher sur les deux sens. <strong>Deux faits en sortent, et aucun n'était dans le document.</strong></p>
+    <p>Vingt-sept parties décrivent. Celle-ci décide. Chaque mesure du document est reprise et convertie en la seule chose qu'un opérateur ait à savoir avant d'entrer&nbsp;: <em>si je prends position ici, à la hausse ou à la baisse, quelle est la probabilité, que coûte l'erreur, et quelle dérive faudrait-il pour que cela vaille la peine.</em> Rien n'y est inventé — la chaîne de mesure existait, il fallait la brancher sur les deux sens. <strong>Deux faits en sortent, et aucun n'était dans le document.</strong></p>
   </div>
 
   <h2 id="s-spec-issues">Une position a trois fins, et la troisième ne se déclare pas</h2>
@@ -3522,10 +3610,10 @@
 
   <p>Le réglage que cette partie propose — {{spec_horizon_optimal}}&nbsp;minutes, un stop de {{spec_stop_optimal}}&nbsp;points, un rapport d'un pour deux — <em>ne promet aucun avantage</em>. Il dit seulement où une dérive, si un opérateur en avait une, serait la plus visible, donc la plus vite prouvée ou réfutée&nbsp;: {{spec_ecart_optimal}}&nbsp;points de taux d'écart entre les deux sens, contre {{spec_ecart_haut}} au mieux des trois géométries déclarées. C'est moins qu'une stratégie et c'est plus qu'un avis, parce que c'est le seul des deux qui se calcule.</p>
 
-  <p>La ligne qui manque à toute cette partie est celle qu'aucune des vingt-six précédentes n'a trouvée. Ni les quinze lectures du catalogue, ni les douze setups, ni les cinquante-neuf affirmations des huit parties d'options n'apportent de dérive. <strong>Ce document n'a jamais rencontré d'avantage directionnel</strong>, et ce qu'il offre à la place est le seul objet qu'on puisse construire sans en avoir un&nbsp;: la géométrie où l'on saurait le plus vite s'il existe.</p>
+  <p>La ligne qui manque à toute cette partie est celle qu'aucune des vingt-sept précédentes n'a trouvée. Ni les quinze lectures du catalogue, ni les douze setups, ni les {{ord_total_options}}&nbsp;affirmations des neuf parties d'options n'apportent de dérive. <strong>Ce document n'a jamais rencontré d'avantage directionnel</strong>, et ce qu'il offre à la place est le seul objet qu'on puisse construire sans en avoir un&nbsp;: la géométrie où l'on saurait le plus vite s'il existe.</p>
 
   <div class="part">
-    <span class="lab">Vingt-huitième partie</span>
+    <span class="lab">Vingt-neuvième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

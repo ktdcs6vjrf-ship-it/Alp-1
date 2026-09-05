@@ -1,4 +1,4 @@
-"""Les tests de la partie XXVIII — les grecs du troisième ordre.
+"""Les tests de la partie XXVII — les grecs du troisième ordre.
 
 Trois tests portent ici plus que les autres. Le premier contrôle les cinq
 formes fermées contre la dérivée qu'elles prétendent être, ce qu'aucun des
@@ -15,6 +15,7 @@ import math
 import re
 import unittest
 
+from alp1 import figord
 from alp1 import grandeurs as G
 from alp1 import ordres as O
 from alp1 import vanna as va
@@ -325,6 +326,120 @@ class TestLesTables(unittest.TestCase):
     def test_aucune_valeur_ne_publie_un_zero_trompeur(self):
         for cle, v in O.values().items():
             self.assertNotIn("100,000", v, cle)
+
+
+class TestLesPlanches(unittest.TestCase):
+    def setUp(self):
+        self.rendus = figord.render_all()
+
+    def test_les_quatorze_planches_sont_la(self):
+        self.assertEqual(len(self.rendus), 14)
+
+    def test_aucune_couleur_n_est_ecrite_en_dur(self):
+        for cle, svg in self.rendus.items():
+            self.assertEqual(re.findall(r"#[0-9a-fA-F]{6}", svg), [], cle)
+
+    def test_aucune_entite_html_n_est_ecrite(self):
+        for cle, svg in self.rendus.items():
+            self.assertEqual(re.findall(r"&#\d+;", svg), [], cle)
+
+    def test_aucun_libelle_aria_ne_porte_d_apostrophe(self):
+        for cle, svg in self.rendus.items():
+            for aria in re.findall(r'aria-label="([^"]*)"', svg):
+                self.assertNotIn("'", aria, cle)
+                self.assertNotIn("\u2019", aria, cle)
+
+    def test_aucun_pied_ne_porte_de_marque(self):
+        for cle, svg in self.rendus.items():
+            for classe in ("lg cap", "lg keep"):
+                for texte in re.findall(
+                        r'<text[^>]*class="' + classe + r'"[^>]*>([^<]*)<',
+                        svg):
+                    self.assertNotIn("**", texte, cle)
+                    self.assertNotIn("*", texte, cle)
+                    self.assertNotIn("`", texte, cle)
+
+    def test_les_quatre_reliefs_portent_leur_echine(self):
+        for cle in ("ordreliefsp", "ordreliefco", "ordrelieful",
+                    "ordreliefve"):
+            self.assertIn('class="post"', self.rendus[cle], cle)
+            self.assertIn('class="nuage', self.rendus[cle], cle)
+
+    def test_toutes_les_graduations_tombent_dans_leur_domaine(self):
+        from alp1.figterm import Panel
+
+        hits = []
+        og_y, og_x = Panel.grid_y, Panel.grid_x
+
+        def enveloppe(nom, orig, lo_a, hi_a):
+            def f(self, ticks, *a, **k):
+                lo, hi = sorted((getattr(self, lo_a), getattr(self, hi_a)))
+                dehors = [t for t in ticks
+                          if not (lo - 1e-9 <= t <= hi + 1e-9)]
+                if dehors:
+                    hits.append((nom, self.title, dehors, (lo, hi)))
+                return orig(self, ticks, *a, **k)
+            return f
+
+        Panel.grid_y = enveloppe("grid_y", og_y, "y0", "y1")
+        Panel.grid_x = enveloppe("grid_x", og_x, "x0", "x1")
+        try:
+            figord.render_all()
+        finally:
+            Panel.grid_y, Panel.grid_x = og_y, og_x
+        self.assertEqual(hits, [])
+
+    def test_aucun_trace_n_est_reduit_par_le_decoupage(self):
+        from alp1.figterm import Panel
+
+        hits = []
+        og = Panel.path
+
+        def f(self, pts, *a, **k):
+            pts = list(pts)
+            dedans = [p for p in pts if self._in_domain(*p)]
+            if len(pts) > 2 and len(dedans) < 0.5 * len(pts):
+                hits.append((self.title, len(pts), len(dedans)))
+            return og(self, pts, *a, **k)
+
+        Panel.path = f
+        try:
+            figord.render_all()
+        finally:
+            Panel.path = og
+        self.assertEqual(hits, [])
+
+    def test_le_domaine_est_declare_avant_les_traces(self):
+        from alp1.figterm import Panel
+
+        hits = []
+        og_path, og_dom = Panel.path, Panel.domain
+
+        def path(self, pts, *a, **k):
+            if not getattr(self, "_domaine_declare", False):
+                hits.append(self.title)
+            return og_path(self, pts, *a, **k)
+
+        def domain(self, *a, **k):
+            self._domaine_declare = True
+            return og_dom(self, *a, **k)
+
+        Panel.path, Panel.domain = path, domain
+        try:
+            figord.render_all()
+        finally:
+            Panel.path, Panel.domain = og_path, og_dom
+        self.assertEqual(hits, [])
+
+    def test_le_bandeau_de_speculation_accroche_la_famille(self):
+        """Le piège des trente-sept figures orphelines, refermé ici.
+
+        Une clé qui n'accroche aucun préfixe rend un bandeau vide, et une
+        planche muette ressemble à une planche sans objet directionnel.
+        """
+        from alp1 import speculation as sp
+        for cle in self.rendus:
+            self.assertEqual(sp.module_d_une_figure(cle), "figord", cle)
 
 
 if __name__ == "__main__":
