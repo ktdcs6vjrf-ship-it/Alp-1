@@ -9,7 +9,7 @@ from __future__ import annotations
 import math
 
 from .costs import deflated_threshold_sharpe
-from .figures import Canvas, _esc, _legend, _num
+from .figures import Canvas, _bulle, _esc, _legend, _num
 from .report9 import SEALED_SR, SEALED_TRADES, _verdict
 
 
@@ -80,7 +80,7 @@ def fig_battery() -> str:
               f'text-anchor="end">{_esc(chk.label)}</text>')
         c.add(f'<circle class="pt {cls}" cx="{c.left + 12:.1f}" '
               f'cy="{y:.1f}" r="6">'
-              f'<title>{_esc(chk.reading)}</title></circle>')
+              f'<title>{_bulle(chk.reading)}</title></circle>')
         c.add(f'<text class="dl" x="{c.left + 28:.1f}" y="{y + 3.5:.1f}">'
               f'{_esc("franchi" if chk.passed else "manqué")}</text>')
 

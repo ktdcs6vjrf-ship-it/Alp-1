@@ -13,6 +13,7 @@ comme en thème sombre sans duplication.
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass, field
 
 from .barriers import prob_target_before_stop
@@ -28,8 +29,30 @@ STOP_PCT = 0.010
 FRICTION = COST_BASE.friction_points(ES)
 
 
+#: Un point décimal encadré de deux chiffres, et rien d'autre.
+_POINT_DECIMAL = re.compile(r"(?<=\d)\.(?=\d)")
+
+
 def _esc(text: str) -> str:
     return (text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+
+
+def _bulle(texte: str) -> str:
+    """Le texte d'une infobulle, échappé **et mis à la française**.
+
+    Une infobulle se compose au fil du code, souvent par une chaîne formatée
+    plutôt que par `_num`. Deux mille deux cent huit d'entre elles publiaient
+    « 33.3 % » quand l'étiquette dessinée juste à côté publiait « 33,3 % » :
+    le même nombre, deux fois, de deux façons, dans un document français.
+    Personne ne l'avait vu parce qu'une infobulle ne se lit qu'au survol.
+
+    Corriger deux mille appels aurait été une occasion de plus de les faire
+    diverger. La normalisation se fait donc **à l'endroit unique où une
+    infobulle est écrite**, et elle ne touche qu'un point encadré de deux
+    chiffres — jamais une abréviation, jamais une balise, jamais une
+    coordonnée.
+    """
+    return _esc(_POINT_DECIMAL.sub(",", texte))
 
 
 def _num(value: float, nd: int = 2) -> str:
@@ -161,7 +184,7 @@ class Canvas:
     def dot(self, x: float, y: float, cls: str, title: str = "") -> None:
         if not self.in_domain(x, y):
             return
-        t = f"<title>{_esc(title)}</title>" if title else ""
+        t = f"<title>{_bulle(title)}</title>" if title else ""
         self.add(f'<circle class="pt {cls}" cx="{self.sx(x):.2f}" cy="{self.sy(y):.2f}" '
                  f'r="4">{t}</circle>')
 
@@ -247,7 +270,7 @@ def fig_expectancy_plane() -> str:
             return (ox + (i - j) * cx, oy + (i + j) * cy - (val - zlo) * cz / (zhi - zlo))
 
         def poly(points, cls, tip=""):
-            t = f"<title>{_esc(tip)}</title>" if tip else ""
+            t = f"<title>{_bulle(tip)}</title>" if tip else ""
             return (f'<polygon class="{cls}" points="' +
                     " ".join(f"{x:.1f},{y:.1f}" for x, y in points) + f'">{t}</polygon>')
 
@@ -335,10 +358,12 @@ def fig_required_ir_heatmap() -> str:
             u = (math.log(v) - math.log(lo)) / (math.log(hi) - math.log(lo))
             step = min(7, max(0, int(round(u * 7))))
             x, y = left + cw * j, top + ch * i
+            bulle = _bulle(f"stop {pct:.3f} % · R:R 1:{r} · "
+                           f"IR requis {v:.3f}")
             parts.append(
                 f'<rect class="hm hm{step}" x="{x + 1:.1f}" y="{y + 1:.1f}" '
                 f'width="{cw - 2:.1f}" height="{ch - 2:.1f}">'
-                f'<title>stop {pct:.3f} % · R:R 1:{r} · IR requis {v:.3f}</title></rect>')
+                f'<title>{bulle}</title></rect>')
             ink = "cl-hi" if step >= 4 else "cl-lo"
             parts.append(f'<text class="cell {ink}" x="{x + cw / 2:.1f}" y="{y + ch / 2 + 4:.1f}" '
                          f'text-anchor="middle">{_num(v, 3)}</text>')

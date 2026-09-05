@@ -25,7 +25,7 @@ from functools import lru_cache
 
 from .costs import deflated_threshold_sharpe
 from .entropy import trades_for_information
-from .figterm import Board, Panel, _esc, _num, _signed
+from .figterm import Board, Panel, _bulle, _esc, _num, _signed
 from .journal import LEVERS, synthesise
 from .operator import evaluate
 
@@ -295,7 +295,7 @@ def _surface(board: Board, ox: float, oy: float, z: list[list[float]],
         brut = z[i][j] if tip_value is None else tip_value(z[i][j])
         board.add(f'<circle class="noeud {classify(z[i][j])}" cx="{x:.1f}" '
                   f'cy="{y:.1f}" r="2.6">'
-                  f'<title>{_esc(tip.format(v=brut))}</title></circle>')
+                  f'<title>{_bulle(tip.format(v=brut))}</title></circle>')
 
     # L'échine de hauteur, à gauche du coin le plus à gauche. Sans
     # graduation, on ne la trace pas : un axe nu se lit comme inachevé. Le
@@ -505,8 +505,8 @@ def fig_plane() -> str:
         # zéro reste lisible — il est gradué sur l'échine, et la couleur en
         # fait une frontière.
         _surface(b, ox, 224, z, lo, hi, cx=28.0, cy=10.0, cz=112.0,
-                 row_labels=[f"{p:.0%}" for p in selectivity],
-                 col_labels=[f"{s:g} R" for s in sizing],
+                 row_labels=[_num(100 * p, 0) + " %" for p in selectivity],
+                 col_labels=[_num(s, 1) + " R" for s in sizing],
                  z_ticks=graduations(lo, hi),
                  tip="{v:+.3f} R", classify=diverging, zero=lo)
 
@@ -1206,7 +1206,7 @@ def fig_powermap() -> str:
             x = gx + i * cw
             b.add(f'<rect class="{_ramp(pw)}" x="{x + 1:.1f}" y="{y + 1:.1f}" '
                   f'width="{cw - 2:.1f}" height="{ch - 2:.1f}">'
-                  f'<title>{n} décisions · {_esc(_num(bits, 4))} bit · '
+                  f'<title>{n} décisions · {_bulle(_num(bits, 4))} bit · '
                   f'puissance {pw:.0%}</title></rect>')
             b.add(f'<text class="cell {"cl-hi" if pw > 0.55 else "cl-lo"}" '
                   f'x="{x + cw / 2:.1f}" y="{y + ch / 2 + 3.5:.1f}" '
@@ -1415,7 +1415,7 @@ def fig_layers() -> str:
             b.add(f'<rect class="{"s1f" if actif else "wash"}" '
                   f'x="{x + 2:.1f}" y="{y + 2:.1f}" '
                   f'width="{cw - 4:.1f}" height="{ch - 4:.1f}" rx="2">'
-                  f'<title>{_esc(nom)} — '
+                  f'<title>{_bulle(nom)} — '
                   f'{"alimente" if actif else "n a pas d effet sur"} '
                   f'le levier « {NOMS_LEVIERS[k]} »</title></rect>')
 

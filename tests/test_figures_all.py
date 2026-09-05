@@ -51,6 +51,33 @@ class TestToutesLesFigures(unittest.TestCase):
         cls.figs = {f"{m}:{k}": v
                     for m in MODULES for k, v in _render(m).items()}
 
+    def test_aucune_infobulle_ne_publie_un_point_decimal(self):
+        """Le document est français jusque dans ce qui ne se lit qu'au survol.
+
+        Deux mille deux cent huit infobulles publiaient « 33.3 % » quand
+        l'étiquette dessinée juste à côté publiait « 33,3 % » : le même
+        nombre, deux fois, de deux façons, sur la même planche. Personne ne
+        l'avait vu, et c'est normal — une infobulle ne se lit qu'au survol,
+        et aucun des trois balayages ne la regarde.
+
+        La correction n'est pas dans les deux mille appels mais à l'endroit
+        unique où une infobulle est écrite : `_bulle`, dans les deux moteurs.
+        Ce test est ce qui empêche un dix-septième site d'y échapper.
+        """
+        for cle, svg in self.figs.items():
+            for texte in re.findall(r"<title>(.*?)</title>", svg, re.S):
+                self.assertIsNone(re.search(r"\d\.\d", texte),
+                                  f"{cle} :: {texte[:80]}")
+
+    def test_aucune_etiquette_visible_ne_publie_un_point_decimal(self):
+        """Et la même exigence sur ce qui se lit sans survoler."""
+        for cle, svg in self.figs.items():
+            sans = re.sub(r"<title>.*?</title>", "", svg, flags=re.S)
+            for texte in re.findall(r"<text[^>]*>(.*?)</text>", sans, re.S):
+                nu = re.sub(r"<[^>]+>", "", texte)
+                self.assertIsNone(re.search(r"\d\.\d", nu),
+                                  f"{cle} :: {nu[:80]}")
+
     def test_aucune_couleur_n_est_ecrite_en_dur(self):
         """Les couleurs passent par les variables CSS, sans exception.
 

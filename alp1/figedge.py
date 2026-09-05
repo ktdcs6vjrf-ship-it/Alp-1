@@ -13,7 +13,7 @@ import math
 from .costs import deflated_threshold_sharpe
 from .discipline import SEALED_BUDGET, breaking_deviations, deviation_cost
 from .entropy import null_mutual_information, required_bits, trades_for_information
-from .figures import Canvas, _esc, _legend, _num, _swatches
+from .figures import Canvas, _bulle, _esc, _legend, _num, _swatches
 from .nonlinear import EMBED, null_permutation
 from .report6 import (
     C_OVER_L_V1,
@@ -104,7 +104,7 @@ def fig_three_routes() -> str:
         c.add(f'<rect class="area ar{ {"s3": 2, "s1": 1, "s2": 3}[cls] }" '
               f'x="{c.left:.1f}" y="{y:.1f}" width="{w:.1f}" '
               f'height="{h * 0.52:.1f}" rx="2">'
-              f'<title>{_esc(nom)} · {val:,.0f} trades</title></rect>')
+              f'<title>{_bulle(nom)} · {val:,.0f} trades</title></rect>')
         c.add(f'<text class="lg" x="{c.left - 8:.1f}" '
               f'y="{y + h * 0.34:.1f}" text-anchor="end">{_esc(nom)}</text>')
         c.add(f'<text class="dl halo" x="{c.left + w + 7:.1f}" '
@@ -159,8 +159,9 @@ def fig_noise_floor() -> str:
               f'x2="{x1:.1f}" y2="{y:.1f}" stroke-width="3" '
               f'stroke-linecap="round" opacity="0.34"/>')
         c.add(f'<circle class="pt s2" cx="{x1:.2f}" cy="{y:.2f}" r="5">'
-              f'<title>{_esc(nom)} · plancher {val * 1e6:.1f}×10⁻⁶ bit, '
-              f'{val / besoin:.0f} fois l\'exigence</title></circle>')
+              f'<title>{_bulle(nom + " · plancher " + _num(val * 1e6, 1))}'
+              f'×10⁻⁶ bit, {_num(val / besoin, 0)} fois l\'exigence'
+              f'</title></circle>')
         c.add(f'<text class="lg" x="{c.left - 8:.1f}" y="{y + 3.5:.1f}" '
               f'text-anchor="end">{_esc(nom)}</text>')
         c.add(f'<text class="dl halo" x="{x1 + 10:.1f}" y="{y + 3.5:.1f}">'

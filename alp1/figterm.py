@@ -22,6 +22,7 @@ support de lecture aux grandeurs calculées, jamais de preuve.
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass, field
 
 from . import dow, fib, gex, orderflow, vprofile
@@ -47,8 +48,30 @@ def _plausible() -> tuple[float, float]:
     return PLAUSIBLE_DRIFT_PER_HOUR
 
 
+#: Un point décimal encadré de deux chiffres, et rien d'autre.
+_POINT_DECIMAL = re.compile(r"(?<=\d)\.(?=\d)")
+
+
 def _esc(text: str) -> str:
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _bulle(texte: str) -> str:
+    """Le texte d'une infobulle, échappé **et mis à la française**.
+
+    Une infobulle se compose au fil du code, souvent par une chaîne formatée
+    plutôt que par `_num`. Deux mille deux cent huit d'entre elles publiaient
+    « 33.3 % » quand l'étiquette dessinée juste à côté publiait « 33,3 % » :
+    le même nombre, deux fois, de deux façons, dans un document français.
+    Personne ne l'avait vu parce qu'une infobulle ne se lit qu'au survol.
+
+    Corriger deux mille appels aurait été une occasion de plus de les faire
+    diverger. La normalisation se fait donc **à l'endroit unique où une
+    infobulle est écrite**, et elle ne touche qu'un point encadré de deux
+    chiffres — jamais une abréviation, jamais une balise, jamais une
+    coordonnée.
+    """
+    return _esc(_POINT_DECIMAL.sub(",", texte))
 
 
 def _num(value: float, nd: int = 2) -> str:
@@ -318,7 +341,7 @@ class Panel:
         if current:
             segments.append(current)
         extra = f' stroke-dasharray="{dash}"' if dash else ""
-        t = f"<title>{_esc(tip)}</title>" if tip else ""
+        t = f"<title>{_bulle(tip)}</title>" if tip else ""
         for seg in segments:
             if len(seg) < 2:
                 continue
@@ -341,7 +364,7 @@ class Panel:
                      for i, (x, y) in enumerate(pts_top))
         d += (f" L{self.sx(pts_top[-1][0]):.2f},{self.sy(baseline):.2f}"
               f" L{self.sx(pts_top[0][0]):.2f},{self.sy(baseline):.2f} Z")
-        t = f"<title>{_esc(tip)}</title>" if tip else ""
+        t = f"<title>{_bulle(tip)}</title>" if tip else ""
         self.board.add(f'<path class="{cls}" d="{d}">{t}</path>')
 
     def hbar(self, y_center: float, x_from: float, x_to: float, thickness: float,
@@ -349,7 +372,7 @@ class Panel:
         """Barre horizontale : les profils de prix se lisent verticalement."""
         xa, xb = sorted((self.sx(x_from), self.sx(x_to)))
         yy = self.sy(y_center) - thickness / 2.0
-        t = f"<title>{_esc(tip)}</title>" if tip else ""
+        t = f"<title>{_bulle(tip)}</title>" if tip else ""
         self.board.add(f'<rect class="{cls}" x="{xa:.2f}" y="{yy:.2f}" '
                        f'width="{max(xb - xa, 0.4):.2f}" height="{thickness:.2f}">{t}</rect>')
 
@@ -357,7 +380,7 @@ class Panel:
              cls: str, tip: str = "") -> None:
         ya, yb = sorted((self.sy(y_from), self.sy(y_to)))
         xx = self.sx(x_center) - thickness / 2.0
-        t = f"<title>{_esc(tip)}</title>" if tip else ""
+        t = f"<title>{_bulle(tip)}</title>" if tip else ""
         self.board.add(f'<rect class="{cls}" x="{xx:.2f}" y="{ya:.2f}" '
                        f'width="{thickness:.2f}" height="{max(yb - ya, 0.4):.2f}">{t}</rect>')
 
@@ -382,7 +405,7 @@ class Panel:
                        f'x2="{xx:.1f}" y2="{self.y + self.h:.1f}"/>')
 
     def dot(self, x: float, y: float, cls: str, tip: str = "", r: float = 4.0) -> None:
-        t = f"<title>{_esc(tip)}</title>" if tip else ""
+        t = f"<title>{_bulle(tip)}</title>" if tip else ""
         self.board.add(f'<circle class="pt {cls}" cx="{self.sx(x):.2f}" '
                        f'cy="{self.sy(y):.2f}" r="{r:g}">{t}</circle>')
 
@@ -771,7 +794,8 @@ def fig_dow_null() -> str:
         w = seg_w * frac
         b.add(f'<rect class="{cls}" x="{seg_x + acc:.1f}" y="{strip_y:.0f}" '
               f'width="{max(w - 2, 1):.1f}" height="14" rx="2">'
-              f'<title>{_esc(name)} · {100 * frac:.1f} %</title></rect>')
+              f'<title>{_bulle(name)} · {_num(100 * frac, 1)} %'
+              f'</title></rect>')
         b.add(f'<text class="lg" x="{seg_x + acc + w / 2:.1f}" y="{strip_y + 26:.0f}" '
               f'text-anchor="middle">{_esc(name)}</text>')
         b.add(f'<text class="dl halo" x="{seg_x + acc + w / 2:.1f}" '

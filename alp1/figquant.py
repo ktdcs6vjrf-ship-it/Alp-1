@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import math
 
-from .figterm import Board, Panel, _esc, _num, _signed
+from .figterm import Board, Panel, _bulle, _esc, _num, _signed
 
 
 # --- Primitive : surface isométrique ---------------------------------------
@@ -66,7 +66,7 @@ def surface(
                 oy + (i + j) * cy - (val - zlo) * cz / (zhi - zlo))
 
     def poly(points, cls, title=""):
-        t = f"<title>{_esc(title)}</title>" if title else ""
+        t = f"<title>{_bulle(title)}</title>" if title else ""
         return (f'<polygon class="{cls}" points="'
                 + " ".join(f"{x:.1f},{y:.1f}" for x, y in points) + f'">{t}</polygon>')
 
@@ -823,7 +823,7 @@ def fig_crossval() -> str:
             for a, c, kind in runs:
                 b.add(f'<rect class="{cls[kind]}" x="{px + w * a / n_obs:.1f}" '
                       f'y="{y + 1:.1f}" width="{max(w * (c - a) / n_obs, 0.6):.1f}" '
-                      f'height="{rh - 2:.1f}"><title>{_esc(kind)} : '
+                      f'height="{rh - 2:.1f}"><title>{_bulle(kind)} : '
                       f'{c - a} observations</title></rect>')
             b.add(f'<text class="tk" x="{px - 6:.1f}" y="{y + rh - 3:.1f}" '
                   f'text-anchor="end">{k + 1}</text>')
