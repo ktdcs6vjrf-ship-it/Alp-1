@@ -21,8 +21,8 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (157 sections en vingt-neuf
-parties, 163 tables, 243 figures dont soixante-dix surfaces en nuage de
+**ALP nº 3** — `docs/prouver-un-jugement.html` (166 sections en trente
+parties, 173 tables, 259 figures dont soixante-quatorze surfaces en nuage de
 points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
@@ -34,7 +34,8 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `figrev.py` + `niveaux.py` + `fignv.py` + `grandeurs.py` + `figgra.py` +
 `theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` + `vanna.py` +
 `figva.py` + `charm.py` + `figch.py` + `volga.py` + `figvo.py` +
-`ordres.py` + `figord.py` + `speculation.py` + `figspec.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`ordres.py` + `figord.py` + `implicite.py` + `figiv.py` +
+`speculation.py` + `figspec.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -65,8 +66,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/0bf1fb72-2a2d-4b19-8569-ac60d0e4d877
-  (précédents : 9d9ad6dc, 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
+- ALP nº 3 : https://claude.ai/code/artifact/1d4e0835-600c-41af-80c2-a639e061157e
+  (précédents : 0bf1fb72, 9d9ad6dc, 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
   8edc727c, b40a2d6b, e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee,
   d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005,
   4e95dfbc, e49bcb16, c360de80)
@@ -830,8 +831,84 @@ d'Ultima à la monnaie vaut 235 fois moins que son pic, donc son point tombait
 exactement sur la ligne à côté des deux vraies bascules et la planche
 montrait trois traversées là où il y en a deux.
 
-Sa **partie XXVIII** est la feuille de spéculation — `speculation.py` +
-`figspec.py`. Les vingt-sept parties qui précèdent décrivent ; celle-ci
+Sa **partie XXVIII** est le dixième et dernier guide de la série d'options,
+consacré à la volatilité implicite — `implicite.py` + `figiv.py`. C'est le
+**second des dix à publier le résultat de son propre test négatif**, après
+celui du vanna, et le seul dont ce résultat porte sur un outil qu'il
+recommande par ailleurs : une relation monotone entre l'IV rank et les
+résultats à venir, dit-il, *disparaît entièrement* dès que la fenêtre de
+classement est rendue strictement glissante. Sa phrase d'ouverture est la
+meilleure définition de la série — *l'implicite n'est pas une prévision, pas
+une mesure ; c'est le nombre qu'il faut mettre dans le modèle pour retrouver
+un prix déjà observé* — et le dépôt en tire ce qu'elle implique : si c'est un
+changement d'unités, **la précision de la traduction se calcule**.
+
+① **Deux bornes que le guide ne nomme pas.** Il borne l'existence de la
+solution par l'arbitrage. Il en manque deux, plus proches : le lieu où un
+seul tick vaut un point entier de volatilité (`100·tick/𝒱`, qui diverge où le
+véga meurt — 0,44 point à la monnaie et à trente jours, 3,5 à cinq deltas et
+une semaine), et surtout `moneyness_cotable`, **le lieu où le prix théorique
+tombe sous un demi-tick** : l'écran affiche zéro, et zéro est *sous* le
+plancher d'arbitrage. À sept jours cette frontière est à 7 % de la monnaie.
+② **Un IV rank sur un an porte l'information de deux observations.** C'est le
+résultat structurant, et il vient d'un fait absent du guide : la volatilité
+est persistante, donc l'échantillon effectif d'une fenêtre vaut `n(1−ρ)/(1+ρ)`
+= `κT/2` — *le nombre d'observations disparaît de la formule*. Contrôlé
+contre la dispersion mesurée d'un percentile sur quatre cents fenêtres.
+Conséquence : séparer un percentile de 80 d'un percentile de 50 demande
+**8,8 ans**, et « annoncez la fenêtre » est juste et insuffisant, puisque la
+fenêtre ne dit pas l'échantillon.
+③ **Le rang est hostage d'un point, le percentile d'un sur n**, et le rapport
+des deux sensibilités **croît avec la fenêtre** : allonger la fenêtre, geste
+par lequel on croit stabiliser une statistique, aggrave le rang dans la
+proportion où il améliore le percentile. C'est le défaut du Calmar de la
+partie XVIII sur un troisième objet.
+④ **Le look-ahead reproduit sous loi nulle**, et le premier jet s'y est
+trompé — voir les pièges. À loi nulle correcte, le classement glissant rend
+0,03 (sous son seuil) et le classement fuité 0,22, **et l'artefact grandit
+avec l'horizon de détention**, ce qu'aucun des dix guides n'écrit.
+⑤ **Une part de la prime publiée est une propriété de l'unité.** Un vendeur
+dont l'implicite égale exactement la volatilité vraie a une espérance **nulle
+en variance** et **positive en volatilité** : la racine est concave, le biais
+vaut 0,23 point par expiration mensuelle — un neuvième du bas de la
+fourchette que le guide annonce — et sa forme fermée `σ/(4h)` referme la
+mesure. *Le guide écrit que l'option est cotée dans les mauvaises unités,
+exprès ; voici ce que l'unité paie.* Et le vendeur sans le moindre avantage
+gagne **53,9 %** de ses expirations, ce qui fait vivre la prime courte bien
+au-delà de ce que son espérance justifie.
+⑥ **Les cinq pièges, tous en points de volatilité**, et le classement n'est
+pas celui de la liste : le plus cher est « grecs de fournisseur », que le
+guide place en dernier, et il l'est *par construction* — il cache les quatre
+autres à la fois. Deux d'entre eux sont **le même nombre**, `−Δ·ΔS/𝒱`.
+⑦ **Le décompte** : cinq affirmations déplacent le risque, une l'horloge,
+trois rien, **aucune la direction** — septième partie consécutive. Sur les
+**soixante-seize** affirmations des dix parties d'options, aucune ne donne un
+sens.
+
+Quatre pièges y sont enterrés, et deux sont des affirmations écrites d'avance
+que la mesure a réfutées. Le premier est **le signe d'une forme fermée** :
+`∂σ/∂S` à prix constant vaut `−Δ/𝒱`, le premier jet écrivait le signe opposé,
+et *les cinq pièges, tous pris en valeur absolue, ne voyaient rien* — c'est le
+contrôle contre la réinversion complète qui a rendu deux cents pour cent
+d'écart. **Une forme fermée dont on ne consomme que la valeur absolue est une
+forme fermée à moitié contrôlée.** Le deuxième est **la loi nulle du
+look-ahead**, qui n'en était pas une : le premier jet posait le gain comme le
+niveau de volatilité moins la réalisée qui suit, et la colonne glissante
+rendait 0,284 là où zéro était exigé — non par un bug, mais parce que *sous un
+retour à la moyenne le niveau prédit vraiment la variation*, et que confondre
+le niveau avec un prix est exactement la confusion que le guide dissout. Le
+troisième est **le delta de la frontière** : on attendait une horizontale par
+analogie avec le pic du vanna de la partie XXIV, la mesure rend une
+décroissance d'un facteur dix, et le mécanisme est qu'un seuil *absolu* sur
+une densité qui s'aplatit ne peut pas rendre un argument constant. Le
+quatrième n'a été vu qu'en regardant la page : la surface du pas de cotation
+était portée en **moneyness**, si bien qu'une de ses cellules — `S/K = 0,90`
+à deux jours — rendait dix millions de points de volatilité par tick sur un
+strike qui ne cote plus du tout ; elle est en **delta** depuis, pour la raison
+même que le guide donne.
+
+Sa **partie XXIX** est la feuille de spéculation — `speculation.py` +
+`figspec.py`. Les vingt-huit parties qui précèdent décrivent ; celle-ci
 décide. Chaque mesure du document y est convertie en la seule chose qu'un
 opérateur ait à savoir avant d'entrer : si je prends position ici, dans un
 sens ou dans l'autre, quelle probabilité, quel coût, et quelle dérive
@@ -1164,6 +1241,35 @@ Rendu
   planche d'Ultima ne pose plus de point à la monnaie sur la ligne de zéro
   (il y valait 235 fois moins que le pic et se lisait comme une troisième
   bascule).
+- `implicite.py` — **le nombre qu'il faut mettre dans le modèle.**
+  `bornes_d_arbitrage` et `existe`, qui font de l'inversion une fonction
+  **partielle** ; `implicite` par bissection et `implicite_newton` par le
+  véga, les deux routes dont l'accord est le contrôle — et dont le désaccord,
+  dans l'aile courte, *est* le plancher numérique de la partie XXVI.
+  `points_de_vol_par_tick` = `100·tick/𝒱` et son contrôle par réinversion ;
+  `strike_du_point_de_vol` et **`moneyness_cotable`**, les deux frontières
+  que le guide ne nomme pas, cherchées du côté hors de la monnaie ;
+  `ecart_a_la_droite`, qui mesure ce que la réciproque s'écarte de sa corde
+  (0,9 % à la monnaie, 43 % dans l'aile). `serie` — un Ornstein-Uhlenbeck en
+  logarithme, **amorcé dans son régime stationnaire**, graine explicite ;
+  `iv_rank` / `iv_percentile` et leurs sensibilités, `borne_du_rapport`
+  moyennée sur deux cents tirages parce qu'un tirage unique n'est pas
+  monotone. `echantillon_effectif` = `n(1−ρ)/(1+ρ)` et sa mesure par la
+  dispersion d'un percentile ; `seances_pour_distinguer`.
+  **`implicite_juste`**, l'espérance conditionnelle de la réalisée à venir en
+  forme fermée — c'est elle qui fait du gain une loi nulle — et
+  `biais_de_look_ahead`, dont le champ `esperance` contrôle que la loi nulle
+  en est une. `campagne`, qui publie **les deux comptabilités** du même livre,
+  `biais_d_unite` et sa forme fermée `σ/(4h)`. `derive_par_deplacement` =
+  `−Δ·ΔS/𝒱` (le signe a coûté un défaut), son contrôle, et
+  `ecart_du_premier_ordre`, qui chiffre ce que le premier ordre manque au
+  lieu de le qualifier. `pieges()`, dont le cinquième est la **somme** des
+  quatre autres, et un test l'exige. Dix tables, quatre surfaces.
+- `figiv.py` — les seize planches de la partie XXVIII, dont quatre reliefs.
+  Deux d'entre elles ont été refaites après avoir été **regardées** : la
+  planche de l'inversion annonçait une pente qui diverge et montrait une
+  droite, et la surface du pas de cotation portait une moneyness là où seul
+  un delta décrit le même objet à deux échéances.
 - `speculation.py` — **ce qu'une lecture vaut si l'on prend position.**
   `Issue` et `lire` (les trois issues, session comprise, dans les deux sens) ;
   `portee_de_seance` et `rr_atteignable`, les deux nombres qui disent si un
@@ -1177,7 +1283,7 @@ Rendu
   `_PREFIXES`, relevée sur les clés réelles et gardée par un test ;
   `familles_par_geometrie`, qui **calcule** le regroupement au lieu de
   l'écrire. Neuf tables, quatre surfaces.
-- `figspec.py` — les quinze planches de la partie XXVIII, dont quatre reliefs.
+- `figspec.py` — les quinze planches de la partie XXIX, dont quatre reliefs.
 - `pieds.py` porte en plus `bandeau_html` : la ligne de spéculation sous
   chaque figure, passée par `figure_html` avec la clé de la figure. Seul
   `discpaper` la passe ; les deux autres documents sont rendus comme avant.
@@ -1187,7 +1293,7 @@ Rendu
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — vingt-cinq modules, chacun expose `render_all()`. `figcat.py` porte
+- `fig*.py` — vingt-six modules, chacun expose `render_all()`. `figcat.py` porte
   les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.

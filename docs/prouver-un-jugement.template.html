@@ -3488,8 +3488,128 @@
 
   <div class="part">
     <span class="lab">Vingt-huitième partie</span>
+    <h2>La volatilité implicite, et les deux nombres qu'on en tire à tort</h2>
+    <p>Dixième document de la série d'options, et le second — après celui du vanna — à <strong>publier le résultat de son propre test négatif</strong>. Une relation monotone entre le rang de volatilité implicite et les résultats à venir, dit-il, <em>disparaît entièrement</em> dès que la fenêtre de classement est rendue strictement glissante&nbsp;: le motif était un artefact du classement, pas une propriété du marché. Le dépôt reprend ce test, en publie la loi nulle, et découvre que l'artefact est plus grand que le guide ne l'écrit. Sa phrase d'ouverture, elle, est la meilleure définition de l'objet qu'on puisse donner.</p>
+  </div>
+
+  <h2 id="s-iv-inversion">Unique quand elle existe, et deux bornes plus proches</h2>
+
+  <p>«&nbsp;L'implicite n'est pas une prévision, pas une mesure, pas une propriété du sous-jacent&nbsp;: c'est le nombre qu'il faut mettre dans Black-Scholes pour retrouver un prix qu'on a déjà observé.&nbsp;» Cette phrase dissout la moitié des confusions de la série, et le dépôt y souscrit sans réserve. Il va là où le guide s'arrête&nbsp;: si l'implicite est un <strong>changement d'unités</strong>, alors la précision de la traduction se calcule, et elle n'est pas la même partout.</p>
+
+{{TABLE:iv_inversion}}
+
+{{FIGURE:ivinversion|Le prix contre la volatilité, et la fonction réciproque qu'un moteur d'inversion calcule réellement.}}
+
+  <p>Le cadre de droite porte une affirmation écrite d'avance et <strong>réfutée par la mesure</strong>. On y annonçait une pente qui diverge&nbsp;; la réciproque est une droite. À la monnaie, la densité qui porte le véga vaut sa constante à un centième près quelle que soit la volatilité, donc la fonction inverse s'écarte de sa corde de {{iv_droite_atm}}&nbsp;% seulement — <em>et c'est ce qui autorise un opérateur à raisonner en volatilité comme il raisonnerait en prix.</em> Dans l'aile l'écart vaut {{iv_droite_aile}}&nbsp;%, quarante-cinq fois plus, et le raisonnement cesse d'être valide exactement là où le pupitre croit encore l'appliquer.</p>
+
+{{FIGURE:ivroutes|Le véga contre la moneyness, et l'écart entre bissection et Newton sur toute la plage.}}
+
+  <p>Deux routes indépendantes vers le même nombre — une bissection, qui ne demande que la monotonie, et un Newton, qui demande le véga — et leur accord est le contrôle de la section. Aucun des dix guides ne le publie. Il vaut la peine de noter <em>où</em> les deux cessent de se refermer&nbsp;: dans l'aile courte, le prix est plat à la résolution d'un flottant, et deux volatilités séparées de cinq millionièmes rendent le même prix à la dixième décimale. Ce n'est pas une faiblesse de l'algorithme, c'est le <strong>plancher numérique</strong> que la partie&nbsp;XXVI avait rencontré sur le sourire, retrouvé ici sur l'objet dont il est la définition.</p>
+
+  <h2 id="s-iv-tick">Un pas de cotation ne vaut pas le même nombre de points partout</h2>
+
+  <p>La précision de la traduction vaut <span class="mono">100·tick/𝒱</span>. Le véga est au dénominateur, donc la quantité diverge exactement là où il s'annule&nbsp;: dans l'aile et près de l'échéance. Le guide place sa remarque sur les fourchettes larges dans les <em>marchés</em> larges&nbsp;; la mesure dit qu'elle vaut d'abord loin de la monnaie, y compris dans un marché dont la fourchette en prix ne fait qu'un seul tick.</p>
+
+{{TABLE:iv_tick}}
+
+{{FIGURE:ivtick|Ce qu'un pas de cotation vaut en points de volatilité, par delta et par échéance.}}
+
+  <p>À la monnaie et à trente jours, un tick vaut {{iv_tick_atm}}&nbsp;point de volatilité&nbsp;; à cinq deltas et une semaine, {{iv_tick_extreme}}. <em>L'objet coté n'a plus deux chiffres significatifs</em>, et aucune surface construite dessus n'en a non plus.</p>
+
+{{TABLE:iv_frontiere}}
+
+{{FIGURE:ivfrontiere|Les deux frontières de la cotation contre l'échéance, en moneyness et en delta.}}
+
+  <p>Il y a deux frontières et le guide n'en nomme aucune. La première est le lieu où un tick vaut un point entier. La seconde est plus radicale&nbsp;: au-delà, le prix théorique tombe sous un demi-tick, l'écran affiche zéro, et <strong>zéro est sous le plancher d'arbitrage</strong> — il n'y a donc aucune volatilité implicite, à aucune précision. Le cadre de droite porte une seconde affirmation réfutée&nbsp;: on attendait un lieu à delta constant, par analogie avec le pic du vanna de la partie&nbsp;XXIV, et la mesure donne une décroissance d'un facteur dix. Le mécanisme est dans la formule — <em>un seuil absolu posé sur une densité qui s'aplatit ne peut pas rendre un argument constant.</em></p>
+
+{{FIGURE:ivrelieftk|Relief de ce qu'un tick vaut en points de volatilité, en échéance et en delta du strike.}}
+
+  <h2 id="s-iv-effectif">Une année de séances porte deux observations</h2>
+
+  <p>C'est le résultat structurant de la partie, et il vient d'un fait que le guide ne mentionne pas&nbsp;: la volatilité est <strong>persistante</strong>. L'échantillon effectif d'une fenêtre de classement vaut <span class="mono">n(1−ρ)/(1+ρ)</span>, c'est-à-dire <span class="mono">κT/2</span> pour un retour à la moyenne lent devant la séance. <em>Le nombre d'observations disparaît de la formule</em>, et ce qui reste est la durée multipliée par une vitesse que personne n'observe.</p>
+
+{{TABLE:iv_effectif}}
+
+{{FIGURE:iveffectif|L'échantillon effectif d'une fenêtre de classement, contre sa longueur et la vitesse de retour à la moyenne.}}
+
+  <p>À la vitesse de référence, une année de séances porte {{iv_neff_an}}&nbsp;observations indépendantes et cinq années en portent {{iv_neff_cinq}}. La forme fermée est contrôlée contre la dispersion mesurée d'un percentile sur quatre cents fenêtres tirées, qui rend {{iv_neff_mesure}}. <strong>Regarder la volatilité plus souvent n'apprend rien&nbsp;; il faut la regarder plus longtemps.</strong></p>
+
+{{FIGURE:ivreliefef|Relief de l'échantillon effectif, en vitesse de retour à la moyenne et en longueur de fenêtre.}}
+
+  <h2 id="s-iv-budget">Le plus lourd des dix budgets d'information</h2>
+
+  <p>L'échantillon indépendant requis pour séparer deux percentiles vaut <span class="mono">z²(p(1−p)+q(1−q))/(p−q)²</span>, et la persistance le multiplie par <span class="mono">(1+ρ)/(1−ρ)</span>. C'est le budget d'information de la partie&nbsp;IV rencontré sur un dixième objet, et le plus lourd des dix.</p>
+
+{{TABLE:iv_budget}}
+
+{{FIGURE:ivbudget|Les années requises pour séparer deux percentiles, contre l'écart et la vitesse de retour.}}
+
+  <p>Distinguer un percentile de quatre-vingts d'un percentile de cinquante demande {{iv_annees_80}}&nbsp;ans de données&nbsp;; un percentile de quatre-vingt-dix-neuf d'un percentile de quatre-vingt-dix, {{iv_annees_99}}. Le guide recommande d'annoncer la fenêtre de classement, ce qui est la bonne recommandation et <strong>ne suffit pas</strong>&nbsp;: deux outils qui annoncent la même fenêtre sur deux actifs de vitesses différentes publient deux nombres qui n'ont pas la même précision, et rien dans leur affichage ne le dit. <em>La vitesse est le paramètre qu'il faudrait annoncer, et personne ne l'observe.</em></p>
+
+{{FIGURE:ivreliefbu|Relief des années requises pour distinguer un percentile de la médiane.}}
+
+  <h2 id="s-iv-pic">Le rang est hostage d'un point, le percentile d'un sur n</h2>
+
+  <p>«&nbsp;Le rang n'emploie que les deux extrêmes de la fenêtre et se trouve donc à la merci d'un seul pic&nbsp;; un jour de crise peut le tenir artificiellement bas pendant un an.&nbsp;» Exact, et la mesure ajoute le facteur.</p>
+
+{{TABLE:iv_pic}}
+
+{{FIGURE:ivpic|Une année de volatilité simulée, et ce qu'un pic déplace sur le rang et sur le percentile.}}
+
+  <p>Le rang a un maximum au dénominateur&nbsp;; le percentile a un comptage, donc il ne peut pas bouger de plus d'un point sur <span class="mono">n</span>, et dans la plupart des tirages il ne bouge pas du tout. Le rapport des deux sensibilités vaut {{iv_rapport_sens}} sur une fenêtre d'un an, et il <strong>croît avec la longueur de la fenêtre</strong>&nbsp;: <em>allonger la fenêtre, geste par lequel on croit stabiliser une statistique, aggrave le rang exactement dans la proportion où il améliore le percentile.</em> C'est le défaut du Calmar de la partie&nbsp;XVIII — un dénominateur qui est un maximum, et il n'y a qu'un seul maximum dans une série quelle que soit sa longueur — rencontré ici sur un troisième objet.</p>
+
+  <h2 id="s-iv-lookahead">Le motif que le guide a vu disparaître, fabriqué sous loi nulle</h2>
+
+  <p>«&nbsp;Calculez le rang sur une fenêtre strictement glissante. Classer l'implicite d'aujourd'hui contre une fenêtre qui contient des observations futures est un biais de look-ahead, et il est assez répandu dans la recherche publiée et les outils grand public pour qu'il faille le présumer présent jusqu'à preuve du contraire. Dans nos propres tests, une relation monotone propre entre le rang et les résultats à venir a entièrement disparu dès que la fenêtre de classement a été rendue strictement glissante.&nbsp;»</p>
+
+  <p>Le dépôt reproduit la loi nulle de ce test, et l'écrire proprement a coûté un aller-retour instructif. Le premier jet posait le gain du vendeur comme <em>le niveau de volatilité du jour moins la réalisée qui suit</em>&nbsp;: la colonne glissante rendait alors 0,284 de corrélation là où la loi nulle en exigeait zéro. Ce n'était pas un bug — sous un retour à la moyenne, le niveau du jour prédit vraiment la variation qui suit, et un vendeur qui vend haut gagne pour cette seule raison. <strong>L'erreur était de confondre le niveau de volatilité avec un prix</strong>, ce qui est précisément la confusion que le guide passe sa première page à dissoudre.</p>
+
+{{TABLE:iv_look_ahead}}
+
+{{FIGURE:ivlookahead|Les deux classements contre l'horizon de détention, et le contrôle de l'espérance nulle du gain.}}
+
+  <p>L'implicite honnête est l'espérance conditionnelle de la réalisée à venir&nbsp;; elle a une forme fermée sous le processus déclaré, et le gain qu'elle définit est d'espérance conditionnelle nulle <strong>par construction</strong>. Alors seulement le classement glissant rend {{iv_glissant}} — zéro à la précision de l'échantillon — et le classement fuité rend {{iv_fuite}}, très au-dessus du seuil de {{iv_seuil}}. <em>Le guide a publié le résultat négatif&nbsp;; voici le résultat positif que le bug fabrique</em>, et un fait qu'aucun des dix guides n'écrit&nbsp;: l'artefact grandit avec l'horizon de détention.</p>
+
+  <h2 id="s-iv-prime">Une part de la prime publiée est une propriété de l'unité</h2>
+
+  <p>Le guide annonce que l'implicite dépasse la réalisée de deux à quatre points en indice actions, et décrit l'asymétrie exactement&nbsp;: une petite prime positive la plupart du temps, ponctuée d'épisodes où la réalisée déborde franchement. Les deux moitiés se mesurent.</p>
+
+{{TABLE:iv_prime}}
+
+{{FIGURE:ivprime|Les années requises et la fréquence de gain d'un vendeur de prime, contre son avantage.}}
+
+  <p>Un vendeur <strong>sans le moindre avantage</strong> gagne {{iv_taux_nul}}&nbsp;% de ses expirations, parce que la médiane d'un khi-deux tombe sous sa moyenne&nbsp;: c'est le mécanisme de la partie&nbsp;XXI sur un autre estimateur, et c'est ce qui fait vivre les stratégies de prime courte bien au-delà de ce que leur espérance justifie. Établir le bas de la fourchette annoncée demande {{iv_annees_prime}}&nbsp;an.</p>
+
+{{FIGURE:ivunite|Le biais d'unité contre l'horizon, et les deux comptabilités du même livre.}}
+
+  <p>Le sous-titre du guide est qu'une option est <em>un prix coté dans les mauvaises unités, exprès</em>, et il ne va pas jusqu'au bout de sa propre remarque. Voici ce que l'unité coûte. Un vendeur dont l'implicite égale exactement la volatilité vraie a une espérance <strong>nulle en variance</strong> et une espérance <strong>positive en volatilité</strong>, parce que la racine est concave. Le biais vaut {{iv_biais_unite}}&nbsp;point par expiration mensuelle, soit un neuvième du bas de la fourchette annoncée, et sa forme fermée <span class="mono">σ/(4h)</span> referme la mesure. <em>Une part de la prime de risque de volatilité publiée est une propriété de la façon de coter, pas du marché.</em></p>
+
+{{FIGURE:ivreliefpr|Relief des années requises pour établir une prime, en durée d'expiration et en avantage.}}
+
+  <h2 id="s-iv-pieges">Les cinq pièges, et deux d'entre eux sont le même nombre</h2>
+
+  <p>Le guide nomme cinq pièges pratiques et n'en chiffre aucun. Les mettre tous dans la même unité est ce qui les rend comparables.</p>
+
+{{TABLE:iv_pieges}}
+
+{{FIGURE:ivpieges|Le coût des cinq pièges en points de volatilité, et le contrôle de la forme fermée du déplacement.}}
+
+  <p>Le classement qui en sort n'est pas celui de la liste&nbsp;: le plus cher est «&nbsp;{{iv_pire_piege}}&nbsp;», que le guide place en dernier, et il l'est <strong>par construction</strong> — un grec calculé ailleurs ne cache pas un des quatre autres, il les cache tous, puisqu'on ignore à la fois le forward employé, le taux, la convention de prix et l'âge de la cotation. Deux des cinq sont par ailleurs le même nombre&nbsp;: un forward faux et un prix périmé décalent tous deux l'implicite de <span class="mono">−Δ·ΔS/𝒱</span>, la seule différence étant l'origine du décalage.</p>
+
+  <p><strong>Le signe de cette forme fermée a coûté un défaut au dépôt.</strong> Le premier jet écrivait <span class="mono">+Δ·ΔS/𝒱</span>, et l'amplitude étant juste, les cinq pièges — tous pris en valeur absolue — ne voyaient rien. C'est le contrôle contre la réinversion complète qui a rendu deux cents pour cent d'écart et montré le signe. <em>Une forme fermée dont on ne consomme que la valeur absolue est une forme fermée à moitié contrôlée</em>, et c'est une variante de ce que la partie&nbsp;XXIV avait déjà enterré ici.</p>
+
+  <h2 id="s-iv-reste">Le décompte, et le guide qui teste sa propre statistique</h2>
+
+{{TABLE:iv_reste}}
+
+{{FIGURE:ivreste|Le décompte des affirmations par ce qu'elles déplacent, et le cumul des dix parties d'options.}}
+
+  <p>Sur les {{iv_total_options}}&nbsp;affirmations examinées dans les dix parties consacrées aux options, <strong>aucune ne donne un sens</strong>. La colonne de la direction est vide pour la septième partie consécutive. Ce qui distingue ce dixième guide n'est pas la qualité de ses formules mais son honnêteté sur un point précis&nbsp;: il a testé sa propre statistique préférée, trouvé que la relation disparaissait dès que le classement cessait de regarder l'avenir, et publié ce résultat. <em>Un guide qui écrit que son outil ne prédit rien une fois calculé proprement est un guide qu'on peut lire.</em></p>
+
+  <div class="part">
+    <span class="lab">Vingt-neuvième partie</span>
     <h2>Ce qu'une position coûte, dans les deux sens</h2>
-    <p>Vingt-sept parties décrivent. Celle-ci décide. Chaque mesure du document est reprise et convertie en la seule chose qu'un opérateur ait à savoir avant d'entrer&nbsp;: <em>si je prends position ici, à la hausse ou à la baisse, quelle est la probabilité, que coûte l'erreur, et quelle dérive faudrait-il pour que cela vaille la peine.</em> Rien n'y est inventé — la chaîne de mesure existait, il fallait la brancher sur les deux sens. <strong>Deux faits en sortent, et aucun n'était dans le document.</strong></p>
+    <p>Vingt-huit parties décrivent. Celle-ci décide. Chaque mesure du document est reprise et convertie en la seule chose qu'un opérateur ait à savoir avant d'entrer&nbsp;: <em>si je prends position ici, à la hausse ou à la baisse, quelle est la probabilité, que coûte l'erreur, et quelle dérive faudrait-il pour que cela vaille la peine.</em> Rien n'y est inventé — la chaîne de mesure existait, il fallait la brancher sur les deux sens. <strong>Deux faits en sortent, et aucun n'était dans le document.</strong></p>
   </div>
 
   <h2 id="s-spec-issues">Une position a trois fins, et la troisième ne se déclare pas</h2>
@@ -3610,10 +3730,10 @@
 
   <p>Le réglage que cette partie propose — {{spec_horizon_optimal}}&nbsp;minutes, un stop de {{spec_stop_optimal}}&nbsp;points, un rapport d'un pour deux — <em>ne promet aucun avantage</em>. Il dit seulement où une dérive, si un opérateur en avait une, serait la plus visible, donc la plus vite prouvée ou réfutée&nbsp;: {{spec_ecart_optimal}}&nbsp;points de taux d'écart entre les deux sens, contre {{spec_ecart_haut}} au mieux des trois géométries déclarées. C'est moins qu'une stratégie et c'est plus qu'un avis, parce que c'est le seul des deux qui se calcule.</p>
 
-  <p>La ligne qui manque à toute cette partie est celle qu'aucune des vingt-sept précédentes n'a trouvée. Ni les quinze lectures du catalogue, ni les douze setups, ni les {{ord_total_options}}&nbsp;affirmations des neuf parties d'options n'apportent de dérive. <strong>Ce document n'a jamais rencontré d'avantage directionnel</strong>, et ce qu'il offre à la place est le seul objet qu'on puisse construire sans en avoir un&nbsp;: la géométrie où l'on saurait le plus vite s'il existe.</p>
+  <p>La ligne qui manque à toute cette partie est celle qu'aucune des vingt-huit précédentes n'a trouvée. Ni les quinze lectures du catalogue, ni les douze setups, ni les {{iv_total_options}}&nbsp;affirmations des dix parties d'options n'apportent de dérive. <strong>Ce document n'a jamais rencontré d'avantage directionnel</strong>, et ce qu'il offre à la place est le seul objet qu'on puisse construire sans en avoir un&nbsp;: la géométrie où l'on saurait le plus vite s'il existe.</p>
 
   <div class="part">
-    <span class="lab">Vingt-neuvième partie</span>
+    <span class="lab">Trentième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>
