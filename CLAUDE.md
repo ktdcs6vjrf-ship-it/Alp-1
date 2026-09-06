@@ -21,9 +21,9 @@ sortie. Chaîne : `report*.py` + `fig*.py` → `workingpaper.py`. Sa section 18
 (`report15.py` + `fighyp.py`) audite sa propre hypothèse d'edge : voir
 « la circularité » plus bas.
 
-**ALP nº 3** — `docs/prouver-un-jugement.html` (166 sections en trente
-parties, 173 tables, 259 figures dont soixante-quatorze surfaces en nuage de
-points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
+**ALP nº 3** — `docs/prouver-un-jugement.html` (175 sections en trente
+et une parties, 182 tables, 275 figures dont soixante-dix-huit surfaces en
+nuage de points). L'évaluation d'un opérateur discrétionnaire dont l'avantage n'est pas
 codable, puis **le catalogue des quinze lectures**, puis **la grammaire du
 setup**, puis le seuil de rentabilité, puis les concepts de sortie, puis la
 lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` →
@@ -35,7 +35,7 @@ lecture du flux. Chaîne : `journal.py` → `operator.py` → `attribution.py` �
 `theta.py` + `figth.py` + `vega.py` + `figvg.py` + `rho.py` + `figrh.py` + `vanna.py` +
 `figva.py` + `charm.py` + `figch.py` + `volga.py` + `figvo.py` +
 `ordres.py` + `figord.py` + `implicite.py` + `figiv.py` +
-`speculation.py` + `figspec.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
+`skew.py` + `figsk.py` + `speculation.py` + `figspec.py` → `discpaper.py`. Titre courant : *Le seuil, et non le signal*.
 
 Sa **partie III** est le catalogue : quinze lectures — footprint, carnet, CVD,
 VWAP, Fibonacci, profil de volume, profil de marché, gamma, structure de Dow —
@@ -66,8 +66,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/1d4e0835-600c-41af-80c2-a639e061157e
-  (précédents : 0bf1fb72, 9d9ad6dc, 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
+- ALP nº 3 : https://claude.ai/code/artifact/b9a9ac4d-ff55-4eeb-9b22-bc6f52ce4cab
+  (précédents : 1d4e0835, 0bf1fb72, 9d9ad6dc, 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
   8edc727c, b40a2d6b, e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee,
   d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005,
   4e95dfbc, e49bcb16, c360de80)
@@ -907,8 +907,94 @@ quatrième n'a été vu qu'en regardant la page : la surface du pas de cotation
 strike qui ne cote plus du tout ; elle est en **delta** depuis, pour la raison
 même que le guide donne.
 
-Sa **partie XXIX** est la feuille de spéculation — `speculation.py` +
-`figspec.py`. Les vingt-huit parties qui précèdent décrivent ; celle-ci
+Sa **partie XXIX** poursuit la série d'options par le guide du skew —
+`skew.py` + `figsk.py`. C'est le **troisième des onze à publier le résultat
+de son propre test négatif**, après ceux du vanna et de l'implicite, et il
+est le seul des trois à expliquer *pourquoi* ce résultat ne condamne pas
+l'objet : le skew de put comme prédicteur n'a pas survécu — corrélation de
+rang de −0,014 sur 495 séances — et *ce n'est pas une preuve que le skew ne
+veut rien dire ; c'est une description du prix de la protection de queue,
+maintenant, et on la vend comme une prévision constamment.* C'est la thèse
+de la quatrième partie, formulée par un praticien qui n'avait aucune raison
+de la formuler.
+
+① **Un résultat négatif sans sa puissance ne dit presque rien.** Le seuil de
+ce test vaut **0,088** sur 495 séances, et le guide ne le publie pas : le
+nombre observé en est à 0,31 écart-type, donc le test ne rejette rien — et
+*il n'aurait pas non plus détecté un effet de la taille qu'on cherche*.
+Établir une corrélation de 0,05, qui serait considérable ici, demande 6,1
+ans. La loi nulle est simulée (quatre mille tirages de deux séries
+indépendantes, Spearman) et le seuil de Fisher contrôlé contre ses
+quantiles. **Sans le seuil, « nous n'avons rien trouvé » et « nous ne
+pouvions rien trouver » se lisent pareil.**
+② **Les trois conventions ne mesurent pas le même objet.** Les strikes à
+vingt-cinq deltas se tiennent à `d₁ = ±0,6745` — le quartile de la loi
+normale, d'où le nom de la convention — donc le risk reversal sonde une
+bande **proportionnelle à `σ√T`** quand la convention à moneyness fixe en
+sonde une constante. Leur rapport passe de 0,47 à trente jours à 1,14 à un
+an, et varie d'un facteur 3 sur la plage de volatilité **à peau
+rigoureusement inchangée** : *la convention qu'on choisit pour être
+insensible au comptant est la plus sensible à la volatilité, et un skew qui
+« se raidit » peut n'être qu'une volatilité qui monte.*
+③ **« Le skew s'aplatit avec le ténor » dépend de la convention**, et c'est
+le résultat de la partie. Si la pente locale décroît en `T^{−H}`, le risk
+reversal se comporte en `T^{1/2−H}` — sa bande s'élargit en `√T` pendant que
+la pente s'aplatit. **Il ne décroît donc qu'au-delà de `H = 1/2`**, et à la
+valeur que la littérature retient son exposant mesuré vaut −0,02, c'est-à-dire
+plat. Le décalage entre les deux exposants vaut un demi en théorie, 0,48 à
+la mesure, et **ne bouge pas d'un centième sur toute la grille du seul
+paramètre libre** : c'est ce qui en fait un résultat et non un réglage.
+*L'affirmation la plus consensuelle du document est vraie dans deux
+conventions sur trois, et rien dans sa formulation ne dit lesquelles.*
+④ **Le coût d'une erreur de régime, et le mot qui porte le sens.** Le guide
+dit « plusieurs deltas sur chaque strike simultanément ». Exact par option —
+1,54 point de delta à cinq pour cent sous la monnaie — et une option seule ne
+coûte que **0,025 friction par séance** : c'est *simultanément* qui porte
+tout, et il faut **39 contrats** sur le même strike pour en coûter une. La
+correction porte le **véga** et non le vanna, résultat de la partie XXIV
+importé et non recopié.
+⑤ **Vendre du skew, c'est prendre une position directionnelle.** Le risk
+reversal a un véga net **nul par parité** (le véga ne dépend de `d₁` que par
+une fonction paire, les deux strikes ont des `d₁` opposés) et un delta net
+qui vaut **exactement deux fois le delta de sa convention**, sans dépendance
+à la peau, à l'échéance ni à la volatilité. Son seuil de rentabilité vaut
+**0,10 pt/h**, soit 0,17 fois le plancher du domaine plausible : il passe
+*sous* ce plancher, parce que la position n'a aucune barrière et achète la
+séance entière. C'est le seuil le plus bas de tout le document, et ce n'est
+pas une bonne nouvelle.
+⑥ **Les trois forces, et laquelle est établissable.** Ce guide est le seul
+des onze à donner une conséquence testable par mécanisme. Le dépôt n'a pas
+de données et ne peut en tester aucune ; il chiffre ce qu'elles coûteraient,
+et le classement est un renversement : le levier se voit en quelques
+semaines, « la prime de risque de crash » — sur laquelle repose tout
+l'argument économique du skew — demande **31 ans**, un facteur 975 entre les
+deux bouts.
+⑦ **Le décompte** : quatre affirmations déplacent le risque, une l'horloge,
+quatre rien, **aucune la direction** — huitième partie consécutive. Sur les
+**quatre-vingt-cinq** affirmations des onze parties d'options, aucune ne
+donne un sens.
+
+Cinq pièges y sont enterrés, et trois sont des affirmations écrites d'avance
+que la mesure a réfutées. La **courbure de la peau** ne s'aplatissait pas
+avec la pente dans le premier jet : à grand `H` elle dominait l'aile d'un an
+et le décalage d'un demi — le résultat de la partie — s'y dégradait de
+moitié. *Une surface où la pente s'aplatit et où la courbure reste ne décrit
+aucun marché ; elle décrit un modèle qu'on a écrit sans le relire.* On avait
+écrit que **le coût d'une erreur de régime dépassait la friction** : il vaut
+deux centièmes par option, et c'est la taille de livre qu'il fallait
+publier. On attendait le **sommet de la surface des régimes aux échéances
+longues**, où le véga est le plus grand : l'arête de la monnaie est *plate*,
+parce que le véga croît en `√T` exactement autant que la pente décroît, et
+ce qui monte est l'aile. On attendait un **décalage indépendant de la
+volatilité** : il se dégrade de 0,50 à 0,40, dans le sens que le mécanisme
+prédit puisque le premier ordre suppose une bande étroite — *un écart qui va
+dans le sens prédit est un contrôle, pas un défaut.* Et la forme fermée de
+l'étendue à la monnaie portait **deux `σ` au lieu d'un**, rendant le quart du
+nombre mesuré : le véga porte le comptant et la pente par point le porte au
+dénominateur, donc il s'annule et il ne reste qu'une volatilité.
+
+Sa **partie XXX** est la feuille de spéculation — `speculation.py` +
+`figspec.py`. Les vingt-neuf parties qui précèdent décrivent ; celle-ci
 décide. Chaque mesure du document y est convertie en la seule chose qu'un
 opérateur ait à savoir avant d'entrer : si je prends position ici, dans un
 sens ou dans l'autre, quelle probabilité, quel coût, et quelle dérive
@@ -1270,6 +1356,33 @@ Rendu
   planche de l'inversion annonçait une pente qui diverge et montrait une
   droite, et la surface du pas de cotation portait une moneyness là où seul
   un delta décrit le même objet à deux échéances.
+- `skew.py` — **la forme, et trois façons de la mesurer.** `peau`, une
+  surface **déclarée et non ajustée** dont la pente *et la courbure* portent
+  le même exposant d'aplatissement — le premier jet ne le faisait que pour
+  la pente, et le résultat de la partie s'y dégradait de moitié.
+  `moneyness_du_delta`, qui résout le point fixe delta-volatilité-strike ;
+  `risk_reversal` et son contrôle `risk_reversal_ferme` (`2·d·σ√T·|b|·σ`) ;
+  `pente_moneyness_fixe`, `pente_a_la_monnaie`, `largeur_sondee` et
+  `LARGEUR_FIXE` — c'est de la différence de ces deux bandes que découle
+  toute la partie. `exposant_mesure` et **`decalage_des_exposants`**, un
+  demi, stable au centième sur la grille de `H` : le résultat.
+  `seuil_de_correlation` = `z/√(n−1)`, contrôlé contre `loi_nulle_du_test`
+  (quatre mille tirages de Spearman) ; `seances_pour_correlation` par la
+  transformation **exacte** de Fisher, et `borne_de_l_approximation`, qui
+  dit *laquelle des deux bornes lie* — l'information ou la validité de
+  l'approximation. `REGIMES` et `delta_du_regime`, dont la correction porte
+  le **véga** (partie XXIV, importée) ; `etendue_a_la_monnaie_ferme`, qui ne
+  dépend pas de l'échéance ; `options_pour_une_friction`, le nombre que le
+  guide ne donne pas et qui rend sa phrase lisible. `delta_net_ferme` = `2δ`
+  et `risk_reversal_position`, dont le véga net est nul par parité et le
+  seuil passe sous le plancher plausible. `forces()`, les trois mécanismes
+  avec le budget d'information de chacun. Neuf tables, quatre surfaces.
+- `figsk.py` — les seize planches de la partie XXIX, dont quatre reliefs.
+  Deux d'entre elles ont été refaites après avoir été **regardées** : la
+  planche de la position montrait deux horizontales contre l'échéance, là où
+  l'axe du delta fait apparaître l'identité `net = 2δ` ; et le relief des
+  régimes portait une légende qui annonçait un sommet aux échéances longues
+  sur une arête plate.
 - `speculation.py` — **ce qu'une lecture vaut si l'on prend position.**
   `Issue` et `lire` (les trois issues, session comprise, dans les deux sens) ;
   `portee_de_seance` et `rr_atteignable`, les deux nombres qui disent si un
@@ -1283,7 +1396,7 @@ Rendu
   `_PREFIXES`, relevée sur les clés réelles et gardée par un test ;
   `familles_par_geometrie`, qui **calcule** le regroupement au lieu de
   l'écrire. Neuf tables, quatre surfaces.
-- `figspec.py` — les quinze planches de la partie XXIX, dont quatre reliefs.
+- `figspec.py` — les quinze planches de la partie XXX, dont quatre reliefs.
 - `pieds.py` porte en plus `bandeau_html` : la ligne de spéculation sous
   chaque figure, passée par `figure_html` avec la clé de la figure. Seul
   `discpaper` la passe ; les deux autres documents sont rendus comme avant.
@@ -1293,7 +1406,7 @@ Rendu
   l'audit de l'hypothèse d'edge d'ALP nº 1 — **la colonne de verdict de la
   table `dependance` est calculée, jamais écrite** ; l'ordre des lignes en
   découle, et un test l'exige.
-- `fig*.py` — vingt-six modules, chacun expose `render_all()`. `figcat.py` porte
+- `fig*.py` — vingt-sept modules, chacun expose `render_all()`. `figcat.py` porte
   les bougies, l'éventail des issues et les deux nuages du catalogue. `figterm.py` porte
   `Board`/`Panel`, partagés par `figdisc`, `figflux`, `figpower`, `figquant`,
   `figrisk`. `figures.py` porte `Canvas`, l'ancien moteur d'ALP nº 1.
@@ -1638,7 +1751,7 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # ~1925 tests (compter ~80 min ; --wp, setups,
+python main.py --tests      # ~1990 tests (compter ~85 min ; --wp, setups,
                             # robustesse, overnight, emprunts, revue,
                             # niveaux, theta et vega sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html

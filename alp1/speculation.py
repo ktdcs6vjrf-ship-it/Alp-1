@@ -410,6 +410,8 @@ HYPOTHESES: dict[str, Hypothese] = {
                        "volga, aucune ne donne un sens"),
     "figiv": Hypothese(0.0, "la volatilité implicite",
                        "implicite, aucune ne donne un sens"),
+    "figsk": Hypothese(0.0, "la forme de la surface",
+                       "skew, aucune ne donne un sens"),
     "figord": Hypothese(0.0, "un grec du troisième ordre",
                         "ordres, aucune ne donne un sens"),
     "figspec": Hypothese(390.0, "la feuille elle-même",
@@ -573,7 +575,7 @@ _PREFIXES: tuple[tuple[str, str], ...] = (
     ("nv", "fignv"), ("gr", "figgra"), ("th", "figth"),
     ("vg", "figvg"), ("va", "figva"), ("vo", "figvo"),
     ("ch", "figch"), ("on", "figon"), ("ord", "figord"),
-    ("iv", "figiv"),
+    ("iv", "figiv"), ("sk", "figsk"),
     ("spec", "figspec"),
     ("r", "figrobu"),
 )

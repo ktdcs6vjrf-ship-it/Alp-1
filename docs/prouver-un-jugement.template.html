@@ -3608,8 +3608,120 @@
 
   <div class="part">
     <span class="lab">Vingt-neuvième partie</span>
+    <h2>Le skew, et les trois nombres que trois pupitres appellent du même nom</h2>
+    <p>Onzième document de la série d'options, et le <strong>troisième des onze à publier le résultat de son propre test négatif</strong> — après ceux du vanna et de la volatilité implicite. Le skew de put comme prédicteur, écrit-il, n'a pas survécu&nbsp;: la corrélation de rang entre l'écart d'implicite put-call à vingt-cinq deltas et l'amplitude réalisée de la séance suivante vaut −0,014 sur 495 séances. Et l'encadré qui suit est le meilleur des onze documents&nbsp;: <em>ce n'est pas une preuve que le skew ne veut rien dire ; le skew est excellent à ce qu'il est — une description du prix de la protection de queue, maintenant. Ce n'est simplement pas une prévision de direction ni d'amplitude à court horizon, et on le vend comme telle constamment.</em></p>
+  </div>
+
+  <h2 id="s-sk-conventions">Trois conventions, et elles ne mesurent pas le même objet</h2>
+
+  <p>Le guide en donne trois — risk reversal à vingt-cinq deltas, pente à moneyness fixe, pente locale — et dit qu'elles sont toutes en usage et toutes différentes. Elles le sont d'une façon qui se calcule. Les strikes à vingt-cinq deltas se tiennent à un argument fixe de la loi normale, {{sk_d1}}, qui en est le quartile&nbsp;: <strong>le risk reversal sonde donc une bande proportionnelle à <span class="mono">σ√T</span></strong>, quand la convention à moneyness fixe en sonde une constante de {{sk_bande_fixe}}.</p>
+
+{{FIGURE:skforme|La peau déclarée à trois échéances, et les trois conventions de mesure posées dessus.}}
+
+{{TABLE:sk_conventions}}
+
+{{FIGURE:skconventions|Les trois conventions contre l'échéance, et la bande que chacune sonde.}}
+
+  <p>À trente jours le rapport des deux premières vaut {{sk_rapport_30}}&nbsp;; à un an, {{sk_rapport_365}}. <em>Deux pupitres qui publient « le skew » publient deux nombres dont le rapport dépend d'un produit qu'aucun des deux n'a écrit.</em> La forme fermée du risk reversal est le contrôle de la route exacte, qui doit résoudre un point fixe — le delta dépend de la volatilité, qui dépend du strike, qui dépend du delta.</p>
+
+  <h2 id="s-sk-vol">La convention insensible au comptant est la plus sensible à la volatilité</h2>
+
+  <p>Le guide défend le risk reversal parce que ses strikes se déplacent avec le marché, ce qui rend la mesure stable quand le comptant dérive. L'argument est juste et <strong>muet sur un axe</strong>&nbsp;: les mêmes strikes se déplacent aussi avec la volatilité.</p>
+
+{{TABLE:sk_vol}}
+
+{{FIGURE:skvol|Les deux conventions contre la volatilité, sur une peau rigoureusement inchangée.}}
+
+  <p>Toute cette mesure est faite sur <strong>une seule peau</strong>, qui ne change pas d'un centième d'un bout à l'autre. La bande sondée varie pourtant d'un facteur {{sk_bande_vol}} sur la plage, et le risk reversal avec elle. La conséquence pratique tient en une phrase&nbsp;: <em>un skew qui « se raidit » peut n'être qu'une volatilité qui monte</em>, et la convention à moneyness fixe, que le guide donne comme la moins bonne, est la seule qui ne confonde pas les deux.</p>
+
+{{FIGURE:skreliefra|Relief du rapport des deux conventions, en échéance et en volatilité.}}
+
+  <h2 id="s-sk-exposant">« Le skew s'aplatit avec le ténor » dépend de la convention</h2>
+
+  <p>C'est le résultat de la partie, et il tient en une ligne d'algèbre. Si la pente locale décroît comme <span class="mono">T^−H</span>, la pente à moneyness fixe décroît de même, mais le risk reversal se comporte comme <span class="mono">T^(1/2−H)</span> — parce que sa bande s'élargit en racine du temps pendant que la pente s'aplatit. <strong>Il ne décroît donc qu'au-delà de <span class="mono">H = {{sk_h_bascule}}</span></strong>, et à cette valeur — celle que la littérature retient, la pente à la monnaie décroissant en <span class="mono">1/√T</span> — son exposant mesuré vaut {{sk_expo_rr}}, c'est-à-dire plat.</p>
+
+{{TABLE:sk_exposant}}
+
+{{FIGURE:skexposant|Les trois exposants en échéance contre le paramètre d'aplatissement, et leur décalage.}}
+
+  <p>Le décalage entre l'exposant du risk reversal et celui de la pente locale vaut un demi en théorie et {{sk_decalage}} à la mesure, l'écart venant du portage et de la courbure que la forme fermée néglige. Ce qui en fait un résultat plutôt qu'une coïncidence de réglage est qu'<strong>il ne bouge pas d'un centième sur toute la grille du seul paramètre libre de la partie</strong>. <em>L'affirmation la plus consensuelle du document est donc vraie dans deux conventions sur trois, et rien dans la façon dont on l'énonce ne dit lesquelles.</em> C'est la question de la partie&nbsp;XXIII — quelle variable tient-on fixe — posée sur un cinquième objet.</p>
+
+{{FIGURE:sktenor|Le skew normalisé contre l'échéance, dans deux conventions et à trois exposants.}}
+
+{{FIGURE:skreliefex|Relief de l'exposant du risk reversal, en paramètre d'aplatissement et en volatilité.}}
+
+  <h2 id="s-sk-loi-nulle">Un résultat négatif publié sans sa loi nulle</h2>
+
+  <p>Le guide publie un résultat négatif honnête, et le dépôt n'a rien à y redire sur le fond. Ce qu'il ajoute est le nombre qui rend ce résultat lisible. Voici d'abord la loi nulle&nbsp;: deux séries indépendantes de {{sk_test_n}}&nbsp;points, corrélation de rang de Spearman, quatre mille tirages.</p>
+
+{{TABLE:sk_loi_nulle}}
+
+{{FIGURE:sklois|La loi nulle d'une corrélation de rang sur quatre cent quatre-vingt-quinze séances, et le seuil de Fisher.}}
+
+  <p>Le nombre que le guide publie tombe au milieu de cette loi, à {{sk_ecarts_types}}&nbsp;écart-type de zéro&nbsp;: sa conclusion est entièrement confirmée. La forme fermée du seuil, <span class="mono">z/√(n−1)</span>, est contrôlée contre les quantiles simulés — {{sk_seuil}} contre {{sk_seuil_mesure}} — ce qui autorise à la publier. <em>Un résultat négatif publié sans sa loi nulle demande au lecteur de croire que l'auteur connaissait la sienne.</em></p>
+
+  <h2 id="s-sk-puissance">Le guide ne pouvait pas conclure autrement</h2>
+
+  <p>Sur {{sk_test_n}}&nbsp;séances, le seuil à quatre-vingt-quinze pour cent d'une corrélation de rang vaut {{sk_seuil}}. C'est le nombre qui manque au document examiné, et il change la lecture du sien&nbsp;: le test ne rejette rien, et <strong>il n'aurait pas non plus détecté un effet de la taille qu'on cherche</strong>.</p>
+
+{{TABLE:sk_puissance}}
+
+{{FIGURE:skpuissance|Les séances requises contre la taille de l'effet, et ce que l'échantillon du guide pouvait voir.}}
+
+  <p>Établir une corrélation de cinq centièmes — qui serait déjà un avantage considérable sur cet objet — demande {{sk_seances_005}}&nbsp;séances, soit {{sk_annees_005}}&nbsp;ans. <em>Sans le seuil, « nous n'avons rien trouvé » et « nous ne pouvions rien trouver » se lisent pareil.</em> C'est le budget d'information de la partie&nbsp;IV, rencontré sur un onzième objet.</p>
+
+{{FIGURE:skreliefpu|Relief de la part du seuil atteinte, en nombre de séances et en taille d'effet.}}
+
+  <h2 id="s-sk-regimes">Sticky strike, sticky delta, et ce que l'erreur coûte</h2>
+
+  <p>Le guide pose la bonne question — quand le comptant bouge, le sourire bouge-t-il avec lui&nbsp;? — et donne les trois réponses standard, chacune avec le régime de marché où elle s'applique. La correction porte le <strong>véga</strong> et non le vanna, et ce n'est pas une question de notation&nbsp;: la partie&nbsp;XXIV a établi que la formule usuelle nomme le mauvais grec et se trompe d'un facteur. Le résultat en est importé plutôt que recopié.</p>
+
+{{TABLE:sk_regimes}}
+
+{{FIGURE:skregimes|Le delta d'un même strike sous les trois régimes de collage, et l'étendue des trois.}}
+
+  <p>« Choisir le mauvais régime ne produit pas une petite erreur — en marché rapide c'est plusieurs deltas sur chaque strike simultanément. » Exact par option&nbsp;: la mesure rend {{sk_etendue_5}}&nbsp;points de delta à cinq pour cent sous la monnaie. Mais une option seule ne coûte que {{sk_cout_5}}&nbsp;friction par séance, et <strong>c'est le mot « simultanément » qui porte tout le sens de la phrase</strong> — il faut {{sk_options_5}}&nbsp;contrats sur le même strike pour qu'une erreur de régime coûte un aller-retour complet. Une affirmation écrite d'avance dans ce dépôt disait que le coût d'une seule option dépassait la friction&nbsp;; la mesure l'a réfutée.</p>
+
+{{FIGURE:skcout|Le coût d'une erreur de régime, par option et en taille de livre.}}
+
+  <p>Le relief ajoute un fait qu'aucune table ne donne, et qui a lui aussi réfuté une affirmation écrite d'avance. On attendait un sommet aux échéances longues, où le véga est le plus grand&nbsp;; <strong>l'arête de la monnaie est plate</strong>. Le véga croît en racine du temps exactement autant que la pente locale décroît, donc leur produit ne dépend pas de l'échéance&nbsp;: {{sk_etendue_atm_7}}&nbsp;points de delta à une semaine, {{sk_etendue_atm_an}} à un an. <em>Ce qui monte avec l'échéance est l'aile, qui rattrape son retard.</em></p>
+
+{{FIGURE:skreliefre|Relief de l'étendue des trois deltas, en échéance et en moneyness.}}
+
+  <h2 id="s-sk-position">Vendre du skew, c'est prendre une position directionnelle</h2>
+
+  <p>L'objet par lequel un pupitre négocie « le skew » est le risk reversal&nbsp;: acheter le call à vingt-cinq deltas, vendre le put du même delta. Son véga net est <strong>nul par parité</strong> — le véga ne dépend de son argument que par une fonction paire, et les deux strikes ont des arguments opposés, ce que la partie&nbsp;XXIV a établi — donc la position ne porte rien de ce qu'elle prétend négocier au premier ordre.</p>
+
+{{TABLE:sk_position}}
+
+{{FIGURE:skposition|Le delta net, le véga net et la dérive requise d'un risk reversal, contre le delta de sa convention.}}
+
+  <p>Ce qu'elle porte est un delta net qui vaut <strong>exactement deux fois le delta de sa convention</strong>, sans aucune dépendance à la peau, à l'échéance ni à la volatilité&nbsp;: {{sk_delta_net}} à vingt-cinq deltas, {{sk_delta_net_10}} à dix, {{sk_delta_net_40}} à quarante. Le put à <span class="mono">δ</span> deltas est le strike où le call en porte <span class="mono">1 − δ</span>&nbsp;; le vendre ajoute <span class="mono">δ</span> au delta, et acheter le call en ajoute autant.</p>
+
+  <p>Le seuil de rentabilité de cette position vaut {{sk_derive_rr}}&nbsp;point par heure, soit {{sk_part_plancher}} fois le plancher du domaine plausible. <em>Elle passe donc sous ce plancher, et ce n'est pas une bonne nouvelle&nbsp;: c'est un avertissement.</em> Une position sans barrière achète la séance entière, donc son seuil est le plus bas de tout ce document — et l'objet par lequel on prétend négocier la forme de la surface est, en delta, la position directionnelle la plus facile à rentabiliser qu'on y ait rencontrée.</p>
+
+  <h2 id="s-sk-forces">Les trois forces, et laquelle est établissable</h2>
+
+  <p>Ce onzième guide fait ce qu'aucun des dix précédents n'avait fait&nbsp;: il donne, pour chaque mécanisme qui produit le skew, une conséquence <strong>testable</strong>. Le dépôt n'a aucune donnée de marché et ne peut en tester aucune. Il peut chiffrer ce qu'elles coûteraient, et le classement qui en sort est un renversement.</p>
+
+{{TABLE:sk_forces}}
+
+{{FIGURE:skforces|Le budget d'information des trois forces, et celui d'une corrélation contre sa taille.}}
+
+  <p>Le levier se voit en quelques semaines parce que son effet est énorme — si énorme que ce n'est plus l'information qui borne mais la validité de l'approximation. « {{sk_force_chere}} », sur laquelle repose tout l'argument économique du skew, demande {{sk_force_annees}}&nbsp;ans. Un facteur {{sk_rapport_budgets}} entre les deux bouts. <em>Les tailles d'effet sont déclarées et non ajustées&nbsp;: le dépôt n'ajuste rien qu'il ne mesure.</em></p>
+
+  <h2 id="s-sk-reste">Le décompte, et le guide qui teste sa propre statistique</h2>
+
+{{TABLE:sk_reste}}
+
+{{FIGURE:skreste|Le décompte des affirmations par ce qu'elles déplacent, et le cumul des onze parties d'options.}}
+
+  <p>Sur les {{sk_total_options}}&nbsp;affirmations examinées dans les onze parties consacrées aux options, <strong>aucune ne donne un sens</strong>. La colonne de la direction est vide pour la huitième partie consécutive. Ce onzième guide est le troisième à publier le résultat de son propre test négatif, et il est le seul des trois à expliquer <em>pourquoi</em> ce résultat ne condamne pas l'objet&nbsp;: le skew décrit le prix de la protection de queue maintenant, et ce n'est pas une prévision. <strong>C'est la thèse de la quatrième partie de ce document, formulée sur un onzième objet par un praticien qui n'avait aucune raison de la formuler.</strong></p>
+
+  <div class="part">
+    <span class="lab">Trentième partie</span>
     <h2>Ce qu'une position coûte, dans les deux sens</h2>
-    <p>Vingt-huit parties décrivent. Celle-ci décide. Chaque mesure du document est reprise et convertie en la seule chose qu'un opérateur ait à savoir avant d'entrer&nbsp;: <em>si je prends position ici, à la hausse ou à la baisse, quelle est la probabilité, que coûte l'erreur, et quelle dérive faudrait-il pour que cela vaille la peine.</em> Rien n'y est inventé — la chaîne de mesure existait, il fallait la brancher sur les deux sens. <strong>Deux faits en sortent, et aucun n'était dans le document.</strong></p>
+    <p>Vingt-neuf parties décrivent. Celle-ci décide. Chaque mesure du document est reprise et convertie en la seule chose qu'un opérateur ait à savoir avant d'entrer&nbsp;: <em>si je prends position ici, à la hausse ou à la baisse, quelle est la probabilité, que coûte l'erreur, et quelle dérive faudrait-il pour que cela vaille la peine.</em> Rien n'y est inventé — la chaîne de mesure existait, il fallait la brancher sur les deux sens. <strong>Deux faits en sortent, et aucun n'était dans le document.</strong></p>
   </div>
 
   <h2 id="s-spec-issues">Une position a trois fins, et la troisième ne se déclare pas</h2>
@@ -3730,10 +3842,10 @@
 
   <p>Le réglage que cette partie propose — {{spec_horizon_optimal}}&nbsp;minutes, un stop de {{spec_stop_optimal}}&nbsp;points, un rapport d'un pour deux — <em>ne promet aucun avantage</em>. Il dit seulement où une dérive, si un opérateur en avait une, serait la plus visible, donc la plus vite prouvée ou réfutée&nbsp;: {{spec_ecart_optimal}}&nbsp;points de taux d'écart entre les deux sens, contre {{spec_ecart_haut}} au mieux des trois géométries déclarées. C'est moins qu'une stratégie et c'est plus qu'un avis, parce que c'est le seul des deux qui se calcule.</p>
 
-  <p>La ligne qui manque à toute cette partie est celle qu'aucune des vingt-huit précédentes n'a trouvée. Ni les quinze lectures du catalogue, ni les douze setups, ni les {{iv_total_options}}&nbsp;affirmations des dix parties d'options n'apportent de dérive. <strong>Ce document n'a jamais rencontré d'avantage directionnel</strong>, et ce qu'il offre à la place est le seul objet qu'on puisse construire sans en avoir un&nbsp;: la géométrie où l'on saurait le plus vite s'il existe.</p>
+  <p>La ligne qui manque à toute cette partie est celle qu'aucune des vingt-neuf précédentes n'a trouvée. Ni les quinze lectures du catalogue, ni les douze setups, ni les {{sk_total_options}}&nbsp;affirmations des onze parties d'options n'apportent de dérive. <strong>Ce document n'a jamais rencontré d'avantage directionnel</strong>, et ce qu'il offre à la place est le seul objet qu'on puisse construire sans en avoir un&nbsp;: la géométrie où l'on saurait le plus vite s'il existe.</p>
 
   <div class="part">
-    <span class="lab">Trentième partie</span>
+    <span class="lab">Trente et unième partie</span>
     <h2>Protocole, limites, et ce qui reste ouvert</h2>
     <p>Ce qui n'est pas déclaré avant ne prouve rien après.</p>
   </div>

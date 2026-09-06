@@ -21,12 +21,12 @@ from pathlib import Path
 from . import (charm, concepts, emprunts, figcat, figch, figdisc, figemp,
                figfds, figflux,
                figgra, figiv, fignv, figon, figord, figrev, figrh, figrobu,
-               figsetup,
+               figsetup, figsk,
                figsortie, figspec, figth, figva, figvg, figvo,
                fonds, grandeurs, horloge, implicite, niveaux, ordres,
                overnight, report10,
                report11, report13, report14, revue,
-               rho, robustesse, setups, sorties, speculation, theta, vanna,
+               rho, robustesse, setups, skew, sorties, speculation, theta, vanna,
                vega, volga)
 from .figcss import FIGURE_CSS, FIGURE_CSS_TERMINAL, FIGURE_TOKENS_TERMINAL
 from .pieds import figure_html
@@ -58,7 +58,8 @@ def values() -> dict[str, str]:
                   grandeurs.values(), theta.values(), vega.values(),
                   rho.values(), vanna.values(), charm.values(),
                   volga.values(), ordres.values(),
-                  implicite.values(), speculation.values()):
+                  implicite.values(), skew.values(),
+                  speculation.values()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"clés en collision : {sorted(heurts)}")
@@ -82,7 +83,8 @@ def tables() -> dict[str, Table]:
                   vega.all_tables(), rho.all_tables(),
                   vanna.all_tables(), charm.all_tables(),
                   volga.all_tables(), ordres.all_tables(),
-                  implicite.all_tables(), speculation.all_tables()):
+                  implicite.all_tables(), skew.all_tables(),
+                  speculation.all_tables()):
         heurts = set(fusion) & set(autre)
         if heurts:
             raise KeyError(f"tables en collision : {sorted(heurts)}")
@@ -104,15 +106,16 @@ def figures() -> dict[str, str]:
     convexité, `figvg` pour le prix de l'incertitude, `figrh` pour le taux,
     `figva` pour la dérivée croisée, `figch` pour la saignée du delta,
     `figvo` pour la convexité en volatilité, `figord` pour les grecs du
-    troisième ordre, `figiv` pour la volatilité implicite et `figspec`
-    pour ce qu'une position coûte dans les deux sens ;
+    troisième ordre, `figiv` pour la volatilité implicite, `figsk` pour
+    la forme de la surface et `figspec` pour ce qu'une position coûte dans
+    les deux sens ;
     deux clés identiques y feraient disparaître une figure en silence.
     """
     fusion = dict(figdisc.render_all())
     for module in (figflux, figsortie, figcat, figsetup, figrobu, figon,
                    figemp, figfds, figrev, fignv, figgra, figth,
                    figvg, figrh, figva, figch, figvo, figord, figiv,
-                   figspec):
+                   figsk, figspec):
         rendu = module.render_all()
         heurts = set(fusion) & set(rendu)
         if heurts:
