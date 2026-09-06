@@ -489,7 +489,13 @@ def fig_streak_diagnostic() -> str:
         y1 = -1.0 + 3.0 * (step + 1) / 8.0
         b.add(f'<rect class="hm{step}" x="{p2.x:.1f}" y="{p2.sy(y1):.1f}" '
               f'width="{p2.w:.1f}" height="{abs(p2.sy(y1) - p2.sy(y0)):.1f}"/>')
-    p2.grid_y([-1, 0, 1, 2], lambda v: f"1:{10 ** v:g}", side="right")
+    # `:g` publie un point décimal anglais, et cet axe est **visible** :
+    # « 1:0.1 » a vécu là jusqu'à ce que le balayage des étiquettes de
+    # `test_figures_all` le trouve. Le format passe par `_num`, qui met la
+    # virgule, avec une décimale sous l'unité et aucune au-dessus.
+    p2.grid_y([-1, 0, 1, 2],
+              lambda v: "1:" + _num(10.0 ** v, 1 if v < 0 else 0),
+              side="right")
     p2.frame()
 
     ligne = []

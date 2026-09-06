@@ -1638,7 +1638,7 @@ accident de mise en page.
 ## Commandes
 
 ```
-python main.py --tests      # ~1860 tests (compter ~75 min ; --wp, setups,
+python main.py --tests      # ~1925 tests (compter ~80 min ; --wp, setups,
                             # robustesse, overnight, emprunts, revue,
                             # niveaux, theta et vega sont lents)
 python main.py --wp         # reconstruit docs/temps-de-marche-et-peremption.html
