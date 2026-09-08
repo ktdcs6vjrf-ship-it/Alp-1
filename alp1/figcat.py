@@ -24,8 +24,9 @@ from . import concepts as C
 from . import footprint as fp
 from . import tpo as tp
 from . import vprofile
-from .figdisc import W, _plate, _ramp, _source, _surface
-from .figterm import Board, Panel, _esc, _num
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _ramp, _source, _surface)
+from .figterm import Board, Panel, _esc, _num, _signed
 
 FIGURES: dict[str, object] = {}
 
@@ -1148,7 +1149,7 @@ def fig_mur() -> str:
     """
     b = _plate(524.0, "Catalogue · le mur",
                "Combien d'années pour établir une lecture",
-               "hauteur : délai, en années")
+               "hauteur : délai, en années", width=W + LEGEND_MARGIN)
 
     z = [[math.log10(max(C.decisions_pour(t)
                          / (occ * FREQUENCE_TYPE * C.SEANCES_PAR_AN), 0.02))
@@ -1161,6 +1162,8 @@ def fig_mur() -> str:
                       (math.log10(C.CARRIERE_ANS), "carrière"),
                       (2.0, "1 siècle"), (4.0, "100 siècles")],
              tip="{v:.2f} en log d'années")
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 400.0, -1.0, 4.0,
+              fmt=lambda v: _num(10.0 ** v, 1) + " ans")
 
     b.annotation(0.0, 450.0,
                  "arête gauche : horizon de la lecture · arête droite : "
@@ -1202,7 +1205,7 @@ def fig_gain() -> str:
     """
     b = _plate(540.0, "Catalogue · le gain",
                "Ce que la dérive ajoute à la chance d'avoir raison",
-               "hauteur : points au-dessus de 50 %")
+               "hauteur : points au-dessus de 50 %", width=W + LEGEND_MARGIN)
 
     z = [[100.0 * (_phi(d / 60.0 * math.sqrt(t) / C.q.SIGMA_1MIN) - 0.5)
           for d in DERIVES] for t in HORIZONS]
@@ -1213,6 +1216,8 @@ def fig_gain() -> str:
              z_ticks=[(0.0, "0"), (10.0, "+10"), (20.0, "+20"),
                       (30.0, "+30"), (45.0, "+45")],
              tip="{v:+.1f} points")
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 400.0, 0.0, 45.0,
+              fmt=lambda v: _signed(v, 1) + " pt")
 
     b.annotation(0.0, 450.0,
                  "arête gauche : horizon de la lecture · arête droite : "

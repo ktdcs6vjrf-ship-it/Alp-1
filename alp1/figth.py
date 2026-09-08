@@ -15,7 +15,8 @@ import math
 from . import niveaux as nv
 from . import quant as q
 from . import theta as V
-from .figdisc import W, _plate, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _source, _surface)
 from .fignv import _dec, _echine, _pct, _ticks
 from .figterm import Board, Panel, _num, _signed
 
@@ -570,13 +571,15 @@ def fig_th_relief() -> str:
 
     b = _plate(486, "Thêta · le relief de la dispersion",
                "Ce qu'un vendeur ne contrôle qu'à moitié",
-               "hauteur : écart-type, en prime")
+               "hauteur : écart-type, en prime", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(n, 0) for n in V.SURF_PAS],
              col_labels=[_num(j, 0) for j in V.SURF_JOURS],
              z_ticks=[(t, _pct(t, 0)) for t in _echine(zlo, zhi)],
              tip="{v:.3f} de prime", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _pct(v, 1))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : couvertures par jour · arête droite : "
@@ -778,7 +781,7 @@ def fig_th_relief_horloge() -> str:
 
     b = _plate(486, "Thêta · le relief des horloges",
                "Ce qu'un lundi doit ajouter à une implicite courte",
-               "hauteur logarithmique")
+               "hauteur logarithmique", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(w, 2) for w in V.SURF_HORLOGE_POIDS],
@@ -788,6 +791,8 @@ def fig_th_relief_horloge() -> str:
                       if zlo <= math.log1p(t) <= zhi],
              tip="{v:.1%} d implicite", zero=zlo,
              tip_value=lambda v: math.expm1(v))
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _pct(math.expm1(v), 1))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : poids d'un jour non ouvré · arête "
@@ -905,7 +910,7 @@ def fig_th_relief_signe() -> str:
 
     b = _plate(486, "Thêta · le relief du signe",
                "La frontière du signe, et l'arête où elle disparaît",
-               "hauteur : la frontière")
+               "hauteur : la frontière", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_pct(r, 0) for r in V.SURF_SIGNE_TAUX],
@@ -913,6 +918,8 @@ def fig_th_relief_signe() -> str:
              z_ticks=[(t, _num(t, 2)) for t in (0.0, 0.3, 0.6, 0.9)
                       if zlo <= t <= zhi],
              tip="frontiere {v:.3f}", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : taux · arête droite : échéance · "
@@ -1037,7 +1044,7 @@ def fig_th_relief_preuve() -> str:
 
     b = _plate(486, "Thêta · le relief de la preuve",
                "Ce que coûte un avantage qu'on n'a pas rendu grand",
-               "hauteur logarithmique : années")
+               "hauteur logarithmique : années", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(n, 0) for n in V.SURF_PRIME_PAS],
@@ -1047,6 +1054,8 @@ def fig_th_relief_preuve() -> str:
                       if zlo <= math.log10(t) <= zhi],
              tip="{v:.1f} annees", zero=zlo,
              tip_value=lambda v: 10.0 ** v)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(10.0 ** v, 1) + " ans")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : couvertures par jour · arête droite : "

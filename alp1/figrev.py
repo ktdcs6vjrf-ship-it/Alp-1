@@ -16,7 +16,8 @@ from __future__ import annotations
 import math
 
 from . import revue as V
-from .figdisc import W, _plate, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _source, _surface)
 from .figterm import Board, Panel, _num, _signed
 
 
@@ -314,7 +315,8 @@ def fig_rev_bande() -> str:
 
     b = _plate(486, "Revue · le relief de la bande",
                "Quand un Calmar cesse d'être une anecdote",
-               "hauteur : largeur de bande en % de la médiane")
+               "hauteur : largeur de bande en % de la médiane",
+               width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(s, 1) for s in V.SURF_SHARPE],
@@ -322,6 +324,8 @@ def fig_rev_bande() -> str:
              z_ticks=[(t, _num(t, 0) + " %")
                       for t in _echine(zlo, zhi)],
              tip="{v:.0f} % de la médiane", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 1) + " %")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : Sharpe · arête droite : années observées · "
@@ -452,7 +456,8 @@ def fig_rev_invisible() -> str:
 
     b = _plate(486, "Revue · le krach invisible",
                "Ce qu'une archive ne peut pas exclure",
-               "hauteur : taille du choc, en écarts-types")
+               "hauteur : taille du choc, en écarts-types",
+               width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=["1 / " + _num(1.0 / f, 0) for f in V.SURF_FREQ],
@@ -460,6 +465,8 @@ def fig_rev_invisible() -> str:
              z_ticks=[(t, _num(t, 0) + " σ")
                       for t in _echine(zlo, zhi)],
              tip="{v:.1f} écarts-types", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2) + " σ")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : fréquence du krach partagé · arête droite : "
@@ -587,7 +594,7 @@ def fig_rev_portage() -> str:
 
     b = _plate(486, "Revue · ce qu'une prime sous-estimée coûte",
                "Le Calmar couvert, budget contre facteur de prime",
-               "sol posé au Calmar nu")
+               "sol posé au Calmar nu", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_pct(x, 1) for x in V.SURF_BUDGET],
@@ -597,6 +604,8 @@ def fig_rev_portage() -> str:
              # échine dense va la heurter.
              z_ticks=[(t, _num(t, 1)) for t in _echine(zlo, zhi, 3, 3)],
              tip="{v:+.3f} de Calmar", zero=V.DOC_A["calmar"])
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _signed(v, 2))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : budget de prime annuel · arête droite : "
@@ -722,7 +731,7 @@ def fig_rev_drag() -> str:
 
     b = _plate(486, "Revue · le relief du coût",
                "Ce qu'une stratégie paie, taille contre rotation",
-               "hauteur : % du notionnel par an")
+               "hauteur : % du notionnel par an", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(q, 0) for q in V.SURF_TAILLE_NQ],
@@ -730,6 +739,8 @@ def fig_rev_drag() -> str:
              z_ticks=_echine_log(zlo, zhi),
              tip="{v:.1f} % par an", zero=zlo,
              tip_value=lambda v: 10.0 ** v)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(10.0 ** v, 1) + " %")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : taille en contrats · arête droite : "

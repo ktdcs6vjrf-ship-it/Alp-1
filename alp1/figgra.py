@@ -16,7 +16,8 @@ import math
 from . import grandeurs as V
 from . import niveaux as nv
 from . import quant as q
-from .figdisc import W, _plate, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _source, _surface)
 from .fignv import _dec, _echine, _pct, _ticks
 from .figterm import Board, Panel, _num, _signed
 
@@ -383,13 +384,15 @@ def fig_gr_confusion() -> str:
 
     b = _plate(486, "Grandeurs · le relief de la confusion",
                "Où les deux probabilités s'écartent le plus",
-               "hauteur : rapport des deux")
+               "hauteur : rapport des deux", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(a, 1) for a in V.SURF_STOP_PTS],
              col_labels=[_num(r, 0) for r in V.SURF_RR],
              z_ticks=[(t, _num(t, 0)) for t in _echine(zlo, zhi)],
              tip="facteur {v:.1f}", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2) + " ×")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : largeur du stop en points · arête droite : "
@@ -425,13 +428,15 @@ def fig_gr_relief_cout() -> str:
 
     b = _plate(486, "Grandeurs · le relief du coût",
                "Ce que la confusion coûte, en R par décision",
-               "hauteur : écart en R")
+               "hauteur : écart en R", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(a, 1) for a in V.SURF_STOP_PTS],
              col_labels=[_num(r, 0) for r in V.SURF_RR],
              z_ticks=[(t, _signed(t, 0)) for t in _echine(zlo, zhi)],
              tip="{v:+.2f} R par décision", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _signed(v, 2) + " R")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : largeur du stop en points · arête droite : "
@@ -535,7 +540,7 @@ def fig_gr_gap() -> str:
 
     b = _plate(486, "Grandeurs · le relief de l'écart",
                "Delta moins probabilité terminale, à la monnaie",
-               "hauteur : points de delta")
+               "hauteur : points de delta", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_pct(v, 0) for v in V.SURF_VOL],
@@ -543,6 +548,8 @@ def fig_gr_gap() -> str:
                          for m in V.SURF_MOIS],
              z_ticks=[(t, _num(t, 0)) for t in _echine(zlo, zhi)],
              tip="{v:.1f} points de delta", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 1) + " pt")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : volatilité annuelle · arête droite : "
@@ -671,13 +678,15 @@ def fig_gr_lieu() -> str:
 
     b = _plate(486, "Grandeurs · où le bleed agit",
                "La bande du bleed se referme sur le strike",
-               "hauteur : distance au strike en %")
+               "hauteur : distance au strike en %", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(j, 0) for j in V.SURF_JOURS],
              col_labels=[_pct(v, 0) for v in V.SURF_VOL_CHARM],
              z_ticks=[(t, _pct(t / 100.0, 0)) for t in _echine(zlo, zhi)],
              tip="{v:.1f} % du strike", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 1) + " %")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : jours à l'échéance · arête droite : "

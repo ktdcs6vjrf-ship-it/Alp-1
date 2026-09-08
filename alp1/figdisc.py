@@ -156,6 +156,45 @@ def _scale_legend(board: Board, x: float, y: float, lo: str, hi: str,
               f'{_esc(label)}</text>')
 
 
+#: Marge réservée à droite d'une planche en relief pour sa légende de couleur.
+#: Ajoutée à la largeur commune `W`, jamais empiétée par la surface elle-même
+#: — c'est une extension du canevas, pas un partage de l'espace existant, ce
+#: qui évite tout chevauchement avec les libellés d'arête déjà posés là.
+LEGEND_MARGIN = 120.0
+
+#: Décalage du bord gauche de la barre par rapport à `W`, à l'intérieur de
+#: la marge ci-dessus. Le reste de la marge est le budget de texte des deux
+#: valeurs extrêmes — assez pour une lecture à deux unités, jamais assez
+#: pour qu'un chiffre déborde du canevas élargi.
+LEGEND_BAR_X = 16.0
+
+
+def _colorbar(board: Board, x: float, y0: float, y1: float,
+              zlo: float, zhi: float, fmt=None) -> None:
+    """Légende verticale d'une surface : la même rampe, lue de haut en bas.
+
+    Le nuage de points d'une surface porte déjà sa teinte par la classe
+    `hm0`…`hm7` ; cette légende ne fait que rendre cette échelle lisible sans
+    survoler chaque sommet. Le haut porte la valeur haute — sur fond sombre,
+    la rampe est une rampe de luminance et « fort » y est clair — l'inverse
+    braierait la lecture en la faisant paraître décroissante.
+    """
+    if fmt is None:
+        fmt = lambda v: _num(v, 2)
+    n = 8
+    bw = 10.0
+    step = (y1 - y0) / n
+    for k in range(n):
+        band = n - 1 - k
+        board.add(f'<rect class="hm{band}" x="{x:.1f}" '
+                  f'y="{y0 + k * step:.1f}" width="{bw:.1f}" '
+                  f'height="{step + 0.5:.1f}"/>')
+    board.add(f'<text class="tk" x="{x + bw + 5:.1f}" y="{y0 + 4:.1f}">'
+              f'{_esc(fmt(zhi))}</text>')
+    board.add(f'<text class="tk" x="{x + bw + 5:.1f}" y="{y1 + 2:.1f}">'
+              f'{_esc(fmt(zlo))}</text>')
+
+
 def _bilineaire(z: list[list[float]], facteur: int) -> list[list[float]]:
     """Densifie une grille par interpolation bilinéaire.
 

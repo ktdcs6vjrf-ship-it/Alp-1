@@ -11,7 +11,8 @@ import math
 
 from . import footprint as fp
 from . import tpo as tp
-from .figdisc import W, _num, _plate, _ramp, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _num,
+                       _plate, _ramp, _source, _surface)
 from .figterm import Board, Panel, _esc
 
 FIGURES: dict[str, object] = {}
@@ -298,7 +299,8 @@ def fig_footprint_surface() -> str:
 
     b = _plate(344, "Le seuil ne décide presque rien",
                "Fréquence nulle du déséquilibre sur ses deux axes",
-               "hauteur : fréquence en échelle logarithmique")
+               "hauteur : fréquence en échelle logarithmique",
+               width=W + LEGEND_MARGIN)
     _surface(b, 314, 154, z, zlo, zhi, cx=32.0, cy=10.0, cz=142.0,
              row_labels=[f"{c}" for c in clumps],
              col_labels=[_num(r, 1) for r in ratios[:-1]]
@@ -306,6 +308,8 @@ def fig_footprint_surface() -> str:
              z_ticks=[(float(k), _pourcent_court(10.0 ** k))
                       for k in range(math.ceil(zlo), math.floor(zhi) + 1)],
              tip="fréquence nulle = 10^{v:.2f}", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 262.0, zlo, zhi,
+              fmt=lambda v: _pourcent_court(10.0 ** v))
     b.annotation(0, 306, "arête gauche : la taille de grappe, une hypothèse. "
                          "arête droite : le seuil de lecture, un choix")
     _source(b, "Arête gauche : taille de grappe, en contrats. Arête droite : "
@@ -473,7 +477,8 @@ def fig_tpo_surface() -> str:
 
     b = _plate(352, "Ce qui décide la rareté",
                "Fréquence nulle d'un extrême pauvre",
-               "hauteur : part des séances sans dérive")
+               "hauteur : part des séances sans dérive",
+               width=W + LEGEND_MARGIN)
     _surface(b, 314, 152, z, zlo, zhi, cx=34.0, cy=11.0, cz=136.0,
              row_labels=[_num(t, 2) for t in ticks[:-1]]
                         + [_num(ticks[-1], 2) + " pt"],
@@ -483,6 +488,8 @@ def fig_tpo_surface() -> str:
                       for k in range(0, int(zhi / 0.1) + 1)
                       if zlo <= 0.1 * k <= zhi],
              tip="{v:.1%} des séances", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 262.0, zlo, zhi,
+              fmt=lambda v: _num(100.0 * v, 1) + " %")
     b.annotation(0, 306, "arête gauche : le pas de cotation. arête droite : "
                          "la volatilité de séance. seul leur rapport décide")
     _source(b, "Arête gauche : pas de cotation, en points d'indice. Arête "
@@ -631,7 +638,8 @@ def fig_information_surface() -> str:
 
     b = _plate(352, "Budget d'information, sur deux axes",
                "Ce que la géométrie exige du signal, en bits",
-               "hauteur : part d'un bit, échelle logarithmique")
+               "hauteur : part d'un bit, échelle logarithmique",
+               width=W + LEGEND_MARGIN)
     _surface(b, 314, 152, z, zlo, zhi, cx=34.0, cy=11.0, cz=138.0,
              row_labels=[f"1:{rr:g}" for rr in cibles],
              col_labels=[_num(100 * f, 0) for f in frictions[:-1]]
@@ -640,6 +648,8 @@ def fig_information_surface() -> str:
                                       max(0, -int(k) - 1)) + " %")
                       for k in range(math.ceil(zlo), math.floor(zhi) + 1)],
              tip="10^{v:.2f} bit par décision", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 262.0, zlo, zhi,
+              fmt=lambda v: _num(100.0 * 10.0 ** v, 3) + " %")
     b.annotation(0, 306, "arête gauche : la cible, en multiples du risque. "
                          "arête droite : la friction rapportée au risque")
     _source(b, "Arête gauche : ratio gain/risque visé. Arête droite : friction "
@@ -788,7 +798,7 @@ def fig_spectrum_surface() -> str:
 
     b = _plate(352, "La force critique",
                "Ce qu'un facteur doit peser pour se voir",
-               "hauteur : √γ, sans dimension")
+               "hauteur : √γ, sans dimension", width=W + LEGEND_MARGIN)
     _surface(b, 314, 152, z, zlo, zhi, cx=34.0, cy=11.0, cz=138.0,
              row_labels=[f"{k} couches" if k == couches[0] else f"{k}"
                          for k in couches],
@@ -798,6 +808,8 @@ def fig_spectrum_surface() -> str:
                       for j in range(0, int(zhi / 0.1) + 2)
                       if zlo <= 0.1 * j <= zhi],
              tip="force critique √γ = {v:.3f}", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 262.0, zlo, zhi,
+              fmt=lambda v: _num(v, 3))
     b.annotation(0, 306, "ajouter une couche relève le seuil sous lequel un "
                          "facteur réel devient invisible")
     _source(b, "Arête gauche : nombre de couches d'analyse suivies. Arête "

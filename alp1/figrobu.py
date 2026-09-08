@@ -17,7 +17,8 @@ from __future__ import annotations
 import math
 
 from . import robustesse as R
-from .figdisc import W, _plate, _ramp, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _ramp, _source, _surface)
 from .figterm import Board, Panel, _num, _signed
 
 #: La rampe, du plus clair au plus foncé, dans l'ordre des lois.
@@ -373,7 +374,7 @@ def fig_robu_esperance() -> str:
 
     b = _plate(470, "Robustesse · l'espérance",
                "Ce que la dérive ajoute, ce que les queues n'ajoutent pas",
-               "hauteur : E[R] par décision")
+               "hauteur : E[R] par décision", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(R.kurtosis_mixte(x), 1)
@@ -386,6 +387,8 @@ def fig_robu_esperance() -> str:
              z_ticks=[(t, _signed(t, 2))
                       for t in (-0.05, 0.2, 0.45, 0.7)],
              tip="{v:+.3f} R", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _signed(v, 2) + " R")
 
     b.annotation(0.0, 396.0,
                  "arête gauche : kurtosis excédentaire, de 0 à "
@@ -432,13 +435,15 @@ def fig_robu_seuil() -> str:
 
     b = _plate(470, "Robustesse · le seuil",
                "Les queues déplacent le seuil, la géométrie bien plus",
-               "hauteur : µ* en pt/h")
+               "hauteur : µ* en pt/h", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(R.kurtosis_mixte(x), 1) for x in sorted(R.SURF_V2)],
              col_labels=[_num(p, 3) + " %" for p in sorted(R.SURF_STOP_PCT)],
              z_ticks=[(t, _num(t, 2)) for t in (0.1, 0.4, 0.7, 1.0, 1.2)],
              tip="{v:.3f} pt/h", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2) + " pt/h")
 
     b.annotation(0.0, 396.0,
                  "arête gauche : kurtosis excédentaire · arête droite : "

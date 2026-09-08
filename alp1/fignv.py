@@ -18,7 +18,8 @@ import math
 from . import niveaux as V
 from . import quant as q
 from . import seuil
-from .figdisc import W, _plate, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _source, _surface)
 from .figterm import Board, Panel, _num, _signed
 
 
@@ -342,7 +343,7 @@ def fig_nv_relief() -> str:
 
     b = _plate(486, "Niveaux · le relief de la preuve",
                "Ce que coûte une exigence qu'on a rendue petite",
-               "hauteur : touches requises")
+               "hauteur : touches requises", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(p, 3) for p in V.SURF_STOP],
@@ -352,6 +353,8 @@ def fig_nv_relief() -> str:
                       if zlo <= math.log10(t) <= zhi],
              tip="{v:.0f} touches", zero=zlo,
              tip_value=lambda v: 10.0 ** v)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(10.0 ** v, 0))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : largeur du stop en % · arête droite : "
@@ -456,7 +459,7 @@ def fig_nv_invalidation() -> str:
 
     b = _plate(486, "Niveaux · qui invalide, le marché ou la bande",
                "La probabilité que le stop parle avant le niveau",
-               "hauteur : probabilité")
+               "hauteur : probabilité", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(w, 1) for w in V.SURF_LARGEUR],
@@ -464,6 +467,8 @@ def fig_nv_invalidation() -> str:
              z_ticks=[(t, _pct(t, 0)) for t in _echine(zlo, zhi)
                       if t > zlo + 0.12 * (zhi - zlo)],
              tip="{v:.1%} de chances que le stop parle en premier", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _pct(v, 1))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : demi-largeur du niveau · arête droite : "
@@ -577,13 +582,15 @@ def fig_nv_bande() -> str:
 
     b = _plate(486, "Niveaux · où vit la courbure",
                "Gamma n'est pas un nombre, c'est un lieu",
-               "hauteur : demi-largeur en points")
+               "hauteur : demi-largeur en points", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(j, 1) for j in V.SURF_JOURS],
              col_labels=[_pct(v, 0) for v in V.SURF_VOL],
              z_ticks=[(t, _num(t, 0)) for t in _echine(zlo, zhi)],
              tip="{v:.0f} points de demi-largeur", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 1) + " pt")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : jours à l'échéance · arête droite : "
@@ -794,13 +801,15 @@ def fig_nv_bascule() -> str:
 
     b = _plate(486, "Niveaux · ce que vaut une supposition",
                "Quand la bascule n'existe pas du tout",
-               "hauteur : tirages sans bascule")
+               "hauteur : tirages sans bascule", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_pct(f, 0) for f in V.SURF_PART],
              col_labels=[_num(j, 0) for j in V.SURF_JOURS_GEX],
              z_ticks=[(t, _pct(t / 100.0, 0)) for t in _echine(zlo, zhi)],
              tip="{v:.0f} % des tirages sans aucune bascule", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 1) + " %")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : part des strikes dont le signe est connu · "

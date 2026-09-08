@@ -16,7 +16,8 @@ from __future__ import annotations
 import math
 
 from . import emprunts as E
-from .figdisc import W, _plate, _scale_legend, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _scale_legend, _source, _surface)
 from .figterm import Board, Panel, _num, _signed
 
 
@@ -123,13 +124,15 @@ def fig_emp_puissance() -> str:
 
     b = _plate(486, "Unité d'observation · la puissance",
                "Ce qu'il faut d'années pour voir un Sharpe donné",
-               "hauteur : probabilité de le détecter")
+               "hauteur : probabilité de le détecter", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(s, 1) for s in E.SURF_SHARPE],
              col_labels=[_num(t, 0) for t in E.SURF_ANNEES],
              z_ticks=[(t, _pct(t)) for t in (0.2, 0.5, 0.8)],
              tip="{v:.3f}", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _pct(v, 1))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : Sharpe annuel vrai · arête droite : années "
@@ -347,13 +350,15 @@ def fig_emp_hasard() -> str:
 
     b = _plate(486, "Analyse de survie · le relief du risque",
                "Quand un sommet est le plus menacé, et de combien",
-               "hauteur : part du risque maximal")
+               "hauteur : part du risque maximal", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(d, 0) + " pt" for d in E.SURF_DISTANCE],
              col_labels=[_num(m, 0) for m in E.SURF_MINUTES],
              z_ticks=[(t, _pct(t)) for t in (0.0, 0.5, 1.0)],
              tip="{v:.2f} de son maximum", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _pct(v, 1))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : distance du prix à son sommet · arête "
@@ -496,13 +501,15 @@ def fig_emp_excitation() -> str:
 
     b = _plate(486, "Auto-excitation · le seuil",
                "Le seuil de rentabilité après une bouffée d'activité",
-               "hauteur : µ* en points par heure")
+               "hauteur : µ* en points par heure", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(n, 2) for n in E.SURF_BRANCHEMENT],
              col_labels=[_num(t, 0) for t in E.SURF_APRES],
              z_ticks=[(t, _num(t, 1)) for t in (0.6, 1.0, 1.4, 1.8)],
              tip="{v:.3f} pt/h", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2) + " pt/h")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : ratio de branchement · arête droite : "
@@ -692,13 +699,15 @@ def fig_emp_queue() -> str:
 
     b = _plate(486, "Valeurs extrêmes · le prix de la queue",
                "Ce qu'un indice de queue coûte, selon la distance au seuil",
-               "hauteur : rapport de VaR")
+               "hauteur : rapport de VaR", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=48.0, cy=15.0, cz=158.0,
              row_labels=[_num(x, 2) for x in E.SURF_XI],
              col_labels=[_num(100.0 * c, 3) + " %" for c in E.SURF_CONFIANCE],
              z_ticks=[(t, _num(t, 1) + " ×") for t in (1.0, 2.0, 3.0)],
              tip="{v:.2f} fois", zero=1.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2) + " ×")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : indice de queue ξ · arête droite : niveau de "
@@ -833,13 +842,15 @@ def fig_emp_critere() -> str:
 
     b = _plate(486, "Détection · le relief du gain",
                "Ce que la sensibilité et le critère rapportent ensemble",
-               "hauteur : R par an")
+               "hauteur : R par an", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(d, 2) for d in E.SURF_DPRIME],
              col_labels=[_signed(c, 1) for c in E.SURF_CRITERE],
              z_ticks=[(t, _num(t, 0)) for t in (0.0, 60.0, 120.0, 180.0)],
              tip="{v:+.1f} R par an", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _signed(v, 0) + " R/an")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : sensibilité d′ · arête droite : critère de "
@@ -987,13 +998,15 @@ def fig_emp_bbp() -> str:
 
     b = _plate(486, "Spectre · la transition",
                "Ce qu'un facteur ajoute au bruit, force contre dimension",
-               "hauteur : λ observée moins le bord")
+               "hauteur : λ observée moins le bord", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(s, 2) for s in E.SURF_FORCE],
              col_labels=[_num(g, 2) for g in E.SURF_GAMMA],
              z_ticks=[(t, _num(t, 1)) for t in (0.0, 0.5, 1.0)],
              tip="{v:+.3f} au-dessus du bord", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _signed(v, 2))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : force du facteur · arête droite : rapport de "

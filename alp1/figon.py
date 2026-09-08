@@ -15,7 +15,8 @@ from __future__ import annotations
 import math
 
 from . import overnight as O
-from .figdisc import W, _plate, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _source, _surface)
 from .figterm import Board, Panel, _num, _signed
 
 
@@ -287,13 +288,15 @@ def fig_on_boite() -> str:
 
     b = _plate(486, "Extrêmes overnight · la boîte",
                "Ce que le résidu doit à deux réglages que personne n'observe",
-               "hauteur : conditionnel prédit")
+               "hauteur : conditionnel prédit", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(k, 2) for k in O.SURF_K],
              col_labels=[_num(s, 2) for s in O.SURF_S],
              z_ticks=[(t, _pct(t, 0)) for t in (0.64, 0.69, 0.74)],
              tip="{v:.3f}", zero=zlo)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _pct(v, 1))
 
     b.annotation(0.0, 408.0,
                  "arête gauche : rapport de volatilité nuit/jour · arête "
@@ -339,13 +342,15 @@ def fig_on_plan() -> str:
 
     b = _plate(486, "Extrêmes overnight · le plan",
                "Le taux et la géométrie, et rien d'autre",
-               "hauteur : E[R] par décision")
+               "hauteur : E[R] par décision", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_pct(t) for t in O.SURF_TAUX],
              col_labels=["1 pour " + _num(1.0 / r, 1) for r in O.SURF_RAPPORT],
              z_ticks=[(t, _signed(t, 1)) for t in (-0.4, 0.0, 0.4)],
              tip="{v:+.3f} R", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _signed(v, 2) + " R")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : taux de réussite · arête droite : rapport "

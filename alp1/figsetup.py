@@ -33,7 +33,8 @@ from . import dow, seuil
 from . import footprint as fp
 from . import setups as S
 from . import vprofile
-from .figdisc import W, _plate, _ramp, _source, _surface
+from .figdisc import (LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate,
+                       _ramp, _source, _surface)
 from .figterm import Board, Panel, _esc, _num
 
 FIGURES: dict[str, object] = {}
@@ -992,7 +993,7 @@ def fig_relief() -> str:
     """
     b = _plate(506.0, "Setup · le relief du coût",
                "Ce qu'une confirmation coûte, sur deux axes",
-               "hauteur : délai, en années")
+               "hauteur : délai, en années", width=W + LEGEND_MARGIN)
 
     decisions = C.decisions_pour(HORIZON_SURFACE)
     z = [[math.log10(max(decisions / (part * debit * C.SEANCES_PAR_AN), 0.02))
@@ -1006,6 +1007,8 @@ def fig_relief() -> str:
                       (math.log10(C.CARRIERE_ANS), "carrière"),
                       (2.0, "1 siècle"), (4.0, "100 siècles")],
              tip="{v:.2f} en log d'années")
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 380.0, -1.0, 4.0,
+              fmt=lambda v: _num(10.0 ** v, 1) + " ans")
 
     b.annotation(0.0, 428.0,
                  "arête gauche : part des contacts que la confirmation "

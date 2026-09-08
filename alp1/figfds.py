@@ -17,7 +17,7 @@ import math
 
 from . import fonds as F
 from . import seuil as S
-from .figdisc import W, _plate, _source, _surface
+from .figdisc import LEGEND_BAR_X, LEGEND_MARGIN, W, _colorbar, _plate, _source, _surface
 from .figterm import Board, Panel, _num, _signed
 
 
@@ -145,13 +145,15 @@ def fig_fds_exigence() -> str:
 
     b = _plate(486, "Loi fondamentale · le relief de l'exigence",
                "Ce qu'il faut avoir raison de plus que le hasard",
-               "hauteur : points de taux")
+               "hauteur : points de taux", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(ir, 1) for ir in F.SURF_IR],
              col_labels=[_num(n, 0) for n in F.SURF_N],
              z_ticks=[(t, _num(t, 0) + " pt") for t in (0.0, 3.0, 6.0, 9.0)],
              tip="{v:.3f} point de taux", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2) + " pt")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : ratio d'information visé · arête droite : "
@@ -335,13 +337,15 @@ def fig_fds_panier() -> str:
 
     b = _plate(486, "Le panier de lectures · le relief",
                "Ce qu'ajoute une lecture de plus, selon la corrélation",
-               "hauteur : gain sur une lecture seule")
+               "hauteur : gain sur une lecture seule", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(k, 0) for k in F.SURF_K],
              col_labels=[_num(r, 2) for r in F.SURF_RHO],
              z_ticks=[(t, _num(t, 0) + " ×") for t in (1.0, 3.0, 5.0)],
              tip="{v:.2f} fois une lecture", zero=1.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(v, 2) + " ×")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : nombre de lectures · arête droite : "
@@ -465,7 +469,7 @@ def fig_fds_relief() -> str:
 
     b = _plate(486, "La capacité · le relief",
                "Le seuil, quand la taille et la géométrie se composent",
-               "hauteur : µ* en points par heure")
+               "hauteur : µ* en points par heure", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_num(q, 0) for q in F.SURF_TAILLE],
@@ -474,6 +478,8 @@ def fig_fds_relief() -> str:
                       for t in (0.3, 3.0, 30.0)],
              tip="{v:.2f} pt/h", zero=zlo,
              tip_value=lambda v: 10.0 ** v)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _num(10.0 ** v, 1) + " pt/h")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : taille en contrats · arête droite : largeur "
@@ -597,13 +603,15 @@ def fig_fds_adverse() -> str:
 
     b = _plate(486, "L'exécution · ce qui peut la reprendre",
                "Le gain annuel, remplissage contre sélection adverse",
-               "hauteur : points par an")
+               "hauteur : points par an", width=W + LEGEND_MARGIN)
 
     _surface(b, 0.52 * W, 232.0, z, zlo, zhi, cx=42.0, cy=13.0, cz=158.0,
              row_labels=[_pct(r, 0) for r in F.SURF_REMPLI],
              col_labels=[_num(d, 2) for d in F.SURF_ADVERSE],
              z_ticks=[(t, _signed(t, 0)) for t in (-150.0, 0.0, 200.0, 400.0)],
              tip="{v:+.0f} points par an", zero=0.0)
+    _colorbar(b, W + LEGEND_BAR_X, 60.0, 340.0, zlo, zhi,
+              fmt=lambda v: _signed(v, 0) + " pt/an")
 
     b.annotation(0.0, 408.0,
                  "arête gauche : part des ordres servis · arête droite : "
