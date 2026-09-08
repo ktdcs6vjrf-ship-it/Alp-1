@@ -66,8 +66,8 @@ les deux autres documents n'avaient pas.
 Dernier artefact : https://claude.ai/code/artifact/c452a408-3263-431f-8b53-373553f12c9b
 
 Derniers artefacts publiés :
-- ALP nº 3 : https://claude.ai/code/artifact/b9a9ac4d-ff55-4eeb-9b22-bc6f52ce4cab
-  (précédents : 1d4e0835, 0bf1fb72, 9d9ad6dc, 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
+- ALP nº 3 : https://claude.ai/code/artifact/23f16e50-d604-461d-bc24-533226520666
+  (précédents : b9a9ac4d, 1d4e0835, 0bf1fb72, 9d9ad6dc, 96060108, 9131a050, 6aa40bf9, 340834bd, 5a666d3a, 9e0ef040,
   8edc727c, b40a2d6b, e5f06e51, 614afa35, 213dccda, a990ef0e, c2cbc5ee,
   d1e5eca9, 82bd1a42, 601106cf, dcb59260, d5e2c22b, 99a53614, f9f5d005,
   4e95dfbc, e49bcb16, c360de80)
@@ -1504,6 +1504,26 @@ la relecture. La parade est une source unique : `setups.criteres()` rend la
 liste des conditions avec leur valeur et leur verdict, `_confirme` n'est que le
 « tous » de cette liste, et la figure lit la même liste. Un test l'exige sur
 deux cents contacts par niveau.
+
+### Le sommaire figé — trois parties portées par le corps, absentes de la table
+Quand la partie XXVII (`ordres.py`) puis la XXVIII (`implicite.py`) puis la
+XXIX (`skew.py`) se sont insérées avant la spéculation, le corps du document
+a été mis à jour — `<div class="part">`, `<h2 id=…>`, numérotation en toutes
+lettres, tout juste — mais le `<nav class="toc">` du gabarit, écrit à la main
+dans `docs/prouver-un-jugement.template.html`, ne l'a pas été : il enchaînait
+directement de la partie XXVI (volga) sur la spéculation, restée numérotée
+XXVII depuis son insertion d'origine, elle-même suivie du protocole en XXVIII.
+Rien dans le rendu ne le signalait — la page s'affichait, le sommaire semblait
+complet, il omettait simplement vingt-cinq entrées et mentait sur sept autres.
+`tests.test_discpaper.TestSommaire` l'a trouvé (`test_ordre_identique`,
+`test_les_start_suivent_la_numerotation`), mais seulement quand on l'exécute :
+il n'est pas rejoué à chaque reconstruction. La correction est mécanique une
+fois vue — insérer les trois `<li>` manquants, recaler `start=` sur le rang
+réel (140, 147, 156, 165, 172) — mais rien ne l'aurait signalée sans faire
+tourner ce test précis. **Toute insertion de partie doit toucher le gabarit
+en trois endroits, jamais deux** : le corps, le sommaire, et si la partie
+n'est pas la dernière, la renumérotation en toutes lettres de tout ce qui la
+suit.
 
 ### L'échantillon
 Le contrôle d'échantillon doit partir de `REFERENCE_BITS` — l'effet à
