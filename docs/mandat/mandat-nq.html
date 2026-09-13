@@ -532,6 +532,14 @@
     <p class="measure" style="margin-top:1.3rem">Ces six lignes ne sont pas une présentation&nbsp;: ce sont les paramètres avec lesquels la figure&nbsp;5.1 est calculée. <strong>Les changer changerait ses six verdicts</strong>, ce qui est précisément la raison de les écrire ici, avant, plutôt que de les ajuster ensuite pour que le résultat tombe bien.</p>
     <div class="thesis">Aucune géométrie ne crée d'espérance. Elle fixe seulement l'exigence à laquelle il faudra répondre.
       <span>et c'est la seule chose que l'opérateur contrôle entièrement</span></div>
+
+    <h3 class="sub-h">Une décision, de bout en bout</h3>
+    <p class="measure">Le reste du document parle d'outils, de lois nulles et de délais. Voici la chose elle-même, dans l'ordre où elle arrive&nbsp;: un niveau <strong>calculé avant l'ouverture</strong>, un contact, une entrée, deux barrières écrites en même temps que l'entrée, et une sortie. <strong>Tout est décidé avant&nbsp;; il ne reste ensuite qu'à laisser le marché trancher.</strong></p>
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-dec" class="fig" viewBox="0 0 1000 492" role="img" aria-label="Une position de bout en bout sur une seance illustrative : le niveau calcule avant l ouverture, le contact, l entree, le stop et l objectif traces d avance, et la sortie resolue en balayant les barres"></svg></div>
+        <figcaption><span class="lab">Fig. 3.1</span>Une position entière sur une séance illustrative. Le niveau est le creux de la première demi-séance arrondi&nbsp;: il est donc connu <em>avant</em> le contact, ce qui est toute la différence entre un niveau et un commentaire. Le stop et l'objectif sont ceux de la ligne « nœud de faible volume » de la figure&nbsp;5.1 — mêmes nombres, même exigence. <strong>La sortie n'est pas affirmée&nbsp;: elle est trouvée en balayant les barres</strong> jusqu'à la première qui touche une barrière, et la séance montrée est celle qui, sur deux cent quarante simulées, met <strong>le plus longtemps</strong> à se dénouer&nbsp;: la médiane en met trois minutes. Ce n'est pas un détail de mise en page — <strong>à un stop de douze points, une minute de bruit vaut déjà l'essentiel de la distance</strong>, et c'est ce qui rend une règle de sortie difficile à discuter autrement qu'en chiffres.</figcaption>
+      </figure></div>
+    <p class="measure">Ce qui se voit sur cette planche est ce qui se reproduit chaque fois&nbsp;: <strong>l'opérateur ne choisit pas l'issue, il choisit la géométrie</strong>. Ce qu'il apporte, ce sont le niveau et le moment — c'est-à-dire précisément la part qui ne se code pas, et qu'on ne peut donc juger qu'au fil des centaines de contacts que la section&nbsp;05 chiffre.</p>
   </section>
 
   <section id="s04">
@@ -1211,6 +1219,117 @@
     });
     tx(host, 'axl', W / 2, B + 38, ETROIT ? 'GAMMA NET (INTÉRÊT OUVERT)' : 'GAMMA NET (INTÉRÊT OUVERT)', { 'text-anchor': 'middle' });
     tx(host, 'wm', R, H - 14, ETROIT ? 'aucune donnée de marché' : MARK + ' · profil illustratif · aucune donnée de marché', { 'text-anchor': 'end' });
+  }
+
+  // ================= Fig. 3.1 — une décision, de bout en bout ============
+  // La seule planche du document qui montre une position entiere : le niveau
+  // calcule avant l ouverture, le contact, l entree, les deux barrieres, et
+  // la sortie — resolue en balayant les barres, jamais affirmee. Ses nombres
+  // sont ceux de la ligne « haut / bas de structure » de la 5.1 : meme stop,
+  // meme rapport, donc meme seuil a demontrer.
+  //
+  // Trois choses ont ete apprises en la construisant. Le premier jet posait
+  // des ancres choisies a la main : le niveau tombait au ras du cadre et le
+  // contact n existait pas, si bien que le repli le placait la ou le prix n
+  // etait jamais revenu et que la sortie se resolvait a la barre suivante.
+  // La seance est donc choisie par une regle. Et la regle a rendu un fait
+  // qu on ne cherchait pas : a un stop de douze points sur des barres dont
+  // l ecart-type vaut neuf, la mediane se denoue en trois minutes. Ce nombre
+  // est mesure et publie sous la planche plutot que contourne.
+  var A_DEC = [[0, 29470], [0.16, 29548], [0.32, 29462], [0.48, 29524], [0.66, 29458], [0.84, 29512], [1, 29538]];
+  var DEC_N = 130, DEC_GERMES = 400;
+  function positionDeSeance(bs, n, a, b) {
+    var bas = Infinity;
+    for (var i = 0; i < n * 0.42; i++) if (bs[i].l < bas) bas = bs[i].l;
+    var niveau = Math.round(bas / 5) * 5;
+    var iC = -1;
+    for (var k = Math.floor(n * 0.48); k < n; k++) if (bs[k].l <= niveau) { iC = k; break; }
+    if (iC < 0 || iC > n * 0.78) return null;
+    var stop = niveau - a, cible = niveau + b, iS = n - 1, issue = 'clôture de séance';
+    for (var j = iC + 1; j < n; j++) {
+      if (bs[j].l <= stop) { iS = j; issue = 'stop'; break; }
+      if (bs[j].h >= cible) { iS = j; issue = 'objectif'; break; }
+    }
+    if (stop < LO + 40 || cible > HI - 40) return null;
+    return { niveau: niveau, stop: stop, cible: cible, iC: iC, iS: iS, issue: issue, duree: iS - iC };
+  }
+  var DECRES = null;
+  function campagneDecision() {
+    if (DECRES) return DECRES;
+    var T = testabilite(), L = null;
+    for (var t = 0; t < T.length; t++) if (T[t].nom.indexOf('structure') >= 0) L = T[t];
+    var a = L.a, b = a * L.rr, durees = [], best = null, bestBars = null;
+    for (var g = 1; g <= DEC_GERMES; g++) {
+      var bs = bars(A_DEC, DEC_N, 7000 + g), p = positionDeSeance(bs, DEC_N, a, b);
+      if (!p) continue;
+      durees.push(p.duree);
+      // La regle de choix ne porte pas sur l issue — elle porte sur la duree :
+      // c est la seule qui rende la planche lisible, et elle ne dit rien du
+      // sens. La colonne des issues est publiee a cote.
+      if (!best || p.duree > best.duree) { best = p; bestBars = bs; }
+    }
+    durees.sort(function (x, y) { return x - y; });
+    var nO = 0;
+    DECRES = { L: L, a: a, b: b, P: best, bs: bestBars, seances: durees.length,
+      mediane: durees.length ? durees[Math.floor(durees.length / 2)] : 0 };
+    return DECRES;
+  }
+  function figDecision() {
+    var host = document.getElementById('f-dec'); if (!host) return;
+    var D = campagneDecision(); if (!D.P) return;
+    var L = D.L, a = D.a, b = D.b, P = D.P, bs = D.bs, n = DEC_N;
+
+    // La gouttiere du pied doit loger deux lignes ET l axe des temps : a 74
+    // la seconde ligne se posait sur les heures.
+    var c = chart(host, { h: ETROIT ? 524 : 492, padBot: ETROIT ? 128 : 96 });
+    var x0 = 14, xEnd = c.plotR * (ETROIT ? 0.94 : 0.90), dx = (xEnd - x0) / (n - 1);
+
+    // fonds d abord : une bande peinte apres les barres les recouvre
+    host.appendChild(el('rect', { class: 'zoneband', x: (x0 + dx * P.iC).toFixed(1), y: c.sy(P.cible).toFixed(1),
+      width: Math.max(dx * P.duree, 3).toFixed(1), height: (c.sy(P.niveau) - c.sy(P.cible)).toFixed(1) }));
+    [[P.niveau, 'lvl'], [P.cible, 'lvldot'], [P.stop, 'lvldot']].forEach(function (l) {
+      host.appendChild(el('line', { class: l[1], x1: 0, y1: c.sy(l[0]).toFixed(1), x2: c.plotR, y2: c.sy(l[0]).toFixed(1) }));
+    });
+    candles(host, bs, x0, dx, c.sy, Math.max(dx * 0.62, 1.8));
+
+    // les trois intitules, apres les bougies et cernes de noir
+    tx(host, 'lvltx w halo', 8, c.sy(P.cible) - 7, 'objectif  +' + b + ' pt');
+    tx(host, 'lvltx w halo', 8, c.sy(P.niveau) - 7, ETROIT ? 'niveau calculé d’avance' : 'niveau calculé avant l’ouverture');
+    tx(host, 'lvltx halo', 8, c.sy(P.stop) + 17, 'stop  −' + a + ' pt');
+
+    // l entree et la sortie
+    var xC = x0 + dx * P.iC, xS = x0 + dx * P.iS;
+    host.appendChild(el('circle', { cx: xC.toFixed(1), cy: c.sy(P.niveau).toFixed(1), r: 4.2, fill: '#FFFFFF' }));
+    var yS = P.issue === 'stop' ? P.stop : (P.issue === 'objectif' ? P.cible : bs[P.iS].c);
+    host.appendChild(el('circle', { cx: xS.toFixed(1), cy: c.sy(yS).toFixed(1), r: 4.2, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.8 }));
+    // Sur telephone les deux intitules tombaient dans la meme bande que celui
+    // de l objectif, a dix-huit minutes d intervalle sur un axe trois fois
+    // plus court. Les deux marques prennent leur nom dans le pied.
+    if (!ETROIT) {
+      pill(host, xC + 10, c.sy(P.niveau), 'entrée  ' + fmt(P.niveau, 0), c.plotR - 6);
+      var fin = 'sortie — ' + P.issue, aDroite = xS + 14 + fin.length * 7.4 < c.plotR - 4;
+      tx(host, 'lvltx w halo', xS + (aDroite ? 14 : -14), c.sy(yS) - 12, fin, { 'text-anchor': aDroite ? 'start' : 'end' });
+    }
+
+    tag(host, c, c.sy(closes(bs)[n - 1]), fmt(closes(bs)[n - 1], ETROIT ? 0 : 2), true);
+    timeAxis(host, c, x0, xEnd);
+
+    // le pied, dans sa propre gouttiere : tout y est calcule
+    var p0 = 100 * L.p0, ps = 100 * L.ps, yb = c.h - c.bot;
+    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yb + 16).toFixed(1), x2: c.w, y2: (yb + 16).toFixed(1) }));
+    var pct1 = p0.toFixed(1).replace('.', ','), pct2 = ps.toFixed(1).replace('.', ',');
+    var ecart = (ps - p0).toFixed(2).replace('.', ',');
+    if (ETROIT) {
+      host.appendChild(el('circle', { cx: 14, cy: yb + 32, r: 4.2, fill: '#FFFFFF' }));
+      tx(host, 'lvltx w', 26, yb + 36, 'entrée  ' + fmt(P.niveau, 0));
+      host.appendChild(el('circle', { cx: 14, cy: yb + 54, r: 4.2, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.8 }));
+      tx(host, 'lvltx w', 26, yb + 58, 'sortie — ' + P.issue + ', ' + P.duree + ' min plus tard');
+      tx(host, 'lvltx', 8, yb + 80, 'objectif avant stop ' + pct1 + ' %  ·  seuil ' + pct2 + ' %');
+      tx(host, 'lvltx', 8, yb + 97, 'médiane de ' + D.seances + ' séances simulées : ' + D.mediane + ' min');
+    } else {
+      tx(host, 'lvltx w', 10, yb + 36, 'sans dérive : objectif avant stop ' + pct1 + ' %   ·   seuil de rentabilité ' + pct2 + ' %   ·   écart à démontrer ' + ecart + ' pt');
+      tx(host, 'lvltx', 10, yb + 53, 'celle-ci se dénoue en ' + P.duree + ' minutes — médiane de ' + D.seances + ' séances simulées : ' + D.mediane + ' minutes');
+    }
   }
 
   // ================= Fig. 4.2 — structure =================
@@ -2142,6 +2261,7 @@
   figFlux();
   figCockpit();
   figGex();
+  figDecision();
   figStruct();
   figVolp();
   figVwap();
