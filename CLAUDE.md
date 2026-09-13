@@ -1062,6 +1062,28 @@ proposé rend 43,4 contre 4,4 au mieux des trois géométries déclarées. Une
 troisième planche alignait dix-neuf barres anonymes ; elle en publie six,
 nommées, et le regroupement est calculé.
 
+## Hors du corpus — le mandat NQ
+
+`docs/mandat/` porte un objet qui n'appartient pas à la chaîne des papiers :
+un **fichier HTML autonome** — un `<style>` en ligne, un `<script>` en ligne,
+aucune dépendance, aucune construction — publié en artefact et envoyé à un
+bailleur privé. Treize planches SVG écrites à la main, noir et blanc strict,
+aléa déterministe (mulberry32 + MA(1) à coefficient négatif pour le rebond
+bid-ask). Il ne passe par aucun module Python et par aucun test du dépôt ;
+son `README.md` liste ses règles, ses pièges et ses scripts de vérification.
+
+Deux règles y engagent l'auteur. **Un nouveau lien à chaque édition** : on
+copie le fichier sous un nouveau nom, on ne republie jamais la même URL.
+**Aucun défilement horizontal à aucune largeur** — vérifié à 360, 390, 430,
+768 et 1100 px ; sous 760 px le drapeau `ETROIT` fait passer les planches
+d'une boîte de 1000 à une boîte de 430, faute de quoi un intitulé de 14 px
+se rend à 5,5 px.
+
+Le piège qui résume les autres : **la relecture visuelle se faisait dans une
+police de repli**, plus large que celle qui est livrée. Les vraies fontes se
+récupèrent par npm et s'injectent dans un aperçu local — c'est ce qui a rendu
+visibles la moitié des défauts de rendu du document.
+
 ## Carte des modules
 
 Mesure et géométrie

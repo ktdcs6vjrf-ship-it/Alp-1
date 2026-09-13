@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const p = await b.newPage({ viewport: { width: 1200, height: 900 }, deviceScaleFactor: 4 });
+await p.goto('file://' + process.cwd() + '/preview_s38.html');
+await p.waitForTimeout(600);
+const [id, fx, fy, fw, fh] = [process.argv[2], ...process.argv.slice(3).map(Number)];
+const box = await p.evaluate(([id, fx, fy, fw, fh]) => { const e = document.querySelector('#'+id); const r = e.getBoundingClientRect();
+  return { x: r.x + r.width*fx, y: r.y + scrollY + r.height*fy, width: r.width*fw, height: r.height*fh }; }, [id, fx, fy, fw, fh]);
+await p.screenshot({ path: `c_${id}.png`, fullPage: true, clip: box });
+console.log('ok');
+await b.close();

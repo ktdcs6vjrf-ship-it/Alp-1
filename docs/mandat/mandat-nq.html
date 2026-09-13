@@ -1,0 +1,2156 @@
+<title>Mandat NQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+  /* Noir et blanc strict. Aucune couleur n'entre dans ce document : ce qui
+     distingue deux séries est la valeur (blanc / gris) ou le tireté, jamais
+     une teinte. C'est la contrainte qui rend les onze figures cohérentes. */
+  :root {
+    --paper:   #000000;
+    --panel:   #0C0E10;
+    --panel-2: #111316;
+    --ink:     #F2F4F6;
+    --soft:    #B3B9C0;
+    --muted:   #7C838B;
+    --faint:   #4C535B;
+    --hair:    #23272C;
+
+    --k0: #0A0C0E; --k1: #171A1E; --k2: #262A30; --k3: #383D45;
+    --k4: #4D535C; --k5: #676E77; --k6: #8E959E; --k7: #EFF2F5;
+
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --gutter: 1.5rem;
+    --measure: 40rem;
+    --wide: 58rem;
+
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.07rem;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet { max-width: var(--wide); margin: 0 auto; padding-inline: var(--gutter); padding-block: 3.6rem 5rem; }
+  .measure { max-width: var(--measure); }
+  ::selection { background: #2A2F36; color: #FFFFFF; }
+
+  /* ---------- en-tête ---------- */
+
+  .venue {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 2.2rem; flex-wrap: wrap;
+  }
+  .venue .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); flex: none; }
+  .venue b { color: var(--soft); font-weight: 500; }
+  .venue .sep { color: var(--hair); }
+
+  .kicker {
+    font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink); margin: 0 0 0.9rem;
+  }
+  h1 {
+    font-family: var(--serif); font-size: clamp(1.85rem, 4.6vw, 2.5rem); font-weight: 600; line-height: 1.18;
+    letter-spacing: -0.012em; margin: 0 0 1.1rem; max-width: 32ch; text-wrap: balance;
+  }
+  .dek { font-size: 1.06rem; color: var(--soft); max-width: var(--measure); margin: 0 0 2.4rem; }
+
+  .kpis {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--hair);
+    border: 1px solid var(--hair); margin-bottom: 0.4rem;
+  }
+  .kpi { background: #000; padding: 1.3rem 1.3rem; min-width: 0; }
+  .kpi .t, .kpi .n { overflow-wrap: anywhere; }
+  .kpi .n {
+    display: block; font-family: var(--mono); font-size: 1.42rem; font-weight: 600; color: var(--ink);
+    font-variant-numeric: tabular-nums; line-height: 1.05; margin-bottom: 0.4rem;
+  }
+  .kpi .t { display: block; font-size: 0.78rem; color: var(--muted); line-height: 1.35; font-family: var(--mono); }
+  @media (max-width: 38rem) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- sections ---------- */
+
+  section { margin-top: 4.4rem; }
+  .sh { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1.05rem; }
+  .sh .no { font-family: var(--mono); font-size: 0.8rem; color: var(--ink); flex: none; }
+  .sh h2 { font-family: var(--serif); font-size: 1.48rem; font-weight: 600; margin: 0; letter-spacing: -0.008em; }
+
+  .sub { margin-top: 3rem; padding-top: 3rem; border-top: 1px solid var(--hair); }
+  .sub:first-of-type { border-top: none; padding-top: 0; }
+  .sub .sh2 { display: flex; align-items: baseline; gap: 0.65rem; margin-bottom: 0.6rem; }
+  .sub .sh2 .no { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); flex: none; }
+  .sub .sh2 h3 { font-family: var(--serif); font-size: 1.16rem; font-weight: 600; margin: 0; }
+
+  p { margin: 0 0 0.9rem; max-width: var(--measure); }
+  p:last-child { margin-bottom: 0; }
+  strong { font-weight: 600; color: var(--ink); }
+
+  ul.plain { margin: 1rem 0 0; padding: 0; list-style: none; max-width: var(--measure); }
+  ul.plain li { position: relative; padding-left: 1.3rem; margin-bottom: 0.75rem; }
+  ul.plain li::before { content: "—"; position: absolute; left: 0; color: var(--faint); }
+
+  /* ---------- infrastructure ---------- */
+
+  .infra { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--hair); border: 1px solid var(--hair); }
+  .infra-card { background: #0A0C0E; }
+  .infra-card .name { font-weight: 600; font-size: 1.05rem; display: block; margin-bottom: 0.45rem; color: var(--ink); }
+  .infra-card .desc { font-size: 0.86rem; color: var(--soft); margin: 0; }
+  @media (max-width: 38rem) { .infra { grid-template-columns: 1fr; } }
+
+  /* ---------- figures ---------- */
+
+  figure { margin: 1.6rem 0 0; }
+  figure svg { display: block; width: 100%; height: auto; background: #000; border: 1px solid #1E2227; }
+  figcaption { font-size: 0.85rem; line-height: 1.55; color: var(--muted); margin-top: 0.7rem; max-width: var(--measure); }
+  figcaption .lab { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); margin-right: 0.5em; }
+
+  .fig text { font-family: var(--mono); }
+  .fig .bg { fill: #000; }
+  .fig .grid { stroke: #14171A; stroke-width: 1; fill: none; }
+  .fig .axsep { stroke: #23272C; stroke-width: 1; }
+  .fig .px { font-size: 14.5px; fill: #B3B9C0; font-variant-numeric: tabular-nums; }
+  .fig .px.b { fill: #FFFFFF; font-weight: 600; }
+  .fig .px.d { fill: #6E757D; }
+  .fig .qn { font-size: 12px; fill: #FFFFFF; font-weight: 600; letter-spacing: 0.04em; }
+  .fig .qv { font-size: 11.5px; fill: #8A9099; font-variant-numeric: tabular-nums; }
+  .fig .pxbox { fill: #2A2F36; }
+  .fig .pxbox.now { fill: #FFFFFF; }
+  .fig .pxtx { font-size: 14px; fill: #FFFFFF; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .fig .pxtx.inv { fill: #000000; }
+  .fig .tm { font-size: 13.5px; fill: #7C838B; }
+  .fig .hdr { font-size: 13.5px; fill: #8E959E; letter-spacing: 0.06em; }
+  .fig .cu { fill: #FFFFFF; }
+  .fig .cd { fill: #5E656E; }
+  .fig .wu { stroke: #FFFFFF; stroke-width: 1; }
+  .fig .wd { stroke: #5E656E; stroke-width: 1; }
+  .fig .ma { stroke: #7C838B; stroke-width: 1; fill: none; }
+  .fig .ma.f { stroke: #FFFFFF; stroke-width: 1.5; }
+  .fig .halo { stroke: #000000; stroke-width: 4; fill: none; stroke-linejoin: round; }
+  .fig .lvl { stroke: #EFF2F5; stroke-width: 1; stroke-dasharray: 8 5; fill: none; }
+  .fig .lvl.thin { stroke: #6E757D; }
+  .fig .lvldot { stroke: #6E757D; stroke-width: 1; stroke-dasharray: 2 4; fill: none; }
+  .fig .lvlsolid { stroke: #EFF2F5; stroke-width: 1; fill: none; }
+  .fig .lvlthick { stroke: #FFFFFF; stroke-width: 2.2; stroke-dasharray: 12 4 3 4; fill: none; }
+  .fig text.halo { paint-order: stroke; stroke: #000000; stroke-width: 3.6px; stroke-linejoin: round; stroke-linecap: round; }
+  .fig .lvltx { font-size: 13.5px; fill: #8E959E; }
+  .fig .lvltx.w { fill: #FFFFFF; }
+  .fig .pill { fill: #FFFFFF; }
+  .fig .pilltx { font-size: 13px; fill: #000000; font-weight: 600; }
+  .fig .sess { stroke: #FFFFFF; stroke-width: 1.4; stroke-dasharray: 2 5; stroke-linecap: round; }
+  .fig .vp { fill: #4D535C; }
+  .fig .vp.poc { fill: #FFFFFF; }
+  .fig .zoneband { fill: #FFFFFF; opacity: 0.06; }
+  .fig .wm { font-size: 11.5px; fill: #333940; letter-spacing: 0.08em; }
+  .fig .ttl { font-size: 17px; fill: #FFFFFF; font-weight: 700; letter-spacing: 0.04em; }
+  .fig .axl { font-size: 13.5px; fill: #7C838B; }
+  .fig .side { font-size: 30px; fill: #2A2F36; letter-spacing: 0.08em; }
+  .fig .side.sm { font-size: 26px; }
+
+  /* barres : le blanc porte une famille, le gris l'autre */
+  .fig .barA { fill: #FFFFFF; }
+  .fig .barB { fill: #5E656E; }
+  .fig .barA.dim { fill: #C9CED4; }
+
+  /* rampe de gris, commune à toutes les cartes de chaleur */
+  .fig .k0 { fill: var(--k0); } .fig .k1 { fill: var(--k1); } .fig .k2 { fill: var(--k2); } .fig .k3 { fill: var(--k3); }
+  .fig .k4 { fill: var(--k4); } .fig .k5 { fill: var(--k5); } .fig .k6 { fill: var(--k6); } .fig .k7 { fill: var(--k7); }
+  .fig .cellsep { stroke: #000000; stroke-width: 0.5; fill: none; }
+  .fig .dnum { font-size: 13.5px; fill: #C9CED4; font-variant-numeric: tabular-nums; }
+  .fig .dnum.b { fill: #FFFFFF; font-weight: 600; }
+  .fig .badgebg { fill: #FFFFFF; }
+  .fig .badgebg.dim { fill: #5E656E; }
+  .fig .badge { font-size: 12.5px; font-weight: 600; fill: #000; font-variant-numeric: tabular-nums; }
+
+  .fig .volbar { fill: #FFFFFF; opacity: 0.30; stroke: #000; stroke-width: 0.6; }
+  .fig .bubble { fill: #FFFFFF; stroke: #000000; stroke-width: 0.8; }
+  .fig .mcpath { stroke: #FFFFFF; stroke-width: 0.7; fill: none; }
+  .fig .cardbody { fill: #0A0C0E; stroke: #2A2F35; stroke-width: 1; }
+  .fig .cardhead { fill: #191D22; stroke: none; }
+  .fig .cardrule { stroke: #3A4048; stroke-width: 1; }
+  .fig .cardkey { fill: #FFFFFF; stroke: #FFFFFF; stroke-width: 1; }
+  .fig .cardkeyhead { fill: #C9CED4; stroke: none; }
+  .fig .stepn { font-size: 13px; font-weight: 700; fill: #FFFFFF; letter-spacing: 0.04em; }
+  .fig .stepn.inv { fill: #000000; }
+  .fig .cardttl { font-size: 11.5px; letter-spacing: 0.09em; fill: #9098A2; }
+  .fig .cardttl.inv { fill: #1B1F24; }
+  .fig .cardbig { font-size: 15px; font-weight: 600; fill: #FFFFFF; }
+  .fig .cardbig.inv { fill: #000000; }
+  .fig .cardsub { font-size: 13px; fill: #8A9099; }
+  .fig .cardsub.inv { fill: #2C3138; }
+  .fig .railon { fill: #FFFFFF; }
+  .fig .railoff { fill: none; stroke: #2A2F35; stroke-width: 1; }
+  .fig .railtx { font-size: 10.5px; font-weight: 700; fill: #000000; letter-spacing: 0.06em; }
+  .fig .cloud { stroke: #FFFFFF; fill: none; stroke-linecap: round; }
+  .fig .cloudgrid { stroke: #1C2026; stroke-width: 1; fill: none; }
+
+  /* chrome des tuiles */
+  .fig .cpwin { fill: #000; stroke: #1E2227; stroke-width: 1; }
+  .fig .cphead { fill: #0A0C0E; stroke: #1E2227; stroke-width: 1; }
+  .fig .cptitle { font-size: 12.5px; letter-spacing: 0.07em; fill: #8E959E; }
+  .fig .cpdot { fill: #FFFFFF; }
+  .fig .cpx { fill: none; stroke: #4C535B; stroke-width: 1; }
+  .fig .cpwm { font-size: 10.5px; letter-spacing: 0.03em; fill: #2E343A; }
+  .fig .ticker { fill: #0A0C0E; stroke: #1E2227; }
+  .fig .ticker.on { fill: #FFFFFF; stroke: #FFFFFF; }
+  .fig .tickertx { font-size: 12px; fill: #6E757D; }
+  .fig .tickertx.on { fill: #000000; font-weight: 600; }
+
+
+  /* ---------- comparatif deux familles ---------- */
+  .cmp { border: 1px solid var(--hair); background: var(--panel); max-width: var(--measure); margin-top: 1.4rem; }
+  .cmp .row { display: grid; grid-template-columns: 9.5rem 1fr 1fr; gap: 0; }
+  .cmp .row + .row { border-top: 1px solid var(--hair); }
+  .cmp .row.head { background: var(--panel-2); }
+  .cmp .c { padding: 0.75rem 0.9rem; font-size: 0.88rem; line-height: 1.45; }
+  .cmp .c.k { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+  .cmp .row.head .c { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); font-weight: 600; }
+  .cmp .c + .c { border-left: 1px solid var(--hair); }
+  .cmp .c.mine { color: var(--ink); }
+  .cmp .c.other { color: var(--soft); }
+  @media (max-width: 36rem) {
+    .cmp .row { grid-template-columns: 1fr; }
+    .cmp .c + .c { border-left: none; border-top: 1px solid var(--hair); }
+    .cmp .row.head { display: none; }
+    .cmp .c.mine::before { content: "discrétionnaire — "; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+    .cmp .c.other::before { content: "systématique — "; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+  }
+
+  /* ---------- énoncé mis en avant ---------- */
+  .thesis {
+    border-left: 2px solid var(--ink); padding: 0.2rem 0 0.2rem 1.3rem; margin: 2.2rem 0 1.6rem;
+    max-width: var(--measure); font-size: 1.16rem; line-height: 1.5; color: var(--ink);
+  }
+  .thesis span { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; }
+
+  /* ---------- offre ---------- */
+  .offer { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--hair); border: 1px solid var(--hair); margin-top: 1.4rem; }
+  .offer .card { background: #0A0C0E; }
+  @media (max-width: 40rem) { .offer { grid-template-columns: 1fr; } }
+
+
+  /* ---------- planches ---------- */
+  /* Pas de défilement horizontal : une planche se met toujours à la largeur
+     disponible. Sur téléphone elle reprend en plus les marges du corps de
+     texte — c'est autant de facteur d'échelle gagné sur la lisibilité. */
+  /* Entre 33 et 47,5 rem, les planches sont rendues dans leur gabarit
+     telephone (430 de large) mais le cadre en fait beaucoup plus : etirees,
+     leur typographie devenait deux fois trop grosse. On les borne et on les
+     centre — au-dela de 47,5 rem c est le gabarit large qui sert. */
+  @media (min-width: 33rem) and (max-width: 47.49rem) {
+    .figwrap figure svg { max-width: 34rem; margin-inline: auto; }
+  }
+  .figwrap { margin: 1.6rem 0 0; }
+  .figwrap figure { margin: 0; }
+  @media (max-width: 52rem) {
+    .figwrap { margin-inline: calc(-1 * var(--gutter)); }
+    .figwrap figcaption { margin-inline: var(--gutter); }
+  }
+
+
+  /* ---------- critères numérotés ---------- */
+  .crit { border: 1px solid var(--hair); background: var(--panel); max-width: var(--measure); margin-top: 1.3rem; }
+  .crit > .band + .c { border-top: none; }
+  .crit .c { display: grid; grid-template-columns: 2.6rem 1fr; gap: 0 0.9rem; padding: 1rem 1.15rem; }
+  .crit .c + .c { border-top: 1px solid var(--hair); }
+  .crit .n { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); padding-top: 0.18rem; }
+  .crit .t { font-weight: 600; font-size: 1rem; color: var(--ink); }
+  .crit .d { grid-column: 2; font-size: 0.89rem; color: var(--soft); margin-top: 0.3rem; }
+  @media (max-width: 30rem) { .crit .c { grid-template-columns: 2rem 1fr; gap: 0 0.6rem; } }
+
+
+  /* ---------- résumé d'ouverture ---------- */
+  .brief { border: 1px solid var(--hair); background: #0A0C0E; max-width: var(--measure); margin-bottom: 2.2rem; }
+  .brief .body { padding: 1.2rem 1.35rem; }
+  .brief p { font-size: 1.02rem; margin-bottom: 0.7rem; color: var(--soft); max-width: none; }
+  .brief p:last-child { margin-bottom: 0; }
+  .brief strong { color: var(--ink); }
+
+  /* ---------- sommaire ---------- */
+  .toc { border: 1px solid var(--hair); margin-bottom: 2.6rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--hair); }
+  .toc a { background: #000; padding: 0.75rem 0.9rem; text-decoration: none; display: block; transition: background 0.12s; }
+  .toc a:hover { background: var(--panel); }
+  .toc .n { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); display: block; }
+  .toc .t { font-size: 0.92rem; color: var(--soft); }
+  .toc a:hover .t { color: var(--ink); }
+  @media (max-width: 44rem) { .toc { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 26rem) { .toc { grid-template-columns: 1fr; } }
+  section { scroll-margin-top: 1.5rem; }
+
+
+  /* ---------- questions ---------- */
+  .qa { border: 1px solid var(--hair); background: var(--panel); max-width: var(--measure); margin-top: 1.4rem; }
+  .qa .q { padding: 1.15rem 1.15rem 1.25rem; }
+  .qa .q + .q { border-top: 1px solid var(--hair); }
+  .qa .no { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 0.45rem; }
+  .qa .qt { font-family: var(--serif); font-size: 1.06rem; font-weight: 600; color: var(--ink); line-height: 1.32; margin: 0 0 0.55rem; }
+  .qa .qr { font-size: 0.9rem; color: var(--soft); margin: 0; }
+  .qa .qr + .qr { margin-top: 0.5rem; }
+  .qa .pin { display: block; margin-top: 0.85rem; padding: 0.55rem 0 0.55rem 0.85rem; border-left: 2px solid var(--ink);
+             font-family: var(--mono); font-size: 0.74rem; line-height: 1.5; color: var(--ink); background: var(--panel-2); }
+
+  /* ---------- lexique ---------- */
+  .lex { border: 1px solid var(--hair); background: var(--panel); max-width: var(--measure); }
+  .lex .e { display: grid; grid-template-columns: 11rem 1fr; gap: 0 1rem; padding: 0.8rem 1.15rem; }
+  .lex .e + .e { border-top: 1px solid var(--hair); }
+  .lex .k { font-family: var(--mono); font-size: 0.78rem; color: var(--ink); font-weight: 500; padding-top: 0.12rem; }
+  .lex .v { font-size: 0.89rem; color: var(--soft); }
+  @media (max-width: 34rem) { .lex .e { grid-template-columns: 1fr; gap: 0.25rem; } }
+
+
+  /* ---------- grammaire de carte, commune au document et aux planches ----------
+     Une carte = un bandeau gris qui la nomme, un filet, puis le corps.
+     C'est la même forme que les encadrés de la figure 2.1, pour que la page
+     et ses planches se lisent comme un seul objet. */
+  .band {
+    background: #191D22; border-bottom: 1px solid #3A4048; padding: 0.55rem 1.15rem;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.09em;
+    text-transform: uppercase; color: #9098A2; display: block;
+  }
+  .band .i { color: var(--ink); font-weight: 600; margin-right: 0.5em; }
+  .band.key { background: #C9CED4; color: #1B1F24; border-bottom-color: #FFFFFF; }
+  .body { padding: 1.05rem 1.15rem; }
+  .body > p { font-size: 0.89rem; color: var(--soft); margin: 0 0 0.6rem; max-width: none; }
+  .body > p:last-child { margin-bottom: 0; }
+  .body strong { color: var(--ink); }
+
+
+  /* ---------- rythme : un lever de section est une respiration ---------- */
+  .sh { position: relative; }
+  .sh::before {
+    content: ""; position: absolute; top: -1.5rem; left: 0; width: 2.6rem; height: 1px; background: var(--ink);
+  }
+  section > .sh { margin-top: 0.4rem; }
+  h3.sub-h {
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 600; margin: 2.8rem 0 0.7rem;
+    letter-spacing: -0.004em; max-width: var(--measure);
+  }
+  h3.sub-h::before {
+    content: ""; display: block; width: 1.6rem; height: 1px; background: var(--faint); margin-bottom: 0.85rem;
+  }
+  /* le sommaire doit se voir au clavier autant qu'à la souris */
+  .toc a:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* les libellés de figure, plus présents */
+  figcaption .lab { font-weight: 600; }
+
+  /* ---------- statut ---------- */
+
+  .status {
+    display: inline-flex; align-items: center; gap: 0.55em; font-family: var(--mono); font-size: 0.8rem;
+    background: var(--panel); border: 1px solid var(--hair); padding: 0.42rem 0.85rem; margin-bottom: 1.2rem;
+  }
+  .status .dot2 { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--ink); }
+
+  /* ---------- conditions ---------- */
+
+  .terms { border: 1px solid var(--hair); background: var(--panel); max-width: var(--measure); }
+  .term-row { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; padding: 0.95rem 1.15rem; }
+  .term-row + .term-row { border-top: 1px solid var(--hair); }
+  .term-row .label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding-top: 0.2rem; }
+  .term-row .value { font-size: 1rem; }
+  .term-row .value .fig-n { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+  .term-row .note { display: block; font-size: 0.84rem; color: var(--muted); margin-top: 0.3rem; font-family: var(--mono); }
+  @media (max-width: 34rem) { .term-row { grid-template-columns: 1fr; gap: 0.3rem; } }
+
+  /* ---------- suivi ---------- */
+
+  .track-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--hair); border: 1px solid var(--hair); max-width: var(--measure); margin-bottom: 1.3rem; }
+  .track-kpis .kpi { padding: 0.9rem 1rem; }
+  @media (max-width: 34rem) { .track-kpis { grid-template-columns: 1fr; } }
+  .track-kpis .n { font-size: 1.15rem; }
+
+  .scroll { max-width: var(--measure); }
+  table.log { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .log th, .log td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--hair); }
+  .log th { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .log td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .log tr.example td { color: var(--faint); font-style: italic; }
+  @media (max-width: 40rem) {
+    .log thead { display: none; }
+    .log tr { display: block; border-bottom: 1px solid var(--hair); padding: 0.5rem 0; }
+    .log td { display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.6rem; border: none; padding: 0.2rem 0; }
+    .log td::before { content: attr(data-k); font-family: var(--mono); font-size: 0.66rem;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  }
+
+  /* ---------- avertissement ---------- */
+
+  .warn { background: var(--panel-2); border: 1px solid var(--hair); padding: 1.15rem 1.25rem; margin-top: 3.4rem; max-width: var(--measure); }
+  .warn .lab { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.6rem; }
+  .warn p { font-size: 0.89rem; color: var(--soft); }
+
+  footer { margin-top: 3rem; padding-top: 1.3rem; border-top: 1px solid var(--hair); font-size: 0.78rem; color: var(--muted); font-family: var(--mono); }
+
+  @media (max-width: 30rem) { :root { --gutter: 1rem; } }
+
+  /* ---------- impression et export PDF ----------
+     Le document garde son fond noir a l impression : c est son identite, et
+     il est fait pour etre archive en PDF plutot que tire sur papier. Ce qui
+     change est la pagination — rien ne doit se couper au milieu d une carte,
+     d une figure ou d une reponse. */
+
+  /* ---------- repères de lecture ----------
+     Le document fait une vingtaine d écrans sur téléphone. Deux reperes
+     suffisent : ou j en suis, et comment revenir au sommaire. Aucun des deux
+     ne s imprime, et aucun ne bouge tant qu on ne defile pas. */
+  .lecture { position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 40; pointer-events: none; background: var(--hair); }
+  .lecture .bar { display: block; height: 100%; width: 0; background: var(--ink); }
+  .retour { position: fixed; right: 1rem; bottom: 1rem; z-index: 40;
+            font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--ink); background: #1C2026; border: 1px solid #454C55;
+            padding: 0.55rem 0.75rem; text-decoration: none; }
+  .retour:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  @media print { .lecture, .retour { display: none !important; } }
+  .tempo { font-family: var(--mono); font-size: 0.74rem; line-height: 1.7; color: var(--muted);
+           max-width: var(--measure); margin: 1.1rem 0 0; }
+  .tempo span { color: var(--ink); border-bottom: 1px solid var(--faint); padding-bottom: 1px; }
+  .nw { white-space: nowrap; }
+  .printonly { display: none; }
+  @page { size: A4; margin: 13mm 11mm; }
+  @media print {
+    html, body { background: #000; }
+    *, *::before, *::after { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sheet { max-width: none; }
+    .printonly { display: block; }
+    .figwrap { margin-inline: 0; }
+    .figwrap figcaption { margin-inline: 0; }
+    .scrollbox { overflow: visible; }
+    a { text-decoration: none; color: inherit; }
+    figure, .qa .q, .crit .c, .lex .e, .infra-card, .offer .card, .terms,
+    .thesis, .warn, .brief, .kpis, .track-kpis, .cmp, .toc,
+    .lex, .qa, .crit { break-inside: avoid; page-break-inside: avoid; }
+    h1, h2, h3, .sh, .band { break-after: avoid; page-break-after: avoid; }
+    figure { break-before: avoid; page-break-before: avoid; }
+    section { break-before: page; page-break-before: always; }
+    section#s01 { break-before: auto; page-break-before: auto; }
+    footer { break-before: avoid; page-break-before: avoid; }
+  }
+</style>
+
+<div class="lecture" aria-hidden="true"><span class="bar"></span></div>
+<a class="retour" href="#sommaire" hidden>↑ sommaire</a>
+
+<div class="sheet">
+
+  <p class="venue"><span class="dot"></span> Reporting de gestion <span class="nw"><span class="sep">·</span> mandat privé</span> <span class="nw"><span class="sep">·</span> <b>confidentiel</b></span> <span class="nw"><span class="sep">·</span> <b>édition du 13/09/2026</b></span></p>
+
+  <p class="kicker">SEUIL — desk intraday NQ (E-mini Nasdaq-100)</p>
+  <h1>Un capital alloué, une méthode documentée, un suivi hebdomadaire.</h1>
+  <p class="dek">Une méthode <strong>discrétionnaire</strong>, construite sur six ans de marché — modèles macro, order flow et lecture graphique, pratiqués sur le forex, la crypto, les matières premières et les indices. Ce reporting explique comment les 500&nbsp;€ alloués sont utilisés, quels outils arment chaque décision, <strong>ce qui dans cette méthode se prouve et ce qui ne se prouve pas</strong>, et selon quelles conditions le capital et la performance vous seront restitués. <strong>Aucun résultat n'y est promis</strong> — et les mauvaises semaines y figureront comme les bonnes.</p>
+
+  <div class="kpis">
+    <div class="kpi"><span class="n">6 ans</span><span class="t">macro, order flow, graphique — forex, crypto, matières premières, indices</span></div>
+    <div class="kpi"><span class="n">500&nbsp;€</span><span class="t">capital alloué au mandat</span></div>
+    <div class="kpi"><span class="n">6</span><span class="t">familles d'outils, testées une à une</span></div>
+    <div class="kpi"><span class="n">NQ</span><span class="t">un seul instrument, une seule discipline</span></div>
+  </div>
+
+  <div class="brief">
+    <span class="band">En trois phrases</span>
+    <div class="body">
+    <p>Vous avez avancé <strong>500&nbsp;€</strong> pour financer une tentative d'évaluation chez une société qui, si le test est réussi, ouvre un compte de trading <strong>avec son propre capital</strong>. Cet argent paie un droit d'entrée&nbsp;: il n'est jamais exposé au marché.</p>
+    <p>La méthode est <strong>discrétionnaire</strong>. Ses outils se testent un par un contre le hasard&nbsp;; sa combinaison, non — et ce document dit exactement où passe cette frontière plutôt que de la masquer.</p>
+    <p>Le suivi est <strong>hebdomadaire</strong>, sous un lien neuf à chaque édition, et il porte les mauvaises semaines comme les bonnes. <strong>Aucun résultat n'est promis.</strong></p>
+    </div>
+  </div>
+
+  <nav class="toc" id="sommaire" aria-label="Sommaire">
+    <a href="#s01"><span class="n">01</span><span class="t">Le mandat, en une phrase</span></a>
+    <a href="#s02"><span class="n">02</span><span class="t">Où va l'argent</span></a>
+    <a href="#s03"><span class="n">03</span><span class="t">Méthode d'exécution</span></a>
+    <a href="#s04"><span class="n">04</span><span class="t">La boîte à outils</span></a>
+    <a href="#s05"><span class="n">05</span><span class="t">Ce qui se prouve</span></a>
+    <a href="#s06"><span class="n">06</span><span class="t">Conditions &amp; risques</span></a>
+    <a href="#s07"><span class="n">07</span><span class="t">Le suivi hebdomadaire</span></a>
+    <a href="#s08"><span class="n">08</span><span class="t">Les questions à me poser</span></a>
+    <a href="#s09"><span class="n">09</span><span class="t">Travailler ensemble</span></a>
+    <a href="#s10"><span class="n">10</span><span class="t">Lexique</span></a>
+  </nav>
+
+  <p class="tempo"><span>23 min de lecture</span> — ou deux, par les trois phrases ci-dessus et les légendes des figures. Les sections&nbsp;06 et&nbsp;08 sont celles qui vous engagent.</p>
+
+  <section id="s01">
+    <div class="sh"><span class="no">01</span><h2>Le mandat, en une phrase</h2></div>
+    <p class="measure">Vous avez alloué <strong>500&nbsp;€</strong> pour financer une tentative d'évaluation auprès d'une société qui donne accès à du capital de trading une fois un test réussi. Ce document tient lieu de <strong>track record</strong> en construction&nbsp;: il explique la mécanique du montage, la méthode d'exécution, et les conditions de restitution du capital et de partage de la performance.</p>
+  </section>
+
+  <section id="s02">
+    <div class="sh"><span class="no">02</span><h2>Où va l'argent</h2></div>
+    <p class="measure">C'est la première question à poser à quiconque vous demande de l'argent, et elle mérite une réponse en image avant d'être une réponse en mots.</p>
+
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-flux" class="fig" viewBox="0 0 1000 300" role="img" aria-label="Trajet des cinq cents euros : droit d entree paye a la societe de financement, compte d evaluation simule, puis compte finance par le capital de la societe, et enfin remboursement prioritaire puis partage"></svg></div>
+        <figcaption><span class="lab">Fig. 2.1</span>Le trajet des 500&nbsp;€, étape par étape, avec à chaque étape <strong>qui détient quoi</strong> et <strong>ce qui est exposé au marché</strong>. Le point à retenir est le troisième encadré&nbsp;: le capital qui prend le risque de marché n'est ni le vôtre ni le mien, c'est celui de la société de financement.</figcaption>
+      </figure></div>
+
+    <p class="measure" style="margin-top:1.6rem">Trois acteurs distincts, chacun avec un rôle précis — aucun ne détient directement les 500&nbsp;€&nbsp;: ils financent uniquement les frais d'évaluation du deuxième.</p>
+    <div class="infra">
+      <div class="infra-card">
+        <span class="band">Plateforme</span>
+        <div class="body"><span class="name">TradingView</span>
+        <p class="desc">Analyse graphique et passage d'ordres. C'est l'interface où chaque lecture — structure, volume, VWAP, Fibonacci — est construite et surveillée en direct.</p></div>
+      </div>
+      <div class="infra-card">
+        <span class="band">Allocataire de capital</span>
+        <div class="body"><span class="name">My Funded Futures</span>
+        <p class="desc">La société de financement (« prop firm »). Elle vend un test d'évaluation et, une fois réussi, ouvre un compte financé avec son propre capital.</p></div>
+      </div>
+      <div class="infra-card">
+        <span class="band">Broker d'exécution</span>
+        <div class="body"><span class="name">Tradovate</span>
+        <p class="desc">Le routage des ordres vers le marché à terme (CME). C'est lui qui fait passer chaque entrée et chaque sortie, en temps réel.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s03">
+    <div class="sh"><span class="no">03</span><h2>Méthode d'exécution</h2></div>
+    <span class="status"><span class="dot2"></span> en cours de finalisation — phase d'évaluation</span>
+    <p class="measure">Style retenu&nbsp;: <strong>trading intraday discrétionnaire</strong> sur le NQ — positions ouvertes et refermées dans la séance, jamais conservées la nuit. Discrétionnaire veut dire que la décision finale est prise par un opérateur, pas par un programme&nbsp;: les outils de la section&nbsp;04 préparent et qualifient la situation, la pondération entre eux relève de <strong>six ans de marché</strong> — modèles macro, order flow et lecture graphique, pratiqués sur plusieurs classes d'actifs avant d'être concentrés sur un seul instrument. Aucune décision n'est prise sur une seule lecture isolée&nbsp;: chaque entrée demande la convergence de plusieurs familles.</p>
+
+    <h3 class="sub-h">La géométrie, déclarée avant d'être jugée</h3>
+    <p class="measure">Un point de méthode, et c'est celui qui gouverne tout le reste. Une position se définit par trois nombres&nbsp;: où l'on sort si l'on a tort, où l'on sort si l'on a raison, et ce que coûte l'aller-retour. Ces trois-là ne dépendent pas du marché&nbsp;: <strong>ils sont entièrement fixés par l'opérateur</strong>, et ils décident du taux de réussite qu'il faut atteindre pour seulement rentrer dans ses frais.</p>
+    <div class="terms">
+      <span class="band">La géométrie retenue — écrite d'avance, pas après coup</span>
+      <div class="term-row"><div class="label">Instrument</div><div class="value">NQ (E-mini Nasdaq-100), <strong>un seul</strong>. Choisi pour sa liquidité et la régularité de son volume.</div></div>
+      <div class="term-row"><div class="label">Horizon</div><div class="value">Intraday strict. Toute position est refermée avant la clôture&nbsp;; <strong>aucune n'est exposée à la nuit</strong>.</div></div>
+      <div class="term-row"><div class="label">Stop</div><div class="value"><span class="fig-n" id="p-stop">—</span><span class="note">selon la lecture qui arme la décision — jamais élargi une fois la position ouverte</span></div></div>
+      <div class="term-row"><div class="label">Rapport gain / risque</div><div class="value"><span class="fig-n" id="p-rr">—</span><span class="note">au-delà, l'objectif sort de la portée d'une séance et cesse d'être atteignable</span></div></div>
+      <div class="term-row"><div class="label">Friction retenue</div><div class="value"><span class="fig-n" id="p-fric">—</span><span class="note">par aller-retour, commission et glissement compris — c'est elle qui fixe le seuil</span></div></div>
+      <div class="term-row"><div class="label">Volume d'observation</div><div class="value"><span class="fig-n" id="p-seances">—</span><span class="note">par mois — l'unité dans laquelle le délai de preuve de la section 05 est compté</span></div></div>
+    </div>
+    <p class="measure" style="margin-top:1.3rem">Ces six lignes ne sont pas une présentation&nbsp;: ce sont les paramètres avec lesquels la figure&nbsp;5.1 est calculée. <strong>Les changer changerait ses six verdicts</strong>, ce qui est précisément la raison de les écrire ici, avant, plutôt que de les ajuster ensuite pour que le résultat tombe bien.</p>
+    <div class="thesis">Aucune géométrie ne crée d'espérance. Elle fixe seulement l'exigence à laquelle il faudra répondre.
+      <span>et c'est la seule chose que l'opérateur contrôle entièrement</span></div>
+  </section>
+
+  <section id="s04">
+    <div class="sh"><span class="no">04</span><h2>La boîte à outils d'analyse</h2></div>
+    <p class="measure">Six familles de lecture du marché, chacune avec sa fonction propre. Aucune n'est utilisée seule&nbsp;: c'est leur convergence qui déclenche une décision.</p>
+
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-cockpit" class="fig" viewBox="0 0 1050 420" role="img" aria-label="Poste de travail illustratif au format terminal : huit panneaux, prix avec murs gamma, gamma net par strike, profil de volume, bandes VWAP, carnet, carte de profondeur, delta cumule et relief"></svg></div>
+        <figcaption><span class="lab">Fig. 4.0</span>Poste de travail illustratif, au gabarit d'un terminal d'analyse&nbsp;: huit panneaux réunissant dans le même plan de lecture les familles détaillées ci-dessous. Chacune est reprise en grand dans sa propre section — c'est leur convergence, jamais une lecture isolée, qui déclenche une décision.</figcaption>
+      </figure></div>
+
+    <div class="sub">
+      <div class="sh2"><span class="no">4.1</span><h3>Exposition gamma (GEX)</h3></div>
+      <p class="measure">Mesure la couverture que les teneurs de marché doivent effectuer sur leurs positions d'options selon que le prix monte ou descend. Une zone de gamma positif tend à freiner les mouvements&nbsp;; une zone négative les amplifie. Sert à situer les niveaux — <em>call wall</em>, <em>put wall</em>, <em>vol trigger</em> — où ce comportement mécanique pèse le plus sur le prix.</p>
+      <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-gex" class="fig" viewBox="0 0 1000 520" role="img" aria-label="Gamma net par strike, illustratif : barres blanches du cote des calls, grises du cote des puts, avec mur majeur, prix comptant, point de douleur maximale et seuil de volatilite"></svg></div>
+        <figcaption><span class="lab">Fig. 4.1</span>Gamma net par strike, illustratif&nbsp;: barres blanches du côté des calls, grises du côté des puts. Le <em>call wall</em> marque le strike où la couverture est la plus dense, le <em>vol trigger</em> la bascule sous laquelle le régime s'inverse. Les cinq repères se distinguent par leur tireté, jamais par une couleur.</figcaption>
+      </figure></div>
+    </div>
+
+    <div class="sub">
+      <div class="sh2"><span class="no">4.2</span><h3>Structure de marché</h3></div>
+      <p class="measure">Décrit la tendance à travers la succession des sommets et des creux&nbsp;: une série de plus hauts et de plus bas croissants signale une tendance haussière intacte&nbsp;; sa rupture (<em>break of structure</em>) signale un retournement possible. Sert de cadre directionnel&nbsp;: on ne cherche pas la même chose selon que la structure est intacte ou cassée.</p>
+      <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-struct" class="fig" viewBox="0 0 1000 420" role="img" aria-label="Structure de marche illustrative en bougies sur fond noir, avec moyennes mobiles, murs gamma reportes en tireté, niveau de rupture de structure et echelle de prix a droite"></svg></div>
+        <figcaption><span class="lab">Fig. 4.2</span>Structure illustrative&nbsp;: plus hauts et plus bas croissants, puis rupture sous le dernier creux — le <em>break of structure</em>. Les tiretés blancs reportent les murs gamma de la figure&nbsp;4.1 sur le prix&nbsp;; le pointillé vertical marque l'ouverture de la séance suivante.</figcaption>
+      </figure></div>
+    </div>
+
+    <div class="sub">
+      <div class="sh2"><span class="no">4.3</span><h3>Volume Profile</h3></div>
+      <p class="measure">Répartit le volume échangé par niveau de prix plutôt que dans le temps. Fait apparaître le <strong>point de contrôle</strong> (POC, le prix le plus échangé) et la <strong>zone de valeur</strong> où s'est concentrée la majorité des échanges. Sert à distinguer les prix où le marché a accepté de rester longtemps de ceux qu'il n'a fait que traverser.</p>
+      <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-volp" class="fig" viewBox="0 0 1000 420" role="img" aria-label="Profil de volume illustratif accole a l echelle de prix, avec point de controle en blanc et zone de valeur, sur un graphique en bougies fond noir"></svg></div>
+        <figcaption><span class="lab">Fig. 4.3</span>Profil de volume illustratif, accolé à l'échelle de prix comme sur l'écran de travail&nbsp;: la barre blanche est le point de contrôle (POC), la bande claire regroupe les niveaux qui concentrent l'essentiel du volume, entre valeur haute (VAH) et basse (VAL).</figcaption>
+      </figure></div>
+    </div>
+
+    <div class="sub">
+      <div class="sh2"><span class="no">4.4</span><h3>VWAP &amp; écarts-types</h3></div>
+      <p class="measure">Le prix moyen pondéré par le volume depuis l'ouverture, recalculé à chaque bougie, encadré par ses deux premières bandes d'écart-type. Sert de référence de valeur intrajournalière&nbsp;: un prix étiré au bord d'une bande est statistiquement éloigné de son point d'équilibre — sujet à un retour vers la moyenne, ou, s'il la franchit avec du volume, à une extension.</p>
+      <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-vwap" class="fig" viewBox="0 0 1000 420" role="img" aria-label="VWAP de seance illustratif et ses deux premieres bandes d ecart type sur un graphique en bougies fond noir, avec la touche de la deuxieme bande signalee"></svg></div>
+        <figcaption><span class="lab">Fig. 4.4</span>VWAP de séance illustratif (trait blanc plein) et ses deux premières bandes d'écart-type (gris), recalculés à chaque bougie. La zone claire marque la touche de la deuxième bande&nbsp;; l'étiquette de droite reporte la valeur courante sur l'échelle de prix.</figcaption>
+      </figure></div>
+    </div>
+
+    <div class="sub">
+      <div class="sh2"><span class="no">4.5</span><h3>Order Flow &amp; murs de liquidité</h3></div>
+      <p class="measure">La lecture du carnet d'ordres en temps réel&nbsp;: la taille des ordres en attente à l'achat et à la vente, à chaque prix. Un déséquilibre marqué, ou un ordre anormalement gros à un niveau — un <strong>mur de liquidité</strong> — indique où le marché peut absorber, ou au contraire accélérer, un mouvement.</p>
+      <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-dom" class="fig" viewBox="0 0 1000 420" role="img" aria-label="Carnet d ordres illustratif : tailles a l achat en blanc a gauche, a la vente en gris a droite, colonne de prix au centre, avec un mur de liquidite nomme dans sa barre"></svg></div>
+        <figcaption><span class="lab">Fig. 4.5a</span>Carnet d'ordres illustratif&nbsp;: tailles à l'achat (blanc, gauche) et à la vente (gris, droite) par niveau de prix. La ligne élargie marque un mur de liquidité — un ordre inhabituellement gros, susceptible de retenir le prix.</figcaption>
+      </figure></div>
+      <p class="measure" style="margin-top:1.6rem">Le carnet, lu dans le temps plutôt qu'à l'instant&nbsp;: une carte de profondeur où la liquidité en attente à chaque prix est peinte en continu et le prix négocié serpente par-dessus. Un mur s'y reconnaît à une bande qui reste claire pendant que les autres niveaux s'allument et s'éteignent.</p>
+      <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-depth" class="fig" viewBox="0 0 1000 580" role="img" aria-label="Carte de profondeur de marche illustrative en niveaux de gris : liquidite en attente par niveau de prix au fil du temps, prix negocie en blanc cerne de noir, mur persistant nomme, et delta net en bandeau"></svg></div>
+        <figcaption><span class="lab">Fig. 4.5b</span>Carte de profondeur illustrative&nbsp;: chaque colonne est une minute, chaque ligne un prix, la clarté de la case la taille en attente. La bande qui reste claire d'un bout à l'autre est le mur&nbsp;; le trait blanc est le prix négocié, qui ralentit en l'approchant. En bas, le delta net de chaque minute — achat au-dessus de l'axe, vente en dessous.</figcaption>
+      </figure></div>
+    </div>
+
+    <div class="sub">
+      <div class="sh2"><span class="no">4.6</span><h3>Fibonacci</h3></div>
+      <p class="measure">Applique des ratios de retracement — notamment 61,8&nbsp;% et 78,6&nbsp;% — à un mouvement de prix pour identifier les zones où une correction a statistiquement le plus de chances de s'arrêter avant que la tendance ne reprenne. Sert de grille de niveaux à surveiller après un mouvement impulsif&nbsp;: jamais un signal à lui seul.</p>
+      <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-fib" class="fig" viewBox="0 0 1000 420" role="img" aria-label="Retracement de Fibonacci illustratif sur un mouvement impulsif, avec zone doree entre 61,8 et 78,6 pour cent, sur un graphique en bougies fond noir"></svg></div>
+        <figcaption><span class="lab">Fig. 4.6</span>Retracement illustratif&nbsp;: après un mouvement impulsif, le prix corrige dans la zone comprise entre 61,8&nbsp;% et 78,6&nbsp;% avant de reprendre sa direction initiale. Chaque niveau porte son prix, comme sur l'écran de travail.</figcaption>
+      </figure></div>
+    </div>
+  </section>
+
+  <section id="s05">
+    <div class="sh"><span class="no">05</span><h2>Ce qui se prouve, ce qui ne se prouve pas</h2></div>
+    <p class="measure">Cette méthode est <strong>discrétionnaire</strong>. Elle repose sur six ans de marché — trois familles de modèles (macro, order flow, lecture graphique) éprouvées sur plusieurs classes d'actifs&nbsp;: forex, crypto, matières premières, indices. Le NQ est l'endroit où tout cela a fini par se concentrer, pas l'endroit où tout a commencé. Aucun programme ne décide à ma place, et c'est un choix — qui a un prix autant qu'un rendement. Les deux méritent d'être écrits noir sur blanc, parce que c'est en les connaissant que vous saurez ce que vous financez.</p>
+    <p class="measure">Il n'y a pas de camp supérieur. Le systématique et le discrétionnaire résolvent le même problème par deux routes, et chacune paie quelque part.</p>
+
+    <div class="cmp">
+      <div class="row head"><div class="c"></div><div class="c">Systématique (quant)</div><div class="c">Discrétionnaire (ici)</div></div>
+      <div class="row"><div class="c k">Ce qui se prouve</div>
+        <div class="c other">La stratégie entière, rejouée sur des années d'historique.</div>
+        <div class="c mine">Chaque outil séparément, contre sa loi nulle — jamais l'ensemble.</div></div>
+      <div class="row"><div class="c k">Ce qui échappe</div>
+        <div class="c other">Que le régime de demain ressemble à celui qu'on a rejoué.</div>
+        <div class="c mine">La pondération entre les outils&nbsp;: elle vit dans la tête de l'opérateur.</div></div>
+      <div class="row"><div class="c k">Vitesse</div>
+        <div class="c other">Immédiate&nbsp;: on recalcule, on sait.</div>
+        <div class="c mine">Lente&nbsp;: une séance à la fois, et il en faut des centaines.</div></div>
+      <div class="row"><div class="c k">Arbitrage</div>
+        <div class="c other">Élevé&nbsp;: ce qui se code se réplique, se vend, se sature.</div>
+        <div class="c mine">Faible&nbsp;: ce qui ne se code pas ne se copie pas.</div></div>
+      <div class="row"><div class="c k">Capacité</div>
+        <div class="c other">Grande — la taille est le vrai plafond.</div>
+        <div class="c mine">Limitée à un opérateur, une attention, une séance.</div></div>
+      <div class="row"><div class="c k">Risque propre</div>
+        <div class="c other">Le surajustement&nbsp;: la règle épouse le passé.</div>
+        <div class="c mine">L'humain&nbsp;: biais, fatigue, dérive de discipline.</div></div>
+    </div>
+
+    <div class="thesis">Ce qui ne se code pas ne se fait pas arbitrer.
+      <span>le seul avantage structurel du discrétionnaire</span></div>
+    <p class="measure">Une règle codable finit toujours par être trouvée par d'autres&nbsp;: elle se réplique, se diffuse, et son avantage se partage jusqu'à disparaître. Une lecture qui vit dans l'expérience d'un opérateur n'a pas ce problème — personne ne peut la copier, donc personne ne la dilue. C'est la contrepartie exacte de ce que le discrétionnaire perd ailleurs.</p>
+    <p class="measure">Le prix, lui, est direct et je ne le contourne pas&nbsp;: <strong>la stratégie entière n'est pas backtestable.</strong> Non par paresse — par nature. Elle n'est pas codable, donc il n'existe aucun historique sur lequel la rejouer. Tout document qui vous montrerait une courbe de backtest d'une méthode discrétionnaire vous montrerait une courbe fabriquée.</p>
+
+    <h3 class="sub-h">Mais les pièces, elles, se testent</h3>
+    <p class="measure">Ce qui ne se code pas, ce sont les <em>arbitrages</em>. Les <em>outils</em>, eux, se mesurent un par un, et c'est exactement ce que fait le corpus <strong>ALP&nbsp;nº&nbsp;3</strong> (175&nbsp;sections). Chaque question a une réponse chiffrée&nbsp;: un nœud de faible volume tient-il plus souvent que le hasard&nbsp;? Une bande d'écart-type ramène-t-elle le prix&nbsp;? Un haut de structure retesté tient-il&nbsp;? Un contact sur zone de valeur haute est-il rejeté&nbsp;?</p>
+    <div class="thesis">Ces tests ne fabriquent pas la stratégie. Ils vérifient qu'elle ne repose pas sur du bruit.
+      <span>la différence est entière</span></div>
+    <p class="measure">C'est une distinction qu'il faut poser nettement, parce qu'elle sépare deux démarches qu'on confond tout le temps. <strong>Un backtest de construction</strong> part des données, essaie des règles et garde celle qui a le mieux marché&nbsp;: le risque y est de fabriquer une règle qui n'existe que dans l'historique. <strong>Une vérification</strong> part d'une lecture qu'on emploie déjà, écrite d'avance, et demande seulement&nbsp;: bat-elle le hasard, oui ou non&nbsp;? Rien n'est choisi après coup, donc il n'y a rien à surajuster. La stratégie existe avant le test, et le test ne peut que la confirmer ou la contredire.</p>
+    <p class="measure">Et surtout&nbsp;: <strong>combien de contacts faut-il pour le savoir&nbsp;?</strong> C'est la seule question qui décide si une lecture est démontrable dans une vie d'opérateur ou seulement dans un discours.</p>
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-preuve" class="fig" viewBox="0 0 1120 486" role="img" aria-label="Pour chaque outil : le taux sous prix sans derive, le taux qu il faut depasser pour couvrir la friction, et le nombre de mois de contacts necessaires pour etablir cet ecart, compare a six ans d experience"></svg></div>
+        <figcaption><span class="lab">Fig. 5.1</span>Pour chacun des six outils&nbsp;: à gauche, le taux de réussite <strong>sous prix sans dérive</strong> (cercle vide) et le taux qu'il faut dépasser pour seulement couvrir la friction (disque plein) — l'écart entre les deux est tout ce qu'il y a à démontrer. À droite, le temps de contacts nécessaire pour l'établir à 95&nbsp;%. Tous les paramètres sont déclarés en bas de planche et les quatre colonnes sont calculées, jamais écrites à la main.</figcaption>
+      </figure></div>
+
+    <div class="thesis">Six ans d'opération, ce sont 72 mois — et les six outils tiennent sous cette barre.
+      <span>l'expérience n'est pas un argument d'autorité — c'est l'échantillon</span></div>
+    <p class="measure">C'est le point que la figure rend visible&nbsp;: aucun de ces outils ne demande plus de temps que ce qui a déjà été passé devant l'écran. Le plus rapide — l'absorption sur un mur de carnet — se tranche en moins de six mois. Le plus lent — la bande d'écart-type — en un peu plus de trois ans. <strong>Six ans couvrent les six.</strong></p>
+    <p class="measure">Et ces lectures <strong>ne sont pas propres à un instrument</strong>&nbsp;: un nœud de faible volume, une bande d'écart-type, un haut de structure ou un mur de carnet se lisent de la même façon sur un indice, une paire de devises ou une crypto. Six ans passés sur plusieurs marchés n'ont donc pas dispersé l'échantillon — ils ont accumulé des contacts sur les <em>mêmes familles</em>, dans des régimes très différents. C'est plutôt un avantage&nbsp;: une lecture qui tient sur quatre classes d'actifs a été éprouvée par plus de régimes qu'une lecture vue sur un seul.</p>
+    <p class="measure">Ce qui reste hors de portée, et la figure le marque aussi, c'est <strong>la combinaison</strong>&nbsp;: la façon dont ces six lectures sont pesées les unes contre les autres, un jour donné, dans un contexte donné. Cette pondération-là n'a pas d'échantillon, parce qu'elle n'est jamais deux fois la même.</p>
+
+    <h3 class="sub-h">La stratégie n'est pas figée</h3>
+    <p class="measure">Elle évolue en permanence, et c'est à la fois sa qualité et son coût. Sa qualité&nbsp;: un marché change de régime, et une méthode qui s'adapte suit ce changement là où une règle scellée le subit. Son coût&nbsp;: <strong>l'échantillon ne se referme jamais sur la même règle</strong> — chaque ajustement redémarre en partie le compteur de preuve. Les deux sont vrais en même temps. Il vaut mieux l'écrire que le cacher.</p>
+
+    <h3 class="sub-h">Ce que le hasard seul produit sur une évaluation</h3>
+    <p class="measure">Dernière pièce du cadre, et la plus inconfortable&nbsp;: avant de juger un résultat, il faut savoir ce qu'un opérateur <strong>sans le moindre avantage</strong> obtiendrait sur la même évaluation. C'est la loi nulle, et elle se simule&nbsp;: deux mille comptes de 50&nbsp;000&nbsp;$, soixante séances, aucune dérive, un écart-type quotidien déclaré de 0,9&nbsp;% du compte. Les deux seuils du programme — objectif <strong>+6&nbsp;%</strong>, perte maximale <strong>−4&nbsp;%</strong> — y sont reportés tels quels.</p>
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-mc" class="fig" viewBox="0 0 1000 476" role="img" aria-label="Monte-Carlo de l evaluation sans avantage : distribution du resultat a soixante seances et fonction de repartition, avec percentiles et seuils du programme"></svg></div>
+        <figcaption><span class="lab">Fig. 5.2</span>Deux mille évaluations simulées sans avantage. À gauche, la loi du résultat à soixante séances, avec ses percentiles&nbsp;; à droite, la probabilité d'atteindre un résultat au moins égal à <em>x</em>. <strong>Le chiffre qui compte est le contraste</strong>&nbsp;: la probabilité de <em>toucher</em> l'objectif avant la limite est bien supérieure à celle de <em>finir</em> au-dessus — et la première est celle qu'un candidat croit lire quand il réussit. C'est pour cela qu'une évaluation réussie ne prouve pas grand-chose à elle seule, et que ce document existe.</figcaption>
+      </figure></div>
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-mc3d" class="fig" viewBox="0 0 1000 522" role="img" aria-label="Les memes deux mille trajectoires vues en perspective : capital en fonction du jour de seance et du numero de simulation, avec les courbes de percentile cinq, mediane et quatre-vingt-quinze"></svg></div>
+        <figcaption><span class="lab">Fig. 5.3</span>Les mêmes trajectoires, vues en perspective&nbsp;: chaque fil est une évaluation, l'épaisseur de la nappe est l'incertitude. Les trois courbes pleines sont les percentiles 5, 50 et 95 à chaque séance. Aucune n'a d'avantage&nbsp;: tout l'écart entre le fil du haut et celui du bas est du hasard. C'est précisément l'écart qu'un track record de quelques semaines ne permet pas de distinguer d'un talent — d'où le suivi hebdomadaire de la section&nbsp;07, qui accumule au lieu d'affirmer.</figcaption>
+      </figure></div>
+  </section>
+
+  <section id="s06">
+    <div class="sh"><span class="no">06</span><h2>Conditions du mandat, et risques</h2></div>
+    <div class="terms">
+      <span class="band">Les termes convenus</span>
+      <div class="term-row"><div class="label">Capital alloué</div><div class="value"><span class="fig-n">500&nbsp;€</span></div></div>
+      <div class="term-row"><div class="label">Usage des fonds</div><div class="value">Frais d'évaluation My Funded Futures. Les outils d'analyse de la section&nbsp;04 sont gratuits et ne pèsent pas sur ce montant.</div></div>
+      <div class="term-row"><div class="label">Restitution</div><div class="value">Prioritaire sur les premiers gains du compte financé si l'évaluation aboutit. À défaut, remboursement échelonné, mois par mois.</div></div>
+      <div class="term-row"><div class="label">Alignement</div><div class="value">Je ne perçois <strong>rien</strong> tant que les 500&nbsp;€ ne vous sont pas revenus. Le partage ne commence qu'après.</div></div>
+      <div class="term-row"><div class="label">Partage de la performance</div><div class="value"><span class="fig-n">50&nbsp;%</span> des bénéfices nets à partir du moment où le compte financé atteint le palier convenu.
+        <span class="note">seuil discuté : compte financé de l'ordre de 20 000 $ — à reconfirmer entre nous</span>
+      </div></div>
+    </div>
+
+    <h3 class="sub-h">Les trois façons dont ça peut mal tourner</h3>
+    <p class="measure">Un document qui ne nomme pas ses risques vous demande de les deviner. Les voici, dans l'ordre de leur probabilité.</p>
+    <div class="crit">
+      <div class="c"><span class="n">01</span><span class="t">L'évaluation échoue — le cas le plus probable</span>
+        <p class="d">Les 500&nbsp;€ sont alors dépensés, sans contrepartie. C'est le scénario dont la figure&nbsp;5.2 donne la mesure&nbsp;: sans le moindre avantage, une évaluation sur trois environ touche l'objectif, ce qui veut dire que <strong>deux sur trois ne le touchent pas</strong>. Mon travail consiste à faire mieux que ce chiffre, pas à prétendre qu'il n'existe pas.</p></div>
+      <div class="c"><span class="n">02</span><span class="t">L'évaluation réussit, puis le compte financé est perdu</span>
+        <p class="d">Il n'y a alors aucun gain sur lequel vous rembourser en priorité, et la restitution bascule sur l'échéancier mensuel — c'est-à-dire sur mes propres revenus, pas sur ceux du compte. C'est le scénario où la clause de restitution compte vraiment&nbsp;; c'est pour cela qu'elle est écrite.</p></div>
+      <div class="c"><span class="n">03</span><span class="t">La méthode se dégrade sans que je le voie</span>
+        <p class="d">Le plus difficile des trois, parce qu'il ne se signale pas. Un opérateur qui perd sa discipline continue de croire qu'il l'a. C'est exactement ce que les règles d'arrêt de la section&nbsp;09 et le critère de discipline de la section&nbsp;07 sont là pour attraper — et c'est aussi pour cela que je vous demande de regarder la discipline avant le résultat.</p></div>
+    </div>
+  </section>
+
+  <section id="s07">
+    <div class="sh"><span class="no">07</span><h2>Le suivi hebdomadaire, et comment vous en servir</h2></div>
+    <p class="measure">Clôture hebdomadaire&nbsp;: un point chaque semaine sur l'avancement de l'évaluation, les dépenses et, une fois le compte financé, la performance. <strong>Un nouveau lien vous est envoyé à chaque clôture.</strong> C'est délibéré&nbsp;: une adresse neuve à chaque édition garantit que ce que vous ouvrez est bien la dernière version, sans cache ni ambiguïté. L'édition en cours est datée en tête de ce document.</p>
+
+    <p class="measure">La figure&nbsp;5.2 vient de montrer qu'un résultat seul ne dit rien avant des centaines de séances. La question devient donc&nbsp;: <strong>qu'est-ce qui est lisible tôt&nbsp;?</strong> Trois choses le sont, et je préfère vous les donner que vous laisser chercher.</p>
+
+    <div class="crit">
+      <div class="c"><span class="n">01</span><span class="t">La discipline, avant le résultat</span>
+        <p class="d">Combien de fois la règle de sortie a été respectée — pas combien elle a rapporté. C'est la seule chose jugeable dès la première semaine, et c'est celle qui décide de tout le reste.</p></div>
+      <div class="c"><span class="n">02</span><span class="t">La perte maximale, avant le gain</span>
+        <p class="d">Un gain peut venir du hasard&nbsp;; une perte contenue vient d'une règle. Regardez le pire creux avant de regarder le sommet — c'est pour cela que le retracement figure sur le tableau de bord au même rang que le capital.</p></div>
+      <div class="c"><span class="n">03</span><span class="t">La régularité du suivi, avant son contenu</span>
+        <p class="d">Une semaine sans point est un signal, quel que soit le chiffre qu'elle aurait porté. Un reporting qui s'espace quand les nouvelles sont mauvaises ne vaut rien.</p></div>
+    </div>
+
+    <p class="measure" style="margin-top:1.3rem"><strong>Et ce qu'il ne faut pas regarder</strong>&nbsp;: une bonne semaine, une mauvaise semaine, un chiffre isolé. À cette échelle, aucun des trois ne porte d'information — c'est exactement ce que la figure&nbsp;5.2 met en chiffres, et ce serait une erreur de me créditer comme de me condamner sur l'un d'eux.</p>
+
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-equity" class="fig" viewBox="0 0 1000 340" role="img" aria-label="Tableau de bord de suivi du capital : courbe de capital, rendement hebdomadaire, retracement depuis le sommet et metriques, plats ou a tiret car aucune seance n a encore ete tradee"></svg></div>
+        <figcaption><span class="lab">Fig. 7.1</span>Tableau de bord du suivi&nbsp;: courbe de capital, rendement hebdomadaire, retracement depuis le sommet et métriques. Tout est plat ou à tiret pour l'instant — le compte n'a pas encore démarré&nbsp;; le tableau se peuple clôture après clôture, jamais avant qu'une séance ait réellement eu lieu.</figcaption>
+      </figure></div>
+
+    <div class="track-kpis">
+      <div class="kpi"><span class="n">1</span><span class="t">clôture hebdomadaire enregistrée</span></div>
+      <div class="kpi"><span class="n">500&nbsp;€</span><span class="t">dépenses cumulées à ce jour</span></div>
+      <div class="kpi"><span class="n">évaluation</span><span class="t">statut actuel du compte</span></div>
+    </div>
+    <div class="scroll">
+      <table class="log">
+        <thead><tr><th>Semaine</th><th>Statut du compte</th><th>Dépenses</th><th>Résultat</th></tr></thead>
+        <tbody>
+          <tr class="example"><td data-k="Semaine">exemple — semaine du 14/09</td><td data-k="Statut">évaluation en cours</td><td class="num" data-k="Dépenses">0 €</td><td data-k="Résultat">—</td></tr>
+          <tr><td data-k="Semaine">semaine du 13/09</td><td data-k="Statut">évaluation — pas encore démarrée</td><td class="num" data-k="Dépenses">0 €</td><td data-k="Résultat">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s08">
+    <div class="sh"><span class="no">08</span><h2>Les questions à me poser</h2></div>
+    <p class="measure">Un document qui ne répond qu'aux questions faciles se repère à ce qu'il ne mentionne jamais l'échec. Voici donc les sept questions que je poserais moi-même à quelqu'un qui me demanderait de l'argent, avec les réponses que j'ai. <strong>Certaines ne sont pas rassurantes</strong> ; elles sont écrites quand même, parce qu'une réponse donnée d'avance vaut mieux qu'une réponse trouvée sous pression.</p>
+
+    <div class="qa">
+      <span class="band">Sept questions, et les réponses telles qu'elles sont</span>
+      <div class="q">
+        <span class="no">Q&nbsp;01</span>
+        <p class="qt">Et si vous perdez les 500&nbsp;€&nbsp;?</p>
+        <p class="qr">Ils sont perdus, et il n'y a rien à récupérer. C'est le premier risque de la section&nbsp;06, pas une éventualité lointaine : une évaluation échouée ne rend pas ses frais.</p>
+        <p class="qr">Ce que je peux faire, et que j'ai fait avant de vous le demander, c'est le chiffrer : <strong>sans le moindre avantage</strong>, la figure&nbsp;5.2 donne <strong>32,5&nbsp;%</strong> de chances de toucher l'objectif avant la limite. Deux tentatives sur trois échouent par le seul hasard. Mon travail consiste à battre ce nombre, pas à prétendre qu'il n'existe pas.</p>
+        <span class="pin">500 € est le montant maximal en jeu &mdash; pas d'appel de marge, pas de dette, pas de second tour non prévu.</span>
+      </div>
+      <div class="q">
+        <span class="no">Q&nbsp;02</span>
+        <p class="qt">Pourquoi une société d'évaluation plutôt que votre propre argent&nbsp;?</p>
+        <p class="qr">Parce que la contrainte n'est pas la méthode, c'est la taille du compte. Sur quelques milliers d'euros, le pas minimal du contrat et la friction rendent la géométrie de risque impraticable : le stop qu'il faudrait poser est plus petit que le bruit d'une minute, donc c'est le bruit qui décide, pas la lecture.</p>
+        <p class="qr">Une évaluation donne accès à un compte assez grand pour qu'un risque par position soit un vrai pourcentage &mdash; et elle borne ma perte maximale au prix du test. C'est le trajet de la figure&nbsp;2.1.</p>
+        <span class="pin">la perte est bornée d'avance, et le capital exposé au marché n'est jamais le vôtre.</span>
+      </div>
+      <div class="q">
+        <span class="no">Q&nbsp;03</span>
+        <p class="qt">Qu'est-ce qui me dit que vous n'êtes pas simplement chanceux&nbsp;?</p>
+        <p class="qr">Rien, aujourd'hui &mdash; et je préfère l'écrire moi-même plutôt que vous laisser le découvrir. C'est exactement la thèse de la section&nbsp;05 : une évaluation réussie ne distingue pas un opérateur d'un tirage favorable, puisque le hasard seul en réussit une sur trois.</p>
+        <p class="qr">Ce qui distingue, c'est le <strong>nombre de décisions</strong>, et il est chiffré outil par outil dans la figure&nbsp;5.1. Un document qui répondrait « regardez mes résultats » à cette question vous répondrait à côté.</p>
+        <span class="pin">une réussite ne prouve rien ; une série documentée finit par prouver.</span>
+      </div>
+      <div class="q">
+        <span class="no">Q&nbsp;04</span>
+        <p class="qt">Six ans d'expérience, mais aucun historique public&nbsp;?</p>
+        <p class="qr">Exact, et c'est précisément ce que ce document commence. Six ans sur le forex, la crypto, les matières premières et les indices ont produit un échantillon de <em>lectures</em>, pas une courbe d'équité publiable : un compte personnel change de taille, de courtier et de règle en cours de route, et sa courbe mélange tout cela sans le dire.</p>
+        <p class="qr">Ce qui commence ici est daté, numéroté, réédité chaque semaine sous un lien neuf. Il n'y a aucune version antérieure à réécrire, et c'est la seule façon honnête de commencer un track record.</p>
+        <span class="pin">la première édition est la semaine 01 ; tout ce qui suit s'y ajoute sans rien effacer.</span>
+      </div>
+      <div class="q">
+        <span class="no">Q&nbsp;05</span>
+        <p class="qt">Pourquoi croire des chiffres que vous produisez vous-même&nbsp;?</p>
+        <p class="qr">Parce que la plupart ne sont pas des résultats. Les figures&nbsp;5.1 à 5.3 ne mesurent pas ma performance : elles mesurent <strong>ce que le hasard produit dans les mêmes conditions</strong>. Ce calcul-là ne dépend d'aucune donnée privée et se refait par quiconque sait ce qu'est une loi binomiale.</p>
+        <p class="qr">Les seuls chiffres qui me concernent vraiment &mdash; le solde du compte, le retracement, le nombre de séances &mdash; viennent du tableau de bord de la société d'évaluation, pas de moi.</p>
+        <span class="pin">les lois nulles se vérifient sans moi ; le solde se vérifie sans moi aussi.</span>
+      </div>
+      <div class="q">
+        <span class="no">Q&nbsp;06</span>
+        <p class="qt">Combien de temps avant de savoir&nbsp;?</p>
+        <p class="qr">Deux horloges, et elles n'ont pas la même vitesse. L'<strong>évaluation</strong> se tranche en quelques semaines : c'est une question de seuils touchés ou non. La <strong>preuve</strong>, elle, se compte en centaines de décisions &mdash; la figure&nbsp;5.1 en donne le délai pour chacun des six outils.</p>
+        <p class="qr">Confondre les deux est l'erreur la plus commune du métier, et la plus coûteuse : une évaluation réussie en trois semaines ne raccourcit pas le second délai d'un seul jour.</p>
+        <span class="pin">quelques semaines pour le test, des mois pour la preuve &mdash; ce ne sont pas les mêmes chiffres.</span>
+      </div>
+      <div class="q">
+        <span class="no">Q&nbsp;07</span>
+        <p class="qt">Et si vous arrêtez&nbsp;?</p>
+        <p class="qr">Le remboursement échelonné commence, et il ne dépend pas de mon humeur au moment où la question se pose : les deux critères d'arrêt sont écrits en section&nbsp;09 <em>avant</em> d'être atteints, ce qui est la seule chose qui rende une règle utile.</p>
+        <p class="qr">Si ces deux lignes venaient à disparaître d'une édition future, ce serait le signal &mdash; et vous n'auriez besoin de personne pour le voir.</p>
+        <span class="pin">une règle qui n'est pas écrite d'avance n'est pas une règle, c'est une intention.</span>
+      </div>
+    </div>
+
+    <div class="thesis">La bonne question n'est pas « combien pouvez-vous gagner », c'est « qu'est-ce qui vous ferait changer d'avis ».
+      <span>la seule qu'un discours ne peut pas simuler</span></div>
+    <p class="measure">À celle-là ma réponse tient en une ligne : <strong>deux évaluations échouées d'affilée</strong>, ou plus de trois sorties hors règle dans le même mois. Les deux sont détaillées à la section suivante, et les deux figureront dans chaque édition de ce document tant que le mandat court.</p>
+  </section>
+
+  <section id="s09">
+    <div class="sh"><span class="no">09</span><h2>Travailler ensemble</h2></div>
+    <p class="measure">Ce document est un reporting, mais il est aussi une candidature. Si ce que vous venez de lire correspond à ce que vous cherchez — une méthode qui dit ce qu'elle prouve et ce qu'elle ne prouve pas, et qui rend des comptes chaque semaine —, voici ce que je propose, aux mêmes conditions que le mandat en cours.</p>
+
+    <div class="offer">
+      <div class="card">
+        <span class="band">Ce que je fais</span><div class="body">
+        <p><strong>Trading intraday discrétionnaire sur le NQ</strong>, un seul instrument aujourd'hui — après six ans de marché sur le forex, la crypto, les matières premières et les indices.</p>
+        <p>Six familles de lecture, chacune testée séparément contre sa loi nulle. Aucune position gardée la nuit.</p>
+        </div>
+      </div>
+      <div class="card">
+        <span class="band">Ce que vous recevez</span><div class="body">
+        <p><strong>Ce document, réédité chaque semaine sous un lien neuf</strong> — daté, numéroté, et toujours à jour par construction.</p>
+        <p>Le statut du compte, les dépenses, le résultat. Les mauvaises semaines y figurent comme les bonnes.</p>
+        </div>
+      </div>
+      <div class="card">
+        <span class="band key">Ce que je ne promets pas</span><div class="body">
+        <p><strong>Aucun rendement, aucune garantie, aucun calendrier.</strong> Une évaluation peut échouer et la somme engagée être perdue.</p>
+        <p>Ce que je garantis est d'une autre nature&nbsp;: la transparence du suivi et l'honnêteté du protocole.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-h">Ce qui me ferait arrêter — écrit maintenant, pas plus tard</h3>
+    <p class="measure">Une règle décidée au mauvais moment n'est pas une règle. Voici les deux qui sont posées d'avance, et qui figureront dans chaque édition de ce document.</p>
+    <div class="crit">
+      <div class="c"><span class="n">01</span><span class="t">Deux évaluations échouées d'affilée</span>
+        <p class="d">J'arrête et je passe au remboursement échelonné. Je ne reviens pas vous demander une troisième mise&nbsp;: à ce stade, l'hypothèse la plus économique est que je me trompe, pas que je n'ai pas eu de chance.</p></div>
+      <div class="c"><span class="n">02</span><span class="t">La discipline avant le capital</span>
+        <p class="d">Plus de trois sorties hors règle dans le même mois et je suspends l'exécution jusqu'à la clôture suivante. Le compte n'a pas besoin d'attendre qu'une perte tranche à ma place.</p></div>
+    </div>
+    <p class="measure" style="margin-top:1.3rem">Si ces deux lignes venaient à disparaître de ce document, <strong>ce serait le signal</strong>.</p>
+
+    <div class="thesis">Je ne vends pas une performance. Je vends une méthode qui sait ce qu'elle vaut, et qui vous le montre chaque semaine — y compris quand ça ne va pas.
+      <span>ce que vaut un track record en construction</span></div>
+
+    <p class="measure">Les conditions sont celles de la section&nbsp;06&nbsp;: le capital finance les frais d'évaluation, il vous revient <strong>en priorité</strong> sur les premiers gains, et la performance nette se partage à <strong>50&nbsp;%</strong> une fois le palier atteint. <strong>Je ne perçois rien tant que vous n'êtes pas remboursé</strong> — le partage commence après, jamais avant. Tout écart à ces termes serait renégocié avec vous, écrit, et daté dans ce document.</p>
+    <p class="measure">Un mot sur la rareté, parce que c'est le seul argument de ce type que je peux tenir honnêtement&nbsp;: une méthode discrétionnaire est <strong>plafonnée par un opérateur, une attention, une séance</strong>. Ce n'est pas une limite de marketing, c'est la ligne « capacité » du tableau de la section&nbsp;05, et elle joue contre moi autant qu'elle joue pour vous.</p>
+    <p class="measure">Pour en parler&nbsp;: répondez sur le canal par lequel ce lien vous est parvenu. Une seule question suffit — celle que vous poseriez en premier à quelqu'un à qui vous confieriez de l'argent.</p>
+  </section>
+
+  <section id="s10">
+    <div class="sh"><span class="no">10</span><h2>Lexique</h2></div>
+    <p class="measure">Ce document emploie le vocabulaire du métier. Il n'y a aucune raison de le connaître pour le lire, et aucune raison non plus de faire semblant de le connaître. Voici les quinze termes utilisés, dans l'ordre où ils apparaissent.</p>
+    <div class="lex">
+      <span class="band">Quinze termes, dans l'ordre d'apparition</span>
+      <div class="e"><div class="k">Discrétionnaire</div><div class="v">La décision finale est prise par un opérateur, pas par un programme. Son contraire est <em>systématique</em>.</div></div>
+      <div class="e"><div class="k">Prop firm</div><div class="v">Société qui vend un test d'évaluation et, s'il est réussi, ouvre un compte de trading financé par son propre capital, en partageant les gains avec l'opérateur.</div></div>
+      <div class="e"><div class="k">Intraday</div><div class="v">Positions ouvertes et refermées dans la même séance. Aucune n'est conservée la nuit, donc aucune n'est exposée à ce qui se passe pendant le sommeil.</div></div>
+      <div class="e"><div class="k">NQ</div><div class="v">Le contrat à terme sur l'indice Nasdaq-100. Un seul instrument, choisi pour sa liquidité et son volume constant.</div></div>
+      <div class="e"><div class="k">Gamma, GEX</div><div class="v">Mesure de la couverture que les vendeurs d'options doivent effectuer quand le prix bouge. Elle crée des niveaux où le marché freine ou accélère mécaniquement.</div></div>
+      <div class="e"><div class="k">Call wall, put wall</div><div class="v">Les deux prix où cette couverture est la plus dense — au-dessus et au-dessous du marché. Ils agissent comme des freins.</div></div>
+      <div class="e"><div class="k">Vol trigger</div><div class="v">Le prix où le régime bascule&nbsp;: au-dessus, la couverture amortit les mouvements&nbsp;; au-dessous, elle les amplifie.</div></div>
+      <div class="e"><div class="k">VWAP</div><div class="v">Prix moyen pondéré par le volume depuis l'ouverture. Sert de référence de valeur pour la séance en cours.</div></div>
+      <div class="e"><div class="k">Écart-type (σ)</div><div class="v">Mesure de dispersion. Une bande à ±2σ autour du VWAP encadre la zone où le prix se tient l'essentiel du temps.</div></div>
+      <div class="e"><div class="k">POC, VAH, VAL</div><div class="v">Le prix le plus échangé de la séance (point de contrôle), et les bornes haute et basse de la zone qui concentre l'essentiel du volume.</div></div>
+      <div class="e"><div class="k">LVN, HVZ</div><div class="v">Un nœud de faible volume est un prix que le marché a traversé sans s'y arrêter&nbsp;; une zone de valeur haute est l'inverse. Les deux se comportent différemment au contact.</div></div>
+      <div class="e"><div class="k">Carnet d'ordres</div><div class="v">La liste des ordres en attente à chaque prix. Un ordre anormalement gros y forme un <em>mur de liquidité</em>, susceptible de retenir le prix.</div></div>
+      <div class="e"><div class="k">CVD, delta</div><div class="v">La différence entre ce qui s'achète et ce qui se vend agressivement. Son cumul sur la séance dit qui pousse&nbsp;; sa divergence avec le prix dit que quelqu'un a cessé de pousser.</div></div>
+      <div class="e"><div class="k">Retracement, drawdown</div><div class="v">La baisse depuis le plus haut atteint. C'est la mesure de risque la plus honnête d'un compte, et elle se regarde avant le gain.</div></div>
+      <div class="e"><div class="k">Loi nulle</div><div class="v">Ce que produirait le pur hasard, dans les mêmes conditions. Tout ce qui n'a pas été comparé à sa loi nulle n'a pas été vérifié — c'est le principe de tout ce document.</div></div>
+    </div>
+  </section>
+
+  <div class="warn">
+    <span class="lab">Avertissement</span>
+    <p>Le trading intraday sur produits à effet de levier comporte un risque de perte, y compris la perte totale des sommes engagées dans une évaluation. Aucun résultat n'est garanti. Les délais de restitution et de partage décrits ci-dessus dépendent entièrement des résultats réels du compte et seront ajustés de bonne foi si la situation change.</p>
+  </div>
+
+  <p class="printonly" style="font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--hair);padding-top:.8rem;margin-top:2rem">ÉDITION DU 13/09/2026 &nbsp;·&nbsp; SEUIL &nbsp;·&nbsp; CHAQUE ÉDITION PARAÎT SOUS UN LIEN NEUF &mdash; CE TIRAGE PEUT AVOIR ÉTÉ REMPLACÉ.</p>
+  <footer>SEUIL — reporting établi à usage privé entre les deux parties. Ne constitue pas un conseil en investissement.<br>Le jour où ce document cessera de dire ce qui ne va pas, il aura cessé d'être utile.</footer>
+
+</div>
+
+<script>
+// Repères de lecture. Rien ne s anime : la barre suit la position, le retour
+// apparait une fois le sommaire passe.
+(function () {
+  var bar = document.querySelector('.lecture .bar'), ret = document.querySelector('.retour');
+  var toc = document.getElementById('sommaire');
+  if (!bar || !ret || !toc) return;
+  var tick = false;
+  function pose() {
+    tick = false;
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? Math.min(100, Math.max(0, window.scrollY / h * 100)) : 0) + '%';
+    ret.hidden = window.scrollY < toc.getBoundingClientRect().top + window.scrollY + toc.offsetHeight + 400;
+  }
+  addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(pose); } }, { passive: true });
+  addEventListener('resize', pose);
+  pose();
+})();
+
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var NB = ' ';
+  var MARK = 'SEUIL';
+  // Sous 760 px une planche de 1000 tombe a 0,39 d echelle : un intitule de
+  // 14 px y vaut 5,5 px. Les graphiques passent donc a 430 de large, ou la
+  // meme typographie se rend a taille reelle.
+  var ETROIT = (typeof window !== 'undefined') && window.innerWidth < 760;
+
+  function el(t, a) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); return e; }
+  function tx(host, cls, x, y, s, extra) {
+    var a = { class: cls, x: x, y: y };
+    if (extra) for (var k in extra) a[k] = extra[k];
+    var e = el('text', a); e.textContent = s; host.appendChild(e); return e;
+  }
+  function poly(host, cls, pts, extra) {
+    var a = { class: cls, points: pts.join(' ') };
+    if (extra) for (var k in extra) a[k] = extra[k];
+    host.appendChild(el('polyline', a));
+  }
+  function haloLine(host, cls, pts) { poly(host, 'halo', pts); poly(host, cls, pts); }
+
+  // Générateur explicite (mulberry32) : déterministe, et surtout sans la
+  // corrélation d'alias d'un hachage en sinus — c'est elle qui produisait
+  // des séries de vingt bougies du même sens.
+  function rng(seed) {
+    var s = seed >>> 0;
+    return function () {
+      s = (s + 0x6D2B79F5) >>> 0;
+      var t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gauss(r) { var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+  function fmt(p, dec) {
+    dec = dec === undefined ? 2 : dec;
+    var s = Math.abs(p).toFixed(dec).split('.');
+    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, NB);
+    return (p < 0 ? '−' : '') + s[0] + (dec ? ',' + s[1] : '');
+  }
+  function pct(v, dec) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(dec === undefined ? 1 : dec).replace('.', ',') + ' %'; }
+  function interp(a, t) {
+    for (var i = 0; i < a.length - 1; i++) {
+      var x = a[i], y = a[i + 1];
+      if (t >= x[0] && t <= y[0]) { var u = (t - x[0]) / ((y[0] - x[0]) || 1); return x[1] + (y[1] - x[1]) * u; }
+    }
+    return a[a.length - 1][1];
+  }
+
+  // Barres d'une minute : dérive locale donnée par les ancres, bruit à
+  // autocorrélation d'ordre un NÉGATIVE (le rebond bid-ask), et rappel
+  // faible vers l'ancre pour que la séance reste dans sa fenêtre.
+  // Contrôlé hors document : séries de 4 à 7 bougies du même sens au plus,
+  // et une bougie sur deux en hausse.
+  var VOL = 9;
+  function bars(anchors, n, seed, vol, theta, pull) {
+    vol = vol || VOL; theta = theta === undefined ? 0.5 : theta; pull = pull === undefined ? 0.06 : pull;
+    var r = rng(seed), out = [], p = interp(anchors, 0), prevEps = 0, prevClose = p;
+    for (var i = 0; i < n; i++) {
+      var t = i / (n - 1), tn = Math.min(1, (i + 1) / (n - 1));
+      var drift = interp(anchors, tn) - interp(anchors, t);
+      var eps = gauss(r) * vol * (0.6 + 0.8 * r());
+      var close = p + drift + eps - theta * prevEps + pull * (interp(anchors, tn) - p);
+      var open = prevClose + gauss(r) * vol * 0.15;
+      out.push({
+        o: open, c: close,
+        h: Math.max(open, close) + Math.abs(gauss(r)) * vol * 0.5,
+        l: Math.min(open, close) - Math.abs(gauss(r)) * vol * 0.5,
+        v: 0.35 + Math.abs(gauss(r)) * 0.55
+      });
+      prevEps = eps; p = close; prevClose = close;
+    }
+    return out;
+  }
+  function closes(bs) { return bs.map(function (b) { return b.c; }); }
+  function sma(vals, k) {
+    var out = [], s = 0;
+    for (var i = 0; i < vals.length; i++) { s += vals[i]; if (i >= k) s -= vals[i - k]; out.push(s / Math.min(i + 1, k)); }
+    return out;
+  }
+
+  // ---------- gabarit commun ----------
+  var LO = 29360, HI = 29640, STEP = 25;
+  var CALLWALL = 29600, PUTWALL = 29400, SPOT = 29500, MAXPAIN = 29480, TRIGGER = 29440;
+  var SESSION = ['09:30', '10:30', '11:30', '12:30', '13:30', '14:30', '15:30'];
+
+  function chart(host, o) {
+    o = o || {};
+    if (o.w === undefined) o.w = ETROIT ? 430 : 1000;
+    if (o.h === undefined) o.h = ETROIT ? 400 : 420;
+    host.setAttribute('viewBox', '0 0 ' + o.w + ' ' + o.h);
+    var axisW = o.axisW || (ETROIT ? 86 : 116);
+    var top = o.padTop === undefined ? 30 : o.padTop;
+    var bot = o.padBot === undefined ? 28 : o.padBot;
+    var plotR = o.w - axisW;
+    var lo = o.lo === undefined ? LO : o.lo, hi = o.hi === undefined ? HI : o.hi;
+    // Vingt-cinq points de pas donnent douze graduations : sur telephone elles
+    // se touchent, et une echelle illisible ne vaut pas mieux qu aucune.
+    var step = o.step || (ETROIT ? STEP * 2 : STEP);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: o.w, height: o.h }));
+    // Les graduations sont retenues : une etiquette de niveau posee par-dessus
+    // tronquait le nombre en dessous d elle, ce qu aucune relecture de code ne
+    // montre. `tag` retire desormais celle qu il recouvre, comme le fait une
+    // echelle de prix reelle sous son etiquette de dernier prix.
+    var grads = [];
+    function sy(p) { return top + (hi - p) / (hi - lo) * (o.h - top - bot); }
+    for (var p = Math.ceil(lo / step) * step; p <= hi; p += step) {
+      var y = sy(p);
+      if (y < top + 4 || y > o.h - bot - 4) continue;
+      host.appendChild(el('line', { class: 'grid', x1: 0, y1: y.toFixed(1), x2: plotR, y2: y.toFixed(1) }));
+      grads.push({ y: y, node: tx(host, 'px ' + (Math.abs(p % (step * 2)) < 1e-6 ? 'b' : 'd'), plotR + 8, y + 4, fmt(p, ETROIT ? 0 : 2)) });
+    }
+    host.appendChild(el('line', { class: 'axsep', x1: plotR, y1: 0, x2: plotR, y2: o.h - bot }));
+    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: o.h - bot, x2: o.w, y2: o.h - bot }));
+    tx(host, 'hdr', 10, 18, ETROIT ? 'NQ1!  ·  1 min  ·  ' + MARK + ' v1' : 'NQ1!   ·   1 min   ·   ' + MARK + ' v1   ·   illustratif');
+    return { sy: sy, plotR: plotR, top: top, bot: bot, axisW: axisW, w: o.w, h: o.h, lo: lo, hi: hi, grads: grads };
+  }
+  function timeAxis(host, c, x0, xEnd) {
+    var pas = ETROIT ? 3 : 1;
+    SESSION.forEach(function (s, i) {
+      if (i % pas) return;
+      var x = x0 + (xEnd - x0) * i / (SESSION.length - 1), a = 'middle';
+      if (i === 0) { a = 'start'; x = Math.max(x - 14, 6); }
+      if (i === SESSION.length - 1) { a = 'end'; x = Math.min(x + 14, c.plotR - 2); }
+      tx(host, 'tm', x, c.h - 9, s, { 'text-anchor': a });
+    });
+  }
+  function tag(host, c, y, label, now) {
+    var w = c.axisW - 8, h = 19, x = c.plotR + 4;
+    if (c.grads) {
+      for (var g = c.grads.length - 1; g >= 0; g--) {
+        if (Math.abs(c.grads[g].y - y) < h / 2 + 8) {
+          if (c.grads[g].node.parentNode) c.grads[g].node.parentNode.removeChild(c.grads[g].node);
+          c.grads.splice(g, 1);
+        }
+      }
+    }
+    host.appendChild(el('rect', { class: 'pxbox' + (now ? ' now' : ''), x: x, y: (y - h / 2).toFixed(1), width: w, height: h, rx: 1 }));
+    tx(host, 'pxtx' + (now ? ' inv' : ''), x + w / 2, y + 4, label, { 'text-anchor': 'middle' });
+  }
+  // `maxR` : bord droit a ne pas franchir. Sans lui, une etiquette posee pres
+  // de la fin de seance entrait dans la gouttiere des prix et s y faisait
+  // couper par l etiquette de dernier prix — invisible au balayage, qui ne
+  // compare qu a la boite du SVG.
+  function pill(host, x, y, label, maxR) {
+    var w = label.length * 7.9 + 22, h = 21, a = 8;
+    if (maxR !== undefined && x + w > maxR) x = Math.max(4, maxR - w);
+    host.appendChild(el('path', { class: 'pill', d: 'M' + x + ',' + y + 'l' + a + ',-' + (h / 2) + 'h' + (w - a) + 'v' + h + 'h-' + (w - a) + 'z' }));
+    tx(host, 'pilltx', x + a + (w - a) / 2, y + 4, label, { 'text-anchor': 'middle' });
+  }
+  // Trois niveaux proches rendent trois étiquettes superposées : on les
+  // écarte d'un pas minimal avant de les poser, au lieu de les subir.
+  function ecarter(items, mini) {
+    var out = items.slice().sort(function (a, b) { return a.y - b.y; });
+    for (var i = 1; i < out.length; i++) {
+      if (out[i].y - out[i - 1].y < mini) out[i].y = out[i - 1].y + mini;
+    }
+    return out;
+  }
+
+  function candles(host, bs, x0, dx, sy, bw) {
+    bs.forEach(function (b, i) {
+      var x = x0 + i * dx, up = b.c >= b.o;
+      host.appendChild(el('line', { class: up ? 'wu' : 'wd', x1: x.toFixed(1), x2: x.toFixed(1), y1: sy(b.h).toFixed(1), y2: sy(b.l).toFixed(1) }));
+      var yT = sy(Math.max(b.o, b.c)), yB = sy(Math.min(b.o, b.c));
+      host.appendChild(el('rect', { class: up ? 'cu' : 'cd', x: (x - bw / 2).toFixed(1), y: yT.toFixed(1), width: bw.toFixed(1), height: Math.max(yB - yT, 1).toFixed(1) }));
+    });
+  }
+  function wm(host, c, s) { tx(host, 'wm', c.plotR - 8, c.h - c.bot - 8, ETROIT ? MARK + ' · illustratif' : s, { 'text-anchor': 'end' }); }
+
+
+  // ================= Fig. 2.1 — le trajet des 500 € =====================
+  // Chaque étape est un objet : bandeau d'en-tête, chiffre fort, corps.
+  // L'étape 03 est inversée parce que c'est celle qui porte le fait ; et
+  // un rail sous les boîtes montre où le risque de marché se trouve —
+  // le lecteur doit pouvoir le voir sans lire une ligne.
+  var FLUX = [
+    ['01', 'VOUS', '500 €', ['vous détenez', 'rien n’est engagé'], false, false],
+    ['02', 'DROIT D’ENTRÉE', 'frais payés', ['la société encaisse', '500 € dépensés'], false, false],
+    ['03', 'ÉVALUATION', 'compte simulé', ['aucun capital réel', 'rien au marché'], true, false],
+    ['04', 'COMPTE FINANCÉ', 'capital société', ['la firme détient', 'son propre capital'], false, true],
+    ['05', 'GAINS', 'vos 500 € d’abord', ['puis 50 / 50', 'priorité à vous'], false, false]
+  ];
+  function figFlux() {
+    var host = document.getElementById('f-flux'); if (!host) return;
+    var etroit = (typeof window !== 'undefined') && window.innerWidth < 760;
+    var n = FLUX.length, HEAD = 26;
+    var W = etroit ? 372 : 1000, BW = etroit ? 348 : 182, BH = etroit ? 130 : 120;
+    var GAP = etroit ? 24 : 16, TOP = etroit ? 46 : 72;
+    var RAIL = 30;
+    var H = etroit ? TOP + n * (BH + GAP) + 106 : 300;
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    tx(host, 'hdr', 12, 20, 'LE TRAJET DES 500 €  ·  ' + MARK + ' v1');
+
+    function at(i) { return etroit ? [12, TOP + i * (BH + GAP)] : [12 + i * (BW + GAP), TOP]; }
+
+    FLUX.forEach(function (f, i) {
+      var q = at(i), x = q[0], y = q[1], cle = f[4];
+      // corps de la carte, puis bandeau d'en-tête : la même grammaire que
+      // les tuiles du terminal, pour que tout le document se tienne.
+      host.appendChild(el('rect', { class: cle ? 'cardkey' : 'cardbody', x: x, y: y, width: BW, height: BH, rx: 2 }));
+      host.appendChild(el('rect', { class: cle ? 'cardkeyhead' : 'cardhead', x: x, y: y, width: BW, height: HEAD, rx: 2 }));
+      host.appendChild(el('rect', { class: cle ? 'cardkey' : 'cardbody', x: x, y: y + HEAD - 3, width: BW, height: 3 }));
+      host.appendChild(el('line', { class: 'cardrule', x1: x, y1: y + HEAD, x2: x + BW, y2: y + HEAD }));
+      tx(host, cle ? 'stepn inv' : 'stepn', x + 11, y + 19, f[0]);
+      tx(host, cle ? 'cardttl inv' : 'cardttl', x + 36, y + 18, f[1]);
+      tx(host, cle ? 'cardbig inv' : 'cardbig', x + 11, y + HEAD + 26, f[2]);
+      f[3].forEach(function (l, k) {
+        tx(host, cle ? 'cardsub inv' : 'cardsub', x + 11, y + HEAD + 48 + k * 18, l);
+      });
+      if (etroit) {
+        var fy = y + BH - 26;
+        host.appendChild(el('line', { class: 'cardrule', x1: x, y1: fy, x2: x + BW, y2: fy }));
+        host.appendChild(el('rect', { class: f[5] ? 'railon' : 'railoff', x: x + 10, y: fy + 6, width: BW - 20, height: 14, rx: 1 }));
+        tx(host, f[5] ? 'railtx' : (cle ? 'cardsub inv' : 'cardsub'), x + BW / 2, fy + 17,
+          f[5] ? 'EXPOSÉ : CELUI DE LA SOCIÉTÉ' : 'exposé au marché : aucun', { 'text-anchor': 'middle' });
+      }
+      if (i < n - 1) {
+        if (etroit) {
+          var cx = x + BW / 2, cy = y + BH;
+          host.appendChild(el('path', { class: 'lvlsolid', d: 'M' + cx + ',' + cy + 'v' + (GAP - 9) }));
+          host.appendChild(el('path', { class: 'pill', d: 'M' + (cx - 5) + ',' + (cy + GAP - 11) + 'h10l-5,9z' }));
+        } else {
+          var ax = x + BW, ay = y + BH / 2;
+          host.appendChild(el('path', { class: 'lvlsolid', d: 'M' + ax + ',' + ay + 'h' + (GAP - 11) }));
+          host.appendChild(el('path', { class: 'pill', d: 'M' + (ax + GAP - 13) + ',' + (ay - 5) + 'v10l9,-5z' }));
+        }
+      }
+    });
+
+    // le rail : plein là où le capital est réellement au marché, creux
+    // partout ailleurs. Tout l'argument de la planche tient dans ce trait.
+    if (!etroit) {
+      var ry = TOP + BH + 18;
+      tx(host, 'lvltx', 12, ry - 6, 'capital exposé au marché');
+      FLUX.forEach(function (f, i) {
+        var x = at(i)[0];
+        host.appendChild(el('rect', { class: f[5] ? 'railon' : 'railoff', x: x, y: ry, width: BW, height: 12, rx: 1 }));
+        if (f[5]) tx(host, 'railtx', x + BW / 2, ry + 9, 'CELUI DE LA SOCIÉTÉ', { 'text-anchor': 'middle' });
+        else tx(host, 'lvltx', x + BW / 2, ry + 9, 'aucun', { 'text-anchor': 'middle' });
+      });
+    }
+
+    var yN = etroit ? TOP + n * (BH + GAP) - GAP + 30 : TOP + BH + 74;
+    host.appendChild(el('line', { class: 'axsep', x1: 12, y1: yN - 20, x2: W - 12, y2: yN - 20 }));
+    var dit = etroit
+      ? [['w', 'À aucun moment vos 500 €'], ['w', 'ne sont exposés au marché :'], ['w', 'ils paient un droit d’entrée.'],
+         ['', 'Le risque de marché porte'], ['', 'sur le capital de la société.']]
+      : [['w', 'À aucun moment vos 500 € ne sont exposés au marché : ils paient un droit d’entrée.'],
+         ['', 'Ce qui prend le risque de marché, à l’étape 04, est le capital de la société de financement.']];
+    dit.forEach(function (l, i) { tx(host, 'lvltx' + (l[0] ? ' w' : ''), 12, yN + i * 19, l[1]); });
+  }
+
+  // ================= Fig. 4.1 — gamma net par strike =================
+  var GEX = [
+    [29700, 14], [29675, 5], [29650, 62], [29625, 30], [29600, 232], [29575, 55],
+    [29550, 104], [29525, 42], [29500, 88], [29475, 36], [29450, 20], [29425, -26],
+    [29400, -78], [29375, -16], [29350, -44], [29325, -10], [29300, -30]
+  ];
+  function figGex() {
+    var host = document.getElementById('f-gex'); if (!host) return;
+    // Sur telephone la planche tient dans 430 : l axe des gammas se resserre
+    // autour du zero et les intitules de niveau gardent leur seul sigle.
+    var W = ETROIT ? 430 : 1000, H = ETROIT ? 486 : 520;
+    var L = ETROIT ? 82 : 96, R = ETROIT ? 418 : 962, T = ETROIT ? 66 : 54, B = ETROIT ? 420 : 452;
+    var zero = ETROIT ? 184 : 470, kpx = ETROIT ? 0.98 : 2.0;
+    var ticks = ETROIT ? [-100, 0, 100, 200] : [-200, -100, 0, 100, 200];
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    if (ETROIT) {
+      tx(host, 'ttl', 10, 22, 'NQ  ·  GAMMA NET PAR STRIKE');
+      tx(host, 'hdr', 10, 40, MARK + ' v1  ·  illustratif');
+    } else {
+      tx(host, 'ttl', W / 2, 24, 'NQ  ·  GAMMA NET PAR STRIKE  ·  ILLUSTRATIF', { 'text-anchor': 'middle' });
+      tx(host, 'hdr', 10, 24, MARK + ' v1');
+    }
+    var lo = 29288, hi = 29712;
+    function sy(p) { return T + (hi - p) / (hi - lo) * (B - T); }
+    function sx(v) { return zero + v * kpx; }
+    for (var p = 29300; p <= 29700; p += 50) {
+      host.appendChild(el('line', { class: 'grid', x1: L, y1: sy(p).toFixed(1), x2: R, y2: sy(p).toFixed(1) }));
+      if (ETROIT && p % 100 !== 0) continue;
+      tx(host, 'px ' + (p % 100 === 0 ? 'b' : 'd'), L - 10, sy(p) + 4, fmt(p, 0), { 'text-anchor': 'end' });
+    }
+    // Sur telephone la gouttiere de gauche loge tout juste « 29 700 » : le
+    // titre pivote y entrait dans les chiffres. L en-tete le dit deja.
+    if (!ETROIT) tx(host, 'axl', 24, (T + B) / 2, 'STRIKE', { 'text-anchor': 'middle', transform: 'rotate(-90 24 ' + ((T + B) / 2).toFixed(0) + ')' });
+    var sideC = 'side' + (ETROIT ? ' sm' : '');
+    tx(host, sideC, zero - (ETROIT ? 50 : 190), T + 20, 'PUTS', { 'text-anchor': 'middle' });
+    tx(host, sideC, zero + (ETROIT ? 92 : 210), T + 20, 'CALLS', { 'text-anchor': 'middle' });
+    var rowH = (B - T) / GEX.length;
+    GEX.forEach(function (g) {
+      host.appendChild(el('rect', {
+        class: g[1] >= 0 ? 'barA' : 'barB',
+        x: (g[1] >= 0 ? zero : sx(g[1])).toFixed(1), y: (sy(g[0]) - rowH * 0.34).toFixed(1),
+        width: Math.max(Math.abs(g[1]) * kpx, 1.2).toFixed(1), height: (rowH * 0.68).toFixed(1)
+      }));
+    });
+    function refLine(p, cls, leftLab, rightLab, sous) {
+      var dy = sous ? 17 : -9;
+      host.appendChild(el('line', { class: cls, x1: L, y1: sy(p).toFixed(1), x2: R, y2: sy(p).toFixed(1) }));
+      // Les barres occupent 68 % de chaque rangee : un intitule de niveau tombe
+      // forcement sur l une d elles, et le mur majeur mangeait ses jambages.
+      // Le lisere noir le detache, comme le fait une plateforme de cotation.
+      if (leftLab) tx(host, 'lvltx w halo', L + 6, sy(p) + dy, leftLab);
+      if (rightLab) tx(host, 'lvltx w halo', R - 6, sy(p) + dy, rightLab, { 'text-anchor': 'end' });
+    }
+    refLine(CALLWALL, 'lvlsolid', ETROIT ? null : 'MUR MAJEUR  ' + fmt(CALLWALL, 0), 'CALL WALL  ' + fmt(CALLWALL, 0));
+    refLine(SPOT, 'lvl', 'COMPTANT  ' + fmt(SPOT, 0), null);
+    // Vingt points separent le comptant du max pain : sur l echelle resserree
+    // du telephone les deux intitules se confondent. Le second passe dessous.
+    refLine(MAXPAIN, 'lvldot', 'MAX PAIN  ' + fmt(MAXPAIN, 0), null, ETROIT);
+    refLine(TRIGGER, 'lvlthick', null, (ETROIT ? 'VOL TRIG.  ' : 'VOL TRIGGER  ') + fmt(TRIGGER, 0));
+    refLine(PUTWALL, 'lvl thin', 'PUT WALL  ' + fmt(PUTWALL, 0), null);
+    host.appendChild(el('line', { class: 'lvlsolid', x1: zero, y1: T, x2: zero, y2: B }));
+    host.appendChild(el('line', { class: 'axsep', x1: L, y1: B, x2: R, y2: B }));
+    ticks.forEach(function (v) {
+      tx(host, 'px d', sx(v), B + 18, v === 0 ? '0' : (v < 0 ? '−' : '') + Math.abs(v) + ' k', { 'text-anchor': 'middle' });
+    });
+    tx(host, 'axl', W / 2, B + 38, ETROIT ? 'GAMMA NET (INTÉRÊT OUVERT)' : 'GAMMA NET (INTÉRÊT OUVERT)', { 'text-anchor': 'middle' });
+    tx(host, 'wm', R, H - 14, ETROIT ? 'aucune donnée de marché' : MARK + ' · profil illustratif · aucune donnée de marché', { 'text-anchor': 'end' });
+  }
+
+  // ================= Fig. 4.2 — structure =================
+  var A_STRUCT = [[0, 29430], [0.16, 29528], [0.30, 29486], [0.48, 29596], [0.64, 29540], [0.80, 29452], [1, 29512]];
+  function figStruct() {
+    var host = document.getElementById('f-struct'); if (!host) return;
+    var c = chart(host, {});
+    var n = 130, x0 = 14, xEnd = c.plotR * 0.80, dx = (xEnd - x0) / (n - 1);
+    var bs = bars(A_STRUCT, n, 1051), cl = closes(bs);
+    [[21, 'ma'], [55, 'ma'], [89, 'ma f']].forEach(function (m) {
+      var s = sma(cl, m[0]), pts = [];
+      for (var i = 3; i < n; i++) pts.push((x0 + i * dx).toFixed(1) + ',' + c.sy(s[i]).toFixed(1));
+      poly(host, m[1], pts);
+    });
+    candles(host, bs, x0, dx, c.sy, Math.max(dx * 0.62, 1.8));
+    [[CALLWALL, 'CW Call Wall', 0.66], [PUTWALL, 'PW Put Wall', 0.18]].forEach(function (l) {
+      host.appendChild(el('line', { class: 'lvl', x1: 0, y1: c.sy(l[0]).toFixed(1), x2: c.plotR, y2: c.sy(l[0]).toFixed(1) }));
+      pill(host, xEnd * l[2], c.sy(l[0]), fmt(l[0], 0) + (ETROIT ? '  ' + l[1].split(' ')[0] : '  ' + l[1]), c.plotR - 6);
+      tag(host, c, c.sy(l[0]), fmt(l[0], ETROIT ? 0 : 2));
+    });
+    var bos = 29486;
+    host.appendChild(el('line', { class: 'lvldot', x1: x0 + dx * 39, y1: c.sy(bos).toFixed(1), x2: c.plotR, y2: c.sy(bos).toFixed(1) }));
+    tx(host, 'lvltx w halo', c.plotR - 8, c.sy(bos) - 6, ETROIT ? 'BOS ' + fmt(bos, 0) : 'BOS   ' + fmt(bos, 2), { 'text-anchor': 'end' });
+    [[0.16, 29528, 'HH', -1], [0.30, 29486, 'HL', 1], [0.48, 29596, 'HH', -1],
+     [0.64, 29540, 'HL', 1], [0.80, 29452, 'LL', 1]].forEach(function (s) {
+      tx(host, 'lvltx halo', x0 + (xEnd - x0) * s[0], c.sy(s[1]) + (s[3] < 0 ? -14 : 20), s[2], { 'text-anchor': 'middle' });
+    });
+    var xs = xEnd + 26;
+    host.appendChild(el('line', { class: 'sess', x1: xs, y1: c.top - 8, x2: xs, y2: c.h - c.bot }));
+    tx(host, 'lvltx', xs - 8, c.top + 4, 'ouverture suivante', { 'text-anchor': 'end' });
+    tag(host, c, c.sy(cl[n - 1]), fmt(cl[n - 1], ETROIT ? 0 : 2), true);
+    timeAxis(host, c, x0, xEnd);
+    wm(host, c, MARK + ' · structure illustrative');
+  }
+
+  // ================= Fig. 4.3 — profil de volume =================
+  // Le profil se construit sur les barres réellement tracées : temps passé
+  // à chaque prix pondéré par le volume de la barre. Rien n'est postulé.
+  function profileFromBars(bs, lo, hi, rows) {
+    var acc = new Array(rows).fill(0);
+    bs.forEach(function (b) {
+      var a = Math.min(b.l, b.h), z = Math.max(b.l, b.h);
+      var r0 = Math.max(0, Math.floor((a - lo) / (hi - lo) * rows));
+      var r1 = Math.min(rows - 1, Math.floor((z - lo) / (hi - lo) * rows));
+      var share = b.v / Math.max(1, r1 - r0 + 1);
+      for (var r = r0; r <= r1; r++) acc[r] += share;
+    });
+    return acc.map(function (v, i) { return [lo + (hi - lo) * (i + 0.5) / rows, v]; });
+  }
+  function figVolp() {
+    var host = document.getElementById('f-volp'); if (!host) return;
+    var c = chart(host, {});
+    var n = 130, x0 = 14, xEnd = c.plotR * 0.64, dx = (xEnd - x0) / (n - 1);
+    var bs = bars([[0, 29556], [0.20, 29470], [0.38, 29432], [0.55, 29502], [0.72, 29466], [0.88, 29548], [1, 29520]], n, 2027);
+    var rows = 44, prof = profileFromBars(bs, c.lo, c.hi, rows);
+    var maxV = 0, poc = prof[0], total = 0;
+    prof.forEach(function (r) { total += r[1]; if (r[1] > maxV) { maxV = r[1]; poc = r; } });
+    // zone de valeur : 70 % du volume autour du point de contrôle
+    var order = prof.slice().sort(function (a, b) { return b[1] - a[1]; }), cum = 0, keep = [];
+    for (var i = 0; i < order.length && cum < 0.70 * total; i++) { cum += order[i][1]; keep.push(order[i][0]); }
+    var vah = Math.max.apply(null, keep), val = Math.min.apply(null, keep);
+    host.appendChild(el('rect', { class: 'zoneband', x: 0, y: c.sy(vah).toFixed(1), width: c.plotR, height: (c.sy(val) - c.sy(vah)).toFixed(1) }));
+    candles(host, bs, x0, dx, c.sy, Math.max(dx * 0.62, 1.8));
+    var pw = c.plotR * 0.30, rh = (c.h - c.top - c.bot) / rows;
+    prof.forEach(function (r) {
+      var w = r[1] / maxV * pw;
+      host.appendChild(el('rect', { class: 'vp' + (r === poc ? ' poc' : ''), x: (c.plotR - w).toFixed(1), y: (c.sy(r[0]) - rh * 0.42).toFixed(1), width: Math.max(w, 0.6).toFixed(1), height: (rh * 0.84).toFixed(1) }));
+    });
+    var marques = [{ p: vah, n: 'VAH', k: 'lvldot' }, { p: poc[0], n: 'POC', k: 'lvl' }, { p: val, n: 'VAL', k: 'lvldot' }];
+    marques.forEach(function (l) {
+      host.appendChild(el('line', { class: l.k, x1: 0, y1: c.sy(l.p).toFixed(1), x2: c.plotR, y2: c.sy(l.p).toFixed(1) }));
+      l.y = c.sy(l.p) - 7;
+    });
+    ecarter(marques, 19).forEach(function (l) {
+      tx(host, 'lvltx halo' + (l.n === 'POC' ? ' w' : ''), 8, l.y.toFixed(1), ETROIT ? l.n : l.n + '   ' + fmt(l.p, 2));
+    });
+    tx(host, 'lvltx', c.plotR - pw, c.top + 12, 'volume par prix →', { 'text-anchor': 'start' });
+    tag(host, c, c.sy(closes(bs)[n - 1]), fmt(closes(bs)[n - 1], ETROIT ? 0 : 2), true);
+    tag(host, c, c.sy(poc[0]), fmt(poc[0], ETROIT ? 0 : 2));
+    timeAxis(host, c, x0, xEnd);
+    wm(host, c, MARK + ' · profil de séance illustratif');
+  }
+
+  // ================= Fig. 4.4 — VWAP =================
+  function figVwap() {
+    var host = document.getElementById('f-vwap'); if (!host) return;
+    var c = chart(host, {});
+    var n = 140, x0 = 14, xEnd = c.plotR * 0.86, dx = (xEnd - x0) / (n - 1);
+    var bs = bars([[0, 29488], [0.26, 29552], [0.46, 29512], [0.64, 29578], [0.84, 29472], [1, 29450]], n, 3313);
+    // VWAP réel : moyenne et écart-type pondérés par le volume de barre.
+    var sw = 0, sp = 0, sp2 = 0, v = [], b1 = [], m1 = [], b2 = [], m2 = [], last = {};
+    for (var i = 0; i < n; i++) {
+      var tp = (bs[i].h + bs[i].l + bs[i].c) / 3, w = bs[i].v;
+      sw += w; sp += tp * w; sp2 += tp * tp * w;
+      var mean = sp / sw, sig = Math.sqrt(Math.max(sp2 / sw - mean * mean, 0));
+      var x = (x0 + i * dx).toFixed(1);
+      v.push(x + ',' + c.sy(mean).toFixed(1));
+      b1.push(x + ',' + c.sy(mean + sig).toFixed(1)); m1.push(x + ',' + c.sy(mean - sig).toFixed(1));
+      b2.push(x + ',' + c.sy(mean + 2 * sig).toFixed(1)); m2.push(x + ',' + c.sy(mean - 2 * sig).toFixed(1));
+      last = { mean: mean, sig: sig };
+    }
+    // Une zone peinte sans son nom ne dit rien : la legende de la figure le
+    // disait, la planche non — et une marque se nomme dans la planche.
+    var zx = x0 + dx * (n - 16), zw = dx * 18;
+    host.appendChild(el('rect', { class: 'zoneband', x: zx.toFixed(1), y: c.top, width: zw.toFixed(1), height: (c.h - c.top - c.bot).toFixed(1) }));
+    tx(host, 'lvltx halo', zx - 8, c.top + 14, ETROIT ? 'touche 2ᵉ bande →' : 'touche de la 2ᵉ bande →', { 'text-anchor': 'end' });
+    poly(host, 'ma', b2); poly(host, 'ma', m2); poly(host, 'ma', b1); poly(host, 'ma', m1);
+    poly(host, 'ma f', v);
+    candles(host, bs, x0, dx, c.sy, Math.max(dx * 0.6, 1.6));
+    var bandes = [['+2σ', last.mean + 2 * last.sig], ['+1σ', last.mean + last.sig], ['VWAP', last.mean],
+      ['−1σ', last.mean - last.sig], ['−2σ', last.mean - 2 * last.sig]].map(function (l) {
+        return { n: l[0], p: l[1], y: c.sy(l[1]) - 6 };
+      });
+    ecarter(bandes, 19).forEach(function (l) {
+      tx(host, 'lvltx halo' + (l.n === 'VWAP' ? ' w' : ''), c.plotR - 8, l.y.toFixed(1), ETROIT ? l.n : l.n + '   ' + fmt(l.p, 2), { 'text-anchor': 'end' });
+    });
+    tag(host, c, c.sy(closes(bs)[n - 1]), fmt(closes(bs)[n - 1], ETROIT ? 0 : 2), true);
+    tag(host, c, c.sy(last.mean), fmt(last.mean, ETROIT ? 0 : 2));
+    timeAxis(host, c, x0, xEnd);
+    wm(host, c, MARK + ' · VWAP de séance illustratif');
+  }
+
+  // ================= Fig. 4.5a — carnet =================
+  var BOOK = [
+    [29514, 15, 22], [29512, 20, 18], [29510, 12, 30], [29508, 25, 20], [29506, 18, 15],
+    [29504, 32, 11], [29502, 9, 26], [29500, 21, 19], [29498, 14, 28], [29496, 27, 13],
+    [29494, 212, 10], [29492, 22, 12], [29490, 14, 19], [29488, 10, 16], [29486, 17, 24]
+  ];
+  function bookRows(host, x, y, w, h, full) {
+    var gapc = full ? 34 : 8;
+    var mid = x + w / 2, rows = BOOK.length, rh = h / rows, maxV = 34;
+    var half = w / 2 - gapc - (full ? 30 : 2);
+    if (full) {
+      host.appendChild(el('line', { class: 'axsep', x1: mid - gapc, y1: y, x2: mid - gapc, y2: y + h }));
+      host.appendChild(el('line', { class: 'axsep', x1: mid + gapc, y1: y, x2: mid + gapc, y2: y + h }));
+    }
+    BOOK.forEach(function (r, i) {
+      var cy = y + rh * i + rh / 2, wall = r[1] > 100;
+      var bh = rh * (wall ? 0.82 : 0.62);
+      var bl = Math.min(r[1], maxV) / maxV * half;
+      var al = Math.min(r[2], maxV) / maxV * half * 0.92;
+      host.appendChild(el('rect', { class: 'barA' + (wall ? '' : ' dim'), x: (mid - gapc - bl).toFixed(1), y: (cy - bh / 2).toFixed(1), width: bl.toFixed(1), height: bh.toFixed(1) }));
+      host.appendChild(el('rect', { class: 'barB', x: mid + gapc, y: (cy - rh * 0.31).toFixed(1), width: al.toFixed(1), height: (rh * 0.62).toFixed(1) }));
+      if (!full) return;
+      if (wall) tx(host, 'badge', mid - gapc - 8, cy + 4, ETROIT ? '212 · MUR' : '212  ·  MUR DE LIQUIDITÉ', { 'text-anchor': 'end' });
+      else tx(host, 'dnum', mid - gapc - bl - 7, cy + 3.5, String(r[1]), { 'text-anchor': 'end' });
+      tx(host, 'dnum', mid + gapc + al + 7, cy + 3.5, String(r[2]));
+      if (r[0] === SPOT) {
+        host.appendChild(el('rect', { class: 'pxbox now', x: mid - gapc + 2, y: cy - 8, width: gapc * 2 - 4, height: 16, rx: 1 }));
+        tx(host, 'pxtx inv', mid, cy + 4, fmt(r[0], 0), { 'text-anchor': 'middle' });
+      } else {
+        tx(host, 'px ' + (r[0] % 10 === 0 ? 'b' : 'd'), mid, cy + 3.5, fmt(r[0], 0), { 'text-anchor': 'middle' });
+      }
+    });
+  }
+  function figDom() {
+    var host = document.getElementById('f-dom'); if (!host) return;
+    var W = ETROIT ? 430 : 1000, H = ETROIT ? 406 : 420;
+    var BX = ETROIT ? 12 : 60, BW = W - 2 * BX;
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    tx(host, 'hdr', 10, 18, ETROIT ? 'NQ1!  ·  carnet  ·  ' + MARK + ' v1' : 'NQ1!   ·   carnet   ·   ' + MARK + ' v1   ·   illustratif');
+    tx(host, 'tm', BX + BW * 0.22, 40, ETROIT ? 'ACHAT' : 'ACHAT (BID)', { 'text-anchor': 'middle' });
+    tx(host, 'tm', W / 2, 40, 'PRIX', { 'text-anchor': 'middle' });
+    tx(host, 'tm', BX + BW * 0.78, 40, ETROIT ? 'VENTE' : 'VENTE (ASK)', { 'text-anchor': 'middle' });
+    bookRows(host, BX, 54, BW, H - 104, true);
+    tx(host, 'wm', W - 14, H - 14, ETROIT ? MARK + ' · illustratif' : MARK + ' · carnet illustratif', { 'text-anchor': 'end' });
+  }
+
+  // ================= Fig. 4.5b — carte de profondeur, façon Bookmap ======
+  // Quatre couches, comme sur l'outil : la chaleur porte les ordres EN
+  // ATTENTE, les bulles portent le volume EXÉCUTÉ, les barres du bas le
+  // volume par minute, et la colonne de droite l'état courant du carnet.
+  var DEPTH = {
+    lo: 29400, hi: 29610, rows: 14, cols: 44, wallRow: 9, softRow: 3,
+    path: [[0, 3.0], [0.22, 4.2], [0.44, 5.6], [0.62, 7.4], [0.78, 8.6], [0.88, 6.4], [1, 4.8]]
+  };
+  function depthField(r, c, rows, wallRow, softRow) {
+    var hump = 0.05 + 0.16 * Math.exp(-Math.pow((r - rows * 0.42) / (rows * 0.30), 2));
+    var main = r === wallRow ? 0.88 + 0.12 * Math.sin(c * 0.34) : 0;
+    var soft = r === softRow ? 0.44 + 0.12 * Math.sin(c * 0.26 + 1.3) : 0;
+    var bleed = Math.abs(r - wallRow) === 1 ? 0.16 : 0;
+    var noise = 0.16 * Math.abs(gauss(rng(r * 977 + c * 13 + 7)));
+    return Math.min(1, hump + main + soft + bleed + noise);
+  }
+  function depthGrid(host, x, y, w, h, cols, rows, wallRow, softRow, withVolume) {
+    var cw = w / cols, ch = h / rows, r, c;
+    var maxV = 0;
+    for (r = 0; r < rows; r++) for (c = 0; c < cols; c++) maxV = Math.max(maxV, depthField(r, c, rows, wallRow, softRow));
+    for (r = 0; r < rows; r++) for (c = 0; c < cols; c++) {
+      var step = Math.min(7, Math.max(0, Math.round(depthField(r, c, rows, wallRow, softRow) / maxV * 7)));
+      host.appendChild(el('rect', {
+        class: 'k' + step, x: (x + c * cw).toFixed(1), y: (y + r * ch).toFixed(1),
+        width: (cw - 0.8).toFixed(1), height: (ch - 0.8).toFixed(1)
+      }));
+    }
+    function rowAt(t) { return interp(DEPTH.path, t); }
+    // volume par minute, peint sur le bas de la carte — comme l'outil
+    var r2 = rng(9091);
+    var vols = [];
+    for (c = 0; c < cols; c++) {
+      var near = 1 - Math.min(1, Math.abs(rowAt((c + 0.5) / cols) - wallRow) / 4);
+      vols.push(0.25 + 0.75 * r2() * (0.5 + near));
+    }
+    if (withVolume) {
+      var vmax = Math.max.apply(null, vols), vh = h * 0.20;
+      for (c = 0; c < cols; c++) {
+        var bh = vols[c] / vmax * vh;
+        host.appendChild(el('rect', {
+          class: 'volbar', x: (x + c * cw + 0.6).toFixed(1), y: (y + h - bh).toFixed(1),
+          width: (cw - 2).toFixed(1), height: bh.toFixed(1)
+        }));
+      }
+    }
+    // prix négocié
+    var pts = [];
+    for (c = 0; c <= cols; c++) {
+      var t = c / cols;
+      pts.push((x + t * w).toFixed(1) + ',' + (y + (rowAt(t) + Math.sin(t * 11) * 0.16) * ch).toFixed(1));
+    }
+    haloLine(host, 'ma f', pts);
+    // bulles de volume exécuté : le disque porte la quantité échangée
+    if (withVolume) {
+      for (c = 0; c < cols; c += 1) {
+        var t2 = (c + 0.5) / cols, rr = rowAt(t2) + Math.sin(t2 * 11) * 0.16;
+        var q = vols[c], rad = 1.4 + Math.sqrt(q) * 4.2;
+        host.appendChild(el('circle', {
+          class: 'bubble', cx: (x + t2 * w).toFixed(1), cy: (y + rr * ch).toFixed(1), r: rad.toFixed(1),
+          opacity: (0.35 + 0.5 * q).toFixed(2)
+        }));
+      }
+    }
+    return { cw: cw, ch: ch, rowAt: rowAt, vols: vols, maxV: maxV };
+  }
+  function figDepth() {
+    var host = document.getElementById('f-depth'); if (!host) return;
+    // La colonne de droite laissait 156 px de vide au bord de la planche :
+    // la carte de chaleur, qui est le sujet, prend cette largeur. Sur
+    // telephone les quatre couches restent, mais les trois legendes
+    // s empilent au lieu de se ranger de front.
+    var W = ETROIT ? 430 : 1000, X = ETROIT ? 12 : 14, Y = 46;
+    var GW = ETROIT ? 300 : 800, GH = ETROIT ? 286 : 300;
+    var D = DEPTH, LX = GW + X + (ETROIT ? 8 : 12), LW = ETROIT ? 40 : 96, AX = LX + LW + (ETROIT ? 6 : 10);
+    var LG = ETROIT ? 3 : 1;
+    var H = ETROIT ? 706 : 580;
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    tx(host, 'hdr', 10, 18, ETROIT ? 'NQ1!  ·  profondeur du carnet' : 'NQ1!   ·   profondeur du carnet   ·   ' + MARK + ' v1   ·   illustratif');
+    var g = depthGrid(host, X, Y, GW, GH, D.cols, D.rows, D.wallRow, D.softRow, true);
+
+    function priceOfRow(r) { return D.hi - (D.hi - D.lo) * (r + 0.5) / D.rows; }
+    // colonne de droite : état courant du carnet, comme le panneau de l'outil
+    tx(host, 'tm', LX, Y - 10, ETROIT ? 'carnet' : 'carnet courant');
+    host.appendChild(el('line', { class: 'axsep', x1: AX - 8, y1: Y, x2: AX - 8, y2: Y + GH }));
+    for (var r = 0; r < D.rows; r++) {
+      var yy = Y + g.ch * r, cy = yy + g.ch / 2;
+      var size = depthField(r, D.cols - 1, D.rows, D.wallRow, D.softRow) / g.maxV;
+      var bw = size * LW;
+      host.appendChild(el('rect', { class: r === D.wallRow ? 'barA' : 'barA dim', x: LX, y: (cy - g.ch * 0.3).toFixed(1), width: Math.max(bw, 1).toFixed(1), height: (g.ch * 0.6).toFixed(1) }));
+      if (r === D.wallRow || r === D.softRow) {
+        tx(host, 'badge', LX + 6, cy + 4, r === D.wallRow ? '212' : '96');
+      }
+      if (ETROIT && r % 2) continue;
+      tx(host, 'px ' + (r % 2 === 0 ? 'b' : 'd'), AX, cy + 4, fmt(priceOfRow(r), 0));
+    }
+    tx(host, 'tm', X, Y - 10, '09:30  ouverture');
+    if (!ETROIT) tx(host, 'tm', X + GW, Y - 10, 'clôture  15:30', { 'text-anchor': 'end' });
+    pill(host, X + GW * (ETROIT ? 0.06 : 0.26), Y + g.ch * D.wallRow + g.ch / 2, ETROIT ? 'MUR — 212 · ' + fmt(priceOfRow(D.wallRow), 0) : 'MUR — 212 contrats tenus  ·  ' + fmt(priceOfRow(D.wallRow), 0), X + GW - 4);
+
+    // légendes : la chaleur, puis la bulle — les deux grandeurs de l'outil
+    var lgy = Y + GH + 38, cw0 = ETROIT ? 26 : 30, lgw = 8 * cw0 - 2;
+    var L2 = ETROIT ? lgy + 62 : lgy, L3 = ETROIT ? lgy + 124 : lgy;
+    tx(host, 'tm', X, lgy - 10, 'ordres en attente au carnet');
+    for (var k = 0; k < 8; k++) host.appendChild(el('rect', { class: 'k' + k, x: X + k * cw0, y: lgy, width: cw0 - 2, height: 11 }));
+    tx(host, 'tm', X, lgy + 28, 'peu');
+    tx(host, 'tm', X + lgw, lgy + 28, 'beaucoup', { 'text-anchor': 'end' });
+    var bx = ETROIT ? X + 14 : X + 360;
+    tx(host, 'tm', bx - 14, L2 - 10, 'volume exécuté à ce prix');
+    [2.2, 4.2, 6.4].forEach(function (rad, i) {
+      host.appendChild(el('circle', { class: 'bubble', cx: bx + i * 36, cy: L2 + 5, r: rad, opacity: 0.8 }));
+    });
+    tx(host, 'tm', bx - 14, L2 + 28, 'du plus petit au plus gros');
+    // Cette legende vivait dans la carte de chaleur, ou le gris sur gris la
+    // rendait illisible. Elle rejoint les deux autres, hors de la donnee.
+    var vx = ETROIT ? X : X + 640;
+    tx(host, 'tm', vx, L3 - 10, 'volume exécuté par minute');
+    [7, 11, 6, 14, 9].forEach(function (hh, i) {
+      host.appendChild(el('rect', { class: 'barA dim', x: vx + i * 13, y: L3 + 11 - hh, width: 9, height: hh }));
+    });
+    tx(host, 'tm', vx, L3 + 28, 'au bas de la carte');
+
+    // delta cumulé
+    var dW = ETROIT ? W - 2 * X : GW;
+    var dTop = ETROIT ? L3 + 78 : Y + GH + 112, dH = 84, dMid = dTop + dH / 2;
+    tx(host, 'tm', X, dTop - 10, ETROIT ? 'delta cumulé (CVD)' : 'delta cumulé de la séance (CVD)');
+    host.appendChild(el('rect', { class: 'axsep', x: X, y: dTop, width: dW, height: dH, fill: 'none' }));
+    host.appendChild(el('line', { class: 'grid', x1: X, y1: dMid, x2: X + dW, y2: dMid }));
+    var cvd = 0, cpts = [], rr2 = rng(4242), maxAbs = 0, series2 = [];
+    for (var c2 = 0; c2 < D.cols; c2++) {
+      var slope = g.rowAt((c2 + 1) / D.cols) - g.rowAt(c2 / D.cols);
+      cvd += (-slope) * 3 + gauss(rr2) * 0.9;
+      series2.push(cvd); maxAbs = Math.max(maxAbs, Math.abs(cvd));
+    }
+    series2.forEach(function (v2, c3) {
+      cpts.push((X + (c3 + 0.5) / D.cols * dW).toFixed(1) + ',' + (dMid - v2 / maxAbs * (dH / 2 - 6)).toFixed(1));
+    });
+    poly(host, 'ma f', cpts);
+    tx(host, 'lvltx', X + 8, dTop + 14, 'achat net cumulé');
+    tx(host, 'lvltx', X + 8, dTop + dH - 7, 'vente nette cumulée');
+    tx(host, 'wm', W - 14, H - 12, ETROIT ? MARK + ' · illustratif' : MARK + ' · profondeur illustrative', { 'text-anchor': 'end' });
+  }
+
+  // ================= Fig. 4.6 — Fibonacci =================
+  function figFib() {
+    var host = document.getElementById('f-fib'); if (!host) return;
+    var c = chart(host, {});
+    var n = 130, x0 = 14, xEnd = c.plotR * 0.88, dx = (xEnd - x0) / (n - 1);
+    var bs = bars([[0, 29404], [0.44, 29588], [0.56, 29546], [0.68, 29474], [0.84, 29528], [1, 29566]], n, 4409);
+    // Les niveaux se mesurent sur le tracé réel, jamais sur les ancres :
+    // sinon la grille et les bougies racontent deux choses différentes.
+    var iTop = 0, top = -Infinity, base = Infinity;
+    bs.forEach(function (b, i) { if (i < n * 0.6 && b.h > top) { top = b.h; iTop = i; } });
+    bs.forEach(function (b, i) { if (i <= iTop && b.l < base) base = b.l; });
+    var lowAfter = Infinity, iLow = iTop;
+    bs.forEach(function (b, i) { if (i > iTop && i < n * 0.82 && b.l < lowAfter) { lowAfter = b.l; iLow = i; } });
+    var R = top - base;
+    host.appendChild(el('rect', { class: 'zoneband', x: 0, y: c.sy(top - 0.618 * R).toFixed(1), width: c.plotR, height: (c.sy(top - 0.786 * R) - c.sy(top - 0.618 * R)).toFixed(1) }));
+    var fibs = [[0, '0'], [0.236, '23,6'], [0.382, '38,2'], [0.5, '50'], [0.618, '61,8'], [0.786, '78,6'], [1, '100']].map(function (l) {
+      var pp = top - l[0] * R;
+      return { p: pp, n: l[1], key: (l[0] === 0.618 || l[0] === 0.786), y: c.sy(pp) - 6 };
+    });
+    fibs.forEach(function (l) {
+      host.appendChild(el('line', { class: l.key ? 'lvl' : 'lvldot', x1: 0, y1: c.sy(l.p).toFixed(1), x2: c.plotR, y2: c.sy(l.p).toFixed(1) }));
+    });
+    candles(host, bs, x0, dx, c.sy, Math.max(dx * 0.62, 1.8));
+    // Les intitules etaient poses avant les bougies, qui en effacaient deux au
+    // ras du depart. Ils passent apres, avec un lisere noir : un nom de niveau
+    // doit rester lisible la ou la donnee est la plus dense.
+    ecarter(fibs, 19).forEach(function (l) {
+      tx(host, 'lvltx halo' + (l.key ? ' w' : ''), 8, l.y.toFixed(1), l.n + ' %   ' + fmt(l.p, ETROIT ? 0 : 2));
+    });
+    tx(host, 'lvltx w', x0 + dx * iTop, c.sy(top) - 14, 'sommet', { 'text-anchor': 'middle' });
+    tx(host, 'lvltx w', x0 + dx * 4, c.sy(base) + 22, 'départ');
+    host.appendChild(el('circle', { cx: (x0 + dx * iLow).toFixed(1), cy: c.sy(lowAfter).toFixed(1), r: 3.4, fill: '#FFFFFF' }));
+    pill(host, x0 + dx * iLow + 8, c.sy(lowAfter), (ETROIT ? 'retrac.  ·  ' : 'retracement  ·  ') + fmt(lowAfter, ETROIT ? 0 : 2) +
+      '  ·  ' + (100 * (top - lowAfter) / R).toFixed(1).replace('.', ',') + ' %', c.plotR - 6);
+    tag(host, c, c.sy(closes(bs)[n - 1]), fmt(closes(bs)[n - 1], ETROIT ? 0 : 2), true);
+    timeAxis(host, c, x0, xEnd);
+    wm(host, c, MARK + ' · retracement illustratif');
+  }
+
+  // ================= Fig. 5.1 — ce qui se teste, et en combien de temps ==
+  // Les quatre colonnes sont calculées à partir de la géométrie déclarée de
+  // chaque outil et de la friction : loi nulle p0 = 1/(1+R:R), seuil de
+  // rentabilité p* = (a+c)/(a+b), excès à démontrer, puis l'échantillon
+  // n = z²·p0(1−p0)/excès² et le délai que le débit de contacts impose.
+  var FRICTION = 0.50, Z95 = 1.645, SEANCES_MOIS = 21, EXPERIENCE_MOIS = 72;
+  var OUTILS = [
+    ['Mur de liquidité', 'l’ordre absorbe', 6, 1.5, 6],
+    ['Point de contrôle (POC)', 'le prix y retourne', 8, 1.0, 2],
+    ['Nœud de faible volume (LVN)', 'le nœud tient', 8, 2.0, 3],
+    ['Zone de valeur haute (HVZ)', 'le contact est rejeté', 10, 2.0, 3],
+    ['Haut / bas de structure', 'le retest tient', 12, 2.0, 4],
+    ['Bande d’écart-type (±2σ)', 'le prix revient', 10, 1.5, 2]
+  ];
+  function testabilite() {
+    return OUTILS.map(function (o) {
+      var a = o[2], rr = o[3], b = a * rr, occ = o[4];
+      var p0 = a / (a + b), ps = (a + FRICTION) / (a + b), d = ps - p0;
+      var n = Math.ceil(Z95 * Z95 * p0 * (1 - p0) / (d * d));
+      var se = Math.ceil(n / occ);
+      return { nom: o[0], quoi: o[1], a: a, rr: rr, occ: occ, p0: p0, ps: ps, d: d, n: n, se: se, mois: se / SEANCES_MOIS };
+    });
+  }
+  function figPreuve() {
+    var host = document.getElementById('f-preuve'); if (!host) return;
+    var T = testabilite();
+    // Sur telephone, 1120 px de large tombent a 0,35 d echelle : les intitules
+    // y valent cinq pixels. La meme planche se lit alors outil par outil, un
+    // bloc chacun, chaque bloc tenant toute la largeur.
+    if ((typeof window !== 'undefined') && window.innerWidth < 760) return figPreuveEtroit(host, T);
+    var W = 1120, H = 486;
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    tx(host, 'hdr', 10, 18, 'VÉRIFIER QU’UN OUTIL BAT LE HASARD — ET CE QUE ÇA COÛTE EN TEMPS  ·  ' + MARK + ' v1');
+
+    var LAB = 300, PX = LAB + 16, PW = 250, QX = 700, QW = 240, TOP = 84, ROW = 48;
+    var rows = T.length, GH = rows * ROW;
+
+    // — panneau gauche : taux —
+    var tlo = 0.30, thi = 0.56;
+    function hx(v) { return PX + (v - tlo) / (thi - tlo) * PW; }
+    tx(host, 'lvltx', PX, TOP - 48, 'taux de réussite');
+    host.appendChild(el('circle', { cx: PX + 6, cy: TOP - 28, r: 4, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.2 }));
+    tx(host, 'lvltx', PX + 18, TOP - 24, 'sans dérive');
+    host.appendChild(el('circle', { cx: PX + 124, cy: TOP - 28, r: 4, fill: '#FFFFFF' }));
+    tx(host, 'lvltx w', PX + 136, TOP - 24, 'seuil de rentabilité');
+    [0.30, 0.35, 0.40, 0.45, 0.50, 0.55].forEach(function (v) {
+      host.appendChild(el('line', { class: 'grid', x1: hx(v).toFixed(1), y1: TOP - 10, x2: hx(v).toFixed(1), y2: TOP + GH + 4 }));
+      tx(host, 'px d', hx(v), TOP + GH + 20, (100 * v).toFixed(0) + ' %', { 'text-anchor': 'middle' });
+    });
+
+    // — panneau droit : délai —
+    var mlo = 0, mhi = 84;
+    function qx(v) { return QX + (v - mlo) / (mhi - mlo) * QW; }
+    tx(host, 'lvltx', QX, TOP - 48, 'mois de contacts pour l’établir à 95 %');
+    [0, 12, 24, 36, 48, 60, 72, 84].forEach(function (v) {
+      host.appendChild(el('line', { class: 'grid', x1: qx(v).toFixed(1), y1: TOP - 10, x2: qx(v).toFixed(1), y2: TOP + GH + 4 }));
+      tx(host, 'px d', qx(v), TOP + GH + 20, String(v), { 'text-anchor': 'middle' });
+    });
+    // la barre des six ans : le repère qui donne son sens à la planche
+    host.appendChild(el('line', { class: 'lvlthick', x1: qx(EXPERIENCE_MOIS).toFixed(1), y1: TOP - 16, x2: qx(EXPERIENCE_MOIS).toFixed(1), y2: TOP + GH + 8 }));
+    tx(host, 'lvltx w', qx(EXPERIENCE_MOIS) - 8, TOP - 24, 'six ans de marché → 72 mois', { 'text-anchor': 'end' });
+
+    T.forEach(function (t, i) {
+      var y = TOP + i * ROW + ROW * 0.5;
+      tx(host, 'lvltx w', LAB, y - 3, t.nom, { 'text-anchor': 'end' });
+      tx(host, 'lvltx', LAB, y + 14, t.quoi + '  ·  ' + t.occ + '/séance', { 'text-anchor': 'end' });
+      // l'écart à démontrer, matérialisé
+      host.appendChild(el('line', { class: 'lvlsolid', x1: hx(t.p0).toFixed(1), y1: y.toFixed(1), x2: hx(t.ps).toFixed(1), y2: y.toFixed(1) }));
+      host.appendChild(el('circle', { cx: hx(t.p0).toFixed(1), cy: y.toFixed(1), r: 4, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.2 }));
+      host.appendChild(el('circle', { cx: hx(t.ps).toFixed(1), cy: y.toFixed(1), r: 4, fill: '#FFFFFF' }));
+      tx(host, 'lvltx w', hx(t.ps) + 10, y + 4, '+' + (100 * t.d).toFixed(2).replace('.', ',') + ' pt');
+      // le délai
+      host.appendChild(el('rect', { class: 'barA dim', x: qx(0), y: (y - 7).toFixed(1), width: (qx(t.mois) - qx(0)).toFixed(1), height: 14 }));
+      // Colonne fixe, hors de l echelle : posees au bout de la barre, ces deux
+      // lignes traversaient le repere des 72 mois, qui les barrait.
+      tx(host, 'lvltx w', QX + QW + 16, y - 3, t.mois.toFixed(1).replace('.', ',') + ' mois');
+      tx(host, 'lvltx', QX + QW + 16, y + 14, fmt(t.n, 0) + ' contacts');
+    });
+
+    // la ligne que la route ne couvre pas
+    var yC = TOP + GH + 66;
+    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: yC - 28, x2: W, y2: yC - 28 }));
+    // Deux colonnes : celle de gauche etait ancree a droite sur LAB et sa
+    // seconde ligne sortait de la planche par le bord gauche. Une seule
+    // colonne, alignee sur le bord, dit la meme chose sans se couper.
+    tx(host, 'lvltx w', 12, yC - 4, 'La combinaison des six est hors de portée de cette route');
+    tx(host, 'lvltx', 12, yC + 14, 'pondérée à l’œil, elle est la décision réelle et n’est jamais deux fois la même — l’échantillon ne se referme jamais');
+
+    tx(host, 'wm', 10, H - 12, 'déclaré : friction ' + FRICTION.toFixed(2).replace('.', ',') + ' pt/aller-retour · stops 6 à 12 pt · rapports 1:1 à 1:2 · ' + SEANCES_MOIS + ' séances/mois · seuil 95 % unilatéral');
+  }
+
+  // Fig. 5.1, forme telephone : un bloc par outil.
+  function figPreuveEtroit(host, T) {
+    // Un bloc occupe 104 px de contenu : a ROW = 104 la ligne « X mois »
+    // tombait sur le nom de l outil suivant. Vu en regardant la planche.
+    var W = 430, TOP = 112, ROW = 128, PAD = 14;
+    var H = TOP + T.length * ROW + 92;
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    tx(host, 'hdr', 10, 18, 'BATTRE LE HASARD — ET CE QUE ÇA COÛTE');
+    tx(host, 'lvltx', PAD, 40, 'pour chaque outil : l’écart à démontrer,');
+    tx(host, 'lvltx', PAD, 57, 'puis le temps de contacts qu’il demande.');
+
+    var tlo = 0.30, thi = 0.56, TW = 232, TX = PAD;
+    function hx(v) { return TX + (v - tlo) / (thi - tlo) * TW; }
+    var mhi = 84, MW = W - 2 * PAD, MX = PAD;
+    function qx(v) { return MX + v / mhi * MW; }
+
+    host.appendChild(el('circle', { cx: TX + 5, cy: 76, r: 4, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.2 }));
+    tx(host, 'lvltx', TX + 16, 80, 'sans dérive');
+    host.appendChild(el('circle', { cx: TX + 118, cy: 76, r: 4, fill: '#FFFFFF' }));
+    tx(host, 'lvltx w', TX + 129, 80, 'seuil de rentabilité');
+
+    T.forEach(function (t, i) {
+      var y = TOP + i * ROW;
+      if (i) host.appendChild(el('line', { class: 'grid', x1: PAD, y1: (y - 18).toFixed(1), x2: W - PAD, y2: (y - 18).toFixed(1) }));
+      tx(host, 'lvltx w', PAD, y + 6, t.nom);
+      tx(host, 'lvltx', PAD, y + 24, t.quoi + '  ·  ' + t.occ + '/séance');
+      // l ecart a demontrer
+      var ye = y + 48;
+      host.appendChild(el('line', { class: 'lvlsolid', x1: hx(t.p0).toFixed(1), y1: ye.toFixed(1), x2: hx(t.ps).toFixed(1), y2: ye.toFixed(1) }));
+      host.appendChild(el('circle', { cx: hx(t.p0).toFixed(1), cy: ye.toFixed(1), r: 4, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.2 }));
+      host.appendChild(el('circle', { cx: hx(t.ps).toFixed(1), cy: ye.toFixed(1), r: 4, fill: '#FFFFFF' }));
+      tx(host, 'lvltx w', W - PAD, ye + 4, '+' + (100 * t.d).toFixed(2).replace('.', ',') + ' pt', { 'text-anchor': 'end' });
+      // le delai, sur toute la largeur
+      var yb = y + 68;
+      host.appendChild(el('rect', { class: 'barA dim', x: MX, y: yb.toFixed(1), width: (qx(t.mois) - MX).toFixed(1), height: 11 }));
+      // Un trait tiret-point de vingt pixels rend deux tirets et se lit comme
+      // un point d exclamation : le repere est plein, et plus haut.
+      host.appendChild(el('line', { class: 'lvlsolid', x1: qx(EXPERIENCE_MOIS).toFixed(1), y1: (yb - 8).toFixed(1), x2: qx(EXPERIENCE_MOIS).toFixed(1), y2: (yb + 19).toFixed(1) }));
+      tx(host, 'lvltx w halo', PAD, yb + 32, t.mois.toFixed(1).replace('.', ',') + ' mois');
+      tx(host, 'lvltx halo', W - PAD, yb + 32, fmt(t.n, 0) + ' contacts', { 'text-anchor': 'end' });
+    });
+
+    var yC = TOP + T.length * ROW;
+    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yC - 20).toFixed(1), x2: W, y2: (yC - 20).toFixed(1) }));
+    tx(host, 'lvltx w', PAD, yC + 2, 'le repère vertical : six ans → 72 mois');
+    tx(host, 'lvltx', PAD, yC + 21, 'la combinaison des six, elle, n’a pas');
+    tx(host, 'lvltx', PAD, yC + 38, 'd’échantillon — elle est la décision.');
+    tx(host, 'wm', PAD, H - 12, 'friction ' + FRICTION.toFixed(2).replace('.', ',') + ' pt · stops 6 à 12 pt · seuil 95 %');
+  }
+
+  // ================= Monte-Carlo de l'évaluation =================
+  // Deux mille comptes, aucune dérive. Les deux barrières du programme sont
+  // suivies en premier passage ; la loi terminale, elle, est celle du
+  // résultat à soixante séances si rien n'arrêtait le compte. Les deux
+  // nombres diffèrent, et c'est le propos.
+  var MC = { sims: 2000, days: 60, sigma: 0.9, target: 6, limit: 4, keep: 220 };
+  var MCRES = null;
+  function monteCarlo() {
+    if (MCRES) return MCRES;
+    var r = rng(20260913), ends = [], paths = [], hitT = 0, hitL = 0;
+    var quant = [];
+    for (var d = 0; d <= MC.days; d++) quant.push([]);
+    for (var s = 0; s < MC.sims; s++) {
+      var eq = 0, path = [0], settled = 0;
+      for (var i = 1; i <= MC.days; i++) {
+        eq += gauss(r) * MC.sigma;
+        path.push(eq);
+        quant[i].push(eq);
+        if (!settled) {
+          if (eq >= MC.target) { settled = 1; hitT++; }
+          else if (eq <= -MC.limit) { settled = -1; hitL++; }
+        }
+      }
+      ends.push(eq);
+      if (s < MC.keep) paths.push(path);
+    }
+    var sorted = ends.slice().sort(function (a, b) { return a - b; });
+    function q(p) { return sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))]; }
+    var env = { p5: [], p50: [], p95: [] };
+    for (var d2 = 0; d2 <= MC.days; d2++) {
+      var col = quant[d2].slice().sort(function (a, b) { return a - b; });
+      if (!col.length) { env.p5.push(0); env.p50.push(0); env.p95.push(0); continue; }
+      env.p5.push(col[Math.floor(0.05 * col.length)]);
+      env.p50.push(col[Math.floor(0.50 * col.length)]);
+      env.p95.push(col[Math.floor(0.95 * col.length)]);
+    }
+    var mean = 0; ends.forEach(function (e) { mean += e; }); mean /= ends.length;
+    MCRES = {
+      ends: ends, sorted: sorted, paths: paths, env: env, q: q, mean: mean,
+      pEnd: ends.filter(function (e) { return e >= MC.target; }).length / ends.length,
+      pTouch: hitT / MC.sims, pLimit: hitL / MC.sims,
+      pOpen: 1 - (hitT + hitL) / MC.sims,
+      ferme: MC.limit / (MC.target + MC.limit)
+    };
+    return MCRES;
+  }
+
+  // ---------- Fig. 5.2 : loi et fonction de répartition ----------
+  function figMc() {
+    var host = document.getElementById('f-mc'); if (!host) return;
+    // Deux panneaux cote a cote tiennent sur un ecran large ; sur telephone ils
+    // reduisent chaque intitule a cinq pixels. Empiles, chacun prend toute la
+    // largeur : c est le meme contenu, lisible sans loupe.
+    var etroit = (typeof window !== 'undefined') && window.innerWidth < 760;
+    var m = monteCarlo();
+    var W = etroit ? 430 : 1000;
+    // Sur telephone la gouttiere doit loger « 100 % » a gauche du cadre de
+    // repartition : a 46 px elle le coupait.
+    var PX = etroit ? 58 : 56, PY = 52, PW = etroit ? 358 : 400, PH = etroit ? 200 : 270;
+    var QX = etroit ? PX : 560, QW = etroit ? PW : 400;
+    var QY = etroit ? PY + PH + 132 : PY, QH = etroit ? 190 : PH;
+    var H = etroit ? QY + QH + 128 : 476;
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    tx(host, 'hdr', 10, 18, etroit
+      ? 'MONTE-CARLO  ·  ' + MC.sims + ' évaluations  ·  aucun avantage'
+      : 'MONTE-CARLO  ·  ' + MC.sims + ' évaluations simulées  ·  aucun avantage  ·  ' + MC.days + ' séances');
+
+    var lo = -22, hi = 22;
+    function hx(v) { return PX + (v - lo) / (hi - lo) * PW; }
+    function qx(v) { return QX + (v - lo) / (hi - lo) * QW; }
+
+    // — histogramme —
+    var nb = etroit ? 34 : 44, bins = new Array(nb).fill(0);
+    m.ends.forEach(function (e) {
+      var k = Math.floor((Math.min(hi - 1e-9, Math.max(lo, e)) - lo) / (hi - lo) * nb);
+      bins[k]++;
+    });
+    var maxB = Math.max.apply(null, bins);
+    // La fenetre des percentiles etait posee sur les barres qu elle commente et
+    // en cachait une dizaine. Les barres montent a 80 % du cadre : la bande du
+    // haut est libre par construction, et chaque percentile s y ecrit sur la
+    // ligne qu il designe.
+    // La bande de lecture porte trois rangs ; elle doit rester assez haute
+    // pour que le nom ne tombe pas sur sa valeur.
+    var BANDE = etroit ? 0.72 : 0.80, BH = PH * (1 - BANDE);
+    function hy(c) { return PY + PH - c / maxB * PH * BANDE; }
+    tx(host, 'lvltx', PX, PY - 10, 'loi du résultat à ' + MC.days + ' séances');
+    for (var i = 0; i < nb; i++) {
+      if (!bins[i]) continue;
+      var x = PX + i / nb * PW, w = PW / nb;
+      host.appendChild(el('rect', { class: 'barA dim', x: (x + 0.4).toFixed(1), y: hy(bins[i]).toFixed(1), width: (w - 0.8).toFixed(1), height: (PY + PH - hy(bins[i])).toFixed(1) }));
+    }
+    host.appendChild(el('line', { class: 'axsep', x1: PX, y1: PY + PH, x2: PX + PW, y2: PY + PH }));
+    [[0.05, 'P5'], [0.25, 'P25'], [0.5, 'P50'], [0.75, 'P75'], [0.95, 'P95']].forEach(function (p, k) {
+      var v = m.q(p[0]);
+      // Les traits partent sous la bande de lecture : sinon ils barrent les
+      // nombres qu ils portent, et c est le defaut qu aucun balayage ne voit.
+      host.appendChild(el('line', { class: 'lvldot', x1: hx(v).toFixed(1), y1: (PY + BH).toFixed(1), x2: hx(v).toFixed(1), y2: PY + PH }));
+      tx(host, 'qn', hx(v), PY + 13, p[1], { 'text-anchor': 'middle' });
+      // Les cinq valeurs sur une meme ligne se chevauchaient : les quartiles
+      // sont a moins de cinq points l un de l autre. Une ligne sur deux les
+      // separe de plus de dix points, sans rien deplacer.
+      tx(host, 'qv', hx(v), PY + (k % 2 ? BH - 8 : BH - 24), pct(v, 2), { 'text-anchor': 'middle' });
+    });
+    [[MC.target, 'objectif ' + pct(MC.target, 0)], [-MC.limit, 'limite ' + pct(-MC.limit, 0)]].forEach(function (t) {
+      host.appendChild(el('line', { class: 'lvl', x1: hx(t[0]).toFixed(1), y1: (PY + BH).toFixed(1), x2: hx(t[0]).toFixed(1), y2: PY + PH }));
+      tx(host, 'lvltx w', hx(t[0]), PY + PH + (t[0] > 0 ? 56 : 38), t[1], { 'text-anchor': 'middle' });
+    });
+    [-20, -10, 0, 10, 20].forEach(function (v) { tx(host, 'px d', hx(v), PY + PH + 18, pct(v, 0), { 'text-anchor': 'middle' }); });
+    tx(host, 'axl', PX + PW / 2, PY + PH + 78, 'résultat du compte (%)', { 'text-anchor': 'middle' });
+
+    // — fonction de répartition —
+    tx(host, 'lvltx', QX, QY - 10, 'probabilité de finir au-dessus de x');
+    host.appendChild(el('rect', { class: 'axsep', x: QX, y: QY, width: QW, height: QH, fill: 'none' }));
+    var cpts = [];
+    for (var k2 = 0; k2 <= 100; k2++) {
+      var v2 = lo + (hi - lo) * k2 / 100;
+      var above = 0;
+      for (var j = m.sorted.length - 1; j >= 0 && m.sorted[j] >= v2; j--) above++;
+      cpts.push(qx(v2).toFixed(1) + ',' + (QY + QH - (above / m.sorted.length) * QH).toFixed(1));
+    }
+    [0.25, 0.5, 0.75].forEach(function (f) {
+      host.appendChild(el('line', { class: 'grid', x1: QX, y1: QY + QH * f, x2: QX + QW, y2: QY + QH * f }));
+    });
+    poly(host, 'ma f', cpts);
+    [[0, '0 %'], [0.5, '50 %'], [1, '100 %']].forEach(function (t) {
+      tx(host, 'px d', QX - 8, QY + QH - t[0] * QH + 4, t[1], { 'text-anchor': 'end' });
+    });
+    [[MC.target, m.pEnd]].forEach(function (t) {
+      host.appendChild(el('line', { class: 'lvl', x1: qx(t[0]).toFixed(1), y1: QY, x2: qx(t[0]).toFixed(1), y2: QY + QH }));
+      var yy = QY + QH - t[1] * QH;
+      host.appendChild(el('line', { class: 'lvldot', x1: QX, y1: yy.toFixed(1), x2: qx(t[0]).toFixed(1), y2: yy.toFixed(1) }));
+      host.appendChild(el('circle', { cx: qx(t[0]).toFixed(1), cy: yy.toFixed(1), r: 3.2, fill: '#FFFFFF' }));
+      tx(host, 'lvltx w halo', qx(t[0]) - 13, yy - 10,
+        (etroit ? 'finir au-dessus : ' : 'finir au-dessus de ' + pct(MC.target, 0) + ' : ')
+        + (100 * t[1]).toFixed(1).replace('.', ',') + ' %', { 'text-anchor': 'end' });
+    });
+    [-20, -10, 0, 10, 20].forEach(function (v) { tx(host, 'px d', qx(v), QY + QH + 18, pct(v, 0), { 'text-anchor': 'middle' }); });
+    tx(host, 'axl', QX + QW / 2, QY + QH + 38, 'seuil x (%)', { 'text-anchor': 'middle' });
+
+    // bilan chiffré, calculé et non écrit
+    var pT = (100 * m.pTouch).toFixed(1).replace('.', ','), pE = (100 * m.pEnd).toFixed(1).replace('.', ',');
+    var lignes = etroit
+      ? ['toucher ' + pct(MC.target, 0) + ' avant ' + pct(-MC.limit, 0) + ' : ' + pT + ' %',
+         'finir au-dessus de ' + pct(MC.target, 0) + ' : ' + pE + ' %',
+         'espérance ' + pct(m.mean, 2) + '  ·  forme fermée ' + (100 * m.ferme).toFixed(1).replace('.', ',') + ' %',
+         (100 * m.pOpen).toFixed(1).replace('.', ',') + ' % non résolues à ' + MC.days + ' séances']
+      : ['espérance ' + pct(m.mean, 2) + '   ·   toucher ' + pct(MC.target, 0) + ' avant ' + pct(-MC.limit, 0) + ' : ' + pT + ' %   ·   finir au-dessus de ' + pct(MC.target, 0) + ' : ' + pE + ' %',
+         'forme fermée à horizon infini B/(A+B) : ' + (100 * m.ferme).toFixed(1).replace('.', ',') + ' %   ·   ' + (100 * m.pOpen).toFixed(1).replace('.', ',') + ' % des évaluations ne sont pas encore résolues à ' + MC.days + ' séances'];
+    lignes.forEach(function (s, i) {
+      tx(host, i < (etroit ? 2 : 1) ? 'lvltx w' : 'lvltx', W / 2, H - 16 - (lignes.length - 1 - i) * 17, s, { 'text-anchor': 'middle' });
+    });
+  }
+
+  // ---------- Fig. 5.3 : les mêmes trajectoires, en perspective ----------
+  function figMc3d() {
+    var host = document.getElementById('f-mc3d'); if (!host) return;
+    var W = 1000, H = 522, m = monteCarlo();
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    tx(host, 'hdr', 10, 18, MARK + '  ·  Monte-Carlo en perspective  ·  ' + MC.sims + ' trajectoires, ' + m.paths.length + ' tracées  ·  aucun avantage');
+
+    var OX = 132, OY = 302, DX = 8.4, DY = 1.1, SX = 0.72, SY = -0.50, VZ = 5.4;
+    function P(d, s, v) { return [OX + d * DX + s * SX, OY + d * DY + s * SY - v * VZ]; }
+
+    // sol : les deux arêtes du repère
+    var S = m.paths.length - 1, D = MC.days;
+    [[P(0, 0, 0), P(D, 0, 0)], [P(0, 0, 0), P(0, S, 0)], [P(D, 0, 0), P(D, S, 0)], [P(0, S, 0), P(D, S, 0)]]
+      .forEach(function (seg) {
+        host.appendChild(el('line', { class: 'cloudgrid', x1: seg[0][0].toFixed(1), y1: seg[0][1].toFixed(1), x2: seg[1][0].toFixed(1), y2: seg[1][1].toFixed(1) }));
+      });
+
+    // les fils, du plus lointain au plus proche
+    for (var s = S; s >= 0; s--) {
+      var path = m.paths[s], pts = [];
+      for (var d = 0; d <= D; d++) {
+        var p = P(d, s, path[d]);
+        pts.push(p[0].toFixed(1) + ',' + p[1].toFixed(1));
+      }
+      poly(host, 'mcpath', pts, { opacity: (0.06 + 0.1 * (1 - s / S)).toFixed(3) });
+    }
+
+    // percentiles, au premier plan
+    [['p95', m.env.p95], ['p50', m.env.p50], ['p5', m.env.p5]].forEach(function (e) {
+      var pts = [];
+      for (var d = 0; d <= D; d++) { var p = P(d, 0, e[1][d]); pts.push(p[0].toFixed(1) + ',' + p[1].toFixed(1)); }
+      haloLine(host, 'ma f', pts);
+    });
+
+    // Axe de profondeur : il vivait sur le sol du repere, donc au milieu du
+    // nuage, et les trois percentiles le barraient — un texte croise par un
+    // trace ne se voit dans aucun balayage. Il est desormais dans une
+    // gouttiere sous la planche, ou il n y a aucune donnee.
+    var GU = 468, x0 = P(0, 0, 0)[0], x1 = P(D, 0, 0)[0];
+    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: GU, x2: W, y2: GU }));
+    tx(host, 'axl', x0, GU + 16, 'séances écoulées');
+    host.appendChild(el('line', { class: 'cloudgrid', x1: x0, y1: GU + 28, x2: x1, y2: GU + 28 }));
+    for (var dd = 0; dd <= D; dd += 15) {
+      var xa = P(dd, 0, 0)[0];
+      host.appendChild(el('line', { class: 'cloudgrid', x1: xa.toFixed(1), y1: GU + 24, x2: xa.toFixed(1), y2: GU + 28 }));
+      tx(host, 'px d', xa, GU + 44, String(dd), { 'text-anchor': 'middle' });
+    }
+    tx(host, 'axl', P(D, S / 2, 0)[0] + 14, P(D, S / 2, 0)[1], 'trajectoires →');
+    [-15, -10, -5, 0, 5, 10, 15].forEach(function (v) {
+      var pv = P(0, 0, v);
+      host.appendChild(el('line', { class: 'cloudgrid', x1: (pv[0] - 6).toFixed(1), y1: pv[1].toFixed(1), x2: pv[0].toFixed(1), y2: pv[1].toFixed(1) }));
+      tx(host, 'px d', pv[0] - 10, pv[1] + 4, pct(v, 0), { 'text-anchor': 'end' });
+    });
+
+    // encart : les trois fins de parcours
+    var bx = 730, by = 40, bw = 250, bh = 70;
+    host.appendChild(el('rect', { class: 'cpwin', x: bx, y: by, width: bw, height: bh, rx: 2 }));
+    [['P95 à ' + MC.days + ' séances', m.env.p95[D]], ['Médiane', m.env.p50[D]], ['P5', m.env.p5[D]]].forEach(function (l, i) {
+      host.appendChild(el('line', { class: 'ma f', x1: bx + 10, y1: by + 18 + i * 17, x2: bx + 28, y2: by + 18 + i * 17 }));
+      tx(host, 'lvltx', bx + 34, by + 21 + i * 17, l[0]);
+      tx(host, 'lvltx w', bx + bw - 10, by + 21 + i * 17, pct(l[1], 2), { 'text-anchor': 'end' });
+    });
+    tx(host, 'wm', W - 14, GU + 16, MARK + ' · loi nulle · aucune donnée de marché', { 'text-anchor': 'end' });
+  }
+
+  // ================= Fig. 7.1 — suivi du capital =================
+  // C'est la planche que le lecteur rouvre chaque semaine : elle passe en
+  // colonne sur téléphone, sinon son texte tombe sous le seuil de lecture.
+  var ETROIT = (typeof window !== 'undefined') && window.innerWidth < 760;
+  function figEquity() {
+    var host = document.getElementById('f-equity'); if (!host) return;
+    var W = ETROIT ? 372 : 1000, H = ETROIT ? 616 : 340;
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    var M = ETROIT ? 12 : 16;
+    tx(host, 'ttl', M, 24, MARK + ' — SUIVI CAPITAL');
+    if (ETROIT) {
+      tx(host, 'tm', M, 42, 'NQ · démo My Funded Futures');
+      tx(host, 'tm', M, 58, '1 clôture enregistrée');
+    } else {
+      tx(host, 'tm', W - M, 24, 'NQ · démo My Funded Futures · 1 clôture enregistrée', { 'text-anchor': 'end' });
+    }
+    var top0 = ETROIT ? 70 : 34;
+    host.appendChild(el('line', { class: 'axsep', x1: M, y1: top0, x2: W - M, y2: top0 }));
+
+    var ex = M, ey = top0 + 22, ew = W - 2 * M, eh = ETROIT ? 132 : 130;
+    host.appendChild(el('rect', { class: 'axsep', x: ex, y: ey, width: ew, height: eh, fill: 'none' }));
+    [0.25, 0.75].forEach(function (f) {
+      host.appendChild(el('line', { class: 'grid', x1: ex, y1: ey + eh * f, x2: ex + ew, y2: ey + eh * f }));
+    });
+    var flat = ey + eh * 0.5;
+    host.appendChild(el('line', { class: 'ma f', x1: ex, y1: flat, x2: ex + ew, y2: flat }));
+    host.appendChild(el('circle', { cx: ex + ew, cy: flat, r: 3, fill: '#FFFFFF' }));
+    tx(host, 'lvltx', ex, ey - 8, 'capital · échelle logarithmique');
+    tx(host, 'lvltx w', ex + ew - 6, flat - 8, '500,00 €', { 'text-anchor': 'end' });
+    tx(host, 'lvltx', ex + ew / 2, flat + 20,
+      ETROIT ? 'aucune séance tradée pour l’instant' : 'aucune séance tradée pour l’instant — la courbe s’amorce à la première clôture',
+      { 'text-anchor': 'middle' });
+    tx(host, 'tm', ex, ey + eh + 16, 'semaine 0');
+    tx(host, 'tm', ex + ew, ey + eh + 16, 'semaine 1', { 'text-anchor': 'end' });
+
+    var rowY = ey + eh + 40, rowH = 84, gap = ETROIT ? 34 : 24;
+    var bw = ETROIT ? ew : (ew - 2 * gap) / 3;
+    function bloc(i) { return ETROIT ? [ex, rowY + i * (rowH + gap)] : [ex + i * (bw + gap), rowY]; }
+
+    var b0 = bloc(0);
+    host.appendChild(el('rect', { class: 'axsep', x: b0[0], y: b0[1], width: bw, height: rowH, fill: 'none' }));
+    tx(host, 'lvltx', b0[0], b0[1] - 8, 'rendement hebdomadaire');
+    host.appendChild(el('line', { class: 'grid', x1: b0[0], y1: b0[1] + rowH / 2, x2: b0[0] + bw, y2: b0[1] + rowH / 2 }));
+    tx(host, 'lvltx', b0[0] + bw / 2, b0[1] + rowH / 2 - 8, 'semaine 1 : —', { 'text-anchor': 'middle' });
+
+    var b1 = bloc(1);
+    host.appendChild(el('rect', { class: 'axsep', x: b1[0], y: b1[1], width: bw, height: rowH, fill: 'none' }));
+    tx(host, 'lvltx', b1[0], b1[1] - 8, 'retracement depuis le sommet');
+    var zY = b1[1] + 16;
+    host.appendChild(el('line', { class: 'lvlsolid', x1: b1[0], y1: zY, x2: b1[0] + bw, y2: zY }));
+    tx(host, 'lvltx w', b1[0] + bw - 6, zY - 6, '0,00 %', { 'text-anchor': 'end' });
+    tx(host, 'lvltx', b1[0] + bw / 2, zY + rowH * 0.45, 'sans objet — évaluation non démarrée', { 'text-anchor': 'middle' });
+
+    var b2 = bloc(2);
+    host.appendChild(el('rect', { class: 'axsep', x: b2[0], y: b2[1], width: bw, height: rowH, fill: 'none' }));
+    tx(host, 'lvltx', b2[0], b2[1] - 8, 'métriques');
+    [['CAGR', '—'], ['Sharpe', '—'], ['MaxDD', '—'], ['Clôtures positives', '—']].forEach(function (r, i) {
+      var ry = b2[1] + 22 + i * 17;
+      tx(host, 'lvltx', b2[0] + 10, ry, r[0]);
+      tx(host, 'lvltx w', b2[0] + bw - 10, ry, r[1], { 'text-anchor': 'end' });
+    });
+    tx(host, 'wm', W - M, H - 10, 'se peuple clôture après clôture', { 'text-anchor': 'end' });
+  }
+
+  // ================= Fig. 4.0 — poste de travail =================
+  function panelChrome(root, x, y, w, h, head, title, id) {
+    root.appendChild(el('rect', { class: 'cpwin', x: x, y: y, width: w, height: h, rx: 2 }));
+    root.appendChild(el('rect', { class: 'cphead', x: x, y: y, width: w, height: head, rx: 2 }));
+    root.appendChild(el('circle', { class: 'cpdot', cx: x + 11, cy: y + head / 2, r: 2.2 }));
+    tx(root, 'cptitle', x + 19, y + head / 2 + 3, title);
+    var xg = x + w - 13, yg = y + head / 2;
+    root.appendChild(el('path', { class: 'cpx', d: 'M' + (xg - 3) + ',' + (yg - 3) + 'L' + (xg + 3) + ',' + (yg + 3) + 'M' + (xg + 3) + ',' + (yg - 3) + 'L' + (xg - 3) + ',' + (yg + 3) }));
+    root.appendChild(el('g', { id: id, transform: 'translate(' + (x + 9) + ',' + (y + head + 7) + ')' }));
+  }
+  function miniScale(lo, hi, h) { return function (p) { return (hi - p) / (hi - lo) * h; }; }
+
+  function miniChain(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    var sy = miniScale(29400, 29640, h), n = 56, dx = w * 0.9 / (n - 1);
+    var bs = bars([[0, 29448], [0.3, 29532], [0.5, 29492], [0.75, 29592], [1, 29548]], n, 5507);
+    candles(g, bs, 2, dx, sy, Math.max(dx * 0.58, 1.4));
+    [[CALLWALL, 'call wall', -7], [29420, 'put wall', -7]].forEach(function (l) {
+      g.appendChild(el('line', { class: 'lvl', x1: 0, y1: sy(l[0]).toFixed(1), x2: w, y2: sy(l[0]).toFixed(1) }));
+      tx(g, 'lvltx', w - 2, sy(l[0]) + l[2], l[1], { 'text-anchor': 'end' });
+    });
+  }
+  function miniGex(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    var rows = GEX.length, rh = h / rows, zero = w * 0.42, k = (w - zero) / 240;
+    g.appendChild(el('line', { class: 'lvlsolid', x1: zero, y1: 0, x2: zero, y2: h }));
+    GEX.forEach(function (gx, i) {
+      var wd = Math.max(Math.abs(gx[1]) * k, 0.8);
+      g.appendChild(el('rect', { class: gx[1] >= 0 ? 'barA' : 'barB', x: (gx[1] >= 0 ? zero : zero - wd).toFixed(1), y: (i * rh + rh * 0.2).toFixed(1), width: wd.toFixed(1), height: (rh * 0.6).toFixed(1) }));
+    });
+    g.appendChild(el('line', { class: 'lvl', x1: 0, y1: rh * 8 + rh / 2, x2: w, y2: rh * 8 + rh / 2 }));
+    g.appendChild(el('line', { class: 'lvlthick', x1: 0, y1: rh * 11 + rh / 2, x2: w, y2: rh * 11 + rh / 2 }));
+  }
+  function miniVolp(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    var lo = 29400, hi = 29620, sy = miniScale(lo, hi, h), n = 60, dx = w * 0.6 / (n - 1);
+    var bs = bars([[0, 29560], [0.35, 29452], [0.65, 29512], [1, 29528]], n, 2027);
+    candles(g, bs, 2, dx, sy, Math.max(dx * 0.58, 1.4));
+    var rows = 22, prof = profileFromBars(bs, lo, hi, rows), maxV = 0, poc = prof[0];
+    prof.forEach(function (r) { if (r[1] > maxV) { maxV = r[1]; poc = r; } });
+    var pw = w * 0.34, rh = h / rows;
+    prof.forEach(function (r) {
+      var bw2 = r[1] / maxV * pw;
+      g.appendChild(el('rect', { class: 'vp' + (r === poc ? ' poc' : ''), x: (w - bw2).toFixed(1), y: (sy(r[0]) - rh * 0.4).toFixed(1), width: Math.max(bw2, 0.5).toFixed(1), height: (rh * 0.8).toFixed(1) }));
+    });
+  }
+  function miniVwap(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    var sy = miniScale(29420, 29620, h), n = 64, dx = w / (n - 1);
+    var bs = bars([[0, 29500], [0.35, 29544], [0.7, 29516], [1, 29466]], n, 3313);
+    var sw = 0, sp = 0, sp2 = 0, v = [], b1 = [], m1 = [], b2 = [], m2 = [];
+    for (var i = 0; i < n; i++) {
+      var tp = (bs[i].h + bs[i].l + bs[i].c) / 3, ww = bs[i].v;
+      sw += ww; sp += tp * ww; sp2 += tp * tp * ww;
+      var mean = sp / sw, sig = Math.sqrt(Math.max(sp2 / sw - mean * mean, 0)), x = (i * dx).toFixed(1);
+      v.push(x + ',' + sy(mean).toFixed(1));
+      b1.push(x + ',' + sy(mean + sig).toFixed(1)); m1.push(x + ',' + sy(mean - sig).toFixed(1));
+      b2.push(x + ',' + sy(mean + 2 * sig).toFixed(1)); m2.push(x + ',' + sy(mean - 2 * sig).toFixed(1));
+    }
+    poly(g, 'ma', b2); poly(g, 'ma', m2); poly(g, 'ma', b1); poly(g, 'ma', m1); poly(g, 'ma f', v);
+    candles(g, bs, 0, dx, sy, Math.max(dx * 0.5, 1.2));
+  }
+  function miniBook(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    bookRows(g, 0, 0, w, h, false);
+  }
+  function miniDepth(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    depthGrid(g, 0, 0, w, h, 24, 10, 6, 2, false);
+  }
+  function miniMc(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    var m = monteCarlo(), lo = -22, hi = 22, nb = 30, bins = new Array(nb).fill(0);
+    m.ends.forEach(function (e) { bins[Math.floor((Math.min(hi - 1e-9, Math.max(lo, e)) - lo) / (hi - lo) * nb)]++; });
+    var maxB = Math.max.apply(null, bins);
+    for (var i = 0; i < nb; i++) {
+      var bh = bins[i] / maxB * (h - 14);
+      g.appendChild(el('rect', { class: 'barA dim', x: (i / nb * w + 0.5).toFixed(1), y: (h - bh).toFixed(1), width: (w / nb - 1).toFixed(1), height: bh.toFixed(1) }));
+    }
+    var xt = (MC.target - lo) / (hi - lo) * w;
+    g.appendChild(el('line', { class: 'lvl', x1: xt.toFixed(1), y1: 0, x2: xt.toFixed(1), y2: h }));
+    // L intitule se pose du cote ou il reste de la place : a droite du trait
+    // il sortait de la tuile des que celle-ci retrecissait.
+    var place = w - xt - 8 > 66;
+    tx(g, 'lvltx w halo', xt + (place ? 5 : -5), 10, 'objectif', { 'text-anchor': place ? 'start' : 'end' });
+  }
+  function miniPreuve(id, w, h) {
+    var g = document.getElementById(id); if (!g) return;
+    var T = testabilite(), rh = h / T.length, mhi = 84;
+    var xe = w * (72 / mhi);
+    g.appendChild(el('line', { class: 'lvlthick', x1: xe.toFixed(1), y1: 0, x2: xe.toFixed(1), y2: h }));
+    T.forEach(function (t, i) {
+      var y = i * rh + rh * 0.22;
+      g.appendChild(el('rect', { class: 'barA dim', x: 0, y: y.toFixed(1), width: Math.max(w * t.mois / mhi, 1).toFixed(1), height: (rh * 0.56).toFixed(1) }));
+    });
+    tx(g, 'lvltx w halo', xe - 5, 12, '6 ans', { 'text-anchor': 'end' });
+  }
+
+  function buildTicker(root, VW) {
+    var items = [['NQ', true], ['ES', false], ['YM', false], ['RTY', false]];
+    var x = 8, y = 8, hh = 20;
+    items.forEach(function (it) {
+      root.appendChild(el('rect', { class: 'ticker' + (it[1] ? ' on' : ''), x: x, y: y, width: 34, height: hh, rx: 2 }));
+      tx(root, 'tickertx' + (it[1] ? ' on' : ''), x + 17, y + hh / 2 + 3, it[0], { 'text-anchor': 'middle' });
+      x += 40;
+    });
+    tx(root, 'tickertx', VW - 8, y + hh / 2 + 3, ETROIT ? MARK : MARK + ' · terminal illustratif', { 'text-anchor': 'end' });
+  }
+  function figCockpit() {
+    var root = document.getElementById('f-cockpit'); if (!root) return;
+    // Quatre tuiles de front tiennent sur un ecran ; sur telephone elles
+    // reduisent chaque titre a quatre pixels. Deux de front, quatre rangs.
+    var NC = ETROIT ? 2 : 4, NR = 8 / NC;
+    var PW = ETROIT ? 200 : 250, PH = 175, HEAD = 20, GAP = 10, MX = 8, TOP = 38;
+    var VW = MX * 2 + NC * PW + (NC - 1) * GAP, VH = TOP + NR * PH + (NR - 1) * GAP + MX;
+    root.setAttribute('viewBox', '0 0 ' + VW + ' ' + VH);
+    root.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: VW, height: VH }));
+    buildTicker(root, VW);
+    var cols = [], rows = [];
+    for (var i = 0; i < NC; i++) cols.push(MX + i * (PW + GAP));
+    for (var j = 0; j < NR; j++) rows.push(TOP + j * (PH + GAP));
+    function at(k) { return [cols[k % NC], rows[Math.floor(k / NC)]]; }
+    var cw = PW - 18, ch = PH - HEAD - 14;
+    var defs = [
+      ['PRIX & MURS', 'cp-chain', miniChain],
+      ['GAMMA NET', 'cp-gex', miniGex],
+      ['PROFIL DE VOLUME', 'cp-volp', miniVolp],
+      ['VWAP σ', 'cp-vwap', miniVwap],
+      ['CARNET', 'cp-book', miniBook],
+      ['PROFONDEUR', 'cp-depth', miniDepth],
+      ['LOI NULLE', 'cp-mc', miniMc],
+      ['BUDGET DE PREUVE', 'cp-preuve', miniPreuve]
+    ];
+    defs.forEach(function (d, k) { var q = at(k); panelChrome(root, q[0], q[1], PW, PH, HEAD, d[0], d[1]); });
+    defs.forEach(function (d) { d[2](d[1], cw, ch); });
+  }
+
+  // La geometrie annoncee en section 03 est lue dans la table des outils, pas
+  // recopiee : une prose et une planche qui disent deux choses est le defaut
+  // qu aucune relecture n attrape.
+  (function () {
+    var stops = OUTILS.map(function (o) { return o[2]; });
+    var rrs = OUTILS.map(function (o) { return o[3]; });
+    function pose(id, s) { var e = document.getElementById(id); if (e) e.textContent = s; }
+    pose('p-stop', Math.min.apply(null, stops) + ' à ' + Math.max.apply(null, stops) + ' pt');
+    pose('p-rr', '1:' + Math.min.apply(null, rrs).toFixed(0) + ' à 1:' + Math.max.apply(null, rrs).toFixed(0));
+    pose('p-fric', FRICTION.toFixed(2).replace('.', ',') + ' pt');
+    pose('p-seances', SEANCES_MOIS + ' séances');
+  })();
+
+  figFlux();
+  figCockpit();
+  figGex();
+  figStruct();
+  figVolp();
+  figVwap();
+  figDom();
+  figDepth();
+  figFib();
+  figPreuve();
+  figMc();
+  figMc3d();
+  figEquity();
+})();
+</script>
