@@ -648,17 +648,15 @@
     <div class="thesis">Ces tests ne fabriquent pas la stratégie. Ils vérifient qu'elle ne repose pas sur du bruit.
       <span>la différence est entière</span></div>
     <p class="measure">C'est une distinction qu'il faut poser nettement, parce qu'elle sépare deux démarches qu'on confond tout le temps. <strong>Un backtest de construction</strong> part des données, essaie des règles et garde celle qui a le mieux marché&nbsp;: le risque y est de fabriquer une règle qui n'existe que dans l'historique. <strong>Une vérification</strong> part d'une lecture qu'on emploie déjà, écrite d'avance, et demande seulement&nbsp;: bat-elle le hasard, oui ou non&nbsp;? Rien n'est choisi après coup, donc il n'y a rien à surajuster. La stratégie existe avant le test, et le test ne peut que la confirmer ou la contredire.</p>
-    <p class="measure">Et surtout&nbsp;: <strong>combien de tentatives faut-il pour le savoir&nbsp;?</strong> C'est la seule question qui décide si une lecture est démontrable dans une vie d'opérateur ou seulement dans un discours.</p>
+    <p class="measure">Et surtout&nbsp;: <strong>combien de contacts faut-il pour le savoir&nbsp;?</strong> C'est la seule question qui décide si une lecture est démontrable dans une vie d'opérateur ou seulement dans un discours.</p>
     <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-preuve" class="fig" viewBox="0 0 1120 534" role="img" aria-label="Pour chaque outil, le nombre de mois de tentatives necessaires pour etablir que la methode bat le hasard, au rapport securise et a l extension, compare a six ans d experience"></svg></div>
-        <figcaption><span class="lab">Fig. 5.1</span>Pour chacun des six outils, le temps qu'il faut pour établir à 95&nbsp;% que la méthode bat le hasard&nbsp;: <strong>barre pleine au rapport sécurisé, barre creuse à l'extension</strong>. Le taux à démontrer est le même pour les six — il ne dépend que du rapport — donc ce qui les distingue est leur <strong>débit de tentatives</strong>, et lui seul. Tous les paramètres sont déclarés en bas de planche et chaque nombre est calculé, jamais écrit à la main.</figcaption>
+        <div class="scrollbox"><svg id="f-preuve" class="fig" viewBox="0 0 1120 534" role="img" aria-label="Pour chaque outil, le nombre de mois de contacts necessaires pour etablir que la methode bat le hasard, au rapport securise et a l extension, compare a six ans d experience"></svg></div>
+        <figcaption><span class="lab">Fig. 5.1</span>Pour chacun des six outils, le temps qu'il faut pour établir à 95&nbsp;% que la méthode bat le hasard&nbsp;: <strong>barre pleine au rapport sécurisé, barre creuse à l'extension</strong>. Le taux à démontrer est le même pour les six — il ne dépend que du rapport — donc ce qui les distingue est leur <strong>débit de contacts</strong>, et lui seul. Tous les paramètres sont déclarés en bas de planche et chaque nombre est calculé, jamais écrit à la main.</figcaption>
       </figure></div>
 
-    <div class="thesis">Au rapport sécurisé, les six tiennent sous six ans. À l'extension, un seul.
-      <span>et c'est exactement pourquoi l'un sécurise et l'autre prolonge</span></div>
-    <p class="measure">C'est le point que la figure rend visible, et il tranche une question que je ne m'étais pas posée dans ces termes avant de la calculer. <strong>Au rapport d'un pour vingt-cinq, les six outils se démontrent en dix-huit à cinquante-quatre mois</strong> — tous sous la barre de six ans, le plus rapide étant le mur de carnet parce que c'est lui qui donne le plus de tentatives. <strong>À un pour cent, aucun ne tient sauf ce même mur, et de justesse&nbsp;: les autres demandent de neuf à dix-huit ans.</strong></p>
-    <p class="measure">La raison est arithmétique et elle vaut la peine d'être dite en clair. L'écart à démontrer vaut la friction divisée par le rapport&nbsp;: multiplier le rapport par quatre divise l'écart par quatre, et <strong>l'échantillon nécessaire croît comme le carré</strong>. Un grand rapport rend donc l'exigence minuscule — c'est son intérêt — et la preuve seize fois plus longue, ce qui est son prix. Les deux sont la même phrase.</p>
-    <p class="measure">Il y a une seconde raison, et elle vient de la séance elle-même. Une cible à cent vingt-cinq points vaut un demi écart-type de séance&nbsp;: elle se touche <strong>six séances sur dix</strong>. Une cible à cinq cents points en vaut deux, et ne se touche que <strong>cinq séances sur cent</strong>. L'extension n'est donc pas un objectif qu'on se fixe&nbsp;: c'est un événement qu'on encaisse quand il se présente, et <strong>ce document ne la compte jamais comme acquise</strong>.</p>
+    <div class="thesis">L'expérience n'est pas un argument d'autorité — c'est l'échantillon.
+      <span>et c'est la seule chose dont le délai se calcule</span></div>
+    <p class="measure">C'est ce que la figure rend visible&nbsp;: le temps nécessaire ne dépend pas de l'outil mais du <strong>débit de contacts</strong> qu'il fournit, et du rapport retenu. Plus le rapport est ample, plus l'écart à démontrer est petit — et plus il faut de contacts pour le distinguer du hasard.</p>
     <p class="measure">Et ces lectures <strong>ne sont pas propres à un instrument</strong>&nbsp;: un nœud de faible volume, une bande d'écart-type, un haut de structure ou un mur de carnet se lisent de la même façon sur un indice, une paire de devises ou une crypto. Six ans passés sur plusieurs marchés n'ont donc pas dispersé l'échantillon — ils ont accumulé des contacts sur les <em>mêmes familles</em>, dans des régimes très différents. C'est plutôt un avantage&nbsp;: une lecture qui tient sur quatre classes d'actifs a été éprouvée par plus de régimes qu'une lecture vue sur un seul.</p>
     <p class="measure">Ce qui reste hors de portée, et la figure le marque aussi, c'est <strong>la combinaison</strong>&nbsp;: la façon dont ces six lectures sont pesées les unes contre les autres, un jour donné, dans un contexte donné. Cette pondération-là n'a pas d'échantillon, parce qu'elle n'est jamais deux fois la même.</p>
 
@@ -675,11 +673,7 @@
         <div class="scrollbox"><svg id="f-mc3d" class="fig" viewBox="0 0 1000 522" role="img" aria-label="Les memes deux mille trajectoires vues en perspective : capital en fonction du jour de seance et du numero de simulation, avec les courbes de percentile cinq, mediane et quatre-vingt-quinze"></svg></div>
         <figcaption><span class="lab">Fig. 5.3</span>Les mêmes trajectoires, vues en perspective&nbsp;: chaque fil est une évaluation, l'épaisseur de la nappe est l'incertitude. Les trois courbes pleines sont les percentiles 5, 50 et 95 à chaque séance. Aucune n'a d'avantage&nbsp;: tout l'écart entre le fil du haut et celui du bas est du hasard. C'est précisément l'écart qu'un track record de quelques semaines ne permet pas de distinguer d'un talent — d'où le suivi hebdomadaire de la section&nbsp;07, qui accumule au lieu d'affirmer.</figcaption>
       </figure></div>
-    <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-relief" class="fig" viewBox="0 0 1000 560" role="img" aria-label="Relief en nuage de points : le nombre de mois necessaires pour etablir la methode, selon le nombre de tentatives par seance et le rapport gain sur risque, hauteur logarithmique"></svg></div>
-        <figcaption><span class="lab">Fig. 5.4</span>Le même budget de preuve, vu comme un relief&nbsp;: <strong>six mille quatre cent quarante-huit points calculés</strong>, un par couple débit / rapport. La hauteur porte un logarithme parce que le délai parcourt trois ordres de grandeur — le coin le plus proche se tranche en quelques mois, le plus lointain demande un siècle. Le nuage n'est pas une maille&nbsp;: une maille pleine cacherait le versant arrière, et c'est précisément la pente du fond qui porte le fait.</figcaption>
-      </figure></div>
-  </section>
+    </section>
 
   <section id="s06">
     <div class="sh"><span class="no">06</span><h2>Conditions du mandat, et risques</h2></div>
@@ -1237,7 +1231,7 @@
   }
 
   // ================= Fig. 3.1 — une position, de bout en bout ===========
-  // La planche que le document n avait pas : plusieurs tentatives sur le
+  // La planche que le document n avait pas : plusieurs contacts sur le
   // meme niveau, celles qui sautent et celle qui porte. Le stop vaut cinq
   // points et la cible cent vingt-cinq : sur un cadre qui couvre deux cent
   // quatre-vingts points, le stop mesure six pixels. C est le fait, pas un
@@ -1269,7 +1263,7 @@
   var DECRES = null;
   function campagneDecision() {
     if (DECRES) return DECRES;
-    var B = budget(RR_BAS), a = STOP_PT, b = B.cible;
+    var B = budget(RR_VISE), a = STOP_PT, b = B.cible;
     var best = null, bestBars = null, ks = [];
     for (var g = 1; g <= DEC_GERMES; g++) {
       var bs = bars(A_DEC, DEC_N, 7000 + g), C = campagneDeSeance(bs, DEC_N, a, b);
@@ -1302,7 +1296,7 @@
     host.appendChild(el('line', { class: 'lvl', x1: 0, y1: c.sy(C.niveau).toFixed(1), x2: c.plotR, y2: c.sy(C.niveau).toFixed(1) }));
     candles(host, bs, x0, dx, c.sy, Math.max(dx * 0.62, 1.8));
 
-    // les tentatives : une croix par stop, un disque plein pour celle qui porte
+    // les contacts : une croix par stop, un disque plein pour celui qui porte
     C.tent.forEach(function (t, i) {
       var x = xw(t.iC), y = c.sy(C.niveau);
       if (t.issue === 'stop') {
@@ -1316,21 +1310,21 @@
     host.appendChild(el('circle', { cx: xF.toFixed(1), cy: c.sy(C.cible).toFixed(1), r: 4.4, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.8 }));
 
     // les intitules, apres les bougies et cernes de noir
-    tx(host, 'lvltx w halo', 8, c.sy(C.cible) - 8, 'cible  +' + b.toFixed(0) + ' pt  =  +' + RR_BAS + ' R');
+    tx(host, 'lvltx w halo', 8, c.sy(C.cible) - 8, 'cible  +' + b.toFixed(0) + ' pt  =  +' + RR_VISE + ' R');
     tx(host, 'lvltx w halo', 8, c.sy(C.niveau) + 17, ETROIT ? 'niveau calculé d’avance' : 'niveau calculé avant l’ouverture  ·  stop  −' + a.toFixed(0) + ' pt  =  −1 R');
 
     tag(host, c, c.sy(closes(bs)[n - 1]), fmt(closes(bs)[n - 1], ETROIT ? 0 : 2), true);
     timeAxis(host, c, x0, xEnd);
 
     // le pied : l arithmetique de la campagne, calculee
-    var perdues = k - 1, brut = RR_BAS - perdues, fact = k * FRICTION_R, net = brut - fact;
+    var perdues = k - 1, brut = RR_VISE - perdues, fact = k * FRICTION_R, net = brut - fact;
     var yb = c.h - c.bot;
     host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yb + 16).toFixed(1), x2: c.w, y2: (yb + 16).toFixed(1) }));
-    var l1 = 'stop −1 R  ·  cible +' + RR_BAS + ' R  ·  friction ' + fmt(FRICTION_R, 2) + ' R par aller-retour';
-    var l2 = 'sans dérive une tentative porte ' + fmt(100 * D.B.p0, 2) + ' % du temps ; le seuil de rentabilité vaut ' + fmt(100 * D.B.ps, 2) + ' %';
+    var l1 = 'stop −1 R  ·  cible +' + RR_VISE + ' R  ·  friction ' + fmt(FRICTION_R, 2) + ' R par aller-retour';
+    var l2 = 'sans dérive une position atteint la cible ' + fmt(100 * D.B.p0, 2) + ' % du temps ; le seuil de rentabilité vaut ' + fmt(100 * D.B.ps, 2) + ' %';
     var l3 = 'le stop vaut ' + fmt(100 * a / (HI - LO), 1) + ' % de la hauteur du cadre';
     if (ETROIT) {
-      tx(host, 'lvltx w', 8, yb + 36, 'stop −1 R  ·  cible +' + RR_BAS + ' R');
+      tx(host, 'lvltx w', 8, yb + 36, 'stop −1 R  ·  cible +' + RR_VISE + ' R');
       tx(host, 'lvltx', 8, yb + 54, 'friction ' + fmt(FRICTION_R, 2) + ' R par aller-retour');
       tx(host, 'lvltx', 8, yb + 75, 'loi nulle ' + fmt(100 * D.B.p0, 2) + ' %  ·  seuil ' + fmt(100 * D.B.ps, 2) + ' %');
       tx(host, 'lvltx', 8, yb + 92, 'le stop vaut ' + fmt(100 * a / (HI - LO), 1) + ' % du cadre');
@@ -1698,16 +1692,17 @@
   // rentabilité p* = (a+c)/(a+b), excès à démontrer, puis l'échantillon
   // n = z²·p0(1−p0)/excès² et le délai que le débit de contacts impose.
   // ================= la géométrie déclarée =================
-  // Tout se compte en R : 1 R est le risque d une tentative. C est la seule
+  // Tout se compte en R : 1 R est le risque d une position. C est la seule
   // unite qui ne depende ni du contrat ni de la taille du compte, et c est
   // celle dans laquelle la friction doit se lire — pas en dollars, pas en
   // ticks. La conversion en points est declaree, pas supposee.
-  var RISQUE_R = 100;          // $ risques par tentative
+  var RISQUE_R = 100;          // $ risques par position
   var POINT_NQ = 20;           // $ par point sur un contrat NQ
   var STOP_PT = RISQUE_R / POINT_NQ;
   var FRICTION = 0.50;         // pt par aller-retour, commission et glissement
   var FRICTION_R = FRICTION / STOP_PT;
   var RR_BAS = 5, RR_HAUT = 200;
+  var RR_VISE = 25;            // le rapport visé au minimum
   var SIGMA_SEANCE = 250;      // pt, ecart-type d une seance — a mesurer
   var Z95 = 1.645, SEANCES_MOIS = 21, EXPERIENCE_MOIS = 72;
 
@@ -1721,7 +1716,6 @@
     var n = Math.ceil(Z95 * Z95 * p0 * (1 - p0) / (d * d));
     return { rr: rr, p0: p0, ps: ps, d: d, n: n, cible: STOP_PT * rr };
   }
-  function moisPourPreuve(rr, parSeance) { return budget(rr).n / parSeance / SEANCES_MOIS; }
 
   // La portee : une cible n existe que si la seance peut l atteindre.
   // Principe de reflexion — P(toucher +b a un moment) = 2Φ(−b/σ).
@@ -1770,11 +1764,11 @@
       'combien de temps pour établir que la méthode bat le hasard  ·  seuil 95 % unilatéral  ·  ' + FORCAGE + ' contacts joués par niveau');
     function qx(v) { return PX + v / mhi * PW; }
 
-    tx(host, 'lvltx', PX, TOP - 52, 'mois de tentatives pour l’établir à 95 %');
+    tx(host, 'lvltx', PX, TOP - 52, 'mois de contacts pour l’établir à 95 %');
     host.appendChild(el('rect', { class: 'barA', x: 12, y: TOP - 60, width: 22, height: 9 }));
-    tx(host, 'lvltx w', 42, TOP - 52, 'rapport sécurisé 1:' + RR_BAS);
+    tx(host, 'lvltx w', 42, TOP - 52, 'rapport 1:' + RR_BAS);
     host.appendChild(el('rect', { class: 'barO', x: 12, y: TOP - 38, width: 22, height: 9 }));
-    tx(host, 'lvltx', 42, TOP - 30, 'extension 1:' + RR_HAUT);
+    tx(host, 'lvltx', 42, TOP - 30, 'rapport 1:' + RR_HAUT);
 
     var GH = S.length * ROW;
     [0, 60, 120, 180, 240].forEach(function (v) {
@@ -1787,25 +1781,25 @@
     S.forEach(function (t, i) {
       var y = TOP + i * ROW + ROW * 0.5, e = E[i];
       tx(host, 'lvltx w', LAB, y - 3, t.nom, { 'text-anchor': 'end' });
-      tx(host, 'lvltx', LAB, y + 14, t.quoi + '  ·  ' + t.occ + ' tent./séance', { 'text-anchor': 'end' });
+      tx(host, 'lvltx', LAB, y + 14, t.quoi + '  ·  ' + t.occ + ' contacts/séance', { 'text-anchor': 'end' });
       host.appendChild(el('rect', { class: 'barA', x: PX, y: (y - 13).toFixed(1), width: Math.max(qx(t.mois) - PX, 1).toFixed(1), height: 11 }));
       host.appendChild(el('rect', { class: 'barO', x: PX, y: (y + 1).toFixed(1), width: Math.max(Math.min(qx(e.mois), qx(mhi)) - PX, 1).toFixed(1), height: 11 }));
       tx(host, 'lvltx w', VX, y - 3, fmt(t.mois, 1) + ' mois');
       tx(host, 'lvltx', VX, y + 14, e.mois > mhi ? '> 20 ans' : fmt(e.mois / 12, 1) + ' ans');
     });
-    tx(host, 'axl', PX + PW / 2, TOP + GH + 44, 'mois de tentatives', { 'text-anchor': 'middle' });
+    tx(host, 'axl', PX + PW / 2, TOP + GH + 44, 'mois de contacts', { 'text-anchor': 'middle' });
 
     var yC = TOP + GH + 76, P25 = porteeDeSeance(RR_BAS), P100 = porteeDeSeance(RR_HAUT);
     host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yC - 22).toFixed(1), x2: W, y2: (yC - 22).toFixed(1) }));
-    tx(host, 'lvltx w', 12, yC, 'sans dérive une tentative porte ' + fmt(100 * S[0].p0, 2) + ' % du temps ; le seuil de rentabilité vaut '
+    tx(host, 'lvltx w', 12, yC, 'sans dérive une position atteint la cible ' + fmt(100 * S[0].p0, 2) + ' % du temps ; le seuil de rentabilité vaut '
       + fmt(100 * S[0].ps, 2) + ' %, soit ' + fmt(100 * S[0].d, 2) + ' point à démontrer');
     tx(host, 'lvltx', 12, yC + 18, 'à 1:' + RR_HAUT + ' l’écart tombe à ' + fmt(100 * E[0].d, 3)
-      + ' point : quatre fois plus petit à franchir, quatre fois plus long à prouver (' + fmt(E[0].n, 0) + ' tentatives)');
+      + ' point : quatre fois plus petit à franchir, quatre fois plus long à prouver (' + fmt(E[0].n, 0) + ' contacts)');
     tx(host, 'lvltx', 12, yC + 36, 'portée de séance : la cible de 1:' + RR_BAS + ' vaut ' + fmt(P25.sigmas, 2)
       + ' σ et se touche ' + fmt(100 * P25.p, 0) + ' % des séances ; celle de 1:' + RR_HAUT + ' vaut ' + fmt(P100.sigmas, 2)
       + ' σ et ' + fmt(100 * P100.p, 1) + ' %');
-    tx(host, 'wm', 12, H - 12, 'déclaré : risque ' + RISQUE_R + ' $/tentative · stop ' + fmt(STOP_PT, 0) + ' pt · friction '
-      + fmt(FRICTION, 2) + ' pt = ' + fmt(100 * FRICTION_R, 0) + ' % de R · ' + FORCAGE + ' tentatives/niveau · σ séance ' + SIGMA_SEANCE + ' pt · ' + SEANCES_MOIS + ' séances/mois');
+    tx(host, 'wm', 12, H - 12, 'déclaré : risque ' + RISQUE_R + ' $/position · stop ' + fmt(STOP_PT, 0) + ' pt · friction '
+      + fmt(FRICTION, 2) + ' pt = ' + fmt(100 * FRICTION_R, 0) + ' % de R · ' + FORCAGE + ' contacts joués/niveau · σ séance ' + SIGMA_SEANCE + ' pt · ' + SEANCES_MOIS + ' séances/mois');
   }
 
   // Fig. 5.1, forme telephone : un bloc par outil.
@@ -1815,7 +1809,7 @@
     host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
     host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
     tx(host, 'hdr', 10, 18, 'COMBIEN DE TEMPS POUR L’ÉTABLIR');
-    tx(host, 'lvltx', PAD, 40, 'mois de tentatives pour établir');
+    tx(host, 'lvltx', PAD, 40, 'mois de contacts pour établir');
     tx(host, 'lvltx', PAD, 57, 'que la méthode bat le hasard.');
     host.appendChild(el('rect', { class: 'barA', x: PAD, y: 72, width: 20, height: 9 }));
     tx(host, 'lvltx w', PAD + 28, 80, '1:' + RR_BAS);
@@ -1828,7 +1822,7 @@
       var y = TOP + i * ROW, e = E[i];
       if (i) host.appendChild(el('line', { class: 'grid', x1: PAD, y1: (y - 18).toFixed(1), x2: W - PAD, y2: (y - 18).toFixed(1) }));
       tx(host, 'lvltx w', PAD, y + 6, t.nom);
-      tx(host, 'lvltx', PAD, y + 24, t.quoi + '  ·  ' + t.occ + ' tent./séance');
+      tx(host, 'lvltx', PAD, y + 24, t.quoi + '  ·  ' + t.occ + ' contacts/séance');
       host.appendChild(el('rect', { class: 'barA', x: MX, y: (y + 40).toFixed(1), width: Math.max(qx(t.mois) - MX, 1).toFixed(1), height: 11 }));
       host.appendChild(el('rect', { class: 'barO', x: MX, y: (y + 56).toFixed(1), width: Math.max(qx(e.mois) - MX, 1).toFixed(1), height: 11 }));
       host.appendChild(el('line', { class: 'lvlsolid', x1: qx(EXPERIENCE_MOIS).toFixed(1), y1: (y + 34).toFixed(1), x2: qx(EXPERIENCE_MOIS).toFixed(1), y2: (y + 73).toFixed(1) }));
@@ -1840,7 +1834,7 @@
     host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yC - 20).toFixed(1), x2: W, y2: (yC - 20).toFixed(1) }));
     tx(host, 'lvltx w', PAD, yC + 2, 'le trait vertical : six ans → 72 mois');
     tx(host, 'lvltx', PAD, yC + 21, 'loi nulle ' + fmt(100 * S[0].p0, 2) + ' %  ·  seuil ' + fmt(100 * S[0].ps, 2) + ' %');
-    tx(host, 'lvltx', PAD, yC + 38, fmt(S[0].n, 0) + ' tentatives à 1:' + RR_BAS + ', ' + fmt(E[0].n, 0) + ' à 1:' + RR_HAUT);
+    tx(host, 'lvltx', PAD, yC + 38, fmt(S[0].n, 0) + ' contacts à 1:' + RR_BAS + ', ' + fmt(E[0].n, 0) + ' à 1:' + RR_HAUT);
     tx(host, 'lvltx', PAD, yC + 55, 'la cible de 1:' + RR_BAS + ' se touche ' + fmt(100 * P25.p, 0) + ' % des séances');
     tx(host, 'wm', PAD, H - 12, 'risque ' + RISQUE_R + ' $ · stop ' + fmt(STOP_PT, 0) + ' pt · friction ' + fmt(100 * FRICTION_R, 0) + ' % de R');
   }
@@ -2075,100 +2069,6 @@
     tx(host, 'wm', W - 14, GU + 16, MARK + ' · loi nulle · aucune donnée de marché', { 'text-anchor': 'end' });
   }
 
-  // ================= Fig. 5.4 — le relief du délai de preuve ==============
-  // Un nuage de points, pas une maille : une maille pleine cache le versant
-  // arriere, et un filet de separation mange la surface des qu on raffine la
-  // grille. La hauteur porte un logarithme parce que le delai parcourt trois
-  // ordres de grandeur ; l infobulle, elle, publie les mois.
-  var REL_NX = 104, REL_NY = 62;
-  function figRelief() {
-    var host = document.getElementById('f-relief'); if (!host) return;
-    var W = ETROIT ? 430 : 1000, H = ETROIT ? 452 : 560;
-    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
-    bandeau(host, W, MARK + '  ·  RELIEF DU DÉLAI DE PREUVE',
-      ETROIT ? 'hauteur logarithmique' : fmt(REL_NX * REL_NY, 0) + ' points calculés  ·  hauteur logarithmique  ·  rapport 1:' + RR_BAS + ' à 1:' + RR_HAUT + '  ·  friction ' + fmt(100 * FRICTION_R, 0) + ' % de R');
-
-    var nx = ETROIT ? 64 : REL_NX, ny = ETROIT ? 40 : REL_NY;
-    var tLo = 1, tHi = 24;                       // tentatives par séance
-    var rLo = RR_BAS, rHi = RR_HAUT;             // rapport
-    function debit(i) { return tLo + (tHi - tLo) * i / (nx - 1); }
-    function rapport(j) { return rLo * Math.pow(rHi / rLo, j / (ny - 1)); }
-    var mois = [], mn = Infinity, mx = 0;
-    for (var j = 0; j < ny; j++) {
-      mois.push([]);
-      for (var i = 0; i < nx; i++) {
-        var m = moisPourPreuve(rapport(j), debit(i));
-        mois[j].push(m); if (m < mn) mn = m; if (m > mx) mx = m;
-      }
-    }
-    var LG = Math.log(mx / mn);
-    function haut(m) { return Math.log(m / mn) / LG; }
-
-    // Le maximum se met au fond : en projection isometrique le coin (0,0) est
-    // le plus eloigne, et un relief qui monte vers l horizon se lit.
-    var OX = ETROIT ? 78 : 176, OY = ETROIT ? 292 : 392;
-    var DX = (ETROIT ? 236 : 560) / (nx - 1), DY = (ETROIT ? 58 : 74) / (nx - 1);
-    var SX = (ETROIT ? 92 : 208) / (ny - 1), SY = (ETROIT ? -62 : -132) / (ny - 1);
-    var VZ = ETROIT ? 138 : 186;
-    function P(i, j, h) { return [OX + i * DX + j * SX, OY + i * DY + j * SY - h * VZ]; }
-
-    // le sol, en filets
-    for (var g = 0; g <= 4; g++) {
-      var a1 = P(0, (ny - 1) * g / 4, 0), a2 = P(nx - 1, (ny - 1) * g / 4, 0);
-      host.appendChild(el('line', { class: 'cloudgrid', x1: a1[0].toFixed(1), y1: a1[1].toFixed(1), x2: a2[0].toFixed(1), y2: a2[1].toFixed(1) }));
-      var b1 = P((nx - 1) * g / 4, 0, 0), b2 = P((nx - 1) * g / 4, ny - 1, 0);
-      host.appendChild(el('line', { class: 'cloudgrid', x1: b1[0].toFixed(1), y1: b1[1].toFixed(1), x2: b2[0].toFixed(1), y2: b2[1].toFixed(1) }));
-    }
-    // les quatre montants
-    [[0, 0], [nx - 1, 0], [0, ny - 1], [nx - 1, ny - 1]].forEach(function (c) {
-      var s = P(c[0], c[1], 0), t = P(c[0], c[1], haut(mois[c[1]][c[0]]));
-      host.appendChild(el('line', { class: 'cloudgrid', x1: s[0].toFixed(1), y1: s[1].toFixed(1), x2: t[0].toFixed(1), y2: t[1].toFixed(1) }));
-    });
-
-    // les profils, un rang sur six : ils tissent la surface sous le nuage et
-    // rendent la pente lisible la ou les points seuls ne la donnent pas
-    for (var jp = 0; jp < ny; jp += 6) {
-      var pts = [];
-      for (var ip = 0; ip < nx; ip++) { var q = P(ip, jp, haut(mois[jp][ip])); pts.push(q[0].toFixed(1) + ',' + q[1].toFixed(1)); }
-      poly(host, 'mcpath', pts, { opacity: 0.30 });
-    }
-    // le nuage : du fond vers l avant, pour que le proche recouvre le lointain
-    for (var jj = 0; jj < ny; jj++) {
-      for (var ii = 0; ii < nx; ii++) {
-        var h = haut(mois[jj][ii]), p = P(ii, jj, h);
-        host.appendChild(el('circle', { class: 'pt', cx: p[0].toFixed(1), cy: p[1].toFixed(1),
-          r: (0.55 + 1.15 * h).toFixed(2), opacity: (0.16 + 0.78 * h).toFixed(3) }));
-      }
-    }
-
-    // l echine graduee, a gauche
-    var ech = [3, 12, 72, 300, 1200];
-    ech.forEach(function (m) {
-      if (m < mn || m > mx) return;
-      var p = P(0, 0, haut(m));
-      host.appendChild(el('line', { class: 'cloudgrid', x1: (p[0] - 7).toFixed(1), y1: p[1].toFixed(1), x2: p[0].toFixed(1), y2: p[1].toFixed(1) }));
-      tx(host, 'px d', p[0] - 11, p[1] + 4, m >= 12 ? fmt(m / 12, 0) + ' ans' : m + ' mois', { 'text-anchor': 'end' });
-    });
-
-    // les deux arêtes du sol, nommées
-    var f0 = P(0, 0, 0), fx = P(nx - 1, 0, 0), fy = P(0, ny - 1, 0);
-    tx(host, 'lvltx', (f0[0] + fx[0]) / 2, (f0[1] + fx[1]) / 2 + 30, 'tentatives par séance  :  ' + tLo + '  →  ' + tHi, { 'text-anchor': 'middle' });
-    tx(host, 'lvltx halo', fy[0] + 10, fy[1] + 4, 'rapport 1:' + rHi);
-    tx(host, 'lvltx halo', f0[0] + 10, f0[1] + 18, 'rapport 1:' + rLo);
-
-    var yb = H - (ETROIT ? 54 : 58);
-    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: yb.toFixed(1), x2: W, y2: yb.toFixed(1) }));
-    if (ETROIT) {
-      tx(host, 'lvltx w', 12, yb + 20, 'de ' + fmt(mn, 1) + ' mois à ' + fmt(mx / 12, 0) + ' ans');
-      tx(host, 'lvltx', 12, yb + 37, 'le rapport pèse plus que le débit');
-    } else {
-      tx(host, 'lvltx w', 12, yb + 22, 'de ' + fmt(mn, 1) + ' mois au coin le plus proche à ' + fmt(mx / 12, 0)
-        + ' ans au plus lointain — un facteur ' + fmt(mx / mn, 0) + ' sur deux axes seulement');
-      tx(host, 'wm', 12, yb + 44, MARK + ' · ' + fmt(nx * ny, 0) + ' points · loi nulle · aucune donnée de marché');
-    }
-  }
-
   // ================= Fig. 7.1 — suivi du capital =================
   // C'est la planche que le lecteur rouvre chaque semaine : elle passe en
   // colonne sur téléphone, sinon son texte tombe sous le seuil de lecture.
@@ -2396,7 +2296,6 @@
   figPreuve();
   figMc();
   figMc3d();
-  figRelief();
   figEquity();
 })();
 </script>
