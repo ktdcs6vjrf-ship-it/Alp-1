@@ -128,7 +128,8 @@
   .fig .pxtx { font-size: 14px; fill: #FFFFFF; font-weight: 600; font-variant-numeric: tabular-nums; }
   .fig .pxtx.inv { fill: #000000; }
   .fig .tm { font-size: 13.5px; fill: #7C838B; }
-  .fig .hdr { font-size: 13.5px; fill: #8E959E; letter-spacing: 0.06em; }
+  .fig .hdr { font-size: 12.5px; fill: #9098A2; letter-spacing: 0.085em; }
+  .fig .sub { font-size: 11px; fill: #4C535B; letter-spacing: 0.07em; }
   .fig .cu { fill: #FFFFFF; }
   .fig .cd { fill: #5E656E; }
   .fig .wu { stroke: #FFFFFF; stroke-width: 1; }
@@ -174,7 +175,7 @@
 
   .fig .volbar { fill: #FFFFFF; opacity: 0.30; stroke: #000; stroke-width: 0.6; }
   .fig .bubble { fill: #FFFFFF; stroke: #000000; stroke-width: 0.8; }
-  .fig .mcpath { stroke: #FFFFFF; stroke-width: 0.7; fill: none; }
+  .fig .mcpath { stroke: #FFFFFF; stroke-width: 0.42; fill: none; vector-effect: non-scaling-stroke; }
   .fig .cardbody { fill: #0A0C0E; stroke: #2A2F35; stroke-width: 1; }
   .fig .cardhead { fill: #191D22; stroke: none; }
   .fig .cardrule { stroke: #3A4048; stroke-width: 1; }
@@ -193,6 +194,7 @@
   .fig .railtx { font-size: 10.5px; font-weight: 700; fill: #000000; letter-spacing: 0.06em; }
   .fig .cloud { stroke: #FFFFFF; fill: none; stroke-linecap: round; }
   .fig .cloudgrid { stroke: #1C2026; stroke-width: 1; fill: none; }
+  .fig .pt { fill: #FFFFFF; }
 
   /* chrome des tuiles */
   .fig .cpwin { fill: #000; stroke: #1E2227; stroke-width: 1; }
@@ -520,38 +522,23 @@
     <p class="measure">Style retenu&nbsp;: <strong>trading intraday discrétionnaire</strong> sur le NQ — positions ouvertes et refermées dans la séance, jamais conservées la nuit. Discrétionnaire veut dire que la décision finale est prise par un opérateur, pas par un programme&nbsp;: les outils de la section&nbsp;04 préparent et qualifient la situation, la pondération entre eux relève de <strong>six ans de marché</strong> — modèles macro, order flow et lecture graphique, pratiqués sur plusieurs classes d'actifs avant d'être concentrés sur un seul instrument. Aucune décision n'est prise sur une seule lecture isolée&nbsp;: chaque entrée demande la convergence de plusieurs familles.</p>
 
     <h3 class="sub-h">La géométrie, déclarée avant d'être jugée</h3>
-    <p class="measure">Un point de méthode, et c'est celui qui gouverne tout le reste. Une position se définit par trois nombres&nbsp;: ce qu'on risque, ce qu'on vise, et ce que coûte l'aller-retour. Ces trois-là ne dépendent pas du marché&nbsp;: <strong>ils sont entièrement fixés par l'opérateur</strong>, et ils décident à eux seuls du taux de réussite qu'il faut atteindre pour ne serait-ce que rentrer dans ses frais.</p>
+    <p class="measure">Une position se définit par trois nombres&nbsp;: ce qu'on risque, ce qu'on vise, et ce que coûte l'aller-retour. Ces trois-là ne dépendent pas du marché&nbsp;: <strong>ils sont entièrement fixés par l'opérateur</strong>, et ils décident à eux seuls du taux de réussite qu'il faut atteindre pour ne serait-ce que rentrer dans ses frais.</p>
     <p class="measure">Tout se compte ici en <strong>R</strong> — une unité, un seul risque de position. C'est la seule grandeur qui ne dépende ni de la taille du compte ni du contrat, et c'est dans celle-là que la friction doit se lire&nbsp;: pas en dollars, pas en ticks.</p>
     <div class="terms">
       <span class="band">La géométrie retenue — écrite d'avance, pas après coup</span>
-      <div class="term-row"><div class="label">Risque par tentative</div><div class="value"><span class="fig-n" id="p-risque">—</span><span class="note">c'est l'unité : 1 R. Tout le reste du document se compte dans celle-ci.</span></div></div>
+      <div class="term-row"><div class="label">Risque par position</div><div class="value"><span class="fig-n" id="p-risque">—</span><span class="note">c'est l'unité : 1 R. Tout le reste du document se compte dans celle-ci.</span></div></div>
       <div class="term-row"><div class="label">Stop</div><div class="value"><span class="fig-n" id="p-stop">—</span><span class="note">ce que 1 R représente sur un contrat NQ — jamais élargi une fois la position ouverte</span></div></div>
-      <div class="term-row"><div class="label">Rapport sécurisé</div><div class="value"><span class="fig-n" id="p-rr">—</span><span class="note" id="p-cible">—</span></div></div>
-      <div class="term-row"><div class="label">Extension</div><div class="value"><span class="fig-n" id="p-rrx">—</span><span class="note" id="p-ciblex">—</span></div></div>
-      <div class="term-row"><div class="label">Méthode d'entrée</div><div class="value"><strong>Forçage</strong>&nbsp;: plusieurs tentatives sur le même niveau, chacune risquant 1 R, jusqu'à ce qu'une porte.<span class="note" id="p-forcage">—</span></div></div>
+      <div class="term-row"><div class="label">Rapport gain / risque</div><div class="value"><span class="fig-n" id="p-rr">—</span><span class="note" id="p-cible">—</span></div></div>
       <div class="term-row"><div class="label">Friction retenue</div><div class="value"><span class="fig-n" id="p-fric">—</span><span class="note">par aller-retour, commission et glissement compris — c'est elle, et elle seule, qui fixe le seuil</span></div></div>
       <div class="term-row"><div class="label">Horizon</div><div class="value">Intraday strict. Toute position est refermée avant la clôture&nbsp;; <strong>aucune n'est exposée à la nuit</strong>.</div></div>
     </div>
-    <p class="measure" style="margin-top:1.3rem">Ces sept lignes ne sont pas une présentation&nbsp;: ce sont les paramètres avec lesquels les figures&nbsp;3.1, 3.2 et 5.1 sont calculées. <strong>Les changer changerait tous leurs verdicts</strong>, ce qui est précisément la raison de les écrire ici, avant, plutôt que de les ajuster ensuite pour que le résultat tombe bien.</p>
-
-    <h3 class="sub-h">Le forçage, et ce qu'il faut en penser</h3>
-    <p class="measure">C'est la partie de la méthode qui surprend, alors autant la décrire sans la maquiller. Sur un niveau jugé bon, <strong>je ne prends pas une position&nbsp;: j'en prends plusieurs, l'une après l'autre.</strong> Chacune risque 1 R et meurt vite — le stop est serré exprès. On recommence tant que le niveau tient. Quand l'une porte, elle porte beaucoup, parce que le stop est petit et la cible lointaine.</p>
-    <p class="measure">L'objet de la manœuvre n'est pas d'avoir raison souvent. Il est d'obtenir <strong>la meilleure position possible en rapport gain/risque</strong>, quitte à payer plusieurs fois le droit d'essayer. Voici ce que cela donne, sur une séance où ça marche.</p>
+    <p class="measure" style="margin-top:1.3rem">Ces cinq lignes ne sont pas une présentation&nbsp;: ce sont les paramètres avec lesquels les figures&nbsp;3.1 et&nbsp;5.1 sont calculées. <strong>Les changer changerait tous leurs verdicts</strong>, ce qui est précisément la raison de les écrire ici, avant, plutôt que de les ajuster ensuite pour que le résultat tombe bien.</p>
     <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-dec" class="fig" viewBox="0 0 1000 500" role="img" aria-label="Une campagne de forcage sur une seance illustrative : le niveau calcule avant l ouverture, quatre tentatives stoppees marquees d une croix, la cinquieme qui porte, et la course jusqu a la cible"></svg></div>
-        <figcaption><span class="lab">Fig. 3.1</span>Une campagne entière sur une séance illustrative. Le niveau est le creux de la première demi-séance arrondi&nbsp;: il est donc connu <em>avant</em> le contact, ce qui est toute la différence entre un niveau et un commentaire. <strong>Chaque croix est une tentative stoppée</strong>, le disque plein celle qui porte, le cercle vide la cible atteinte. Le stop vaut moins de deux pour cent de la hauteur du cadre — les quatre croix tiennent donc dans l'épaisseur du trait de niveau, et c'est le fait, pas un défaut de rendu. La campagne montrée est <strong>choisie pour sa lisibilité, pas pour son résultat</strong>&nbsp;: la fréquence vraie est écrite sous la planche, et elle est bien plus basse.</figcaption>
-      </figure></div>
-    <p class="measure">La séance ci-dessus rend <strong>+20,50&nbsp;R</strong>, soit un peu plus de deux mille euros sur une unité de cent. C'est une bonne séance, et il faut résister à en tirer quoi que ce soit&nbsp;: sous prix sans dérive, une tentative porte <strong>3,85&nbsp;%</strong> du temps, et le seuil au-dessus duquel la méthode couvre ses frais vaut <strong>4,23&nbsp;%</strong>. L'écart entre les deux — <strong>trente-huit centièmes de point de taux</strong> — est tout ce qu'il y a à démontrer, et c'est aussi tout ce qui sépare une méthode rentable d'une méthode qui s'use.</p>
-
-    <h3 class="sub-h">Ce que le forçage coûte, et ce qu'il achète</h3>
-    <p class="measure">Deux choses, et elles tirent en sens inverse. <strong>Le forçage ne crée aucune espérance.</strong> À un rapport d'un pour vingt-cinq, la loi nulle rend exactement un vingt-sixième&nbsp;: une tentative vaut zéro avant la friction et moins la friction après. Recommencer vingt fois ne déplace pas ce zéro — cela multiplie la facture par le nombre de tentatives, et rien d'autre.</p>
-    <p class="measure">Mais <strong>le forçage multiplie aussi l'échantillon</strong>, exactement au même rythme. Et comme la preuve se compte en tentatives, pas en séances, forcer <em>divise le délai</em> au bout duquel on saura. C'est le seul levier du document qui achète du temps — et il se paie comptant, en friction.</p>
-    <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-forc" class="fig" viewBox="0 0 1000 470" role="img" aria-label="A gauche l esperance d une campagne en R selon le nombre de tentatives sur le meme niveau ; a droite le nombre de mois necessaires pour etablir la methode selon le debit de tentatives par seance, pour les deux rapports"></svg></div>
-        <figcaption><span class="lab">Fig. 3.2</span>À gauche, ce qu'une campagne rend selon le nombre de tentatives&nbsp;: la barre descend, et elle descend <em>exactement</em> de la friction payée — l'espérance, elle, ne bouge pas d'un centième. À droite, le délai avant de savoir, selon le nombre de tentatives par séance et pour les deux rapports. <strong>Les deux cadres décrivent le même geste&nbsp;: à gauche ce qu'il coûte, à droite ce qu'il achète.</strong> Sous la planche, la facture mensuelle en dollars — c'est le premier chiffre que la performance doit couvrir.</figcaption>
+        <div class="scrollbox"><svg id="f-dec" class="fig" viewBox="0 0 1000 500" role="img" aria-label="Une position de bout en bout sur une seance illustrative : le niveau calcule avant l ouverture, les contacts, l entree, et la course jusqu a la cible"></svg></div>
+        <figcaption><span class="lab">Fig. 3.1</span>Une position entière sur une séance illustrative. Le niveau est le creux de la première demi-séance arrondi&nbsp;: il est donc connu <em>avant</em> le contact, ce qui est toute la différence entre un niveau et un commentaire. <strong>Chaque croix est un contact qui n'a pas tenu</strong>, le disque plein celui qui porte, le cercle vide la cible atteinte. Le stop vaut moins de deux pour cent de la hauteur du cadre&nbsp;: les croix tiennent donc dans l'épaisseur du trait de niveau, et c'est le fait, pas un défaut de rendu.</figcaption>
       </figure></div>
 
-    <div class="thesis">Aucune géométrie ne crée d'espérance. Elle fixe l'exigence, et le forçage décide seulement de la vitesse à laquelle on saura si on y répond.
+    <div class="thesis">Aucune géométrie ne crée d'espérance. Elle fixe seulement l'exigence à laquelle il faudra répondre.
       <span>et c'est la seule chose que l'opérateur contrôle entièrement</span></div>
   </section>
 
@@ -604,12 +591,12 @@
       <div class="sh2"><span class="no">4.5</span><h3>Order Flow &amp; murs de liquidité</h3></div>
       <p class="measure">La lecture du carnet d'ordres en temps réel&nbsp;: la taille des ordres en attente à l'achat et à la vente, à chaque prix. Un déséquilibre marqué, ou un ordre anormalement gros à un niveau — un <strong>mur de liquidité</strong> — indique où le marché peut absorber, ou au contraire accélérer, un mouvement.</p>
       <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-dom" class="fig" viewBox="0 0 1000 420" role="img" aria-label="Carnet d ordres illustratif : tailles a l achat en blanc a gauche, a la vente en gris a droite, colonne de prix au centre, avec un mur de liquidite nomme dans sa barre"></svg></div>
+        <div class="scrollbox"><svg id="f-dom" class="fig" viewBox="0 0 1000 436" role="img" aria-label="Carnet d ordres illustratif : tailles a l achat en blanc a gauche, a la vente en gris a droite, colonne de prix au centre, avec un mur de liquidite nomme dans sa barre"></svg></div>
         <figcaption><span class="lab">Fig. 4.5a</span>Carnet d'ordres illustratif&nbsp;: tailles à l'achat (blanc, gauche) et à la vente (gris, droite) par niveau de prix. La ligne élargie marque un mur de liquidité — un ordre inhabituellement gros, susceptible de retenir le prix.</figcaption>
       </figure></div>
       <p class="measure" style="margin-top:1.6rem">Le carnet, lu dans le temps plutôt qu'à l'instant&nbsp;: une carte de profondeur où la liquidité en attente à chaque prix est peinte en continu et le prix négocié serpente par-dessus. Un mur s'y reconnaît à une bande qui reste claire pendant que les autres niveaux s'allument et s'éteignent.</p>
       <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-depth" class="fig" viewBox="0 0 1000 580" role="img" aria-label="Carte de profondeur de marche illustrative en niveaux de gris : liquidite en attente par niveau de prix au fil du temps, prix negocie en blanc cerne de noir, mur persistant nomme, et delta net en bandeau"></svg></div>
+        <div class="scrollbox"><svg id="f-depth" class="fig" viewBox="0 0 1000 596" role="img" aria-label="Carte de profondeur de marche illustrative en niveaux de gris : liquidite en attente par niveau de prix au fil du temps, prix negocie en blanc cerne de noir, mur persistant nomme, et delta net en bandeau"></svg></div>
         <figcaption><span class="lab">Fig. 4.5b</span>Carte de profondeur illustrative&nbsp;: chaque colonne est une minute, chaque ligne un prix, la clarté de la case la taille en attente. La bande qui reste claire d'un bout à l'autre est le mur&nbsp;; le trait blanc est le prix négocié, qui ralentit en l'approchant. En bas, le delta net de chaque minute — achat au-dessus de l'axe, vente en dessous.</figcaption>
       </figure></div>
     </div>
@@ -661,9 +648,9 @@
     <div class="thesis">Ces tests ne fabriquent pas la stratégie. Ils vérifient qu'elle ne repose pas sur du bruit.
       <span>la différence est entière</span></div>
     <p class="measure">C'est une distinction qu'il faut poser nettement, parce qu'elle sépare deux démarches qu'on confond tout le temps. <strong>Un backtest de construction</strong> part des données, essaie des règles et garde celle qui a le mieux marché&nbsp;: le risque y est de fabriquer une règle qui n'existe que dans l'historique. <strong>Une vérification</strong> part d'une lecture qu'on emploie déjà, écrite d'avance, et demande seulement&nbsp;: bat-elle le hasard, oui ou non&nbsp;? Rien n'est choisi après coup, donc il n'y a rien à surajuster. La stratégie existe avant le test, et le test ne peut que la confirmer ou la contredire.</p>
-    <p class="measure">Et surtout&nbsp;: <strong>combien de tentatives faut-il pour le savoir&nbsp;?</strong> C'est la seule question qui décide si une lecture est démontrable dans une vie d'opérateur ou seulement dans un discours — et au rapport déclaré, la réponse ne se compte plus en contacts mais en <em>tentatives</em>, ce qui change tout, puisque le forçage en produit plusieurs par contact.</p>
+    <p class="measure">Et surtout&nbsp;: <strong>combien de tentatives faut-il pour le savoir&nbsp;?</strong> C'est la seule question qui décide si une lecture est démontrable dans une vie d'opérateur ou seulement dans un discours.</p>
     <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-preuve" class="fig" viewBox="0 0 1120 520" role="img" aria-label="Pour chaque outil, le nombre de mois de tentatives necessaires pour etablir que la methode bat le hasard, au rapport securise et a l extension, compare a six ans d experience"></svg></div>
+        <div class="scrollbox"><svg id="f-preuve" class="fig" viewBox="0 0 1120 534" role="img" aria-label="Pour chaque outil, le nombre de mois de tentatives necessaires pour etablir que la methode bat le hasard, au rapport securise et a l extension, compare a six ans d experience"></svg></div>
         <figcaption><span class="lab">Fig. 5.1</span>Pour chacun des six outils, le temps qu'il faut pour établir à 95&nbsp;% que la méthode bat le hasard&nbsp;: <strong>barre pleine au rapport sécurisé, barre creuse à l'extension</strong>. Le taux à démontrer est le même pour les six — il ne dépend que du rapport — donc ce qui les distingue est leur <strong>débit de tentatives</strong>, et lui seul. Tous les paramètres sont déclarés en bas de planche et chaque nombre est calculé, jamais écrit à la main.</figcaption>
       </figure></div>
 
@@ -681,12 +668,16 @@
     <h3 class="sub-h">Ce que le hasard seul produit sur une évaluation</h3>
     <p class="measure">Dernière pièce du cadre, et la plus inconfortable&nbsp;: avant de juger un résultat, il faut savoir ce qu'un opérateur <strong>sans le moindre avantage</strong> obtiendrait sur la même évaluation. C'est la loi nulle, et elle se simule&nbsp;: deux mille comptes de 50&nbsp;000&nbsp;$, soixante séances, aucune dérive, un écart-type quotidien déclaré de 0,9&nbsp;% du compte. Les deux seuils du programme — objectif <strong>+6&nbsp;%</strong>, perte maximale <strong>−4&nbsp;%</strong> — y sont reportés tels quels.</p>
     <div class="figwrap"><figure>
-        <div class="scrollbox"><svg id="f-mc" class="fig" viewBox="0 0 1000 476" role="img" aria-label="Monte-Carlo de l evaluation sans avantage : distribution du resultat a soixante seances et fonction de repartition, avec percentiles et seuils du programme"></svg></div>
+        <div class="scrollbox"><svg id="f-mc" class="fig" viewBox="0 0 1000 490" role="img" aria-label="Monte-Carlo de l evaluation sans avantage : distribution du resultat a soixante seances et fonction de repartition, avec percentiles et seuils du programme"></svg></div>
         <figcaption><span class="lab">Fig. 5.2</span>Deux mille évaluations simulées sans avantage. À gauche, la loi du résultat à soixante séances, avec ses percentiles&nbsp;; à droite, la probabilité d'atteindre un résultat au moins égal à <em>x</em>. <strong>Le chiffre qui compte est le contraste</strong>&nbsp;: la probabilité de <em>toucher</em> l'objectif avant la limite est bien supérieure à celle de <em>finir</em> au-dessus — et la première est celle qu'un candidat croit lire quand il réussit. C'est pour cela qu'une évaluation réussie ne prouve pas grand-chose à elle seule, et que ce document existe.</figcaption>
       </figure></div>
     <div class="figwrap"><figure>
         <div class="scrollbox"><svg id="f-mc3d" class="fig" viewBox="0 0 1000 522" role="img" aria-label="Les memes deux mille trajectoires vues en perspective : capital en fonction du jour de seance et du numero de simulation, avec les courbes de percentile cinq, mediane et quatre-vingt-quinze"></svg></div>
         <figcaption><span class="lab">Fig. 5.3</span>Les mêmes trajectoires, vues en perspective&nbsp;: chaque fil est une évaluation, l'épaisseur de la nappe est l'incertitude. Les trois courbes pleines sont les percentiles 5, 50 et 95 à chaque séance. Aucune n'a d'avantage&nbsp;: tout l'écart entre le fil du haut et celui du bas est du hasard. C'est précisément l'écart qu'un track record de quelques semaines ne permet pas de distinguer d'un talent — d'où le suivi hebdomadaire de la section&nbsp;07, qui accumule au lieu d'affirmer.</figcaption>
+      </figure></div>
+    <div class="figwrap"><figure>
+        <div class="scrollbox"><svg id="f-relief" class="fig" viewBox="0 0 1000 560" role="img" aria-label="Relief en nuage de points : le nombre de mois necessaires pour etablir la methode, selon le nombre de tentatives par seance et le rapport gain sur risque, hauteur logarithmique"></svg></div>
+        <figcaption><span class="lab">Fig. 5.4</span>Le même budget de preuve, vu comme un relief&nbsp;: <strong>six mille quatre cent quarante-huit points calculés</strong>, un par couple débit / rapport. La hauteur porte un logarithme parce que le délai parcourt trois ordres de grandeur — le coin le plus proche se tranche en quelques mois, le plus lointain demande un siècle. Le nuage n'est pas une maille&nbsp;: une maille pleine cacherait le versant arrière, et c'est précisément la pente du fond qui porte le fait.</figcaption>
       </figure></div>
   </section>
 
@@ -1026,7 +1017,8 @@
     }
     host.appendChild(el('line', { class: 'axsep', x1: plotR, y1: 0, x2: plotR, y2: o.h - bot }));
     host.appendChild(el('line', { class: 'axsep', x1: 0, y1: o.h - bot, x2: o.w, y2: o.h - bot }));
-    tx(host, 'hdr', 10, 18, ETROIT ? 'NQ1!  ·  1 min  ·  ' + MARK + ' v1' : 'NQ1!   ·   1 min   ·   ' + MARK + ' v1   ·   illustratif');
+    tx(host, 'hdr', 10, 17, ETROIT ? 'NQ1!  ·  1 min  ·  ' + MARK + ' v1' : 'NQ1!   ·   1 min   ·   ' + MARK + ' v1   ·   illustratif');
+    host.appendChild(el('line', { class: 'cloudgrid', x1: 0, y1: 26, x2: o.w, y2: 26 }));
     return { sy: sy, plotR: plotR, top: top, bot: bot, axisW: axisW, w: o.w, h: o.h, lo: lo, hi: hi, grads: grads };
   }
   function timeAxis(host, c, x0, xEnd) {
@@ -1079,6 +1071,14 @@
       var yT = sy(Math.max(b.o, b.c)), yB = sy(Math.min(b.o, b.c));
       host.appendChild(el('rect', { class: up ? 'cu' : 'cd', x: (x - bw / 2).toFixed(1), y: yT.toFixed(1), width: bw.toFixed(1), height: Math.max(yB - yT, 1).toFixed(1) }));
     });
+  }
+  // Bandeau d en-tete : un titre et une ligne de parametres plus sourde.
+  // C est ce second niveau qui fait lire une planche comme une sortie
+  // d instrument plutot que comme une illustration.
+  function bandeau(host, W, titre, sous) {
+    tx(host, 'hdr', 10, 17, titre);
+    if (sous) tx(host, 'sub', 10, 32, sous);
+    host.appendChild(el('line', { class: 'cloudgrid', x1: 0, y1: sous ? 41 : 27, x2: W, y2: sous ? 41 : 27 }));
   }
   function wm(host, c, s) { tx(host, 'wm', c.plotR - 8, c.h - c.bot - 8, ETROIT ? MARK + ' · illustratif' : s, { 'text-anchor': 'end' }); }
 
@@ -1236,7 +1236,7 @@
     tx(host, 'wm', R, H - 14, ETROIT ? 'aucune donnée de marché' : MARK + ' · profil illustratif · aucune donnée de marché', { 'text-anchor': 'end' });
   }
 
-  // ================= Fig. 3.1 — une campagne de forçage ==================
+  // ================= Fig. 3.1 — une position, de bout en bout ===========
   // La planche que le document n avait pas : plusieurs tentatives sur le
   // meme niveau, celles qui sautent et celle qui porte. Le stop vaut cinq
   // points et la cible cent vingt-cinq : sur un cadre qui couvre deux cent
@@ -1269,16 +1269,15 @@
   var DECRES = null;
   function campagneDecision() {
     if (DECRES) return DECRES;
-    var B = budget(RR_SECURISE), a = STOP_PT, b = B.cible;
+    var B = budget(RR_BAS), a = STOP_PT, b = B.cible;
     var best = null, bestBars = null, ks = [];
     for (var g = 1; g <= DEC_GERMES; g++) {
       var bs = bars(A_DEC, DEC_N, 7000 + g), C = campagneDeSeance(bs, DEC_N, a, b);
       if (!C) continue;
       ks.push(C.tent.length);
-      // La regle de choix : la campagne qui montre le plus de tentatives tout
-      // en se denouant sur la cible. Elle porte donc sur la lisibilite, pas
-      // sur le resultat — et la frequence vraie est publiee a cote.
-      if (C.fin.issue !== 'objectif' || C.fin.iS - C.fin.iC < 12) continue;
+      // La regle de choix porte sur la lisibilite, pas sur le resultat : la
+      // frequence vraie est publiee sous la planche.
+      if (C.fin.issue !== 'objectif' || C.fin.iS - C.fin.iC < 3) continue;
       if (C.tent.length > 6) continue;
       if (!best || C.tent.length > best.tent.length) { best = C; bestBars = bs; }
     }
@@ -1317,115 +1316,28 @@
     host.appendChild(el('circle', { cx: xF.toFixed(1), cy: c.sy(C.cible).toFixed(1), r: 4.4, fill: '#000', stroke: '#FFFFFF', 'stroke-width': 1.8 }));
 
     // les intitules, apres les bougies et cernes de noir
-    tx(host, 'lvltx w halo', 8, c.sy(C.cible) - 8, 'cible  +' + b.toFixed(0) + ' pt  =  +' + RR_SECURISE + ' R');
+    tx(host, 'lvltx w halo', 8, c.sy(C.cible) - 8, 'cible  +' + b.toFixed(0) + ' pt  =  +' + RR_BAS + ' R');
     tx(host, 'lvltx w halo', 8, c.sy(C.niveau) + 17, ETROIT ? 'niveau calculé d’avance' : 'niveau calculé avant l’ouverture  ·  stop  −' + a.toFixed(0) + ' pt  =  −1 R');
 
     tag(host, c, c.sy(closes(bs)[n - 1]), fmt(closes(bs)[n - 1], ETROIT ? 0 : 2), true);
     timeAxis(host, c, x0, xEnd);
 
     // le pied : l arithmetique de la campagne, calculee
-    var perdues = k - 1, brut = RR_SECURISE - perdues, fact = k * FRICTION_R, net = brut - fact;
+    var perdues = k - 1, brut = RR_BAS - perdues, fact = k * FRICTION_R, net = brut - fact;
     var yb = c.h - c.bot;
     host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yb + 16).toFixed(1), x2: c.w, y2: (yb + 16).toFixed(1) }));
-    var l1 = k + ' tentatives  ·  ' + perdues + ' × (−1 R)  ·  1 × (+' + RR_SECURISE + ' R)  ·  friction ' + fmt(fact, 2) + ' R  →  net ' + (net >= 0 ? '+' : '') + fmt(net, 2) + ' R';
+    var l1 = 'stop −1 R  ·  cible +' + RR_BAS + ' R  ·  friction ' + fmt(FRICTION_R, 2) + ' R par aller-retour';
     var l2 = 'sans dérive une tentative porte ' + fmt(100 * D.B.p0, 2) + ' % du temps ; le seuil de rentabilité vaut ' + fmt(100 * D.B.ps, 2) + ' %';
-    var l3 = 'campagne médiane : ' + D.kMedian + ' tentative' + (D.kMedian > 1 ? 's' : '')
-      + '  ·  le stop vaut ' + fmt(100 * a / (HI - LO), 1) + ' % de la hauteur du cadre';
+    var l3 = 'le stop vaut ' + fmt(100 * a / (HI - LO), 1) + ' % de la hauteur du cadre';
     if (ETROIT) {
-      tx(host, 'lvltx w', 8, yb + 36, k + ' tentatives  ·  net ' + (net >= 0 ? '+' : '') + fmt(net, 2) + ' R');
-      tx(host, 'lvltx', 8, yb + 54, perdues + ' × (−1 R)  ·  1 × (+' + RR_SECURISE + ' R)');
-      tx(host, 'lvltx', 8, yb + 71, 'friction ' + fmt(fact, 2) + ' R pour ' + k + ' allers-retours');
-      tx(host, 'lvltx', 8, yb + 92, 'loi nulle ' + fmt(100 * D.B.p0, 2) + ' %  ·  seuil ' + fmt(100 * D.B.ps, 2) + ' %');
-      tx(host, 'lvltx', 8, yb + 109, 'campagne médiane : ' + D.kMedian + ' tentative' + (D.kMedian > 1 ? 's' : ''));
+      tx(host, 'lvltx w', 8, yb + 36, 'stop −1 R  ·  cible +' + RR_BAS + ' R');
+      tx(host, 'lvltx', 8, yb + 54, 'friction ' + fmt(FRICTION_R, 2) + ' R par aller-retour');
+      tx(host, 'lvltx', 8, yb + 75, 'loi nulle ' + fmt(100 * D.B.p0, 2) + ' %  ·  seuil ' + fmt(100 * D.B.ps, 2) + ' %');
+      tx(host, 'lvltx', 8, yb + 92, 'le stop vaut ' + fmt(100 * a / (HI - LO), 1) + ' % du cadre');
     } else {
       tx(host, 'lvltx w', 10, yb + 36, l1);
       tx(host, 'lvltx', 10, yb + 54, l2);
       tx(host, 'lvltx', 10, yb + 72, l3);
-    }
-  }
-
-  // ================= Fig. 3.2 — ce que le forçage coûte et achète ========
-  // Le forcage ne deplace pas l esperance : a 1:25 la loi nulle rend
-  // exactement 1/26, donc une tentative vaut zero avant friction et −c apres.
-  // Forcer k fois multiplie la facture par le nombre attendu de tentatives,
-  // et rien d autre. Ce qu il deplace est le delai de preuve, qu il divise
-  // au meme rythme. La planche met les deux cote a cote parce qu on ne peut
-  // pas juger l un sans l autre.
-  var FORC_K = [1, 2, 3, 5, 8, 12, 20];
-  var FORC_DEBIT = [2, 4, 6, 9, 12, 16, 20];
-  function figForcage() {
-    var host = document.getElementById('f-forc'); if (!host) return;
-    var W = ETROIT ? 430 : 1000, H = ETROIT ? 762 : 470;
-    var PX = ETROIT ? 60 : 66, PW = ETROIT ? W - PX - 20 : 372, PY = ETROIT ? 74 : 78, PH = ETROIT ? 208 : 236;
-    var QX = ETROIT ? PX : 588, QW = ETROIT ? PW : 372;
-    var QY = ETROIT ? PY + PH + 118 : PY, QH = ETROIT ? 208 : PH;
-    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
-    tx(host, 'hdr', 10, 18, ETROIT ? 'LE FORÇAGE : CE QU’IL COÛTE, CE QU’IL ACHÈTE'
-      : 'LE FORÇAGE — CE QU’IL COÛTE, ET CE QU’IL ACHÈTE  ·  ' + MARK + ' v1');
-
-    // — gauche : l esperance d une campagne —
-    var camp = FORC_K.map(function (k) { return forcage(RR_SECURISE, k); });
-    var pire = 0;
-    camp.forEach(function (c) { if (c.e < pire) pire = c.e; });
-    var elo = Math.floor(pire * 2) / 2;
-    function ey(v) { return PY + (0 - v) / (0 - elo) * PH; }
-    tx(host, 'lvltx', PX, PY - 30, 'ce qu’une campagne rend, en R');
-    tx(host, 'lvltx w', PX, PY - 13, 'l’espérance ne bouge pas : la facture, si');
-    [0, elo / 2, elo].forEach(function (v) {
-      host.appendChild(el('line', { class: 'grid', x1: PX, y1: ey(v).toFixed(1), x2: PX + PW, y2: ey(v).toFixed(1) }));
-      tx(host, 'px d', PX - 8, ey(v) + 4, fmt(v, 1) + ' R', { 'text-anchor': 'end' });
-    });
-    var bw = PW / camp.length;
-    camp.forEach(function (c, i) {
-      var x = PX + i * bw + bw * 0.18, w = bw * 0.64;
-      host.appendChild(el('rect', { class: 'barA dim', x: x.toFixed(1), y: ey(0).toFixed(1), width: w.toFixed(1), height: Math.max(ey(c.e) - ey(0), 1).toFixed(1) }));
-      tx(host, 'px d', x + w / 2, PY + PH + 18, String(c.k), { 'text-anchor': 'middle' });
-    });
-    tx(host, 'axl', PX + PW / 2, PY + PH + 38, 'tentatives sur le même niveau', { 'text-anchor': 'middle' });
-
-    // — droite : le delai de preuve —
-    // Les deux delais parcourent de seize mois a cinquante-quatre ans : sur un
-    // axe lineaire la courbe du rapport securise s ecrase contre le plancher
-    // et celle de l extension se fait couper. L axe est donc logarithmique,
-    // et gradue en annees, qui est l unite dans laquelle la question se pose.
-    var mlo = 12, mhi = 720, LG = Math.log(mhi / mlo);
-    function qx(i) { return QX + i / (FORC_DEBIT.length - 1) * QW; }
-    function qy(m) { return QY + QH - Math.log(Math.max(m, mlo) / mlo) / LG * QH; }
-    tx(host, 'lvltx', QX, QY - 30, 'le délai avant de savoir, en années');
-    tx(host, 'lvltx w', QX, QY - 13, 'forcer le divise d’autant');
-    [[12, '1'], [36, '3'], [72, '6'], [144, '12'], [300, '25'], [720, '60']].forEach(function (g) {
-      host.appendChild(el('line', { class: 'grid', x1: QX, y1: qy(g[0]).toFixed(1), x2: QX + QW, y2: qy(g[0]).toFixed(1) }));
-      tx(host, 'px d', QX - 8, qy(g[0]) + 4, g[1], { 'text-anchor': 'end' });
-    });
-    host.appendChild(el('line', { class: 'lvl', x1: QX, y1: qy(EXPERIENCE_MOIS).toFixed(1), x2: QX + QW, y2: qy(EXPERIENCE_MOIS).toFixed(1) }));
-    tx(host, 'lvltx w halo', QX + 6, qy(EXPERIENCE_MOIS) - 8, 'six ans de marché');
-    [[RR_SECURISE, 'ma f', true], [RR_EXTENSION, 'ma', false]].forEach(function (r) {
-      var pts = FORC_DEBIT.map(function (t, i) { return qx(i).toFixed(1) + ',' + qy(moisPourPreuve(r[0], t)).toFixed(1); });
-      poly(host, r[1], pts);
-      FORC_DEBIT.forEach(function (t, i) {
-        host.appendChild(el('circle', { cx: qx(i).toFixed(1), cy: qy(moisPourPreuve(r[0], t)).toFixed(1), r: 3, fill: r[2] ? '#FFFFFF' : '#000', stroke: '#FFFFFF', 'stroke-width': 1.2 }));
-      });
-    });
-    tx(host, 'lvltx w halo', qx(FORC_DEBIT.length - 1) - 8, qy(moisPourPreuve(RR_SECURISE, FORC_DEBIT[FORC_DEBIT.length - 1])) - 12, '1:' + RR_SECURISE, { 'text-anchor': 'end' });
-    tx(host, 'lvltx halo', qx(1) + 8, qy(moisPourPreuve(RR_EXTENSION, FORC_DEBIT[1])) - 10, '1:' + RR_EXTENSION);
-    FORC_DEBIT.forEach(function (t, i) { tx(host, 'px d', qx(i), QY + QH + 18, String(t), { 'text-anchor': 'middle' }); });
-    tx(host, 'axl', QX + QW / 2, QY + QH + 38, 'tentatives par séance', { 'text-anchor': 'middle' });
-
-    // — le pied : la facture, en dollars, parce que c est ce qui se paie —
-    var yb = ETROIT ? QY + QH + 62 : PY + PH + 62;
-    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: yb.toFixed(1), x2: W, y2: yb.toFixed(1) }));
-    var fact = function (t) { return t * FRICTION_R * RISQUE_R * SEANCES_MOIS; };
-    if (ETROIT) {
-      tx(host, 'lvltx w', 12, yb + 24, 'la facture de friction, par mois');
-      tx(host, 'lvltx', 12, yb + 42, '4 tentatives/séance : ' + fmt(fact(4), 0) + ' $  ·  8 : ' + fmt(fact(8), 0) + ' $');
-      tx(host, 'lvltx', 12, yb + 59, '12 : ' + fmt(fact(12), 0) + ' $  ·  20 : ' + fmt(fact(20), 0) + ' $');
-      tx(host, 'wm', 12, H - 12, 'friction ' + fmt(100 * FRICTION_R, 0) + ' % de R · 1 R = ' + RISQUE_R + ' $');
-    } else {
-      tx(host, 'lvltx w', 12, yb + 24, 'facture de friction par mois : '
-        + [4, 8, 12, 20].map(function (t) { return t + '/séance → ' + fmt(fact(t), 0) + ' $'; }).join('  ·  '));
-      tx(host, 'lvltx', 12, yb + 42, 'c’est le premier chiffre que la performance doit couvrir, et il croît exactement comme le débit de tentatives');
-      tx(host, 'wm', 12, H - 10, 'déclaré : 1 R = ' + RISQUE_R + ' $ · friction ' + fmt(100 * FRICTION_R, 0) + ' % de R · ' + SEANCES_MOIS + ' séances/mois');
     }
   }
 
@@ -1584,15 +1496,16 @@
   }
   function figDom() {
     var host = document.getElementById('f-dom'); if (!host) return;
-    var W = ETROIT ? 430 : 1000, H = ETROIT ? 406 : 420;
+    var W = ETROIT ? 430 : 1000, H = ETROIT ? 422 : 436;
     var BX = ETROIT ? 12 : 60, BW = W - 2 * BX;
     host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
     host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
-    tx(host, 'hdr', 10, 18, ETROIT ? 'NQ1!  ·  carnet  ·  ' + MARK + ' v1' : 'NQ1!   ·   carnet   ·   ' + MARK + ' v1   ·   illustratif');
-    tx(host, 'tm', BX + BW * 0.22, 40, ETROIT ? 'ACHAT' : 'ACHAT (BID)', { 'text-anchor': 'middle' });
-    tx(host, 'tm', W / 2, 40, 'PRIX', { 'text-anchor': 'middle' });
-    tx(host, 'tm', BX + BW * 0.78, 40, ETROIT ? 'VENTE' : 'VENTE (ASK)', { 'text-anchor': 'middle' });
-    bookRows(host, BX, 54, BW, H - 104, true);
+    bandeau(host, W, ETROIT ? 'NQ1!  ·  CARNET D’ORDRES' : MARK + '  ·  NQ1!  ·  CARNET D’ORDRES',
+      ETROIT ? 'profondeur illustrative' : 'quinze niveaux de prix  ·  tailles à l’achat et à la vente  ·  profondeur illustrative');
+    tx(host, 'tm', BX + BW * 0.22, 58, ETROIT ? 'ACHAT' : 'ACHAT (BID)', { 'text-anchor': 'middle' });
+    tx(host, 'tm', W / 2, 58, 'PRIX', { 'text-anchor': 'middle' });
+    tx(host, 'tm', BX + BW * 0.78, 58, ETROIT ? 'VENTE' : 'VENTE (ASK)', { 'text-anchor': 'middle' });
+    bookRows(host, BX, 72, BW, H - 122, true);
     tx(host, 'wm', W - 14, H - 14, ETROIT ? MARK + ' · illustratif' : MARK + ' · carnet illustratif', { 'text-anchor': 'end' });
   }
 
@@ -1667,14 +1580,15 @@
     // la carte de chaleur, qui est le sujet, prend cette largeur. Sur
     // telephone les quatre couches restent, mais les trois legendes
     // s empilent au lieu de se ranger de front.
-    var W = ETROIT ? 430 : 1000, X = ETROIT ? 12 : 14, Y = 46;
+    var W = ETROIT ? 430 : 1000, X = ETROIT ? 12 : 14, Y = 62;
     var GW = ETROIT ? 300 : 800, GH = ETROIT ? 286 : 300;
     var D = DEPTH, LX = GW + X + (ETROIT ? 8 : 12), LW = ETROIT ? 40 : 96, AX = LX + LW + (ETROIT ? 6 : 10);
     var LG = ETROIT ? 3 : 1;
-    var H = ETROIT ? 706 : 580;
+    var H = ETROIT ? 722 : 596;
     host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
     host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
-    tx(host, 'hdr', 10, 18, ETROIT ? 'NQ1!  ·  profondeur du carnet' : 'NQ1!   ·   profondeur du carnet   ·   ' + MARK + ' v1   ·   illustratif');
+    bandeau(host, W, ETROIT ? 'NQ1!  ·  PROFONDEUR DU CARNET' : MARK + '  ·  NQ1!  ·  PROFONDEUR DU CARNET',
+      ETROIT ? 'quatre couches  ·  illustratif' : 'ordres en attente  ·  volume exécuté  ·  volume par minute  ·  état courant du carnet  ·  illustratif');
     var g = depthGrid(host, X, Y, GW, GH, D.cols, D.rows, D.wallRow, D.softRow, true);
 
     function priceOfRow(r) { return D.hi - (D.hi - D.lo) * (r + 0.5) / D.rows; }
@@ -1793,7 +1707,7 @@
   var STOP_PT = RISQUE_R / POINT_NQ;
   var FRICTION = 0.50;         // pt par aller-retour, commission et glissement
   var FRICTION_R = FRICTION / STOP_PT;
-  var RR_SECURISE = 25, RR_EXTENSION = 100;
+  var RR_BAS = 5, RR_HAUT = 200;
   var SIGMA_SEANCE = 250;      // pt, ecart-type d une seance — a mesurer
   var Z95 = 1.645, SEANCES_MOIS = 21, EXPERIENCE_MOIS = 72;
 
@@ -1808,19 +1722,6 @@
     return { rr: rr, p0: p0, ps: ps, d: d, n: n, cible: STOP_PT * rr };
   }
   function moisPourPreuve(rr, parSeance) { return budget(rr).n / parSeance / SEANCES_MOIS; }
-
-  // Le forçage : k tentatives sur le meme niveau, arret a la premiere qui
-  // porte. L esperance se calcule terme a terme plutot que de s affirmer.
-  function forcage(rr, k) {
-    var p0 = 1 / (1 + rr), e = 0, facture = 0;
-    for (var j = 1; j <= k; j++) {
-      var atteint = Math.pow(1 - p0, j - 1);
-      e += atteint * p0 * (rr - (j - 1));
-      facture += atteint * FRICTION_R;
-    }
-    e -= Math.pow(1 - p0, k) * k;
-    return { k: k, pk: 1 - Math.pow(1 - p0, k), e: e - facture, facture: facture };
-  }
 
   // La portee : une cible n existe que si la seance peut l atteindre.
   // Principe de reflexion — P(toucher +b a un moment) = 2Φ(−b/σ).
@@ -1847,9 +1748,9 @@
     ['Haut / bas de structure', 'le retest tient', 4],
     ['Bande d’écart-type (±2σ)', 'le prix revient', 2]
   ];
-  var FORCAGE = 3;             // tentatives par niveau — a mesurer
+  var FORCAGE = 3;             // contacts joues par niveau — a mesurer
   function testabilite(rr) {
-    var B = budget(rr === undefined ? RR_SECURISE : rr);
+    var B = budget(rr === undefined ? RR_BAS : rr);
     return OUTILS.map(function (o) {
       var occ = o[2] * FORCAGE, se = Math.ceil(B.n / occ);
       return { nom: o[0], quoi: o[1], a: STOP_PT, rr: B.rr, occ: occ, contacts: o[2],
@@ -1859,20 +1760,21 @@
 
   function figPreuve() {
     var host = document.getElementById('f-preuve'); if (!host) return;
-    var S = testabilite(RR_SECURISE), E = testabilite(RR_EXTENSION);
+    var S = testabilite(RR_BAS), E = testabilite(RR_HAUT);
     if (ETROIT) return figPreuveEtroit(host, S, E);
-    var W = 1120, H = 520, LAB = 330, PX = LAB + 28, PW = 540, TOP = 96, ROW = 46;
+    var W = 1120, H = 534, LAB = 330, PX = LAB + 28, PW = 540, TOP = 110, ROW = 46;
     var mhi = 240, VX = PX + PW + 22;
     host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
     host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
-    tx(host, 'hdr', 10, 18, 'COMBIEN DE TEMPS POUR ÉTABLIR QUE LA MÉTHODE BAT LE HASARD  ·  ' + MARK + ' v1');
+    bandeau(host, W, MARK + '  ·  BUDGET DE PREUVE',
+      'combien de temps pour établir que la méthode bat le hasard  ·  seuil 95 % unilatéral  ·  ' + FORCAGE + ' contacts joués par niveau');
     function qx(v) { return PX + v / mhi * PW; }
 
     tx(host, 'lvltx', PX, TOP - 52, 'mois de tentatives pour l’établir à 95 %');
     host.appendChild(el('rect', { class: 'barA', x: 12, y: TOP - 60, width: 22, height: 9 }));
-    tx(host, 'lvltx w', 42, TOP - 52, 'rapport sécurisé 1:' + RR_SECURISE);
+    tx(host, 'lvltx w', 42, TOP - 52, 'rapport sécurisé 1:' + RR_BAS);
     host.appendChild(el('rect', { class: 'barO', x: 12, y: TOP - 38, width: 22, height: 9 }));
-    tx(host, 'lvltx', 42, TOP - 30, 'extension 1:' + RR_EXTENSION);
+    tx(host, 'lvltx', 42, TOP - 30, 'extension 1:' + RR_HAUT);
 
     var GH = S.length * ROW;
     [0, 60, 120, 180, 240].forEach(function (v) {
@@ -1893,14 +1795,14 @@
     });
     tx(host, 'axl', PX + PW / 2, TOP + GH + 44, 'mois de tentatives', { 'text-anchor': 'middle' });
 
-    var yC = TOP + GH + 76, P25 = porteeDeSeance(RR_SECURISE), P100 = porteeDeSeance(RR_EXTENSION);
+    var yC = TOP + GH + 76, P25 = porteeDeSeance(RR_BAS), P100 = porteeDeSeance(RR_HAUT);
     host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yC - 22).toFixed(1), x2: W, y2: (yC - 22).toFixed(1) }));
     tx(host, 'lvltx w', 12, yC, 'sans dérive une tentative porte ' + fmt(100 * S[0].p0, 2) + ' % du temps ; le seuil de rentabilité vaut '
       + fmt(100 * S[0].ps, 2) + ' %, soit ' + fmt(100 * S[0].d, 2) + ' point à démontrer');
-    tx(host, 'lvltx', 12, yC + 18, 'à 1:' + RR_EXTENSION + ' l’écart tombe à ' + fmt(100 * E[0].d, 3)
+    tx(host, 'lvltx', 12, yC + 18, 'à 1:' + RR_HAUT + ' l’écart tombe à ' + fmt(100 * E[0].d, 3)
       + ' point : quatre fois plus petit à franchir, quatre fois plus long à prouver (' + fmt(E[0].n, 0) + ' tentatives)');
-    tx(host, 'lvltx', 12, yC + 36, 'portée de séance : la cible de 1:' + RR_SECURISE + ' vaut ' + fmt(P25.sigmas, 2)
-      + ' σ et se touche ' + fmt(100 * P25.p, 0) + ' % des séances ; celle de 1:' + RR_EXTENSION + ' vaut ' + fmt(P100.sigmas, 2)
+    tx(host, 'lvltx', 12, yC + 36, 'portée de séance : la cible de 1:' + RR_BAS + ' vaut ' + fmt(P25.sigmas, 2)
+      + ' σ et se touche ' + fmt(100 * P25.p, 0) + ' % des séances ; celle de 1:' + RR_HAUT + ' vaut ' + fmt(P100.sigmas, 2)
       + ' σ et ' + fmt(100 * P100.p, 1) + ' %');
     tx(host, 'wm', 12, H - 12, 'déclaré : risque ' + RISQUE_R + ' $/tentative · stop ' + fmt(STOP_PT, 0) + ' pt · friction '
       + fmt(FRICTION, 2) + ' pt = ' + fmt(100 * FRICTION_R, 0) + ' % de R · ' + FORCAGE + ' tentatives/niveau · σ séance ' + SIGMA_SEANCE + ' pt · ' + SEANCES_MOIS + ' séances/mois');
@@ -1916,9 +1818,9 @@
     tx(host, 'lvltx', PAD, 40, 'mois de tentatives pour établir');
     tx(host, 'lvltx', PAD, 57, 'que la méthode bat le hasard.');
     host.appendChild(el('rect', { class: 'barA', x: PAD, y: 72, width: 20, height: 9 }));
-    tx(host, 'lvltx w', PAD + 28, 80, '1:' + RR_SECURISE);
+    tx(host, 'lvltx w', PAD + 28, 80, '1:' + RR_BAS);
     host.appendChild(el('rect', { class: 'barO', x: PAD + 92, y: 72, width: 20, height: 9 }));
-    tx(host, 'lvltx', PAD + 120, 80, '1:' + RR_EXTENSION);
+    tx(host, 'lvltx', PAD + 120, 80, '1:' + RR_HAUT);
     var MX = PAD, MW = W - 2 * PAD;
     function qx(v) { return MX + Math.min(v, mhi) / mhi * MW; }
 
@@ -1934,12 +1836,12 @@
       tx(host, 'lvltx halo', W - PAD, y + 88, e.mois > mhi ? '> 20 ans' : fmt(e.mois / 12, 1) + ' ans', { 'text-anchor': 'end' });
     });
 
-    var yC = TOP + S.length * ROW, P25 = porteeDeSeance(RR_SECURISE);
+    var yC = TOP + S.length * ROW, P25 = porteeDeSeance(RR_BAS);
     host.appendChild(el('line', { class: 'axsep', x1: 0, y1: (yC - 20).toFixed(1), x2: W, y2: (yC - 20).toFixed(1) }));
     tx(host, 'lvltx w', PAD, yC + 2, 'le trait vertical : six ans → 72 mois');
     tx(host, 'lvltx', PAD, yC + 21, 'loi nulle ' + fmt(100 * S[0].p0, 2) + ' %  ·  seuil ' + fmt(100 * S[0].ps, 2) + ' %');
-    tx(host, 'lvltx', PAD, yC + 38, fmt(S[0].n, 0) + ' tentatives à 1:' + RR_SECURISE + ', ' + fmt(E[0].n, 0) + ' à 1:' + RR_EXTENSION);
-    tx(host, 'lvltx', PAD, yC + 55, 'la cible de 1:' + RR_SECURISE + ' se touche ' + fmt(100 * P25.p, 0) + ' % des séances');
+    tx(host, 'lvltx', PAD, yC + 38, fmt(S[0].n, 0) + ' tentatives à 1:' + RR_BAS + ', ' + fmt(E[0].n, 0) + ' à 1:' + RR_HAUT);
+    tx(host, 'lvltx', PAD, yC + 55, 'la cible de 1:' + RR_BAS + ' se touche ' + fmt(100 * P25.p, 0) + ' % des séances');
     tx(host, 'wm', PAD, H - 12, 'risque ' + RISQUE_R + ' $ · stop ' + fmt(STOP_PT, 0) + ' pt · friction ' + fmt(100 * FRICTION_R, 0) + ' % de R');
   }
 
@@ -1948,7 +1850,7 @@
   // suivies en premier passage ; la loi terminale, elle, est celle du
   // résultat à soixante séances si rien n'arrêtait le compte. Les deux
   // nombres diffèrent, et c'est le propos.
-  var MC = { sims: 2000, days: 60, sigma: 0.9, target: 6, limit: 4, keep: 220 };
+  var MC = { sims: 2000, days: 60, sigma: 0.9, target: 6, limit: 4, keep: 900 };
   var MCRES = null;
   function monteCarlo() {
     if (MCRES) return MCRES;
@@ -2001,22 +1903,22 @@
     var W = etroit ? 430 : 1000;
     // Sur telephone la gouttiere doit loger « 100 % » a gauche du cadre de
     // repartition : a 46 px elle le coupait.
-    var PX = etroit ? 58 : 56, PY = 52, PW = etroit ? 358 : 400, PH = etroit ? 200 : 270;
+    var PX = etroit ? 58 : 56, PY = 64, PW = etroit ? 358 : 400, PH = etroit ? 200 : 270;
     var QX = etroit ? PX : 560, QW = etroit ? PW : 400;
     var QY = etroit ? PY + PH + 132 : PY, QH = etroit ? 190 : PH;
-    var H = etroit ? QY + QH + 128 : 476;
+    var H = etroit ? QY + QH + 128 : 490;
     host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
     host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
-    tx(host, 'hdr', 10, 18, etroit
-      ? 'MONTE-CARLO  ·  ' + MC.sims + ' évaluations  ·  aucun avantage'
-      : 'MONTE-CARLO  ·  ' + MC.sims + ' évaluations simulées  ·  aucun avantage  ·  ' + MC.days + ' séances');
+    bandeau(host, W, etroit ? 'MONTE-CARLO  ·  ' + MC.sims + ' ÉVALUATIONS' : MARK + '  ·  MONTE-CARLO DE L’ÉVALUATION',
+      etroit ? MC.days + ' séances  ·  aucun avantage'
+        : MC.sims + ' évaluations simulées  ·  ' + MC.days + ' séances  ·  objectif ' + pct(MC.target, 0) + '  ·  limite ' + pct(-MC.limit, 0) + '  ·  aucun avantage');
 
     var lo = -22, hi = 22;
     function hx(v) { return PX + (v - lo) / (hi - lo) * PW; }
     function qx(v) { return QX + (v - lo) / (hi - lo) * QW; }
 
     // — histogramme —
-    var nb = etroit ? 34 : 44, bins = new Array(nb).fill(0);
+    var nb = etroit ? 54 : 84, bins = new Array(nb).fill(0);
     m.ends.forEach(function (e) {
       var k = Math.floor((Math.min(hi - 1e-9, Math.max(lo, e)) - lo) / (hi - lo) * nb);
       bins[k]++;
@@ -2034,7 +1936,7 @@
     for (var i = 0; i < nb; i++) {
       if (!bins[i]) continue;
       var x = PX + i / nb * PW, w = PW / nb;
-      host.appendChild(el('rect', { class: 'barA dim', x: (x + 0.4).toFixed(1), y: hy(bins[i]).toFixed(1), width: (w - 0.8).toFixed(1), height: (PY + PH - hy(bins[i])).toFixed(1) }));
+      host.appendChild(el('rect', { class: 'barA dim', x: (x + 0.22).toFixed(1), y: hy(bins[i]).toFixed(1), width: (w - 0.44).toFixed(1), height: (PY + PH - hy(bins[i])).toFixed(1) }));
     }
     host.appendChild(el('line', { class: 'axsep', x1: PX, y1: PY + PH, x2: PX + PW, y2: PY + PH }));
     [[0.05, 'P5'], [0.25, 'P25'], [0.5, 'P50'], [0.75, 'P75'], [0.95, 'P95']].forEach(function (p, k) {
@@ -2067,6 +1969,12 @@
     }
     [0.25, 0.5, 0.75].forEach(function (f) {
       host.appendChild(el('line', { class: 'grid', x1: QX, y1: QY + QH * f, x2: QX + QW, y2: QY + QH * f }));
+    });
+    // Les memes percentiles que l histogramme, reportes en pointille : les deux
+    // cadres decrivent la meme loi et doivent porter les memes reperes.
+    [0.05, 0.25, 0.5, 0.75, 0.95].forEach(function (q) {
+      var v = m.q(q);
+      host.appendChild(el('line', { class: 'lvldot', x1: qx(v).toFixed(1), y1: QY, x2: qx(v).toFixed(1), y2: QY + QH }));
     });
     poly(host, 'ma f', cpts);
     [[0, '0 %'], [0.5, '50 %'], [1, '100 %']].forEach(function (t) {
@@ -2103,9 +2011,13 @@
     var host = document.getElementById('f-mc3d'); if (!host) return;
     var W = 1000, H = 522, m = monteCarlo();
     host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
-    tx(host, 'hdr', 10, 18, MARK + '  ·  Monte-Carlo en perspective  ·  ' + MC.sims + ' trajectoires, ' + m.paths.length + ' tracées  ·  aucun avantage');
+    bandeau(host, W, MARK + '  ·  MONTE-CARLO EN PERSPECTIVE',
+      MC.sims + ' trajectoires simulées  ·  ' + m.paths.length + ' tracées  ·  ' + MC.days + ' séances  ·  σ ' + fmt(MC.sigma, 1) + ' %/séance  ·  aucun avantage  ·  loi nulle');
 
-    var OX = 132, OY = 302, DX = 8.4, DY = 1.1, SX = 0.72, SY = -0.50, VZ = 5.4;
+    // L ecartement en profondeur se deduit du nombre de fils : a nombre fixe
+    // il faisait sortir la nappe du cadre des qu on la densifiait.
+    var NF = m.paths.length - 1;
+    var OX = 132, OY = 302, DX = 8.4, DY = 1.1, SX = 176 / NF, SY = -124 / NF, VZ = 5.4;
     function P(d, s, v) { return [OX + d * DX + s * SX, OY + d * DY + s * SY - v * VZ]; }
 
     // sol : les deux arêtes du repère
@@ -2122,7 +2034,7 @@
         var p = P(d, s, path[d]);
         pts.push(p[0].toFixed(1) + ',' + p[1].toFixed(1));
       }
-      poly(host, 'mcpath', pts, { opacity: (0.06 + 0.1 * (1 - s / S)).toFixed(3) });
+      poly(host, 'mcpath', pts, { opacity: (0.038 + 0.085 * (1 - s / S)).toFixed(3) });
     }
 
     // percentiles, au premier plan
@@ -2161,6 +2073,100 @@
       tx(host, 'lvltx w', bx + bw - 10, by + 21 + i * 17, pct(l[1], 2), { 'text-anchor': 'end' });
     });
     tx(host, 'wm', W - 14, GU + 16, MARK + ' · loi nulle · aucune donnée de marché', { 'text-anchor': 'end' });
+  }
+
+  // ================= Fig. 5.4 — le relief du délai de preuve ==============
+  // Un nuage de points, pas une maille : une maille pleine cache le versant
+  // arriere, et un filet de separation mange la surface des qu on raffine la
+  // grille. La hauteur porte un logarithme parce que le delai parcourt trois
+  // ordres de grandeur ; l infobulle, elle, publie les mois.
+  var REL_NX = 104, REL_NY = 62;
+  function figRelief() {
+    var host = document.getElementById('f-relief'); if (!host) return;
+    var W = ETROIT ? 430 : 1000, H = ETROIT ? 452 : 560;
+    host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    host.appendChild(el('rect', { class: 'bg', x: 0, y: 0, width: W, height: H }));
+    bandeau(host, W, MARK + '  ·  RELIEF DU DÉLAI DE PREUVE',
+      ETROIT ? 'hauteur logarithmique' : fmt(REL_NX * REL_NY, 0) + ' points calculés  ·  hauteur logarithmique  ·  rapport 1:' + RR_BAS + ' à 1:' + RR_HAUT + '  ·  friction ' + fmt(100 * FRICTION_R, 0) + ' % de R');
+
+    var nx = ETROIT ? 64 : REL_NX, ny = ETROIT ? 40 : REL_NY;
+    var tLo = 1, tHi = 24;                       // tentatives par séance
+    var rLo = RR_BAS, rHi = RR_HAUT;             // rapport
+    function debit(i) { return tLo + (tHi - tLo) * i / (nx - 1); }
+    function rapport(j) { return rLo * Math.pow(rHi / rLo, j / (ny - 1)); }
+    var mois = [], mn = Infinity, mx = 0;
+    for (var j = 0; j < ny; j++) {
+      mois.push([]);
+      for (var i = 0; i < nx; i++) {
+        var m = moisPourPreuve(rapport(j), debit(i));
+        mois[j].push(m); if (m < mn) mn = m; if (m > mx) mx = m;
+      }
+    }
+    var LG = Math.log(mx / mn);
+    function haut(m) { return Math.log(m / mn) / LG; }
+
+    // Le maximum se met au fond : en projection isometrique le coin (0,0) est
+    // le plus eloigne, et un relief qui monte vers l horizon se lit.
+    var OX = ETROIT ? 78 : 176, OY = ETROIT ? 292 : 392;
+    var DX = (ETROIT ? 236 : 560) / (nx - 1), DY = (ETROIT ? 58 : 74) / (nx - 1);
+    var SX = (ETROIT ? 92 : 208) / (ny - 1), SY = (ETROIT ? -62 : -132) / (ny - 1);
+    var VZ = ETROIT ? 138 : 186;
+    function P(i, j, h) { return [OX + i * DX + j * SX, OY + i * DY + j * SY - h * VZ]; }
+
+    // le sol, en filets
+    for (var g = 0; g <= 4; g++) {
+      var a1 = P(0, (ny - 1) * g / 4, 0), a2 = P(nx - 1, (ny - 1) * g / 4, 0);
+      host.appendChild(el('line', { class: 'cloudgrid', x1: a1[0].toFixed(1), y1: a1[1].toFixed(1), x2: a2[0].toFixed(1), y2: a2[1].toFixed(1) }));
+      var b1 = P((nx - 1) * g / 4, 0, 0), b2 = P((nx - 1) * g / 4, ny - 1, 0);
+      host.appendChild(el('line', { class: 'cloudgrid', x1: b1[0].toFixed(1), y1: b1[1].toFixed(1), x2: b2[0].toFixed(1), y2: b2[1].toFixed(1) }));
+    }
+    // les quatre montants
+    [[0, 0], [nx - 1, 0], [0, ny - 1], [nx - 1, ny - 1]].forEach(function (c) {
+      var s = P(c[0], c[1], 0), t = P(c[0], c[1], haut(mois[c[1]][c[0]]));
+      host.appendChild(el('line', { class: 'cloudgrid', x1: s[0].toFixed(1), y1: s[1].toFixed(1), x2: t[0].toFixed(1), y2: t[1].toFixed(1) }));
+    });
+
+    // les profils, un rang sur six : ils tissent la surface sous le nuage et
+    // rendent la pente lisible la ou les points seuls ne la donnent pas
+    for (var jp = 0; jp < ny; jp += 6) {
+      var pts = [];
+      for (var ip = 0; ip < nx; ip++) { var q = P(ip, jp, haut(mois[jp][ip])); pts.push(q[0].toFixed(1) + ',' + q[1].toFixed(1)); }
+      poly(host, 'mcpath', pts, { opacity: 0.30 });
+    }
+    // le nuage : du fond vers l avant, pour que le proche recouvre le lointain
+    for (var jj = 0; jj < ny; jj++) {
+      for (var ii = 0; ii < nx; ii++) {
+        var h = haut(mois[jj][ii]), p = P(ii, jj, h);
+        host.appendChild(el('circle', { class: 'pt', cx: p[0].toFixed(1), cy: p[1].toFixed(1),
+          r: (0.55 + 1.15 * h).toFixed(2), opacity: (0.16 + 0.78 * h).toFixed(3) }));
+      }
+    }
+
+    // l echine graduee, a gauche
+    var ech = [3, 12, 72, 300, 1200];
+    ech.forEach(function (m) {
+      if (m < mn || m > mx) return;
+      var p = P(0, 0, haut(m));
+      host.appendChild(el('line', { class: 'cloudgrid', x1: (p[0] - 7).toFixed(1), y1: p[1].toFixed(1), x2: p[0].toFixed(1), y2: p[1].toFixed(1) }));
+      tx(host, 'px d', p[0] - 11, p[1] + 4, m >= 12 ? fmt(m / 12, 0) + ' ans' : m + ' mois', { 'text-anchor': 'end' });
+    });
+
+    // les deux arêtes du sol, nommées
+    var f0 = P(0, 0, 0), fx = P(nx - 1, 0, 0), fy = P(0, ny - 1, 0);
+    tx(host, 'lvltx', (f0[0] + fx[0]) / 2, (f0[1] + fx[1]) / 2 + 30, 'tentatives par séance  :  ' + tLo + '  →  ' + tHi, { 'text-anchor': 'middle' });
+    tx(host, 'lvltx halo', fy[0] + 10, fy[1] + 4, 'rapport 1:' + rHi);
+    tx(host, 'lvltx halo', f0[0] + 10, f0[1] + 18, 'rapport 1:' + rLo);
+
+    var yb = H - (ETROIT ? 54 : 58);
+    host.appendChild(el('line', { class: 'axsep', x1: 0, y1: yb.toFixed(1), x2: W, y2: yb.toFixed(1) }));
+    if (ETROIT) {
+      tx(host, 'lvltx w', 12, yb + 20, 'de ' + fmt(mn, 1) + ' mois à ' + fmt(mx / 12, 0) + ' ans');
+      tx(host, 'lvltx', 12, yb + 37, 'le rapport pèse plus que le débit');
+    } else {
+      tx(host, 'lvltx w', 12, yb + 22, 'de ' + fmt(mn, 1) + ' mois au coin le plus proche à ' + fmt(mx / 12, 0)
+        + ' ans au plus lointain — un facteur ' + fmt(mx / mn, 0) + ' sur deux axes seulement');
+      tx(host, 'wm', 12, yb + 44, MARK + ' · ' + fmt(nx * ny, 0) + ' points · loi nulle · aucune donnée de marché');
+    }
   }
 
   // ================= Fig. 7.1 — suivi du capital =================
@@ -2372,11 +2378,8 @@
     function pose(id, s) { var e = document.getElementById(id); if (e) e.textContent = s; }
     pose('p-risque', RISQUE_R + ' $');
     pose('p-stop', fmt(STOP_PT, 0) + ' pt');
-    pose('p-rr', '1:' + RR_SECURISE);
-    pose('p-cible', 'la cible est à ' + fmt(budget(RR_SECURISE).cible, 0) + ' points, soit ' + fmt(porteeDeSeance(RR_SECURISE).sigmas, 2) + ' écart-type de séance — elle se touche ' + fmt(100 * porteeDeSeance(RR_SECURISE).p, 0) + ' % des séances');
-    pose('p-rrx', '1:' + RR_EXTENSION + ' et au-delà');
-    pose('p-ciblex', fmt(budget(RR_EXTENSION).cible, 0) + ' points, soit ' + fmt(porteeDeSeance(RR_EXTENSION).sigmas, 2) + ' écart-type — elle ne se touche que ' + fmt(100 * porteeDeSeance(RR_EXTENSION).p, 1) + ' % des séances, et c\u2019est pour cela qu\u2019elle reste une extension et non un objectif');
-    pose('p-forcage', FORCAGE + ' tentatives par niveau en moyenne — déclaré, à remplacer par la mesure');
+    pose('p-rr', 'entre 1:' + RR_BAS + ' et 1:' + RR_HAUT);
+    pose('p-cible', 'soit une cible de ' + fmt(budget(RR_BAS).cible, 0) + ' à ' + fmt(budget(RR_HAUT).cible, 0) + ' points');
     pose('p-fric', fmt(FRICTION, 2) + ' pt = ' + fmt(100 * FRICTION_R, 0) + ' % de R');
   })();
 
@@ -2384,7 +2387,6 @@
   figCockpit();
   figGex();
   figDecision();
-  figForcage();
   figStruct();
   figVolp();
   figVwap();
@@ -2394,6 +2396,7 @@
   figPreuve();
   figMc();
   figMc3d();
+  figRelief();
   figEquity();
 })();
 </script>
