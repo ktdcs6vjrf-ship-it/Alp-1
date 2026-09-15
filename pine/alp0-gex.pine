@@ -382,6 +382,10 @@ if barstate.islast
     rows = str.split(raw, "\n")
     for i = 0 to array.size(rows) - 1
         row = str.trim(array.get(rows, i))
+        // Un en-tete de tableau ouvre le bloc CSV meme sans titre de section :
+        // un robot qui repond par le seul tableau reste lisible.
+        enteteCsv = str.contains(str.lower(row), "strike") and
+             str.contains(row, ",")
         if str.startswith(row, "#")
             l = str.lower(row)
             section := str.contains(l, "level") or str.contains(l, "niveau") ?
@@ -390,7 +394,9 @@ if barstate.islast
                   "contexte" :
                   str.contains(l, "data") or str.contains(l, "donnee") ?
                   "data" : "autre"
-        else if str.length(row) > 0 and section == "data"
+        else if enteteCsv or (str.length(row) > 0 and section == "data")
+            if enteteCsv
+                section := "data"
             champs = str.split(row, ",")
             nc = array.size(champs)
             if nc > 1
@@ -402,13 +408,29 @@ if barstate.islast
                         nom = str.lower(str.trim(array.get(champs, c)))
                         if nom == "strike"
                             iStrike := c
-                        if iVal < 0 and str.contains(nom, "net")
+                        if iVal < 0 and (str.contains(nom, "net") or
+                             str.contains(nom, "gex"))
                             iVal := c
                     if iVal < 0
                         iVal := nc - 1
                 else if iStrike >= 0 and iVal >= 0 and nc > math.max(iStrike, iVal)
                     k = str.tonumber(nettoyerNombre(array.get(champs, iStrike)))
                     w = str.tonumber(nettoyerNombre(array.get(champs, iVal)))
+                    // A defaut d'en-tete, l'echeance se lit dans la colonne
+                    // d'expiration du tableau : « 2026-09-16 » sur une seance
+                    // du 14 rend « 2 », donc 2CR et 2R1.
+                    if prefixe == "" and prefixeLu == ""
+                        dparts = str.split(str.trim(array.get(champs, 0)), "-")
+                        if array.size(dparts) == 3
+                            yy = str.tonumber(array.get(dparts, 0))
+                            mm = str.tonumber(array.get(dparts, 1))
+                            dd = str.tonumber(array.get(dparts, 2))
+                            if not na(yy) and not na(mm) and not na(dd)
+                                tExp = timestamp(int(yy), int(mm), int(dd), 0, 0)
+                                tJour = timestamp(year, month, dayofmonth, 0, 0)
+                                j = math.round((tExp - tJour) / 86400000.0)
+                                if j >= 0 and j <= 999
+                                    prefixeLu := str.tostring(int(j))
                     if not na(k) and not na(w)
                         // Le poids d'un strike est la somme des VALEURS
                         // ABSOLUES de ses jambes : un call et un put au meme
