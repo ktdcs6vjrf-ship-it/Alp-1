@@ -365,7 +365,7 @@ ecartSans = na(medLvl) ? na : math.abs(medLvl - close)
 ecartAvec = na(medLvl) ? na : math.abs(medLvl + basis - close)
 autoApp   = na(medLvl) ? true : ecartAvec <= ecartSans
 appliquer = application == "Jamais" ? false :
-            application == "Toujours" ? true : autoApp
+             application == "Toujours" ? true : autoApp
 baseApp   = appliquer ? basis : 0.0
 
 prixDe(int i) => array.get(lvlIdx, i) + baseApp
@@ -415,7 +415,7 @@ motif(string s) =>
          s == "Tirets" ? line.style_dashed : line.style_dotted
 
 corps = txtSize == "Minuscule" ? size.tiny :
-        txtSize == "Normal"    ? size.normal : size.small
+         txtSize == "Normal"   ? size.normal : size.small
 
 if barstate.islast
     while array.size(lines) > 0

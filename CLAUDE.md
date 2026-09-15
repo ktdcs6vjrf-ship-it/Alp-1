@@ -1508,6 +1508,17 @@ Hors du noyau Python
   compilateur Pine n'est joignable depuis le dépôt**, donc c'est la seule façon
   de vérifier qu'un collage rend les niveaux attendus sans ouvrir TradingView.
   Il ne participe ni aux documents ni aux tests.
+  Piège de langage, trouvé par l'éditeur et pas par la relecture : **une ligne
+  de continuation ne doit jamais être indentée d'un multiple de quatre.** Pine
+  réserve ces indentations aux blocs locaux, donc une continuation posée à
+  douze espaces se lit comme l'ouverture d'un bloc et rend
+  « Syntax error at input end of line without line continuation ». Le fichier
+  en portait deux sur quatre-vingt-six. Un balayage de quinze lignes les
+  trouve — repérer les lignes qui finissent par un opérateur, lire
+  l'indentation de la suivante — et il vaut mieux que l'œil, qui voit un
+  alignement soigné là où le compilateur voit un bloc. Le `=> valeur` par
+  défaut d'un `switch` est indenté de quatre **à juste titre** : c'est une
+  branche, pas une continuation.
   Voir `docs/gex-discord-vers-tradingview.md`.
 - Ces trois fichiers ne participent ni aux documents ni aux tests : ils n'ont
   pas de loi nulle et n'en revendiquent aucune. **La version déployée sur le
