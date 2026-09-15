@@ -1468,7 +1468,22 @@ Hors du noyau Python
   murale. Sans barre alignée il refuse de publier un nombre et trace en
   pointillé. Ce que le retard ne casse pas : les niveaux (la base dérive de
   0,2 point par quart d'heure, calculé). Ce qu'il casse : la colonne
-  « distance au prix », qui parle d'un prix vieux d'autant.
+  « distance au prix », qui parle d'un prix vieux d'autant — désactivée par
+  défaut pour cette raison.
+  Rendu : un objet `line` ne dépose **rien** sur l'échelle des prix, c'est un
+  dessin et pas une série. Le prix d'un niveau y arrive donc par **douze
+  emplacements `plot` fixes**, tracés en `display.price_scale` seul — ils ne
+  dessinent rien dans le panneau, où le trait pointillé fait tout le travail.
+  Douze est une limite dure : le nombre de `plot` d'un script est fixé à la
+  compilation et ne peut pas suivre une liste. Trois pièges de langage y sont
+  refermés : `display` n'accepte qu'une **constante**, donc l'interrupteur vide
+  la série au lieu de changer le paramètre ; les trois tableaux naissent à la
+  taille douze remplis de vide, pour qu'`array.get` ne soit jamais hors bornes
+  quelle que soit la façon dont Pine évalue la branche non prise d'un ternaire ;
+  et l'intitulé en bout de trait est une bulle `style_label_left` rendue
+  **totalement transparente**, seule façon de caler un texte à gauche de son
+  ancre sans cartouche. Les trois familles se distinguent par la valeur **et**
+  par le motif de trait, jamais par la teinte seule.
   Voir `docs/gex-discord-vers-tradingview.md`.
 - Ces trois fichiers ne participent ni aux documents ni aux tests : ils n'ont
   pas de loi nulle et n'en revendiquent aucune. **La version déployée sur le

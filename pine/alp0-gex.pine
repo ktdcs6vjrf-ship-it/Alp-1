@@ -18,11 +18,22 @@ indicator("Alp-0 GEX", "Alp-0 GEX", overlay = true,
 //
 //    1. recevoir la liste collee telle quelle, une ligne par niveau ;
 //    2. mesurer la base NQ − NDX en direct, sur le graphique lui-meme ;
-//    3. tracer chaque niveau converti, etiquete, avec sa distance au prix.
+//    3. tracer chaque niveau converti, etiquete, et POSER SON PRIX DANS
+//       L'ECHELLE DE DROITE comme le fait un niveau natif.
 //
 //  Le collage est la seule action manuelle, et elle prend cinq secondes par
 //  jour. La conversion, elle, n'est jamais faite a la main : c'est la seule
 //  partie ou une erreur coute quelque chose.
+//
+//  Le prix dans l'echelle de droite — pourquoi il faut un `plot`
+//  ------------------------------------------------------------
+//  Un objet `line` ne depose rien sur l'echelle des prix : c'est un dessin,
+//  pas une serie. Seul un `plot` y pose son etiquette. Les niveaux passent
+//  donc par DOUZE emplacements fixes, traces en `display.price_scale` — donc
+//  invisibles dans le panneau, ou la ligne pointillee et son intitule font
+//  tout le travail — et l'echelle porte les prix comme pour n'importe quel
+//  indicateur natif. Douze est une limite dure de Pine : le nombre de `plot`
+//  d'un script est fixe a la compilation et ne peut pas suivre une liste.
 //
 //  Le decalage des deux flux — la seule facon de se tromper sans le voir
 //  -------------------------------------------------------------------
@@ -72,6 +83,8 @@ indicator("Alp-0 GEX", "Alp-0 GEX", overlay = true,
 //  pour qu'on lise cette colonne en le sachant.
 // ═══════════════════════════════════════════════════════════════════════════
 
+MAXN = 12
+
 
 // ─── ① Les niveaux ────────────────────────────────────────────────────────
 gA = "① Niveaux, en points d'indice"
@@ -81,7 +94,8 @@ raw = input.text_area(
      group = gA,
      tooltip = "Une ligne par niveau. « prix = etiquette », l'etiquette " +
                "etant facultative. Les lignes vides et celles commencant " +
-               "par # sont ignorees.")
+               "par # sont ignorees. Douze niveaux au maximum : au-dela, " +
+               "l'echelle de droite ne pourrait plus porter leur prix.")
 
 // ─── ② La conversion ──────────────────────────────────────────────────────
 gB = "② Conversion indice → future"
@@ -118,26 +132,54 @@ decalIdx = input.int(0, "Recaler l'indice de N barres", minval = 0, maxval = 60,
                "le panneau affiche.")
 showDiag = input.bool(true, "Afficher le diagnostic de decalage", group = gD)
 
-// ─── ④ Apparence ──────────────────────────────────────────────────────────
-gC = "④ Apparence"
-colCall = input.color(color.new(#E0625C, 0), "Resistance / call",  group = gC)
-colPut  = input.color(color.new(#6E9BFF, 0), "Support / put",      group = gC)
-colFlip = input.color(color.new(#E4E6EA, 0), "Bascule / neutre",   group = gC)
+// ─── ④ Le trait ───────────────────────────────────────────────────────────
+//  Trois familles, distinguees par la VALEUR et par le MOTIF, jamais par la
+//  teinte seule : c'est ce qui rend la planche lisible en noir et blanc, et
+//  lisible tout court pour qui ne separe pas deux couleurs proches.
+gC = "④ Le trait"
+colCall = input.color(color.new(#F2F5F9, 0), "Resistance / call",  group = gC)
+colPut  = input.color(color.new(#8F98A3, 0), "Support / put",      group = gC)
+colFlip = input.color(color.new(#C3CAD3, 0), "Bascule / neutre",   group = gC)
 colWarn = input.color(color.new(#F2B138, 0), "Alerte de decalage", group = gC)
-lw      = input.int(2, "Epaisseur", minval = 1, maxval = 5,        group = gC)
-extendR = input.int(60, "Prolonger de N barres", minval = 0, maxval = 500,
+stCall  = input.string("Tirets",     "Motif · resistance", group = gC,
+     options = ["Plein", "Tirets", "Pointilles"])
+stPut   = input.string("Tirets",     "Motif · support",    group = gC,
+     options = ["Plein", "Tirets", "Pointilles"])
+stFlip  = input.string("Pointilles", "Motif · bascule",    group = gC,
+     options = ["Plein", "Tirets", "Pointilles"])
+lw      = input.int(1, "Epaisseur", minval = 1, maxval = 5, group = gC)
+voile   = input.int(30, "Voile du trait", minval = 0, maxval = 90, group = gC,
+     tooltip = "Un niveau est un repere, pas le sujet du graphique : un trait " +
+               "legerement voile laisse les bougies au premier plan.")
+x1Off   = input.int(40, "Commencer N barres avant", minval = 0, maxval = 500,
+     group = gC,
+     tooltip = "Le trait part a gauche du prix pour qu'on voie ce que le " +
+               "niveau a deja fait, et non seulement ou il est.")
+extendR = input.int(14, "Prolonger de N barres", minval = 0, maxval = 500,
      group = gC)
-showDist = input.bool(true, "Afficher la distance au prix", group = gC)
-showBase = input.bool(true, "Afficher la base mesuree",     group = gC)
+
+// ─── ⑤ Les intitules ──────────────────────────────────────────────────────
+gE = "⑤ Les intitules"
+tagsAxe  = input.bool(true, "Poser le prix dans l'echelle de droite",
+     group = gE,
+     tooltip = "Douze emplacements traces en price_scale seulement : ils ne " +
+               "dessinent rien dans le panneau et portent le prix sur " +
+               "l'echelle, comme un niveau natif.")
+showTag  = input.bool(true, "Intitule en bout de trait", group = gE)
+showPrix = input.bool(true, "Rappeler le prix dans l'intitule", group = gE)
+showDist = input.bool(false, "Ajouter la distance au prix", group = gE,
+     tooltip = "Desactive par defaut : sur un flux differe, cette distance " +
+               "compare le niveau a un prix vieux du differe. Le panneau " +
+               "publie ce retard.")
+txtSize  = input.string("Petit", "Corps de l'intitule", group = gE,
+     options = ["Minuscule", "Petit", "Normal"])
+showBase = input.bool(true, "Afficher le panneau de base", group = gE)
 
 
 // ─── La base ──────────────────────────────────────────────────────────────
 // Le cours de l'indice ET l'horodatage de la barre dont ce cours provient.
 // La seconde requete est tout l'objet du fichier : sans elle, rien ne
 // distingue une base juste d'une base qui a mange un quart d'heure de derive.
-// `ignore_invalid_symbol` evite que l'indicateur disparaisse si le symbole est
-// mal ecrit, et `lookahead_off` interdit tout regard vers l'avenir — meme sur
-// un report, une barre qui se repeint est un piege.
 idxCloseRaw = request.security(idxSym, timeframe.period, close,
      lookahead = barmerge.lookahead_off, ignore_invalid_symbol = true)
 idxTimeRaw  = request.security(idxSym, timeframe.period, time_close,
@@ -185,71 +227,152 @@ basis = switch mode
 retardMin = math.max(0.0, (timenow - time_close) / 60000.0)
 
 
-// ─── Le tracé ─────────────────────────────────────────────────────────────
-var line[]  lines  = array.new<line>()
-var label[] labels = array.new<label>()
+// ─── La liste, lue une fois ───────────────────────────────────────────────
+// Pine relance le script entier quand un `input` change, donc lire la zone de
+// texte a la premiere barre suffit : la liste ne peut pas changer en cours de
+// route sans que tout soit recalcule. Ce qui change a chaque barre, c'est la
+// base, donc le PRIX du niveau — pas le niveau d'indice qu'on a colle.
+// Les trois tableaux naissent a la taille MAXN, remplis de vide. Un `array.get`
+// n'est alors jamais hors bornes, ce qui evite de dependre du fait qu'une
+// branche non prise d'un ternaire soit evaluee ou non — elle l'est parfois.
+var float[]  lvlIdx = array.new<float>(MAXN, na)
+var string[] lvlTag = array.new<string>(MAXN, "")
+var int[]    lvlFam = array.new<int>(MAXN, 2)
+var int      nLvl   = 0
 
-// Un mot de l'etiquette suffit a choisir la couleur. Le classement est
+// Un mot de l'etiquette suffit a ranger le niveau. Le classement est
 // volontairement grossier : il ne sert qu'a distinguer trois familles d'un
 // coup d'oeil, et toute etiquette inconnue reste neutre.
-teinte(string tag) =>
+famille(string tag) =>
     t = str.lower(tag)
     isCall = str.contains(t, "call") or str.contains(t, "resist") or
-             str.contains(t, "wall+") or str.contains(t, "cw")
+             str.contains(t, "wall+") or str.contains(t, "cw") or
+             str.contains(t, "cr")
     isPut  = str.contains(t, "put") or str.contains(t, "support") or
-             str.contains(t, "pw")
-    isCall ? colCall : isPut ? colPut : colFlip
+             str.contains(t, "pw") or str.contains(t, "ps")
+    isCall ? 0 : isPut ? 1 : 2
 
-if barstate.islast
-    // Tout est redessine a chaque tick de la derniere barre : c'est le seul
-    // moyen sûr de refleter un changement de la zone de texte.
-    while array.size(lines) > 0
-        line.delete(array.pop(lines))
-    while array.size(labels) > 0
-        label.delete(array.pop(labels))
-
-    x1 = bar_index - 1
-    x2 = bar_index + extendR
-
-    // Une base non mesurable ne se trace pas en silence : les niveaux sont
-    // pointilles tant que la conversion repose sur un repli.
-    douteux = mode == "Base alignee" and not mesurable
-    styleLn = douteux ? line.style_dashed : line.style_solid
-
+if barstate.isfirst
     rows = str.split(raw, "\n")
     for i = 0 to array.size(rows) - 1
         row = str.trim(array.get(rows, i))
-        if str.length(row) > 0 and str.substring(row, 0, 1) != "#"
+        vide = str.length(row) == 0 or str.substring(row, 0, 1) == "#"
+        if not vide and nLvl < MAXN
             // Un seul separateur possible par ligne ; on essaie les trois.
             sep = str.contains(row, "=") ? "=" :
                   str.contains(row, ":") ? ":" :
                   str.contains(row, "|") ? "|" : ""
             parts = sep == "" ? array.from(row) : str.split(row, sep)
-            priceTxt = str.trim(array.get(parts, 0))
-            tag = array.size(parts) > 1 ? str.trim(array.get(parts, 1)) : ""
-            idxLvl = str.tonumber(priceTxt)
-            if not na(idxLvl)
-                lvl = idxLvl + basis
-                col = teinte(tag)
-                ln = line.new(x1, lvl, x2, lvl, xloc = xloc.bar_index,
-                     color = col, width = lw, style = styleLn)
-                array.push(lines, ln)
+            v = str.tonumber(str.trim(array.get(parts, 0)))
+            tg = array.size(parts) > 1 ? str.trim(array.get(parts, 1)) : ""
+            if not na(v)
+                array.set(lvlIdx, nLvl, v)
+                array.set(lvlTag, nLvl, tg)
+                array.set(lvlFam, nLvl, famille(tg))
+                nLvl := nLvl + 1
 
+prixDe(int i) => array.get(lvlIdx, i) + basis
+teinteDe(int i) =>
+    f = array.get(lvlFam, i)
+    f == 0 ? colCall : f == 1 ? colPut : colFlip
+
+
+// ─── Le prix dans l'echelle de droite ─────────────────────────────────────
+// Douze emplacements fixes. `display.price_scale` seul : rien n'est dessine
+// dans le panneau — la ligne pointillee s'en charge — et l'echelle porte le
+// prix. Un emplacement vide rend `na` et disparait de lui-meme.
+// `display` n'accepte qu'une constante, donc l'interrupteur ne peut pas y
+// passer : c'est la serie qu'on vide, et une serie vide ne pose rien.
+p00 = tagsAxe ? prixDe(0)  : na
+p01 = tagsAxe ? prixDe(1)  : na
+p02 = tagsAxe ? prixDe(2)  : na
+p03 = tagsAxe ? prixDe(3)  : na
+p04 = tagsAxe ? prixDe(4)  : na
+p05 = tagsAxe ? prixDe(5)  : na
+p06 = tagsAxe ? prixDe(6)  : na
+p07 = tagsAxe ? prixDe(7)  : na
+p08 = tagsAxe ? prixDe(8)  : na
+p09 = tagsAxe ? prixDe(9)  : na
+p10 = tagsAxe ? prixDe(10) : na
+p11 = tagsAxe ? prixDe(11) : na
+plot(p00, "Niveau 1",  teinteDe(0),  display = display.price_scale, editable = false)
+plot(p01, "Niveau 2",  teinteDe(1),  display = display.price_scale, editable = false)
+plot(p02, "Niveau 3",  teinteDe(2),  display = display.price_scale, editable = false)
+plot(p03, "Niveau 4",  teinteDe(3),  display = display.price_scale, editable = false)
+plot(p04, "Niveau 5",  teinteDe(4),  display = display.price_scale, editable = false)
+plot(p05, "Niveau 6",  teinteDe(5),  display = display.price_scale, editable = false)
+plot(p06, "Niveau 7",  teinteDe(6),  display = display.price_scale, editable = false)
+plot(p07, "Niveau 8",  teinteDe(7),  display = display.price_scale, editable = false)
+plot(p08, "Niveau 9",  teinteDe(8),  display = display.price_scale, editable = false)
+plot(p09, "Niveau 10", teinteDe(9),  display = display.price_scale, editable = false)
+plot(p10, "Niveau 11", teinteDe(10), display = display.price_scale, editable = false)
+plot(p11, "Niveau 12", teinteDe(11), display = display.price_scale, editable = false)
+
+
+// ─── Le tracé ─────────────────────────────────────────────────────────────
+var line[]  lines  = array.new<line>()
+var label[] labels = array.new<label>()
+
+motif(string s) =>
+    s == "Plein" ? line.style_solid :
+         s == "Tirets" ? line.style_dashed : line.style_dotted
+
+corps = txtSize == "Minuscule" ? size.tiny :
+        txtSize == "Normal"    ? size.normal : size.small
+
+if barstate.islast
+    // Tout est redessine a chaque tick de la derniere barre : c'est le seul
+    // moyen sûr de refleter un changement de la base.
+    while array.size(lines) > 0
+        line.delete(array.pop(lines))
+    while array.size(labels) > 0
+        label.delete(array.pop(labels))
+
+    x1 = bar_index - x1Off
+    x2 = bar_index + extendR
+
+    // Une base non mesurable ne se trace pas en silence : le trait passe en
+    // pointille et le panneau le dit, tant que la conversion est un repli.
+    douteux = mode == "Base alignee" and not mesurable
+
+    if nLvl > 0
+        for i = 0 to nLvl - 1
+            lvl = prixDe(i)
+            f   = array.get(lvlFam, i)
+            tg  = array.get(lvlTag, i)
+            col = teinteDe(i)
+            st  = douteux ? line.style_dotted :
+                  motif(f == 0 ? stCall : f == 1 ? stPut : stFlip)
+
+            ln = line.new(x1, lvl, x2, lvl, xloc = xloc.bar_index,
+                 color = color.new(col, voile), width = lw, style = st)
+            array.push(lines, ln)
+
+            if showTag
+                // Bulle rendue totalement transparente : il ne reste que le
+                // texte, cale a gauche de son ancre — c'est la seule facon
+                // d'aligner un intitule sur le bout du trait sans cartouche.
                 dist = lvl - close
-                txt = (tag == "" ? str.tostring(idxLvl, format.mintick) : tag) +
-                      "  " + str.tostring(lvl, format.mintick) +
+                // Un niveau sans etiquette garde son prix : sans quoi le
+                // trait porterait une bulle vide, qui se lit comme un defaut.
+                prix = showPrix or tg == ""
+                txt = (tg == "" ? "" : str.upper(tg)) +
+                      (prix ? (tg == "" ? "" : "   ") +
+                              str.tostring(lvl, format.mintick) : "") +
                       (showDist ? "   " + (dist >= 0 ? "+" : "") +
                                   str.tostring(dist, "#.##") : "")
                 lb = label.new(x2, lvl, txt, xloc = xloc.bar_index,
-                     style = label.style_label_left, color = color.new(col, 88),
-                     textcolor = col, size = size.small)
+                     style = label.style_label_left,
+                     color = color.new(color.black, 100),
+                     textcolor = color.new(col, math.min(voile, 20)),
+                     size = corps)
                 array.push(labels, lb)
 
     if showBase
         string entete = na
         if mesurable or mode != "Base alignee"
             entete := "base " + str.tostring(basis, "#.##") + "  ·  " +
-                 str.tostring(array.size(lines)) + " niveaux"
+                 str.tostring(nLvl) + " niveaux"
         else
             entete := "FLUX DESYNCHRONISES  ·  base non mesurable  ·  repli " +
                  str.tostring(fixedBas, "#.##")
@@ -275,6 +398,6 @@ if barstate.islast
         teintePanneau = mesurable or mode != "Base alignee" ? colFlip : colWarn
         lbBase = label.new(bar_index, close, entete + diag,
              xloc = xloc.bar_index, style = label.style_label_up,
-             color = color.new(teintePanneau, 90), textcolor = teintePanneau,
+             color = color.new(color.black, 88), textcolor = teintePanneau,
              size = size.small)
         array.push(labels, lbBase)
