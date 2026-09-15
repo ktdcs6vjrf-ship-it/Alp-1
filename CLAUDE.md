@@ -1484,6 +1484,19 @@ Hors du noyau Python
   **totalement transparente**, seule façon de caler un texte à gauche de son
   ancre sans cartouche. Les trois familles se distinguent par la valeur **et**
   par le motif de trait, jamais par la teinte seule.
+  Vocabulaire : `codeDe` range les noms longs d'un robot sous les codes courts
+  de l'opérateur — `PS` put support, `CR` call resistance, `MP` max pain,
+  `GW` gamma wall, `HVL` gamma flip, `RM` résistance macro, `R1/R2/S1/S2`
+  gardés tels quels. **L'ordre des tests porte le sens** : « major wall » se
+  range en `GW` avant que « wall » ne le fasse basculer, « resistance macro »
+  en `RM` avant que « resistance » ne le prenne. Le **préfixe d'échéance ne
+  s'écrit pas à la main** : il se lit dans `## Context` (`horizon: 0 dte` →
+  `0CR`), et c'est la seule raison pour laquelle cette section est lue. Coller
+  deux exports d'échéances différentes à la suite donne donc `0CR` et `30CR`
+  sur la même planche. `RM` est exempt de préfixe — « macro » *est* son
+  échéance. Les zones partagent **un trait, une teinte, un style** (gris foncé,
+  continu) : ce qui les distingue est leur nom, pas leur apparence. Vingt
+  emplacements de `plot`.
   Lecture : l'export markdown entier d'un robot se colle **sans retouche**. Le
   sens de lecture est **déduit** (le nombre est à gauche ou à droite du
   séparateur selon le format) ; le nombre se nettoie de ce qui le décore mais

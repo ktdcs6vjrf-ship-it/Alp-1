@@ -134,6 +134,54 @@ n'est pas dans la chaîne des documents et ne prétend rien mesurer : elle sert 
 vérifier qu'un collage donné rend les niveaux attendus **sans avoir à ouvrir
 TradingView**, puisqu'aucun compilateur Pine n'est joignable depuis le dépôt.
 
+### Le vocabulaire, et le préfixe qu'on n'écrit pas
+
+Un robot écrit « call wall », un opérateur lit **CR**. La table de
+correspondance est dans `codeDe`, en un seul endroit :
+
+| code | nom | ce qui s'y range |
+|---|---|---|
+| `PS` | put support | put wall, put support, support |
+| `CR` | call resistance | call wall, call resistance, resistance |
+| `MP` | max pain | max pain |
+| `GW` | gamma wall | gamma wall, major wall |
+| `HVL` | gamma flip | flip, gamma flip, hvl |
+| `RM` | résistance macro | tout ce qui porte « macro » |
+| `R1` `R2` `S1` `S2` | supports et résistances secondaires | gardés tels quels |
+
+**L'ordre des tests porte le sens.** « major wall » se range en `GW` avant que
+« wall » ne le fasse basculer ailleurs ; « resistance macro » en `RM` avant
+que « resistance » ne le prenne. Une table de correspondance dont l'ordre est
+arbitraire finit par ranger le mauvais mot.
+
+Le **préfixe d'échéance ne s'écrit pas à la main** : il se lit dans l'en-tête
+de l'export. `- **horizon:** 0 dte` rend `0PS`, `0CR`, `0HVL`. C'est la seule
+raison pour laquelle la section `## Context` est lue — tout le reste de
+l'en-tête tombe.
+
+Conséquence pratique : **coller deux exports d'échéances différentes à la
+suite** donne `0CR` et `30CR` sur la même planche, chacun avec la sienne, sans
+avoir à les distinguer à la main. Le préfixe se remet à zéro à chaque
+`## Context` rencontré. Un code déjà préfixé dans le texte collé garde le
+sien, et `RM` en est exempt : « macro » *est* son échéance, donc `30RM` dirait
+deux fois la même chose et mal.
+
+Deux zones au même prix ne font qu'un trait, et leurs codes se joignent :
+`0CR/0PS`. C'est le cas courant — un mur d'appel et un mur de vente tombent
+souvent sur le même strike.
+
+### Un seul trait, gris foncé, continu
+
+Les zones ne sont pas le sujet du graphique : ce sont des repères. Elles
+partagent donc **un trait, une teinte, un style** — gris foncé, continu, une
+épaisseur — et ce qui les distingue est leur **nom**, pas leur apparence. Le
+trait part soixante barres à gauche du prix, pour qu'on voie ce que la zone a
+déjà fait et pas seulement où elle est.
+
+Vingt emplacements, contre douze auparavant : deux échéances collées à la
+suite en occupent une quinzaine. Vingt est une limite dure, le nombre de
+`plot` d'un script étant fixé à la compilation.
+
 ### L'échelle, mesurée et non supposée
 
 Un robot qui publie « NDX » peut publier des strikes d'indice, ou des niveaux
