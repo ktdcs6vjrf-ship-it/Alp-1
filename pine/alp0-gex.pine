@@ -377,9 +377,41 @@ if barstate.islast
     // tout se lit, donc la liste nue continue de marcher.
     bool titres = str.contains(raw, "#")
     string section = titres ? "autre" : "niveaux"
-    string prefixe = ""
 
     rows = str.split(raw, "\n")
+
+    // PREMIERE PASSE : l'echeance, et rien d'autre. La faire avant tout le
+    // reste retire toute dependance a l'ordre des sections du collage — sans
+    // quoi une echeance trouvee dans le tableau arriverait apres la section
+    // des niveaux et les laisserait sans prefixe, melangeant « CR » et
+    // « 2R1 » sur la meme planche. Deux sources, dans cet ordre : la ligne
+    // « horizon » de l'en-tete, puis la colonne d'expiration du tableau.
+    string prefixe = ""
+    for i = 0 to array.size(rows) - 1
+        ligne = str.trim(array.get(rows, i))
+        if prefixe == "" and str.length(ligne) > 0
+            if str.contains(str.lower(ligne), "horizon")
+                sp = str.contains(ligne, ":") ? ":" : "="
+                pr = str.split(ligne, sp)
+                if array.size(pr) > 1
+                    prefixe := teteNumerique(array.get(pr, 1))
+            else
+                d = str.split(ligne, ",")
+                if array.size(d) > 3
+                    dt = str.split(str.trim(array.get(d, 0)), "-")
+                    if array.size(dt) == 3
+                        yy = str.tonumber(array.get(dt, 0))
+                        mm = str.tonumber(array.get(dt, 1))
+                        dd = str.tonumber(array.get(dt, 2))
+                        if not na(yy) and not na(mm) and not na(dd)
+                            tExp = timestamp(int(yy), int(mm), int(dd), 0, 0)
+                            tJour = timestamp(year, month, dayofmonth, 0, 0)
+                            j = math.round((tExp - tJour) / 86400000.0)
+                            if j >= 0 and j <= 999
+                                prefixe := str.tostring(int(j))
+    prefixeLu := prefixe
+
+    // SECONDE PASSE : les zones.
     for i = 0 to array.size(rows) - 1
         row = str.trim(array.get(rows, i))
         // Un en-tete de tableau ouvre le bloc CSV meme sans titre de section :
@@ -416,21 +448,6 @@ if barstate.islast
                 else if iStrike >= 0 and iVal >= 0 and nc > math.max(iStrike, iVal)
                     k = str.tonumber(nettoyerNombre(array.get(champs, iStrike)))
                     w = str.tonumber(nettoyerNombre(array.get(champs, iVal)))
-                    // A defaut d'en-tete, l'echeance se lit dans la colonne
-                    // d'expiration du tableau : « 2026-09-16 » sur une seance
-                    // du 14 rend « 2 », donc 2CR et 2R1.
-                    if prefixe == "" and prefixeLu == ""
-                        dparts = str.split(str.trim(array.get(champs, 0)), "-")
-                        if array.size(dparts) == 3
-                            yy = str.tonumber(array.get(dparts, 0))
-                            mm = str.tonumber(array.get(dparts, 1))
-                            dd = str.tonumber(array.get(dparts, 2))
-                            if not na(yy) and not na(mm) and not na(dd)
-                                tExp = timestamp(int(yy), int(mm), int(dd), 0, 0)
-                                tJour = timestamp(year, month, dayofmonth, 0, 0)
-                                j = math.round((tExp - tJour) / 86400000.0)
-                                if j >= 0 and j <= 999
-                                    prefixeLu := str.tostring(int(j))
                     if not na(k) and not na(w)
                         // Le poids d'un strike est la somme des VALEURS
                         // ABSOLUES de ses jambes : un call et un put au meme
@@ -456,10 +473,8 @@ if barstate.islast
             droite = array.size(parts) > 1 ? str.trim(array.get(parts, 1)) : ""
 
             if section == "contexte"
-                // L'echeance ne s'ecrit pas a la main : elle se lit ici.
-                if str.contains(str.lower(gauche), "horizon")
-                    prefixe := teteNumerique(droite)
-                    prefixeLu := prefixe
+                // L'echeance a deja ete lue par la premiere passe.
+                na
             else if nLvl < MAXN
                 // Le sens de lecture est deduit : « prix = nom » et
                 // « nom : prix » se rencontrent tous les deux, et c'est le
