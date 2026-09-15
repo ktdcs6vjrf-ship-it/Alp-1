@@ -170,6 +170,50 @@ Deux zones au même prix ne font qu'un trait, et leurs codes se joignent :
 `0CR/0PS`. C'est le cas courant — un mur d'appel et un mur de vente tombent
 souvent sur le même strike.
 
+### Les quatre zones que l'indicateur calcule
+
+`PS CR MP GW HVL RM` viennent du robot : l'indicateur les reporte. **`R1 R2 S1
+S2`, non — il les calcule**, à partir du bloc CSV du même collage, et c'est la
+seule chose de ce fichier qui ne soit pas du report. Le panneau les compte
+donc à part, et l'interrupteur qui les produit est nommé pour ce qu'il fait.
+
+La règle tient en une phrase : *les plus fortes concentrations de gamma de
+part et d'autre du prix, hors de celles qui portent déjà un nom.* Trois
+décisions la précisent, et chacune se justifie.
+
+**Le poids d'un strike est la somme des valeurs absolues de ses jambes.** Un
+call et un put au même strike y concentrent tous les deux du gamma, et leurs
+signes opposés ne doivent pas s'annuler — sans quoi un strike massivement
+chargé des deux côtés passerait pour vide.
+
+**Les colonnes se lisent dans l'en-tête du CSV**, jamais à une position
+supposée : `strike` par son nom, la valeur par la première colonne dont le nom
+porte `net`. L'ordre des colonnes est une donnée du fichier, pas une
+convention.
+
+**Le classement vient après tout le reste** — après la lecture entière, pour
+que toutes les zones nommées soient déjà posées donc exclues quel que soit
+l'ordre des sections ; et après que la base soit tranchée, parce que
+« au-dessus du prix » n'a de sens qu'une fois les deux échelles ramenées à la
+même.
+
+Sur l'export du 14 septembre, un seul collage rend huit zones :
+
+| | | |
+|---|---|---|
+| `0GW` | 29 290 | nommée |
+| `0HVL` | 29 280 | nommée |
+| `0CR/0PS` | 29 250 | nommées, fusionnées |
+| `0R2` | 29 230 | calculée |
+| `0R1` | 29 225 | calculée |
+| `0S1` | 29 220 | calculée |
+| `0S2` | 29 210 | calculée |
+| `0MP` | 29 175 | nommée |
+
+`0R1` tombe à 29 225 et non sur le plus gros call : le strike y porte 165 M de
+gamma dont 160 côté put. *La concentration ne dit pas le sens, elle dit où le
+prix a de la matière à traverser.*
+
 ### Un seul trait, gris foncé, continu
 
 Les zones ne sont pas le sujet du graphique : ce sont des repères. Elles

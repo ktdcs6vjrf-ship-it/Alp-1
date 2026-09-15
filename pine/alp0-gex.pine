@@ -124,6 +124,14 @@ raw = input.text_area(
                "geres ; le prefixe d'echeance se lit dans l'en-tete. Vingt " +
                "zones au maximum : au-dela, l'echelle de droite ne pourrait " +
                "plus porter leur prix.")
+secondaires = input.bool(true, "Deduire R1/R2/S1/S2 du bloc CSV", group = gA,
+     tooltip = "Les zones nommees viennent du robot ; celles-ci sont " +
+               "CALCULEES a partir du bloc CSV du meme collage : les plus " +
+               "fortes concentrations de gamma de part et d'autre du prix, " +
+               "hors de celles qui portent deja un nom. L'indicateur cesse " +
+               "donc d'etre un pur outil de report sur ces quatre lignes, et " +
+               "le panneau les compte a part.")
+nSec = input.int(2, "Combien de chaque cote", minval = 1, maxval = 4, group = gA)
 bandePct = input.float(3.0, "Fenetre de plausibilite, en % du prix",
      minval = 0.05, maxval = 50, step = 0.05, group = gA,
      tooltip = "Un nombre qui tombe plus loin que cela du prix n'est pas une " +
@@ -309,6 +317,23 @@ var string[] lvlCode = array.new<string>(MAXN, "")
 var int      nLvl    = 0
 var float    medLvl  = na
 
+// Le bloc CSV, accumule par strike. Deux tableaux paralleles plutot qu'une
+// table : vingt-deux lignes ne justifient pas d'index, et une recherche
+// lineaire se relit.
+var float[]  csvStrike = array.new<float>()
+var float[]  csvPoids  = array.new<float>()
+var string   prefixeLu = ""
+
+// Une zone deja posee ne se reprend pas comme secondaire. Les emplacements
+// vides valant `na`, la comparaison les ecarte d'elle-meme.
+dejaPose(float v) =>
+    bool trouve = false
+    for k = 0 to MAXN - 1
+        e = array.get(lvlPrix, k)
+        if not na(e) and math.abs(e - v) < syminfo.mintick
+            trouve := true
+    trouve
+
 // La lecture se fait sur la DERNIERE barre, pas sur la premiere : c'est la
 // seule ou `close` est le prix courant, donc la seule ou la fenetre de
 // plausibilite a un sens. Les `plot` qui suivent lisent les tableaux remplis,
@@ -318,6 +343,14 @@ if barstate.islast
     for k = 0 to MAXN - 1
         array.set(lvlPrix, k, na)
         array.set(lvlCode, k, "")
+
+    array.clear(csvStrike)
+    array.clear(csvPoids)
+    prefixeLu := ""
+    // Les colonnes du CSV se lisent dans SA propre en-tete : leur ordre n'est
+    // pas une convention qu'on peut supposer, c'est une donnee du fichier.
+    int iStrike = -1
+    int iVal    = -1
 
     float[] ech = array.new<float>()
     bande = close * bandePct / 100.0
@@ -335,7 +368,44 @@ if barstate.islast
             section := str.contains(l, "level") or str.contains(l, "niveau") ?
                   "niveaux" :
                   str.contains(l, "context") or str.contains(l, "contexte") ?
-                  "contexte" : "autre"
+                  "contexte" :
+                  str.contains(l, "data") or str.contains(l, "donnee") ?
+                  "data" : "autre"
+        else if str.length(row) > 0 and section == "data"
+            champs = str.split(row, ",")
+            nc = array.size(champs)
+            if nc > 1
+                if str.contains(str.lower(row), "strike")
+                    // L'en-tete du tableau : on y releve les deux colonnes.
+                    iStrike := -1
+                    iVal := -1
+                    for c = 0 to nc - 1
+                        nom = str.lower(str.trim(array.get(champs, c)))
+                        if nom == "strike"
+                            iStrike := c
+                        if iVal < 0 and str.contains(nom, "net")
+                            iVal := c
+                    if iVal < 0
+                        iVal := nc - 1
+                else if iStrike >= 0 and iVal >= 0 and nc > math.max(iStrike, iVal)
+                    k = str.tonumber(nettoyerNombre(array.get(champs, iStrike)))
+                    w = str.tonumber(nettoyerNombre(array.get(champs, iVal)))
+                    if not na(k) and not na(w)
+                        // Le poids d'un strike est la somme des VALEURS
+                        // ABSOLUES de ses jambes : un call et un put au meme
+                        // strike concentrent tous les deux du gamma, et leurs
+                        // signes opposes ne doivent pas s'annuler.
+                        int pos = -1
+                        if array.size(csvStrike) > 0
+                            for j = 0 to array.size(csvStrike) - 1
+                                if math.abs(array.get(csvStrike, j) - k) < syminfo.mintick
+                                    pos := j
+                        if pos >= 0
+                            array.set(csvPoids, pos,
+                                 array.get(csvPoids, pos) + math.abs(w))
+                        else
+                            array.push(csvStrike, k)
+                            array.push(csvPoids, math.abs(w))
         else if str.length(row) > 0 and section != "autre"
             sep = str.contains(row, "=") ? "=" :
                   str.contains(row, ":") ? ":" :
@@ -348,6 +418,7 @@ if barstate.islast
                 // L'echeance ne s'ecrit pas a la main : elle se lit ici.
                 if str.contains(str.lower(gauche), "horizon")
                     prefixe := teteNumerique(droite)
+                    prefixeLu := prefixe
             else if nLvl < MAXN
                 // Le sens de lecture est deduit : « prix = nom » et
                 // « nom : prix » se rencontrent tous les deux, et c'est le
@@ -398,6 +469,29 @@ autoApp   = na(medLvl) ? true : ecartAvec <= ecartSans
 appliquer = application == "Jamais" ? false :
              application == "Toujours" ? true : autoApp
 baseApp   = appliquer ? basis : 0.0
+
+// Les secondaires se classent APRES que la base soit tranchee : « au-dessus
+// du prix » n'a de sens qu'une fois les deux echelles ramenees a la meme. Et
+// apres la lecture entiere, pour que toutes les zones nommees soient deja
+// posees et donc exclues, quel que soit l'ordre des sections du collage.
+if barstate.islast and secondaires and array.size(csvStrike) > 0
+    for cote = 0 to 1
+        for rang = 1 to nSec
+            float best = na
+            float bestW = -1.0
+            for k = 0 to array.size(csvStrike) - 1
+                v = array.get(csvStrike, k)
+                w = array.get(csvPoids, k)
+                haut = v + baseApp > close
+                bon = cote == 0 ? haut : not haut
+                if bon and w > bestW and not dejaPose(v)
+                    best := v
+                    bestW := w
+            if not na(best) and nLvl < MAXN
+                array.set(lvlPrix, nLvl, best)
+                array.set(lvlCode, nLvl, prefixeLu + (cote == 0 ? "R" : "S") +
+                     str.tostring(rang))
+                nLvl := nLvl + 1
 
 prixDe(int i) => array.get(lvlPrix, i) + baseApp
 

@@ -1484,6 +1484,17 @@ Hors du noyau Python
   **totalement transparente**, seule façon de caler un texte à gauche de son
   ancre sans cartouche. Les trois familles se distinguent par la valeur **et**
   par le motif de trait, jamais par la teinte seule.
+  **`R1 R2 S1 S2` sont la seule chose que ce fichier calcule** au lieu de la
+  reporter : les plus fortes concentrations de gamma de part et d'autre du
+  prix, tirées du bloc CSV du même collage, hors de celles qui portent déjà un
+  nom. Le poids d'un strike est la **somme des valeurs absolues de ses
+  jambes** — un call et un put au même strike y concentrent tous les deux du
+  gamma et leurs signes opposés ne doivent pas s'annuler. Les colonnes se
+  lisent dans l'en-tête du CSV, jamais à une position supposée. Le classement
+  vient **après** la lecture entière (pour que les zones nommées soient déjà
+  posées donc exclues) et **après** que la base soit tranchée (« au-dessus du
+  prix » n'a de sens qu'à échelles ramenées à la même). Un export réel rend
+  huit zones d'un seul collage.
   Vocabulaire : `codeDe` range les noms longs d'un robot sous les codes courts
   de l'opérateur — `PS` put support, `CR` call resistance, `MP` max pain,
   `GW` gamma wall, `HVL` gamma flip, `RM` résistance macro, `R1/R2/S1/S2`

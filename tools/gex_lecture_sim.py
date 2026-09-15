@@ -60,19 +60,49 @@ def code_de(tag, pref):
     return c if (c == "" or pref == "" or deja or c == "RM") else pref + c
 
 
-def lire(raw):
+def lire(raw, secondaires=True, n_sec=2):
     prix, codes, n, ech = [None] * MAXN, [""] * MAXN, 0, []
     bande = CLOSE * BANDE_PCT / 100.0
     titres = "#" in raw
     section = "autre" if titres else "niveaux"
     prefixe = ""
+    csv_strike, csv_poids = [], []
+    i_strike = i_val = -1
     for row in raw.split("\n"):
         row = row.strip()
         if row.startswith("#"):
             l = row.lower()
             section = ("niveaux" if ("level" in l or "niveau" in l) else
-                       "contexte" if ("context" in l or "contexte" in l)
+                       "contexte" if ("context" in l or "contexte" in l) else
+                       "data" if ("data" in l or "donnee" in l)
                        else "autre")
+        elif row and section == "data":
+            champs = row.split(",")
+            if len(champs) > 1:
+                if "strike" in row.lower():
+                    i_strike = i_val = -1
+                    for c, nom in enumerate(x.strip().lower() for x in champs):
+                        if nom == "strike":
+                            i_strike = c
+                        if i_val < 0 and "net" in nom:
+                            i_val = c
+                    if i_val < 0:
+                        i_val = len(champs) - 1
+                elif i_strike >= 0 and i_val >= 0 and len(champs) > max(i_strike, i_val):
+                    k = tonumber(nettoyer_nombre(champs[i_strike]))
+                    w = tonumber(nettoyer_nombre(champs[i_val]))
+                    if k is not None and w is not None:
+                        # Somme des VALEURS ABSOLUES des jambes : un call et un
+                        # put au meme strike y concentrent tous les deux du
+                        # gamma, et leurs signes opposes ne doivent pas
+                        # s'annuler.
+                        pos = next((j for j, v in enumerate(csv_strike)
+                                    if abs(v - k) < MINTICK), -1)
+                        if pos >= 0:
+                            csv_poids[pos] += abs(w)
+                        else:
+                            csv_strike.append(k)
+                            csv_poids.append(abs(w))
         elif row and section != "autre":
             sep = "=" if "=" in row else ":" if ":" in row else "|" if "|" in row else ""
             parts = [row] if sep == "" else row.split(sep)
@@ -103,6 +133,27 @@ def lire(raw):
                         ech.append(v)
                         n += 1
     med = sorted(ech)[len(ech) // 2] if ech else None
+    base_app = 0.0 if (med is None or abs(med - CLOSE) < abs(med + BASIS - CLOSE)) else BASIS
+
+    # Les secondaires se classent APRES la lecture entiere et apres que la base
+    # soit tranchee : « au-dessus du prix » n'a de sens qu'une fois les deux
+    # echelles ramenees a la meme, et toutes les zones nommees doivent etre
+    # posees pour etre exclues.
+    def deja_pose(v):
+        return any(e is not None and abs(e - v) < MINTICK for e in prix)
+
+    if secondaires and csv_strike:
+        for cote in (0, 1):
+            for rang in range(1, n_sec + 1):
+                best, best_w = None, -1.0
+                for v, w in zip(csv_strike, csv_poids):
+                    haut = v + base_app > CLOSE
+                    if (haut if cote == 0 else not haut) and w > best_w and not deja_pose(v):
+                        best, best_w = v, w
+                if best is not None and n < MAXN:
+                    prix[n] = best
+                    codes[n] = prefixe + ("R" if cote == 0 else "S") + str(rang)
+                    n += 1
     return prix[:n], codes[:n], med
 
 
