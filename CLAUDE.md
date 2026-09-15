@@ -1456,6 +1456,19 @@ Hors du noyau Python
 - `pine/alp0-gex.pine` — report de niveaux gamma. On colle la réponse d'un
   robot Discord ; l'indicateur mesure lui-même la base `NQ − NDX` et la lisse.
   **Ne jamais convertir NDX→NQ à la main : la base saute à chaque roll.**
+  Piège enterré, et c'est celui qui ne se signale pas : `base = NQ − NDX` n'est
+  juste qu'**au même instant**. Un abonnement qui livre le future en différé de
+  quinze minutes et l'indice autrement fait soustraire deux instants
+  différents, et la base absorbe la dérive de l'indice sur l'intervalle — des
+  dizaines de points, l'ordre de grandeur de la base elle-même. L'indicateur ne
+  suppose donc aucun retard : il demande à l'indice l'**horodatage** de la
+  barre d'où vient son cours, écarte toute barre désalignée, et publie au
+  panneau le désalignement mesuré, le nombre de barres retenues, la base brute
+  qu'on aurait eue sans le filtre, et le retard du graphique contre l'horloge
+  murale. Sans barre alignée il refuse de publier un nombre et trace en
+  pointillé. Ce que le retard ne casse pas : les niveaux (la base dérive de
+  0,2 point par quart d'heure, calculé). Ce qu'il casse : la colonne
+  « distance au prix », qui parle d'un prix vieux d'autant.
   Voir `docs/gex-discord-vers-tradingview.md`.
 - Ces trois fichiers ne participent ni aux documents ni aux tests : ils n'ont
   pas de loi nulle et n'en revendiquent aucune. **La version déployée sur le

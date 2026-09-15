@@ -94,6 +94,64 @@ Si `NASDAQ:NDX` n'est pas accessible sur votre abonnement, l'indicateur
 accepte une base fixe : relevez `NQ − NDX` une fois à l'ouverture et
 saisissez-la. À refaire chaque jour, et impérativement au roll.
 
+## Deux flux, deux retards — les trois mots qui portent tout
+
+La ligne ci-dessus dit `base = NQ − NDX, **au même instant**`, et ces trois
+mots sont la seule façon de se tromper sans le voir.
+
+Un abonnement peut livrer le future en différé de quinze minutes et l'indice
+autrement — en direct, ou en différé d'une autre durée. La soustraction compare
+alors deux instants différents, et la base mesurée absorbe la dérive de l'indice
+sur l'intervalle. Sur une matinée qui bouge, cela vaut des dizaines de points :
+**exactement l'ordre de grandeur de la base elle-même**, et bien plus que la
+distance que le niveau prétend marquer. Rien ne le signale. L'indicateur trace,
+les niveaux ont l'air normaux, et ils sont tous décalés du même faux montant.
+
+L'indicateur ne suppose donc aucun retard : **il le mesure**. À chaque barre il
+demande à l'indice, en plus de son cours, l'horodatage de la barre dont ce cours
+provient. Quand cet horodatage ne tombe pas sur celui de la barre du graphique,
+les deux côtés de la soustraction ne parlent pas du même instant : la barre est
+écartée et n'entre pas dans la base. La fenêtre compte donc des barres
+**retenues**, pas des barres écoulées.
+
+Le panneau publie de quoi vérifier, plutôt que de rassurer :
+
+| ligne | ce qu'elle dit |
+|---|---|
+| `désalignement  0.0 barre` | l'écart d'horodatage mesuré. Positif : l'indice est en retard sur le future. Négatif : en avance. |
+| `28/30 barres retenues` | combien de barres de la fenêtre ont passé le filtre. Une fenêtre qui se vide est un flux qui se désynchronise. |
+| `base brute 246.10  écart +0.35 pt` | la base qu'on aurait obtenue **sans** le filtre, et son écart à la base alignée. Cet écart *est* le coût du décalage, en points. |
+| `graphique retardé de 15.2 min` | le retard du flux lui-même, mesuré contre l'horloge murale. C'est la réponse chiffrée à « mon NQ est-il vraiment en retard ». |
+
+Si aucune barre n'est alignée, la base n'est pas mesurable : le panneau le dit en
+toutes lettres, passe en teinte d'alerte, et les niveaux se tracent **en
+pointillé** pour qu'on ne les lise pas comme des niveaux mesurés. Publier un
+nombre faux serait pire que ne rien publier.
+
+### Ce que le retard ne casse pas, et ce qu'il casse
+
+**Les niveaux restent justes.** La base est du portage, et elle se chiffre. À
+NDX = 24 000, `r − q` = 2,8 % et soixante jours d'échéance, elle vaut 110 points
+et dérive par deux canaux sur un quart d'heure : l'échéance qui raccourcit lui
+prend **0,019 point**, et le niveau de l'indice lui en donne **0,18** si l'indice
+bouge de quarante points. Deux dixièmes de point au total, contre un stop de
+cinq. Une base mesurée sur des barres alignées d'il y a quinze minutes *est* la
+base de maintenant, à la précision où on l'emploie.
+
+**La colonne « distance au prix », non.** Elle compare un niveau au dernier prix
+du graphique, et ce prix a quinze minutes. Sur NQ, quinze minutes valent
+couramment vingt à quarante points : la distance affichée peut se tromper de
+plus que la largeur du niveau. C'est pour cela que le panneau affiche le retard
+au lieu de le taire — aucun indicateur ne peut rattraper une donnée qui n'est
+pas encore arrivée.
+
+Le réglage *Recaler l'indice de N barres* existe pour le seul cas où le panneau
+annonce un désalignement **négatif** persistant, c'est-à-dire un indice en avance
+sur le future. On y entre alors le nombre de barres que le panneau affiche. Dans
+tous les autres cas il reste à zéro : décaler une série pour faire tomber un
+chiffre à zéro, ce n'est pas aligner deux flux, c'est fabriquer l'alignement
+qu'on cherchait à vérifier.
+
 ## Ce que ces niveaux valent
 
 Rien dans cette note ne dit qu'un niveau gamma prédit quoi que ce soit. Le

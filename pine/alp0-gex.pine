@@ -24,6 +24,30 @@ indicator("Alp-0 GEX", "Alp-0 GEX", overlay = true,
 //  jour. La conversion, elle, n'est jamais faite a la main : c'est la seule
 //  partie ou une erreur coute quelque chose.
 //
+//  Le decalage des deux flux — la seule facon de se tromper sans le voir
+//  -------------------------------------------------------------------
+//  Un abonnement qui livre NQ en differe de quinze minutes et NDX autrement
+//  — en direct, ou en differe d'une autre duree — fait comparer DEUX INSTANTS
+//  DIFFERENTS dans la soustraction NQ − NDX. La base mesuree absorbe alors la
+//  derive de l'indice sur l'intervalle, qui vaut des dizaines de points sur
+//  une matinee. Rien ne le signale : l'indicateur trace, les niveaux ont l'air
+//  normaux, et ils sont tous decales du meme faux montant.
+//
+//  Ce fichier ne suppose donc aucun retard, il le MESURE. A chaque barre il
+//  demande a l'indice, en plus de son cours, l'HORODATAGE de la barre dont ce
+//  cours provient. Quand cet horodatage ne tombe pas sur celui de la barre du
+//  graphique, les deux cotes de la soustraction ne parlent pas du meme
+//  instant : la barre est ecartee, et elle n'entre pas dans la base. La base
+//  publiee est la mediane des seules barres alignees.
+//
+//  Le panneau publie les trois grandeurs qui permettent de verifier :
+//    · le desalignement mesure, en barres ;
+//    · le nombre de barres retenues sur la fenetre ;
+//    · la base brute — celle qu'on aurait obtenue sans le filtre — et son
+//      ecart a la base alignee. Cet ecart EST le cout du decalage, en points.
+//  Si aucune barre n'est alignee, la base n'est pas mesurable et le panneau le
+//  dit en toutes lettres au lieu de publier un nombre faux.
+//
 //  Format accepte, une ligne par niveau
 //  ------------------------------------
 //    20450 = call wall
@@ -40,6 +64,12 @@ indicator("Alp-0 GEX", "Alp-0 GEX", overlay = true,
 //  Il ne calcule aucun gamma. Il ne verifie pas les niveaux qu'on lui donne,
 //  il n'a aucune loi nulle et n'en revendique aucune. C'est un outil de
 //  report, pas une mesure — meme statut que `alp0.pine`.
+//
+//  Il ne rattrape pas non plus le retard du graphique. Si le flux NQ arrive
+//  avec quinze minutes de retard, les NIVEAUX sont justes — la base ne bouge
+//  presque pas sur un quart d'heure — mais la colonne « distance au prix »
+//  parle d'un prix vieux d'un quart d'heure. Le panneau affiche ce retard
+//  pour qu'on lise cette colonne en le sachant.
 // ═══════════════════════════════════════════════════════════════════════════
 
 
@@ -58,22 +88,42 @@ gB = "② Conversion indice → future"
 idxSym  = input.symbol("NASDAQ:NDX", "Indice de reference", group = gB,
      tooltip = "L'indice dans lequel les niveaux sont exprimes. NDX pour NQ, " +
                "SPX pour ES, RUT pour RTY.")
-mode    = input.string("Base mesuree", "Methode",
-     options = ["Base mesuree", "Base fixe", "Aucune conversion"], group = gB,
-     tooltip = "« Base mesuree » lit NQ − NDX sur le graphique et la lisse : " +
-               "c'est la seule methode exacte, et elle survit au roll. " +
-               "« Base fixe » sert quand l'indice n'est pas disponible.")
+mode    = input.string("Base alignee", "Methode",
+     options = ["Base alignee", "Base brute", "Base fixe", "Aucune conversion"],
+     group = gB,
+     tooltip = "« Base alignee » n'utilise que les barres ou l'indice et le " +
+               "future portent le meme horodatage : c'est la seule methode " +
+               "qui survive a deux flux de retards differents. « Base brute » " +
+               "est l'ancienne, gardee pour comparaison. « Base fixe » sert " +
+               "quand l'indice n'est pas disponible sur l'abonnement.")
 fixedBas = input.float(0.0, "Base fixe, en points", step = 0.25, group = gB)
-basLen   = input.int(30, "Lissage de la base, en barres", minval = 1,
+basLen   = input.int(30, "Fenetre de la base, en barres retenues", minval = 1,
      maxval = 200, group = gB,
      tooltip = "La base bouge lentement ; la mediane sur trente barres " +
-               "absorbe un print d'indice en retard sans retarder le roll.")
+               "alignees absorbe un print en retard sans retarder le roll.")
 
-// ─── ③ Apparence ──────────────────────────────────────────────────────────
-gC = "③ Apparence"
+// ─── ③ Decalage des flux ──────────────────────────────────────────────────
+gD = "③ Decalage des flux"
+tolBars = input.int(0, "Tolerance d'alignement, en barres", minval = 0,
+     maxval = 10, group = gD,
+     tooltip = "0 exige l'horodatage exact. Monter a 1 si l'indice ne cote " +
+               "pas a chaque barre du graphique — au-dela, on accepte de " +
+               "soustraire deux instants differents, ce qui est le defaut " +
+               "que ce groupe existe pour empecher.")
+decalIdx = input.int(0, "Recaler l'indice de N barres", minval = 0, maxval = 60,
+     group = gD,
+     tooltip = "A laisser a 0. N'a de sens que si le panneau annonce un " +
+               "desalignement NEGATIF persistant, c'est-a-dire un indice en " +
+               "avance sur le future : entrer alors le nombre de barres que " +
+               "le panneau affiche.")
+showDiag = input.bool(true, "Afficher le diagnostic de decalage", group = gD)
+
+// ─── ④ Apparence ──────────────────────────────────────────────────────────
+gC = "④ Apparence"
 colCall = input.color(color.new(#E0625C, 0), "Resistance / call",  group = gC)
 colPut  = input.color(color.new(#6E9BFF, 0), "Support / put",      group = gC)
 colFlip = input.color(color.new(#E4E6EA, 0), "Bascule / neutre",   group = gC)
+colWarn = input.color(color.new(#F2B138, 0), "Alerte de decalage", group = gC)
 lw      = input.int(2, "Epaisseur", minval = 1, maxval = 5,        group = gC)
 extendR = input.int(60, "Prolonger de N barres", minval = 0, maxval = 500,
      group = gC)
@@ -82,24 +132,57 @@ showBase = input.bool(true, "Afficher la base mesuree",     group = gC)
 
 
 // ─── La base ──────────────────────────────────────────────────────────────
-// Le prix de l'indice, lu sur le meme pas de temps. `ignore_invalid_symbol`
-// evite que l'indicateur disparaisse si le symbole est mal ecrit, et
-// `lookahead_off` interdit tout regard vers l'avenir — meme sur un report,
-// une barre qui se repeint est un piege.
-idxClose = request.security(idxSym, timeframe.period, close,
+// Le cours de l'indice ET l'horodatage de la barre dont ce cours provient.
+// La seconde requete est tout l'objet du fichier : sans elle, rien ne
+// distingue une base juste d'une base qui a mange un quart d'heure de derive.
+// `ignore_invalid_symbol` evite que l'indicateur disparaisse si le symbole est
+// mal ecrit, et `lookahead_off` interdit tout regard vers l'avenir — meme sur
+// un report, une barre qui se repeint est un piege.
+idxCloseRaw = request.security(idxSym, timeframe.period, close,
+     lookahead = barmerge.lookahead_off, ignore_invalid_symbol = true)
+idxTimeRaw  = request.security(idxSym, timeframe.period, time_close,
      lookahead = barmerge.lookahead_off, ignore_invalid_symbol = true)
 
-rawBasis = na(idxClose) ? na : close - idxClose
-// `var` : la derniere base valide survit aux heures ou l'indice ne cote pas.
+idxClose = decalIdx == 0 ? idxCloseRaw : idxCloseRaw[decalIdx]
+idxTime  = decalIdx == 0 ? idxTimeRaw  : idxTimeRaw[decalIdx]
+
+tfSec    = timeframe.in_seconds(timeframe.period)
+barMs    = tfSec * 1000
+tolMs    = tolBars * barMs
+// Positif : l'indice est en RETARD sur le graphique. Negatif : en avance.
+desyncMs  = time_close - idxTime
+desyncBar = desyncMs / (barMs * 1.0)
+aligne    = not na(idxClose) and not na(desyncMs) and math.abs(desyncMs) <= tolMs
+
+baseBrute = na(idxClose) ? na : close - idxClose
+
+// La fenetre compte des barres RETENUES, pas des barres ecoulees : une base
+// mesuree sur trente barres alignees vaut mieux qu'une mediane sur trente
+// barres dont vingt sont fausses.
+var float[] pool = array.new<float>()
+if aligne and barstate.isconfirmed and not na(baseBrute)
+    array.push(pool, baseBrute)
+    if array.size(pool) > basLen
+        array.shift(pool)
+
 var float heldBasis = na
-smoothed = ta.median(rawBasis, basLen)
-if not na(smoothed)
-    heldBasis := smoothed
+if array.size(pool) > 0
+    heldBasis := array.median(pool)
+
+baseBruteLissee = ta.median(baseBrute, basLen)
+mesurable = not na(heldBasis)
 
 basis = switch mode
-    "Base mesuree"     => nz(heldBasis, 0.0)
-    "Base fixe"        => fixedBas
+    "Base alignee" => mesurable ? heldBasis : fixedBas
+    "Base brute"   => nz(baseBruteLissee, fixedBas)
+    "Base fixe"    => fixedBas
     => 0.0
+
+// Le retard du graphique lui-meme, mesure contre l'horloge murale. Sur un flux
+// en direct la derniere barre se ferme dans le futur et la quantite est
+// negative, donc nulle apres bornage ; sur un flux differe elle vaut le
+// differe. C'est la reponse chiffree a « mon NQ est-il vraiment en retard ».
+retardMin = math.max(0.0, (timenow - time_close) / 60000.0)
 
 
 // ─── Le tracé ─────────────────────────────────────────────────────────────
@@ -128,6 +211,11 @@ if barstate.islast
     x1 = bar_index - 1
     x2 = bar_index + extendR
 
+    // Une base non mesurable ne se trace pas en silence : les niveaux sont
+    // pointilles tant que la conversion repose sur un repli.
+    douteux = mode == "Base alignee" and not mesurable
+    styleLn = douteux ? line.style_dashed : line.style_solid
+
     rows = str.split(raw, "\n")
     for i = 0 to array.size(rows) - 1
         row = str.trim(array.get(rows, i))
@@ -144,7 +232,7 @@ if barstate.islast
                 lvl = idxLvl + basis
                 col = teinte(tag)
                 ln = line.new(x1, lvl, x2, lvl, xloc = xloc.bar_index,
-                     color = col, width = lw, style = line.style_solid)
+                     color = col, width = lw, style = styleLn)
                 array.push(lines, ln)
 
                 dist = lvl - close
@@ -158,9 +246,35 @@ if barstate.islast
                 array.push(labels, lb)
 
     if showBase
-        info = "base " + str.tostring(basis, "#.##") +
-               "  ·  " + str.tostring(array.size(lines)) + " niveaux"
-        lbBase = label.new(bar_index, close, info, xloc = xloc.bar_index,
-             style = label.style_label_up, color = color.new(colFlip, 90),
-             textcolor = colFlip, size = size.small)
+        string entete = na
+        if mesurable or mode != "Base alignee"
+            entete := "base " + str.tostring(basis, "#.##") + "  ·  " +
+                 str.tostring(array.size(lines)) + " niveaux"
+        else
+            entete := "FLUX DESYNCHRONISES  ·  base non mesurable  ·  repli " +
+                 str.tostring(fixedBas, "#.##")
+
+        string diag = ""
+        if showDiag
+            string dsy = na(desyncBar) ? "indice absent" :
+                 str.tostring(desyncBar, "#.#") + " barre"
+            diag := "\ndesalignement  " + dsy + "  ·  " +
+                 str.tostring(array.size(pool)) + "/" + str.tostring(basLen) +
+                 " barres retenues"
+            string brute = na(baseBruteLissee) ? "—" :
+                 str.tostring(baseBruteLissee, "#.##")
+            diag := diag + "\nbase brute  " + brute
+            if mesurable and not na(baseBruteLissee)
+                ecart = baseBruteLissee - heldBasis
+                diag := diag + "   ecart " + (ecart >= 0 ? "+" : "") +
+                     str.tostring(ecart, "#.##") + " pt"
+            if retardMin >= 1.0
+                diag := diag + "\ngraphique retarde de " +
+                     str.tostring(retardMin, "#.#") + " min"
+
+        teintePanneau = mesurable or mode != "Base alignee" ? colFlip : colWarn
+        lbBase = label.new(bar_index, close, entete + diag,
+             xloc = xloc.bar_index, style = label.style_label_up,
+             color = color.new(teintePanneau, 90), textcolor = teintePanneau,
+             size = size.small)
         array.push(labels, lbBase)
