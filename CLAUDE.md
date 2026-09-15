@@ -1484,6 +1484,30 @@ Hors du noyau Python
   **totalement transparente**, seule façon de caler un texte à gauche de son
   ancre sans cartouche. Les trois familles se distinguent par la valeur **et**
   par le motif de trait, jamais par la teinte seule.
+  Lecture : l'export markdown entier d'un robot se colle **sans retouche**. Le
+  sens de lecture est **déduit** (le nombre est à gauche ou à droite du
+  séparateur selon le format) ; le nombre se nettoie de ce qui le décore mais
+  **jamais du tiret**, sans quoi un niveau négatif deviendrait positif ; un
+  titre `##` commute la lecture, ce qui fait tomber l'en-tête et le bloc CSV
+  sans avoir à les reconnaître ; et une fenêtre de plausibilité autour du prix
+  écarte les `22`, les `0` et les millésimes qu'un en-tête transporte — testée
+  **avec et sans** la base, puisqu'on ne sait pas encore de quelle échelle le
+  niveau parle. Deux niveaux au même prix ne font qu'un trait, et sa famille
+  redevient neutre si les deux diffèrent : un mur d'appel et un mur de vente
+  sur le même strike ne font pas un niveau d'appel.
+  **L'échelle est mesurée, pas supposée** : un robot qui publie « NDX » peut
+  publier des strikes d'indice ou des niveaux déjà portés sur le future, et
+  rien dans le texte ne les distingue. L'indicateur compare la médiane des
+  niveaux collés au prix avec et sans la base, publie les deux écarts, et en
+  mode automatique retient le plus proche en écrivant lequel.
+  La lecture se fait sur la **dernière** barre et non la première : c'est la
+  seule où `close` est le prix courant, donc la seule où la fenêtre de
+  plausibilité ait un sens. Les `plot` qui suivent lisent des tableaux déjà
+  remplis, puisque Pine exécute le script de haut en bas à chaque barre.
+  `tools/gex_lecture_sim.py` transcrit cette boucle en Python : **aucun
+  compilateur Pine n'est joignable depuis le dépôt**, donc c'est la seule façon
+  de vérifier qu'un collage rend les niveaux attendus sans ouvrir TradingView.
+  Il ne participe ni aux documents ni aux tests.
   Voir `docs/gex-discord-vers-tradingview.md`.
 - Ces trois fichiers ne participent ni aux documents ni aux tests : ils n'ont
   pas de loi nulle et n'en revendiquent aucune. **La version déployée sur le

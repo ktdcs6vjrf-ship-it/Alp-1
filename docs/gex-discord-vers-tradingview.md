@@ -94,6 +94,64 @@ Si `NASDAQ:NDX` n'est pas accessible sur votre abonnement, l'indicateur
 accepte une base fixe : relevez `NQ − NDX` une fois à l'ouverture et
 saisissez-la. À refaire chaque jour, et impérativement au roll.
 
+## Coller l'export entier, sans le nettoyer
+
+Un robot ne répond plus par trois lignes de prix : il répond par un document —
+un en-tête, une section de niveaux, une liste de colonnes, un bloc CSV. Le
+lecteur de l'indicateur avale ce document tel quel. Quatre règles y suffisent,
+et chacune existe parce qu'un collage réel la demandait.
+
+**Le sens de lecture est déduit.** `20450 = call wall` et `- **flip:** 29,280.00`
+n'écrivent pas le prix du même côté du séparateur. On essaie le nombre à
+gauche, puis à droite ; c'est le côté qui rend un nombre qui gagne.
+
+**Le nombre se nettoie de ce qui le décore, jamais de ce qui le signe.** Les
+séparateurs de milliers, les astérisques de gras, les accents graves, les
+espaces et le dollar sortent ; **le tiret reste**, sans quoi un niveau négatif
+deviendrait positif. C'est aussi ce qui fait qu'`0 dte` ne devient pas `0` :
+les lettres ne sont pas retirées, donc la conversion échoue et la ligne tombe.
+
+**Un titre `##` commute la lecture.** Hors de la section des niveaux, rien
+n'est lu. C'est ce qui fait ignorer le bloc CSV et l'en-tête sans avoir à les
+reconnaître — et si le collage ne porte aucun titre, tout se lit, donc la
+liste nue continue de marcher.
+
+**Un nombre hors de la fenêtre de plausibilité est refusé.** Un en-tête
+transporte des millésimes, des comptes de lignes, des horizons : `22` et `0`
+passeraient les trois règles précédentes. La fenêtre — un pour cent du prix
+par défaut — les écarte, et elle est mesurée *avec et sans* la base, puisqu'on
+ne sait pas encore de quelle échelle le niveau parle.
+
+Enfin, **deux niveaux au même prix ne font qu'un trait**. Le cas est courant :
+un mur d'appel et un mur de vente tombent souvent sur le même strike. Sans
+fusion, deux intitulés se superposent illisiblement. Et la famille du trait
+fusionné redevient neutre : un mur d'appel et un mur de vente sur le même
+strike ne font pas un niveau d'appel, ils font un niveau dont la famille n'est
+pas décidable.
+
+`tools/gex_lecture_sim.py` est la transcription Python de cette boucle. Elle
+n'est pas dans la chaîne des documents et ne prétend rien mesurer : elle sert à
+vérifier qu'un collage donné rend les niveaux attendus **sans avoir à ouvrir
+TradingView**, puisqu'aucun compilateur Pine n'est joignable depuis le dépôt.
+
+### L'échelle, mesurée et non supposée
+
+Un robot qui publie « NDX » peut publier des strikes d'indice, ou des niveaux
+déjà portés sur le future. Les deux se ressemblent : rien dans le texte ne les
+distingue. Appliquer une base de cent points à des niveaux déjà convertis les
+décale de cent points, et **rien dans la page ne le signalerait**.
+
+L'indicateur ne devine donc pas. Il mesure la médiane des niveaux collés, la
+compare au prix avec et sans la base, et publie les deux écarts :
+
+    echelle  colles 29280.00  ·  ecart sans base 59.0  ·  avec 169.5
+
+En mode automatique il retient le plus proche et écrit lequel dans l'en-tête
+du panneau (`base 110.47 NON appliquée`). Les deux autres modes forcent la
+décision, et le panneau continue de publier les deux écarts — de sorte qu'un
+réglage forcé qui se trompe se lit sur la même ligne que le nombre qui le
+contredit.
+
 ## Deux flux, deux retards — les trois mots qui portent tout
 
 La ligne ci-dessus dit `base = NQ − NDX, **au même instant**`, et ces trois
