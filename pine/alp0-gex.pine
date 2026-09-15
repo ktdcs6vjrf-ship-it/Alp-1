@@ -94,12 +94,31 @@ indicator("Alp-0 GEX", "Alp-0 GEX", overlay = true,
 //  sur celui de la barre du graphique. La base publiee est la mediane des
 //  seules barres alignees.
 //
+//  Les quatre zones qu'il CALCULE
+//  ------------------------------
+//  PS CR MP GW HVL RM viennent du robot : l'indicateur les reporte. R1 R2 S1
+//  S2, non — il les tire du bloc CSV du meme collage, et c'est la seule chose
+//  de ce fichier qui ne soit pas du report. La regle : les plus fortes
+//  concentrations de gamma de part et d'autre du prix, hors de celles qui
+//  portent deja un nom. Trois decisions la precisent.
+//
+//  Le POIDS d'un strike est la somme des VALEURS ABSOLUES de ses jambes : un
+//  call et un put au meme strike y concentrent tous les deux du gamma, et
+//  leurs signes opposes ne doivent pas s'annuler — sans quoi un strike
+//  massivement charge des deux cotes passerait pour vide. Les COLONNES se
+//  lisent dans l'en-tete du CSV et jamais a une position supposee. Et le
+//  CLASSEMENT vient apres tout le reste : apres la lecture entiere, pour que
+//  les zones nommees soient deja posees donc exclues ; apres que la base soit
+//  tranchee, parce que « au-dessus du prix » n'a de sens qu'a echelles
+//  ramenees a la meme.
+//
 //  Ce que cet indicateur ne fait pas
 //  --------------------------------
-//  Il ne calcule aucun gamma et n'invente aucune zone : il n'affiche que ce
-//  que le texte colle contient. Il n'a aucune loi nulle et n'en revendique
-//  aucune. C'est un outil de report, pas une mesure — meme statut que
-//  `alp0.pine`.
+//  Il ne calcule aucun gamma : il ne fait qu'additionner ce que le CSV lui
+//  donne. Il ne verifie aucune des zones qu'on lui colle, il n'a aucune loi
+//  nulle et n'en revendique aucune. C'est un outil de report — a quatre
+//  lignes pres, qui sont nommees pour cela — et pas une mesure. Meme statut
+//  que `alp0.pine`.
 //
 //  Il ne rattrape pas non plus le retard du graphique. Si le flux arrive avec
 //  quinze minutes de retard, les ZONES sont justes — la base ne bouge que de
