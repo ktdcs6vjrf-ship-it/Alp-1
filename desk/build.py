@@ -2,6 +2,7 @@
 
 python3 build.py                 -> dist/alp-desk.html  (tous les desks)
 python3 build.py --only risk     -> dist/only-risk.html (socle + accueil + un desk, pour tester)
+python3 build.py --only quant,perf,risk,donnees,labo-engine,labo-stats,labo-builder,labo -> plusieurs desks
 python3 build.py --out X.html    -> chemin de sortie libre
 python3 build.py --fonts         -> remplace Google Fonts par les fichiers locaux (aperçu hors ligne)
 """
@@ -9,7 +10,7 @@ import os, re, sys, glob
 
 D = os.path.dirname(os.path.abspath(__file__))
 args = sys.argv[1:]
-only = args[args.index('--only') + 1] if '--only' in args else None
+only = args[args.index('--only') + 1].split(',') if '--only' in args else None  # liste séparée par des virgules
 out = args[args.index('--out') + 1] if '--out' in args else None
 fonts = '--fonts' in args
 
@@ -20,7 +21,7 @@ shell = open(os.path.join(D, 'src', 'shell.html')).read()
 desks = []
 for p in sorted(glob.glob(os.path.join(D, 'src', 'desks', '*.js'))):
     name = os.path.splitext(os.path.basename(p))[0]
-    if only and name not in (only, 'home'):
+    if only and name not in only and name != 'home':
         continue
     src = open(p).read()
     desks.append('/* ===== desk : %s ===== */\n(function(){\n%s\n})();' % (name, src))
@@ -38,7 +39,7 @@ if fonts:
           '@font-face{font-family:"Instrument Serif";font-style:normal;src:url(/desk/fonts/instrument-serif-latin-400-normal.woff2) format("woff2")}</style>')
     page = re.sub(r'<link rel="stylesheet" href="https://fonts.googleapis.com[^>]*>', ff, page)
     page = '<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}body{margin:0}</style></head><body>' + page + '</body></html>'
-target = out or os.path.join(D, 'dist', ('only-%s.html' % only) if only else 'alp-desk.html')
+target = out or os.path.join(D, 'dist', ('only-%s.html' % '-'.join(only)) if only else 'alp-desk.html')
 os.makedirs(os.path.dirname(target), exist_ok=True)
 open(target, 'w').write(page)
 open(target + '.js', 'w').write(js)
