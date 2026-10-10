@@ -1,0 +1,145 @@
+Dix-septième partie
+Ce qu’un fonds fait, et ce qui en reste à un seul homme
+La partie précédente empruntait des disciplines. Celle-ci emprunte un adversaire : un programme quantitatif qui n’embauche aucun opérateur de marché, dont trois nombres circulent publiquement. On ne cherche pas à savoir s’ils sont vrais — on cherche ce qu’il faut pour qu’ils le soient, et lequel de ces prérequis un opérateur seul possède.
+Ce que la loi fondamentale exige, décision par décision
+Trois nombres, repris tels quels et cités une seule fois. Un rendement brut annualisé d’environ 66 % sur 31 ans, avancé par une étude académique. Une part de transactions gagnantes de 50,75 %, rapportée par un livre d’enquête sous la forme d’une phrase de l’un des dirigeants du fonds. Une capacité plafonnée autour de 10 milliards de dollars, largement commentée.
+La posture est celle de la partie XV et elle mérite d’être répétée, parce qu’elle est ce qui rend l’exercice honnête : rien de ce qui suit ne conteste ces nombres. Ils sont les données de l’affaire. La question est de savoir ce qu’ils imposent.
+Ce qu’ils imposent tient dans une relation d’une ligne, celle de Grinold : IR = IC·√N. La qualité d’un gestionnaire est le produit de la finesse de sa prévision par la racine du nombre de paris qu’il prend. Elle est presque toujours citée à l’envers.
+Table 58 — Ce que la loi fondamentale exige, décision par décision
+Décisions par anPar séanceIC requisTaux de réussite équivalent (%)Écart au hasard (points)Verdict
+| 504 | 2 | 0,0891 | 54,454 | 4,454 | invraisemblable
+| 2 520 | 10 | 0,0398 | 51,992 | 1,992 | plausible
+| 25 200 | 100 | 0,0126 | 50,630 | 0,630 | plausible
+| 252 000 | 1 000 | 0,0040 | 50,199 | 0,199 | plausible
+| 2 520 000 | 10 000 | 0,0013 | 50,063 | 0,063 | plausible
+| 25 200 000 | 100 000 | 0,0004 | 50,020 | 0,020 | plausible
+Lecture. Relation de Grinold IR = IC·√N, à ratio d’information déclaré 2. La conversion en taux de réussite est exacte pour un pari binaire symétrique, où l’IC vaut 2p − 1. Le verdict compare l’exigence au seuil de vraisemblance posé avant les mesures, 52 % : au-dessus, un avantage sur un marché liquide serait visible de tous. Le basculement tombe à 2 500 décisions par an, soit 9,9 par séance — *c’est le nombre au-dessous duquel un opérateur qui revendique ce ratio revendique aussi un avantage que personne d’autre n’aurait remarqué.*
+Figure 79 — La finesse de prévision exigée par la loi fondamentale, à gauche ; la même exigence traduite en taux de réussite, à droite, avec le seuil de vraisemblance et le point où la courbe le traverse.
+Relation de Grinold, tracée sans aucune donnée. La conversion en taux de réussite est exacte pour un pari binaire symétrique, où l’IC vaut deux fois l’écart au hasard. Le seuil de vraisemblance de 52 % est déclaré avant les mesures et il n’est pas une opinion sur la difficulté du métier : c’est le niveau au-dessus duquel un avantage sur un marché liquide serait visible de tous, donc compété. Ce que la planche établit est un ordre de grandeur, et il est brutal : au rythme d’un opérateur discrétionnaire, la loi fondamentale exige un taux de réussite qu’aucun marché ne laisse traîner.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La lecture se fait par la quatrième colonne, et elle est brutale. Un opérateur à deux décisions par séance qui vise un ratio d’information de 2 doit avoir raison 4,45 points de pour-cent de plus que le hasard. Une infrastructure à dix mille décisions par séance n’en a besoin que de 0,063. Le premier chiffre est visible de tous et se ferait compéter en un trimestre ; le second est invisible et incontestable.
+Le basculement se calcule : il tombe à 2 500 décisions par an, soit 9,9 par séance. Au-dessous de ce rythme, revendiquer ce ratio revient à revendiquer un avantage que personne d’autre n’aurait remarqué.
+Figure 80 — L’exigence par décision sur le plan du ratio d’information visé et du nombre de décisions annuelles. Les deux axes n’agissent pas du tout de la même façon, et c’est le fait de la planche.
+Hauteur en points de pourcentage de taux de réussite, au-dessus du hasard. Les deux axes n’agissent pas du tout de la même façon, et c’est le fait de la planche : viser deux fois mieux double l’exigence, prendre cent fois plus de décisions la divise par dix. Un programme qui ne peut pas augmenter son nombre de décisions n’a donc qu’un levier, et c’est le plus cher des deux. Le relief ne dit rien de la durée nécessaire pour établir quoi que ce soit : elle ne dépend ni de l’un ni de l’autre axe, seulement du ratio visé.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Ce que l’ampleur n’achète pas
+Il faut tuer tout de suite le contresens le plus répandu, parce qu’il est séduisant : prendre plus de décisions ne rend pas la démonstration plus rapide.
+Table 59 — Le nombre d’années ne dépend pas du nombre de décisions
+Décisions par anTaux requis (%)Information par décision (µbit)Décisions pour l’établirAnnées par cette routeAnnées par la route du Sharpe
+| 504 | 54,454 | 5 732,58 | 778 | 1,54 | 1,96
+| 2 520 | 51,992 | 1 145,30 | 3 894 | 1,55 | 1,96
+| 25 200 | 50,630 | 114,50 | 38 949 | 1,55 | 1,96
+| 252 000 | 50,199 | 11,45 | 389 500 | 1,55 | 1,96
+| 2 520 000 | 50,063 | 1,14 | 3 895 010 | 1,55 | 1,96
+| 25 200 000 | 50,020 | 0,11 | 38 950 109 | 1,55 | 1,96
+Lecture. Deux routes indépendantes, et c’est leur invariance qui est le résultat, pas leur égalité. La quatrième colonne vient du test du rapport de vraisemblance sur la table de contingence — de l’information — et la sixième d’un test de moyenne sur le ratio d’information ; elles diffèrent de 21 % parce qu’elles ne testent pas la même statistique. Ce qui compte est qu’aucune des deux ne bouge d’une ligne à l’autre. Ce que l’ampleur achète n’est pas la vitesse de la preuve, c’est la petitesse de l’exigence : l’information par décision tombe de quatre ordres de grandeur d’une ligne à l’autre, la durée ne bouge pas d’un centième d’année.
+Les deux colonnes de droite le disent par deux routes indépendantes — un test d’information sur la table de contingence, un test de moyenne sur le ratio. Elles ne donnent pas exactement le même nombre, et il n’y a aucune raison qu’elles le fassent : elles ne testent pas la même statistique. Ce qui compte est qu’aucune des deux ne bouge d’une ligne à l’autre. C’est le résultat de la section 63, retrouvé dans l’unité de la gestion. L’information par décision, elle, tombe de quatre ordres de grandeur d’une ligne à l’autre.
+Ce que l’ampleur achète n’est pas la vitesse de la preuve : c’est la petitesse de l’exigence. Autrement dit, elle ne rend pas l’hypothèse plus démontrable — elle la rend plausible.
+Le même avantage, et deux dénominateurs
+Reste à appliquer au chiffre publié la machinerie que le document applique à tout le reste.
+Table 60 — Le même avantage, indémontrable pour l’un, acquis pour l’autre
+Taux de réussite (%)Écart au hasard (points)Information par décision (µbit)Décisions pour l’établirAnnées à 504 par anAnnées à 2 520 000 par an
+| 50,75 | 0,75 | 162,31 | 27 477 | 54,5 | 0,011
+| 52,00 | 2,00 | 1 154,46 | 3 863 | 7,7 | 0,002
+| 54,50 | 4,50 | 5 850,83 | 762 | 1,5 | 0,000
+| 58,00 | 8,00 | 18 546,10 | 240 | 0,5 | 0,000
+| 65,00 | 15,00 | 65 931,94 | 68 | 0,1 | 0,000
+Lecture. La première ligne est le taux qu’un livre d’enquête rapporte, cité une seule fois et non contesté ici. Il demande 27 477 décisions pour être distingué du hasard à 5 % et 80 % de puissance — soit 55 ans pour un opérateur à deux décisions par séance, et 4,0 jours pour une infrastructure. L’avantage n’est pas différent : c’est le dénominateur qui l’est. La dernière ligne dit l’inverse, et il faut la lire aussi : un taux franchement élevé s’établit en quelques centaines de décisions, mais aucun marché liquide n’en laisse traîner un.
+Figure 81 — Le nombre de décisions requis pour distinguer un taux de réussite du hasard, à gauche ; le même axe converti en années aux deux rythmes de décision, à droite. Le trait vertical est le taux publié.
+Nombre de décisions requis pour distinguer un taux de réussite du hasard, par le test du rapport de vraisemblance sur la table de contingence. Rien dans ce calcul ne dépend de la géométrie, du Sharpe ou de la loi des rendements : c’est de l’information pure, et c’est ce qui le rend opposable. Le taux rapporté par la publication demande 27 477 décisions, soit 55 ans à deux décisions par séance et 4,0 jours à dix mille. L’avantage n’est pas différent : le dénominateur l’est.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le taux rapporté demande 27 477 décisions pour être distingué du hasard. Cela fait 55 ans pour un opérateur à deux décisions par séance, et 4,0 jours pour une infrastructure à dix mille.
+L’avantage n’est pas différent : c’est le dénominateur qui l’est. Un opérateur qui affiche ce taux de réussite sur son propre relevé n’a rien montré du tout — non parce qu’il se trompe, mais parce que la statistique ne peut rien en dire avant qu’il ait dépassé l’espérance de vie.
+La dernière ligne de la table dit l’inverse et il faut la lire aussi : un taux franchement élevé s’établit en quelques centaines de décisions. C’est atteignable. Simplement, aucun marché liquide n’en laisse traîner un.
+Le plafond d’un panier de lectures
+La deuxième pratique attribuée à ce genre de programme est la combinaison de signaux individuellement faibles. Elle est vraie et elle est mal comprise, parce qu’on la résume par « le gain croît comme la racine du nombre de signaux » — ce qui n’est exact qu’à corrélation exactement nulle.
+Le gain réel d’un panier de k lectures de qualité égale et de corrélation moyenne ρ vaut √(k/(1 + (k−1)ρ)). Il sature, et son plafond est 1/√ρ.
+Table 61 — Ce qu’un panier de lectures ajoute, et où il s’arrête
+Lecturesρ = 0,00ρ = 0,05ρ = 0,15ρ = 0,35
+| 1 | 1,000 | 1,000 | 1,000 | 1,000
+| 2 | 1,414 | 1,380 | 1,319 | 1,217
+| 3 | 1,732 | 1,651 | 1,519 | 1,328
+| 5 | 2,236 | 2,041 | 1,768 | 1,443
+| 8 | 2,828 | 2,434 | 1,975 | 1,523
+| 15 | 3,873 | 2,970 | 2,200 | 1,594
+| 30 | 5,477 | 3,499 | 2,368 | 1,640
+| 60 | 7,746 | 3,897 | 2,468 | 1,665
+| plafond | ∞ | 4,472 | 2,582 | 1,690
+Lecture. Gain d’IC d’un panier de lectures de qualité égale et de corrélation moyenne ρ, rapporté à une lecture seule. La colonne de gauche est la promesse habituelle, √k, et elle n’est vraie qu’à corrélation exactement nulle — ce qui n’arrive pas entre deux lectures d’un même flux. Dès ρ = 0,15, les quinze lectures du catalogue de la partie III valent 2,20 fois une lecture seule et non 3,87, et 24 lectures suffisent déjà à en capter 90 %. Le plafond est fixé par la corrélation, jamais par le nombre, et les lectures supplémentaires ne font plus que gonfler le budget de configurations à déflater.
+Figure 82 — Le gain d’un panier selon le nombre de lectures et leur corrélation, avec les plafonds. La promesse en racine du nombre n’existe que sur la courbe du haut, à corrélation nulle.
+Gain d’IC d’un panier de lectures de qualité égale et de corrélation moyenne donnée. Le plafond vaut l’inverse de la racine de la corrélation, et il est atteint à quelques unités près bien avant que le panier ne soit plein : à 0,15, 24 lectures en captent déjà neuf dixièmes. Les suivantes n’ajoutent rien à l’IC et ajoutent tout au budget de configurations à déflater — c’est la comptabilité de la partie XVI, et elle joue ici contre le collectionneur de lectures.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+À une corrélation de 0,15 — modeste, pour deux lectures qui regardent le même flux d’ordres — les quinze lectures du catalogue de la partie III valent 2,20 fois une lecture seule. Pas quinze fois. Pas non plus 3,87, la racine de quinze. Et 24 lectures en captent déjà les neuf dixièmes.
+Le plafond est fixé par la corrélation, jamais par le nombre. Les lectures suivantes n’ajoutent plus rien à la prévision et ajoutent tout au budget de configurations à déflater — la comptabilité de la partie XVI joue donc contre le collectionneur de lectures.
+Figure 83 — Le gain d’un panier sur le plan du nombre de lectures et de leur corrélation. Une arête étroite là où la corrélation s’annule, un plateau bas partout ailleurs.
+Le versant abrupt du bord gauche est la promesse en racine du nombre ; elle ne survit qu’à corrélation presque nulle. Dès qu’on avance d’un pas sur l’autre axe, la surface s’effondre sur un plateau dont la hauteur ne dépend plus que de la corrélation. C’est le même genre de frontière que la transition de la partie XVI, et la conséquence pratique est la même : ce qui limite un opérateur n’est pas le nombre de choses qu’il regarde, c’est le fait qu’elles se ressemblent.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La capacité, et le seul terrain où le petit gagne
+Voici le retournement de la partie, et il est agréable pour une fois.
+L’impact d’un ordre ne croît pas comme sa taille mais comme sa racine — c’est le résultat empirique le plus reproduit de la microstructure, vérifié sur des actions, des futures et des devises. Doubler la taille ne double pas le coût ; mais il le multiplie, et la friction finit par dépasser ce que la géométrie peut porter.
+Table 62 — Ce que la taille coûte, et où elle tue la géométrie
+ContratsNotionnel (M$)Participation (ppm)Impact par sens (pt)Part de l’impact dans c (%)µ* (pt/h)Verdict
+| 1 | 0,3 | 0,7 | 0,024 | 13 | 0,678 | payant seulement au-delà de µ*
+| 5 | 1,5 | 3,3 | 0,055 | 25 | 0,786 | payant seulement au-delà de µ*
+| 25 | 7,5 | 16,7 | 0,122 | 43 | 1,028 | payant seulement au-delà de µ*
+| 100 | 30,0 | 66,7 | 0,245 | 60 | 1,466 | payant seulement au-delà de µ*
+| 400 | 120,0 | 266,7 | 0,490 | 75 | 2,342 | payant seulement au-delà de µ*
+| 1 600 | 480,0 | 1 066,7 | 0,980 | 86 | 4,094 | hors du domaine plausible
+| 6 400 | 1 920,0 | 4 266,7 | 1,960 | 92 | 7,598 | hors du domaine plausible
+Lecture. Loi en racine Y·σ_jour·√(Q/V) avec Y = 0,50 déclaré, volume quotidien 1 500 000 contrats, friction de base 0,33 point. La cinquième colonne porte le fait de la section : à un contrat, l’impact pèse 13 % de la friction ; à 6 400, il en pèse 92 %. La capacité de cette géométrie — la taille où µ* sort du domaine plausible — vaut 888 contrats, soit 266 millions de dollars de notionnel. Un opérateur seul travaille quatre ordres de grandeur au-dessous, dans un régime où la taille est gratuite. *C’est la seule chose qu’un fonds ne peut pas lui acheter.*
+Figure 84 — L’impact d’un ordre comparé à la friction de base, à gauche ; le seuil de rentabilité qui en découle, à droite, avec le domaine de dérive plausible et la capacité de la géométrie.
+Loi en racine de la taille, forme empirique la plus reproduite de la microstructure, avec un coefficient déclaré et balayé par la surface suivante. La capacité est définie ici comme la taille où le seuil de rentabilité sort du domaine de dérive plausible — non comme la taille où le programme cesse de gagner, ce qui dépendrait d’une dérive que personne ne connaît. C’est le seul axe du document où un opérateur seul est structurellement en avance sur une institution, et l’avance ne se gagne pas : elle se perd en grossissant.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+À un contrat, l’impact vaut 0,024 point par sens et pèse 13 % de la friction totale. La capacité de cette géométrie — la taille où µ* sort du domaine plausible — vaut 888 contrats, soit 266 millions de dollars de notionnel.
+Un opérateur seul travaille quatre ordres de grandeur au-dessous, dans un régime où la taille est gratuite. Le seuil qu’il doit franchir vaut 0,678 point par heure quand celui d’un programme à sa capacité en vaut 3,20. C’est la seule chose qu’un fonds ne peut pas lui acheter, et c’est aussi ce qui explique qu’un tel fonds plafonne ses encours au lieu de les faire croître.
+Figure 85 — Le seuil de rentabilité sur le plan de la taille de position et de la largeur de stop, en hauteur logarithmique. Deux versants, deux causes : l’impact d’un côté, l’effondrement du temps de marché de l’autre.
+Hauteur logarithmique, et ce n’est pas une décoration : le seuil parcourt trois ordres et demi de grandeur sur cette boîte, et tracé brut le relief se réduirait à une aiguille au coin des stops serrés. Les graduations de l’échine et les infobulles restent en points par heure. Ce que la planche ajoute aux deux tables est la composition : un opérateur qui resserre son stop pour risquer moins et grossit sa taille pour gagner plus se déplace vers le coin du fond sur les deux axes à la fois, et le seuil qu’il doit franchir y est multiplié par plusieurs centaines.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Il faut lire ce relief comme un avertissement sur les combinaisons, pas sur les réglages pris un à un. Chacun des deux gestes qu’il porte est raisonnable seul et se défend en une phrase : resserrer le stop pour risquer moins, grossir la taille pour gagner plus. Faits ensemble, ils déplacent l’opérateur vers le coin du fond sur les deux axes à la fois, et les deux versants s’ajoutent au lieu de se compenser. Aucune des deux tables ne pouvait le montrer, parce qu’aucune ne varie les deux axes en même temps.
+Payer le spread, ou l’encaisser
+La dernière pratique est celle que le document a déjà nommée sans jamais la chiffrer : traiter le coût d’exécution comme un modèle à part entière, et non comme une correction qu’on applique après coup.
+Le seuil vaut µ* = c/E[τ∧T]. Une conduite qui divise c divise µ* d’autant, et l’opérateur contrôle c entièrement.
+Table 63 — Le seul levier que l’opérateur contrôle entièrement
+Conduite d’entréeTicks à l’entréec (pt)c/aµ* (pt/h)Facteur sur µ*Dérive adverse qui l’annule (pt/h)
+| Entrée au marché | +0,5 | 0,455 | 0,0506 | 0,814 | 1,00 | 0,000
+| Entrée limite touchée | +0,0 | 0,330 | 0,0367 | 0,590 | 1,38 | 0,224
+| Entrée postée au meilleur prix | −0,5 | 0,205 | 0,0228 | 0,367 | 2,22 | 0,447
+Lecture. Même géométrie partout — stop 0,150 %, rapport 2 — et seule l’entrée change. La sortie est identique sur les trois lignes et elle n’est pas posée à la main : elle vaut (1 − p_cible)·1,5 tick, soit 1,00, parce qu’une sortie sur la cible est une limite qui ne glisse pas et une sortie sur le stop un ordre au marché qui glisse — et que la cible n’est atteinte que 33,3 % du temps. Changer d’entrée, et rien d’autre, divise µ* par 2,22 : c’est plus que ce que le reste du document obtient en changeant de signal. La dernière colonne est la contrepartie honnête. Un ordre passif est rempli parce que le prix est venu le chercher ; si ce remplissage est sélectif, une dérive défavorable de 0,45 point par heure reprend tout. Ce chiffre est au-dessous du plancher du domaine plausible, 0,6 à 3,2 — la sélection adverse peut donc manger le gain sans qu’aucune mesure ordinaire ne s’en aperçoive, et il faut un protocole écrit d’avance pour la voir : comparer les issues des ordres remplis à celles des ordres annulés.
+Figure 86 — Le seuil de rentabilité par conduite d’entrée, avec la dérive adverse qui reprendrait le gain ; et ce qu’un ordre limite attend, selon sa profondeur et la patience qu’on lui accorde.
+Sous prix sans dérive, l’économie d’une entrée passive est intégrale — un ordre rempli parce que le prix est venu le chercher n’apprend rien sur la suite, la propriété de Markov forte l’interdit. Ce qui peut la reprendre est un flux informé, que la loi nulle ne contient pas et qu’un relevé ordinaire ne voit pas. Le seul protocole qui le mesure est écrit d’avance : comparer les issues des ordres remplis à celles des ordres annulés.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Une remarque de méthode d’abord, parce qu’elle décide de la moitié du résultat. La sortie est identique sur les trois lignes et elle n’est pas posée à la main : elle vaut 1,00 tick, produit de la probabilité de finir sur le stop — 33,3 % des trades atteignent la cible, donc les deux tiers finissent sur le stop — par le glissement d’un ordre au marché. Écrire un glissement de sortie plus faible, c’est sous-facturer précisément l’issue la plus probable.
+Changer d’entrée, et rien d’autre, fait passer c de 0,455 à 0,205 point et divise µ* par 2,22. C’est plus que ce que le reste du document obtient en changeant de signal.
+La contrepartie, et pourquoi elle n’est pas mesurable sans protocole
+Un ordre passif est rempli parce que le prix est venu le chercher. Sous un prix sans dérive, cela n’apprend rien sur la suite — la propriété de Markov forte l’interdit — et l’économie de spread est donc intégrale. Sur un marché réel, un flux informé peut rendre le remplissage sélectif.
+Le module calcule la dérive défavorable qui reprendrait exactement le gain : 0,45 point par heure. Ce chiffre est au-dessous du plancher du domaine de dérive plausible. Autrement dit, la sélection adverse peut manger tout le gain sans qu’aucune mesure ordinaire ne s’en aperçoive.
+Table 64 — Ce qu’un ordre limite attend, et ce qu’il manque
+Profondeur (ticks)En points1 min5 min15 min60 min
+| 0,5 | 0,12 | 92,0 | 96,4 | 97,9 | 99,0
+| 1,0 | 0,25 | 84,1 | 92,9 | 95,9 | 97,9
+| 2,0 | 0,50 | 68,9 | 85,8 | 91,8 | 95,9
+| 4,0 | 1,00 | 42,4 | 72,1 | 83,6 | 91,8
+| 8,0 | 2,00 | 11,0 | 47,4 | 68,0 | 83,6
+| 16,0 | 4,00 | 0,1 | 15,2 | 40,9 | 68,0
+Lecture. Forme fermée 2Φ(−d/σ√w), sans simulation — c’est le principe de réflexion de la partie XVI, lu par l’autre bout. Une limite posée au meilleur prix est touchée 96 % du temps en cinq minutes : l’entrée passive ne coûte donc presque aucune occasion, et c’est ce qui la rend intéressante. Une limite posée à 16 ticks n’est touchée que 15 % du temps, et les occasions manquées ne sont pas un échantillon quelconque : ce sont exactement les séances où le prix est parti sans revenir. Attendre un meilleur prix, c’est choisir de ne pas être là quand le mouvement a lieu.
+Le tableau de remplissage dit la seconde contrepartie, et elle est plus subtile qu’il n’y paraît. Une limite posée au meilleur prix est servie 96 % du temps en cinq minutes : l’entrée passive ne coûte presque aucune occasion. Une limite posée à seize ticks n’est servie que 15 % du temps — et les occasions manquées ne sont pas un échantillon quelconque. Ce sont exactement les séances où le prix est parti sans revenir. Attendre un meilleur prix, c’est choisir de ne pas être là quand le mouvement a lieu.
+Figure 87 — Le gain annuel d’une entrée passive sur le plan du taux de remplissage et de la sélection adverse, sol posé à zéro. Les deux axes ne coûtent pas la même chose, et c’est le fait de la planche.
+Arithmétique de Wald, sans simulation : la dérive nette multipliée par le temps de marché, moins la friction, le tout multiplié par le nombre d’occasions servies. Les deux axes ne coûtent pas la même chose et c’est le fait de la planche. Perdre la moitié des remplissages divise le gain par deux ; une sélection adverse de quelques dixièmes de point par heure le fait passer sous zéro. Ce n’est donc pas le taux de remplissage qu’il faut surveiller, c’est ce qui arrive après les remplissages — et c’est la mesure que personne ne fait.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le relief range les deux risques dans le bon ordre. Perdre la moitié des remplissages divise le gain par deux ; une sélection adverse de quelques dixièmes de point par heure le fait passer sous zéro. Ce n’est pas le taux de remplissage qu’il faut surveiller, c’est ce qui arrive après les remplissages — et c’est la mesure que personne ne fait. Le protocole tient en une ligne : enregistrer les ordres annulés au même titre que les ordres remplis, et comparer les deux issues.
+Ce qui transfère à un opérateur seul
+Table 65 — Ce qu’un opérateur seul peut prendre, et ce qu’il ne peut pas
+PratiqueCe qu’elle exigeÀ sa portéeFacteurSur quoiTransfère
+| L’ampleur | 2 500 décisions par an au minimum | non | 70,71 | l’exigence par décision, rapportée à celle d’une infrastructure | non
+| La combinaison de lectures | des lectures décorrélées, et de quoi estimer leur corrélation | oui | 2,20 | le gain d’un panier de quinze lectures sur une seule | oui
+| La capacité | une taille très inférieure à 888 contrats | oui | 4,72 | le seuil payé à la capacité, rapporté à celui payé à un contrat | oui
+| L’exécution | de la patience, et un carnet qui accepte les ordres limite | oui | 2,22 | le facteur sur µ* entre entrée au marché et entrée postée | oui
+| Le coût comme premier modèle | compter le stop dans le budget de friction | oui | 4,13 | la friction réelle, rapportée à celle qui oublie le stop | oui
+Lecture. Le verdict de la dernière colonne est calculé : une pratique transfère si elle est à la portée d’un opérateur à 504 décisions par an et 1 contrat, *et* si elle déplace son terme d’au moins 10 %. 4 des cinq y parviennent. La seule qui échoue est celle qui fait le rendement du fonds, et elle échoue sur un critère que ni le talent ni le travail ne déplacent : le nombre de décisions. Les quatre qui réussissent agissent sur la friction, sur la taille, ou sur le plafond d’un panier de lectures — jamais sur la direction. Rien de ce qui transfère ne touche au sens du prochain mouvement, et c’est la même conclusion que les seize parties précédentes, obtenue cette fois en partant d’un objet extérieur au document.
+Figure 88 — Le facteur mesuré de chaque pratique et le verdict de transfert, en échelle logarithmique. Une seule barre reste hors de portée, et elle échoue sur le nombre de décisions.
+Chaque facteur est relu des sections précédentes, jamais réécrit ici : corriger une mesure en amont change la barre et le verdict sans intervention. Le verdict combine deux conditions déclarées avant les mesures — la pratique doit être à la portée d’un opérateur à 504 décisions par an et un contrat, et déplacer son terme d’au moins 10 %. L’échelle est logarithmique parce que les facteurs vont de deux à soixante-dix ; la longueur d’une barre ne se compare donc pas à celle d’une autre, seule sa position sur l’axe compte.
+Spéculation · une pratique de fonds · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le verdict de la dernière colonne est calculé et non écrit : une pratique transfère si elle est à la portée d’un opérateur à 504 décisions par an et un contrat, et si elle déplace son terme d’au moins 10 %. 4 des cinq y parviennent.
+La seule qui échoue est celle qui fait le rendement du fonds, et elle échoue sur un critère que ni le talent ni le travail ne déplacent : le nombre de décisions. C’est une contrainte d’infrastructure, pas de compétence, et aucune quantité de lecture de graphique ne la lève.
+Les quatre qui réussissent agissent sur la friction, sur la taille, ou sur le plafond d’un panier de lectures. Aucune ne touche à la direction du prochain mouvement.
+C’est la conclusion des seize parties précédentes, obtenue cette fois en partant d’un objet entièrement extérieur au document — et c’est la raison pour laquelle elle vaut d’être écrite une dernière fois. Le marché ne concède que µ. Tout le reste — le temps de marché, la friction, la largeur du stop, la taille de la position, la patience d’un ordre limite — appartient à l’opérateur, se mesure vite, et décide du signe de son compte bien avant que µ n’ait eu son mot à dire.

@@ -1,0 +1,28 @@
+Quatrième partie
+L’instrument
+Si l’on ne teste pas la règle mais sa trace, alors la qualité de la trace décide de tout. Un journal mal conçu rend certaines questions définitivement insolubles, et aucune finesse statistique ultérieure ne les rouvre.
+Le journal de décision
+L’instrument de ce document est un registre où chaque setup éligible laisse une ligne — qu’il ait été pris ou refusé. Ce point sépare le journal de décision du journal de trades ordinaire, qui n’enregistre que les positions ouvertes et perd, ce faisant, la moitié du signal.
+La règle reste dans la tête de l’opérateur ; ce qui sort du dispositif, ce sont des décisions horodatées. On ne lui demande jamais d’expliquer pourquoi il a pris ou refusé — l’explication serait une reconstruction, et une reconstruction n’est pas une donnée. On lui demande seulement de consigner, avant de connaître l’issue, ce qu’il a décidé et dans quel état du monde.
+Sept champs, et une frontière temporelle
+Les champs se lisent en deux blocs, séparés par une frontière qu’il ne faut jamais franchir à l’envers.
+Table 9 — Ce qu’un journal de décision doit porter, et de quel côté de la frontière temporelle chaque champ se situe.
+ChampConnuPourquoi il est indispensable
+| Horodatage de la décision | avant l’issue | sans lui, un journal est un souvenir et non une donnée
+| Contexte au moment de la décision | avant l’issue | c’est l’état du monde que l’opérateur a réellement vu
+| Abstentions — les setups refusés | avant l’issue | sans elles la loi nulle D est intestable et la moitié de la table de contingence reste vide
+| Conviction annoncée | avant l’issue | elle autorise le test de calibration, qu’aucun autre champ ne permet
+| Direction, mise, moment retenu | avant l’issue | les quatre leviers doivent être séparables pour être décomposés
+| Issue effective | après l’issue | le résultat net, friction comprise
+| Issue contrefactuelle des refus | après l’issue | ce que le setup refusé aurait donné — c’est ce qui rend l’abstention mesurable
+Lecture. Les cinq premiers champs sont scellés à l’instant de la décision, les deux derniers ne sont connus qu’après. Un registre qui n’enregistre que les lignes du bas n’est pas un journal de décision mais un journal de trades, et aucun des tests de ce document ne s’y applique.
+La frontière n’est pas une commodité de présentation. Un champ du bloc supérieur rempli après coup contamine tout ce qui en dépend, et aucun test ne rattrape cette contamination — car le test ne peut pas distinguer une décision prise à 10 h 12 d’une décision inscrite à 18 h en se souvenant de 10 h 12. C’est pourquoi un journal rempli le soir est un souvenir et non une donnée : non parce que l’opérateur mentirait, mais parce que la mémoire d’une décision est systématiquement révisée par son issue.
+Trois de ces champs manquent à la quasi-totalité des journaux existants. Le contexte au moment de la décision permet seul de vérifier plus tard qu’un motif invoqué était réellement présent. La conviction annoncée autorise un test qu’aucun autre champ ne permet — la calibration : un opérateur dont les décisions à forte conviction battent ses décisions à faible conviction démontre une compétence même si son espérance moyenne est nulle, ce qui est un résultat considérable et fréquemment inaccessible faute du champ. Et les abstentions, qui méritent leur propre section.
+Les refus sont la moitié de l’information
+Chez un opérateur discrétionnaire, l’avantage loge très souvent dans ce qu’il ne fait pas. C’est le point que la littérature sur l’allocation d’attention formalise : la compétence se manifeste autant par le renoncement que par la sélection.
+Or la mesure de l’abstention exige une table de contingence complète — décision × issue — dont deux cases sur quatre concernent des setups refusés. Il faut donc leur associer une issue contrefactuelle : ce que le setup aurait donné s’il avait été pris. C’est possible dès lors que les setups sont définis mécaniquement, puisqu’on peut alors les rejouer intégralement.
+La conséquence à retenir
+Un journal sans abstentions ne remplit que la moitié de la table. La loi nulle D devient intestable, et la compétence de refus — souvent la principale — n’est pas identifiable, quelle que soit la taille de l’échantillon. Aucune quantité de décisions prises ne compense l’absence des décisions refusées.
+Ce qui invalide un registre avant tout calcul
+Avant de mesurer, on audite. Le module d’audit refuse un journal sur des défauts ordonnés par gravité, et un journal qui déclenche le premier n’est pas dégradé : il est inexploitable, parce que la quantité qu’on voudrait mesurer n’y est pas identifiable.
+Les défauts recherchés sont concrets. Une abstention qui porte une direction ou une mise non nulle a été complétée après coup. Des rangs dupliqués ou non croissants signalent un registre édité. Une conviction constante rend le test de calibration sans objet — ce n’est pas une faute, mais il faut le dire plutôt que de laisser croire que le test a été passé. Et l’absence d’issue contrefactuelle sur les refus laisse la table incomplète.

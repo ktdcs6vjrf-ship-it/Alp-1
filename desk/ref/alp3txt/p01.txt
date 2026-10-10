@@ -1,0 +1,41 @@
+Première partie
+Le problème, et pourquoi il se lève
+La prétention d’un opérateur discrétionnaire paraît invérifiable par construction. Elle ne l’est pas, mais la sortie n’est pas celle qu’on attend : elle ne consiste pas à coder la règle, elle consiste à cesser de vouloir la coder.
+Ce que « non codable » veut dire
+L’énoncé que ce document prend au sérieux est le suivant : il existe un avantage dans mes décisions, et aucun programme ne saurait les reproduire. Il faut d’abord reconnaître qu’il n’est pas absurde. Un opérateur intègre des éléments hétérogènes — la forme d’un mouvement, la densité du carnet, ce qu’il sait du calendrier, ce qu’il a vu les jours précédents — selon une pondération qu’il ne sait pas énoncer et qui varie avec le contexte. L’incapacité à écrire la règle est un fait d’introspection ordinaire, pas une échappatoire.
+Mais l’énoncé, tel quel, s’auto-interdit. Il s’enchaîne ainsi : sans règle écrite, aucun rejeu sur données historiques ; sans rejeu, aucune loi nulle à laquelle comparer la performance ; sans loi nulle, rien ne distingue un avantage d’une série de chance. La prétention devient irréfutable, et une prétention irréfutable n’est pas une prétention forte : c’est une prétention vide. C’est exactement le motif pour lequel la méthodologie de cette série refuse l’entrée à tout estimateur qu’on ne sait pas calibrer contre son bruit.
+Les deux propositions sont liées : plus le processus est irréductible à une règle, moins la voie du rejeu est disponible pour en établir la valeur. La suite de ce document décrit une voie qui ne passe pas par le rejeu.
+Répliquer n’est pas détecter
+La sortie tient dans une distinction que la chaîne d’implication ci-dessus escamote. Elle suppose que tester une stratégie exige de l’exécuter. C’est vrai pour un backtest ; c’est faux pour un test.
+Proposition 1. La détection d’un avantage ne requiert pas la connaissance de la règle qui le produit. Elle requiert seulement l’observation des décisions et de leurs issues, et une loi nulle sur cette même paire.
+Justification. Soit D la suite des décisions et Y celle des issues. Toute statistique de la forme T(D, Y) est calculable sans connaître l’application qui engendre D. Sa loi sous l’hypothèse d’indépendance entre D et Y l’est également, par permutation ou par simulation. Le test compare l’une à l’autre. La règle n’intervient à aucun des trois moments. ∎
+Autrement dit : on n’a jamais eu besoin de la règle. On croyait en avoir besoin parce qu’on confondait deux opérations que le vocabulaire courant réunit sous le mot « tester ». Répliquer exige la règle ; détecter exige seulement la trace.
+La conséquence pratique est immédiate et elle déplace tout le travail. Le problème cesse d’être « comment coder mon jugement » — question sans réponse — pour devenir « comment enregistrer mes décisions de façon que leur trace soit exploitable ». Cette seconde question a une réponse, et c’est la deuxième partie de ce document.
+Ce que l’évaluation des gérants sait faire sans la règle
+La proposition 1 n’est pas une trouvaille : c’est la pratique établie d’un champ entier. Aucune des références ci-dessous ne dispose de la stratégie des gérants qu’elle évalue, et toutes concluent.
+Fama et French (2010) départagent chance et compétence sur la coupe transversale des fonds américains par un bootstrap qui ne suppose rien de leurs processus. Kacperczyk, Van Nieuwerburgh et Veldkamp (2014) vont plus loin et mesurent une compétence variable dans le temps — sélection de titres en expansion, chronométrage du marché en récession — à partir des seuls portefeuilles publiés. Berk et Green (2004) montrent que la compétence peut exister tout en étant intégralement absorbée par les frais et la taille, ce qui met en garde contre l’inférence inverse : une performance nette nulle ne réfute pas la compétence.
+Deux travaux touchent de plus près l’opérateur individuel. Locke et Mann (2005) étudient des opérateurs de parquet sur futures et trouvent que le trait persistant n’est pas la capacité de prévision mais la discipline — la propension à ne pas laisser courir les perdants. Coval, Hirshleifer et Shumway (2005) établissent une persistance de performance chez une minorité d’investisseurs individuels, incompatible avec le pur hasard. À l’inverse, Barber et Odean (2000) documentent la destruction de valeur du plus grand nombre. L’ensemble ne dit pas que le jugement discrétionnaire paie ; il dit qu’elle est mesurable, et que la mesure sépare.
+Portée de l’étude
+Cette section délimite ce que l’étude établit et ce qu’elle laisse hors de son champ.
+L’étude construit un appareil de mesure et en établit la sensibilité. Elle spécifie cinq lois nulles et la prétention que chacune adresse, mesure le nombre de décisions requis pour les battre à un effet donné, et rapporte le taux de déclaration de l’appareil à compétence nulle. Ces résultats sont reproductibles par les modules du dépôt.
+L’étude ne porte sur aucun journal réel. Les journaux analysés sont synthétiques et leur compétence est fixée par construction, ce qui permet de comparer la sortie de l’appareil à une valeur connue. Un registre réel au format de la section 19 est traité par les mêmes modules, sans modification du code.
+Six notions, et ce qu’elles décident
+Les six termes qui suivent reviennent dans tout le document. Chacun est donné deux fois : en langue ordinaire, puis dans la forme qui sert au calcul. Le lecteur qui n’a pas lu les précédents documents de la série y trouvera tout ce qui lui est nécessaire.
+La trace
+Ce qu’une décision laisse derrière elle une fois prise : un instant, un sens, une mise, une issue. La trace existe même quand la règle qui l’a produite reste inconnue, et c’est cette dissociation qui rend ce document possible.
+Le couple (D, Y) des décisions et des issues. Toute statistique T(D, Y) est calculable sans connaître l’application qui engendre D.
+Le levier
+Une liberté que l’opérateur s’accorde et qu’il exerce en regardant le marché : entrer ou non, choisir l’instant, dimensionner, gérer la sortie. Un levier n’est pas une opinion, c’est un choix effectivement réalisé, et il se compte.
+Un choix binaire répété. k leviers engendrent 2k stratégies réalisables, dont l’opérateur choisit une en observant le prix.
+La taxe de multiplicité
+Ce qu’il en coûte, en exigence de preuve, d’avoir eu le choix. Plus on a pu essayer de configurations, plus le meilleur résultat obtenu s’explique par le nombre d’essais plutôt que par la compétence.
+Le seuil déflaté √(2 ln B / N), avec B = 2k. Il croît en racine de k, donc les premiers leviers coûtent davantage que les suivants.
+La loi nulle
+Un adversaire construit exprès pour n’avoir aucune compétence, mais pour ressembler à l’opérateur sur tout le reste : même cadence, même période, même loi des résultats. Un avantage n’existe que s’il bat cet adversaire-là.
+La loi de T(D, Y) sous une hypothèse d’indépendance déclarée, obtenue par permutation ou par simulation à graine fixée.
+La clairvoyance
+La part d’information que l’opérateur possède réellement sur l’issue, avant de décider. Elle ne se mesure pas en pourcentage de réussite mais en quantité d’information, ce qui la rend comparable à ce que l’échantillon peut porter.
+L’information mutuelle I(D ; Y) en bits par décision, estimée sur la table de contingence et corrigée du biais de Miller-Madow.
+Le mur d’échantillon
+Le nombre de décisions en deçà duquel aucun avantage, même réel, ne peut être établi. Ce n’est pas une limite de la méthode mais une propriété du rapport entre l’effet et le bruit.
+N = 2 ln B / SR², ou la forme informationnelle équivalente. Le budget entre par un logarithme, l’effet par un carré.

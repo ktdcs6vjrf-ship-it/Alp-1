@@ -1,0 +1,113 @@
+Quinzième partie
+Une affirmation venue du dehors
+Tout ce qui précède a été construit ici. Cette partie fait l’inverse : elle prend une affirmation à large diffusion, chiffrée et vérifiable, et lui applique le protocole sans rien y ajouter. C’est le seul test qui vaille pour une méthodologie — elle doit trancher un cas qu’elle n’a pas choisi.
+Sept nombres, et ce qu’ils prétendent
+Une publication à large diffusion avance sept nombres sur le contrat NQ, tirés de 11 ans et 2 827 séances. On les reprend ici tels quels, comme des données à expliquer et non comme des résultats à défendre : l’un des deux extrêmes de la session 18:00–09:30 est franchi pendant les heures régulières sur 94,2 % des séances ; les deux sur 22,9 % ; aucun sur 5,8 %. Puis vient l’affirmation qui porte le tout : une ouverture au-dessus du milieu du range annonce que le haut cassera en premier 76,2 % du temps, une ouverture au-dessous que le bas cassera en premier 75,6 %. Enfin le timing : première cassure médiane 11 minutes après 9:30, et 68,7 % des séances ont cassé un côté avant 10:00.
+La conclusion qui les accompagne est qu’on peut « prédire quel niveau sera touché en premier », et s’en servir de biais quand on n’en a pas.
+La question posée ici n’est jamais « ces chiffres sont-ils vrais ? » — ils le sont probablement, et rien de ce qui suit ne les conteste. C’est toujours celle de la section 26 : à quelle fréquence ces chiffres apparaissent-ils sous un prix sans dérive ?
+Table 35 — Les sept nombres publiés, et ce qu’une marche sans dérive en rend.
+Ce que l’affirmation avancePubliéLoi nulleÉcartVerdict
+| Au moins un extrême franchi | 94,2 % | 94,8 % | +0,6 | rendu
+| Les deux extrêmes franchis | 22,9 % | 22,4 % | −0,5 | calibré
+| Aucun extrême franchi | 5,8 % | 5,2 % | −0,6 | calibré
+| Le haut casse en premier, ouverture au-dessus du milieu | 76,2 % | 71,7 % | −4,5 | résidu
+| Le bas casse en premier, ouverture au-dessous du milieu | 75,6 % | 72,4 % | −3,2 | résidu
+| Un côté cassé avant 10:00 | 68,7 % | 69,2 % | +0,5 | rendu
+| Première cassure, médiane | 11 min | 10 min | −1 | rendu
+Lecture. Le modèle nul a deux paramètres, tous deux non observables dans les nombres publiés : le rapport des volatilités nuit/jour, qui vaut 0,42, et la dispersion de volatilité d’une séance à l’autre, qui vaut 0,60. Ils sont calibrés sur les deux lignes marquées « calibré » — celles qui ne portent aucune direction — et il ne reste donc aucun degré de liberté pour les quatre autres, qui sont prédites. C’est la condition sans laquelle l’exercice ne prouverait rien : un paramètre ajusté sur le chiffre qu’il doit expliquer explique n’importe quoi. Le verdict est calculé contre une tolérance de 3 points, déclarée une seule fois.
+Le modèle nul a deux paramètres, et il faut dire tout de suite comment ils sont fixés, faute de quoi l’exercice ne prouverait rien. Ils sont calibrés sur les deux nombres qui ne portent aucune direction — la part des séances qui cassent les deux côtés, celle qui n’en casse aucun. Il ne reste donc aucun degré de liberté pour les nombres de direction, qui sont prédits et non ajustés. C’est la règle 6 du dépôt : un paramètre déclaré n’est jamais dérivé de ce qu’il sert à évaluer.
+Où le prix ouvre dans le range qu’il vient de creuser
+Avant toute simulation, une remarque de structure décide de l’essentiel. L’ouverture de 9:30 est le dernier point de la session overnight, et le range overnight est celui de cette même session. La position de l’ouverture dans le range est donc la position du point terminal d’une marche dans son propre range : une grandeur sans dimension, qui ne dépend d’aucune volatilité, d’aucun instrument et d’aucune époque.
+Sa loi n’est pas uniforme.
+Table 36 — La position de l’ouverture dans le range overnight, par quantile.
+QuantileLoi de la marcheLoi uniformeÉcart
+| 5 % | 2,7 % | 5,0 % | −2,3
+| 10 % | 6,9 % | 10,0 % | −3,1
+| 25 % | 21,2 % | 25,0 % | −3,8
+| 50 % | 50,2 % | 50,0 % | +0,2
+| 75 % | 78,8 % | 75,0 % | +3,8
+| 90 % | 93,0 % | 90,0 % | +3,0
+| 95 % | 97,1 % | 95,0 % | +2,1
+Lecture. La colonne du milieu est ce qu’on croit spontanément : une ouverture qui tomberait n’importe où dans le range. La colonne de gauche est ce qui se produit. La loi est en U — les bords chargés, le milieu creusé — parce que l’instant où une marche atteint son maximum suit une loi de l’arc sinus, qui charge les extrémités du trajet. Conséquence chiffrée : la distance médiane de l’ouverture au bord le plus proche vaut 21,2 % du range contre 78,8 % à l’autre bord, et 37,5 % des séances ouvrent dans le dernier sixième d’un bord. C’est là que l’essentiel du soixante-seize pour cent est déjà contenu, avant qu’aucune donnée de marché ne soit consultée.
+Figure 59 — La densité de la position d’ouverture dans le range overnight, et la fréquence cumulée de la distance au bord le plus proche. Les deux cadres sont obtenus sans aucune donnée de marché.
+La position d’ouverture est une grandeur sans dimension : elle ne dépend d’aucune volatilité, d’aucun instrument et d’aucune époque, puisque l’ouverture de 9:30 est le dernier point de la session overnight et que le range est celui de cette même session. Ce que cette planche montre n’est donc pas une propriété du contrat NQ : c’est une propriété des marches aléatoires. 37,5 % des séances ouvrent dans le dernier sixième d’un bord.
+Spéculation · la session overnight · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 33,0 % à la hausse contre 0,2 % à la baisse · µ requis 0,03 pt/h · objectif à 3,09 σ de séance
+Elle est en U : les bords chargés, le milieu creusé. La raison est classique et se dit en une phrase — l’instant où une marche atteint son maximum suit une loi de l’arc sinus, qui charge les extrémités du trajet, si bien qu’un des deux extrêmes du range est très souvent posé près de la fin. La conséquence est chiffrée : la distance médiane de l’ouverture au bord le plus proche vaut 21,2 % du range, contre 78,8 % à l’autre bord, et 37,5 % des séances ouvrent dans le dernier sixième d’un bord.
+Un rapport de un à quatre entre les deux distances. Le soixante-seize pour cent est déjà là, et aucune donnée de marché n’a encore été consultée.
+Le taux annoncé est la distance, lue à l’envers
+Il ne reste qu’à appliquer le théorème qui fonde toute la série. Sous un prix sans dérive, la probabilité de toucher une barrière avant l’autre vaut le rapport des distances inverses. À distance médiane, le bord proche est à un cinquième et le bord opposé à quatre : la probabilité de toucher le proche en premier vaut donc quatre cinquièmes.
+Table 37 — La probabilité de toucher le bord proche en premier, par distance à ce bord.
+Distance au bord procheSur toutes les séancesSur les séances qui cassentLoi d’arrêt : 1 − dÉcart
+| 0 – 5 % | 91,1 % | 93,7 % | 97,5 % | −3,8
+| 5 – 10 % | 85,1 % | 88,9 % | 92,5 % | −3,6
+| 10 – 15 % | 82,2 % | 86,6 % | 87,5 % | −0,9
+| 15 – 20 % | 76,9 % | 80,7 % | 82,5 % | −1,8
+| 20 – 25 % | 71,7 % | 76,2 % | 77,5 % | −1,3
+| 25 – 30 % | 67,2 % | 71,4 % | 72,5 % | −1,1
+| 30 – 35 % | 59,8 % | 64,5 % | 67,5 % | −3,0
+| 35 – 40 % | 59,8 % | 63,5 % | 62,5 % | +1,0
+| 40 – 45 % | 53,1 % | 56,5 % | 57,5 % | −1,0
+| 45 – 50 % | 49,1 % | 52,3 % | 52,5 % | −0,2
+Lecture. La quatrième colonne n’est pas une simulation : c’est le théorème d’arrêt optionnel, qui donne la probabilité de toucher une barrière avant l’autre comme le rapport des distances inverses. La troisième la suit de bout en bout, 1,8 point d’écart moyen, et le décrochage se concentre aux deux premières lignes, où il atteint 3,8 points. La raison n’est pas le marché mais le pas de temps : la trajectoire avance par minute, et la première minute de séance porte une amplitude comparable à la distance qu’on mesure ici. La loi continue est la limite d’un pas qui tend vers zéro, et une minute d’ouverture n’est pas un pas qui tend vers zéro. Il n’y a donc rien à prédire : la probabilité annoncée est la distance, lue à l’envers.
+La deuxième colonne est la même chose comptée sur *toutes* les séances, et elle est plus basse d’un montant qui ne dépend pas de la distance — exactement les 5,2 % de séances qui ne cassent rien, et qui comptent alors comme un échec à chaque distance. C’est le décalage constant qu’on voit d’une colonne à l’autre, et c’est aussi, à un point près, l’écart entre les deux lectures possibles du nombre publié.
+Figure 60 — La probabilité mesurée de toucher le bord proche en premier, posée sur le théorème d’arrêt optionnel. La droite n’est pas un ajustement : c’est la loi.
+Les deux traits horizontaux sont les deux lectures possibles du nombre publié, selon que son dénominateur compte toutes les séances ou les seules qui cassent quelque chose — la publication ne le dit pas, et l’écart entre les deux vaut 4,7 points. Les deux tombent dans la bande que la loi d’arrêt traverse déjà. Les points s’en écartent de 1,8 point en moyenne, et le décrochage se concentre aux deux premières positions : la trajectoire avance par minute, et la première minute de séance porte une amplitude comparable aux distances mesurées là. La loi continue est la limite d’un pas qui tend vers zéro.
+Spéculation · la session overnight · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 33,0 % à la hausse contre 0,2 % à la baisse · µ requis 0,03 pt/h · objectif à 3,09 σ de séance
+La colonne de droite de la table n’est pas une simulation, c’est le théorème ; la colonne du milieu la retrouve. Il n’y a donc rien à prédire : la probabilité annoncée est la distance, lue à l’envers. Le décrochage des dernières lignes tient à la séance, qui borne le problème — au-delà d’un cinquième de range, une part des séances ne touche plus rien avant la clôture, et c’est le seul endroit où la durée de séance entre dans le calcul.
+Le seul nombre que le bruit ne rend pas
+Un nombre sur sept résiste, et il faut le dire plutôt que de le lisser : le timing. Une marche à volatilité constante casse son premier bord vers la 35e minute quand la publication en annonce 11. Ce n’est pas un défaut du modèle nul, c’est une propriété réelle et connue du marché — la variance de la première demi-heure.
+Table 38 — Ce que le pic de variance d’ouverture explique, et ce qu’il ne touche pas.
+PubliéVolatilité platePic d’ouverture
+| Première cassure, médiane | 11 min | 35 min | 10 min
+| Un côté cassé avant 10:00 | 68,7 % | 44,5 % | 69,2 %
+| Le haut casse en premier, ouverture au-dessus | 76,2 % | 73,4 % | 71,7 %
+| Espérance du trade imposé | — | −0,0220 R | −0,0189 R
+Lecture. Le profil concentre 25 % de la variance de la séance sur la première demi-heure, à variance totale identique : rien n’est ajouté, tout est déplacé. Il rend le timing, que la volatilité plate manquait de trente minutes. Il ne déplace ni la direction ni l’espérance, et c’est l’essentiel : la variance de l’ouverture dit quand la cassure arrive, jamais de quel côté. C’est la seule des sept affirmations qui porte une vraie propriété de marché, et elle n’est pas directionnelle.
+Le profil déclaré concentre 25 % de la variance de la séance sur la première demi-heure, à variance totale identique : rien n’est ajouté, tout est déplacé. Il rend le timing — 10 minutes contre 11 annoncées, 69,2 % avant 10:00 contre 68,7. Et il ne déplace ni la direction ni l’espérance, ce qui est l’essentiel : la variance de l’ouverture dit quand la cassure arrive, jamais de quel côté.
+Ce qui survit, et ce qu’une hypothèse lui donne
+Il faut maintenant énoncer ce que la loi nulle ne rend pas, sans l’arrondir. Sur la convention qui compte toutes les séances, elle place le conditionnel à 72,1 % là où la publication annonce 75,9 %. 3,8 points survivent.
+Une hypothèse séduisante les explique mal, et le dépôt publie sa réfutation plutôt que de la taire. On pourrait croire que la dispersion de volatilité d’une séance à l’autre comble l’écart, puisqu’elle corrige la part des séances qui ne cassent rien — c’était la prédiction faite avant de mesurer. Elle l’aggrave : en ajoutant des séances mortes, elle retire du conditionnel précisément les jours où le bord proche aurait été touché.
+Deux choses bornent alors ce résidu, et la seconde le tue.
+Table 39 — Le résidu, et l’amplitude que deux paramètres non observables lui donnent.
+ValeurLecture
+| Rapport de volatilité nuit/jour | 0,30 – 0,70 | non observable dans les nombres publiés
+| Dispersion de volatilité par séance | 0,00 – 0,90 | non observable dans les nombres publiés
+| Conditionnel prédit, sur toute la boîte | 62,1 % – 74,4 % | amplitude de 12,2 points
+| Conditionnel au couple calibré | 72,1 % | k = 0,42, dispersion 0,60
+| Conditionnel publié | 75,9 % | moyenne des deux sens
+| Résidu | 3,8 points | à comparer à l’amplitude ci-dessus
+Lecture. Le dépôt connaît déjà cette figure : la fréquence nulle d’un déséquilibre de footprint dépend d’une taille de grappe que personne n’observe, celle d’un extrême pauvre en profil de marché dépend d’une hauteur de rangée qui est un réglage d’affichage. Ici, le rapport de volatilité nuit/jour joue le même rôle. Un résidu plus petit que l’amplitude de l’hypothèse n’est pas un résultat, et il faut le dire avant de discuter s’il paie.
+Figure 61 — Le conditionnel prédit par la loi nulle sur toute la boîte des deux paramètres non observables. Le relief y parcourt une amplitude comparable à l’effet revendiqué.
+Aucun des deux axes n’est observable dans les sept nombres publiés, et aucun n’est arbitraire : la nuit échange moins que le jour, et toutes les séances n’ont pas la même volatilité. Le couple retenu est calibré sur les deux nombres qui ne portent aucune direction — la part des séances qui cassent les deux côtés, celle qui n’en casse aucun — de sorte qu’il ne reste aucun degré de liberté pour les nombres de direction. C’est la seule façon de rendre la prédiction non circulaire, et c’est aussi ce qui rend cette planche lisible : le relief est ce que l’hypothèse permet, pas ce qu’on a choisi.
+Spéculation · la session overnight · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 33,0 % à la hausse contre 0,2 % à la baisse · µ requis 0,03 pt/h · objectif à 3,09 σ de séance
+La première est un paramètre que personne n’observe. Sur la boîte plausible du rapport de volatilité nuit/jour et de la dispersion de séance, la prédiction nulle se promène de 62,1 % à 74,4 % — une amplitude de 12,2 points, quand le résidu en vaut 3,8. Le dépôt connaît déjà cette figure : la fréquence nulle d’un déséquilibre de footprint dépend d’une taille de grappe que personne n’observe, celle d’un extrême pauvre dépend d’une hauteur de rangée qui est un réglage d’affichage. Un résidu plus petit que l’amplitude de son hypothèse n’est pas un résultat.
+Le dénominateur que personne n’écrit
+La seconde n’a pas besoin du résidu, et c’est elle qui tranche. La géométrie que l’affirmation impose — viser le bord proche, poser le stop sur le bord opposé — a un taux de réussite d’équilibre, et il se calcule sans rien simuler.
+Table 40 — Le trade imposé : viser le bord proche, stop sur le bord opposé.
+ValeurLecture
+| Rapport gain-risque moyen | 1 pour 3,0 | le bord proche est bien plus près que le bord opposé
+| Temps de marché | 58 min | E[τ∧T], l’exposition moyenne
+| Espérance sous loi nulle | −0,0189 R | à comparer à la prédiction de Wald −0,0196 R, écart +0,13 erreurs types
+| Taux de réussite d’équilibre | 77,4 % | ce qu’il faudrait gagner pour ne rien perdre
+| Taux de réussite publié | 75,9 % | moyenne des deux sens annoncés
+| Espérance au taux publié, lecture B | −0,0202 R | le pour-cent porte sur les séances qui cassent
+| Espérance au taux publié, lecture A | +0,0439 R | le pour-cent porte sur toutes les séances
+Lecture. Les deux dernières lignes ne demandent pas de croire la loi nulle : on suppose le chiffre publié entièrement vrai, résidu compris, et on remplace la seule fréquence dans le calcul en laissant à la géométrie les niveaux qu’elle impose. Elles diffèrent par le dénominateur du pour-cent publié, que la publication ne précise pas, et elles sont de signes opposés : le taux d’équilibre de cette géométrie vaut 77,4 %, et les deux lectures tombent de part et d’autre. Ce qui est certain dans les deux cas : le taux de réussite n’a pas été volé, il a été acheté au prix d’un rapport gain-risque d’un pour 3,0.
+Figure 62 — L’espérance par décision en fonction du taux de réussite. La droite coupe zéro au taux que la géométrie exige ; les trois points sont la loi nulle et les deux lectures du chiffre publié.
+Les deux points « publié » sont le même chiffre, lu de deux façons : selon que son dénominateur compte toutes les séances ou les seules qui cassent quelque chose. La publication ne le précise pas. L’écart vaut 4,7 points de taux, quand l’effet revendiqué au-dessus de la loi nulle en vaut au mieux 4,6. Sous la lecture B, la loi nulle rend le chiffre publié à un dixième de point près et il n’y a rien à expliquer ; sous la lecture A, il reste un résidu — mais la boîte des paramètres non observables lui donne à elle seule une amplitude comparable.
+Spéculation · la session overnight · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 33,0 % à la hausse contre 0,2 % à la baisse · µ requis 0,03 pt/h · objectif à 3,09 σ de séance
+Le taux d’équilibre vaut 77,4 %. Viser un bord à un cinquième du range en risquant les quatre autres cinquièmes impose un rapport gain-risque de un pour 3,0, et un tel rapport exige de gagner quatre fois sur cinq avant même de payer la friction. Le taux de réussite n’a pas été volé : il a été acheté.
+Et c’est ici qu’apparaît le point le plus dérangeant de toute l’analyse. La publication écrit « ouverture au-dessus du milieu, le haut casse en premier 76,2 % » sans dire de quoi ce pour-cent est la part. Deux dénominateurs sont défendables : toutes les séances de ce côté, ou les seules qui cassent quelque chose.
+Table 41 — Les deux lectures possibles du nombre publié, et leurs verdicts opposés.
+LectureTaux parmi les cassuresMême taux sous loi nulleRésiduEspéranceVerdict
+| A — sur toutes les séances | 80,6 % | 76,0 % | +4,6 | +0,0439 R | gagnante
+| B — sur les séances qui cassent | 75,9 % | 76,0 % | −0,1 | −0,0202 R | perdante
+Lecture. Le taux d’équilibre de cette géométrie vaut 77,4 %. La lecture B tombe au-dessous et la lecture A au-dessus : le signe du résultat est décidé par une phrase que la publication n’écrit pas. Et sous la lecture B, la loi nulle rend le nombre publié à un dixième de point près — il n’y a alors strictement rien à expliquer. Le dépôt ne tranche pas à la place de l’auteur : il montre que la question du dénominateur pèse cinq points, quand l’effet revendiqué en pèse quatre.
+L’écart entre les deux lectures vaut 4,7 points de taux — plus que l’effet revendiqué — et il change le signe du verdict. Sous la lecture B, la loi nulle rend le chiffre publié à −0,1 point près et l’espérance vaut −0,0202 R : il n’y a alors strictement rien à expliquer, et la stratégie perd. Sous la lecture A, il reste −0,1 points de résidu et l’espérance vaut +0,0439 R : la stratégie gagne, mais le résidu est plus petit que l’amplitude que la boîte des paramètres lui donne déjà.
+Figure 63 — L’espérance sur le plan du taux de réussite et du rapport gain-risque, le sol posé à l’espérance nulle. Aucune propriété du marché n’entre dans ce relief.
+Ce relief n’est pas simulé : c’est l’arithmétique d’un pari à deux issues, augmentée de la friction mesurée — −0,0196 R par décision à la géométrie de l’affirmation. Il suffit à trancher, et c’est le point : un taux de réussite ne s’interprète jamais seul. Le même 75,9 % est excellent sur un rapport de un pour un et perdant sur un rapport de un pour 3,0. La publication donne le taux et tait le rapport.
+Spéculation · la session overnight · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 33,0 % à la hausse contre 0,2 % à la baisse · µ requis 0,03 pt/h · objectif à 3,09 σ de séance
+Le plan de jeu équitable range tout cela d’un coup, et il n’a que deux axes. Le même 75,9 % est excellent sur un rapport de un pour un et perdant sur un rapport de un pour 3,0. La publication donne le taux et tait le rapport.
+Ce qu’il faut en retenir
+L’affirmation est vraie et sans avantage, et les deux mots comptent. Six de ses sept nombres sont rendus par une marche sans dérive à deux paramètres déclarés. Le septième — le timing — porte une vraie propriété de marché, la variance de l’ouverture, qui dit quand et jamais dans quel sens. Le conditionnel qui fait tout l’intérêt de la publication est la loi d’arrêt optionnel appliquée à une distance que la structure du problème rend petite d’un côté et grande de l’autre.
+Reste la seule question qui décide d’un compte : ce taux paie-t-il la géométrie qu’il impose ? Sous une des deux lectures possibles, non — et sous l’autre, la marge est plus mince que l’incertitude sur une hypothèse invérifiable. Un taux de réussite ne s’interprète jamais sans la géométrie qui l’a produit, et c’est le résultat structurant du document nº 1, retrouvé sur un cas d’espèce que personne n’avait construit pour lui.

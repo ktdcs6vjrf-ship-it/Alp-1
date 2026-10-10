@@ -8,3 +8,7 @@ venv/
 data/*
 !data/.gitkeep
 .env
+
+# ALP Desk — sorties de construction
+desk/dist/
+desk/shots/

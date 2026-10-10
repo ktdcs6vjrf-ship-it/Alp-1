@@ -1084,6 +1084,22 @@ police de repli**, plus large que celle qui est livrée. Les vraies fontes se
 récupèrent par npm et s'injectent dans un aperçu local — c'est ce qui a rendu
 visibles la moitié des défauts de rendu du document.
 
+## Hors du corpus — ALP Desk
+
+`desk/` porte le terminal mobile de préparation MNQ de l'utilisateur : dix desks
+(hub, macro, NQ, stratégie intraday, risque, quant, métriques, journal, routine,
+réglages) assemblés par `desk/build.py` en **une seule page HTML**, publiée en
+artefact avec `db` + `user`. JavaScript sans dépendance, tests en node
+(`desk/test/*.test.js`, 1 229 contrôles) et banc de rendu Playwright à 390 et
+1280 px. Il ne participe à aucun test Python ; il cite ALP nº 3 avec sa source et
+recoupe ses nombres contre `desk/ref/alp3txt/`. **Aucun chiffre de marché n'y est
+écrit** : les rapports macro et le calendrier sont des documents que Claude écrit
+dans les collections `macro` et `calendar` de l'artefact (schémas dans
+`desk/CONTRACT.md`) à partir des captures que l'utilisateur envoie, traduites en
+français. Un nouveau lien à chaque amélioration, comme pour le reste. Dernier
+artefact : https://claude.ai/artifact/Vy2Rb9kb1JNUgtbt8cdcCJ. Lire
+`desk/README.md` avant d'y toucher.
+
 ## Carte des modules
 
 Mesure et géométrie

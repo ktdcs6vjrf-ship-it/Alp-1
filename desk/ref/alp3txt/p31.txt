@@ -1,0 +1,35 @@
+Trente et unième partie
+Protocole, limites, et ce qui reste ouvert
+Ce qui n’est pas déclaré avant ne prouve rien après.
+Ce qu’il faut déclarer avant la première décision
+Sans pré-enregistrement, tout ce qui précède est de la narration. Le protocole doit fixer, avant la première décision enregistrée : le recensement des leviers et donc le budget de configurations ; le format exact du journal ; les cinq lois nulles et leurs graines ; le nombre de décisions à collecter ; et le critère d’acceptation, à savoir les cinq lois battues et le seuil déflaté franchi.
+Le document dispose déjà d’un module de pré-enregistrement produisant une empreinte SHA-256 du protocole. Un opérateur qui scelle son protocole puis publie l’empreinte se prive de toute latitude ultérieure, et c’est précisément ce qui donne du prix à son résultat.
+Quand on a le droit de regarder ses résultats
+La règle d’arrêt est le point où la plupart des évaluations discrétionnaires échouent, et elle échoue silencieusement. Un opérateur qui regarde ses statistiques chaque mois et s’arrête quand elles sont bonnes a conduit un test séquentiel sans en payer le prix : son niveau réel est très supérieur aux 5 % affichés.
+Deux issues acceptables existent. Fixer N à l’avance et ne rien regarder avant — c’est le plus simple et le plus sûr. Ou bien déclarer des paliers d’examen et dépenser le niveau selon une fonction de dépense, ce que le module de puissance de la série sait faire. Ce qui n’est pas acceptable, c’est de regarder sans avoir déclaré.
+Limites
+Quatre limites bornent la portée des résultats.
+Les chiffres rapportés sont des propriétés de l’appareil de mesure, établies sur journaux synthétiques. Ils ne constituent pas la mesure d’une compétence observée.
+Le levier de chronométrage n’est pas séparable du levier d’entrée, comme la section 39 l’établit. Sa part inclut une composante d’interaction que le contrefactuel retenu n’isole pas.
+L’analyse suppose une compétence constante sur la période. Sous compétence variable — apprentissage, fatigue, changement de régime —, l’estimateur agrège des états distincts. Les méthodes de mesure à compétence variable dans le temps existent dans la littérature citée ; elles ne sont pas mobilisées ici.
+La sélection des registres analysés est non aléatoire. Les journaux disponibles proviennent d’opérateurs en activité. La distribution des compétences observée par cette voie diffère de la distribution des compétences dans la population de départ.
+Conclusion
+La prétention d’un avantage non codable devient testable dès lors qu’elle est formulée en termes de trace plutôt que de règle. Elle relève alors d’un problème de mesure ordinaire, avec un instrument, des lois nulles, une puissance et un horizon.
+L’instrument est un journal qui enregistre les abstentions autant que les prises. Les lois nulles sont cinq, une par prétention, et la plus dure demande non pas si l’opérateur gagne mais s’il bat une règle simple. La taxe de multiplicité est réelle mais concave : le premier levier porte le seuil de zéro à 0,0215, et les trois suivants ne le multiplient que par 2,0.
+L’exigence d’échantillon se chiffre : 619 décisions, soit 1,2 an à deux décisions par jour, pour un Sharpe de 0,10 par décision, taxe de multiplicité comprise. Cette exigence est 9,1 fois inférieure à celle qui porte sur un avantage de géométrie, l’écart tenant au rapport de l’effet revendiqué au bruit dans chacun des deux cas.
+L’ensemble de ces mesures suppose un journal conforme à la section 19, dont les champs antérieurs à l’issue ne sont pas reconstituables après coup. C’est la condition d’application du dispositif.
+Références
+Bailey, D. et López de Prado, M. « The Deflated Sharpe Ratio », Journal of Portfolio Management, 2014 — déflation du Sharpe sous tests multiples.
+Bailey, D., Borwein, J., López de Prado, M. et Zhu, Q. « The Probability of Backtest Overfitting », Journal of Computational Finance, 2016 — CSCV et probabilité de surajustement.
+Barber, B. et Odean, T. « Trading Is Hazardous to Your Wealth », Journal of Finance, 2000 — destruction de valeur chez l’investisseur individuel.
+Berk, J. et Green, R. « Mutual Fund Flows and Performance in Rational Markets », Journal of Political Economy, 2004 — compétence réelle intégralement absorbée par frais et taille.
+Coval, J., Hirshleifer, D. et Shumway, T. « Can Individual Investors Beat the Market ? », Harvard NOM Working Paper, 2005 — persistance chez une minorité d’individuels.
+Fama, E. et French, K. « Luck versus Skill in the Cross-Section of Mutual Fund Returns », Journal of Finance, 2010 — bootstrap pour départager chance et compétence.
+Harvey, C., Liu, Y. et Zhu, H. « … and the Cross-Section of Expected Returns », Review of Financial Studies, 2016 — décote de Sharpe sous tests multiples.
+Kacperczyk, M., Van Nieuwerburgh, S. et Veldkamp, L. « Time-Varying Fund Manager Skill », Journal of Finance, 2014 — allocation d’attention et compétence variable.
+Locke, P. et Mann, S. « Professional Trader Discipline and Trade Disposition », Journal of Financial Economics, 2005 — la discipline comme trait persistant.
+Miller, G. « Note on the Bias of Information Estimates », Information Theory in Psychology, 1955 — correction du biais d’information mutuelle.
+Politis, D. et Romano, J. « The Stationary Bootstrap », Journal of the American Statistical Association, 1994 — rééchantillonnage par blocs de longueur aléatoire.
+Shapley, L. « A Value for n-Person Games », Contributions to the Theory of Games, 1953 — l’attribution exhaustive et symétrique.
+Avertissement. Ce document est un travail de recherche méthodologique. Il ne constitue ni un conseil en investissement, ni une recommandation d’opérer, et ne comporte aucune affirmation de performance. Aucun opérateur réel n’y est évalué ; les journaux analysés sont synthétiques et servent à calibrer un appareil de mesure, non à établir un avantage.
+Reproductibilité. Tous les nombres cités sont produits par les modules du dépôt et se recalculent par python main.py --disc. Le document lui-même se reconstruit par python main.py --discpaper à partir de son gabarit ; il ne s’édite pas à la main. Tout aléa est déterministe et amorcé par une graine explicite.

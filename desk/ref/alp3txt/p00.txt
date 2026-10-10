@@ -1,0 +1,234 @@
+Le seuil, et non le signal
+Série de documents de travail ALP · no 3
+Le seuil, et non le signal : ce que l’opérateur discrétionnaire décide vraiment. Lois nulles, taxe de multiplicité et théorème d’arrêt optionnel
+Recherche ALP
+Évaluation de la décision discrétionnaire et théorie des tests multiples
+Première version : août 2026 · Cette version : août 2026
+Résumé
+Un opérateur qui décide au jugement peut établir la valeur de ce jugement en 619 décisions, soit 1,2 an à deux décisions par séance. Deux routes indépendantes y mènent — un test ordinaire sur la moyenne, 619 décisions, et la taxe de sélection due aux 16 configurations, 555 — et c’est la plus exigeante des deux qui lie. Ce document établit ce chiffre et l’appareil qui le produit.
+L’obstacle apparent est que la règle n’existe pas sous forme écrite : sans règle, pas de rejeu ; sans rejeu, pas de loi nulle ; sans loi nulle, rien à opposer au hasard. Il se lève par une distinction que l’évaluation des gérants pratique depuis quarante ans sans jamais disposer de la règle qu’elle juge : répliquer n’est pas détecter. On ne teste pas la règle ; on teste la trace qu’elle laisse.
+La trace est un journal de décision, dont ce document spécifie les sept champs et la frontière temporelle qui les sépare. Trois de ces champs manquent à la plupart des journaux et portent l’essentiel de l’information : le contexte au moment de la décision, la conviction annoncée avant l’issue, et surtout les abstentions — les setups vus et refusés. Sans elles, la moitié de la table de contingence reste vide et la compétence de refus n’est pas identifiable, alors que c’est souvent là que loge l’avantage d’un discrétionnaire.
+Deux parties arment ce dispositif sur le terrain de l’opérateur. Le catalogue range les quinze lectures du dispositif par leur horizon d’observation, qui est calculé et non écrit, et montre qu’aucun de ces motifs n’est rare sous un prix sans dérive. La grammaire du setup va un cran plus loin : un opérateur ne prend pas un motif, il prend un motif à un endroit, tenu par une condition écrite d’avance et abandonné sur une autre. 6 niveaux calculés croisés avec 3 confirmations donnent 12 setups, mesurés sur 900 séances sans dérive simulées à la barre, footprint compris. Le prix va dans le sens attendu 48,7 % du temps une fois la confirmation exigée, contre 49,4 % au contact brut : la confirmation ne déplace pas l’espérance, elle divise l’échantillon — elle ne retient que 1,8 % à 11,1 % des contacts et multiplie le délai d’établissement d’un facteur 9,0 à 54. Le nombre de conditions exigées avant d’entrer est ainsi le paramètre le plus coûteux du dispositif, et c’est aussi celui qu’on ajuste le plus librement.
+Cinq lois nulles sont construites, chacune réfutant une prétention distincte : la sélection au sort, les issues permutées dans la séance, la règle scellée, l’indépendance décision-issue, et le rééchantillonnage par blocs. La quatrième mesure l’abstention ; la troisième est la plus dure, car elle ne demande pas si l’opérateur gagne mais s’il fait mieux qu’une règle qu’on écrit en dix lignes. L’appareil est calibré contre une vérité plantée de taille connue : sur un opérateur sans compétence il ne déclare rien ; à 0,2245 bit par décision il déclare ; entre les deux il refuse, et ce refus est le sujet du document.
+Le chiffre tient à deux propriétés. La liberté de décider se paie : 4 leviers engendrent 16 configurations effectives, et le seuil de preuve monte avec ce nombre. Mais il monte en racine de son logarithme : le premier levier fait tout le prix — il porte le seuil de zéro à 0,0215 — et les trois suivants ne le multiplient que par 2,0. Trois routes indépendantes convergent ensuite sur le même ordre de grandeur. Le seuil monte, donc ; mais l’exigence d’échantillon, elle, ne bouge pas — tant que la taxe reste sous celle du test ordinaire, et il faudrait dépasser 22 configurations pour l’en faire sortir, ouvrir un levier ne coûte rien de plus que ce qu’il faut de toute façon.
+La dernière partie retourne la question, et c’est le résultat que ce document tient pour le sien. Prouver un jugement suppose que le jugement soit ce qui manque. Le théorème d’arrêt optionnel dit qu’il ne l’est pas : par l’identité de Wald à temps borné par la séance, E[R] = (µ·E[τ∧T] − c)/L, d’où un seuil de rentabilité µ* = c/E[τ∧T] qui ne dépend d’aucun signal. µ est une propriété du marché ; µ* est une propriété de la géométrie, et l’opérateur la fixe entièrement. Là où µ demande un échantillon, une loi nulle et une taxe de multiplicité, µ* se calcule.
+Il se calcule, et il décide. À la géométrie déclarée par l’opérateur — un stop de 0,010 % de l’indice — le seuil vaut 8,19 points par heure quand le domaine de dérive que ce même document appelle plausible s’arrête à 3,2. La rentabilité n’y est pas improbable : elle est arithmétiquement impossible. À 0,150 % elle tombe à 0,196, soit un facteur 53 sur ce seul levier, quand améliorer l’exécution n’en donne que 3,5. L’espérance passe de −0,416 à +0,337 R par trade à dérive identique : seule la géométrie a changé.
+Ce chapitre corrige un défaut du document nº 1, et il faut le nommer. La dérive de référence y était dérivée de la friction — deux fois le seuil de rentabilité — donc supposée exactement au niveau qui rend la stratégie rentable, et à 16,4 points par heure, soit 5,1 fois la borne haute du plausible. Les chapitres de risque refaits sous une dérive déclarée et une géométrie corrigée donnent de meilleures grandeurs qu’en gardant l’hypothèse : Sharpe par trade +0,0918 contre +0,0873, fraction de Kelly 3,34 % contre 1,82 %, coefficient de Lundberg 0,0609 contre 0,0333 — à une dérive cinq fois plus faible.
+Mots-clés — décision discrétionnaire ; lois nulles ; Sharpe déflaté ; tests multiples ; valeur de Shapley ; information mutuelle ; analyse de puissance ; journal de décision ; abstention ; pré-enregistrement ; évaluation de gérants ; grammaire du setup ; théorème d’arrêt optionnel
+Classification JEL — C12, C44, C52, G11, G14
+16configurations effectives engendrées par 4 leviers discrétionnaires
+2,0 ×ce que les trois leviers suivant le premier ajoutent au seuil
+619décisions pour prouver un Sharpe de 0,10, taxe comprise
+53 ×ce que la seule largeur du stop déplace du seuil de rentabilité
+1,2 anle même mur, traduit à deux décisions par jour
+91,7 %de l’avantage attribué au bon levier par la décomposition de Shapley
+Note de lecture
+Le document se lit à trois profondeurs. La thèse tient dans le résumé et la section 2 : on ne teste pas la règle, on teste sa trace. La stratégie évaluée est décrite en partie II, couche par couche. L’appareil occupe les parties IV à VI — le journal, la vérité de référence, les cinq lois nulles. Le résultat est aux parties VII à IX : la taxe du jugement, le mur d’échantillon, et la comparaison des exigences de preuve entre jugement et géométrie.
+Aucun nombre de ce document n’est écrit à la main. Tous sont produits par les modules du dépôt et se recalculent ; un lecteur qui doute d’un chiffre peut relancer le module qui l’établit.
+Sommaire
+Première partie — Le problème, et pourquoi il se lève
+Ce que « non codable » veut dire
+Répliquer n’est pas détecter
+Ce que l’évaluation des gérants sait faire sans la règle
+Portée de l’étude
+Six notions, et ce qu’elles décident
+Deuxième partie — La stratégie évaluée
+Sept couches, et ce qu’elles produisent
+Ce que chaque couche observe
+Des couches aux leviers
+Troisième partie — Le catalogue, dans l’ordre
+Pourquoi le footprint vient en premier
+Ce que chaque lecture vaut quand il n’y a rien à lire
+Quinze situations, et ce que le prix en fait
+Ce qu’il faudrait pour que la lecture paie
+Le produit qui ne bouge pas
+Un motif n’est pas un setup
+Lire un setup, famille par famille
+Ce que la confirmation change, et ce qu’elle ne change pas
+Le prix d’une confirmation
+Quatrième partie — L’instrument
+Le journal de décision
+Sept champs, et une frontière temporelle
+Les refus sont la moitié de l’information
+Ce qui invalide un registre avant tout calcul
+Cinquième partie — La vérité de référence
+L’univers des setups, sur un prix sans dérive
+L’invariance, transposée du choix des barrières au choix des trades
+Planter une compétence de taille connue
+Sixième partie — Les cinq lois nulles
+Pourquoi une seule loi nulle ne suffit pas
+Le catalogue, et ce que chaque loi réfute
+Faire mieux que dix lignes de code
+Ce que l’appareil déclare quand il n’y a rien
+Septième partie — La taxe du jugement
+k leviers, 2k configurations
+Le recensement d’un opérateur réel
+Le quatrième levier coûte moins cher que le premier
+Combien de couches peut-on suivre ?
+Huitième partie — Le mur d’échantillon
+Trois routes indépendantes
+Le mur, en décisions puis en années
+Où la détection devient acquise
+Neuvième partie — Comparaison des deux régimes de preuve
+Pourquoi le jugement est prouvable là où la géométrie ne l’est pas
+Ce que cela change pour l’opérateur
+Dixième partie — Décomposer l’avantage
+Shapley, et les seize coalitions
+Une décomposition réfutable
+Quels leviers fermer
+Onzième partie — Le seuil, et non le signal
+La question posée n’était pas la bonne
+Le seuil s’effondre quand le stop s’élargit
+Une hypothèse qui supposait sa conclusion
+Ce que les chapitres de risque deviennent
+Où dépenser le jugement
+Douzième partie — Sortir
+Douze concepts, et ce qu’ils font vraiment
+Ce qu’il reste alors à décider
+Treizième partie — Lire le flux
+Le régime de gamma, et ce qu’il décide vraiment
+Le footprint, et ce qu’un déséquilibre vaut
+Ce qui décide la fréquence nulle, et que personne n’observe
+Le profil de marché, et ses cinq lectures
+Combien de bruit un trade supporte-t-il ?
+Quatorzième partie — Ce que le théorème ne suppose pas
+« Votre théorème suppose une loi normale »
+Six lois, une seule espérance
+Ce que les queues déplacent, et de combien
+Le prix, en décisions, d’une espérance lue
+Systématique et discrétionnaire, alpha et bêta
+Quinzième partie — Une affirmation venue du dehors
+Sept nombres, et ce qu’ils prétendent
+Où le prix ouvre dans le range qu’il vient de creuser
+Le taux annoncé est la distance, lue à l’envers
+Ce qui survit, et ce qu’une hypothèse lui donne
+Le dénominateur que personne n’écrit
+Seizième partie — Cinq disciplines empruntées
+Ce que le pas de temps ne change pas
+Un extrême de séance a un taux de hasard
+Ce qu’une probabilité annoncée doit prouver
+L’activité appelle l’activité
+L’heure du haut, et ce qui vit au-delà du stop
+La sensibilité, et le critère
+Combien de lectures peut-on suivre
+Ce qui transfère, et ce qui ne transfère pas
+Dix-septième partie — Ce qu’un fonds fait, et ce qui en reste à un seul homme
+Ce que la loi fondamentale exige, décision par décision
+Le même avantage, et deux dénominateurs
+Le plafond d’un panier de lectures
+La capacité, et le seul terrain où le petit gagne
+Payer le spread, ou l’encaisser
+Ce qui transfère à un opérateur seul
+Dix-huitième partie — Deux documents venus du dehors
+Ce qu’un résumé dit de lui-même
+Le Calmar est un rapport dont le dénominateur est un maximum
+La corrélation quotidienne n’est pas celle qui décide
+Ce qu’un prix physique ne contient pas
+La capacité décroît comme le carré de la rotation
+Ce qu’on peut en récupérer
+Dix-neuvième partie — Un niveau a une largeur
+Le contrôle apparié en distance
+La définition fabrique le taux
+Ce qu’un niveau doit battre, et ce que la preuve coûte
+Un niveau a une largeur, et elle se calcule
+La géométrie que la largeur impose
+L’identité gamma-thêta
+Le signe que la reconstruction jette
+Ce qui reste du gamma
+Vingtième partie — La grandeur qu’on cite n’est pas celle qui décide
+Une cible a trois probabilités
+Ce que la confusion coûte
+Un delta en a trois aussi
+Ce qui bouge pendant qu’on ne fait rien
+Le résumé qui cache
+La convention qu’on n’attache pas
+Le décompte
+Vingt-et-unième partie — Le loyer de la convexité
+Le loyer, et ses trois termes
+La loi nulle d’un vendeur de prime
+Ce que coûte la couverture discrète
+Les deux horloges
+Le signe
+Ce qu’il faudrait pour établir une prime
+Le décompte
+Vingt-deuxième partie — Le prix de l’incertitude
+Deux conventions, et un facteur cent
+Le véga n’est pas un risque
+La pondération qu’on postule
+Où la courbure change de signe
+Le seuil d’un vendeur de véga
+Ce qu’il faudrait pour l’établir
+Le décompte
+Vingt-troisième partie — Le taux, et la variable qu’on tient fixe
+La proportionnalité au temps, et où elle s’use
+Quand rho rivalise avec le véga, et sous quelle unité
+Ce qui a changé entre zéro et cinq pour cent
+À spot fixe ou à forward fixe
+Une option très dans la monnaie est une action financée
+Ce que rho coûte à l’opérateur de ce document
+Le décompte
+Vingt-quatrième partie — Là où le delta et la volatilité se rencontrent
+Deux lectures, un nombre, et un contrôle qui manquait
+Ce que le vanna fait au delta, et les deux endroits où il fait l’inverse
+Le déplacement annoncé
+Où le vanna est le plus grand, et pourquoi la réponse dépend de la fenêtre
+La formule qui nomme le mauvais grec
+Ce que le test rend, et pourquoi ce dépôt le croit
+Le décompte
+Vingt-cinquième partie — La saignée du delta, et les deux horloges d’un week-end
+L’accélération, et la puissance qu’on lui prête
+Le pic n’est pas à vingt-cinq deltas
+La ligne à la monnaie n’est pas nulle
+Le week-end, et les deux horloges de la même série
+Ce que coûte de couvrir au delta du soir
+Aucune structure symétrique n’est neutre
+Le décompte, et la seule affirmation d’agrégation qui tienne
+Vingt-sixième partie — La convexité en volatilité, et le sourire qu’on en tire
+Le facteur qui décide de tout, et la bande qu’on ne peut pas coter
+Le prix à la monnaie est une droite, pas presque
+Trois routes vers le même sourire, et trois sourires
+Le retournement appartient à l’approximation, pas au modèle
+Vingt points ne coûtent pas deux fois dix
+Le trade de volga pur vend un cinquième de son véga
+Le décompte, et les trois objets que la série partage
+Vingt-septième partie — Les grecs du troisième ordre, et le guide qui conclut lui-même
+Cinq dérivées troisièmes, et le fil qui les tient
+Une forme fermée qu’aucune route ne contrôle est une hypothèse
+Deux des cinq n’ont aucun paramètre libre
+Le mouvement qui divise le gamma par deux, et le seul guide qui se surestime
+Deux changements de signe, et cela se démontre
+Les quatre-vingt-dix-neuf pour cent, et ils sont sous-estimés
+Le décompte, et le guide qui écrit lui-même la conclusion
+Vingt-huitième partie — La volatilité implicite, et les deux nombres qu’on en tire à tort
+Unique quand elle existe, et deux bornes plus proches
+Un pas de cotation ne vaut pas le même nombre de points partout
+Une année de séances porte deux observations
+Le plus lourd des dix budgets d’information
+Le rang est hostage d’un point, le percentile d’un sur n
+Le motif que le guide a vu disparaître, fabriqué sous loi nulle
+Une part de la prime publiée est une propriété de l’unité
+Les cinq pièges, et deux d’entre eux sont le même nombre
+Le décompte, et le guide qui teste sa propre statistique
+Vingt-neuvième partie — Le skew, et les trois nombres que trois pupitres appellent du même nom
+Trois conventions, et elles ne mesurent pas le même objet
+La convention insensible au comptant est la plus sensible à la volatilité
+« Le skew s’aplatit avec le ténor » dépend de la convention
+Un résultat négatif publié sans sa loi nulle
+Le guide ne pouvait pas conclure autrement
+Sticky strike, sticky delta, et ce que l’erreur coûte
+Vendre du skew, c’est prendre une position directionnelle
+Les trois forces, et laquelle est établissable
+Le décompte, et le guide qui teste sa propre statistique
+Trentième partie — Ce qu’une position coûte, dans les deux sens
+Une position a trois fins, et la troisième ne se déclare pas
+À dérive nulle, les deux sens sont le même pari
+Il existe un horizon optimal, et la séance le fixe
+Le seuil se calcule de deux façons, et l’une oublie la séance
+Les quinze lectures, prises comme des positions
+Le bandeau que chaque planche porte désormais
+Trois géométries, deux conditions, et aucune ne passe
+Trente-et-unième partie — Protocole, limites, et ce qui reste ouvert
+Ce qu’il faut déclarer avant la première décision
+Quand on a le droit de regarder ses résultats
+Limites
+Conclusion

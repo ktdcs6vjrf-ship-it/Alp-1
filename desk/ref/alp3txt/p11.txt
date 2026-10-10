@@ -1,0 +1,94 @@
+Onzième partie
+Le seuil, et non le signal
+Ce que l’opérateur ne peut pas prédire, et ce qu’il décide entièrement.
+La question posée n’était pas la bonne
+Tout ce qui précède mesure une seule chose : la dérive µ est-elle démontrable avec l’échantillon disponible. La réponse est non, elle est établie par trois routes indépendantes, et rien de ce qui suit ne la remet en cause.
+Mais un trade n’a pas besoin que µ soit démontrable. Il a besoin que µ dépasse le seuil que la géométrie impose. L’identité de Wald, appliquée avec un temps borné par la séance, sépare les deux en une ligne :
+E[R] = (µ · E[τ∧T] − c) / a(1)
+d’où le seuil de rentabilité :
+µ* = c / E[τ∧T](2)
+µ est une propriété du marché et reste hors de portée. µ* est une propriété de la géométrie, et l’opérateur la fixe entièrement. C’est une grandeur arithmétique là où µ est statistique : elle ne demande aucun échantillon, aucune loi nulle, aucune taxe de multiplicité. Elle se calcule.
+L’équation (1) est une droite en µ, et il vaut la peine de la regarder comme telle plutôt que de la lire. Chaque géométrie en donne une ; les quatre droites ci-dessous en sont quatre exemples, tracés sur la seule arithmétique de l’identité — aucune simulation, aucun échantillon.
+Figure 39 — L’identité de Wald tracée pour quatre géométries. L’ordonnée à l’origine de chaque droite est la friction rapportée au risque nominal, sa pente est le temps de marché acheté, et son croisement avec le zéro est le seuil µ*. Le cadre du bas donne la pente à sa source : l’exposition croît comme le carré de la largeur du stop, puis sature contre la séance.
+Chaque droite est une géométrie. Son ordonnée à l’origine est la friction rapportée au risque nominal, et elle est négative pour les quatre : à dérive nulle, aucune géométrie ne rend une espérance positive, quel que soit le placement des barrières. Sa pente est le temps de marché acheté par unité de risque, et c’est la seule chose que le choix des barrières décide. Son croisement avec le zéro est le seuil µ*. La géométrie déclarée ne croise pas le zéro dans la bande de dérive plausible ; les trois autres le croisent avant sa borne basse. Le cadre du bas donne la pente à sa source — et montre pourquoi la plus raide n’est pas la plus large, l’exposition saturant contre la séance.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Trois choses s’y lisent sans calcul, et ce sont les trois termes de l’équation (1).
+L’ordonnée à l’origine est la loi nulle. À dérive nulle, les quatre droites valent exactement −c/L et aucune n’atteint zéro. Aucune géométrie ne crée d’espérance : c’est le théorème d’arrêt optionnel, et il n’est pas un obstacle à contourner mais le socle sur lequel tout le reste s’appuie. Une géométrie qui rendrait une espérance positive à dérive nulle serait une erreur de calcul.
+La pente est le temps de marché acheté, E[τ∧T]/60L. C’est la seule chose que le choix des barrières décide, et elle varie d’un facteur trois entre les quatre géométries. Le cadre du bas montre d’où elle vient et pourquoi elle finit par redescendre : l’exposition sature contre la fin de séance pendant que le risque nominal continue de croître.
+Le croisement avec le zéro est le seuil. La droite du stop déclaré ne croise jamais le zéro dans la bande de dérive plausible — elle reste sous −0,3 R jusqu’à la borne haute — quand les trois autres le croisent avant même sa borne basse. Le même signal, la même friction, la même séance : seule la géométrie change.
+Le plan complet donne la frontière que ces quatre coupes ne montrent que par leurs croisements.
+Figure 40 — L’espérance nette sur le plan de la largeur de stop et de la dérive du marché. La couleur n’encode que le signe, la hauteur portant déjà la grandeur : la frontière rouge-bleu est l’ensemble des couples où µ = µ*.
+Arête gauche : largeur du stop. Arête droite : dérive du marché, en points d’indice par heure. La hauteur et la couleur portent la même grandeur, l’espérance nette par trade ; la couleur en isole le signe, qui est ce que la figure existe pour donner. La frontière rouge-bleu est l’ensemble des couples où µ = µ*. Elle recule vers les fortes dérives à mesure que le stop se resserre, et la rangée du stop déclaré reste entièrement rouge : son seuil dépasse la dérive la plus forte du cadre. La couleur d’une maille suit la moyenne de ses quatre coins ; le signe exact à dérive nulle se lit sur l’ordonnée à l’origine des droites de la figure précédente, non ici.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La frontière recule vers les fortes dérives à mesure que le stop se resserre. C’est l’énoncé géométrique de l’équation (2), et il suffit à trancher : à la géométrie déclarée, la rangée entière est du mauvais côté. Le reste de cette partie mesure de combien.
+Le seuil s’effondre quand le stop s’élargit
+L’exposition croît comme le carré de la largeur du stop — c’est le régime diffusif, le temps d’atteinte d’une barrière allant comme a²/σ² — pendant que le risque nominal ne croît que linéairement. La friction, elle, est fixe en points. Le seuil décroît donc quadratiquement, et c’est ce qui rend ce levier sans commune mesure avec les autres.
+Table 17 — Le seuil de dérive que chaque géométrie impose, et ce qu’elle rend à dérive déclarée.
+Stopa (pts)E[τ∧T] minc/Lµ* (pt/h)Dans le plausibleE[R] à 2,0 pt/h
+| 0,010 % | 0,60 | 2,4 | 0,550 | 8,189 | non | −0,4157
+| 0,025 % | 1,50 | 10,0 | 0,220 | 1,985 | oui | +0,0016
+| 0,050 % | 3,00 | 28,9 | 0,110 | 0,685 | oui | +0,2112
+| 0,075 % | 4,50 | 50,6 | 0,073 | 0,391 | oui | +0,3018
+| 0,100 % | 6,00 | 69,8 | 0,055 | 0,284 | oui | +0,3329
+| 0,150 % | 9,00 | 100,9 | 0,037 | 0,196 | oui | +0,3371
+| 0,200 % | 12,00 | 127,6 | 0,028 | 0,155 | oui | +0,3271
+| 0,300 % | 18,00 | 173,9 | 0,018 | 0,114 | oui | +0,3036
+| 0,400 % | 24,00 | 212,3 | 0,014 | 0,093 | oui | +0,2812
+| 0,600 % | 36,00 | 271,3 | 0,009 | 0,073 | oui | +0,2420
+Lecture. µ* = c/E[τ∧T] est le seuil de rentabilité, et il ne dépend que de la géométrie et de la friction — jamais du signal. Il décroît quadratiquement parce que l’exposition croît comme le carré du stop quand le risque nominal ne croît que linéairement. La dernière colonne est l’identité de Wald à dérive déclarée ; l’optimum y est intérieur, la saturation de séance reprenant d’un côté ce que la friction cède de l’autre.
+Figure 41 — Le seuil de rentabilité selon la largeur du stop, en échelle logarithmique, avec le domaine de dérive que le document nº 1 déclare plausible posé derrière. Le cadre du bas donne l’espérance nette à dérive déclarée ; son optimum est intérieur.
+Le seuil ne dépend que de la géométrie et de la friction, jamais du signal. La bande est le domaine de dérive que le document nº 1 déclare plausible : une géométrie dont le seuil passe au-dessus ne peut pas être rentable, quelle que soit la dérive réelle. L’optimum du cadre du bas est intérieur — la friction domine à gauche, la saturation de séance à droite.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+À la géométrie déclarée par l’opérateur — un stop de 0,010 % de l’indice — le seuil vaut 8,19 points par heure. Le domaine de dérive que le document nº 1 traite comme plausible s’arrête à 3,2. La rentabilité n’y est donc pas improbable : elle est arithmétiquement impossible, quelle que soit la dérive réelle, tant qu’elle reste dans ce domaine. Aucun signal, aucune couche d’analyse, aucune discipline ne change cela — c’est la géométrie qui ferme la porte.
+À 0,150 %, le seuil tombe à 0,196 point par heure, soit six fois sous la borne basse du domaine plausible. L’espérance passe de −0,416 R à +0,337 R par trade, à dérive identique. Seule la géométrie a changé.
+Table 18 — Le même signal, sept géométries : ce que le choix de l’opérateur fait au seuil qu’il doit franchir.
+Configurationµ* (pt/h)Dans le plausibleE[R] à 2,0 pt/h
+| Stop déclaré, MES, friction réaliste | 32,260 | non | −2,0323
+| Stop déclaré, ES, friction réaliste | 14,393 | non | −0,8323
+| Stop déclaré, ES, friction de référence | 8,189 | non | −0,4157
+| Stop déclaré, ES, friction optimiste | 4,095 | non | −0,1407
+| Stop 0,050 %, ES, friction de référence | 0,685 | oui | +0,2112
+| Stop 0,150 %, ES, friction de référence | 0,196 | oui | +0,3371
+| Stop 0,150 %, ES, friction optimiste | 0,098 | oui | +0,3554
+Lecture. Aucune ligne ne suppose une dérive différente d’une autre : seule la géométrie change. Les quatre premières lignes sont hors du domaine plausible, et la conclusion qui s’y attache n’est pas que la stratégie est improbable — c’est qu’elle est arithmétiquement impossible, quelle que soit la dérive réelle, tant qu’elle reste dans le domaine que le document nº 1 déclare.
+L’optimum est intérieur, et il l’est pour une raison mécanique qu’il faut énoncer : trop serré, la friction domine — elle mange 55 % du risque nominal — et l’exposition est trop courte pour que la dérive agisse ; trop large, l’exposition sature contre la fin de séance pendant que le risque nominal continue de croître, et l’espérance retombe en 1/a. Les deux forces se croisent à 101 minutes d’exposition moyenne.
+La friction est le second axe, et l’opérateur le contrôle aussi : elle dépend du courtier, de l’heure choisie et de la façon de passer l’ordre. La surface porte les deux axes ensemble et le plafond de dérive plausible avec eux, de sorte que le verdict se lise sans convertir une élévation en grandeur.
+Figure 42 — Le seuil de rentabilité sur le plan des deux variables que l’opérateur contrôle. Arête gauche : la largeur du stop. Arête droite : la friction aller-retour. La hauteur est le seuil en échelle logarithmique, et l’échine porte le plafond de dérive plausible. La couleur ne code pas la hauteur mais le verdict : une maille rouge exige une dérive que le marché ne fournit pas.
+Arête gauche : largeur du stop. Arête droite : friction aller-retour, en points. La hauteur est le seuil de rentabilité en échelle logarithmique ; les graduations portent sa valeur réelle en points par heure. Une maille rouge dépasse le plafond de dérive plausible de 3,2 points par heure : sa rentabilité est impossible, quelle que soit la dérive du marché. Seule la rangée du stop le plus serré y tombe, et elle y tombe pour toutes les frictions.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La rangée rouge est celle du stop le plus serré, et elle est rouge pour toutes les frictions : aucune amélioration d’exécution ne rachète cette géométrie. Réciproquement, une fois le stop élargi, la friction déplace le seuil d’un facteur 3,5 seulement, quand la géométrie le déplace d’un facteur 53. Les deux axes ne pèsent pas le même poids, et l’ordre dans lequel on les travaille est décidé par la figure.
+Une hypothèse qui supposait sa conclusion
+Ce chapitre corrige un défaut du document nº 1, et il faut le nommer. La dérive de référence y vaut DRIFT_MULTIPLE × c / E[τ], c’est-à-dire deux fois le seuil de rentabilité. La dérive y est dérivée de la friction : l’avantage n’est pas mesuré, il est supposé, et il est supposé exactement au niveau qui rend la stratégie rentable.
+Table 19 — La dérive de référence du document nº 1, et ce à quoi elle se compare.
+GrandeurPoints par heureStatut
+| Dérive de référence du document nº 1 | 16,38 | définie comme 2·µ*
+| Seuil µ* à la géométrie déclarée | 8,19 | mesuré
+| Borne haute du domaine plausible | 3,20 | déclarée
+| Dérive de travail de ce chapitre | 2,00 | déclarée, dans le domaine
+Lecture. La dérive de référence vaut DRIFT_MULTIPLE × c/E[τ], soit deux fois le seuil de rentabilité : elle est dérivée de la friction, donc l’avantage y est supposé et non mesuré. Elle vaut 5,1 fois la borne haute du domaine que le même document appelle plausible. Les chapitres de risque qui tournent sous cette dérive doivent se lire ainsi. Ce chapitre-ci déclare la sienne et ne la dérive de rien.
+Cette dérive supposée vaut 16,4 points par heure, soit 5,1 fois la borne haute du domaine que le même document appelle plausible. Les chapitres de risque qui en dépendent — Sortino, Kelly, drawdown, mesures de queue — tournent donc sous une dérive que le document juge lui-même invraisemblable, et leurs conclusions doivent se lire ainsi. Le présent chapitre déclare sa dérive de travail, 2,0 point par heure, et ne la dérive de rien.
+Ce que les chapitres de risque deviennent
+Le défaut ne reste pas confiné à une hypothèse : il traverse tout ce que le document nº 1 calcule ensuite. Sharpe, fraction de Kelly, coefficient de Lundberg, profondeur de ruine — chacun est établi sous la dérive de référence. Refaire ces calculs sous une dérive déclarée est donc le test décisif du chapitre.
+Table 20 — Les grandeurs de risque du document nº 1, refaites sous une dérive déclarée plutôt que dérivée de la friction.
+Casµ (pt/h)E[R]Sharpe/tradeKelly f*θ* Lundberg
+| Document nº 1 — µ = 2µ*, stop 0,010 % | 16,38 | +0,5500 | +0,0873 | 1,82 % | 0,0333
+| Dérive déclarée, stop 0,010 % | 2,00 | −0,4157 | −0,0876 | 0,00 % | 0,0000
+| Dérive déclarée, stop 0,150 % optimal | 2,00 | +0,3371 | +0,0918 | 3,34 % | 0,0609
+Lecture. La première ligne est le cas de référence du document nº 1, et son espérance vaut exactement le ratio de friction — c’est mécanique : si µ = 2µ*, alors µ·E[τ] = 2c et E[R] = c/a. Le chiffre annoncé ne contient aucune information sur le marché ; il ne contient que la friction. La deuxième ligne montre ce que devient la même géométrie sous une dérive plausible : l’espérance est négative, Kelly vaut zéro, et il n’y a rien à dimensionner. La troisième corrige la géométrie et non l’hypothèse : chaque grandeur y dépasse celle de la première ligne, à une dérive cinq fois plus faible.
+La première ligne mérite d’être lue deux fois. L’espérance de référence du document nº 1 vaut +0,550 R, et le ratio de friction vaut 0,550. Ce sont le même nombre, et c’est mécanique : si µ = 2µ*, alors µ·E[τ] = 2c, donc E[R] = (2c − c)/a = c/a. Le chiffre publié ne dit rien du marché ; il dit la friction, et rien d’autre. Toute la chaîne qui en dépend hérite de cette propriété.
+La deuxième ligne donne ce que devient la géométrie déclarée sous une dérive plausible : espérance négative, fraction de Kelly nulle, coefficient de Lundberg nul. Les chapitres de risque n’y sont pas seulement moins favorables — ils sont vides. On ne dimensionne pas une espérance négative, on s’en abstient.
+La troisième ligne est le résultat de ce document. Elle ne corrige pas l’hypothèse en la remplaçant par une plus généreuse : elle garde la dérive plausible et corrige la géométrie. Le Sharpe par trade y vaut +0,0918 contre +0,0873 dans le cas circulaire, la fraction de Kelly 3,34 % contre 1,82 %, le coefficient de Lundberg 0,0609 contre 0,0333. Chaque grandeur de risque dépasse celle du cas de référence, à une dérive cinq fois plus faible.
+C’est la conclusion qu’il faut retenir de la correction, et elle est plus forte que sa version négative. Le document nº 1 n’avait pas besoin d’une dérive invraisemblable pour tenir ; il en avait besoin parce que sa géométrie mangeait tout. Retirer l’hypothèse et corriger la géométrie donne de meilleurs chiffres qu’en la gardant.
+Où dépenser le jugement
+La conséquence pour l’opérateur discrétionnaire est directe, et elle contredit l’usage. Le jugement se dépense presque toujours sur la direction — quel côté, quel niveau, quel moment. Or c’est le seul terme de l’équation (1) qui exige un échantillon que l’opérateur n’aura jamais : 619 décisions pour établir un Sharpe de 0,10 par décision.
+Les deux autres termes ne demandent presque rien. La friction se lit sur un relevé de courtage ; l’exposition se calcule. La table ci-dessous chiffre l’écart.
+Table 21 — Les trois termes de l’équation (1), et le nombre de décisions qu’il faut pour établir un progrès sur chacun.
+LevierTermeDécisions pour t = 2Rapport
+| Direction — la dérive µ | µ | 10 568 | 1×
+| Exécution — entrer à la limite | c | 9 | 1 151× moins
+| Contrat — ES plutôt qu’un micro | c | aucun | arithmétique
+| Géométrie — la largeur du stop | E[τ∧T] | aucun | arithmétique
+Lecture. Le premier levier est celui sur lequel le jugement se dépense presque toujours, et c’est le seul qui exige un échantillon hors de portée. Le deuxième se mesure sur le relevé de courtage : on compare le prix obtenu au milieu de fourchette, et l’écart-type de cette différence est petit — d’où un échantillon de l’ordre de la dizaine, sous un glissement déclaré de 1,0 tick. Les deux derniers n’exigent aucun échantillon supplémentaire parce qu’ils ne s’estiment pas : ils se calculent à partir de paramètres déjà calibrés. Un opérateur qui déplace son jugement du premier vers les trois autres échange un pari statistique contre un calcul.
+Établir un progrès d’exécution demande 9 décisions, sous un glissement déclaré de 1,0 tick — parce qu’on ne mesure pas un avantage noyé dans le bruit du marché, mais un écart entre le prix obtenu et le milieu de fourchette, dont la dispersion est petite. Le contrat et la géométrie n’en demandent aucune : ils ne s’estiment pas, ils se calculent. Un opérateur qui déplace son jugement de la direction vers ces trois-là échange un pari statistique contre une arithmétique, et l’échange se fait à plus de mille contre un.
+Trois décisions épuisent l’essentiel. Le contrat : sur les deux micro-contrats, la friction dépasse le risque nominal, et la position est perdue avant d’être ouverte. L’exécution : entrer à la limite plutôt qu’au marché divise la friction par deux, ce qui divise le seuil par deux. La géométrie : c’est le levier quadratique, et c’est de loin le plus puissant — un facteur 329 sépare le pire choix du meilleur.
+Cela ne crée aucun avantage à partir de rien, et il faut être net là-dessus. À dérive nulle, l’espérance vaut −c/a pour toute géométrie de la grille : négative partout, et l’optimum est de ne pas trader. Le théorème d’arrêt optionnel n’est pas contourné, il n’est jamais contournable. Ce chapitre établit une chose plus faible et plus utile : conditionnellement à une dérive positive, la géométrie décide si l’opérateur la garde ou si la friction la mange — et à la géométrie déclarée, elle la mange entièrement.

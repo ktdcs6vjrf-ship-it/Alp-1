@@ -1,0 +1,39 @@
+Sixième partie
+Les cinq lois nulles
+Un opérateur qui bat « le hasard » n’a rien démontré tant qu’on n’a pas dit quel hasard. C’est la contribution méthodologique de ce document.
+Pourquoi une seule loi nulle ne suffit pas
+Chaque loi nulle est un adversaire particulier, et battre un adversaire ne dit rien des autres. Un opérateur peut très bien choisir remarquablement ses setups tout en n’apportant rien par sa gestion de sortie ; un autre peut apporter par sa gestion tout en sélectionnant au hasard. Une statistique globale confond les deux, et pire, elle laisse croire qu’un avantage établi sur un axe vaut sur tous.
+Le principe retenu ici est donc : une loi nulle par prétention. Chacune est construite pour tenir constant tout ce que l’opérateur ne revendique pas, et ne faire varier que ce qu’il revendique.
+Le catalogue, et ce que chaque loi réfute
+Table 10 — Les cinq lois nulles, ce que chacune réfute, et le verdict sur un opérateur dont la clairvoyance est connue.
+Loi nulleCe qu’elle réfute si elle tientObservéSeuil 95 %Verdict
+| La règle scellée | que le jugement ajoute à la règle | +0,4785 | +0,0961 | battue
+| Sélection au sort | que le choix des setups porte de l’information | +0,4785 | +0,0552 | battue
+| Issues permutées dans la séance | que le moment choisi porte de l’information | +0,4785 | +0,4125 | battue
+| Décision indépendante de l’issue | que l’abstention soit informative | +0,2396 | +0,0065 | battue
+| Rééchantillonnage par blocs | que le résultat tienne à plus que quelques décisions | +0,3350 | +0,0000 | battue
+Lecture. Le verdict est positif si et seulement si les cinq lois sont battues. Une loi inapplicable — un journal sans abstentions, par exemple — est comptée comme non battue.
+Deux constructions méritent d’être justifiées. La sélection au sort tire le même nombre de setups que l’opérateur, sans remise : tenir la cadence constante n’est pas un raffinement, car un adversaire prenant un nombre différent de setups changerait aussi la variance de la moyenne, et l’écart mesuré mêlerait sélectivité et compétence. Les issues permutées le sont à l’intérieur de la séance et non globalement : une permutation globale détruirait la structure de volatilité entre séances — la saisonnalité en U, les jours calmes et les jours agités — et confondrait compétence de chronométrage et simple exposition aux séances favorables.
+Figure 25 — L’observé posé sur chacune de ses cinq lois nulles, pour un opérateur dont la clairvoyance est franche. Un cadre par loi : la forme grise est la distribution de la statistique sous cette loi, le pointillé le seuil qu’il faut dépasser, le trait fort la valeur observée. Les cinq seuils doivent tomber du bon côté ; une seule loi non battue suffit à refuser.
+Les deux graduations d’un cadre sont la moyenne de la loi et l’observé. Une loi est battue quand le trait fort passe à droite du pointillé. Adversaire analytique pour règle scellée et indépendance : la hauteur d’une barre y est la probabilité exacte de la classe, là où les trois autres comptent des tirages. Le bootstrap se lit autrement : la forme grise y est la distribution de l’espérance rééchantillonnée, l’observé sa borne basse à 2,5 %, et le seuil est zéro.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Figure 26 — La loi de l’espérance mesurée en l’absence de compétence, en densité puis en répartition. Les quantiles P5 et P95 délimitent l’intervalle qui contient 90 pour cent des tirages. La courbe de droite donne la probabilité qu’une espérance donnée soit atteinte sans aucune information sur l’issue.
+La bande claire de l’histogramme couvre 90 pour cent des tirages. La répartition donne la probabilité qu’une espérance soit atteinte sans compétence.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Faire mieux que dix lignes de code
+La troisième loi n’est pas simulée : son adversaire est déterministe, c’est la règle scellée exécutée sur l’univers entier. Elle ne demande pas si l’opérateur gagne. Elle demande s’il fait mieux que ce qu’on obtient sans lui.
+C’est la seule des cinq qui compare l’opérateur à une alternative disponible plutôt qu’à un tirage. Un opérateur qui bat la sélection au sort, le chronométrage et l’indépendance sans battre la règle scellée présente une compétence mesurable dont l’apport net sur la règle est nul. Les deux constats sont indépendants, et le dispositif les rapporte séparément.
+Ce que l’appareil déclare quand il n’y a rien
+Le contrôle qui autorise tous les autres ne consiste pas à vérifier qu’un opérateur compétent est détecté — n’importe quelle statistique complaisante y parvient. Il consiste à vérifier qu’un opérateur sans compétence ne l’est pas.
+Table 11 — Ce que l’appareil déclare, selon la compétence qu’on lui a plantée.
+ClairvoyanceBits par décisionE[R] par décisionSharpe par décisionLois battuesVerdict
+| 0,00 | 0,0000 | −0,0643 | −0,0592 | 0 / 5 | refusé
+| 0,20 | 0,0282 | +0,0891 | +0,0798 | 4 / 5 | refusé
+| 0,35 | 0,0877 | +0,2972 | +0,2492 | 5 / 5 | déclaré
+| 0,55 | 0,2245 | +0,4785 | +0,4061 | 5 / 5 | déclaré
+Lecture. La première ligne mesure le niveau du test : à compétence nulle, le nombre de lois battues est nul. La dernière mesure la puissance. Les lignes intermédiaires situent la plage où la compétence est non nulle et le verdict négatif.
+La première ligne est ce contrôle : à clairvoyance nulle, 0 loi battue sur cinq, verdict refusé, malgré un Sharpe observé de −0,0592 qui aurait pu tromper un examen naïf. La dernière ligne établit la puissance : à 0,2245 bit par décision, les cinq lois tombent et l’avantage est déclaré.
+Entre les deux se situe une plage où la vérité plantée est non nulle et où le nombre de lois battues reste inférieur à cinq. L’étendue de cette plage est fixée par la taille de l’échantillon : à 400 séances, la transition se situe entre 0,0282 et 0,0877 bit par décision. Un seuil de déclaration abaissé la réduirait, au prix d’un taux de déclaration non nul sur la première ligne.
+Figure 27 — Le nombre de lois nulles battues selon l’information plantée par décision. Le point à zéro bit est le contrôle qui autorise tous les autres : sans compétence, l’appareil ne déclare rien. La bande grisée marque la zone où l’avantage existe sans être démontrable.
+Abscisse : information plantée, en bits par décision. Ordonnée : lois nulles battues sur cinq. Chaque point est un journal complet, évalué par la batterie entière.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance

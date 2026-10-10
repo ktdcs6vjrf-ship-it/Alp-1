@@ -1,0 +1,74 @@
+Deuxième partie
+La stratégie évaluée
+Le dispositif décrit dans ce document s’applique à un opérateur particulier, dont le processus repose sur sept couches d’analyse. Cette partie décrit chaque couche, puis situe les couches dans la décision.
+Sept couches, et ce qu’elles produisent
+La pile évaluée combine sept instruments d’analyse appliqués aux contrats à terme sur indice, en séance. Chacun produit une lecture du marché à un instant donné ; aucun ne produit une décision. La décision est prise par l’opérateur au vu de l’ensemble, et c’est cette combinaison qui constitue les quatre leviers discrétionnaires recensés en partie VII.
+Les sept couches et leurs lois nulles sont établies au document no 1 de cette série ; elles sont reprises ici sans modification. Ce document ne les réévalue pas : il évalue la décision qui les agrège.
+Table 1 — Les sept couches de la stratégie évaluée, ce que chacune observe, et le levier discrétionnaire qu’elle alimente.
+CoucheCe qu’elle observeLevier alimentéLoi nulle établie au document nº 1
+| Théorie de Dow | la succession des sommets et des creux journaliers | Entrer ou s’abstenir | trois jours sur quatre déclenchent par hasard
+| Supports et résistances | les niveaux touchés puis quittés | Entrer ou s’abstenir | tout niveau touché deux fois se qualifie a posteriori
+| Profil de volume | la densité d’échanges par niveau de prix | La gestion de sortie | densité d’occupation : le POC est le mode de la distribution
+| Bandes VWAP | l’écart au prix moyen pondéré, en écarts-types | Entrer ou s’abstenir | 1,1 minute de séance au-delà de trois écarts-types
+| Exposition gamma | la position des teneurs de marché en options | La taille de position | le signe du gamma contraint la variance, non la direction
+| Carnet d’ordres | les tailles affichées et les exécutions agressives | Le moment exact dans la fenêtre | recouvrement des comportements : aire sous la courbe plafonnée
+| Fibonacci et OTE | les retracements d’une impulsion | Le moment exact dans la fenêtre | taux de remplissage de 14 % à la borne 0,618
+Lecture. La colonne du levier situe la couche dans la décision : elle dit à quel moment l’opérateur la consulte, non ce que la couche apporte. Les lois nulles de la dernière colonne sont établies au document nº 1 de cette série et reprises ici sans modification.
+Ce que chaque couche observe
+Les sept sections qui suivent décrivent chaque couche selon le même plan : l’objet observé, la grandeur produite, la loi nulle qui lui a été opposée au document no 1, et ce que cette loi laisse ou non subsister. Les figures sont celles des documents antérieurs, reprises sans modification.
+La théorie de Dow
+L’objet. La succession des sommets et des creux journaliers. Des sommets croissants accompagnés de creux croissants définissent une phase haussière ; la configuration symétrique définit une phase baissière ; toute autre combinaison est déclarée sans tendance. La couche produit donc un état à trois valeurs, mis à jour une fois par séance.
+Ce qu’elle produit dans la décision. Un filtre directionnel appliqué en amont : l’opérateur ne considère les entrées que dans le sens de l’état déclaré. La couche n’indique aucun niveau ni aucun instant.
+La loi nulle. Sur un prix sans dérive, la configuration de continuation apparaît environ trois jours sur quatre, et une mèche dominante un jour sur trois. Ces fréquences sont élevées : la question posée par le document no 1 n’est donc pas si le motif apparaît, mais si la dérive impliquée par sa présence dépasse le seuil que la friction impose.
+Figure 1 — La fréquence des configurations de Dow sur un prix sans dérive, et la dérive qu’il faudrait pour que leur présence soit informative. Figure reprise du document no 1.
+Trois jours sur quatre déclenchent un signal de continuation. Seuil de détection δ = 4 points · σ = 1,25 point par racine de minute · µ* = seuil de rentabilité du trade.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Les supports et résistances
+L’objet. Des niveaux de prix auxquels le marché a réagi par le passé — extrêmes de séance, points de retournement, bornes d’un intervalle — retenus comme susceptibles de provoquer une réaction à nouveau.
+Ce qu’elle produit dans la décision. Une liste de niveaux et la distance du prix courant à chacun. Elle alimente le choix d’entrer, et sert accessoirement au placement du stop.
+La loi nulle. Elle porte sur la sélection plutôt que sur la réaction. Tout niveau touché deux fois se qualifie a posteriori comme support ou résistance, y compris sur un prix sans dérive : la méthode d’extraction garantit donc de trouver des niveaux, qu’il y ait quelque chose ou non. Le test n’a de sens que si les niveaux sont fixés avant la séance et comparés à des niveaux tirés au sort. C’est la seule des sept couches dont la loi nulle porte sur le protocole d’extraction et non sur le motif.
+Le profil de volume
+L’objet. La répartition des quantités échangées par niveau de prix sur une période donnée. Le mode de cette répartition est le point de contrôle ; l’intervalle qui contient environ 70 pour cent des échanges est la zone de valeur ; les niveaux peu échangés sont les nœuds de faible volume.
+Ce qu’elle produit dans la décision. Une carte de densité, utilisée pour placer le stop et pour anticiper la vitesse de traversée d’une zone.
+La loi nulle. Le profil est une densité d’occupation, et une densité d’occupation n’est pas une prévision : elle décrit où le prix a passé du temps, ce qui est mécaniquement lié à sa volatilité locale. Le document no 1 en tire un résultat opératoire indépendant de toute dérive : la volatilité locale varie comme l’inverse de la racine de la densité, donc un stop en pourcentage fixe n’est pas un risque fixe. La couche informe le dimensionnement du risque sans rien dire de la direction.
+Figure 2 — Les niveaux du profil de volume et la vitesse de traversée qui leur est associée. Le point de contrôle est le mode de la distribution des échanges. Figure reprise du document no 1.
+Un stop en pourcentage fixe du prix n’est pas un risque fixe : il vaut 2,3 σ locaux sur un LVN contre 3,6 sur le POC.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Les bandes VWAP
+L’objet. Le prix moyen pondéré par les volumes depuis un point d’ancrage — l’ouverture de la séance, le plus souvent — entouré de bandes situées à un, deux et trois écarts-types pondérés.
+Ce qu’elle produit dans la décision. Un écart normalisé du prix courant à sa moyenne, exprimé en écarts-types. C’est le déclencheur principal de la stratégie scellée du document no 1, et la seule couche dont la loi nulle soit connue en forme fermée.
+La loi nulle. Sur un prix sans dérive, le temps passé au-delà de trois écarts-types vaut environ 1,1 minute par séance de 390 minutes. Le franchissement d’une bande lointaine est donc un événement rare par construction, ce qui le rend exploitable comme déclencheur : sa rareté est calculable, et l’espérance conditionnelle au franchissement peut être testée contre cette rareté.
+Figure 3 — Les bandes d’écart-type autour du prix moyen pondéré, et le temps passé au-delà de chacune sur un prix sans dérive. Figure reprise du document no 1.
+Trajectoire simulée de façon déterministe — aucune donnée de marché. La bande 3 σ est dépassée environ une minute par séance : toute règle qui s’y accroche est rare par construction, et son échantillon croît d’autant plus lentement.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+L’exposition gamma
+L’objet. La position agrégée des teneurs de marché en options, telle que la publication des positions ouvertes permet de l’estimer. Elle détermine le sens de leur couverture : une exposition négative les conduit à vendre en baisse et acheter en hausse, ce qui amplifie les mouvements ; une exposition positive produit l’effet inverse.
+Ce qu’elle produit dans la décision. Un régime de volatilité attendu, et une liste de niveaux d’exercice où la couverture change de sens. Elle alimente le dimensionnement plutôt que l’entrée.
+La loi nulle. Le prédicat testable porte sur la variance conditionnelle au signe du gamma, non sur l’espérance. Le mécanisme de couverture contraint la dispersion et laisse la direction indéterminée : une exposition négative annonce des mouvements plus amples, pas des mouvements haussiers. C’est la couche dont la loi nulle est la plus nette, et le document no 1 la désigne comme la première à tester.
+Figure 4 — Les niveaux d’exposition gamma et le régime de volatilité associé au signe. La couche contraint la dispersion attendue, non la direction. Figure reprise du document no 1.
+Concentration potentielle : chaque strike évalué à la monnaie · gamma net : la chaîne évaluée au spot du jour. Chaîne 0DTE synthétique — aucune donnée de marché.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le carnet d’ordres
+L’objet. Les quantités affichées à l’achat et à la vente aux niveaux immédiatement adjacents au prix, et les exécutions qui les consomment. S’y ajoutent des grandeurs dérivées : l’absorption, le déséquilibre cumulé, la persistance des tailles affichées.
+Ce qu’elle produit dans la décision. Une lecture de la pression instantanée, qui alimente le choix du moment d’exécution à l’intérieur d’une fenêtre déjà retenue.
+La loi nulle. La capacité de séparation d’un indicateur de carnet est bornée par le recouvrement des comportements : une taille affichée sans intention d’exécution et une taille affichée avec intention produisent la même observation. Le document no 1 chiffre ce plafond et relève un second point, décisif pour l’usage : la demi-vie du signal se compte en secondes, alors que la durée d’exposition d’une position en séance se compte en heures. La couche relève donc de l’exécution, non de la sélection.
+Figure 5 — La carte de liquidité du carnet et la capacité de séparation qu’elle autorise. Figure reprise du document no 1.
+Trajectoire et carnet simulés de façon déterministe — aucune donnée de marché.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Figure 6 — La demi-vie d’un signal de carnet comparée à la durée d’exposition d’une position en séance. L’écart d’ordre de grandeur situe la couche du côté de l’exécution. Figure reprise du document no 1.
+1 cotation · 2 file d’ordres · 3 inventaire · 4 structurel · 5 positionnement. Bande grisée : dérives inférieures à la volatilité d’une minute, seul domaine plausible. Un signal de carnet ne peut pas financer une position d’une demi-heure ; il peut en améliorer l’exécution.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Fibonacci et l’entrée optimale
+L’objet. Une grille de retracements tracée sur une impulsion identifiée, aux proportions 0,382, 0,5, 0,618 et 0,79. L’intervalle compris entre 0,618 et 0,79 est retenu comme zone d’entrée préférentielle.
+Ce qu’elle produit dans la décision. Un intervalle de prix conditionnel à une impulsion, dans lequel l’opérateur place un ordre plutôt que d’entrer au marché. Elle alimente le moment, et non la direction.
+La loi nulle. Le taux de remplissage à la borne 0,618 vaut environ 14 pour cent sur un prix sans dérive. Le document no 1 en tire une conséquence contre-intuitive et qui s’applique directement ici : attendre un retracement améliore l’espérance si et seulement si l’entrée au marché est perdante. Sur un signal dont l’espérance au marché est positive, l’attente coûte les remplissages manqués.
+Figure 7 — Les niveaux de retracement et leur taux de remplissage sur un prix sans dérive. Figure reprise du document no 1.
+Trait plein : impulsion · pointillé : retracement · à gauche le ratio, à droite sa probabilité nulle d’atteinte. Sous un prix sans dérive, attendre épargne une friction par signal non exécuté ; au-delà du seuil, les signaux manqués sont ceux qui partaient.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Des couches aux leviers
+Les sept couches ne sont pas sept décisions. Elles alimentent les quatre leviers discrétionnaires, et la correspondance n’est pas de un à un : 3 couches sur 7 interviennent au moment d’entrer ou de s’abstenir, les autres se répartissent entre le choix du moment, le dimensionnement et la gestion de la sortie.
+Figure 8 — Quelle couche d’analyse alimente quel levier discrétionnaire. Le chiffre au-dessus de chaque colonne est le nombre de couches concernées. La matrice situe les couches dans la décision ; elle ne mesure pas leur apport, qui est l’objet de la partie X.
+Le chiffre au-dessus de chaque colonne est le nombre de couches qui alimentent ce levier. La matrice situe les couches dans la décision ; elle ne mesure pas leur apport.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Cette correspondance a une conséquence directe sur le reste du document. Le nombre de configurations effectives est fixé par le nombre de leviers, non par le nombre de couches : sept instruments consultés pour prendre quatre décisions binaires engendrent 24 configurations, et non 27. La consultation d’un instrument supplémentaire ne coûte rien tant qu’elle n’ouvre pas un nouveau choix.
+Elle a aussi une conséquence sur l’interprétation de l’attribution. La décomposition de la partie X porte sur les leviers et non sur les couches : elle indique à quel moment de la décision l’avantage se forme, sans distinguer laquelle des couches alimentant ce levier y contribue.

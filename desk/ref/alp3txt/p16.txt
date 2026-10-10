@@ -1,0 +1,258 @@
+Seizième partie
+Cinq disciplines empruntées
+Un fonds qui n’embauche aucun opérateur de marché n’a pas remplacé le jugement par de la puissance de calcul : il a reformulé la question dans une discipline qui savait déjà y répondre. Cette partie fait le trajet inverse — cinq disciplines constituées, ce que chacune mesure sur une séance, et la fréquence de son motif sous un prix sans dérive.
+Ce que le pas de temps ne change pas
+La première question à poser n’appartient à aucune des cinq disciplines : c’est celle de l’unité d’observation. Un opérateur qui veut prouver quelque chose peut regarder la minute, l’épisode de volatilité, l’extrême de séance, sa propre décision, ou la séance entière. L’intuition veut que le pas le plus fin donne le plus de matière — cinq cent mille minutes contre mille deux cent soixante séances — et qu’il permette donc de prouver bien davantage.
+L’intuition est vraie sur l’effet par unité, et fausse sur la conclusion.
+Table 42 — L’unité d’observation change tout sauf la conclusion
+UnitéPar ann disponibled′ minimalSharpe annuel équivalentCe qu’on y observe
+| la minute | 98 280 | 491 400 | 0,0040 | 1,25 | le signe du pas de prix suivant
+| l’épisode de volatilité | 2 520 | 12 600 | 0,0250 | 1,25 | une bouffée d’activité et son retour au calme
+| l’extrême de séance | 504 | 2 520 | 0,0558 | 1,25 | le haut et le bas du jour, et l’heure de chacun
+| la décision de l’opérateur | 504 | 2 520 | 0,0558 | 1,25 | entrer, ou laisser passer
+| la séance | 252 | 1 260 | 0,0789 | 1,25 | le rendement du jour
+| le relevé qui existe | 180 | 30 | 0,5115 | 6,86 | les trente premières décisions enregistrées
+Lecture. Effet minimal détectable à 5 % et 80 % de puissance, soit d = 2,802/√n. La quatrième colonne parcourt quatre ordres de grandeur ; la cinquième ne bouge pas, et c’est le résultat de la section : le nombre d’années décide, le pas de temps ne décide de rien. La dernière ligne n’est pas une archive mais un relevé réel de 30 décisions — il faudrait 7,8 ans pour établir un Sharpe de 1, quelle que soit l’unité choisie.
+Figure 64 — L’effet minimal détectable selon l’unité d’observation, à gauche ; la même exigence traduite en Sharpe annuel, à droite. Cinq barres identiques, et une sixième qui ne l’est pas pour une raison qui n’a rien à voir avec le pas de temps.
+Effet minimal détectable à 5 % et 80 % de puissance. L’exigence par unité parcourt quatre ordres de grandeur ; annualisée, elle vaut 2,802 divisé par la racine du nombre d’années, et rien d’autre. Choisir un pas de temps plus fin n’achète donc aucune preuve — c’est un résultat, pas une limitation de la méthode employée ici, et il vaut pour tout estimateur sans mémoire.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La quatrième colonne parcourt quatre ordres de grandeur : à la minute, un effet de 0,0040 écart-type suffit ; au relevé réel, il en faut 0,511. La cinquième ne bouge pas. Elle vaut 1,25 partout, parce que l’effet et le bruit se composent tous deux en racine du nombre d’unités et que le rapport des deux ne dépend que de la durée. Une colonne constante est un signal, jamais un détail : celle-ci dit que le choix du pas de temps n’achète aucune preuve.
+Il faut 7,8 ans pour établir un Sharpe de 1, et aucune finesse d’échantillonnage ne raccourcit ce délai.
+Figure 65 — La puissance d’un test de Sharpe sur le plan du Sharpe vrai et du nombre d’années. Ni instrument, ni loi de rendement, ni géométrie n’entrent dans ce relief : c’est une borne, pas un modèle.
+Puissance d’un test bilatéral au risque 5 % : la probabilité de conclure quand la conclusion est vraie. Le relief est de l’arithmétique pure et ne se discute pas ; ce qui se discute est le point où l’on se tient dessus. Un opérateur qui revendique un Sharpe de deux et deux ans de relevé se tient dans la région haute, un opérateur qui revendique un demi et deux ans se tient dans le creux — et aucune analyse de ses trades ne l’en sortira.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le seul endroit où l’unité coûte quelque chose
+Elle coûte par la multiplicité qu’elle introduit. Choisir son unité après avoir regardé, c’est chercher parmi des candidats, et la comptabilité du recensement des leviers s’applique : 4 leviers valent 16 configurations.
+Table 43 — Ce que coûte le fait de chercher, plutôt que de savoir
+LeviersConfigurationsQuantile déflatéSharpe détectable en 5 ansAnnées pour Sharpe 1Verdict
+| 0 | 1 | 1,96 | 1,25 | 7,8 | à portée
+| 2 | 4 | 2,50 | 1,49 | 11,2 | à portée
+| 4 | 16 | 2,96 | 1,70 | 14,4 | à portée
+| 6 | 64 | 3,36 | 1,88 | 17,6 | à portée
+| 8 | 256 | 3,73 | 2,04 | 20,9 | à portée
+| 10 | 1 024 | 4,06 | 2,19 | 24,0 | à portée
+| 12 | 4 096 | 4,37 | 2,33 | 27,2 | à portée
+| 14 | 16 384 | 4,67 | 2,46 | 30,3 | hors de portée
+| 16 | 65 536 | 4,94 | 2,59 | 33,5 | hors de portée
+| 18 | 262 144 | 5,21 | 2,71 | 36,6 | hors de portée
+Lecture. Déflation de Bonferroni sur 2^k configurations, k leviers discrétionnaires — la comptabilité du recensement des leviers. Le fait utile est la lenteur de la colonne : passer d’une configuration à 262 144 multiplie le nombre d’années par 4,66 seulement, parce que le quantile croît comme la racine du logarithme du nombre de candidats. Chercher coûte cher, mais beaucoup moins cher que ne le suggère le nombre de candidats. Verdict calculé contre une carrière de 30 ans.
+Le résultat est plus doux qu’on ne le craint. Passer d’une configuration à plus de deux cent mille ne multiplie le nombre d’années requis que par 4,66, parce que le quantile déflaté croît comme la racine du logarithme du nombre de candidats. Chercher coûte cher ; cela coûte beaucoup moins cher que ne le suggère le nombre de candidats. Au-delà de 12 leviers, en revanche, la démonstration sort d’une carrière de 30 ans, et c’est une limite dure.
+Un extrême de séance a un taux de hasard
+L’analyse de survie est la discipline qui étudie la durée avant un événement, quand certaines durées ne sont pas observées jusqu’au bout. C’est exactement la situation d’un opérateur qui demande : le haut du jour va-t-il tenir ?
+Elle apporte trois objets. Le taux de hasard, qui est le risque instantané que l’extrême tombe dans la minute qui vient sachant qu’il a tenu jusque-là. La censure à droite, qui est le sort des observations que la clôture — ou la sortie de l’opérateur — interrompt avant leur terme. Et l’estimateur de Kaplan-Meier, qui traite la seconde sans supposer aucune loi.
+Le cas est plus favorable ici qu’en médecine, et il faut le dire tout de suite : la loi nulle est fermée. Par le principe de réflexion, la probabilité qu’un sommet distant de d tienne m minutes sous un prix sans dérive vaut 2Φ(d/σ√m) − 1. Aucune simulation n’est requise pour savoir ce qu’un sommet vaut.
+Table 44 — La survie d’un sommet de séance, mesurée et fermée
+Distance au sommetOccasionsSurvie à 30 min mesuréeForme fermée continueForme fermée à la minutePic de risque (min)Risque au pic (par heure)
+| 0 à 3 pt | 2 613 | 21,1 | 13,3 | 21,5 | 0,3 | 35,9
+| 3 à 6 pt | 1 926 | 55,0 | 48,2 | 54,8 | 4,8 | 2,4
+| 6 à 9 pt | 1 738 | 73,4 | 72,0 | 76,4 | 13,6 | 0,9
+| 9 à 14 pt | 2 302 | 91,5 | 89,6 | 91,6 | 31,2 | 0,4
+| 14 à 22 pt | 2 264 | 99,2 | 98,5 | 98,9 | 72,9 | 0,2
+| plus de 22 pt | 1 157 | 99,9 | 100,0 | 100,0 | 170,4 | 0,1
+Lecture. Sommet relevé à la 120e minute sur 12 000 séances sans dérive, sans aucune censure ici — c’est la durée vraie qui est mesurée. Les deux colonnes de forme fermée sont 2Φ(d/σ√m) − 1 moyennée sur les distances effectivement observées dans la strate : la première en temps continu, la seconde pour une barrière surveillée à la minute. C’est la seconde qui décrit ce qu’un opérateur voit — écart absolu moyen de 0,7 point contre 3,1 pour la forme continue, et il n’est pas réparti : une seule strate le porte presque entier. Ce qui reste est le second ordre de la correction, sensible seulement à trente minutes : sur l’horizon de séance de la table de calibration, il retombe sous le point. Les deux dernières colonnes portent le fait de la section : le risque n’est pas maximal quand le sommet vient d’être posé, mais d²/2,61σ² minutes plus tard — la constante est la racine d’une équation sans forme fermée, et elle ne vaut pas trois.
+Figure 66 — À gauche, quatre réponses à la même question, dont deux fausses : l’estimateur de Kaplan-Meier retrouve la forme fermée, la facilité qui écarte les observations non résolues ne la retrouve pas. À droite, le risque instantané pour trois distances, chacun avec son pic.
+Sommet relevé à la 120e minute, suivi jusqu’à la clôture ou jusqu’à la sortie de l’opérateur. La courbe pleine est Kaplan-Meier, qui traite la censure ; la tiretée est la forme fermée moyennée sur les distances observées, qui sert de vérité. Le point clair marque ce que donne la facilité la plus répandue — ne garder que les cas résolus — et il tombe à 12 minutes contre 120. À droite, le risque instantané : il monte, culmine, puis décroît en un sur deux fois le temps écoulé. Un sommet vieux est un sommet sûr, mais un sommet jeune ne l’est pas non plus.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Deux faits sortent de cette table, et le second n’était pas attendu.
+Le premier est une question de pas d’observation. La forme fermée décrit une barrière surveillée en temps continu ; un opérateur regarde une bougie d’une minute. Une barrière surveillée à intervalle Δt se comporte comme une barrière continue déplacée de 0,583 σ√Δt vers l’extérieur, soit 0,73 point ici — la constante est universelle et n’est pas ajustée. C’est le troisième visage d’un piège que le document connaît : la taille de grappe décide de la rareté d’un déséquilibre de footprint, la hauteur de rangée de celle d’un extrême pauvre, le pas d’observation de la survie d’un sommet. La différence est qu’ici la correction se calcule.
+Le second est le pic de risque. Un sommet n’est pas le plus menacé à l’instant où il est posé : il l’est d²/2,61σ² minutes plus tard, soit 20 minutes pour un sommet à neuf points. La constante n’a pas de forme fermée — c’est la racine de 3/u − u = 2φ(u)/(2Φ(u)−1), soit 1,615 — et une première version du module la posait à trois, ce qu’un test a trouvé en comparant la formule au maximum balayé. Juste après, la distance est trop grande pour le bruit accumulé ; longtemps après, la survie a déjà éliminé les trajectoires qui montaient. Entre les deux se trouve un maximum, et il se calcule d’une ligne.
+Figure 67 — Le risque instantané sur tout le plan distance × temps écoulé. La crête suit d²/2,61σ² : à chaque distance correspond un instant de danger maximal, et cet instant recule comme le carré de la distance.
+Forme fermée φ(u)·u/(m·(2Φ(u)−1)) avec u = d/σ√m, tracée sans aucune simulation, puis rapportée à son maximum distance par distance. La normalisation n’est pas un choix d’esthétique : le risque absolu parcourt deux ordres de grandeur sur cette boîte, et le relief brut se réduisait à une aiguille au coin des sommets proches, où l’arête que la section décrit n’était pas visible. Les niveaux absolus sont dans la table. Ce relief est la raison pour laquelle une règle du type « si le haut tient dix minutes, il tiendra » n’a pas de sens général : dix minutes est très long pour un sommet à deux points et très court pour un sommet à quinze.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Ce que coûte le fait d’écarter ce qui n’a pas fini
+La censure n’est pas un raffinement de méthode. Sur ces séances, 61,5 % des observations sont interrompues avant terme, la plupart par la sortie de l’opérateur lui-même : sa position fermée, le sort du sommet lui devient inobservable.
+Table 45 — Ce que coûte le fait d’écarter ce qui n’a pas fini
+MéthodeMédiane (min)Durée moyenne restreinte (min)Part de l’échantillon utiliséeÉcart à la référenceCe que c’est
+| En écartant les observations non résolues | 12,0 | 23,5 | 38,5 | −83,3 | la méthode que tout le monde emploie sans le dire
+| En les arrêtant à la borne | 31,0 | 44,5 | 100,0 | −68,3 | l’autre facilité, de biais opposé
+| Kaplan-Meier | 107,0 | 136,2 | 100,0 | −3,1 | l’estimateur de la discipline, sans hypothèse de loi
+| Forme fermée moyennée | 119,7 | 140,5 | 100,0 | +0,0 | la référence, calculée et non estimée
+Lecture. 61,5 % des observations sont censurées à droite, dont 61,2 % par la sortie de l’opérateur et le reste par la clôture. Écarter les non résolues revient à ne garder que les sommets qui sont tombés, donc à répondre à une autre question — la durée moyenne y perd 83 %. Les arrêter à la borne fait l’erreur opposée, et le hasard veut qu’elle soit ici du même signe : les deux facilités se trompent, jamais l’une contre l’autre. Kaplan-Meier ne suppose aucune loi et retrouve la référence, qui est ici calculable parce que la loi nulle est fermée — la discipline se vérifie sur un cas où l’on connaît la réponse, puis s’emploie là où on ne la connaît pas.
+Écarter ces observations revient à ne garder que les sommets qui sont tombés, donc à répondre à une autre question que celle posée. Kaplan-Meier ne suppose aucune loi et retrouve la référence — qui est ici calculable, ce qui est le luxe de ce cas et sa raison d’être dans ce document : la discipline se vérifie là où l’on connaît la réponse, puis s’emploie là où on ne la connaît pas.
+Ce qu’une probabilité annoncée doit prouver
+Une probabilité annoncée se juge à sa calibration : parmi les cas où l’on a dit soixante-dix pour cent, soixante-dix pour cent doivent se réaliser. C’est l’épreuve la plus simple, la plus dure à truquer, et celle qu’aucune lecture de graphique ne se voit jamais imposer.
+Table 46 — La forme fermée, mise à l’épreuve de la calibration
+TrancheAnnoncé, temps continuAnnoncé, à la minuteFréquence observéeÉcartOccasionsz
+| 1 | 0,9 | 3,7 | 3,8 | +0,1 | 1 200 | +0,25
+| 2 | 7,0 | 9,8 | 9,4 | −0,4 | 1 200 | −0,43
+| 3 | 13,9 | 16,6 | 17,2 | +0,6 | 1 200 | +0,58
+| 4 | 20,9 | 23,6 | 22,5 | −1,1 | 1 200 | −0,88
+| 5 | 28,2 | 30,9 | 28,8 | −2,0 | 1 200 | −1,51
+| 6 | 36,0 | 38,5 | 38,4 | −0,1 | 1 200 | −0,09
+| 7 | 44,5 | 46,8 | 46,1 | −0,8 | 1 200 | −0,53
+| 8 | 53,7 | 55,8 | 55,8 | +0,0 | 1 200 | +0,00
+| 9 | 64,7 | 66,5 | 66,8 | +0,2 | 1 200 | +0,18
+| 10 | 80,7 | 81,9 | 82,8 | +0,9 | 1 200 | +0,81
+Lecture. Chaque séance reçoit sa probabilité annoncée que son sommet tienne jusqu’à la clôture, 2Φ(d/σ√270) − 1 ; les séances sont rangées par cette probabilité et la fréquence réelle est relevée par tranche. Le biais moyen vaut +2,13 point en temps continu et −0,25 point une fois la barrière corrigée du pas d’observation ; l’écart absolu moyen passe de 2,13 à 0,63 point. La conclusion est double, et la seconde moitié compte plus que la première : la formule est exacte, donc utilisable telle quelle comme loi nulle — et elle est exacte *sans rien savoir du marché*, donc une lecture qui se contente de la retrouver n’a rien démontré.
+Figure 68 — La courbe de calibration de la probabilité de survie annoncée, et la loi de la distance dont elle se déduit. La diagonale est la seule chose à regarder ; l’annonce en temps continu s’en écarte systématiquement, l’annonce corrigée du pas d’observation ne s’en écarte plus.
+Chaque séance reçoit sa probabilité annoncée que son sommet tienne jusqu’à la clôture, puis les séances sont rangées par cette probabilité et la fréquence réelle est relevée par tranche. La correction du pas d’observation vaut 0,583 fois l’écart-type d’une minute, soit 0,73 point ; elle n’est pas ajustée, c’est une constante universelle. Ce que la planche établit n’est pas que la formule marche — elle est exacte — mais qu’elle marche sans rien savoir du marché : une lecture qui se contente de la retrouver n’a donc rien démontré.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La conclusion est double, et la seconde moitié compte plus que la première. La formule est exacte, donc utilisable telle quelle comme loi nulle de tout énoncé du type « ce niveau va tenir ». Et elle est exacte sans rien savoir du marché — donc une lecture qui se contente de la retrouver n’a rien démontré. C’est la barre que doit franchir toute méthode qui prétend annoncer la tenue d’un extrême.
+L’activité appelle l’activité
+Un processus auto-excitant est un processus dont chaque événement relève la probabilité du suivant. La sismologie l’a formalisé la première — une secousse fait des répliques, et leur taux décroît selon la loi d’Omori — et la microstructure l’a repris tel quel pour le flux d’ordres.
+Trois objets, et une loi nulle. Le noyau d’excitation α·e^{−βt}, qui dit de combien un événement relève l’intensité et à quelle vitesse cela s’oublie. Le ratio de branchement n = α/β, qui est la part de l’activité fille d’une autre activité — ici déclaré à 0,75, l’ordre de grandeur que la littérature mesure sur un indice liquide. Le rapport de Fano, variance sur moyenne des comptes par fenêtre, qui vaut un sous Poisson et 1/(1−n)² sous Hawkes. Et la loi nulle est le Poisson homogène de même taux, simulé plutôt que supposé.
+Table 47 — L’auto-excitation, vue par le seul rapport de Fano
+Fenêtre (min)F mesuréF médian sous PoissonBande à 95 % sous PoissonRatio de branchement impliciteVerdict
+| 5 | 5,43 | 1,00 | 0,97 à 1,03 | 0,571 | excitation
+| 10 | 8,12 | 1,00 | 0,96 à 1,04 | 0,649 | excitation
+| 25 | 11,72 | 1,00 | 0,92 à 1,06 | 0,708 | excitation
+| 50 | 13,45 | 1,01 | 0,91 à 1,11 | 0,727 | excitation
+| 100 | 16,08 | 1,01 | 0,88 à 1,16 | 0,751 | excitation
+| 200 | 15,94 | 1,01 | 0,83 à 1,21 | 0,750 | excitation
+| 400 | 16,08 | 1,01 | 0,77 à 1,31 | 0,751 | excitation
+Lecture. Processus de Hawkes exponentiel simulé par amincissement d’Ogata sur 40 000 minutes, fond 0,10 événement par minute, mémoire 1,7 minute, ratio de branchement déclaré 0,75. Le ratio implicite de la cinquième colonne vient de n̂ = 1 − 1/√F, valable quand la fenêtre est longue devant la mémoire — ce qui explique que les fenêtres courtes le sous-estiment, et non l’inverse. La bande de Poisson est la loi nulle : sans elle, un F de 1,2 se lirait comme de l’excitation.
+Figure 69 — À gauche, la fenêtre la plus chargée du processus auto-excitant et celle de son Poisson témoin, choisies l’une et l’autre par balayage. À droite, le taux d’événements après un événement, contre la forme fermée et contre le un plat du Poisson.
+Processus de Hawkes exponentiel simulé par amincissement d’Ogata, ratio de branchement déclaré 0,75, et son Poisson de même taux. Les deux fenêtres de gauche sont les plus chargées de chaque processus sur 40 000 minutes, choisies par balayage et non à la main : 129 événements contre 39. Le cadre de droite remplace cette impression par une mesure, et la forme fermée la rend à quelques pour-cent près sans aucun ajustement.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le rapport de Fano converge vers 16,0 et rend le ratio déclaré à trois millièmes près, sans qu’aucune vraisemblance ait été ajustée. La bande du Poisson est ce qui rend le verdict possible : sans elle, un rapport de 1,2 se lirait comme de l’excitation alors qu’il n’est que du comptage.
+Table 48 — La décroissance d’Omori, mesurée contre son Poisson
+Minutes après un événementTaux mesuré (par min)Forme ferméeTaux de fondRapport au fondRapport sous Poisson
+| 0 à 1 | 1,419 | 1,433 | 0,389 | 3,65 | 1,00
+| 1 à 2 | 1,269 | 1,288 | 0,389 | 3,26 | 1,00
+| 2 à 4 | 1,110 | 1,109 | 0,389 | 2,86 | 1,00
+| 4 à 8 | 0,838 | 0,853 | 0,389 | 2,16 | 1,00
+| 8 à 16 | 0,568 | 0,586 | 0,389 | 1,46 | 1,00
+| 16 à 40 | 0,416 | 0,416 | 0,389 | 1,07 | 1,00
+Lecture. La forme fermée est l’intensité de Palm λ̄ + A·e^{−(β−α)t}, moyennée sur la fenêtre. Le relèvement décroît avec une constante de temps de 6,7 minutes, plus longue que la mémoire du noyau parce que la descendance prolonge la secousse. Son amplitude vaut α(2β−α)/2(β−α) et non α : conditionner sur un événement sélectionne aussi un instant où l’intensité était déjà haute, et ce second terme vaut ici 2,5 fois le premier. La dernière colonne est la loi nulle et elle vaut un partout : sous Poisson homogène, un événement ne dit rien du suivant. C’est le seul point de comparaison qui vaille.
+Une subtilité mérite d’être nommée, parce qu’elle se trompe facilement d’un facteur deux et demi. L’amplitude du relèvement mesuré après un événement n’est pas α : conditionner sur un événement ajoute sa descendance, mais sélectionne aussi un instant où l’intensité était déjà haute. L’intensité de Palm vaut λ̄ + A·e^{−(β−α)t} avec A = α(2β−α)/2(β−α), et le contrôle est immédiat : intégrée sur le temps, cette amplitude doit rendre le rapport de Fano, ce qu’un test vérifie.
+Ce que l’excitation déplace, et ce qu’elle ne déplace pas
+Reste la seule question qui intéresse un compte. Sous l’hypothèse déclarée — chaque événement déplace le prix d’un pas de taille fixe, donc σ ∝ √λ — une bouffée d’activité multiplie la variance par 3,81 juste après un événement. Le temps de marché E[τ∧T] diminue d’autant, et le seuil µ* = c/E[τ∧T] monte.
+Table 49 — Ce qu’une bouffée d’activité fait au seuil, et à rien d’autre
+Minutes après un événementIntensité relativeVolatilité relativeE[τ∧T] (min)µ* (pt/h)Verdict
+| 0 | 3,812 | 1,953 | 12,0 | 1,655 | payant seulement au-delà de µ*
+| 2 | 3,084 | 1,756 | 14,1 | 1,405 | payant seulement au-delà de µ*
+| 5 | 2,329 | 1,526 | 17,5 | 1,132 | payant seulement au-delà de µ*
+| 10 | 1,628 | 1,276 | 23,1 | 0,859 | payant seulement au-delà de µ*
+| 20 | 1,140 | 1,068 | 30,3 | 0,653 | payant seulement au-delà de µ*
+| 40 | 1,007 | 1,003 | 33,4 | 0,593 | payant sous toute dérive plausible
+Lecture. Hypothèse déclarée, et la seule : chaque événement déplace le prix d’un pas de taille fixe, donc σ ∝ √λ. Le stop vaut 0,150 % et le rapport gain-risque 2. Le seuil est multiplié par 2,79 entre le calme et l’instant qui suit un événement, et le verdict change avec lui : ce qui était payant sous n’importe quelle dérive plausible ne l’est plus qu’au prix d’une dérive presque doublée. La direction, elle, ne bouge pas d’un millième — le processus est symétrique par construction. L’excitation déplace l’horloge, jamais la boussole, et elle la déplace dans le sens défavorable. Domaine de dérive plausible : 0,6 à 3,2 point par heure.
+Figure 70 — Le seuil de rentabilité sur le plan du ratio de branchement et du temps écoulé depuis un événement. Le relief est entièrement une affaire d’horloge : la part de hausses après un événement vaut 49,9 % sur 12 374 occasions.
+Une hypothèse déclarée, et une seule : chaque événement déplace le prix d’un pas de taille fixe, donc la variance par minute suit l’intensité. Le temps de marché diminue alors comme l’inverse de la variance, et le seuil µ* monte d’autant. La lecture courante — ça bouge, c’est le moment d’agir — a donc le signe exact du contraire : une bouffée d’activité n’améliore pas l’espérance, elle relève la barre. Ce que l’excitation offre est ailleurs, dans la vitesse de résolution, et cela se paie au comptant.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le seuil est multiplié par 2,79 juste après un événement, et le verdict de la dernière colonne change avec lui. La lecture courante — ça bouge, c’est le moment d’agir — a donc le signe exact du contraire.
+Il faut mesurer l’autre moitié pour avoir le droit de conclure, et le module le fait : sur 12 374 occasions, la part de hausses dans les dix minutes qui suivent un événement vaut 49,9 %, à 0,45 point d’écart-type près. L’auto-excitation déplace l’horloge, jamais la boussole — et c’est exactement ce que disait déjà, à la partie XV, le profil de variance de l’ouverture : il rend le quand d’une cassure et jamais son côté.
+L’heure du haut, et ce qui vit au-delà du stop
+La théorie des valeurs extrêmes apporte deux choses au dossier, et elles n’ont presque rien à voir l’une avec l’autre.
+La première est la loi de l’arc sinus, qui donne l’instant où une marche sans dérive atteint son maximum. Sa densité est en U : elle diverge aux deux bords de l’intervalle et creuse au milieu.
+Table 50 — À quelle heure le haut du jour se pose, sans aucun marché
+Moment de la séanceFréquence mesuréeLoi de l’arc sinusLoi uniformeRapport à l’uniforme
+| 0 à 10 % | 20,32 | 20,48 | 10,00 | 2,05
+| 10 à 20 % | 8,96 | 9,03 | 10,00 | 0,90
+| 20 à 30 % | 7,45 | 7,38 | 10,00 | 0,74
+| 30 à 40 % | 6,93 | 6,69 | 10,00 | 0,67
+| 40 à 50 % | 6,48 | 6,41 | 10,00 | 0,64
+| 50 à 60 % | 6,83 | 6,41 | 10,00 | 0,64
+| 60 à 70 % | 6,82 | 6,69 | 10,00 | 0,67
+| 70 à 80 % | 7,02 | 7,38 | 10,00 | 0,74
+| 80 à 90 % | 8,85 | 9,03 | 10,00 | 0,90
+| 90 à 100 % | 20,36 | 20,48 | 10,00 | 2,05
+Lecture. 20 000 séances de 390 minutes, sans dérive, sans profil de volume, sans heure privilégiée. La densité est en U : le premier et le dernier dixième portent chacun 20,5 % des sommets là où l’uniforme en prévoit dix. Le premier ou le dernier quart d’heure de séance en portent 25,1 % à eux deux. Une affirmation du type « le haut du jour se fait à l’ouverture ou en clôture » est donc vraie et sans contenu : elle décrit la loi de l’arc sinus, pas le marché.
+Figure 71 — La densité et la fréquence cumulée de l’heure du plus haut de séance, comparées à la loi de l’arc sinus et à la loi uniforme. Aucune donnée de marché n’entre dans cette planche.
+Le maximum d’une marche sans dérive tombe près des bords de l’intervalle bien plus souvent qu’au milieu, et la loi est exacte depuis 1939. La conséquence pratique est brutale : toute règle horaire tirée d’un relevé de hauts et de bas de séance doit d’abord battre cette courbe, pas la courbe plate. Le document nº 3 a déjà rencontré cette loi à la partie XV, où elle expliquait la position d’ouverture dans le range overnight ; c’est la même, lue sur l’axe du temps.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le rapport à la loi plate atteint deux aux deux bords, et le premier ou le dernier quart d’heure de séance portent à eux seuls 25,1 % des sommets. Une affirmation du type « le haut du jour se fait à l’ouverture ou en clôture » est donc vraie et sans contenu. Le document a déjà croisé cette loi à la partie XV, où elle donnait la position d’ouverture dans le range overnight : c’est la même loi, lue cette fois sur l’axe du temps, et il vaut la peine de noter qu’elle explique deux affirmations de marché sans partage — l’une sur l’heure, l’autre sur le prix.
+La seconde est la loi de Pareto généralisée des dépassements de seuil, avec son indice de queue ξ et son estimateur de Hill. Elle dit ce qui vit au-delà du stop — c’est-à-dire ce que le stop ne protège pas.
+Table 51 — Ce qui vit au-delà du stop, loi par loi
+Loi d’incrémentξ estiméξ vraiVaR 99,9 % par la Pareto (σ)VaR 99,9 % empirique (σ)ÉcartRapport à la gaussienne
+| Gaussienne | −0,045 | 0,000 | 3,33 | 3,30 | +0,8 | 1,00
+| Student, 5 degrés | 0,188 | 0,200 | 5,47 | 5,39 | +1,4 | 1,63
+| Student, 3 degrés | 0,310 | 0,333 | 7,44 | 7,40 | +0,5 | 2,24
+| Sauts de Merton | 0,358 | 0,000 | 4,93 | 7,12 | −30,8 | 2,16
+Lecture. Pareto généralisée ajustée par la méthode des moments sur les 2 % de dépassements les plus grands de 60 000 incréments d’une minute à variance un — les lois sont celles de la partie XIV, reprises sans retouche. La cinquième colonne est le quantile empirique, encore bien estimé à ce niveau ; la sixième dit donc ce que l’extrapolation coûte là où elle est encore vérifiable, et elle atteint déjà 31 %. Plus loin, elle ne se vérifie plus du tout : prolongée jusqu’au stop de travail, à 7,2 écarts-types d’une minute, elle annonce une minute sur 59 516 233 064 pour la gaussienne et une sur 908 pour la Student à trois degrés — un rapport qui se compte en millions, et qui ne doit se lire que comme un ordre de grandeur, la sixième colonne disant pourquoi. La forme de la queue ne change pas l’espérance — la partie XIV l’a montré — elle change ce que le stop ne protège pas.
+La table porte son propre contrôle, et c’est ce qui la rend utilisable. La colonne empirique dit ce que l’extrapolation coûte là où elle est encore vérifiable, et l’écart y atteint déjà trente pour cent sur la loi à sauts — dont les queues ne sont pas de Pareto du tout, ce que rien dans l’ajustement ne signale. Au-delà, l’extrapolation ne se vérifie plus et ne doit se lire que comme un ordre de grandeur.
+Table 52 — Le tracé de Hill, ou le réglage qui décide de la queue
+k/n (%)normaleStudent 5Student 3sauts
+| 0,2 | 0,092 | 0,206 | 0,340 | 0,430
+| 0,5 | 0,105 | 0,234 | 0,353 | 0,438
+| 1,0 | 0,116 | 0,254 | 0,355 | 0,306
+| 2,0 | 0,132 | 0,257 | 0,359 | 0,232
+| 5,0 | 0,168 | 0,282 | 0,372 | 0,214
+| 10,0 | 0,208 | 0,316 | 0,399 | 0,243
+| 20,0 | 0,290 | 0,386 | 0,467 | 0,305
+| vrai | 0,000 | 0,200 | 0,333 | 0,000
+Lecture. Estimateur de Hill sur les k plus grandes valeurs absolues de 60 000 incréments. Toutes les fractions du tableau sont défendables et aucune n’est canonique. L’estimation parcourt 0,13 d’amplitude sur la Student à trois degrés, dont le vrai indice vaut 0,333, et 0,20 sur la gaussienne, dont le vrai indice est nul — l’estimateur y rend pourtant une queue lourde à toute fraction retenue. C’est le piège de la taille de grappe du footprint et de la hauteur de rangée du profil de marché, sous une troisième forme : *un réglage non observable décide de ce que la mesure déclare rare.*
+Figure 72 — Le tracé de Hill de l’indice de queue pour quatre lois d’incrément, avec les indices vrais en tirets. Aucune des quatre courbes n’a de plateau, et la gaussienne — dont l’indice vrai est nul — se voit attribuer une queue lourde à toute fraction retenue.
+Estimateur de Hill sur les k plus grandes valeurs absolues. La gaussienne, dont l’indice vrai est nul, se voit attribuer une queue lourde à toute fraction retenue, et les sauts de Merton — dont les queues sont gaussiennes elles aussi — plus encore. C’est le troisième visage d’un même piège du dépôt : la taille de grappe décide de la rareté d’un déséquilibre de footprint, la hauteur de rangée décide de celle d’un extrême pauvre, la fraction retenue décide ici de l’épaisseur d’une queue. Un réglage non observable ne se choisit pas, il se déclare et se balaye.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+C’est le piège habituel sous une nouvelle forme : un réglage non observable décide de ce que la mesure déclare rare. Toutes les fractions du tracé sont défendables et aucune n’est canonique.
+Figure 73 — Le rapport de VaR entre une queue de Pareto et une queue exponentielle, selon l’indice et le niveau de confiance. Près du seuil, l’indice ne change rien ; loin du seuil, il change tout — et c’est là que le tracé de Hill ne sait plus l’estimer.
+Le relief ne contient aucune donnée : c’est la formule de la VaR d’une Pareto généralisée, à seuil et échelle tenus fixes pour que seul l’indice bouge. Il explique pourquoi l’indice de queue est à la fois si disputé et si peu important dans l’usage courant. Près du seuil il ne change rien, et c’est là que vivent les stops. Loin du seuil il change tout, et c’est là que vivent les faillites — mais c’est aussi là que le tracé de Hill ne sait plus l’estimer.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La conclusion se tient en deux phrases. La forme de la queue ne change pas l’espérance — la partie XIV l’a montré sur six lois. Elle change ce que le stop ne protège pas, et cela se dimensionne au lieu de se craindre.
+La sensibilité, et le critère
+Voici la seule des cinq disciplines qui touche à µ.
+La théorie de la détection est née en psychophysique, pour une raison qui s’applique mot pour mot ici : un observateur qui dit « j’ai vu le signal » mélange deux choses que le taux de bonnes réponses ne sépare pas. Sa sensibilité d′, qu’il ne choisit pas, et son critère, qu’il choisit entièrement.
+Le modèle : à chaque occasion, la cible tombera avant le stop ou l’inverse ; l’opérateur reçoit une évidence gaussienne centrée en ±d′/2 selon le cas, et agit si elle dépasse son critère. La géométrie entre par la porte du taux de base, qui n’est pas un demi mais 33,3 % — c’est 1/(1+RR), et cela change tout.
+Table 53 — Cinq opérateurs, une seule sensibilité
+Critère (σ)Taux de réussite affichéFréquence d’actionDécisions par anE[R] par décisionE[R] par an
+| −0,50 | 36,8 | 67,2 | 677 | +0,068 | +45,9
+| +0,00 | 38,9 | 48,0 | 484 | +0,129 | +62,4
+| +0,40 | 40,8 | 32,8 | 330 | +0,187 | +61,9
+| +0,80 | 43,0 | 20,0 | 202 | +0,253 | +50,9
+| +1,60 | 47,9 | 5,1 | 52 | +0,399 | +20,6
+Lecture. Les cinq lignes ont exactement la même sensibilité d′ = 0,30, donc la même aire sous la courbe ROC (58,4 %) et la même erreur de Bayes (44,0 %). Seul le critère change. Le taux de réussite affiché parcourt pourtant 11,0 points, et il n’apprend donc rien sur l’opérateur qu’on ne sache déjà de sa géométrie : le taux d’équilibre est 34,6 % au rapport 2 pour un. Le gain annuel, lui, a un maximum intérieur — 63,7 R au critère +0,18 — et c’est la seule justification chiffrable de la sélectivité. La grammaire du setup mesurait ce fait sur douze setups ; il se lit ici en une ligne d’arithmétique.
+Figure 74 — À gauche, la courbe ROC : cinq opérateurs de compétence identique occupent cinq points de la même courbe. À droite, ce que ces cinq points rapportent réellement sur une année, avec le maximum intérieur que le critère optimal atteint.
+Le modèle est celui de la psychophysique, avec un taux de base imposé par la géométrie : la cible tombe d’abord une fois sur 3. Les cinq points de la courbe ROC ont la même aire sous la courbe, 58,4 %, et la même erreur de Bayes, 44,0 % ; leurs taux de réussite affichés vont de 36,8 % à 47,9 %. Un relevé de trades ne distingue pas ces cinq opérateurs, et c’est pourquoi il ne mesure pas la compétence.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Les cinq lignes ont exactement la même sensibilité, donc la même aire sous la courbe ROC — 58,4 % — et la même erreur de Bayes, 44,0 %. Leur taux de réussite affiché va pourtant de 36,8 % à 47,9 %, soit 11,0 points d’amplitude. Cinq relevés de trades qui n’ont rien en commun, produits par la même compétence.
+Le gain annuel, lui, passe par un maximum intérieur, en +0,18, à 63,7 R par an. La grammaire du setup mesurait ce fait sur douze setups et neuf cents séances ; il se lit ici en une ligne d’arithmétique, et le critère optimal se calcule au lieu de se chercher à tâtons.
+Table 54 — Ce qu’il faut de sensibilité, et ce qu’il faut pour l’établir
+d′Aire sous ROCErreur de BayesCritère optimalTaux affiché à l’optimumE[R] par anDécisions, protocole équilibréDécisions, au taux de base réelAnnées à deux par séance
+| 0,00 | 50,0 | 50,0 | +4,00 | 33,3 | −0,0 | ∞ | ∞ | ∞
+| 0,05 | 51,4 | 49,0 | +1,09 | 35,1 | +2,4 | 6 279 | 22 192 | 44,03
+| 0,10 | 52,8 | 48,0 | +0,55 | 36,0 | +12,5 | 1 570 | 5 548 | 11,01
+| 0,20 | 55,6 | 46,0 | +0,27 | 37,8 | +37,5 | 392 | 1 387 | 2,75
+| 0,30 | 58,4 | 44,0 | +0,18 | 39,7 | +63,7 | 174 | 616 | 1,22
+| 0,50 | 63,8 | 40,1 | +0,11 | 43,6 | +116,2 | 63 | 222 | 0,44
+| 0,80 | 71,4 | 34,5 | +0,07 | 49,6 | +192,8 | 25 | 87 | 0,17
+Lecture. La première ligne est la loi nulle et elle se lit seule : à sensibilité nulle, le critère optimal part vers l’infini et le meilleur gain possible est de ne rien faire, la friction étant le seul terme qui reste. Les trois dernières colonnes donnent le prix de la démonstration. La septième est la formule de manuel, qui suppose deux groupes égaux ; la huitième tient compte du taux de base que la géométrie impose — une fois sur 3 — et elle est 3,53 fois plus grande. Un rapport gain-risque déséquilibré coûte des décisions avant de coûter de l’espérance. Un opérateur à d′ = 0,30 a donc besoin de 616 décisions, soit 1,2 ans, et son relevé en compte 30.
+Figure 75 — L’espérance annuelle sur le plan de la sensibilité et du critère. La rangée du fond est la loi nulle : à sensibilité nulle, tout le profil est sous le sol et le meilleur choix est de ne rien faire. La crête se déplace vers la gauche quand la sensibilité monte.
+Espérance annuelle sur 1 008 occasions examinées, au stop de 0,150 % et au rapport 2 pour un. Ce relief explique analytiquement ce que la grammaire du setup mesurait sur douze setups : la confirmation ne déplace pas l’espérance par décision, elle divise le nombre de décisions — et le produit des deux a un maximum qu’on peut calculer au lieu de le chercher à tâtons. Le versant du fond porte la loi nulle et elle est entièrement négative, ce qui est la seule façon honnête de dessiner un gain.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La première ligne de la table est la loi nulle et elle se lit seule : à sensibilité nulle, le critère optimal part vers l’infini et le meilleur gain possible est de ne rien faire, la friction étant le seul terme qui reste. Le balayage le trouve sans qu’on le lui souffle.
+Ce qu’un relevé court ne peut pas dire
+Table 55 — La sensibilité que le hasard fabrique
+Décisions au relevéAnnéesd̂′ médian95e centile99e centileFace à d′ = 0,30
+| 30 | 0,06 | +0,000 | 0,809 | 1,238 | le bruit suffit
+| 100 | 0,20 | −0,003 | 0,441 | 0,621 | le bruit suffit
+| 252 | 0,50 | −0,002 | 0,282 | 0,390 | le bruit ne suffit plus
+| 504 | 1,00 | −0,001 | 0,191 | 0,280 | le bruit ne suffit plus
+| 1 008 | 2,00 | +0,000 | 0,141 | 0,194 | le bruit ne suffit plus
+| 5 040 | 10,00 | −0,001 | 0,062 | 0,087 | le bruit ne suffit plus
+Lecture. Un opérateur sans aucune information, agissant sur la moitié des occasions, relevé sur n décisions. La sensibilité apparente est estimée comme en psychophysique, d̂′ = Φ⁻¹(Ĥ) − Φ⁻¹(F̂), avec la correction (x+½)/(n+1). Sur 30 décisions, le bruit seul produit une sensibilité apparente qui dépasse 0,81 une fois sur vingt — au-dessus de la sensibilité qu’on espère d’un opérateur expérimenté. Il ne faut pas y voir un défaut d’estimateur : c’est la même arithmétique que la colonne « décisions pour l’établir » de la table précédente, vue de l’autre bout.
+Un opérateur à d′ = 0,30 a besoin de 616 décisions pour l’établir, soit 1,2 ans, et son relevé en compte 30. Vu de l’autre bout : sur 30 décisions, le bruit seul produit une sensibilité apparente qui dépasse 0,81 une fois sur vingt — soit 2,7 fois celle qu’on cherche à établir. C’est la dernière ligne de la première table de cette partie, dite dans la langue de la détection.
+Combien de lectures peut-on suivre
+La dernière discipline répond à une question que le catalogue de la partie III pose sans la formuler : suivre quinze lectures à la fois, est-ce que cela fabrique de la structure à partir de rien ?
+La loi de Marchenko-Pastur donne le spectre d’une matrice de corrélation de séries indépendantes — il n’est pas concentré sur un, il occupe une plage entière — et la transition de Baik-Ben Arous-Péché donne le seuil : un facteur de force inférieure à √γ, avec γ = k/n, ne se voit pas du tout.
+Table 56 — Combien de lectures peut-on suivre avant que le bruit ne parle
+Lectures suiviesγ = k/nBord λ₊95e centile de λ_max simuléSeuil BBP √γSéances requises pour s = 0,25AnnéesVerdict
+| 3 | 0,012 | 1,230 | 1,179 | 0,109 | 48 | 0,19 | vu en un an
+| 6 | 0,024 | 1,332 | 1,297 | 0,154 | 96 | 0,38 | vu en un an
+| 9 | 0,036 | 1,414 | 1,390 | 0,189 | 144 | 0,57 | vu en un an
+| 12 | 0,048 | 1,484 | 1,465 | 0,218 | 192 | 0,76 | vu en un an
+| 15 | 0,060 | 1,547 | 1,536 | 0,244 | 240 | 0,95 | vu en un an
+Lecture. Une année de séances, n = 252. Le bord de Marchenko-Pastur est la forme fermée ; la quatrième colonne est la même quantité simulée à k fini. Elle reste au-dessous du bord fermé et s’en approche à mesure que k grandit : à trois lectures le bord asymptotique surestime de 4,3 %, à quinze de 0,8 % seulement — la forme fermée est donc conservatrice, et elle l’est d’autant moins qu’on suit plus de lectures. Le seuil de Baik-Ben Arous-Péché dit qu’un facteur de force inférieure à √γ ne se voit pas du tout : sa valeur propre reste collée au bord, ce n’est pas une perte de puissance mais une disparition. La bonne nouvelle est la sixième colonne : suivre les quinze lectures du catalogue ne demande que 0,95 an pour distinguer un facteur de force 0,25. Le spectre n’est pas ce qui limite l’opérateur.
+Figure 76 — À gauche, le spectre de quinze séries indépendantes : la forme fermée de Marchenko-Pastur et la simulation à effectif fini. À droite, la transition de Baik-Ben Arous-Péché, exactement plate sous le seuil.
+Matrice de corrélation de 15 lectures sur 252 séances, soit γ = 0,060. La densité de Marchenko-Pastur est la forme fermée ; les barres sont la simulation à k fini, et l’accord est le contrôle qui autorise à se servir de la forme fermée ailleurs. Le fait rassurant de cette section est la petitesse du nombre : suivre quinze lectures ne demande que 240 séances pour distinguer un facteur de force 0,25. Ce qui coûte, quand on suit quinze lectures, n’est pas le spectre — c’est la multiplicité, et la première section de cette partie l’a chiffrée.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La réponse est rassurante, et c’est rare dans ce document. Suivre les quinze lectures du catalogue sur une année de séances place le seuil à 0,244, et il ne faut que 240 séances pour qu’un facteur de force 0,25 en sorte. Le coût du nombre de lectures n’est pas spectral : il est de multiplicité, et la deuxième table de cette partie l’a chiffré.
+Figure 77 — La valeur propre observée sur le plan de la force du facteur et du rapport de dimension. La frontière n’est pas une pente, c’est une arête : sous le seuil, deux facteurs de forces très différentes donnent exactement la même valeur propre.
+Formule de Baik-Ben Arous-Péché, sans simulation, hauteur rapportée au bord du bruit λ₊. Ce que le relief ajoute à la table est la forme de la frontière : elle n’est pas une pente, c’est une arête. Sous le seuil, deux facteurs de forces très différentes donnent exactement la même valeur propre, et aucune finesse d’estimation ne les sépare. La conséquence pour un opérateur est directe : ajouter des lectures sans ajouter des séances déplace la frontière vers la droite et fait disparaître ce qu’il voyait la veille.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La conséquence pratique tient en une phrase : ajouter des lectures sans ajouter des séances déplace la frontière et fait disparaître ce qu’on voyait la veille.
+Ce qui transfère, et ce qui ne transfère pas
+Il reste à ranger. L’identité qui gouverne tout le document a quatre termes, E[R] = (µ·E[τ∧T] − c)/a, et la seule question qui vaille pour chaque discipline est : lequel déplace-t-elle, et de combien ?
+Table 57 — Ce que chaque discipline déplace dans E[R] = (µ·E[τ∧T] − c)/a
+DisciplineTerme touchéGrandeur mesuréeDéplacement (%)TransfèreAgit sur le sens
+| Analyse de survie | E[τ∧T] | durée moyenne d’un sommet, en écartant les censurés | −83,3 | oui | non
+| Processus auto-excitants | E[τ∧T], donc µ* | seuil de rentabilité juste après un événement | +179,0 | oui | non
+| Valeurs extrêmes | a | VaR à 99,9 % d’une queue lourde, rapportée à la gaussienne | +124,2 | oui | non
+| Théorie de la détection | µ | amplitude du taux affiché à sensibilité constante | +28,4 | oui | oui
+| Spectre en grande dimension | le nombre de lectures | séances requises pour voir un facteur de force 0,25 sur 15 lectures | −4,8 | non | non
+Lecture. Le verdict de l’avant-dernière colonne est calculé, jamais écrit : une discipline transfère si elle déplace son terme d’au moins 10 %, règle posée avant les mesures. 4 des cinq y parviennent. La dernière colonne est celle qui compte, et elle ne porte qu’un seul oui : quatre disciplines déplacent l’horloge, le risque ou le budget de preuve, une seule touche au sens. Les quatre premières sont pourtant les plus faciles à mesurer, et la cinquième la plus difficile — ce qui suffit à expliquer pourquoi tant de méthodes publiées portent sur le quand et si peu sur le quoi.
+Figure 78 — Le déplacement mesuré de chaque discipline sur le terme qu’elle touche, rangé par ampleur. Une seule barre porte la teinte forte, et c’est la plus courte des quatre qui transfèrent.
+Chaque déplacement est relu des mesures des sections précédentes, jamais réécrit ici : corriger une mesure en amont change donc la barre et le verdict sans intervention. Le seuil de verdict est déclaré à 10 % avant les mesures. La lecture est celle de toute la partie : quatre disciplines déplacent l’horloge, le risque ou le budget de preuve, une seule touche au sens — et c’est celle dont l’estimation demande le plus de décisions. L’ordre de difficulté est exactement inverse de l’ordre d’utilité.
+Spéculation · une discipline empruntée · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le verdict de l’avant-dernière colonne est calculé et non écrit : une discipline transfère si elle déplace son terme d’au moins 10 %, règle posée avant les mesures. 4 des cinq y parviennent.
+La dernière colonne ne porte qu’un seul oui. Quatre disciplines déplacent l’horloge, le risque ou le budget de preuve ; une seule touche au sens. Et l’ordre de difficulté est exactement l’inverse de l’ordre d’utilité : la survie, l’excitation, les extrêmes et le spectre se mesurent sur des dizaines de milliers d’observations qui existent déjà, quand la sensibilité de l’opérateur demande 616 décisions qui n’existent pas encore.
+C’est, dit autrement, la thèse de tout ce document. Le marché ne concède que µ, et µ est cher. Tout le reste — le temps de marché, la friction, la largeur du stop — appartient à l’opérateur, se mesure vite, et décide du signe du compte avant que µ n’ait eu son mot à dire.

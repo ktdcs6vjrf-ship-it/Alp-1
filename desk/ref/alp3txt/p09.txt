@@ -1,0 +1,20 @@
+Neuvième partie
+Comparaison des deux régimes de preuve
+Le résultat qui justifie ce document : l’opérateur discrétionnaire est dans une position épistémique meilleure que celui qui règle une géométrie.
+Pourquoi le jugement est prouvable là où la géométrie ne l’est pas
+Le document no 1 de cette série situe son mur à plusieurs dizaines de milliers de trades. La comparaison ci-dessous rapporte les deux exigences sur une base commune.
+Table 15 — Pourquoi le jugement est prouvable là où la géométrie ne l’est pas.
+Objet du testSharpe revendiquéConfigurationsRoute 1 — test tRoute 2 — taxeExigence lianteà 2 par jour
+| Géométrie de sortie (ALP-1) | 0,0332 | 1 | 5 610 | 0 | 5 610 | 11,1 an
+| Opérateur discrétionnaire | 0,1000 | 16 | 619 | 555 | 619 | 1,2 an
+Lecture. À une configuration unique la taxe de sélection est nulle — il n’y a rien à sélectionner — et c’est le test ordinaire qui lie. À seize configurations la taxe existe mais reste sous ce même test, qui lie encore : il faudrait plus de vingt-deux configurations pour qu’elle passe devant. L’arithmétique est celle de la proposition 2 : le budget de configurations entre dans l’exigence par un logarithme, l’effet revendiqué par un carré. Ici, multiplier le premier par seize ne coûte rien du tout, quand diviser le second par trois multiplie l’exigence par neuf.
+L’opérateur discrétionnaire paie 16 fois plus de configurations que la géométrie scellée, et franchit pourtant le mur 9,1 fois plus tôt. La raison n’est pas qu’il serait meilleur.
+La table sépare les deux routes parce qu’aucune ne domine partout, et parce que la version précédente de ce document ne montrait que la seconde. Elle l’attribuait à la géométrie scellée en bornant son budget à deux essais : 1 258 décisions de taxe de sélection pour une configuration unique, c’est-à-dire un chiffre qui n’existait que par le bornage. À une seule configuration il n’y a rien à sélectionner, donc rien à déflater, et la taxe vaut exactement zéro. C’est le test ordinaire qui lie alors — et il lie aussi à 16 configurations : il faudrait dépasser 22 configurations pour que la taxe passe devant lui. Les quatre leviers recensés se cachent sous l’exigence du test ordinaire.
+Proposition 2. Le mur d’échantillon est gouverné par le rapport de l’effet revendiqué au bruit, et non par le nombre de configurations. La taxe de multiplicité entre par un logarithme ; l’effet entre par un carré.
+Justification. Les deux routes donnent N₁ = (zα + zβ)² / SR² et N₂ = 2 ln B / SR², et l’exigence est leur maximum, soit max((zα + zβ)², 2 ln B) / SR². Le Sharpe entre par un carré dans les deux termes ; le budget n’entre que dans le second, et par un logarithme. Doubler le nombre de leviers multiplie B par 2 et N₂ par un facteur qui tend vers 1, sans rien changer tant que N₂ < N₁ ; doubler le Sharpe divise l’exigence entière par 4. ∎
+Les deux objets ne revendiquent pas le même ordre de grandeur. Une stratégie de géométrie revendique un effet borné par le théorème d’invariance. Un opérateur discrétionnaire revendique un effet de jugement, dont l’amplitude n’est pas bornée par ce théorème. C’est le rapport de l’effet revendiqué au bruit, et non la qualité de l’un ou de l’autre, qui fixe l’exigence d’échantillon.
+Ce que cela change pour l’opérateur
+Trois conséquences opérationnelles découlent des chiffres ci-dessus.
+D’abord, l’horizon de preuve est de l’ordre de l’année aux cadences retenues. Un opérateur qui commence aujourd’hui un journal correct saura dans un peu plus d’un an ce que vaut son processus, à condition que le Sharpe revendiqué soit de l’ordre de 0,10 par décision.
+Ensuite, l’effet du format d’enregistrement dépasse celui du nombre de leviers. Fermer un levier abaisse le seuil d’un facteur faible ; un journal sans abstentions rend la loi D inapplicable quel que soit le nombre d’années accumulées.
+Enfin, les deux issues du protocole sont informatives. Un opérateur qui, au terme de la période préenregistrée, ne bat pas la loi mécanique dispose d’une mesure de l’apport net de son jugement sur la règle scellée, laquelle reste exécutable.

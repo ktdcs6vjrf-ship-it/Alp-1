@@ -1,0 +1,27 @@
+Dixième partie
+Décomposer l’avantage
+Savoir qu’un opérateur bat ses lois nulles ne dit pas par où. Or c’est cette question qui décide de ce qu’il faut garder.
+Shapley, et les seize coalitions
+On serait tenté de neutraliser un levier à la fois et d’attribuer à chacun la chute observée. Le procédé est faux dès que les leviers interagissent, et il l’est de façon dirigée : la somme des chutes ne fait pas le total, et l’ordre de neutralisation change le résultat.
+La valeur de Shapley (1953) est l’unique attribution simultanément exhaustive — les parts somment au total —, symétrique, et nulle pour un levier sans effet. Elle exige d’évaluer toutes les coalitions.
+Une coïncidence qui n’en est pas une
+Quatre leviers engendrent 16 sous-ensembles. C’est le même 16 que la taxe de multiplicité fait payer au seuil déflaté. La multiplicité qu’on paie en preuve est exactement la multiplicité qu’on décompose en attribution : les configurations qu’un opérateur explore en décidant sont les coalitions dont on lui attribue le mérite.
+Le coût de calcul est négligeable : seize évaluations linéaires en nombre de décisions, soit moins qu’une seule loi nulle simulée. Il n’y a donc aucune raison de se contenter d’une ablation approchée.
+Une décomposition réfutable
+Une méthode d’attribution qu’on ne sait pas mettre en défaut ne mesure rien. Le contrôle appliqué ici est direct : on plante la compétence dans un levier connu, et la décomposition doit l’y désigner sans la répartir sur les autres.
+Table 16 — La décomposition de Shapley retrouve-t-elle la compétence là où elle a été plantée ?
+Compétence plantée dansAvantage totalentréemomenttaillesortieLevier désigné
+| entrée | +0,2130 | 91,7 % | 8,3 % | 0,0 % | 0,0 % | entree
+| taille | +0,1047 | 2,7 % | 14,5 % | 82,9 % | 0,0 % | taille
+| les deux | +0,3142 | 62,1 % | 9,0 % | 28,8 % | 0,0 % | entree
+Lecture. Chaque ligne somme à cent pour cent, propriété qui définit la valeur de Shapley et qui sert ici de contrôle d’implémentation. La colonne « sortie » vaut zéro exact et non zéro approché : le journal synthétique ne gère aucune sortie, et la décomposition l’énonce au lieu de la bruiter.
+Figure 37 — La décomposition de Shapley en cascade, d’un opérateur dont la compétence est plantée dans l’entrée et dans la taille. Les deux colonnes pleines sont des niveaux — l’espérance de la règle scellée et celle de l’opérateur — et les marches intermédiaires sont les parts des quatre leviers. Leur somme est exacte par construction.
+Les deux colonnes pleines sont des niveaux ; les marches intermédiaires sont des contributions. Leur somme est exacte par construction.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Figure 38 — La décomposition de Shapley sur les quatre leviers, pour trois emplacements de la compétence plantée. Les barres franches marquent les leviers où la compétence a été plantée ; ce sont chaque fois ceux que la décomposition désigne. Le troisième panneau en plante deux, et les deux ressortent.
+Abscisse : part de Shapley, en unités de risque par setup éligible. Les quatre parts d’un panneau somment à l’avantage total de ce panneau. Un point marque une part exactement nulle.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+Le levier désigné est chaque fois le bon, et le levier de sortie ressort à zéro exact — ce qui est la vérité, puisque le journal synthétique ne gère aucune sortie, et non une approximation bruitée. En revanche, le levier du chronométrage capte une part parasite qu’il faut nommer : fermer le chronométrage remplace l’issue obtenue par la moyenne de la séance, ce qui détruit aussi la sélection intraséance. Les deux leviers ne sont pas séparables. Shapley signale cette interaction au lieu de la masquer, et c’est une limite du dispositif, non un artefact à corriger.
+Quels leviers fermer
+La décomposition donne le critère. Un levier dont la part est négligeable coûte un doublement de la famille de stratégies sans rien financer : il doit être scellé. Un levier porteur doit être conservé et, si possible, explicité — car un levier qu’on parvient à énoncer cesse d’être discrétionnaire et sort du décompte.
+Le critère de négligeabilité retenu est délibérément grossier — une part inférieure au dixième du total. Un critère fin donnerait l’illusion qu’on sait trancher là où l’échantillon ne le permet pas, et cette illusion est exactement ce que le reste du document s’emploie à dissiper.

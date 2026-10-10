@@ -1,0 +1,51 @@
+Septième partie
+La taxe du jugement
+Chaque liberté que s’accorde l’opérateur agrandit la famille des stratégies qu’il aurait pu suivre. Cette famille se paie en seuil de preuve, et il faut la chiffrer avant toute autre chose.
+k leviers, 2k configurations
+Un opérateur qui, sur chaque setup, décide en regardant le marché s’il entre, quand il entre, combien il met et comment il sort, n’a pas exécuté une stratégie. Il a exécuté l’une des 2k stratégies que ces k choix binaires engendrent, et il a choisi laquelle en regardant le marché. Le seuil de sélection déflaté ne se calcule donc pas sur une configuration mais sur ce nombre-là.
+SRseuil=√(2 ln B/N), B=2k
+(1)
+C’est l’approximation de Bailey et López de Prado du Sharpe attendu du meilleur de B essais en l’absence de tout avantage. Un opérateur dont le Sharpe observé ne dépasse pas ce seuil n’a pas montré un avantage faible : il a montré ce que le hasard produit quand on lui donne B occasions.
+Le recensement d’un opérateur réel
+Le recensement retenu ici comporte 4 leviers, ce qui porte le budget à 16 configurations effectives.
+Table 12 — Les quatre leviers discrétionnaires recensés, et ce que chacun ajoute au seuil de preuve.
+LevierCléConfigurationsSeuil déflatéCe que ce levier ajoute
+| Entrer ou s’abstenir | entree | 2 | 0,0215 | +0,0215
+| Le moment exact dans la fenêtre | moment | 4 | 0,0304 | +0,0089
+| La taille de position | taille | 8 | 0,0372 | +0,0068
+| La gestion de sortie | sortie | 16 | 0,0430 | +0,0058
+Lecture. Le seuil est calculé sur 3 000 décisions. Chaque levier double le nombre de configurations ; le seuil croît en racine du logarithme de ce nombre, d’où un incrément décroissant.
+Le recensement doit être fait honnêtement et avant de regarder les résultats. Un opérateur qui déclarerait deux leviers après en avoir actionné quatre ne se tromperait pas de peu : il diviserait son seuil par un facteur qui n’a aucune raison d’être petit.
+Le quatrième levier coûte moins cher que le premier
+Le seuil croît en √(k · ln 2). La croissance est donc sous-linéaire en k, bien que le nombre de configurations, lui, croisse en 2k.
+Le point de départ mérite d’être posé exactement. À zéro levier, la famille compte une seule configuration : il n’y a rien à sélectionner, donc rien à déflater, et le seuil vaut 0,0000. Le premier levier le porte à 0,0215 — un saut depuis zéro, que nul facteur ne mesure. Les trois suivants le portent à 0,0430, soit un facteur 2,0 sur ce premier palier.
+C’est la forme de cette progression qui compte : 16 configurations ne coûtent pas 16 fois plus qu’une seule, ni même quatre fois plus que deux. En exigence d’échantillon, le facteur 2,0 sur le seuil se traduit par un facteur quatre sur le nombre de décisions — considérable, et sans commune mesure avec l’exponentielle du nombre de configurations.
+Figure 28 — Le seuil de Sharpe déflaté selon le nombre de leviers ouverts, pour trois tailles d’échantillon. La concavité est le résultat : passer de zéro à un levier coûte davantage que passer de quatre à sept. Le trait vertical marque le recensement de 4 leviers retenu ici.
+Seuil donné par l’approximation de Bailey et López de Prado : racine de deux fois le logarithme du budget, divisé par l’échantillon. Chaque courbe est étiquetée à son extrémité.
+Spéculation · le dispositif entier · à dérive nulle 4,5 % dans les deux sens · à 3,2 pt/h 18,8 % à la hausse contre 0,6 % à la baisse · µ requis 0,06 pt/h · objectif à 2,00 σ de séance
+La lecture opérationnelle est contre-intuitive. Un opérateur qui a déjà quatre leviers n’a presque rien à gagner à en fermer un ; il a beaucoup à gagner à passer de quatre à zéro, ce qui signifie sceller entièrement son processus. Les demi-mesures sur ce plan ne rapportent pas la moitié du bénéfice.
+Combien de couches peut-on suivre ?
+La taxe de multiplicité compte les configurations. Une autre arithmétique compte les couches, et elle donne une borne que la première ne voit pas.
+Un opérateur qui suit 7 couches d’analyse en regarde la matrice de corrélation, y trouve une première valeur propre nettement supérieure aux autres, et conclut qu’un facteur commun gouverne ses signaux. Marchenko et Pastur ont montré en 1967 que cette conclusion est presque toujours fausse, et pour une raison qui se calcule sans rien mesurer : sur k séries indépendantes observées N fois, les valeurs propres de la matrice de corrélation empirique ne valent pas toutes un. Elles s’étalent entre deux bornes que le seul rapport γ = k/N fixe :
+λ± = (1 ± √γ)²(3)
+Figure 29 — À gauche, le spectre d’une matrice de corrélation de 7 séries indépendantes sur 250 observations, avec la loi de Marchenko-Pastur posée dessus. À droite, la transition de Baik-Ben Arous-Péché : sous une force critique, un facteur réel ne sort pas du bruit.
+À gauche, les valeurs propres de la matrice de corrélation de sept séries indépendantes sur deux cent cinquante observations, et la loi de Marchenko-Pastur qui les décrit. Le bord λ₊ ne dépend que du rapport du nombre de séries au nombre d’observations. Il est asymptotique : à sept séries la plus grande valeur propre du bruit lui reste inférieure, y compris à son quantile à quatre-vingt-quinze pour cent, et le présenter comme une barre que le bruit vient toucher serait une exagération. À droite, la valeur propre observée d’un facteur réel de force s : plate sous √γ, croissante au-dessus.
+Spéculation · un déséquilibre du flux · à dérive nulle 33,3 % dans les deux sens · à 3,2 pt/h 39,9 % à la hausse contre 27,2 % à la baisse · µ requis 1,98 pt/h · objectif à 0,23 σ de séance
+Table 13 — Le bord du bruit et la force critique, selon le nombre de couches suivies et de séances observées.
+Couches kSéances Nγ = k/NBord λ₊Part de varianceForce critique √γN requis pour s = 0,30
+| 3 | 250 | 0,0120 | 1,231 | 41,0 % | 0,110 | 33
+| 7 | 250 | 0,0280 | 1,363 | 19,5 % | 0,167 | 78
+| 7 | 60 | 0,1167 | 1,800 | 25,7 % | 0,342 | 78
+| 12 | 250 | 0,0480 | 1,486 | 12,4 % | 0,219 | 133
+| 20 | 60 | 0,3333 | 2,488 | 12,4 % | 0,577 | 222
+Lecture. La part de variance est le bord rapporté au nombre de couches : c’est la fraction qu’un facteur commun doit expliquer pour que sa valeur propre sorte du bruit. La dernière colonne inverse la condition √γ
+À 7 couches sur 250 séances, γ vaut 0,0280 et le bord haut 1,363. Toute valeur propre inférieure à ce bord est indiscernable du bruit, et ce n’est pas une approximation qui s’améliorerait avec l’échantillon : c’est une borne. Un facteur commun doit porter 19,5 % de la variance des couches pour se distinguer.
+Une précision d’honnêteté, que la figure porte et que le texte doit répéter. Le bord λ₊ est asymptotique. À 7 séries la plus grande valeur propre d’un spectre de bruit lui reste inférieure — 1,327 à son quantile à quatre-vingt-quinze pour cent contre 1,363 — et le présenter comme une barre que le bruit vient toucher serait une exagération. Il est conservateur, ce qui est le bon sens de l’erreur.
+La transition, et pourquoi elle est plus dure qu’une perte de puissance
+La question intéressante est l’inverse. À partir de quelle force un facteur réel devient-il visible ? Baik, Ben Arous et Péché ont répondu en 2005, et la réponse est brutale. Pour un facteur de force s — la population porte une valeur propre 1 + s — la valeur propre observée vaut (1 + s)(1 + γ/s) si s > √γ, et λ₊ sinon.
+Sous s = √γ, le facteur ne sort pas du bruit. Pas faiblement : pas du tout. Sa valeur propre reste exactement collée au bord, et aucune finesse d’estimation ne l’en décolle. Ce n’est pas une perte de puissance qu’un échantillon plus grand rattraperait à la marge — c’est une transition de phase, et de l’autre côté il n’y a rien à rattraper.
+À 7 couches sur 250 séances la force critique vaut 0,167. Le nombre d’observations requis pour qu’un facteur de force s la franchisse s’en déduit : N > k/s². Cette formule est remarquable par ce qu’elle ne contient pas — ni la loi des rendements, ni la friction, ni la géométrie du trade.
+Figure 30 — La force critique sur le plan du nombre de couches suivies et du nombre de séances observées. Elle ne contient aucune propriété du marché : seulement le nombre de choses regardées, rapporté au nombre de fois où on les a regardées.
+Arête gauche : nombre de couches d’analyse suivies. Arête droite : nombre de séances observées. La hauteur est la force minimale qu’un facteur commun doit avoir pour que sa valeur propre sorte du bruit, sans dimension. Elle ne contient aucune propriété du marché. Trois couches sur mille séances demandent un facteur de cinq pour cent ; vingt couches sur soixante séances en demandent un de cinquante-huit. Regarder plus de choses rend chacune plus difficile à voir.
+Spéculation · un déséquilibre du flux · à dérive nulle 33,3 % dans les deux sens · à 3,2 pt/h 39,9 % à la hausse contre 27,2 % à la baisse · µ requis 1,98 pt/h · objectif à 0,23 σ de séance
+La conséquence contredit un réflexe, et c’est la raison d’être de cette section. Ajouter une couche d’analyse ne coûte pas seulement une taxe de multiplicité : elle relève aussi le seuil sous lequel un facteur réel devient invisible. Regarder plus de choses rend chacune plus difficile à voir. La septième partie disait que le quatrième levier coûte moins cher que le premier ; celle-ci ajoute que la 7e couche, elle, coûte à toutes les autres.

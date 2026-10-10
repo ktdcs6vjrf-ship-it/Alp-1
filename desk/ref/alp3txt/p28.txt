@@ -1,0 +1,199 @@
+Vingt-huitième partie
+La volatilité implicite, et les deux nombres qu’on en tire à tort
+Dixième document de la série d’options, et le second — après celui du vanna — à publier le résultat de son propre test négatif. Une relation monotone entre le rang de volatilité implicite et les résultats à venir, dit-il, disparaît entièrement dès que la fenêtre de classement est rendue strictement glissante : le motif était un artefact du classement, pas une propriété du marché. Le dépôt reprend ce test, en publie la loi nulle, et découvre que l’artefact est plus grand que le guide ne l’écrit. Sa phrase d’ouverture, elle, est la meilleure définition de l’objet qu’on puisse donner.
+Unique quand elle existe, et deux bornes plus proches
+« L’implicite n’est pas une prévision, pas une mesure, pas une propriété du sous-jacent : c’est le nombre qu’il faut mettre dans Black-Scholes pour retrouver un prix qu’on a déjà observé. » Cette phrase dissout la moitié des confusions de la série, et le dépôt y souscrit sans réserve. Il va là où le guide s’arrête : si l’implicite est un changement d’unités, alors la précision de la traduction se calcule, et elle n’est pas la même partout.
+Table 155 — Deux routes vers le même nombre, et les bornes hors desquelles il n’existe pas
+JoursS/KPrixPlancherPlafondPar bissectionPar Newton
+| 30 | 1,00 | 2,9646 | 0,2214 | 99,89 | 0,250000 | 0,250000
+| 30 | 1,10 | 9,5548 | 9,2825 | 99,89 | 0,250000 | 0,250000
+| 30 | 1,25 | 20,1572 | 20,1558 | 99,89 | 0,250000 | 0,250000
+| 7 | 1,00 | 1,4064 | 0,0518 | 99,98 | 0,250000 | 0,250000
+| 7 | 1,10 | 9,1385 | 9,1357 | 99,98 | 0,250000 | 0,250000
+| 7 | 1,25 | 20,0364 | 20,0364 | 99,98 | 0,249996 | 0,250001
+Lecture. Le guide écrit qu’il n’existe pas de forme fermée, que la fonction est monotone en volatilité, et que la solution est donc unique quand elle existe. Les trois sont exacts, et la dernière incise mérite ses deux colonnes : sous le plancher max(Se^{−qT} − Ke^{−rT}, 0) et au-dessus du plafond Se^{−qT}, aucune volatilité positive ne rend le prix, et un outil qui rend tout de même un nombre rend du bruit. Les deux routes se referment à six décimales. Newton s’appuie sur le véga et échoue là où celui-ci s’annule ; la bissection n’échoue jamais, et c’est déjà la mesure de la section suivante.
+Figure 229 — Le prix contre la volatilité, et la fonction réciproque qu’un moteur d’inversion calcule réellement.
+Le guide écrit que la fonction est monotone en volatilité et que la solution est donc unique quand elle existe. Le cadre de gauche montre la monotonie et le plancher d’arbitrage du strike dans la monnaie, seul des trois à être franchement positif. Le cadre de droite retourne la fonction et donne celle qu’un moteur d’inversion calcule réellement. Le premier jet de ce cadre annonçait une pente qui diverge, et la mesure a rendu une droite : à la monnaie le véga ne dépend presque pas de la volatilité, donc la réciproque est affine à un pour cent de sa corde sur toute la plage négociée. C’est ce qui autorise un opérateur à raisonner en volatilité comme il raisonnerait en prix — et c’est faux dans l’aile, où l’écart est quarante-cinq fois plus grand. La section suivante mesure le même fait en unités de pas de cotation.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Le cadre de droite porte une affirmation écrite d’avance et réfutée par la mesure. On y annonçait une pente qui diverge ; la réciproque est une droite. À la monnaie, la densité qui porte le véga vaut sa constante à un centième près quelle que soit la volatilité, donc la fonction inverse s’écarte de sa corde de 0,9 % seulement — et c’est ce qui autorise un opérateur à raisonner en volatilité comme il raisonnerait en prix. Dans l’aile l’écart vaut 43 %, quarante-cinq fois plus, et le raisonnement cesse d’être valide exactement là où le pupitre croit encore l’appliquer.
+Figure 230 — Le véga contre la moneyness, et l’écart entre bissection et Newton sur toute la plage.
+Deux routes indépendantes vers le même nombre : une bissection, qui ne demande que la monotonie, et un Newton, qui demande le véga. Leur accord est le contrôle de la section. Le cadre de gauche dit pourquoi la seconde est fragile — son diviseur s’annule dans l’aile — et cette fragilité n’est pas un détail d’implémentation : elle est la même quantité que la section suivante mesure, vue par l’autre bout. Une inversion numériquement fragile et une cotation imprécise sont un seul fait.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Deux routes indépendantes vers le même nombre — une bissection, qui ne demande que la monotonie, et un Newton, qui demande le véga — et leur accord est le contrôle de la section. Aucun des dix guides ne le publie. Il vaut la peine de noter où les deux cessent de se refermer : dans l’aile courte, le prix est plat à la résolution d’un flottant, et deux volatilités séparées de cinq millionièmes rendent le même prix à la dixième décimale. Ce n’est pas une faiblesse de l’algorithme, c’est le plancher numérique que la partie XXVI avait rencontré sur le sourire, retrouvé ici sur l’objet dont il est la définition.
+Un pas de cotation ne vaut pas le même nombre de points partout
+La précision de la traduction vaut 100·tick/𝒱. Le véga est au dénominateur, donc la quantité diverge exactement là où il s’annule : dans l’aile et près de l’échéance. Le guide place sa remarque sur les fourchettes larges dans les marchés larges ; la mesure dit qu’elle vaut d’abord loin de la monnaie, y compris dans un marché dont la fourchette en prix ne fait qu’un seul tick.
+Table 156 — Ce qu’un seul pas de cotation vaut en points de volatilité
+JoursDeltaK/SVéga par pointForme ferméePar réinversion
+| 7 | 0,50 | 1,001 | 0,0552 | 0,91 | 0,91
+| 7 | 0,25 | 1,025 | 0,0440 | 1,14 | 1,12
+| 7 | 0,10 | 1,047 | 0,0243 | 2,06 | 1,94
+| 7 | 0,05 | 1,060 | 0,0143 | 3,50 | 3,01
+| 30 | 0,50 | 1,005 | 0,1143 | 0,44 | 0,44
+| 30 | 0,25 | 1,055 | 0,0911 | 0,55 | 0,55
+| 30 | 0,10 | 1,101 | 0,0503 | 0,99 | 0,96
+| 30 | 0,05 | 1,130 | 0,0296 | 1,69 | 1,56
+| 90 | 0,50 | 1,014 | 0,1975 | 0,25 | 0,25
+| 90 | 0,25 | 1,103 | 0,1576 | 0,32 | 0,32
+| 90 | 0,10 | 1,189 | 0,0871 | 0,57 | 0,56
+| 90 | 0,05 | 1,244 | 0,0512 | 0,98 | 0,93
+| 365 | 0,50 | 1,056 | 0,3937 | 0,13 | 0,13
+| 365 | 0,25 | 1,251 | 0,3158 | 0,16 | 0,16
+| 365 | 0,10 | 1,458 | 0,1749 | 0,29 | 0,28
+| 365 | 0,05 | 1,597 | 0,1029 | 0,49 | 0,47
+Lecture. Si l’implicite est un changement d’unités, alors la précision de la traduction se calcule, et elle vaut 100·tick/𝒱. Les deux dernières colonnes sont la forme fermée et la réinversion complète d’un prix augmenté d’un tick ; elles se referment partout où le véga n’est pas minuscule, et là où il l’est c’est la réinversion qui a raison. Le guide place sa remarque sur les fourchettes larges dans les marchés larges ; la mesure dit qu’elle vaut d’abord loin de la monnaie et près de l’échéance, y compris dans un marché parfaitement étroit. À cinq deltas et une semaine, un tick vaut 3,5 points de volatilité — *l’objet coté n’a plus deux chiffres significatifs.*
+Figure 231 — Ce qu’un pas de cotation vaut en points de volatilité, par delta et par échéance.
+Le guide fait de l’implicite un changement d’unités, et il a raison. Ce qu’il n’écrit pas est que la précision de la traduction se calcule et qu’elle n’est pas la même partout. Un pas de cotation vaut cent fois lui-même divisé par le véga, donc il diverge exactement là où le véga s’annule — dans l’aile et près de l’échéance. Sa remarque sur les fourchettes larges est donc juste et incomplète : la largeur en points de volatilité peut valoir plusieurs points sur un marché dont la fourchette en prix est d’un seul tick.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+À la monnaie et à trente jours, un tick vaut 0,44 point de volatilité ; à cinq deltas et une semaine, 3,5. L’objet coté n’a plus deux chiffres significatifs, et aucune surface construite dessus n’en a non plus.
+Table 157 — Le lieu où un tick vaut un point de volatilité entier
+JoursS/K de la frontièreK/SDelta correspondantUn tick à la monnaieUn tick à K/S = 1,11
+| 2 | 1,000 | 1,000 | 0,507 | 1,69 | 16 782 196,91
+| 7 | 0,984 | 1,017 | 0,328 | 0,91 | 84,22
+| 30 | 0,908 | 1,102 | 0,099 | 0,44 | 1,17
+| 90 | 0,802 | 1,246 | 0,049 | 0,25 | 0,33
+| 365 | 0,568 | 1,761 | 0,021 | 0,13 | 0,13
+Lecture. La frontière est le lieu où un seul pas de cotation vaut un point entier de volatilité, c’est-à-dire où l’objet coté cesse d’avoir deux chiffres significatifs. Elle est cherchée du côté hors de la monnaie, celui qu’un pupitre cote ; le premier jet balayait l’autre côté et rendait des deltas de quatre-vingt-dix, ce qui n’est pas faux du véga — il est symétrique en d₁ — mais ne décrit pas l’objet. Une affirmation écrite d’avance est ici réfutée par la mesure : on attendait un delta constant, par analogie avec le pic du vanna de la partie XXIV, et la colonne le contredit franchement. Le mécanisme est visible dans la formule : la frontière est à φ(d₁) = 100·tick/(S√T), donc d₁ croît avec l’échéance au lieu d’y rester fixe. *La partie XXIV avait un lieu à delta constant parce que son pic était celui de φ(d₁) fois une fonction de d₁ ; ici le seuil est absolu, et un seuil absolu sur une densité qui s’aplatit ne peut pas rendre un argument constant.*
+Figure 232 — Les deux frontières de la cotation contre l’échéance, en moneyness et en delta.
+Deux frontières, et le guide n’en nomme aucune. La première est le lieu où un seul pas de cotation vaut un point entier de volatilité, c’est-à-dire où l’objet coté cesse d’avoir deux chiffres significatifs. La seconde est plus radicale : au-delà, le prix théorique tombe sous un demi-tick, l’écran affiche zéro, et zéro est sous le plancher d’arbitrage — il n’y a donc aucune volatilité implicite, à aucune précision. Le cadre de droite porte une affirmation écrite d’avance et réfutée : on attendait un delta constant, par analogie avec le pic du vanna de la partie XXIV, et la mesure donne une décroissance d’un facteur dix. Le mécanisme est dans la formule — un seuil absolu sur une densité qui s’aplatit ne peut pas rendre un argument constant.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Il y a deux frontières et le guide n’en nomme aucune. La première est le lieu où un tick vaut un point entier. La seconde est plus radicale : au-delà, le prix théorique tombe sous un demi-tick, l’écran affiche zéro, et zéro est sous le plancher d’arbitrage — il n’y a donc aucune volatilité implicite, à aucune précision. Le cadre de droite porte une seconde affirmation réfutée : on attendait un lieu à delta constant, par analogie avec le pic du vanna de la partie XXIV, et la mesure donne une décroissance d’un facteur dix. Le mécanisme est dans la formule — un seuil absolu posé sur une densité qui s’aplatit ne peut pas rendre un argument constant.
+Figure 233 — Relief de ce qu’un tick vaut en points de volatilité, en échéance et en delta du strike.
+La hauteur est le logarithme de ce qu’un seul pas de cotation vaut en points de volatilité, et l’infobulle publie la valeur dans son unité. L’axe des strikes est un delta et non une moneyness, pour la raison que le guide donne lui-même : une moneyness fixe ne décrit pas le même objet à deux échéances. Le premier jet la portait tout de même, et une cellule de sa grille rendait dix millions de points de volatilité par tick — un strike qui, à deux jours, ne cote plus du tout.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Une année de séances porte deux observations
+C’est le résultat structurant de la partie, et il vient d’un fait que le guide ne mentionne pas : la volatilité est persistante. L’échantillon effectif d’une fenêtre de classement vaut n(1−ρ)/(1+ρ), c’est-à-dire κT/2 pour un retour à la moyenne lent devant la séance. Le nombre d’observations disparaît de la formule, et ce qui reste est la durée multipliée par une vitesse que personne n’observe.
+Table 158 — Ce qu’une fenêtre de classement porte vraiment
+SéancesAnnéesκ (par an)Corrélation d’un pasÉchantillon effectifMesuré
+| 63 | 0,25 | 2 | 0,9921 | 0,2 | 2,0
+| 63 | 0,25 | 4 | 0,9843 | 0,5 | 2,0
+| 63 | 0,25 | 8 | 0,9688 | 1,0 | 2,1
+| 126 | 0,50 | 2 | 0,9921 | 0,5 | 2,1
+| 126 | 0,50 | 4 | 0,9843 | 1,0 | 2,3
+| 126 | 0,50 | 8 | 0,9688 | 2,0 | 2,5
+| 252 | 1,00 | 2 | 0,9921 | 1,0 | 2,3
+| 252 | 1,00 | 4 | 0,9843 | 2,0 | 2,5
+| 252 | 1,00 | 8 | 0,9688 | 4,0 | 2,6
+| 504 | 2,00 | 2 | 0,9921 | 2,0 | 2,5
+| 504 | 2,00 | 4 | 0,9843 | 4,0 | 2,8
+| 504 | 2,00 | 8 | 0,9688 | 8,0 | 2,9
+| 1 260 | 5,00 | 2 | 0,9921 | 5,0 | 2,7
+| 1 260 | 5,00 | 4 | 0,9843 | 10,0 | 2,8
+| 1 260 | 5,00 | 8 | 0,9688 | 20,0 | 2,8
+Lecture. C’est le résultat de la partie, et il vient d’un fait que le guide ne mentionne pas : la volatilité est persistante. L’échantillon effectif d’une fenêtre vaut n(1−ρ)/(1+ρ), c’est-à-dire κT/2 pour un retour à la moyenne lent devant la séance — *le nombre d’observations disparaît de la formule*, et ce qui reste est la durée multipliée par une vitesse qu’on n’observe pas. Une année de séances porte deux observations indépendantes à la vitesse de référence. La dernière colonne mesure la même chose par la dispersion d’un percentile sur quatre cents fenêtres tirées ; les deux se referment, ce qui autorise la première. Regarder la volatilité plus souvent n’apprend rien ; il faut la regarder plus longtemps.
+Figure 234 — L’échantillon effectif d’une fenêtre de classement, contre sa longueur et la vitesse de retour à la moyenne.
+C’est le résultat structurant de la partie, et il vient d’un fait que le guide ne mentionne pas. Une fenêtre de classement d’une année ne porte pas deux cent cinquante-deux observations mais deux, parce que la volatilité met environ un trimestre à oublier où elle était. Le cadre de droite compare la forme fermée à la dispersion mesurée d’un percentile sur quatre cents fenêtres tirées ; les deux se referment, ce qui autorise la première. La vitesse de retour à la moyenne n’est pas observable dans ce dépôt, donc elle est balayée et jamais choisie.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+À la vitesse de référence, une année de séances porte 2,0 observations indépendantes et cinq années en portent 10,0. La forme fermée est contrôlée contre la dispersion mesurée d’un percentile sur quatre cents fenêtres tirées, qui rend 2,5. Regarder la volatilité plus souvent n’apprend rien ; il faut la regarder plus longtemps.
+Figure 235 — Relief de l’échantillon effectif, en vitesse de retour à la moyenne et en longueur de fenêtre.
+La hauteur est le nombre d’observations indépendantes que porte une fenêtre. Le relief dit ce que la table chiffre : la surface est un produit, donc allonger la fenêtre et accélérer le retour à la moyenne comptent exactement pareil, et aucune des deux ne rachète l’autre. Le coin proche est celui d’un outil ordinaire — un an de fenêtre sur un actif lent — et il y porte moins d’une observation.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Le plus lourd des dix budgets d’information
+L’échantillon indépendant requis pour séparer deux percentiles vaut z²(p(1−p)+q(1−q))/(p−q)², et la persistance le multiplie par (1+ρ)/(1−ρ). C’est le budget d’information de la partie IV rencontré sur un dixième objet, et le plus lourd des dix.
+Table 159 — Les années qu’il faut pour séparer deux percentiles
+Percentile observéContreκ (par an)Séances requisesAnnées
+| 80 | 50 | 2 | 4 410 | 17,5
+| 80 | 50 | 4 | 2 205 | 8,8
+| 80 | 50 | 8 | 1 103 | 4,4
+| 90 | 50 | 2 | 2 057 | 8,2
+| 90 | 50 | 4 | 1 029 | 4,1
+| 90 | 50 | 8 | 514 | 2,0
+| 95 | 50 | 2 | 1 422 | 5,6
+| 95 | 50 | 4 | 711 | 2,8
+| 95 | 50 | 8 | 356 | 1,4
+| 90 | 75 | 2 | 11 939 | 47,4
+| 90 | 75 | 4 | 5 970 | 23,7
+| 90 | 75 | 8 | 2 985 | 11,8
+| 99 | 90 | 2 | 11 939 | 47,4
+| 99 | 90 | 4 | 5 970 | 23,7
+| 99 | 90 | 8 | 2 985 | 11,8
+Lecture. L’échantillon indépendant requis vaut z²(p(1−p)+q(1−q))/(p−q)² ; la persistance le multiplie par (1+ρ)/(1−ρ). C’est le budget d’information de la partie IV rencontré sur un dixième objet, et le plus lourd des dix : séparer un percentile de quatre-vingts d’un percentile de cinquante demande 8,8 ans de données à la vitesse de référence. Le guide recommande d’annoncer la fenêtre de classement, ce qui est juste et insuffisant : une fenêtre annoncée ne dit pas l’échantillon qu’elle porte, et deux outils qui annoncent la même fenêtre sur deux actifs de vitesses différentes publient deux nombres qui n’ont pas la même précision.
+Figure 236 — Les années requises pour séparer deux percentiles, contre l’écart et la vitesse de retour.
+Le budget d’information de la partie IV, rencontré sur un dixième objet, et le plus lourd des dix. Le guide recommande d’annoncer la fenêtre de classement, ce qui est la bonne recommandation et ne suffit pas : deux outils qui annoncent la même fenêtre sur deux actifs de vitesses différentes publient deux nombres qui n’ont pas la même précision, et rien dans leur affichage ne le dit. La vitesse est le paramètre qu’il faudrait annoncer, et personne ne l’observe.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Distinguer un percentile de quatre-vingts d’un percentile de cinquante demande 8,8 ans de données ; un percentile de quatre-vingt-dix-neuf d’un percentile de quatre-vingt-dix, 23,7. Le guide recommande d’annoncer la fenêtre de classement, ce qui est la bonne recommandation et ne suffit pas : deux outils qui annoncent la même fenêtre sur deux actifs de vitesses différentes publient deux nombres qui n’ont pas la même précision, et rien dans leur affichage ne le dit. La vitesse est le paramètre qu’il faudrait annoncer, et personne ne l’observe.
+Figure 237 — Relief des années requises pour distinguer un percentile de la médiane.
+La hauteur est le nombre d’années de données qu’il faut pour affirmer qu’un percentile diffère de la médiane. Le relief montre les deux façons d’être ruiné : un actif lent, et un percentile qui n’est pas extrême. Un outil qui affiche « percentile 62 » sur une fenêtre d’un an ne publie pas une mesure, il publie un tirage. C’est la même conclusion que la partie XVIII tire de la bande d’un ratio de Calmar, et elle vient de la même cause : une statistique qu’on lit sur trop peu d’observations effectives.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Le rang est hostage d’un point, le percentile d’un sur n
+« Le rang n’emploie que les deux extrêmes de la fenêtre et se trouve donc à la merci d’un seul pic ; un jour de crise peut le tenir artificiellement bas pendant un an. » Exact, et la mesure ajoute le facteur.
+Table 160 — Ce qu’un seul jour de crise fait aux deux statistiques
+Fenêtre (séances)RangPercentileLe rang recule deLe percentile bouge deAu plusRapport des sensibilités
+| 63 | 0,097 | 0,111 | 0,3180 | immobile | 0,01587 | 20
+| 126 | 0,556 | 0,865 | 0,2840 | 0,0079 | 0,00794 | 36
+| 252 | 0,387 | 0,599 | 0,2665 | immobile | 0,00397 | 67
+| 504 | 0,736 | 0,940 | 0,2282 | 0,0020 | 0,00198 | 115
+| 1 260 | 0,270 | 0,268 | 0,1914 | immobile | 0,00079 | 241
+Lecture. Le pic double le maximum de la fenêtre, ce qui est un événement banal en volatilité. Le rang tombe d’un coup parce que son dénominateur est ce maximum ; le percentile ne peut pas bouger de plus d’un point sur n, et dans la majorité des tirages il ne bouge pas du tout — un jour de crise ne change pas le comptage des jours moins volatils que celui qu’on classe, sauf s’il franchit ce seuil. La colonne du recul est moyennée sur deux cents fenêtres : lue sur un tirage unique elle n’est pas monotone, alors que la grandeur qu’elle mesure l’est, et le dépôt a déjà payé cette leçon en partie XIV. La dernière colonne rapporte ce recul au maximum possible du percentile, ce qui en fait une borne valable quel que soit le tirage : *allonger la fenêtre, geste par lequel on croit stabiliser une statistique, aggrave le rang exactement dans la proportion où il améliore le percentile.* C’est le défaut du Calmar de la partie XVIII — un dénominateur qui est un maximum, et il n’y a qu’un seul maximum dans une série quelle que soit sa longueur — rencontré ici sur un troisième objet.
+Figure 238 — Une année de volatilité simulée, et ce qu’un pic déplace sur le rang et sur le percentile.
+Le guide recommande le percentile plutôt que le rang, et il donne la bonne raison : un jour de crise peut tenir le rang artificiellement bas pendant un an. La mesure ajoute le facteur. Le rang a un maximum au dénominateur et le percentile un comptage, donc leurs sensibilités à un point isolé sont dans le rapport de la taille de la fenêtre. Allonger la fenêtre, geste par lequel on croit stabiliser une statistique, aggrave le rang exactement autant qu’il améliore le percentile.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Le rang a un maximum au dénominateur ; le percentile a un comptage, donc il ne peut pas bouger de plus d’un point sur n, et dans la plupart des tirages il ne bouge pas du tout. Le rapport des deux sensibilités vaut 67 sur une fenêtre d’un an, et il croît avec la longueur de la fenêtre : allonger la fenêtre, geste par lequel on croit stabiliser une statistique, aggrave le rang exactement dans la proportion où il améliore le percentile. C’est le défaut du Calmar de la partie XVIII — un dénominateur qui est un maximum, et il n’y a qu’un seul maximum dans une série quelle que soit sa longueur — rencontré ici sur un troisième objet.
+Le motif que le guide a vu disparaître, fabriqué sous loi nulle
+« Calculez le rang sur une fenêtre strictement glissante. Classer l’implicite d’aujourd’hui contre une fenêtre qui contient des observations futures est un biais de look-ahead, et il est assez répandu dans la recherche publiée et les outils grand public pour qu’il faille le présumer présent jusqu’à preuve du contraire. Dans nos propres tests, une relation monotone propre entre le rang et les résultats à venir a entièrement disparu dès que la fenêtre de classement a été rendue strictement glissante. »
+Le dépôt reproduit la loi nulle de ce test, et l’écrire proprement a coûté un aller-retour instructif. Le premier jet posait le gain du vendeur comme le niveau de volatilité du jour moins la réalisée qui suit : la colonne glissante rendait alors 0,284 de corrélation là où la loi nulle en exigeait zéro. Ce n’était pas un bug — sous un retour à la moyenne, le niveau du jour prédit vraiment la variation qui suit, et un vendeur qui vend haut gagne pour cette seule raison. L’erreur était de confondre le niveau de volatilité avec un prix, ce qui est précisément la confusion que le guide passe sa première page à dissoudre.
+Table 161 — Le motif que le guide a vu disparaître, reproduit sous loi nulle
+Horizon (séances)Fenêtre glissanteFenêtre fuitéeÉcartSeuil à 95 %Le bug fabrique le motif
+| 5 | −0,0178 | 0,0710 | 0,0888 | 0,0716 | non
+| 10 | 0,0134 | 0,1421 | 0,1286 | 0,1014 | oui
+| 21 | 0,0268 | 0,2170 | 0,1902 | 0,1471 | oui
+| 42 | 0,0269 | 0,2944 | 0,2675 | 0,2087 | oui
+| 63 | 0,0207 | 0,3353 | 0,3146 | 0,2563 | oui
+Lecture. La volatilité simulée ici n’a aucune prévisibilité : son niveau du jour ne dit rien de la réalisée qui suit, et la colonne de la fenêtre glissante le confirme en restant sous son seuil. La colonne suivante classe le même jour contre une fenêtre centrée, qui contient l’avenir — le bug que le guide décrit — et la corrélation apparaît. Elle n’est pas petite. *Le guide a publié un résultat négatif ; ce que le dépôt publie est le résultat positif que le bug fabrique*, ce qui explique pourquoi il est si commun dans la recherche publiée et les outils grand public. La dernière colonne est un verdict calculé, jamais écrit.
+Figure 239 — Les deux classements contre l’horizon de détention, et le contrôle de l’espérance nulle du gain.
+Le guide écrit qu’une relation monotone entre le rang et les résultats à venir disparaît entièrement dès que la fenêtre de classement est rendue strictement glissante, et que le motif était un artefact du classement. C’est le second des dix guides à publier le résultat de son propre test négatif, et c’est le seul dont ce résultat porte sur un outil qu’il recommande par ailleurs. La loi nulle est reproduite ici : une volatilité sans la moindre prévisibilité, un gain d’espérance nulle par construction, et un classement fuité qui prédit tout de même.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+L’implicite honnête est l’espérance conditionnelle de la réalisée à venir ; elle a une forme fermée sous le processus déclaré, et le gain qu’elle définit est d’espérance conditionnelle nulle par construction. Alors seulement le classement glissant rend 0,027 — zéro à la précision de l’échantillon — et le classement fuité rend 0,217, très au-dessus du seuil de 0,147. Le guide a publié le résultat négatif ; voici le résultat positif que le bug fabrique, et un fait qu’aucun des dix guides n’écrit : l’artefact grandit avec l’horizon de détention.
+Une part de la prime publiée est une propriété de l’unité
+Le guide annonce que l’implicite dépasse la réalisée de deux à quatre points en indice actions, et décrit l’asymétrie exactement : une petite prime positive la plupart du temps, ponctuée d’épisodes où la réalisée déborde franchement. Les deux moitiés se mesurent.
+Table 162 — La prime annoncée, et ce qu’il faut pour la distinguer de zéro
+Avantage (pts de vol)EspéranceÉcart-typeFréquence de gainExpirations requisesAnnéesPart des pertes dans les 5 % pires
+| 0,0 | 0,232 | 3,04 | 53,9 | 658 | 54,8 | 28,4
+| 1,0 | 1,232 | 3,04 | 66,0 | 23 | 1,9 | 37,3
+| 2,0 | 2,232 | 3,04 | 76,9 | 7 | 0,6 | 50,2
+| 3,0 | 3,232 | 3,04 | 85,4 | 3 | 0,3 | 67,9
+| 4,0 | 4,232 | 3,04 | 91,4 | 2 | 0,2 | 88,7
+| 6,0 | 6,232 | 3,04 | 97,7 | 1 | 0,1 | 100,0
+Lecture. Le guide annonce deux à quatre points en indice actions et décrit l’asymétrie exactement : une petite prime positive la plupart du temps, ponctuée d’épisodes où la réalisée déborde franchement. Les deux moitiés se mesurent. La première ligne est la loi nulle — un vendeur sans le moindre avantage gagne 53,9 % de ses expirations et perd en espérance, parce que la racine est concave et que la réalisée d’un échantillon tombe en moyenne sous sa valeur vraie. C’est la structure de la partie XXI sur un autre estimateur, et c’est ce qui fait vivre les stratégies de prime courte bien au-delà de ce que leur espérance justifie. La colonne des années dit le reste : établir le bas de la fourchette annoncée demande 0,6 ans.
+Figure 240 — Les années requises et la fréquence de gain d’un vendeur de prime, contre son avantage.
+Le guide annonce deux à quatre points de prime en indice actions et décrit l’asymétrie exactement. Les deux moitiés se mesurent. La fréquence de gain sans avantage est le chiffre à retenir : plus d’une expiration sur deux se solde positivement pour un vendeur qui n’a rien, parce que la réalisée d’un échantillon tombe sous sa valeur vraie plus souvent qu’elle ne la dépasse. Un relevé de performance sur quelques trimestres ne distingue donc pas un vendeur qui a un avantage d’un vendeur qui n’en a aucun.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Un vendeur sans le moindre avantage gagne 53,9 % de ses expirations, parce que la médiane d’un khi-deux tombe sous sa moyenne : c’est le mécanisme de la partie XXI sur un autre estimateur, et c’est ce qui fait vivre les stratégies de prime courte bien au-delà de ce que leur espérance justifie. Établir le bas de la fourchette annoncée demande 0,6 an.
+Figure 241 — Le biais d’unité contre l’horizon, et les deux comptabilités du même livre.
+Le sous-titre du guide est qu’une option est un prix coté dans les mauvaises unités, exprès, et il ne va pas jusqu’au bout de sa propre remarque. Voici ce que l’unité coûte. Un vendeur dont l’implicite égale exactement la volatilité vraie a une espérance nulle en variance et une espérance positive en volatilité, parce que la racine est concave. Le biais vaut un neuvième du bas de la fourchette que le guide annonce, et sa forme fermée referme la mesure à quelques pour cent. Une part de la prime de risque de volatilité publiée est une propriété de la façon de coter.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Le sous-titre du guide est qu’une option est un prix coté dans les mauvaises unités, exprès, et il ne va pas jusqu’au bout de sa propre remarque. Voici ce que l’unité coûte. Un vendeur dont l’implicite égale exactement la volatilité vraie a une espérance nulle en variance et une espérance positive en volatilité, parce que la racine est concave. Le biais vaut 0,23 point par expiration mensuelle, soit un neuvième du bas de la fourchette annoncée, et sa forme fermée σ/(4h) referme la mesure. Une part de la prime de risque de volatilité publiée est une propriété de la façon de coter, pas du marché.
+Figure 242 — Relief des années requises pour établir une prime, en durée d’expiration et en avantage.
+La hauteur est le nombre d’années qu’il faut pour distinguer un avantage de zéro à quatre-vingt-quinze pour cent. Les deux axes ne jouent pas le même rôle et c’est ce que le relief montre : l’avantage décide de la hauteur du mur, la durée d’une expiration décide de la vitesse à laquelle on l’escalade. Un vendeur d’hebdomadaires collecte quatre fois plus de décisions par an qu’un vendeur de mensuelles, et c’est le seul levier qu’il contrôle entièrement.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Les cinq pièges, et deux d’entre eux sont le même nombre
+Le guide nomme cinq pièges pratiques et n’en chiffre aucun. Les mettre tous dans la même unité est ce qui les rend comparables.
+Table 163 — Les cinq pièges pratiques, tous dans la même unité
+Le piègeCoût (pts de vol)Sur quoiLe remède
+| Grecs de fournisseur | 9,94 | les quatre autres à la fois, faute de connaître la convention | réinverser depuis la prime brute
+| Quel strike : la monnaie se déplace | 4,61 | un déplacement d’un pour cent du comptant | une convention à delta fixe
+| Quelle cotation : bid, ask, mid ou dernier | 3,98 | une fourchette de quatre ticks à dix deltas | coter en milieu et publier la largeur
+| Dividendes et taux : un forward faux | 0,92 | un forward faux de vingt points de base | recalculer le forward, jamais l’emprunter
+| Cotations périmées | 0,42 | un prix de dix deltas vieux d’une heure | filtrer sur l’âge et la largeur
+Lecture. Le guide nomme les cinq et n’en chiffre aucun. Les mettre tous en points de volatilité est ce qui les rend comparables, et le classement qui en sort n’est pas celui de la liste : le plus cher est « grecs de fournisseur », que le guide place en dernier. Deux d’entre eux sont le même nombre — un forward faux et un prix périmé décalent tous deux l’implicite de Δ·ΔS/𝒱, la seule différence étant l’origine du décalage. La forme fermée n’est que le premier ordre de ce décalage, et la partie publie ce qu’elle manque : 6,1 % à un pour cent de déplacement, 1,1 % à vingt points de base — le second ordre porte le gamma, et il cesse d’être négligeable exactement là où le piège devient cher. Le tri est calculé, jamais écrit, et un test l’exige.
+Figure 243 — Le coût des cinq pièges en points de volatilité, et le contrôle de la forme fermée du déplacement.
+Le guide nomme cinq pièges pratiques et n’en chiffre aucun. Les mettre tous dans la même unité est ce qui les rend comparables, et le classement qui en sort n’est pas celui de la liste : le cinquième arrive en tête parce qu’il est la somme des quatre autres. Un grec qu’on n’a pas calculé soi-même cache le forward employé, le taux, la convention de prix et l’âge de la cotation, et le remède que le guide propose — réinverser depuis la prime brute — est le seul qui les traite ensemble. Le cadre de droite contrôle la forme fermée contre une réinversion complète au comptant faux : les deux partent ensemble et se séparent au-delà du demi pour cent, parce que la forme fermée est un premier ordre et que le second porte le gamma. La légende publie l’écart plutôt que d’annoncer une superposition que la figure contredirait.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Le classement qui en sort n’est pas celui de la liste : le plus cher est « grecs de fournisseur », que le guide place en dernier, et il l’est par construction — un grec calculé ailleurs ne cache pas un des quatre autres, il les cache tous, puisqu’on ignore à la fois le forward employé, le taux, la convention de prix et l’âge de la cotation. Deux des cinq sont par ailleurs le même nombre : un forward faux et un prix périmé décalent tous deux l’implicite de −Δ·ΔS/𝒱, la seule différence étant l’origine du décalage.
+Le signe de cette forme fermée a coûté un défaut au dépôt. Le premier jet écrivait +Δ·ΔS/𝒱, et l’amplitude étant juste, les cinq pièges — tous pris en valeur absolue — ne voyaient rien. C’est le contrôle contre la réinversion complète qui a rendu deux cents pour cent d’écart et montré le signe. Une forme fermée dont on ne consomme que la valeur absolue est une forme fermée à moitié contrôlée, et c’est une variante de ce que la partie XXIV avait déjà enterré ici.
+Le décompte, et le guide qui teste sa propre statistique
+Table 164 — Neuf affirmations, et le décompte des dix parties d’options
+L’affirmationCe qu’elle déplaceCe que la mesure en dit
+| L’implicite n’est pas une prévision : c’est le nombre qu’il faut mettre dans le modèle pour retrouver un prix observé | rien | c’est la meilleure définition des dix guides, et elle dissout la moitié des confusions qui suivent
+| Le véga est strictement positif, donc la solution est unique quand elle existe | le risque | exact, et incomplet : la précision de l’inversion vaut 3,5 points de volatilité par tick à cinq deltas et une semaine
+| Dans les marchés larges, la fourchette peut valoir plusieurs points de volatilité | le risque | sous-estimé : elle les vaut aussi dans un marché étroit, dès que le strike passe 0,908 de moneyness
+| L’implicite dépasse la réalisée de deux à quatre points en indice actions | le risque | plausible, et il faut 0,6 an pour établir le bas de la fourchette contre zéro — 1,9 an pour un point, contre les quatre et demi que la partie XXI demande à un vendeur couvert
+| Préférez le percentile au rang : le rang est hostage d’un seul pic | le risque | exact, et le rapport des deux sensibilités est la taille de la fenêtre — allonger la fenêtre aggrave le rang
+| Un jour de crise peut tenir le rang bas pendant un an | l’horloge | exact par construction : l’ombre d’un pic dure exactement la fenêtre, et c’est le défaut du Calmar de la partie XVIII
+| Calculez le rang sur une fenêtre strictement glissante | rien | c’est le second guide des dix à publier son propre test négatif — et la loi nulle rend 0,217 de corrélation fuitée contre 0,027 glissante
+| Annoncez la fenêtre de classement | rien | juste et insuffisant : la fenêtre ne dit pas l’échantillon, qui vaut 2,0 observations pour une année de séances
+| Un forward faux donne une implicite fausse | le risque | exact, et c’est le même nombre que celui des cotations périmées : Δ·ΔS/𝒱 dans les deux cas
+Lecture. 5 affirmations déplacent le risque, 1 l’horloge, 3 rien, aucune la direction — septième partie consécutive dans ce cas. Sur les 76 affirmations des dix parties consacrées aux options, aucune ne donne un sens. Ce dixième guide est le second des dix à publier le résultat de son propre test négatif, après celui du vanna, et c’est le seul des deux dont le résultat négatif porte sur un outil que le document examiné recommande par ailleurs. *Un guide qui écrit que sa propre statistique préférée ne prédit rien une fois calculée proprement est un guide qu’on peut lire.*
+Figure 244 — Le décompte des affirmations par ce qu’elles déplacent, et le cumul des dix parties d’options.
+La colonne de la direction est vide pour la septième partie consécutive. Ce qui distingue ce dixième guide n’est pas la qualité de ses formules mais son honnêteté sur un point précis : il a testé sa propre statistique préférée, trouvé que la relation disparaissait dès que le classement cessait de regarder l’avenir, et publié ce résultat. Un guide qui écrit que son outil ne prédit rien une fois calculé proprement est un guide qu’on peut lire.
+Spéculation · la volatilité implicite · à dérive nulle 4,8 % dans les deux sens · à 3,2 pt/h 7,0 % à la hausse contre 3,1 % à la baisse · µ requis 8,19 pt/h · objectif à 0,49 σ de séance
+Sur les 76 affirmations examinées dans les dix parties consacrées aux options, aucune ne donne un sens. La colonne de la direction est vide pour la septième partie consécutive. Ce qui distingue ce dixième guide n’est pas la qualité de ses formules mais son honnêteté sur un point précis : il a testé sa propre statistique préférée, trouvé que la relation disparaissait dès que le classement cessait de regarder l’avenir, et publié ce résultat. Un guide qui écrit que son outil ne prédit rien une fois calculé proprement est un guide qu’on peut lire.
