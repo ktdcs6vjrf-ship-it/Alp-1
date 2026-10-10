@@ -929,6 +929,7 @@ function typo(el) {
 }
 P.typo = function (t) { return String(t).replace(/ ([:;?!»])/g, '\u202F$1').replace(/« /g, '«\u202F').replace(/(\d) (%|\$)/g, '$1\u00A0$2').replace(/nº /g, 'nº\u00A0').replace(/ — /g, '\u00A0— '); };
 function injectCss() { if (document.getElementById('perf-css')) return; var s = document.createElement('style'); s.id = 'perf-css'; s.textContent = CSS; document.head.appendChild(s); }
+P.injectCss = injectCss;
 var UI = { hypOpen: false, open: {}, boot: { key: null, res: null }, sim: { key: null, trades: [] } };
 
 function params(set) { var p = Object.assign({}, DEF_PAR, T.store.get(KEY.par, {})); if (!fin(p.cost)) p.cost = set.commissionRT; return p; }

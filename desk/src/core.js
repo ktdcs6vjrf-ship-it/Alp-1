@@ -224,6 +224,62 @@
     } catch (e) {}
   }
 
+  /* T.ucoll(chemin, {mirror, live}) : une collection privée de l'utilisateur, data/users/<id>/<doc>/<collection>.
+     chemin = 'doc/collection' (ex. 'labo/strategies'). Copie locale si mirror !== false (petites collections) ;
+     abonnement en direct si live !== false. Fusion par le champ u (dernière écriture), suppression douce
+     (deleted: true) pour les copies locales, suppression dure pour les grosses collections (mirror: false).
+     Les documents écrits par Claude (ArtifactData) arrivent par le même abonnement. */
+  var UC = {};
+  function ucId() { return 'd' + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
+  T.ucoll = function (path, opt) {
+    if (!/^[A-Za-z0-9_.~:@+-]{1,80}\/[A-Za-z0-9_.~:@+-]{1,80}$/.test(path)) throw new Error('chemin de collection invalide ' + path);
+    if (UC[path]) return UC[path].api;
+    opt = opt || {};
+    var mirror = opt.mirror !== false, live = opt.live !== false;
+    var st = { rows: mirror ? (lsGet('uc:' + path) || []) : [], subs: [], ref: null, loaded: false, waits: [] };
+    function save() { if (mirror) lsSet('uc:' + path, st.rows); var l = api.list(); st.subs.forEach(function (f) { try { f(l); } catch (e) {} }); }
+    function pushRow(r) { if (!st.ref) return Promise.resolve(false); setStatus('saving'); return st.ref.doc(r.id).set(r).then(function () { setStatus('cloud'); return true; }, function (e) { setStatus('local'); throw e; }); }
+    function merge(docs) {
+      var by = {}, changed = false; st.rows.forEach(function (x) { by[x.id] = x; });
+      docs.forEach(function (x) { if (!x || !x.id) return; var cur = by[x.id]; if (!cur || (x.u || 0) > (cur.u || 0)) { by[x.id] = x; changed = true; } });
+      if (mirror) st.rows.forEach(function (x) { if (!docs.some(function (d) { return d && d.id === x.id; })) pushRow(x).catch(function () {}); });
+      else Object.keys(by).forEach(function (k) { if (!docs.some(function (d) { return d && d.id === k; })) { delete by[k]; changed = true; } });
+      if (changed || !st.loaded) { st.rows = Object.keys(by).map(function (k) { return by[k]; }); st.loaded = true; save(); }
+      st.waits.splice(0).forEach(function (f) { f(); });
+    }
+    function attach() {
+      if (st.ref || !cloud.ready) return;
+      var parts = path.split('/');
+      st.ref = cloud.db.doc('data/users/' + cloud.uid + '/' + parts[0]).collection(parts[1]);
+      var toRows = function (snap) { return snap.docs.map(function (d) { var x = d.data() || {}; if (!x.id) x.id = d.id; return x; }); };
+      if (live) st.ref.onSnapshot(function (snap) { merge(toRows(snap)); }, function () {});
+      else st.ref.get().then(function (snap) { merge(toRows(snap)); }, function () { st.loaded = true; st.waits.splice(0).forEach(function (f) { f(); }); });
+    }
+    var api = {
+      path: path,
+      list: function () { return st.rows.filter(function (r) { return !r.deleted; }).map(function (r) { return JSON.parse(JSON.stringify(r)); }); },
+      get: function (id) { var r = st.rows.find(function (x) { return x.id === id && !x.deleted; }); return r ? JSON.parse(JSON.stringify(r)) : null; },
+      set: function (id, doc) { var r = Object.assign({}, doc, { id: id, u: Date.now() }); delete r.deleted; var i = st.rows.findIndex(function (x) { return x.id === id; }); if (i >= 0) st.rows[i] = r; else st.rows.push(r); save(); return pushRow(r).catch(function () { return false; }); },
+      add: function (doc) { var id = doc.id || ucId(); api.set(id, doc); return id; },
+      update: function (id, patch) { var cur = st.rows.find(function (x) { return x.id === id; }); return api.set(id, Object.assign({}, cur || {}, patch)); },
+      remove: function (id) {
+        var i = st.rows.findIndex(function (x) { return x.id === id; }); if (i < 0) return Promise.resolve(false);
+        if (mirror) { st.rows[i] = Object.assign({}, st.rows[i], { deleted: true, u: Date.now() }); save(); return pushRow(st.rows[i]).catch(function () { return false; }); }
+        st.rows.splice(i, 1); save(); return st.ref ? st.ref.doc(id).delete().then(function () { return true; }, function () { return false; }) : Promise.resolve(true);
+      },
+      on: function (f) { st.subs.push(f); return function () { st.subs = st.subs.filter(function (x) { return x !== f; }); }; },
+      ready: function () { return new Promise(function (res) { if (st.loaded || !cloud.ready) { if (!cloud.ready) setTimeout(res, 0); else res(); } else st.waits.push(res); }); },
+      cloud: function () { return !!st.ref; },
+      refresh: function () { if (st.ref && !live) st.ref.get().then(function (snap) { merge(snap.docs.map(function (d) { var x = d.data() || {}; if (!x.id) x.id = d.id; return x; })); }, function () {}); }
+    };
+    UC[path] = { api: api, attach: attach };
+    attach();
+    return api;
+  };
+  T.cloudReady = function () { return cloud.ready; };
+  var cloudSubs = [];
+  T.onCloud = function (f) { if (cloud.ready) { setTimeout(f, 0); return function () {}; } cloudSubs.push(f); return function () { cloudSubs = cloudSubs.filter(function (x) { return x !== f; }); }; };
+
   T.cloudInit = function () {
     if (!window.claude || typeof window.claude.use !== 'function') return;
     Promise.all([window.claude.use('db'), window.claude.use('user')]).then(function (r) {
@@ -233,6 +289,8 @@
         cloud.db = db; cloud.uid = uid; cloud.ready = true; setStatus('cloud');
         Object.keys(store.mem).forEach(pull);
         Object.keys(shared.subs).forEach(attachShared);
+        Object.keys(UC).forEach(function (k) { UC[k].attach(); });
+        cloudSubs.splice(0).forEach(function (f) { try { f(); } catch (e) {} });
         jr.ref = db.doc('data/users/' + uid + '/journal').collection('trades');
         jr.ref.onSnapshot(function (snap) {
           var byId = {}; jr.rows.forEach(function (x) { byId[x.id] = x; });
