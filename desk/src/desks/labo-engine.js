@@ -1,8 +1,8 @@
 /* Labo de stratégie — le moteur (LABO.md, §3 et §4).
    Une seule fonction autonome, laboEngine(a), exécutée telle quelle dans un Web Worker (Blob de sa source)
    et appelée directement par les tests et les petits calculs. Elle ne lit aucune variable extérieure :
-   ni T, ni quantEngine, ni new Function. Les fuseaux se calculent avec Intl (cache par heure), l’aléa
-   avec un mulberry32 recopié et une graine explicite.
+   ni T, ni quantEngine, ni new Function. Les fuseaux se calculent avec Intl (cache par semaine, puis par heure
+   autour d’un changement d’heure), l’aléa avec un mulberry32 recopié et une graine explicite.
    Ce fichier n’enregistre aucun desk : il publie T.lib.laboEngine (enveloppes synchrones, exécuteur de
    worker). Aucun prix de marché n’y est écrit : les tests tournent sur des marches synthétiques amorcées. */
 T.lib = T.lib || {};
@@ -12,50 +12,65 @@ function laboEngine(a) {
   /* =====================================================================================
      API INTERNE — à lire avant d’ajouter une opération dans ce même corps de fonction.
      -------------------------------------------------------------------------------------
-     prepare(a) → ctx
-       Lit a.bars (colonnes {t,o,h,l,c,v?,lowFirst?} ou tableau d’objets), a.spec (valeurs par défaut
-       de §3.0 complétées, jamais validées), a.sel {from,to} (clés), a.settings {tick, pointValue,
-       commissionRT, maxContracts}, a.levels, a.adj, a.news, a.rolls (clés des séances de bascule d’un
-       jeu non ajusté). Ne garde que les séances de sel plus a.warmSessions (20) séances d’amorçage.
-       ctx = { spec0, anchor, tz, tick, pv, comm, maxC, S, F1, tf, dom, smc, warn, lv, news, off0 }
-       S[s] = { key, dn, dow, i0, i1, A (ms de l’ancre nominale), end, exp (barres attendues), sel, roll }
-       F1 = cadre d’une minute = { ctx, t,o,h,l,c,v (ou null), lf (lowFirst ou null), n,
-            sess (Int32 : séance de la barre), sm (Float64 : minutes depuis l’ancre = sessmin),
-            anch (Uint8 : barre ancrée), firstA (Uint8 : première barre ancrée de la séance),
-            seg (Int32 : début du segment continu, coupé aux bascules), m (minutes par barre),
-            si0/si1 (bornes de chaque séance), sa0/sa1 (bornes ancrées, −1 si aucune), cache {} }
-     withBars(ctx, cols) → ctx2 : même structure de temps (séances, sessmin, ancrage, domaine), prix
-       neufs (colonnes de longueur ctx.F1.n, déjà découpées), caches vides. Pour les permutations (4.3).
-     ev(F, opérande) → Float64Array : série d’un opérande (3.2), mise en cache par clé canonique.
-     cv(F, condition) → Uint8Array : 1 vraie, 0 fausse, 2 indéfinie (un opérande non fini) (3.3).
-     clsOf(opérande) → 'k' constante | 'n' niveau | 'e' écart | 'o' oscillateur | 'u' neutre ; lève
-       une erreur sur un typage refusé (niveau × nombre…).
-     resolveSpec(spec, values), mOp / mCond / mSide (miroir 3.4, après résolution).
-     config(ctx, values, spec?) → cfg = { spec (résolue, défauts compris), rules: {L, S}, sides: {L, S}
-       (côtés négociés), sig: {L, S} (Uint8Array des signaux bruts setup ∧ déclencheur, masqués hors
-       ancrage ; null si inutile), dom }. Les séries sont partagées par toutes les configurations d’un
-       même ctx : un balayage ne recalcule que ce qui change.
-     domain(ctx, spec) → dom = { from, to, flat, end (sessmin par séance), trade (Uint8 par séance :
-       dans sel et jour autorisé), cons (Uint8 par barre : un signal y est pris en compte), warm }.
-     executable(ctx, cfg) → Uint8Array : barres où un signal aurait été exécutable (3.5) — le tirage
-       des entrées au hasard (4.2) s’y fait.
-     execute(ctx, cfg, o) → { trades, counts, sessions, fill, costs } : l’exécution de §3.5 à §3.7,
-       séance par séance, à partir de signaux. Options o (toutes facultatives) :
+     Entrée a (LABO.md §4) : { op, bars, spec, values, settings: {tick, pointValue, commissionRT, maxContracts},
+       sel: {from, to} (clés), levels: {clé: {nom: prix} | {levels, scale, base}}, adj: {clé: pts}, news: [{t, impact}],
+       rolls: [clés de bascule d’un jeu non ajusté], warmSessions (20), oosFrom?, oos? (ouverture hors échantillon),
+       seed, draws, fill?, override?: {fill, slipTicks, commissionRT, throughTicks}, onProgress(k, n)?,
+       fp + cache (worker : contexte gardé d’un appel à l’autre pour le même jeu) }.
+     bars : colonnes {t, o, h, l, c, v?, lowFirst?, walk?} (tableaux ou typés) ou tableau d’objets {t, o, h, l, c, v}.
+
+     prepare(a) → ctx. Refuse sel.to ≥ oosFrom (sauf a.oos). Garde les séances de sel plus warmSessions séances
+       d’amorçage (séries calculées, aucun trade). Réutilise a.cache.ctx si la clé (fp, ancrage, fuseau, sel,
+       niveaux, nouvelles, tick…) est la même.
+       ctx = { a, spec0 (défauts §3.0), anchor, tz, tick, pv, comm, maxC, S, F1, n, tf, dom, smc, lv, news,
+               warn (avertissements de l’appel), fwarn (avertissements des séries, gardés avec le cache), off0 }
+       S[s] = { key, dn, dow, i0, i1 (barres de la séance dans F1), A (ms de l’ancre nominale), end, exp (barres
+               attendues : 1380 globex, 390 rth), sel (séance jouable), roll }
+       F1 = cadre d’une minute = { ctx, t, o, h, l, c, v (null sans volume), lf (lowFirst ou null), wk (walk ou null),
+            n, sess (Int32 : séance de la barre), sm (Float64 : minutes depuis l’ancre = sessmin, négatives avant),
+            anch (Uint8 : barre ancrée), firstA (première barre ancrée), seg (Int32 : début du segment continu,
+            coupé aux bascules), m (1), si0/si1 (bornes des séances), sa0/sa1 (bornes ancrées, −1 si aucune), cache {} }
+     withBars(ctx, cols) → ctx2 : même temps (séances, sessmin, ancrage, domaines), prix neufs {o, h, l, c, v?,
+       lowFirst?, walk?} de longueur ctx.F1.n (indices de F1), caches de séries vides. Pour les permutations (4.3).
+     ev(F, opérande) → Float64Array (NaN = indéfini), en cache par clé canonique ; cv(F, condition) → Uint8Array
+       (1 vraie, 0 fausse, 2 indéfinie) ; clsOf(opérande) → 'k' | 'n' niveau | 'e' écart | 'o' oscillateur | 'u'
+       neutre (lève une erreur sur un typage refusé).
+     resolveSpec(spec, values) ; mOp / mCond / mSide (miroir 3.4, après résolution) ; withDefaults(spec).
+     config(ctx, values, spec?) → cfg = { spec (résolue, défauts compris), rules: {L, S}, sides: {L, S} (côtés
+       négociés), sig: {L, S} (Uint8Array : setup ∧ déclencheur à la clôture, barres ancrées seulement ; null si
+       inutile), dom }. Les séries sont partagées par toutes les configurations d’un même ctx.
+     domain(ctx, spec) → dom = { from, to, flat, end = min(to, flat) (sessmin par séance), trade (Uint8 par séance :
+       dans sel, jour autorisé, fenêtre non vide), cons (Uint8 par barre : un signal y est lu), warm }.
+     executable(ctx, cfg) → Uint8Array : barres dont le signal serait exécutable (3.5) — tirage de 4.2.
+     execute(ctx, cfg, o) → { trades, counts, sessions, fill, costs } : §3.5 à §3.7, séance par séance, à partir des
+       signaux. Options o (toutes facultatives) :
          fill          'pessimiste'|'optimiste'|'chemin'|'vrai' (remplace spec.fill)
          slipTicks     ticks par jambe glissée ; commissionRT : $ aller-retour (remplacent les coûts)
          throughTicks  dépassement exigé (ticks) des ordres limites, entrée et objectif (stress 4.7)
-         sig           {L, S} : Uint8Array par barre, remplacent cfg.sig (entrées au hasard 4.2)
+         sig           {L, S} : Uint8Array par barre de F1, remplacent cfg.sig (entrées au hasard 4.2) ; la sortie
+                       sur signal opposé lit toujours cfg.sig
+         cand          Int32Array triée des barres portant un signal (sinon calculée depuis sig, ou gardée sur cfg)
          sessions      Uint8Array sur ctx.S : 1 = séance jouée (ex. hors échantillon seul)
-         fallback      {stop, target} en points : stop ou objectif `level` impossible à la barre → distance
+         fallback      {stop, target} en points : stop ou objectif « level » indéfini à la barre → cette distance
+                       (trade.fb = 1)
          progress      false pour ne pas publier la progression
-       sessions[x] = { key, s (indice dans ctx.S), dow, pnl, n, lo, hi, sig, sumR, sumR2 } pour TOUTES
-       les séances jouées ; trade.sx renvoie à cet indice (mat[config][séance] s’en déduit).
-     statsOf(trades, pv) → statistiques 4.1.
-     lattice(o) → colonnes d’une marche au tick (4.4) ; sigmaOf(ctx, cfg) → σ de 4.4.
+       trade = { i (signal), e (entrée), j (sortie), t, tx, key, sx (indice dans sessions), side, qty, entry, stop0,
+                 target0, exit, fin, pts, pnl, r, risk (L), c (coût par contrat), legs (jambes glissées), mae, mfe,
+                 bars, hour, dow, mk? (marketable), fb? }
+       counts = { signals, ambigu, taille, stopcourt, ecart, annule, expire, trou, marketable, limite (signal
+                 refusé par une limite de séance, hors signals) }
+       sessions[x] = { key, s (indice dans ctx.S), dow, pnl, n, lo, hi, sig, amb (signaux ambigus), sumR, sumR2 } pour TOUTES les séances
+                 jouées : mat[config][séance] = {n, sumR, sumR2, net: pnl} s’en déduit sans relance.
+     statsOf(trades, pv) → statistiques 4.1 (+ rW0 = prédiction sans avantage de rW) ; equity(trades).
+     lattice(o) → colonnes d’une marche au tick (4.4) + lowFirst + walk ; walkOf(F, j) rejoue le chemin exact
+       d’une barre (fill 'vrai') ; sigmaOf(ctx, cfg) → σ de 4.4 ; usesExternal(cfg) → lit level/nearest/news.
      progress(k, n) → transmet l’avancement à a.onProgress (le worker le limite à une fois / 250 ms).
-     rng(seed) → mulberry32 ; warn(ctx, message) ; warnList(ctx).
+     rng(seed) → mulberry32 (aléa uniforme [0, 1)) ; warn(ctx, m) / rwarn(ctx, m) ; warnList(ctx).
      Les opérations s’enregistrent dans la table OPS, en bas de ce corps, et nulle part ailleurs.
      ===================================================================================== */
+  /* Les globaux sont passés en paramètres : leur lecture devient locale, donc rapide aussi dans un contexte vm
+     (tests) où chaque global passe par un intercepteur. */
+  return (function (Math, Float64Array, Int32Array, Uint8Array, Map, Intl, Date, JSON, Object, Array, String, Error, ArrayBuffer, NaN, Infinity) {
   a = a || {};
   var NY = 'America/New_York', PAR = 'Europe/Paris', MIN = 60000, HOUR = 3600000, DAY = 86400000;
   var onProg = typeof a.onProgress === 'function' ? a.onProgress : null;
@@ -79,15 +94,26 @@ function laboEngine(a) {
   function rng(seed) { var s = seed >>> 0; return function () { s = (s + 0x6D2B79F5) >>> 0; var t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 
   /* ---------- Fuseaux : décalage (ms) à ajouter à l’instant UTC pour lire l’heure murale (cache par heure) ---------- */
-  var OFF = {}, FMT = {};
-  function off(tz, t) {
-    if (!tz || tz === 'UTC') return 0;
-    var hr = Math.floor(t / HOUR), key = tz + '|' + hr, v = OFF[key];
-    if (v !== undefined) return v;
+  /* Cache à deux niveaux : une semaine dont les décalages du début et de la fin concordent est réputée sans
+     changement d’heure (deux changements à moins d’une semaine n’existent dans aucun fuseau de marché) ; sinon,
+     heure par heure. Une conversion Intl coûte ~10 µs : sans ce cache elle dominait un run d’un an. */
+  var OFFS = {}, FMT = {};
+  function rawOff(tz, hr) {
     var f = FMT[tz]; if (!f) f = FMT[tz] = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' });
     var o = {}, ps = f.formatToParts(new Date(hr * HOUR)); for (var i = 0; i < ps.length; i++) o[ps[i].type] = ps[i].value;
-    v = Date.UTC(+o.year, +o.month - 1, +o.day, (+o.hour) % 24, +o.minute, +o.second) - hr * HOUR;
-    OFF[key] = v; return v;
+    return Date.UTC(+o.year, +o.month - 1, +o.day, (+o.hour) % 24, +o.minute, +o.second) - hr * HOUR;
+  }
+  function off(tz, t) {
+    if (!tz || tz === 'UTC') return 0;
+    var hr = Math.floor(t / HOUR), c = OFFS[tz];
+    if (!c) c = OFFS[tz] = { hr: NaN, v: 0, wk: new Map(), h: new Map() };
+    if (hr === c.hr) return c.v;
+    var wi = Math.floor(hr / 168), w = c.wk.get(wi), v;
+    if (w === undefined) { var w0 = rawOff(tz, wi * 168), w1 = rawOff(tz, wi * 168 + 167); w = w0 === w1 ? w0 : NaN; c.wk.set(wi, w); }
+    if (w === w) v = w;
+    else { v = c.h.get(hr); if (v === undefined) { v = rawOff(tz, hr); c.h.set(hr, v); } }
+    c.hr = hr; c.v = v;
+    return v;
   }
   function wallToUtc(g, tz) { var t = g - off(tz, g); return g - off(tz, t); }
   function wallAt(dn, mins, tz) { return wallToUtc(dn * DAY + mins * MIN, tz); }
@@ -235,6 +261,7 @@ function laboEngine(a) {
     return o;
   }
   function mPair(a, b, what) {
+    if ((typeof a === 'string' && a.charAt(0) === '$') || (typeof b === 'string' && b.charAt(0) === '$')) fail('Miroir avant résolution : « ' + (typeof a === 'string' ? a : b) + ' » (résoudre les paramètres d’abord).');
     var A = clsOf(a), B = clsOf(b);
     if (A === 'n' || B === 'n') {
       if (A === 'n' && B === 'n') return { a: mOp(a), b: mOp(b), flip: true };
@@ -296,21 +323,23 @@ function laboEngine(a) {
   function sub(x, i, j) { return x ? (x.subarray ? x.subarray(i, j) : Array.prototype.slice.call(x, i, j)) : null; }
   function columns(b) {
     if (!b) fail('Aucune barre fournie.');
-    var t, o, h, l, c, v = null, lf = null, n, i;
+    var t, o, h, l, c, v = null, lf = null, wk = null, n, i;
     if (Array.isArray(b)) {
       n = b.length; t = new Float64Array(n); o = new Float64Array(n); h = new Float64Array(n); l = new Float64Array(n); c = new Float64Array(n);
       var hv = false, hl = false;
       for (i = 0; i < n; i++) { var x = b[i]; t[i] = x.t; o[i] = x.o; h[i] = x.h; l[i] = x.l; c[i] = x.c; if (isNum(x.v)) hv = true; if (x.lowFirst != null) hl = true; }
       if (hv) { v = new Float64Array(n); for (i = 0; i < n; i++) v[i] = isNum(b[i].v) ? b[i].v : 0; }
       if (hl) { lf = new Uint8Array(n); for (i = 0; i < n; i++) lf[i] = b[i].lowFirst ? 1 : 0; }
+      if (n && isNum(b[0].walk)) { wk = new Float64Array(n); for (i = 0; i < n; i++) wk[i] = isNum(b[i].walk) ? b[i].walk : -1; }
     } else {
       if (!b.t) fail('Colonne de temps absente.');
       t = typed(b.t); n = t.length; o = typed(b.o); h = typed(b.h); l = typed(b.l); c = typed(b.c);
       if (b.v && b.v.length === n) v = typed(b.v);
       if (b.lowFirst && b.lowFirst.length === n) lf = b.lowFirst;
+      if (b.walk && b.walk.length === n) wk = b.walk;
     }
     for (i = 1; i < n; i++) if (!(t[i] > t[i - 1])) fail('Barres non triées ou en double (rang ' + i + ').');
-    return { t: t, o: o, h: h, l: l, c: c, v: v, lf: lf, n: n };
+    return { t: t, o: o, h: h, l: l, c: c, v: v, lf: lf, wk: wk, n: n };
   }
   /* Deux registres d’avertissements : fwarn suit les caches (séries, domaine) et survit avec eux d’un appel à
      l’autre ; warn appartient à l’appel (exécution). warnList les réunit. */
@@ -337,12 +366,15 @@ function laboEngine(a) {
       var x = sm[i];
       if (x >= 0 && (!rth || x < 390)) { anch[i] = 1; if (sa0[s] < 0) { sa0[s] = i; firstA[i] = 1; } sa1[s] = i; }
     }
-    return { ctx: ctx, t: cols.t, o: cols.o, h: cols.h, l: cols.l, c: cols.c, v: cols.v || null, lf: cols.lf || null, n: n, sess: sess, sm: sm, anch: anch, firstA: firstA, seg: seg, m: m, si0: si0, si1: si1, sa0: sa0, sa1: sa1, cache: {}, isTf: m > 1 };
+    return { ctx: ctx, t: cols.t, o: cols.o, h: cols.h, l: cols.l, c: cols.c, v: cols.v || null, lf: cols.lf || null, wk: cols.wk || null, n: n, sess: sess, sm: sm, anch: anch, firstA: firstA, seg: seg, m: m, si0: si0, si1: si1, sa0: sa0, sa1: sa1, cache: {}, isTf: m > 1 };
   }
   function prepare(a) {
     var spec0 = withDefaults(a.spec), anchor = spec0.anchor;
     if (anchor !== 'globex' && anchor !== 'paris' && anchor !== 'rth') fail('Ancrage inconnu : « ' + anchor + ' » (globex, paris ou rth).');
     var st = a.settings || {}, i, s, ck = null;
+    /* hors échantillon (2.6) : toute opération autre que l’ouverture reçoit sel.to < oosFrom */
+    if (a.oosFrom && !a.oos && (!a.sel || a.sel.to == null || String(a.sel.to) >= String(a.oosFrom)))
+      fail('Hors échantillon protégé : la sélection doit finir avant le ' + a.oosFrom + ' (sel.to < oosFrom).');
     /* cache d’un appel à l’autre (worker) : même jeu, même ancrage, même sélection → mêmes séries */
     if (a.cache && typeof a.cache === 'object' && a.fp) {
       ck = [a.fp, anchor, (spec0.session && spec0.session.tz) || PAR, canon(a.sel || null), canon(a.warmSessions), canon(a.rolls || null), canon(a.levels || null), canon(a.adj || null), canon(a.news || null), canon(st.tick)].join('|');
@@ -356,7 +388,13 @@ function laboEngine(a) {
     var B = columns(a.bars), N = B.n;
     if (!N) fail('Aucune barre fournie.');
     var starts = [], dns = [], prev = null;
-    for (i = 0; i < N; i++) { var d = keyDn(B.t[i]); if (d !== prev) { if (prev !== null && d < prev) fail('Barres non triées.'); starts.push(i); dns.push(d); prev = d; } }
+    /* clé de chaque barre : la séance de clé d couvre [18:00 New York de d − 1, 18:00 de d) — une conversion par séance */
+    var kLo = Infinity, kHi = -Infinity, d = 0;
+    for (i = 0; i < N; i++) {
+      var ti = B.t[i];
+      if (ti >= kHi || ti < kLo) { d = keyDn(ti); kLo = wallAt(d - 1, 18 * 60, NY); kHi = wallAt(d, 18 * 60, NY); }
+      if (d !== prev) { if (prev !== null && d < prev) fail('Barres non triées.'); starts.push(i); dns.push(d); prev = d; }
+    }
     var sel = a.sel || null, s0 = 0, s1 = starts.length - 1;
     if (sel) {
       if (sel.from != null) { s0 = starts.length; for (s = 0; s < starts.length; s++) if (dayStr(dns[s]) >= sel.from) { s0 = s; break; } }
@@ -365,11 +403,11 @@ function laboEngine(a) {
     if (s0 > s1) fail('Aucune séance dans la sélection' + (sel ? ' (' + (sel.from || '…') + ' → ' + (sel.to || '…') + ')' : '') + '.');
     var warmN = isNum(a.warmSessions) ? Math.max(0, a.warmSessions | 0) : 20, w0 = Math.max(0, s0 - warmN);
     var i0 = starts[w0], i1 = s1 + 1 < starts.length ? starts[s1 + 1] - 1 : N - 1, n = i1 - i0 + 1;
-    var cols = { t: sub(B.t, i0, i1 + 1), o: sub(B.o, i0, i1 + 1), h: sub(B.h, i0, i1 + 1), l: sub(B.l, i0, i1 + 1), c: sub(B.c, i0, i1 + 1), v: sub(B.v, i0, i1 + 1), lf: sub(B.lf, i0, i1 + 1) };
+    var cols = { t: sub(B.t, i0, i1 + 1), o: sub(B.o, i0, i1 + 1), h: sub(B.h, i0, i1 + 1), l: sub(B.l, i0, i1 + 1), c: sub(B.c, i0, i1 + 1), v: sub(B.v, i0, i1 + 1), lf: sub(B.lf, i0, i1 + 1), wk: sub(B.wk, i0, i1 + 1) };
     var rolls = {}, rl = a.rolls;
     if (Array.isArray(rl)) rl.forEach(function (k) { rolls[k] = 1; }); else if (rl && typeof rl === 'object') for (var rk in rl) if (own(rl, rk) && rl[rk]) rolls[rk] = 1;
     var ctx = { a: a, spec0: spec0, anchor: anchor, tz: (spec0.session && spec0.session.tz) || PAR, tick: isNum(st.tick) && st.tick > 0 ? st.tick : 0.25, pv: isNum(st.pointValue) && st.pointValue > 0 ? st.pointValue : 2,
-      comm: isNum(st.commissionRT) ? st.commissionRT : 0, maxC: isNum(st.maxContracts) && st.maxContracts > 0 ? st.maxContracts : 0, S: [], tf: {}, dom: {}, smc: {}, warn: {}, off0: i0 };
+      comm: isNum(st.commissionRT) ? st.commissionRT : 0, maxC: isNum(st.maxContracts) && st.maxContracts > 0 ? st.maxContracts : 0, S: [], tf: {}, dom: {}, smc: {}, warn: {}, fwarn: {}, off0: i0 };
     var S = ctx.S, sess = new Int32Array(n), sm = new Float64Array(n), seg = new Int32Array(n), segStart = 0;
     for (s = w0; s <= s1; s++) {
       var dn = dns[s], A = anchorOf(anchor, dn), end = wallAt(dn, 17 * 60, NY), key = dayStr(dn);
@@ -392,14 +430,15 @@ function laboEngine(a) {
     });
     var nw = (a.news || []).filter(function (x) { return x && isNum(x.t); }).slice().sort(function (x, y) { return x.t - y.t; });
     ctx.news = { t: nw.map(function (x) { return x.t; }), imp: nw.map(function (x) { return isNum(x.impact) ? x.impact : 0; }) };
+    if (ck) { a.cache.ctx = ctx; a.cache.key = ck; }
     return ctx;
   }
   function withBars(ctx, cols) {
     var F = ctx.F1, c2 = {}, k;
     for (k in ctx) if (own(ctx, k)) c2[k] = ctx[k];
     if (!cols || cols.c.length !== F.n) fail('withBars : colonnes de longueur ' + F.n + ' attendues.');
-    c2.F1 = frame(c2, { t: F.t, o: cols.o, h: cols.h, l: cols.l, c: cols.c, v: cols.v === undefined ? F.v : cols.v, lf: cols.lowFirst || cols.lf || null }, F.sess, F.sm, 1, F.seg);
-    c2.tf = {}; c2.warn = ctx.warn;
+    c2.F1 = frame(c2, { t: F.t, o: cols.o, h: cols.h, l: cols.l, c: cols.c, v: cols.v === undefined ? F.v : cols.v, lf: cols.lowFirst || cols.lf || null, wk: cols.walk || cols.wk || null }, F.sess, F.sm, 1, F.seg);
+    c2.tf = {}; c2.warn = ctx.warn; c2.fwarn = {};
     return c2;
   }
   /* Heure HH:MM (fuseau tz) → minutes depuis l’ancre de la séance s : première occurrence à partir de l’ancre. */
@@ -572,20 +611,24 @@ function laboEngine(a) {
     }
     return out;
   }
+  /* VWAP et σ ancrées (3.2) : prix typique pondéré par le volume. Tant que le volume cumulé depuis l’ancre est
+     nul (séance sans volume, ou vol: null), les poids sont égaux — règle causale : une barre ne lit jamais le
+     volume d’une barre à venir. Même arithmétique que sessionVwap (écart à p0, puis moyenne et variance). */
   function vwapCore(F) {
     var hit = F.cache._vw;
     if (hit) return hit;
-    var n = F.n, vw = nanArr(n), sd = nanArr(n), S = F.ctx.S;
+    var n = F.n, vw = nanArr(n), sd = nanArr(n), S = F.ctx.S, V = F.v;
     for (var s = 0; s < S.length; s++) {
       var a0 = F.sa0[s], a1 = F.sa1[s], i;
       if (a0 < 0) continue;
-      var useV = false;
-      if (F.v) for (i = a0; i <= a1; i++) if (F.v[i] > 0) { useV = true; break; }
-      var p0 = (F.h[a0] + F.l[a0] + F.c[a0]) / 3, sw = 0, sp = 0, sp2 = 0;
+      var p0 = (F.h[a0] + F.l[a0] + F.c[a0]) / 3, sw = 0, sp = 0, sp2 = 0, ew = 0, ep = 0, ep2 = 0;
       for (i = a0; i <= a1; i++) {
-        var w = useV ? (F.v[i] > 0 ? F.v[i] : 0) : 1, tp = (F.h[i] + F.l[i] + F.c[i]) / 3 - p0;
+        var w = V && V[i] > 0 ? V[i] : 0, tp = (F.h[i] + F.l[i] + F.c[i]) / 3 - p0, m1, va;
         sw += w; sp += w * tp; sp2 += w * tp * tp;
-        if (sw > 0) { var m1 = sp / sw, va = sp2 / sw - m1 * m1; vw[i] = p0 + m1; sd[i] = va > 1e-12 ? Math.sqrt(va) : 0; }
+        ew += 1; ep += tp; ep2 += tp * tp;
+        if (sw > 0) { m1 = sp / sw; va = sp2 / sw - m1 * m1; }
+        else { m1 = ep / ew; va = ep2 / ew - m1 * m1; }
+        vw[i] = p0 + m1; sd[i] = va > 1e-12 ? Math.sqrt(va) : 0;
       }
     }
     hit = F.cache._vw = { vw: vw, sd: sd };
@@ -688,7 +731,7 @@ function laboEngine(a) {
         return out;
       }
       case 'dow': { var dv = new Float64Array(S.length); for (s = 0; s < S.length; s++) dv[s] = S[s].dow; return perSession(F, dv); }
-      case 'sessmin': return F.sm;
+      case 'sessmin': out = nanArr(n); for (i = 0; i < n; i++) if (F.anch[i]) out[i] = F.sm[i]; return out;
       case 'dist': {
         var A = ev(F, x.a), B = ev(F, x.b), unit = x.unit || 'pts', den = null, k2 = 1;
         if (unit === 'ticks') k2 = ctx.tick;
@@ -774,10 +817,11 @@ function laboEngine(a) {
         A = ev(F, c.a); B = ev(F, c.b);
         var op = c.cmp;
         if (!FLIP[op]) fail('Comparaison inconnue : « ' + op + ' ».');
+        var code = op === '>' ? 0 : op === '<' ? 1 : op === '>=' ? 2 : 3;
         for (i = 0; i < n; i++) {
           x = A[i]; y = B[i];
           if (!(x - x === 0 && y - y === 0)) { out[i] = 2; continue; }
-          out[i] = (op === '>' ? x > y : op === '<' ? x < y : op === '>=' ? x >= y : x <= y) ? 1 : 0;
+          out[i] = (code === 0 ? x > y : code === 1 ? x < y : code === 2 ? x >= y : x <= y) ? 1 : 0;
         }
         break;
       }
@@ -962,12 +1006,20 @@ function laboEngine(a) {
   }
 
   /* ---------- Exécution (3.5 – 3.7) ---------- */
+  /* barres où un signal d’un côté négocié tombe dans la fenêtre (dom.cons), en ordre croissant */
+  function candOf(cfg, sig) {
+    var cons = cfg.dom.cons, n = cons.length, L = cfg.sides.L && sig ? sig.L : null, Sg = cfg.sides.S && sig ? sig.S : null, k = 0, i;
+    for (i = 0; i < n; i++) if (cons[i] && ((L && L[i]) || (Sg && Sg[i]))) k++;
+    var out = new Int32Array(k); k = 0;
+    for (i = 0; i < n; i++) if (cons[i] && ((L && L[i]) || (Sg && Sg[i]))) out[k++] = i;
+    return out;
+  }
   function execute(ctx, cfg, o) {
     o = o || {};
     var F = ctx.F1, S = ctx.S, spec = cfg.spec, R = spec.risk || {}, M = spec.manage || {}, dom = cfg.dom, tick = ctx.tick, pv = ctx.pv;
     var fill = o.fill || spec.fill || 'pessimiste';
     if (fill !== 'pessimiste' && fill !== 'optimiste' && fill !== 'chemin' && fill !== 'vrai') fail('Remplissage inconnu : « ' + fill + ' ».');
-    if (fill === 'vrai' && !F.lf) { warn(ctx, 'remplissage vrai sans ordre intrabarre : lu en chemin'); fill = 'chemin'; }
+    if (fill === 'vrai' && !F.lf && !F.wk) { rwarn(ctx, 'remplissage vrai sans ordre intrabarre : lu en chemin'); fill = 'chemin'; }
     var costs = spec.costs || {};
     var slip = isNum(o.slipTicks) ? o.slipTicks : isNum(costs.slipTicks) ? costs.slipTicks : 0;
     var comm = isNum(o.commissionRT) ? o.commissionRT : isNum(costs.commissionRT) ? costs.commissionRT : ctx.comm;
@@ -983,11 +1035,34 @@ function laboEngine(a) {
     var be = M.breakeven == null || M.breakeven === false ? null : typeof M.breakeven === 'number' ? { r: M.breakeven, off: 0 } : { r: isNum(M.breakeven.r) ? M.breakeven.r : 1, off: (isNum(M.breakeven.offset) ? M.breakeven.offset : 0) * tick };
     var trl = M.trail && typeof M.trail === 'object' ? M.trail : null;
     var only = o.sessions || null, fb = o.fallback || null, lf = F.lf, nS = S.length;
+    /* barres candidates (signal d’un côté négocié, dans la fenêtre), triées : le parcours saute de l’une à la
+       suivante au lieu de lire chaque barre. Données par l’appelant (o.cand) ou gardées sur cfg pour cfg.sig. */
+    var cand = o.cand || (o.sig ? candOf(cfg, sig) : cfg.cand || (cfg.cand = candOf(cfg, cfg.sig))), cp = 0;
     var counts = { signals: 0, ambigu: 0, taille: 0, stopcourt: 0, ecart: 0, annule: 0, expire: 0, trou: 0, marketable: 0, limite: 0 };
     var trades = [], sessions = [], legsSum = 0;
     function reachT(px, tg, side, through) { return side > 0 ? (through ? px > tg + xtT : px >= tg + xtT) : (through ? px < tg - xtT : px <= tg - xtT); }
+    /* Remplissage vrai sur une marche au tick (walk) : premier passage exact, après le remplissage de l’ordre
+       sur sa barre d’entrée. Rend 0 (rien), 1 (stop), 2 (objectif), ou −1 (chemin indisponible → lowFirst). */
+    function exact(j, side, stop, tg, hasTg, px, kind, through) {
+      var W = walkOf(F, j);
+      if (!W) return -1;
+      var pos = W.pos, sg = W.sg * W.tk, o = F.o[j], k = pos.length - 1, q = 0, x;
+      if (kind === 'lim' || kind === 'stp') {
+        for (q = 0; q <= k; q++) {
+          x = o + sg * pos[q];
+          if (kind === 'lim' ? (side > 0 ? (through ? x < px - xtT : x <= px - xtT) : (through ? x > px + xtT : x >= px + xtT)) : (side > 0 ? x >= px : x <= px)) break;
+        }
+        if (q > k) return -1;
+      }
+      for (; q <= k; q++) {
+        x = o + sg * pos[q];
+        if (side > 0 ? x <= stop : x >= stop) return 1;
+        if (hasTg && reachT(x, tg, side, through)) return 2;
+      }
+      return 0;
+    }
     function pathA(j, side) {   /* vrai si la barre se lit « contraire d’abord » (O → extrême adverse → extrême favorable → C) */
-      if (fill === 'vrai') return side > 0 ? !!lf[j] : !lf[j];
+      if (fill === 'vrai' && lf) return side > 0 ? !!lf[j] : !lf[j];
       var c = F.c[j], op = F.o[j];
       return c === op ? true : side > 0 ? c > op : c < op;
     }
@@ -1021,17 +1096,20 @@ function laboEngine(a) {
     for (var s = 0; s < nS; s++) {
       if (!dom.trade[s] || (only && !only[s])) continue;
       var sx = sessions.length, endS = dom.end[s], flatS = dom.flat[s], sI1 = F.si1[s];
-      var srec = { key: S[s].key, s: s, dow: S[s].dow, pnl: 0, n: 0, lo: 0, hi: 0, sig: 0, sumR: 0, sumR2: 0 }, nLoss = 0, cum = 0;
+      var srec = { key: S[s].key, s: s, dow: S[s].dow, pnl: 0, n: 0, lo: 0, hi: 0, sig: 0, amb: 0, sumR: 0, sumR2: 0 }, nLoss = 0, cum = 0;
       sessions.push(srec);
       if (o.progress !== false) progress(sx, nS);
       var i = F.si0[s];
       while (i <= sI1) {
+        while (cp < cand.length && cand[cp] < i) cp++;
+        if (cp >= cand.length || cand[cp] > sI1) break;
+        i = cand[cp];
         if (!dom.cons[i]) { i++; continue; }
         var isL = sigL ? sigL[i] : 0, isS = sigS ? sigS[i] : 0;
         if (!isL && !isS) { i++; continue; }
         if (srec.n >= maxPer || nLoss >= maxLoss || -srec.pnl >= dstop) { counts.limite++; i++; continue; }
         counts.signals++; srec.sig++;
-        if (isL && isS) { counts.ambigu++; i++; continue; }
+        if (isL && isS) { counts.ambigu++; srec.amb++; i++; continue; }
         var side = isL ? 1 : -1, rule = side > 0 ? cfg.rules.L : cfg.rules.S, E = rule.entry || { type: 'market' }, type = E.type || 'market';
         var st = nextStatus(F, i, endS);
         if (st) { counts[st === 2 ? 'trou' : 'expire']++; i++; continue; }
@@ -1112,8 +1190,10 @@ function laboEngine(a) {
             if (side > 0 ? Oj <= stop : Oj >= stop) { xj = jj; xp = Oj - side * slipT; fin = sKind; xleg = 1; how = 'open'; break; }
             if (hasTg && reachT(Oj, tg, side, through)) { xj = jj; xp = Oj; fin = 'objectif'; how = 'open'; break; }
           }
-          var sHit = side > 0 ? Lj <= stop : Hj >= stop, tHit = hasTg && reachT(side > 0 ? Hj : Lj, tg, side, through), ex = 0;
-          if (jj === e && kind === 'lim') {
+          var sHit = side > 0 ? Lj <= stop : Hj >= stop, tHit = hasTg && reachT(side > 0 ? Hj : Lj, tg, side, through), ex = -1;
+          if (fill === 'vrai' && F.wk && (sHit || tHit) && ((jj === e && kind !== 'open') || (sHit && tHit))) ex = exact(jj, side, stop, tg, hasTg, raw, jj === e ? kind : 'open', through);
+          if (ex >= 0) { /* chemin exact */ }
+          else if (jj === e && kind === 'lim') {
             var cT = hasTg && reachT(Cj, tg, side, through);
             if (fill === 'pessimiste') ex = sHit ? 1 : cT ? 2 : 0;
             else if (fill === 'optimiste') ex = tHit ? 2 : sHit ? 1 : 0;
@@ -1194,34 +1274,65 @@ function laboEngine(a) {
   }
   function equity(tr) { var out = [], c = 0; for (var i = 0; i < tr.length; i++) { c += tr[i].pnl; out.push([tr[i].tx, c]); } return out; }
 
-  /* ---------- Marche sans dérive sur le réseau des ticks (4.4) ---------- */
+  /* ---------- Marche sans dérive sur le réseau des ticks (4.4) ----------
+     ±1 tick par pas, k = round((σ/tick)²) pas par minute. Chaque barre tire ses pas dans des mots de 32 bits
+     neufs (mulberry32) : walk[j] = k·2³² + état du générateur au début de la barre, ce qui suffit à rejouer
+     le chemin exact de la barre (walkOf) ; lowFirst = le plus bas atteint avant le plus haut. */
+  var TWO32 = 4294967296;
+  function mixOut(s) { var t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return (t ^ (t >>> 14)) >>> 0; }
   function lattice(o) {
     o = o || {};
     var nS = Math.max(1, Math.floor(isNum(o.sessions) ? o.sessions : 20)), tick = isNum(o.tick) && o.tick > 0 ? o.tick : 0.25, sigma = isNum(o.sigma) && o.sigma > 0 ? o.sigma : 2;
     var minutes = Math.max(1, Math.floor(isNum(o.minutes) ? o.minutes : 1380)), k = Math.max(1, Math.round((sigma / tick) * (sigma / tick))), base = isNum(o.base) ? o.base : 20000;
-    var r = rng((isNum(o.seed) ? o.seed : 1) >>> 0), N = nS * minutes;
-    var t = new Float64Array(N), op = new Float64Array(N), hi = new Float64Array(N), lo = new Float64Array(N), cl = new Float64Array(N), v = new Float64Array(N), lf = new Uint8Array(N);
-    var dn = dnOfKey(o.start || '2026-01-05'), made = 0, p = 0, idx = 0, bits = 0, nb = 0, keys = [];
+    var st = (isNum(o.seed) ? o.seed : 1) >>> 0, N = nS * minutes;
+    var t = new Float64Array(N), op = new Float64Array(N), hi = new Float64Array(N), lo = new Float64Array(N), cl = new Float64Array(N), v = new Float64Array(N), lf = new Uint8Array(N), wk = new Float64Array(N);
+    var dn = dnOfKey(o.start || '2026-01-05'), made = 0, p = 0, idx = 0, keys = [];
     while (made < nS) {
       if (dowOf(dn) <= 5) {
         var t0 = wallAt(dn - 1, 18 * 60, NY);
         keys.push(dayStr(dn));
         for (var mi = 0; mi < minutes; mi++) {
-          var p0 = p, ph = p, pl = p, th = 0, tl = 0;
-          for (var st = 1; st <= k; st++) {
-            if (nb === 0) { bits = (r() * 4294967296) >>> 0; nb = 32; }
+          var p0 = p, ph = p, pl = p, th = 0, tl = 0, bits = 0, nb = 0;
+          wk[idx] = k * TWO32 + st;
+          for (var q = 1; q <= k; q++) {
+            if (nb === 0) { st = (st + 0x6D2B79F5) >>> 0; bits = mixOut(st); nb = 32; }
             p += (bits & 1) ? 1 : -1; bits >>>= 1; nb--;
-            if (p > ph) { ph = p; th = st; } else if (p < pl) { pl = p; tl = st; }
+            if (p > ph) { ph = p; th = q; } else if (p < pl) { pl = p; tl = q; }
           }
+          st = (st + 0x6D2B79F5) >>> 0;
           t[idx] = t0 + mi * MIN; op[idx] = base + p0 * tick; hi[idx] = base + ph * tick; lo[idx] = base + pl * tick; cl[idx] = base + p * tick;
-          v[idx] = 20 + Math.floor(r() * 100); lf[idx] = tl < th ? 1 : 0;
+          v[idx] = 20 + Math.floor(mixOut(st) / TWO32 * 100); lf[idx] = tl < th ? 1 : 0;
           idx++;
         }
         made++;
       }
       dn++;
     }
-    return { t: t, o: op, h: hi, l: lo, c: cl, v: v, lowFirst: lf, k: k, sigma: tick * Math.sqrt(k), keys: keys };
+    return { t: t, o: op, h: hi, l: lo, c: cl, v: v, lowFirst: lf, walk: wk, k: k, sigma: tick * Math.sqrt(k), tick: tick, keys: keys };
+  }
+  /* Chemin exact de la barre j (positions en ticks depuis l’ouverture, pas 0 = ouverture), rejoué depuis walk[j] ;
+     sg = −1 pour une série réfléchie. null si la colonne ne décrit pas cette barre (h, l, c ne concordent pas). */
+  var WCACHE = { F: null, j: -1, r: null };
+  function walkOf(F, j) {
+    if (WCACHE.F === F && WCACHE.j === j) return WCACHE.r;
+    var r = null, W = F.wk, w = W ? W[j] : NaN;
+    if (w >= 0) {
+      var k = Math.floor(w / TWO32), st = (w - k * TWO32) >>> 0;
+      if (k >= 1 && k <= 1e6) {
+        var pos = new Int32Array(k + 1), p = 0, mx = 0, mn = 0, bits = 0, nb = 0;
+        for (var q = 1; q <= k; q++) {
+          if (nb === 0) { st = (st + 0x6D2B79F5) >>> 0; bits = mixOut(st); nb = 32; }
+          p += (bits & 1) ? 1 : -1; bits >>>= 1; nb--;
+          pos[q] = p; if (p > mx) mx = p; else if (p < mn) mn = p;
+        }
+        var tk = F.ctx.tick, o = F.o[j], tol = 1e-9 * Math.max(1, Math.abs(o));
+        var eq = function (x, y) { return Math.abs(x - y) <= tol; };
+        if (eq(F.h[j], o + mx * tk) && eq(F.l[j], o + mn * tk) && eq(F.c[j], o + p * tk)) r = { pos: pos, sg: 1, tk: tk };
+        else if (eq(F.h[j], o - mn * tk) && eq(F.l[j], o - mx * tk) && eq(F.c[j], o - p * tk)) r = { pos: pos, sg: -1, tk: tk };
+      }
+    }
+    WCACHE.F = F; WCACHE.j = j; WCACHE.r = r;
+    return r;
   }
   /* σ de 4.4 : médiane, sur les séances jouées, de l’écart-type des variations de clôture d’une minute dans la fenêtre */
   function sigmaOf(ctx, cfg) {
@@ -1247,10 +1358,446 @@ function laboEngine(a) {
   function toList(arr, i0, i1) { var out = []; for (var i = i0; i <= i1; i++) { var x = arr[i]; out.push(x - x === 0 ? x : null); } return out; }
 
   /* =====================================================================================
+     LOIS NULLES, BALAYAGES, ANALYSE EN AVANT, STRESS, BOOTSTRAP (4.2 – 4.7)
+     Déterminisme : le tirage d reçoit sa propre graine drawSeed(seed, d), si bien que les d premiers tirages ne
+     dépendent ni du nombre total ni du budget de temps qui l’a coupé. Progression : progress(k, n) au niveau du
+     tirage ou de la configuration (execute tourne alors avec progress: false).
+     ===================================================================================== */
+  var MAXCELLS = 400, OBJECTIVES = { meanR: 1, net: 1, sharpe: 1, pf: 1 };
+  function drawSeed(seed, d) { return mixOut(((isNum(seed) ? seed : 1) >>> 0) ^ mixOut(Math.imul(d + 1, 0x9E3779B9) >>> 0)); }
+  function seedOf() { return isNum(a.seed) ? a.seed : 1; }
+  /* options d’exécution communes : a.override (coûts, remplissage, dépassement) puis o */
+  function execOpts(o) {
+    var ov = a.override || {}, r = { fill: ov.fill || a.fill, slipTicks: ov.slipTicks, commissionRT: ov.commissionRT, throughTicks: ov.throughTicks, progress: false }, k;
+    for (k in o) if (own(o, k)) r[k] = o[k];
+    return r;
+  }
+  function meanROf(tr) { var s = 0, m = 0; for (var i = 0; i < tr.length; i++) if (isNum(tr[i].r)) { s += tr[i].r; m++; } return m ? s / m : NaN; }
+  function sortNum(xs) { var out = []; for (var i = 0; i < xs.length; i++) if (isNum(xs[i])) out.push(xs[i]); return out.sort(function (x, y) { return x - y; }); }
+  function qtl(s, q) { if (!s.length) return NaN; var p = (s.length - 1) * q, lo = Math.floor(p), hi = Math.ceil(p); return s[lo] + (s[hi] - s[lo]) * (p - lo); }
+  function median(xs) { return qtl(sortNum(xs), 0.5); }
+  function nul(x) { return isNum(x) ? x : null; }
+  /* p = (1 + #{tirage ≥ observé}) / (tirages + 1). Un tirage sans trade (NaN) compte comme « ≥ » : il n’apporte
+     aucune preuve contre l’hypothèse nulle, p ne peut qu’y monter. Sans valeur observée, p = 1. */
+  function pOf(draws, obs) { if (!isNum(obs)) return 1; var k = 1; for (var i = 0; i < draws.length; i++) if (!(draws[i] < obs)) k++; return k / (draws.length + 1); }
+  function labelOf(base) { return base + ', non corrigée des N' + (isNum(a.N) ? ' = ' + a.N : '') + ' essais'; }
+  /* hors échantillon (2.6) pour les opérations qui reçoivent un résultat déjà calculé (mat, records) sans passer
+     par prepare : même refus, puis seules les séances de sel sont lues */
+  function oosGuard() {
+    if (a.oosFrom && !a.oos && (!a.sel || a.sel.to == null || String(a.sel.to) >= String(a.oosFrom)))
+      fail('Hors échantillon protégé : la sélection doit finir avant le ' + a.oosFrom + ' (sel.to < oosFrom).');
+  }
+  function inSel(key) { var s = a.sel; return !s || key == null || ((s.from == null || String(key) >= String(s.from)) && (s.to == null || String(key) <= String(s.to))); }
+  function objOf(obj) { obj = obj || 'meanR'; if (!OBJECTIVES[obj]) fail('Objectif inconnu : « ' + obj + ' » (meanR, net, sharpe ou pf).'); return obj; }
+  function objVal(st, obj) { return obj === 'net' ? st.net : obj === 'sharpe' ? st.sharpeTrade : obj === 'pf' ? st.pf : st.meanR; }
+
+  /* ---------- 4.2 Entrées au hasard : seul l’instant change ----------
+     Par séance jouée, autant de signaux que la stratégie en a lus (sig − amb : un signal ambigu n’a pas de sens),
+     tirés sans remise parmi les barres exécutables (3.5) de la séance ; chacun suit execute tel quel (même ordre,
+     « at » lu à la barre tirée, offset, valid, through, stop, objectif, gestion, taille, coûts, limites). Sens :
+     celui de la stratégie ; « both » : achat avec la proportion observée. Stop ou objectif « level » indéfini à la
+     barre tirée : distance médiane observée (fallback). */
+  function fallbackOf(trades) {
+    var ds = [], dt = [];
+    for (var i = 0; i < trades.length; i++) { var t = trades[i]; if (t.fb) continue; ds.push(Math.abs(t.entry - t.stop0)); if (t.target0 != null) dt.push(Math.abs(t.target0 - t.entry)); }
+    return { stop: median(ds), target: median(dt) };
+  }
+  /* k entiers distincts de [0, m) (Floyd), dans out */
+  function pickK(r, m, k, out) {
+    out.length = 0;
+    for (var j = m - k; j < m; j++) { var t = Math.floor(r() * (j + 1)); if (out.indexOf(t) >= 0) t = j; out.push(t); }
+    return out;
+  }
+  function randomNull(ctx, cfg, o) {
+    o = o || {};
+    var F = ctx.F1, draws = posInt(o.draws, 'draws', 200), seed = isNum(o.seed) ? o.seed : 1;
+    var x0 = execute(ctx, cfg, execOpts({ sessions: o.sessions })), obs = meanROf(x0.trades), ex = executable(ctx, cfg);
+    var pools = [], need = [], nL = 0, x, i, q;
+    for (x = 0; x < x0.sessions.length; x++) {
+      var sr = x0.sessions[x], pl = [];
+      for (i = F.si0[sr.s]; i <= F.si1[sr.s]; i++) if (ex[i]) pl.push(i);
+      pools.push(pl); need.push(Math.min(pl.length, Math.max(0, sr.sig - (sr.amb || 0))));
+    }
+    for (i = 0; i < x0.trades.length; i++) if (x0.trades[i].side > 0) nL++;
+    var pLong = cfg.sides.L && cfg.sides.S ? (x0.trades.length ? nL / x0.trades.length : 0.5) : cfg.sides.L ? 1 : 0;
+    var fb = fallbackOf(x0.trades), sL = new Uint8Array(F.n), sS = new Uint8Array(F.n), set = [], tmp = [], means = [], nT = 0, nFb = 0;
+    for (var d = 0; d < draws; d++) {
+      var r = rng(drawSeed(seed, d));
+      for (x = 0; x < pools.length; x++) {
+        if (!need[x]) continue;
+        pickK(r, pools[x].length, need[x], tmp);
+        for (q = 0; q < tmp.length; q++) { var b = pools[x][tmp[q]]; if (r() < pLong) sL[b] = 1; else sS[b] = 1; set.push(b); }
+      }
+      set.sort(function (u, w) { return u - w; });
+      var xr = execute(ctx, cfg, execOpts({ sig: { L: sL, S: sS }, cand: new Int32Array(set), fallback: fb, sessions: o.sessions }));
+      for (q = 0; q < set.length; q++) { sL[set[q]] = 0; sS[set[q]] = 0; }
+      set.length = 0;
+      means.push(meanROf(xr.trades)); nT += xr.trades.length;
+      for (q = 0; q < xr.trades.length; q++) if (xr.trades[q].fb) nFb++;
+      progress(d + 1, draws);
+    }
+    var srt = sortNum(means);
+    return { means: means.map(nul), obs: nul(obs), p: pOf(means, obs), pmin: 1 / (draws + 1), lo: nul(qtl(srt, 0.05)), hi: nul(qtl(srt, 0.95)), mid: nul(qtl(srt, 0.5)),
+      draws: draws, n: x0.trades.length, nMean: nT / draws, signals: need.reduce(function (s, k) { return s + k; }, 0), pLong: pLong,
+      fallback: { stop: nul(fb.stop), target: nul(fb.target) }, fbShare: nT ? nFb / nT : 0, label: labelOf('configuration isolée') };
+  }
+
+  /* ---------- 4.3 Permutation des minutes à l’intérieur des tranches d’horloge ----------
+     Chaque barre garde son écart d’ouverture (o − c précédente), sa forme (h − o, l − o, c − o), son volume, son
+     ordre intrabarre (lowFirst, walk) ; les prix sont reconstruits, les heures inchangées. La 1re barre de chaque
+     séance reste en place (elle porte l’écart de la nuit), en tranches comme en « seance ». Tranche = ⌊t / bloc⌋
+     en UTC, donc alignée sur l’horloge de New York et de Paris. Prix sur la grille du tick (1/tick entier) :
+     calcul en entiers puis division, ce qui rend les mêmes doubles que la lecture du texte et garde la grille. */
+  function permBase(ctx) {
+    if (ctx.pb) return ctx.pb;
+    var F = ctx.F1, n = F.n, tk = ctx.tick, D = Math.round(1 / tk), i, ok = Math.abs(D * tk - 1) < 1e-12 && D >= 1;
+    function sc(x) { return ok ? Math.round(x * D) : x; }
+    for (i = 0; i < n && ok; i++) {
+      var xs = [F.o[i], F.h[i], F.l[i], F.c[i]];
+      for (var k = 0; k < 4; k++) if (Math.abs(xs[k] * D - Math.round(xs[k] * D)) > 1e-6) { ok = false; break; }
+    }
+    var g = new Float64Array(n), ho = new Float64Array(n), lo = new Float64Array(n), co = new Float64Array(n), cs = new Float64Array(n);
+    for (i = 0; i < n; i++) {
+      var O = sc(F.o[i]);
+      g[i] = i > 0 && F.sess[i] === F.sess[i - 1] ? O - sc(F.c[i - 1]) : 0;
+      ho[i] = sc(F.h[i]) - O; lo[i] = sc(F.l[i]) - O; co[i] = sc(F.c[i]) - O; cs[i] = sc(F.c[i]);
+    }
+    ctx.pb = { D: ok ? D : 0, g: g, ho: ho, lo: lo, co: co, cs: cs };
+    return ctx.pb;
+  }
+  function blockOf(b) { if (b == null) return 30; if (b === 'seance') return b; return posInt(b, 'block'); }
+  function permuteCols(ctx, r, block) {
+    var F = ctx.F1, n = F.n, P = permBase(ctx), S = ctx.S, perm = new Int32Array(n), D = P.D, i, s;
+    var o = new Float64Array(n), h = new Float64Array(n), l = new Float64Array(n), c = new Float64Array(n);
+    var v = F.v ? new Float64Array(n) : null, lf = F.lf ? new Uint8Array(n) : null, wk = F.wk ? new Float64Array(n) : null;
+    var bms = block === 'seance' ? 0 : block * MIN;
+    for (s = 0; s < S.length; s++) {
+      var i0 = F.si0[s], i1 = F.si1[s];
+      if (i0 < 0) continue;
+      perm[i0] = i0;
+      var b0 = i0 + 1;
+      while (b0 <= i1) {
+        var b1 = i1;
+        if (bms) { var bk = Math.floor(F.t[b0] / bms); b1 = b0; while (b1 < i1 && Math.floor(F.t[b1 + 1] / bms) === bk) b1++; }
+        for (i = b0; i <= b1; i++) perm[i] = i;
+        for (i = b1; i > b0; i--) { var j = b0 + Math.floor(r() * (i - b0 + 1)), tq = perm[i]; perm[i] = perm[j]; perm[j] = tq; }
+        b0 = b1 + 1;
+      }
+      o[i0] = F.o[i0]; h[i0] = F.h[i0]; l[i0] = F.l[i0]; c[i0] = F.c[i0];
+      var cp = P.cs[i0];
+      for (i = i0; i <= i1; i++) {
+        var k = perm[i];
+        if (v) v[i] = F.v[k];
+        if (lf) lf[i] = F.lf[k];
+        if (wk) wk[i] = F.wk[k];
+        if (i === i0) continue;
+        var O = cp + P.g[k];
+        cp = O + P.co[k];
+        if (D) { o[i] = O / D; h[i] = (O + P.ho[k]) / D; l[i] = (O + P.lo[k]) / D; c[i] = cp / D; }
+        else { o[i] = O; h[i] = O + P.ho[k]; l[i] = O + P.lo[k]; c[i] = cp; }
+      }
+    }
+    return { o: o, h: h, l: l, c: c, v: v, lowFirst: lf, walk: wk, perm: perm };
+  }
+  /* tirages adaptés au budget : au moins minDraws, au plus draws, arrêt quand le tirage suivant dépasserait budgetMs */
+  function drawLoop(o, body) {
+    var want = posInt(o.draws, 'draws', o.def), minD = isNum(o.minDraws) ? Math.max(1, Math.floor(o.minDraws)) : o.minDef, budget = isNum(o.budgetMs) ? o.budgetMs : 60000, t0 = Date.now(), d, cut = false;
+    for (d = 0; d < want; d++) {
+      body(d);
+      progress(d + 1, want);
+      var el = Date.now() - t0;
+      if (d + 1 >= minD && d + 1 < want && el / (d + 1) * (d + 2) >= budget) { cut = true; d++; break; }
+    }
+    if (cut) progress(want, want);
+    return { draws: d, cut: cut, ms: Date.now() - t0 };
+  }
+  function permuteNull(ctx, values) {
+    var block = blockOf(a.block), seed = seedOf(), cfg = config(ctx, values), x0 = execute(ctx, cfg, execOpts({})), obs = meanROf(x0.trades), means = [], nT = 0;
+    var L = drawLoop({ draws: a.draws, def: 100, minDraws: a.minDraws, minDef: 50, budgetMs: a.budgetMs }, function (d) {
+      var c2 = withBars(ctx, permuteCols(ctx, rng(drawSeed(seed, d)), block)), xr = execute(c2, config(c2, values), execOpts({}));
+      means.push(meanROf(xr.trades)); nT += xr.trades.length;
+    });
+    var srt = sortNum(means);
+    return { means: means.map(nul), obs: nul(obs), p: pOf(means, obs), draws: L.draws, pmin: 1 / (L.draws + 1), cut: L.cut, ms: L.ms, block: block,
+      lo: nul(qtl(srt, 0.05)), hi: nul(qtl(srt, 0.95)), mid: nul(qtl(srt, 0.5)), n: x0.trades.length, nMean: L.draws ? nT / L.draws : 0,
+      h0: block === 'seance' ? 'dans chaque séance, l’ordre des minutes ne porte aucune information' : 'dans chaque tranche de ' + block + ' minutes, l’ordre des minutes ne porte aucune information',
+      label: labelOf('configuration isolée'), warnings: warnList(ctx) };
+  }
+
+  /* ---------- Grille d’un balayage (1 ou 2 paramètres) ---------- */
+  function paramValues(spec, name) {
+    var p = spec.params && spec.params[name];
+    if (!p || typeof p !== 'object' || !isNum(p.min) || !isNum(p.max) || !isNum(p.step) || !(p.step > 0) || p.max < p.min)
+      fail('Balayage : le paramètre « ' + name + ' » demande min, max et step (ou une liste de valeurs).');
+    var n = Math.floor((p.max - p.min) / p.step + 1e-9) + 1, out = [];
+    for (var i = 0; i < n; i++) out.push(+(p.min + i * p.step).toFixed(10));
+    return out;
+  }
+  function gridOf(spec, g) {
+    g = g || {};
+    var p1 = g.p1, p2 = g.p2 || null, params = spec.params || {};
+    if (!p1) fail('Balayage : paramètre p1 absent.');
+    if (p2 === p1) fail('Balayage : p1 et p2 doivent être deux paramètres différents.');
+    [p1, p2].forEach(function (nm) { if (nm && !own(params, nm)) fail('Balayage : « ' + nm + ' » n’est pas déclaré dans params.'); });
+    var xs = Array.isArray(g.xs) && g.xs.length ? g.xs.slice() : paramValues(spec, p1);
+    var ys = p2 ? (Array.isArray(g.ys) && g.ys.length ? g.ys.slice() : paramValues(spec, p2)) : [null];
+    if (xs.length * ys.length > MAXCELLS) fail('Balayage : ' + xs.length * ys.length + ' cellules, au plus ' + MAXCELLS + '.');
+    var configs = [], base = a.values || {};
+    for (var iy = 0; iy < ys.length; iy++) for (var ix = 0; ix < xs.length; ix++) {
+      var v = {}, k; for (k in base) if (own(base, k)) v[k] = base[k];
+      v[p1] = xs[ix]; if (p2) v[p2] = ys[iy];
+      configs.push(v);
+    }
+    return { p1: p1, p2: p2, xs: xs, ys: ys, configs: configs };
+  }
+  function zeroRec() { return { n: 0, sumR: 0, sumR2: 0, net: 0, gw: 0, gl: 0, sumC: 0 }; }
+  /* ---------- Balayage : chaque configuration résolue puis reflétée (config), exécutée une fois ----------
+     cells[iy][ix] = {n, meanR, sdR, net, pf, sharpe, maxDD, winRate, costR} ; mat[k][x] = {n, sumR, sumR2, net,
+     gw, gl, sumC} pour k = iy·nx + ix et x = colonne de séance (union des séances jouées, ordre des clés). */
+  function sweepCore(ctx) {
+    var G = gridOf(ctx.spec0, a.grid || a), nx = G.xs.length, ny = G.ys.length, nC = nx * ny, obj = objOf(a.objective), minT = isNum(a.minTrades) ? a.minTrades : 1;
+    var cells = [], recs = [], used = new Uint8Array(ctx.S.length), best = null, bv = -Infinity, pv = ctx.pv;
+    for (var iy = 0; iy < ny; iy++) {
+      var row = []; cells.push(row);
+      for (var ix = 0; ix < nx; ix++) {
+        var k = iy * nx + ix, cfg = config(ctx, G.configs[k]), x = execute(ctx, cfg, execOpts({})), st = statsOf(x.trades, pv), m = {}, q;
+        row.push({ n: st.n, meanR: st.meanR, sdR: st.sdR, net: st.net, pf: st.pf, sharpe: st.sharpeTrade, maxDD: st.maxDD, winRate: st.winRate, costR: st.costR });
+        for (q = 0; q < x.sessions.length; q++) { var sr = x.sessions[q], e = zeroRec(); used[sr.s] = 1; e.n = sr.n; e.sumR = sr.sumR; e.sumR2 = sr.sumR2; e.net = sr.pnl; m[sr.s] = e; }
+        for (q = 0; q < x.trades.length; q++) {
+          var t = x.trades[q], ee = m[x.sessions[t.sx].s];
+          if (t.pnl > 0) ee.gw += t.pnl; else if (t.pnl < 0) ee.gl -= t.pnl;
+          if (isNum(t.c) && t.risk > 0) ee.sumC += t.c / (t.risk * pv);
+        }
+        recs.push(m);
+        var v = objVal(st, obj);
+        if (st.n >= minT && v === v && v > bv) { bv = v; best = { k: k, ix: ix, iy: iy, values: G.configs[k], value: v, meanR: st.meanR, n: st.n }; }
+        progress(k + 1, nC);
+      }
+    }
+    var cols = [];
+    for (var s = 0; s < ctx.S.length; s++) if (used[s]) cols.push(s);
+    var mat = recs.map(function (mm) { return cols.map(function (c) { return mm[c] || zeroRec(); }); });
+    return { p1: G.p1, p2: G.p2, xs: G.xs, ys: G.ys, objective: obj, minTrades: minT, cells: cells, mat: mat, keys: cols.map(function (c) { return ctx.S[c].key; }), configs: G.configs, best: best };
+  }
+  /* permuteGrid : la grille rejouée sur chaque permutation ; meilleur observé contre meilleur permuté */
+  function permuteGridNull(ctx) {
+    var G = gridOf(ctx.spec0, a.grid || a), obj = objOf(a.objective), minT = isNum(a.minTrades) ? a.minTrades : 1, block = blockOf(a.block), seed = seedOf();
+    function bestOf(c) {
+      var bv = NaN;
+      for (var k = 0; k < G.configs.length; k++) {
+        var st = statsOf(execute(c, config(c, G.configs[k]), execOpts({})).trades, c.pv), v = objVal(st, obj);
+        if (st.n >= minT && v === v && !(v <= bv)) bv = v;
+      }
+      return bv;
+    }
+    var obs = bestOf(ctx), bests = [];
+    var L = drawLoop({ draws: a.draws, def: 100, minDraws: a.minDraws, minDef: 20, budgetMs: a.budgetMs }, function (d) {
+      bests.push(bestOf(withBars(ctx, permuteCols(ctx, rng(drawSeed(seed, d)), block))));
+    });
+    var srt = sortNum(bests);
+    return { means: bests.map(nul), obs: nul(obs), p: pOf(bests, obs), draws: L.draws, pmin: 1 / (L.draws + 1), cut: L.cut, ms: L.ms, block: block, objective: obj,
+      configs: G.configs.length, lo: nul(qtl(srt, 0.05)), hi: nul(qtl(srt, 0.95)), mid: nul(qtl(srt, 0.5)),
+      h0: block === 'seance' ? 'dans chaque séance, l’ordre des minutes ne porte aucune information' : 'dans chaque tranche de ' + block + ' minutes, l’ordre des minutes ne porte aucune information',
+      label: 'meilleure des ' + G.configs.length + ' configurations de la grille, contre la meilleure sur prix permutés', warnings: warnList(ctx) };
+  }
+
+  /* ---------- 4.5 Analyse en avant, sur la matrice seule (jamais de relance par fenêtre) ----------
+     Fenêtres en colonnes de mat (séances jouées). rolling : IS = [o − is, o) ; anchored : IS = [0, o) ; OOS = [o,
+     o + oos) (la dernière peut être plus courte). Meilleure configuration IS selon l’objectif (égalité → la
+     première ; moins de minTrades trades → exclue), appliquée telle quelle à l’OOS suivante.
+     wfe = meanR des OOS cousues / meanR des meilleurs IS pondérée par les trades (Σ sumR / Σ n), quel que soit
+     l’objectif ; null si ce dénominateur est ≤ costR (moyenne des c/(L·pv) des mêmes trades IS, colonne sumC). */
+  var WF = ['n', 'sumR', 'sumR2', 'net', 'gw', 'gl', 'sumC'];
+  function aggOf(row, x0, x1) {
+    var g = zeroRec(), x, f;
+    for (x = x0; x <= x1; x++) { var e = row[x] || {}; for (f = 0; f < WF.length; f++) { var v = e[WF[f]]; if (isNum(v)) g[WF[f]] += v; } }
+    return g;
+  }
+  function aggVal(g, obj) {
+    if (!(g.n > 0)) return NaN;
+    var m = g.sumR / g.n;
+    if (obj === 'net') return g.net;
+    if (obj === 'pf') return g.gl > 0 ? g.gw / g.gl : g.gw > 0 ? Infinity : NaN;
+    if (obj === 'sharpe') { var vv = g.n > 1 ? (g.sumR2 - g.n * m * m) / (g.n - 1) : NaN, sd = Math.sqrt(Math.max(0, vv)); return sd > 0 ? m / sd : NaN; }
+    return m;
+  }
+  function wfaOf(mat, keys, o) {
+    o = o || {};
+    if (!Array.isArray(mat) || !mat.length) fail('Analyse en avant : matrice vide.');
+    var nC = mat.length, nS = keys.length, isN = posInt(o.is, 'analyse en avant : is'), ooN = posInt(o.oos, 'analyse en avant : oos');
+    var mode = o.mode || 'rolling', obj = objOf(o.objective), minT = isNum(o.minTrades) ? o.minTrades : 1;
+    if (mode !== 'rolling' && mode !== 'anchored') fail('Analyse en avant : mode « ' + mode + ' » inconnu (rolling ou anchored).');
+    if (isN + 1 > nS) fail('Analyse en avant : ' + nS + ' séances, il en faut au moins ' + (isN + 1) + '.');
+    var windows = [], so = zeroRec(), isS = 0, isNt = 0, isC = 0, eq = [], cum = 0, pk = 0, dd = 0, x;
+    for (var k = 0; ; k++) {
+      var o0 = isN + k * ooN;
+      if (o0 >= nS) break;
+      var o1 = Math.min(nS, o0 + ooN) - 1, i0 = mode === 'anchored' ? 0 : o0 - isN, i1 = o0 - 1, best = -1, bv = -Infinity;
+      for (var c = 0; c < nC; c++) { var gi0 = aggOf(mat[c], i0, i1), v = gi0.n >= minT ? aggVal(gi0, obj) : NaN; if (v === v && v > bv) { bv = v; best = c; } }
+      var w = { isFrom: keys[i0], isTo: keys[i1], oosFrom: keys[o0], oosTo: keys[o1], best: best, isValue: best >= 0 ? bv : null, isMeanR: null, isN: 0, oosMeanR: null, oosN: 0, oosNet: 0 };
+      if (best >= 0) {
+        var gi = aggOf(mat[best], i0, i1), go = aggOf(mat[best], o0, o1);
+        w.isMeanR = gi.sumR / gi.n; w.isN = gi.n; w.oosN = go.n; w.oosMeanR = go.n ? go.sumR / go.n : null; w.oosNet = go.net;
+        isS += gi.sumR; isNt += gi.n; isC += gi.sumC;
+        for (var f = 0; f < WF.length; f++) so[WF[f]] += go[WF[f]];
+      }
+      for (x = o0; x <= o1; x++) {
+        if (best >= 0) { var e = mat[best][x] || {}; cum += isNum(e.net) ? e.net : 0; }
+        if (cum > pk) pk = cum; if (pk - cum > dd) dd = pk - cum;
+        eq.push([keys[x], cum]);
+      }
+      windows.push(w);
+    }
+    var mOos = so.n ? so.sumR / so.n : NaN, sv = so.n > 1 ? (so.sumR2 - so.n * mOos * mOos) / (so.n - 1) : NaN, sdO = Math.sqrt(Math.max(0, sv));
+    var den = isNt ? isS / isNt : NaN, costR = isNum(o.costR) ? o.costR : isNt ? isC / isNt : NaN;
+    var stitched = { n: so.n, sumR: so.sumR, meanR: mOos, sdR: so.n > 1 ? sdO : NaN, sharpe: so.n > 1 && sdO > 0 ? mOos / sdO : NaN, net: so.net,
+      pf: so.gl > 0 ? so.gw / so.gl : so.gw > 0 ? Infinity : NaN, maxDD: dd, sessions: eq.length, costR: so.n ? so.sumC / so.n : NaN };
+    return { mode: mode, is: isN, oos: ooN, objective: obj, minTrades: minT, windows: windows, stitched: stitched, eq: eq,
+      isMeanR: den, isN: isNt, costR: costR, wfe: so.n > 0 && den === den && den > (isNum(costR) ? costR : 0) ? mOos / den : null };
+  }
+
+  /* ---------- 4.7 Stress des coûts : seule l’exécution est rejouée (signaux calculés une fois) ---------- */
+  function stressOf(ctx, cfg) {
+    var ov = a.override || {}, costs = cfg.spec.costs || {}, fill = ov.fill || a.fill;
+    var comm0 = isNum(ov.commissionRT) ? ov.commissionRT : isNum(costs.commissionRT) ? costs.commissionRT : ctx.comm;
+    var slip0 = isNum(ov.slipTicks) ? ov.slipTicks : isNum(costs.slipTicks) ? costs.slipTicks : 0;
+    var slips = [0, 1, 2, 3, 4], mults = [1, 1.5, 2], thrs = [0, 1, 2], nAll = slips.length * mults.length * thrs.length + 2, kk = 0;
+    function one(sl, cm, th) {
+      var x = execute(ctx, cfg, { fill: fill, slipTicks: sl, commissionRT: cm, throughTicks: th, progress: false }), st = statsOf(x.trades, ctx.pv), lg = 0;
+      for (var q = 0; q < x.trades.length; q++) lg += x.trades[q].legs;
+      progress(++kk, nAll);
+      return { slip: sl, mult: cm === comm0 ? 1 : null, comm: cm, through: th, n: st.n, meanR: st.meanR, net: st.net, legs: lg };
+    }
+    var base = one(slip0, comm0, 0), rows = [], meanR = [], net = [], nn = [];
+    for (var it = 0; it < thrs.length; it++) {
+      var mR = [], mN = [], mn = [];
+      for (var im = 0; im < mults.length; im++) {
+        var rR = [], rN = [], rn = [];
+        for (var is = 0; is < slips.length; is++) {
+          var x = one(slips[is], comm0 * mults[im], thrs[it]); x.mult = mults[im];
+          rows.push(x); rR.push(x.meanR); rN.push(x.net); rn.push(x.n);
+        }
+        mR.push(rR); mN.push(rN); mn.push(rn);
+      }
+      meanR.push(mR); net.push(mN); nn.push(mn);
+    }
+    /* glissement d’équilibre : interpolé sur meanR(glissement), commission ×1, dépassement 0 */
+    var be, beyond = false, m0 = meanR[0][0];
+    if (!base.legs) be = 'na';
+    else if (!(m0[0] > 0)) be = 0;
+    else {
+      be = null;
+      for (var s = 1; s < slips.length; s++) if (!(m0[s] > 0)) { be = isNum(m0[s]) ? slips[s - 1] + (slips[s] - slips[s - 1]) * m0[s - 1] / (m0[s - 1] - m0[s]) : slips[s - 1]; break; }
+      if (be === null) beyond = true;
+    }
+    var plus = base.legs ? one(slip0 + 1, comm0, 0) : one(slip0, comm0, 1);
+    return { slips: slips, mults: mults, throughs: thrs, slip: slip0, comm: comm0, meanR: meanR, net: net, n: nn, rows: rows,
+      base: base, legs: base.legs, breakEven: be, beyond: beyond,
+      criterion: { kind: base.legs ? 'slip' : 'through', slip: plus.slip, through: plus.through, meanR: plus.meanR, n: plus.n, pass: plus.meanR > 0 },
+      warnings: warnList(ctx) };
+  }
+
+  /* ---------- 4.6 Bootstrap stationnaire des séances et passage d’un compte prop ----------
+     Enregistrements de séance {key?, pnl, n, lo, hi, sumR}, séances sans trade comprises. Politis–Romano : à
+     chaque pas, nouvelle position uniforme avec probabilité 1/bloc, sinon séance suivante (circulaire).
+     Compte : les champs de normAccount du desk Risque (size, target, maxLoss, dd, lockAt, dailyLimit, dailyMode,
+     consistency), plus minDays (jours de trading exigés) et maxDays (séances simulées au plus). Règles de
+     simulate (desk Risque) appliquées à la séance : plancher statique = −maxLoss ; suiveur = min(plus haut, verrou)
+     − maxLoss, le plus haut suivant hi en « intraday » (séance perdante : sommet d’abord, puis creux ; séance
+     gagnante : creux d’abord, comme les trades perdants et gagnants de simulate) et la clôture en « eod » ;
+     échec quand le creux (lo) passe sous le plancher ; limite du jour : la séance s’arrête à −dailyLimit (échec
+     si « fail » ou si ce niveau est sous le plancher) ; réussite quand le solde ≥ objectif, minDays atteints
+     et meilleure séance ≤ consistency % du profit. Les écarts restent relatifs au solde de départ. */
+  function bootIdx(r, ns, pNew, j, t) { return t === 0 || r() < pNew ? Math.floor(r() * ns) : (j + 1) % ns; }
+  function normAcc(acc) {
+    if (!acc || typeof acc !== 'object') return null;
+    if (!isNum(acc.size) || !isNum(acc.target) || !(acc.target > 0) || !isNum(acc.maxLoss) || !(acc.maxLoss > 0)) fail('Compte prop : size, target et maxLoss sont requis (compte normalisé par le desk Risque).');
+    return { size: acc.size, target: acc.target, maxLoss: acc.maxLoss, dd: acc.dd === 'intraday' || acc.dd === 'static' ? acc.dd : 'eod',
+      lockAt: isNum(acc.lockAt) ? Math.max(acc.size, acc.lockAt) : acc.size + acc.maxLoss + 100,
+      dailyLimit: isNum(acc.dailyLimit) && acc.dailyLimit > 0 ? acc.dailyLimit : null, dailyMode: acc.dailyMode === 'fail' ? 'fail' : 'pause',
+      consistency: isNum(acc.consistency) && acc.consistency > 0 ? Math.min(100, acc.consistency) : null };
+  }
+  function propOf(recs, acc, o) {
+    var ns = recs.length, draws = posInt(o.draws, 'draws', 2000), pNew = 1 / o.block, r = rng(drawSeed(o.seed, 1));
+    var A = acc.maxLoss, B = acc.target, mode = acc.dd, lock = acc.lockAt - acc.size, daily = acc.dailyLimit || 0, dfail = acc.dailyMode === 'fail', cons = acc.consistency ? acc.consistency / 100 : 0;
+    var minD = isNum(o.minDays) && o.minDays > 0 ? Math.floor(o.minDays) : 0, maxD = posInt(o.maxDays, 'maxDays', 60);
+    var passDays = [], failDays = [], cause = { gain: 0, never: 0, daily: 0 };
+    for (var d = 0; d < draws; d++) {
+      var pnl = 0, hwm = 0, best = 0, bestDay = 0, td = 0, st = 0, why = '', j = 0, k;
+      for (k = 1; k <= maxD && !st; k++) {
+        j = bootIdx(r, ns, pNew, j, k - 1);
+        var e = recs[j], start = pnl, floor = mode === 'static' ? -A : Math.min(hwm, lock) - A, dl = daily ? start - daily : -Infinity;
+        if (mode === 'intraday' && e.pnl < 0 && start + e.hi > hwm) { hwm = start + e.hi; floor = Math.min(hwm, lock) - A; }
+        var low = start + e.lo;
+        if (low <= floor || low <= dl) {
+          if (floor >= dl) { pnl = floor; st = 2; why = best > 0 ? 'gain' : 'never'; }
+          else { pnl = dl; if (pnl <= floor) { st = 2; why = best > 0 ? 'gain' : 'never'; } else if (dfail) { st = 2; why = 'daily'; } }
+        } else {
+          if (mode === 'intraday' && e.pnl >= 0 && start + e.hi > hwm) hwm = start + e.hi;
+          pnl = start + e.pnl;
+          if (mode === 'intraday') { floor = Math.min(hwm, lock) - A; if (pnl <= floor) { st = 2; why = best > 0 ? 'gain' : 'never'; } }
+        }
+        if (e.n > 0) td++;
+        if (pnl - start > bestDay) bestDay = pnl - start;
+        if (pnl > best) best = pnl;
+        if (!st && pnl >= B && td >= minD && (!cons || bestDay <= cons * pnl + 1e-9)) st = 1;
+        if (!st && mode === 'eod' && pnl > hwm) hwm = pnl;
+        if (st === 1) passDays.push(k); else if (st === 2) { failDays.push(k); cause[why]++; }
+      }
+      if (o.prog) progress(d + 1, draws);
+    }
+    var np = passDays.length, nf = failDays.length;
+    return { n: draws, minDays: minD, maxDays: maxD, pPass: np / draws, pFail: nf / draws, pNone: (draws - np - nf) / draws,
+      medPass: nul(median(passDays)), medFail: nul(median(failDays)), cause: cause, account: acc };
+  }
+  function bootOf(recs, o) {
+    var ns = recs.length;
+    if (!ns) fail('Bootstrap : aucune séance jouée dans la sélection.');
+    var draws = posInt(o.draws, 'draws', 2000), B = isNum(o.block) && o.block >= 1 ? o.block : 5, pNew = 1 / B, H = posInt(o.horizon, 'horizon', 60), seed = isNum(o.seed) ? o.seed : 1;
+    var P = new Float64Array(ns), N = new Float64Array(ns), R = new Float64Array(ns), sP = 0, sN = 0, sR = 0, j, d, t;
+    for (j = 0; j < ns; j++) {
+      var e = recs[j] || {};
+      P[j] = isNum(e.pnl) ? e.pnl : 0; N[j] = isNum(e.n) ? e.n : 0; R[j] = isNum(e.sumR) ? e.sumR : 0;
+      sP += P[j]; sN += N[j]; sR += R[j];
+    }
+    var perYear = o.perYear;
+    if (!isNum(perYear) || !(perYear > 0)) {
+      var k0 = recs[0] && recs[0].key, k1 = recs[ns - 1] && recs[ns - 1].key;
+      perYear = k0 && k1 ? ns * 365.25 / Math.max(7, dnOfKey(k1) - dnOfKey(k0) + 1) : 252;
+    }
+    var r = rng(drawSeed(seed, 0)), mr = [], an = [], total = draws * 2 + (o.account ? 1 : 0), done = 0;
+    for (d = 0; d < draws; d++) {
+      var aR = 0, aN = 0, aP = 0;
+      for (t = 0, j = 0; t < ns; t++) { j = bootIdx(r, ns, pNew, j, t); aR += R[j]; aN += N[j]; aP += P[j]; }
+      mr.push(aN ? aR / aN : NaN); an.push(aP * perYear / ns);
+      progress(++done, total);
+    }
+    /* éventail : chemins de H séances */
+    var W = H + 1, mat = new Float64Array(draws * W), r2 = rng(drawSeed(seed, 2)), q = { p05: [], p25: [], p50: [], p75: [], p95: [] }, paths = [], col = new Float64Array(draws);
+    for (d = 0; d < draws; d++) {
+      var cum = 0;
+      for (t = 0, j = 0; t < H; t++) { j = bootIdx(r2, ns, pNew, j, t); cum += P[j]; mat[d * W + t + 1] = cum; }
+      progress(++done, total);
+    }
+    for (t = 0; t < W; t++) {
+      for (d = 0; d < draws; d++) col[d] = mat[d * W + t];
+      col.sort();
+      q.p05.push(qtl(col, 0.05)); q.p25.push(qtl(col, 0.25)); q.p50.push(qtl(col, 0.5)); q.p75.push(qtl(col, 0.75)); q.p95.push(qtl(col, 0.95));
+    }
+    for (d = 0; d < Math.min(10, draws); d++) paths.push(Array.prototype.slice.call(mat.subarray(d * W, d * W + W)));
+    var sm = sortNum(mr), sa = sortNum(an), acc = normAcc(o.account), prop = null;
+    if (acc) { prop = propOf(recs, acc, { draws: o.propDraws || draws, block: B, seed: seed, minDays: o.minDays, maxDays: o.maxDays }); progress(++done, total); }
+    return { draws: draws, block: B, sessions: ns, trades: sN, perYear: perYear,
+      meanR: { obs: nul(sN ? sR / sN : NaN), lo: nul(qtl(sm, 0.05)), hi: nul(qtl(sm, 0.95)), mid: nul(qtl(sm, 0.5)) },
+      annual: { obs: sP * perYear / ns, lo: nul(qtl(sa, 0.05)), hi: nul(qtl(sa, 0.95)), mid: nul(qtl(sa, 0.5)) },
+      means: mr.map(nul), fan: { horizon: H, q: q, paths: paths }, prop: prop };
+  }
+  function sessionRecs(x) { return x.sessions.map(function (s) { return { key: s.key, pnl: s.pnl, n: s.n, lo: s.lo, hi: s.hi, sumR: s.sumR }; }); }
+
+  /* =====================================================================================
      TABLE DES OPÉRATIONS — le seul endroit où une opération s’enregistre.
-     À ajouter ici, dans ce même corps : random (4.2), permute et permuteGrid (4.3), sweep (avec la
-     matrice mat[config][séance] : {n, sumR, sumR2, net} — voir sessions[x] de execute), wfa (4.5),
-     stress (4.7), boot (4.6). Chaque opération lit `a` et rend un objet sérialisable.
+     Chaque opération lit `a` et rend un objet sérialisable. Les lois nulles, balayages, analyse en avant,
+     stress et bootstrap (4.2 – 4.7) s’appuient sur le bloc qui précède cette table.
      ===================================================================================== */
   var OPS = {
     resolve: function () { return resolveSpec(a.spec, a.values); },
@@ -1310,18 +1857,64 @@ function laboEngine(a) {
       var nS = Math.min(120, nT), warmN = 20;
       var lat = lattice({ sessions: nS + warmN, sigma: sig, tick: ctx.tick, seed: isNum(a.seed) ? a.seed : 1, start: a.start || '2026-01-05', base: isNum(a.base) ? a.base : 20000 });
       var b = {}; for (var k in a) if (own(a, k) && k !== 'onProgress') b[k] = a[k];
-      b.bars = lat; b.sel = { from: lat.keys[warmN], to: lat.keys[lat.keys.length - 1] }; b.levels = null; b.news = null; b.adj = null; b.rolls = null; b.warmSessions = warmN;
+      delete b.oosFrom; delete b.oos; delete b.cache; delete b.fp; b.bars = lat; b.sel = { from: lat.keys[warmN], to: lat.keys[lat.keys.length - 1] }; b.levels = null; b.news = null; b.adj = null; b.rolls = null; b.warmSessions = warmN;
       var c2 = prepare(b), g2 = config(c2, a.values);
       var xv = execute(c2, g2, { fill: 'vrai' }), xd = execute(c2, g2, {});
       var sv = statsOf(xv.trades, c2.pv), sd = statsOf(xd.trades, c2.pv);
       return { applicable: true, sigma: sig, k: lat.k, sessions: nS, theory: -sv.costR, vrai: sv.meanR, declare: sd.meanR, biais: sd.meanR - sv.meanR,
         n: sv.n, nDeclare: sd.n, se: sv.n > 1 ? sv.sdR / Math.sqrt(sv.n) : NaN, costR: sv.costR, fill: xd.fill };
+    },
+    /* 4.2 : { means, obs, p, pmin, lo, hi, mid, draws, n, nMean, signals, pLong, fallback, fbShare, label, warnings } */
+    random: function () {
+      var ctx = prepare(a), cfg = config(ctx, a.values), r = randomNull(ctx, cfg, { draws: a.draws, seed: seedOf() });
+      r.warnings = warnList(ctx);
+      return r;
+    },
+    /* 4.3 : { means, obs, p, draws, pmin, cut, ms, block, lo, hi, mid, n, nMean, h0, label, warnings } */
+    permute: function () { return permuteNull(prepare(a), a.values); },
+    permuteGrid: function () { return permuteGridNull(prepare(a)); },
+    /* colonnes permutées d’un tirage (contrôle et diagnostic) : { t, o, h, l, c, v, lowFirst, walk, perm, keys, block } ;
+       indices de la sélection découpée (séances de sel + amorçage) */
+    permuted: function () {
+      var ctx = prepare(a), block = blockOf(a.block), r = permuteCols(ctx, rng(drawSeed(seedOf(), isNum(a.draw) ? a.draw : 0)), block);
+      r.t = ctx.F1.t; r.block = block; r.keys = ctx.S.map(function (x) { return x.key; });
+      return r;
+    },
+    sweep: function () {
+      var ctx = prepare(a), r = sweepCore(ctx);
+      r.warnings = warnList(ctx);
+      return r;
+    },
+    /* 4.5 : sur a.mat (+ a.keys, colonnes = séances) d’un balayage, ou après un balayage calculé ici ; options a.wfa */
+    wfa: function () {
+      var src;
+      if (a.mat) {
+        oosGuard();
+        if (!Array.isArray(a.keys) || !a.mat.length || a.keys.length !== a.mat[0].length) fail('Analyse en avant : mat et keys (une clé par colonne) sont requis.');
+        var keep = [];
+        a.keys.forEach(function (k, x) { if (inSel(k)) keep.push(x); });
+        src = { keys: keep.map(function (x) { return a.keys[x]; }), mat: a.mat.map(function (row) { return keep.map(function (x) { return row[x]; }); }), configs: a.configs || null };
+      } else { var ctx = prepare(a); src = sweepCore(ctx); src.warnings = warnList(ctx); }
+      var w = wfaOf(src.mat, src.keys, a.wfa || {});
+      if (src.configs) w.windows.forEach(function (x) { x.values = x.best >= 0 ? src.configs[x.best] || null : null; });
+      if (src.warnings) w.warnings = src.warnings;
+      return w;
+    },
+    stress: function () { var ctx = prepare(a); return stressOf(ctx, config(ctx, a.values)); },
+    /* 4.6 : sur a.records (enregistrements de séance d’un run) ou sur le run calculé ici */
+    boot: function () {
+      var recs, warnings = [];
+      if (Array.isArray(a.records)) { oosGuard(); recs = a.records.filter(function (x) { return x && inSel(x.key); }); }
+      else { var ctx = prepare(a), cfg = config(ctx, a.values); recs = sessionRecs(execute(ctx, cfg, execOpts({}))); warnings = warnList(ctx); }
+      var r = bootOf(recs, { draws: a.draws, seed: seedOf(), block: a.block, horizon: a.horizon, perYear: a.perYear, account: a.account, propDraws: a.propDraws, minDays: a.minDays, maxDays: a.maxDays });
+      r.warnings = warnings;
+      return r;
     }
-    /* ── opérations à enregistrer ici : random, permute, permuteGrid, sweep, wfa, stress, boot ── */
   };
   var fn = own(OPS, a.op) ? OPS[a.op] : null;
   if (!fn) fail('Opération inconnue : « ' + a.op + ' ».');
   return fn();
+  })(Math, Float64Array, Int32Array, Uint8Array, Map, Intl, Date, JSON, Object, Array, String, Error, ArrayBuffer, 0 / 0, 1 / 0);
 }
 
 /* =====================================================================================
@@ -1342,7 +1935,8 @@ function laboWorkerMain() {
     if (m.type !== 'call') return;
     var a = m.a || {}, last = Date.now();
     a.op = m.op;
-    if (!a.bars && m.op !== 'lattice' && m.op !== 'key' && m.op !== 'stats' && m.op !== 'resolve' && m.op !== 'mirror') {
+    var given = (m.op === 'wfa' && a.mat) || (m.op === 'boot' && a.records);   /* calculés sur un résultat déjà là */
+    if (!a.bars && !given && m.op !== 'lattice' && m.op !== 'key' && m.op !== 'stats' && m.op !== 'resolve' && m.op !== 'mirror') {
       if (!COLS || (a.fp && a.fp !== FP)) { G.postMessage({ type: 'error', id: m.id, e: 'Colonnes non chargées pour ce jeu.' }); return; }
       a.bars = COLS; a.fp = FP; a.cache = CACHE;
     }
@@ -1353,7 +1947,9 @@ function laboWorkerMain() {
     var r;
     try { r = laboEngine(a); }
     catch (err) { G.postMessage({ type: 'error', id: m.id, e: String((err && err.message) || err) }); return; }
-    var tl = transfers(r);
+    /* seules les colonnes neuves d’une marche (lattice) sont transférées : les autres résultats peuvent partager
+       leur tampon avec le jeu chargé ou avec le cache des séries, qu’un transfert détacherait */
+    var tl = m.op === 'lattice' ? transfers(r) : [];
     try { G.postMessage({ type: 'done', id: m.id, r: r }, tl); } catch (err2) { G.postMessage({ type: 'done', id: m.id, r: r }); }
   };
 }
@@ -1369,7 +1965,15 @@ LE.HEAVY = { random: 1, permute: 1, permuteGrid: 1, sweep: 1, wfa: 1, boot: 1 };
 LE.op = function (name, a) { var b = {}; for (var k in (a || {})) if (Object.prototype.hasOwnProperty.call(a, k)) b[k] = a[k]; b.op = name; return laboEngine(b); };
 LE.run = function (a) { return LE.op('run', a); };
 LE.resolve = function (spec, values) { return laboEngine({ op: 'resolve', spec: spec, values: values }); };
-LE.mirror = function (rule) { return laboEngine({ op: 'mirror', rule: rule }); };
+/* mirror(x, kind?) : kind = 'rule' | 'cond' | 'operand' | 'spec' ; deviné sinon (trigger → règle, clé de
+   condition → condition, sinon opérande). Une spec est résolue (values) puis son côté acheteur reflété. */
+LE.COND_KEYS = ['cmp', 'cross', 'touch', 'reject', 'break', 'bar', 'time', 'news', 'all', 'any', 'not', 'for', 'within'];
+LE.mirror = function (x, kind, values) {
+  if (!kind) kind = x && typeof x === 'object' && x.long ? 'spec' : x && typeof x === 'object' && x.trigger ? 'rule' : x && typeof x === 'object' && LE.COND_KEYS.some(function (k) { return Object.prototype.hasOwnProperty.call(x, k); }) ? 'cond' : 'operand';
+  var a = { op: 'mirror', values: values };
+  if (kind === 'spec') a.spec = x; else if (kind === 'rule') a.rule = x; else if (kind === 'cond') a.cond = x; else a.operand = x;
+  return laboEngine(a);
+};
 LE.key = function (t) { return laboEngine({ op: 'key', t: t }); };
 LE.stats = function (trades, pointValue) { return laboEngine({ op: 'stats', trades: trades, settings: { pointValue: pointValue } }); };
 LE.lattice = function (o) { return LE.op('lattice', o || {}); };
@@ -1411,6 +2015,7 @@ LE.worker = function (opts) {
     var o = {};
     ['t', 'o', 'h', 'l', 'c', 'v'].forEach(function (k) { var x = cols[k]; o[k] = x && x.length != null ? (ArrayBuffer.isView(x) ? x : new Float64Array(x)) : null; });
     var lf = cols.lowFirst || cols.lf; o.lowFirst = lf && lf.length != null ? (ArrayBuffer.isView(lf) ? lf : new Uint8Array(lf)) : null;
+    var wk = cols.walk; o.walk = wk && wk.length != null ? (ArrayBuffer.isView(wk) ? wk : new Float64Array(wk)) : null;
     return o;
   }
   function sendLoad(id) {

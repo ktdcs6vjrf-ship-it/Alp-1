@@ -164,7 +164,9 @@ function cmdBars(file, o) {
   if (roll === 'non-ajuste') q.rolls.filter(x => x.where === 'ouverture').forEach(x => { rollKeys[x.key] = true; });
   const fingerprint = DN.fingerprint({ instrument, D }, cols), id = 'ds' + hash36(fingerprint, 12);
   const ex = readExisting(o.existing, 'datasets/items'), warnings = [];
-  for (const [eid, e] of ex) if (eid !== id && e.doc.fingerprint === fingerprint && !e.doc.deleted && !e.doc.deleting && !o.force) {
+  /* Données identiques déjà complètes dans le compte (même empreinte, quel que soit l’identifiant) : rien à écrire.
+     Un jeu de même identifiant resté incomplet (import interrompu) est réécrit, épinglé par if_version. */
+  for (const [eid, e] of ex) if (e.doc.fingerprint === fingerprint && e.doc.complete === true && !e.doc.deleted && !e.doc.deleting && !o.force) {
     const plan = { outil: 'ingest', kind: 'bars', status: 'deja-present', resume: 'Données identiques déjà présentes : jeu ' + eid + ' (« ' + (e.doc.name || '') + ' »). Rien à écrire (--force pour réimporter).', calls: [], warnings: [] };
     mkdirp(out); writePlan(out, plan); return { plan, out, id: eid };
   }
@@ -444,7 +446,12 @@ function cmdTrades(file, o) {
    le sens de lecture (« nom : prix » ou « prix = nom ») est déduit du côté qui rend un nombre ; un titre ##
    commute la lecture ; une fenêtre de plausibilité écarte ce qui est trop loin des autres.
    ===================================================================== */
-function cleanNumber(s) { return String(s).replace(/[,\s  *`$_]/g, '').replace(/−/g, '-').trim(); }
+/* Une virgule suivie d’un ou deux chiffres en fin de nombre est une virgule décimale (« 21 450,25 ») ; sinon c’est
+   un séparateur de milliers à l’américaine (« 21,450.25 »), retiré comme dans le script Pine. */
+function cleanNumber(s) {
+  const t = String(s).replace(/[\s  *`$_]/g, '').replace(/−/g, '-').trim();
+  return /^[-+]?\d+,\d{1,2}$/.test(t) ? t.replace(',', '.') : t.replace(/,/g, '');
+}
 function cleanTag(s) { return String(s).replace(/[*`#]/g, '').replace(/-/g, ' ').replace(/\s+/g, ' ').trim(); }
 function toNumber(s) { return /^[-+]?\d+(\.\d+)?$/.test(s) ? Number(s) : NaN; }
 function headDigits(s) { const m = /^\d{1,3}/.exec(cleanTag(s)); return m ? m[0] : ''; }
@@ -507,22 +514,22 @@ function cmdLevels(file, o) {
   const key = o.date; if (!/^\d{4}-\d{2}-\d{2}$/.test(key || '')) fail('--date AAAA-MM-JJ (la clé de la séance Globex) est obligatoire.');
   const scale = o.scale || 'contrat'; if (['contrat', 'NDX'].indexOf(scale) < 0) fail('--scale : contrat ou NDX.');
   const base = o.base != null && o.base !== true ? parseNum(String(o.base)) : null;
-  if (o.base != null && !isFinite(base)) fail('--base : un nombre (NQ − NDX ce jour-là).');
+  if (o.base != null && !Number.isFinite(base)) fail('--base : un nombre (NQ − NDX ce jour-là).');
   const out = path.resolve(o.out), text = fs.readFileSync(file, 'utf8');
   const r = parseLevels(text, o);
   if (!r.count) fail('Aucun niveau lu. Lignes refusées : ' + r.rejected.slice(0, 5).map(x => x.line + ' (' + x.why + ')').join(', ') + '.');
   const month = key.slice(0, 7), ex = readExisting(o.existing, 'levels/items'), prev = ex.get(month) || null;
   const days = Object.assign({}, prev && prev.doc.days || {});
   const day = { levels: r.levels, scale, source: o.source && o.source !== true ? String(o.source) : path.basename(file) };
-  if (isFinite(base)) day.base = base;
+  if (Number.isFinite(base)) day.base = base;
   const replaced = !!days[key];
   days[key] = day;
   const doc = { id: month, days, u: nowU(prev && prev.doc.u) };
   const calls = batchCalls([docWrite(out, 'levels', COLL.levels, doc, prev)], 'niveaux du mois ' + month);
-  const ib = inboxDoc('niveaux', 'Niveaux du ' + fmtKey(key), r.count, Object.keys(r.levels).join(', ') + ' · échelle ' + scale + (scale === 'NDX' ? (isFinite(base) ? ', base ' + base : ', base absente') : ''), { desk: 'donnees', tab: 'niveaux', sel: key }, key + '|' + JSON.stringify(r.levels));
+  const ib = inboxDoc('niveaux', 'Niveaux du ' + fmtKey(key), r.count, Object.keys(r.levels).join(', ') + ' · échelle ' + scale + (scale === 'NDX' ? (Number.isFinite(base) ? ', base ' + base : ', base absente') : ''), { desk: 'donnees', tab: 'niveaux', sel: key }, key + '|' + JSON.stringify(r.levels));
   calls.push.apply(calls, batchCalls([docWrite(out, 'inbox', COLL.inbox, ib, null)], 'élément de boîte (en dernier)'));
   const warnings = [];
-  if (scale === 'NDX' && !isFinite(base)) warnings.push('Échelle NDX sans --base : le Labo refusera ces niveaux tant que la base NQ − NDX de ce jour n’est pas écrite.');
+  if (scale === 'NDX' && !Number.isFinite(base)) warnings.push('Échelle NDX sans --base : le Labo refusera ces niveaux tant que la base NQ − NDX de ce jour n’est pas écrite.');
   if (r.rejected.length) warnings.push(r.rejected.length + ' ligne(s) écartée(s) : ' + r.rejected.slice(0, 6).map(x => 'ligne ' + x.line + ' « ' + x.text + ' » (' + x.why + ')').join(' ; ') + '.');
   if (replaced) warnings.push('La séance ' + key + ' avait déjà des niveaux : ils sont remplacés.');
   if (prev && !prev.version) warnings.push('Le mois ' + month + ' existe déjà mais sa version est inconnue : lis-le (ArtifactData get) et ajoute if_version au lot.');

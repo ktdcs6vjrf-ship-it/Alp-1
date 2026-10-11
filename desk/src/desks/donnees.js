@@ -572,7 +572,7 @@ DN.visitFromCols = function (cols, m) {
 DN.synthetic = function (o) {
   var L = T.lib.laboEngine;
   if (!L || typeof L.op !== 'function') throw new Error('Moteur indisponible : la marche synthétique demande le moteur du Labo.');
-  o = Object.assign({ seed: 1, sigma: 4, sessions: 60, tick: 0.25 }, o || {});
+  o = Object.assign({ seed: 1, sigma: 2, sessions: 60, tick: 0.25 }, o || {});
   var r = L.op('lattice', o), b = r && (r.bars || r.cols || r);
   if (!b || !b.t || !b.t.length) throw new Error('Moteur indisponible : la marche synthétique n’a rendu aucune barre.');
   var ds = DN.visitFromCols(b, { id: 'synthetique', name: 'Marche sans dérive · graine ' + o.seed, source: 'synthetique', roll: 'ajuste', instrument: o.instrument || 'MNQ',
@@ -774,7 +774,7 @@ var CSS = '.dn-stack{display:flex;flex-direction:column;gap:12px;min-width:0}' +
   '.dn-meta{font:500 11px/1.4 var(--f-mono);color:var(--mute)}' +
   '.dn-detail{font-size:12.5px;color:var(--soft);line-height:1.5;overflow-wrap:anywhere}' +
   '.dn-acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center}' +
-  '.dn-kv{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:5px 14px;margin:0;font:500 12px/1.45 var(--f-mono)}' +
+  '.dn-kv{max-width:560px;display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:5px 14px;margin:0;font:500 12px/1.45 var(--f-mono)}' +
   '.dn-kv dt{color:var(--mute);white-space:nowrap}.dn-kv dd{margin:0;color:var(--fg);text-align:right;overflow-wrap:anywhere;min-width:0}' +
   '.dn-line{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font:500 11.5px/1.5 var(--f-mono);color:var(--mute);min-width:0}.dn-line b{color:var(--fg);font-weight:600;overflow-wrap:anywhere}' +
   '.dn-cap{font:600 10px/1.3 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}' +
@@ -790,6 +790,11 @@ function injectCss() { if (document.getElementById('donnees-css')) return; var s
 
 var KIND = { trades: 'Trades', barres: 'Barres', strategie: 'Stratégie', niveaux: 'Niveaux', macro: 'Macro', note: 'Note', migration: 'Migration' };
 var DESK_NAME = { journal: 'le journal', donnees: 'Données', labo: 'le Labo', macro: 'Macro', nq: 'NQ', quant: 'Quant' };
+function goLabel(g) {
+  if (g.desk === 'donnees') return g.tab === 'series' ? (g.sel ? 'Voir le jeu' : 'Voir les séries') : g.tab === 'niveaux' ? 'Voir les niveaux' : 'Ouvrir';
+  if (g.desk === 'labo') return g.sel ? 'Ouvrir dans le Labo' : 'Ouvrir le Labo';
+  return 'Ouvrir ' + (DESK_NAME[g.desk] || g.desk);
+}
 var ROLL = { ajuste: 'ajusté', 'non-ajuste': 'non ajusté', inconnu: 'inconnu' };
 var TZ_OPTS = [{ v: 'America/New_York', label: 'New York' }, { v: 'America/Chicago', label: 'Chicago (CME)' }, { v: 'Europe/Paris', label: 'Paris' }, { v: 'UTC', label: 'UTC' }];
 var TIME_KIND = { s: 'secondes Unix', ms: 'millisecondes Unix', iso: 'ISO avec fuseau', local: 'heure locale du fichier' };
@@ -812,20 +817,22 @@ function deskExists(id) { return T.desks().some(function (d) { return d.id === i
 function qualityView(q) {
   var wrap = h('div', { class: 'dn-stack' });
   wrap.appendChild(U.kpis([
-    { label: 'Séances', value: F.int(q.sessions), hint: q.short.length ? plural(q.short.length, 'courte') + ' (< 80 %)' : 'toutes ≥ 80 % des 1 380 barres' },
+    { label: 'Séances', value: F.int(q.sessions), hint: q.short.length ? plural(q.short.length, 'courte') + ' (< 80 %)' : 'toutes ≥ 80 %' },
     { label: 'Barres', value: F.int(q.bars), hint: fmtKey(q.from) + ' → ' + fmtKey(q.to) },
-    { label: 'Minutes manquantes', value: F.int(q.missing), hint: plural(q.holes, 'trou') + ' dans les séances' },
+    { label: 'Minutes manquantes', value: F.int(q.missing), hint: q.holes ? plural(q.holes, 'trou') + ' en séance' : 'aucun trou' },
     { label: 'Barres plates', value: F.int(q.flat), hint: F.pct(q.flatShare, 2) + ' des barres' },
-    { label: 'Sauts suspects', value: F.int(q.rollCount), tone: q.rollCount ? 'acc' : null, hint: q.rollCount ? 'au-delà de 8 écarts-types' : 'aucun au-delà de 8 écarts-types' },
-    { label: 'Sans volume', value: q.hasVolume ? F.int(q.noVolume.length) : 'toutes', hint: q.hasVolume ? 'séances sans aucun volume' : 'la source n’a pas de volume' }
+    { label: 'Sauts suspects', value: F.int(q.rollCount), tone: q.rollCount ? 'acc' : null, hint: 'seuil : 8 σ robustes' },
+    { label: 'Sans volume', value: q.hasVolume ? F.int(q.noVolume.length) : 'toutes', hint: q.hasVolume ? (q.noVolume.length ? 'séances à zéro' : 'volume partout') : 'source sans volume' }
   ], 3));
   var days = q.days || [];
   if (days.length) {
+    /* Abscisse : la clé de chaque séance (jamais l’heure d’ouverture, qui tombe la veille), sans trou de week-end. */
+    var lab = days.map(function (d) { return days.length > 260 ? d.key.slice(5, 7) + '/' + d.key.slice(2, 4) : fmtKeyShort(d.key); });
     wrap.appendChild(h('div', { class: 'dn-cap' }, 'Amplitude de chaque séance, en points'));
-    if (days.length <= 40) wrap.appendChild(C.bar({ cats: days.map(function (d) { return fmtKeyShort(d.key); }), series: [{ name: 'Amplitude', values: days.map(function (d) { return d.range; }), tone: 'violet' }], fmt: function (v) { return F.num(v, 0); }, height: 170 }));
-    else wrap.appendChild(C.line({ series: [{ name: 'Amplitude', points: days.map(function (d) { return [d.t0, d.range]; }), tone: 'violet', area: true }], x: { type: 'time' }, y: { zero: true, fmt: function (v) { return F.num(v, 0); } }, height: 170 }));
+    if (days.length <= 40) wrap.appendChild(C.bar({ cats: lab, series: [{ name: 'Amplitude', values: days.map(function (d) { return d.range; }), tone: 'violet' }], fmt: function (v) { return F.num(v, 0); }, height: 170 }));
+    else wrap.appendChild(C.line({ series: [{ name: 'Amplitude', points: days.map(function (d, i) { return [i, d.range]; }), tone: 'violet', area: true }], x: { type: 'cat', labels: lab }, y: { zero: true, fmt: function (v) { return F.num(v, 0); } }, height: 170 }));
     wrap.appendChild(h('div', { class: 'dn-cap' }, 'Clôture de chaque séance'));
-    wrap.appendChild(C.line({ series: [{ name: 'Clôture', points: days.map(function (d) { return [d.t0, d.close]; }), tone: 'fg' }], x: { type: 'time' }, y: { fmt: function (v) { return F.num(v, 0); } }, height: 150, ml: 52 }));
+    wrap.appendChild(C.line({ series: [{ name: 'Clôture', points: days.map(function (d, i) { return [i, d.close]; }), tone: 'fg' }], x: { type: 'cat', labels: lab }, y: { fmt: function (v) { return F.num(v, 0); } }, height: 150, ml: 52 }));
   }
   var notes = [];
   if (q.misaligned) notes.push(U.note(plural(q.misaligned, 'barre') + ' ne tombe' + (q.misaligned > 1 ? 'nt' : '') + ' pas sur une minute entière : l’enregistrement les refuse.', true));
@@ -843,11 +850,13 @@ function qualityView(q) {
 function renderInbox(root, ctx, subs) {
   var col = coll('inbox/items'); subs.push(col.on(function () { if (ctx.tab === 'boite') ctx.rerender(); }));
   var items = DN.inbox(), unseen = items.filter(function (x) { return !x.seen; });
+  var week = items.filter(function (x) { return (x.at || x.u || 0) >= Date.now() - 7 * 86400000; }).length;
   root.appendChild(U.kpis([
     { label: 'Non lus', value: F.int(unseen.length), tone: unseen.length ? 'acc' : null, hint: unseen.length ? 'à ouvrir' : 'tout est lu' },
+    { label: 'Sept jours', value: F.int(week), hint: 'arrivés récemment' },
     { label: 'Éléments', value: F.int(items.length), hint: 'déposés par Claude' },
     { label: 'Dernier', value: items.length ? F.date(items[0].at || items[0].u) : '—', hint: items.length ? (KIND[items[0].kind] || 'élément') : 'rien encore' }
-  ], 3));
+  ]));
   var sec = U.section('Ce que Claude a *déposé*', unseen.length ? plural(unseen.length, 'non lu') : null);
   if (!items.length) {
     sec.appendChild(U.empty({ title: 'Rien pour l’instant', text: 'Quand Claude importe tes trades, tes barres, des niveaux ou une stratégie, un élément arrive ici avec un lien direct vers l’endroit où le retrouver.', action: U.button({ label: 'Que lui envoyer ?', small: true, onClick: function () { ctx.setTab('envoyer'); } }) }));
@@ -859,13 +868,14 @@ function renderInbox(root, ctx, subs) {
   root.appendChild(U.note('Chaque élément pointe vers l’endroit où la donnée vit désormais. Le lire ne change rien aux données : il sert à suivre ce qui est arrivé depuis ta dernière visite.'));
 }
 function inboxRow(it, ctx) {
-  var g = it.go, ok = g && g.desk && deskExists(g.desk);
+  var g = it.go, ok = g && g.desk && deskExists(g.desk), here = g && g.desk === 'donnees' && (g.tab || 'boite') === 'boite';
   var meta = [fmtWhen(it.at || it.u)];
   if (fin(it.count)) meta.push(F.int(it.count) + (it.kind === 'trades' ? ' trade' + (it.count > 1 ? 's' : '') : it.kind === 'barres' ? ' séance' + (it.count > 1 ? 's' : '') : it.kind === 'niveaux' ? ' niveau' + (it.count > 1 ? 'x' : '') : ''));
   function open() {
     if (!it.seen) DN.markSeen(it.id);
     T.store.set('donnees:go', { desk: g.desk, tab: g.tab || null, sel: g.sel == null ? null : g.sel, from: it.id, at: Date.now() });
     if (g.desk === 'donnees' && g.tab === 'series' && g.sel) { UI.sel = g.sel; T.store.set('donnees:sel', g.sel); }
+    if (g.desk === 'donnees' && g.tab === 'niveaux' && g.sel) UI.day = String(g.sel);
     if (g.desk === 'donnees' && g.tab) { ctx.setTab(g.tab); return; }
     T.nav.go(g.desk, g.tab || undefined);
   }
@@ -874,7 +884,7 @@ function inboxRow(it, ctx) {
     h('div', { class: 'dn-meta' }, meta.join(' · ')),
     it.detail ? h('div', { class: 'dn-detail' }, String(it.detail)) : null,
     h('div', { class: 'dn-acts' },
-      g ? U.button({ label: ok ? 'Ouvrir ' + (DESK_NAME[g.desk] || g.desk) : 'Desk absent de cette version', small: true, kind: ok ? 'pri' : null, disabled: !ok, onClick: open }) : null,
+      g && !here ? U.button({ label: ok ? goLabel(g) : 'Desk absent de cette version', small: true, kind: ok ? 'pri' : null, disabled: !ok, onClick: open }) : null,
       !it.seen ? U.button({ label: 'Marquer comme lu', small: true, kind: 'ghost', onClick: function () { DN.markSeen(it.id); } }) : null));
 }
 
@@ -965,8 +975,8 @@ function fileCard(ctx) {
     var why = canUse(r); if (why) body.push(U.note(why, true));
   }
   body.push(U.fields([
-    { type: 'select', label: 'Fuseau du fichier', value: P.tz, options: TZ_OPTS, hint: 'si l’heure n’a pas de fuseau', onChange: function (v) { setPrefs({ tz: v }); reread(); } },
-    h('div', { class: 'fld' }, h('label', null, 'L’heure d’une barre marque'), U.seg({ aria: 'Horodatage', options: [{ v: 'ouverture', label: 'son ouverture' }, { v: 'cloture', label: 'sa clôture' }], value: P.stamp, onChange: function (v) { setPrefs({ stamp: v }); reread(); } }))
+    { type: 'select', label: 'Fuseau du fichier', value: P.tz, options: TZ_OPTS, full: true, hint: 'utilisé seulement si l’heure n’indique pas son fuseau', onChange: function (v) { setPrefs({ tz: v }); reread(); } },
+    h('div', { class: 'fld full' }, h('label', null, 'L’heure d’une barre marque'), U.seg({ aria: 'Horodatage', options: [{ v: 'ouverture', label: 'son ouverture' }, { v: 'cloture', label: 'sa clôture' }], value: P.stamp, onChange: function (v) { setPrefs({ stamp: v }); reread(); } }))
   ]));
   if (FILE.phase === 'ready' && r && !canUse(r)) {
     body.push(U.fields([
@@ -988,12 +998,19 @@ function fileCard(ctx) {
     FILE.file && FILE.phase !== 'reading' ? U.button({ label: 'Effacer', small: true, kind: 'ghost', onClick: function () { if (VISIT && FILE.res && VISIT.origin === FILE.res) DN.setVisit(null); FILE = { file: null, name: '', size: 0, phase: 'idle', progress: 0, step: '', err: null, res: null, cancel: null, saving: null, saveErr: null, savedId: null, label: '', progEl: null, progTx: null }; ctx.rerender(); } }) : null));
   var card = U.card({ title: 'Fichier de cet appareil', meta: FILE.phase === 'ready' ? 'lu' : FILE.phase === 'reading' ? 'lecture' : FILE.phase === 'error' ? 'refusé' : 'à choisir', body: body });
   var out = [card];
-  if (FILE.phase === 'ready' && r && r.quality && !(VISIT && VISIT.origin === r)) { var s = U.section('Qualité du *fichier*', plural(r.sessions.length, 'séance')); s.appendChild(qualityView(r.quality)); out.push(s); }
+  if (FILE.phase === 'ready' && r && r.quality && !FILE.savedId && !(VISIT && VISIT.origin === r)) { var s = U.section('Qualité du *fichier*', plural(r.sessions.length, 'séance')); s.appendChild(qualityView(r.quality)); out.push(s); }
   return out;
 }
 function visitSection(ctx) {
   var V = VISIT, sec = U.section('Jeu de cette *visite*', V ? (V.meta.source === 'synthetique' ? 'synthétique' : 'fichier local') : 'aucun');
-  if (!V) { sec.appendChild(U.note('Aucun jeu en mémoire. Sans fichier ni jeu du compte, le Labo tourne sur une marche aléatoire sans dérive, annoncée comme telle : aucun avantage n’y existe.')); return sec; }
+  if (!V) {
+    sec.appendChild(U.note('Aucun jeu en mémoire. Sans fichier ni jeu du compte, le Labo tourne sur une marche aléatoire sans dérive, annoncée comme telle : aucun avantage n’y existe.'));
+    if (T.lib.laboEngine && typeof T.lib.laboEngine.op === 'function') sec.appendChild(h('div', { class: 'dn-acts' }, U.button({ label: 'Charger une marche sans dérive', small: true, kind: 'ghost', onClick: function () {
+      try { DN.setVisit(DN.synthetic({ seed: 1, sessions: 60, sigma: 2 })); } catch (e) { T.toast(String(e && e.message || e)); }
+      ctx.rerender();
+    } })));
+    return sec;
+  }
   var m = V.meta, synth = m.source === 'synthetique';
   var body = [h('div', { class: 'dn-acts' }, U.pill(synth ? 'synthétique, pas le marché' : 'fichier local', synth ? 'acc' : 'on'), U.pill(m.instrument || 'MNQ'))];
   body.push(kv([['Période', fmtKey(m.from) + ' → ' + fmtKey(m.to)], ['Séances', F.int(m.sessions)], ['Barres', F.int(m.bars)], ['Volume', m.hasVolume ? 'oui' : 'non'], ['Pas de prix', m.D ? '1/' + F.int(m.D) : '—'], ['Empreinte', m.fingerprint ? DN.shortPrint(m.fingerprint) : '—']]));
@@ -1020,7 +1037,7 @@ function datasetCard(meta, ctx) {
   var body = [kv([
     ['Instrument', meta.instrument || '—'], ['Période', fmtKey(meta.from) + ' → ' + fmtKey(meta.to)], ['Séances', fin(meta.sessions) ? F.int(meta.sessions) : '—'], ['Barres', fin(meta.bars) ? F.int(meta.bars) : '—'],
     ['Volume', meta.hasVolume ? 'oui' : 'non'], ['Pas de prix', fin(meta.D) ? '1/' + F.int(meta.D) : '—'], ['Contrat continu', ROLL[meta.roll] || 'inconnu'],
-    ['Horodatage', meta.stamp === 'cloture' ? 'clôture, recalé à l’ouverture' : 'ouverture'], ['Fichiers', plural(assets.length, 'année') + ' · ' + fmtBytes(bytes)],
+    ['Horodatage', meta.stamp === 'cloture' ? 'clôture, recalé à l’ouverture' : 'ouverture'], ['Fichiers', assets.length ? plural(assets.length, 'année') + ' · ' + fmtBytes(bytes) : 'aucun'],
     ['Source', meta.source === 'claude' ? 'écrit par Claude' : meta.source === 'synthetique' ? 'synthétique' : 'fichier'], ['Empreinte', meta.fingerprint ? DN.shortPrint(meta.fingerprint) : '—'], ['Ajouté le', fmtWhen(meta.createdAt || meta.u)]
   ])];
   if (meta.note) body.push(U.note(String(meta.note)));
@@ -1050,6 +1067,7 @@ function storageCard() {
   DN.assetUsage().then(function (a) {
     if (!slot.isConnected) return; T.clear(slot);
     if (a.source === 'compte') slot.appendChild(h('span', null, h('b', null, fmtBytes(a.bytes)), ' de fichiers attachés' + (fin(a.maxBytes) ? ' sur ' + fmtBytes(a.maxBytes) : '') + ' · ' + plural(a.files || 0, 'fichier') + (fin(a.maxFiles) ? ' sur ' + F.int(a.maxFiles) : '')));
+    else if (!(a.files > 0)) slot.appendChild(h('span', null, 'Aucun fichier de barres enregistré.'));
     else slot.appendChild(h('span', null, h('b', null, fmtBytes(a.bytes)), ' de fichiers de barres selon les fiches des jeux · ' + plural(a.files || 0, 'fichier')));
   });
   var parts = u.parts.filter(function (p) { return p.n > 0; });
@@ -1082,11 +1100,13 @@ function renderLevels(root, ctx, subs) {
   var col = coll('levels/items'); subs.push(col.on(function () { if (ctx.tab === 'niveaux') ctx.rerender(); }));
   var days = DN.levelDays(), months = {}, noBase = days.filter(function (d) { return d.scale === 'NDX' && d.base == null; });
   days.forEach(function (d) { months[d.month] = 1; });
+  var nLv = 0; days.forEach(function (d) { nLv += d.n; });
   root.appendChild(U.kpis([
     { label: 'Séances', value: F.int(days.length), hint: plural(Object.keys(months).length, 'mois') },
+    { label: 'Niveaux', value: F.int(nLv), hint: days.length ? F.num(nLv / days.length, 1) + ' par séance' : 'rien encore' },
     { label: 'Dernière', value: days.length ? fmtKeyShort(days[0].key) : '—', hint: days.length ? plural(days[0].n, 'niveau', 'niveaux') : 'rien encore' },
     { label: 'NDX sans base', value: F.int(noBase.length), tone: noBase.length ? 'neg' : null, hint: noBase.length ? 'refusés par le Labo' : 'aucun' }
-  ], 3));
+  ]));
   if (!days.length) {
     root.appendChild(U.empty({ title: 'Aucun niveau pour l’instant', text: 'Envoie à Claude un collage « NOM : prix » (export d’un robot GEX ou ta propre liste), la date de la séance et l’échelle : prix du contrat, ou de l’indice NDX avec la base NQ − NDX du jour. Il les range ici, séance par séance.', action: U.button({ label: 'Que lui envoyer ?', small: true, onClick: function () { ctx.setTab('envoyer'); } }) }));
     return;
@@ -1094,13 +1114,14 @@ function renderLevels(root, ctx, subs) {
   var cur = days.find(function (d) { return d.key === UI.day; }) || days[0]; UI.day = cur.key;
   var add = cur.scale === 'NDX' && cur.base != null ? cur.base : 0, conv = cur.scale !== 'NDX' || cur.base != null;
   var rows = cur.names.map(function (n) { var v = Number(cur.levels[n]); return { name: n, v: v, c: conv ? v + add : NaN }; }).sort(function (a, b) { return b.v - a.v; });
-  var s1 = U.section('Séance du *' + fmtKey(cur.key) + '*', cur.source ? 'source : ' + cur.source : null);
+  var s1 = U.section('Séance du *' + fmtKey(cur.key) + '*', conv && cur.scale === 'NDX' ? 'prix ramenés au contrat' : null);
   var body = [h('div', { class: 'dn-acts' }, U.pill(cur.scale === 'NDX' ? 'échelle NDX' : 'échelle contrat', 'on'), cur.scale === 'NDX' ? U.pill(cur.base != null ? 'base ' + F.num(cur.base, 2) : 'base absente', cur.base != null ? null : 'no') : null)];
-  body.push(C.ladder({ levels: rows.filter(function (r) { return isFinite(conv ? r.c : r.v); }).map(function (r) { return { price: conv ? r.c : r.v, label: r.name, kind: /HVL|FLIP/i.test(r.name) ? 'violet' : null }; }), fmt: function (v) { return F.num(v, 2); } }));
+  var lad = rows.filter(function (r) { return isFinite(conv ? r.c : r.v); });
+  if (lad.length >= 2) body.push(C.ladder({ levels: lad.map(function (r) { return { price: conv ? r.c : r.v, label: r.name, kind: /HVL|FLIP/i.test(r.name) ? 'violet' : null }; }), fmt: function (v) { return F.num(v, 2); } }));
   body.push(U.table({ cols: [{ k: 'name', label: 'Nom' }, { k: 'v', label: cur.scale === 'NDX' ? 'NDX' : 'Prix', align: 'r', fmt: function (v) { return F.num(v, 2); } }].concat(cur.scale === 'NDX' ? [{ k: 'c', label: 'Contrat', align: 'r', fmt: function (v) { return isFinite(v) ? F.num(v, 2) : '—'; } }] : []), rows: rows }));
   if (cur.scale === 'NDX' && cur.base == null) body.push(U.note('Échelle NDX sans base : le Labo refuse ces niveaux tant que la base NQ − NDX de ce jour n’est pas écrite.', true));
   else if (cur.scale === 'NDX') body.push(U.note('Le Labo lit niveau + base (' + F.num(cur.base, 2) + ' points), puis l’ajustement de roll de la séance s’il y en a un.'));
-  s1.appendChild(U.card({ title: plural(rows.length, 'niveau', 'niveaux'), meta: fmtKey(cur.key), body: body }));
+  s1.appendChild(U.card({ title: plural(rows.length, 'niveau', 'niveaux'), meta: cur.source ? 'source : ' + cur.source : null, body: body }));
   root.appendChild(s1);
   var s2 = U.section('Toutes les *séances*', 'touche une ligne');
   s2.appendChild(U.table({ cols: [{ k: 'key', label: 'Séance', fmt: function (v) { return fmtKey(v); } }, { k: 'scale', label: 'Échelle' }, { k: 'base', label: 'Base', align: 'r', fmt: function (v, r) { return r.scale === 'NDX' ? (v == null ? 'absente' : F.num(v, 2)) : '—'; } }, { k: 'n', label: 'Niveaux', align: 'r' }, { k: 'source', label: 'Source', fmt: function (v) { return v || '—'; } }],
