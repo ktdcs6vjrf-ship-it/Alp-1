@@ -5,7 +5,7 @@ Terminal mobile de préparation pour un opérateur MNQ, publié en **une seule p
 aucun module Python, aucun test du dépôt ne le lit. Il en reprend seulement des résultats
 d'ALP nº 3, toujours avec leur source.
 
-Dernier artefact : https://claude.ai/artifact/Vy2Rb9kb1JNUgtbt8cdcCJ (version 1).
+Dernier artefact : https://claude.ai/artifact/DgoivKfGJjD8mrJ4UFzGwD (v2, avec le Labo ; précédent : Vy2Rb9kb1JNUgtbt8cdcCJ). Capacités : db, user, assets.
 Règle : **un nouveau lien à chaque amélioration** — on publie sous un nouveau nom de fichier.
 
 ## Les desks
