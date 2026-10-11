@@ -36,7 +36,7 @@ const only = args.slice(1).filter((a, i, arr) => !a.startsWith('--') && arr[i - 
           const view = document.getElementById('view'), vr = view.getBoundingClientRect();
           const out = [];
           view.querySelectorAll('*').forEach(el => {
-            if (el.closest('.tbl,.heat,.tabs,svg')) return;
+            if (el.closest('.tbl,.heat,.tabs,svg,.pl-car')) return;
             const r = el.getBoundingClientRect();
             if (r.width === 0) return;
             if (r.right > vr.right + 2 || r.left < vr.left - 2) out.push((el.className && el.className.baseVal === undefined ? el.className : el.tagName) + ' ' + Math.round(r.left) + '→' + Math.round(r.right));

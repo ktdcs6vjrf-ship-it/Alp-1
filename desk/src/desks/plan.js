@@ -28,109 +28,70 @@ L.normPrefs = function (raw) {
   return p;
 };
 
-/* Les étapes de la carte, dans l’ordre du plan. Les identifiants sont ceux de T.DAY_STEPS. */
+/* Les étapes de la carte, dans l’ordre du plan. Les identifiants sont ceux de T.DAY_STEPS.
+   Chaque étape est un déroulé : chaque moment dit quoi VOIR (ses figures, 2D et 3D, à faire glisser) puis quoi FAIRE
+   (un champ, un réglage), et se coche. Figures : s (schéma), v (VWAP calculée), fp (footprint chiffré),
+   liq (carte de liquidité et son footprint), vp, lvnHist, fvg, day (frise), relief, ladder. */
 L.STEPS = [
   { id: 'macro', t: 'Macro et calendrier', short: 'Macro',
     k5: 'Avant de jouer dehors, on regarde la météo. Si un orage est annoncé à 14 h 30, on ne sort pas à 14 h 25.',
-    quoi: [
-      { t: 'Les annonces du jour, à l’heure de Paris', s: 'Seulement celles de rang 1 (trois pastilles). Recopie-les ici en une ligne : « 14:30 CPI, 20:00 FOMC ».', desk: 'macro', tab: 'calendrier', go: 'Calendrier' },
-      { t: 'Le consensus de chacune', s: 'Ce que le marché attend. Le chiffre publié ne compte pas : seul l’écart au consensus fait bouger le prix.' },
-      { t: 'Ce que le prix a déjà fait', s: 'Le NQ a-t-il couru vers l’annonce les jours d’avant ? Si oui, la rumeur est jouée : la nouvelle confirmée peut faire l’inverse.' },
-      { t: 'Le régime', s: 'Appétit pour le risque, aversion, ou neutre : une ligne, une fois par jour.', desk: 'macro', tab: 'regime', go: 'Régime' }],
     items: [
-      { t: 'Annonces de rang 1 relevées', s: 'Heure de Paris, une ligne dans le champ au-dessus.' },
-      { t: 'Consensus noté', s: 'Pour chaque annonce : le chiffre attendu, pas une prévision à toi.' },
-      { t: 'Déjà dans le prix ?', s: 'Le mouvement des derniers jours vers l’annonce est lu : rumeur jouée, ou pas.' },
-      { t: 'Fenêtres interdites posées', s: 'Aucun ordre de quelques minutes avant à un quart d’heure après chaque annonce.' },
-      { t: 'Régime déclaré', s: 'Une ligne : risque recherché, risque fui, ou neutre.' }],
-    schemas: ['macroPublic', 'macroRumeur', 'macroPrix', 'macroPrive'] },
+      { t: 'Annonces de rang 1 relevées', voir: 'Le calendrier du jour : seulement les annonces à trois pastilles, à l’heure de Paris.', faire: 'Recopie-les en une ligne. La frise calcule tes fenêtres interdites à mesure que tu écris.', input: 'annonces', desk: 'macro', tab: 'calendrier', go: 'Calendrier', figs: [{ day: 1 }, { s: 'macroPublic' }] },
+      { t: 'Consensus noté', voir: 'Pour chaque annonce, le chiffre que le marché attend.', faire: 'Ajoute-le après l’heure (« 14:30 CPI 0,3 % »). Ce n’est pas ta prévision : c’est ce qui est déjà dans le prix.', figs: [{ s: 'macroPrix' }, { s: 'macroPublic' }] },
+      { t: 'Déjà dans le prix ?', voir: 'Le NQ a-t-il couru vers l’annonce les jours d’avant ? Une rumeur se lit comme une pente, pas comme un saut.', faire: 'Si la rumeur est jouée, une nouvelle conforme n’est pas un signal dans son sens : ceux qui ont acheté la rumeur vendent l’annonce.', principe: true, figs: [{ s: 'macroRumeur' }, { s: 'macroPrive' }] },
+      { t: 'Fenêtres interdites posées', voir: 'La frise du jour : en violet, les minutes sans ordre. À l’ouverture américaine, le prix touche les bandes pour de mauvaises raisons.', faire: 'Règle les minutes avant et après. Le mode Live les lit à l’horloge et bloque la première case.', input: 'fenetres', figs: [{ day: 1 }, { v: 'ouverture' }] },
+      { t: 'Régime déclaré', voir: 'Le régime du desk Macro, en une ligne.', faire: 'Risque recherché, neutre ou fui. Il règle la taille et la prudence, jamais le sens.', input: 'regime', desk: 'macro', tab: 'regime', go: 'Régime', figs: [] }] },
   { id: 'biais', t: 'Tendance de la veille', short: 'Biais',
     k5: 'On regarde dans quel sens coule la rivière. On nage avec elle. Si elle change de sens pendant la journée, on sort de l’eau.',
-    quoi: [
-      { t: 'La séance d’hier', s: 'Clôture au-dessus ou au-dessous de l’ouverture, plus haut et plus bas : le sens de la veille.' },
-      { t: 'La structure de Dow', s: 'Sur ton unité de tendance : sommets et creux montants, descendants, ou à plat.' },
-      { t: 'Le niveau qui annule tout', s: 'En haussier, le dernier creux montant ; en baissier, le dernier sommet descendant. Sa cassure suspend le biais.', desk: 'nq', tab: 'gex', go: 'Biais NQ' }],
     items: [
-      { t: 'Tendance de la veille lue', s: 'Haussière, baissière ou en range.' },
-      { t: 'Structure intraday lue', s: 'Dow aligné avec la veille, cassé, ou pas encore lisible.' },
-      { t: 'Niveau d’invalidation noté', s: 'Le creux ou le sommet dont la cassure suspend le biais.' },
-      { t: 'Biais déclaré', s: 'Il se déclare une fois, avant la première décision.' }],
-    schemas: ['dowHausse', 'dowBaisse', 'dowRange', 'dowCassure'] },
+      { t: 'Tendance de la veille lue', voir: 'La séance d’hier : sommets et creux montants, descendants, ou à plat.', faire: 'Choisis la forme qui ressemble à hier. La planche choisie passe en premier.', input: 'veille', figs: [{ s: 'dowHausse', sel: 'hausse' }, { s: 'dowBaisse', sel: 'baisse' }, { s: 'dowRange', sel: 'range' }] },
+      { t: 'Structure intraday lue', voir: 'Depuis l’ouverture : la structure suit-elle la veille, ou le dernier creux (ou sommet) a-t-il cédé ?', faire: 'Alignée : le biais tient. Cassée : biais suspendu, pas de trade dans l’ancien sens.', input: 'dow', figs: [{ s: 'dowCassure', sel: 'casse' }, { s: 'dowHausse', sel: 'aligne' }] },
+      { t: 'Niveau d’invalidation noté', voir: 'En haussier, le dernier creux montant ; en baissier, le dernier sommet descendant.', faire: 'Note son prix. Sa cassure en séance suspend le biais, quoi que dise la veille.', input: 'invalid', figs: [{ s: 'dowHausse', bias: 'long' }, { s: 'dowBaisse', bias: 'short' }] },
+      { t: 'Biais déclaré', voir: 'Le biais qui sort des deux réponses, et le sens qu’il autorise.', faire: 'Relis-le : il ne se rediscute plus avant demain, sauf cassure de structure.', input: 'biais', figs: [{ v: 'achat', bias: 'long' }, { v: 'vente', bias: 'short' }] }] },
   { id: 'zones', t: 'Zones de la veille', short: 'Zones',
     k5: 'On trace les endroits où tout le monde s’est retrouvé hier (les places pleines) et ceux où personne ne s’est arrêté (les couloirs vides). Le prix ralentit sur les places, il court dans les couloirs.',
-    quoi: [
-      { t: 'Le profil de volume d’hier, sur la structure', s: 'Du dernier sommet au dernier creux qui comptent, ou la séance entière.' },
-      { t: 'Les HVN, en fourchettes', s: 'Deux ou trois nœuds de haut volume : ce sont tes HVZ. Note un bas et un haut (« 21480-21495 »), jamais un trait.' },
-      { t: 'Les LVN et les FVG', s: 'Les creux du profil entre deux HVZ, et les écarts de prix laissés ouverts.' },
-      { t: 'Les LVN historiques', s: 'Les creux des profils des jours précédents, encore non traversés.' }],
     items: [
-      { t: 'Profil d’hier tracé', s: 'Sur la structure, pas sur une fenêtre au hasard.' },
-      { t: 'HVZ notées', s: 'En fourchettes, dans le champ HVZ.' },
-      { t: 'LVN et FVG notés', s: 'Dans le champ LVN et FVG.' },
-      { t: 'LVN historiques reportées', s: 'Seulement celles qui ne sont pas encore traversées.' }],
-    schemas: ['zoneTraverse', 'zoneRebond', 'zoneIgnore', 'zoneLvn'], relief: 'profil' },
+      { t: 'Profil d’hier tracé', voir: 'Le profil de volume posé sur la structure d’hier : deux bosses (les HVN) et un creux entre elles (la LVN).', faire: 'Trace-le du dernier sommet au dernier creux qui comptent, ou sur la séance entière.', figs: [{ vp: 1 }, { relief: 'profil' }] },
+      { t: 'HVZ notées', voir: 'Chaque bosse du profil, en fourchette : c’est une HVZ. Le prix la traverse, y rebondit après l’avoir traversée, ou n’y vient pas.', faire: 'Note un bas et un haut par zone (« 31080-31095 »), jamais un trait.', input: 'hvz', figs: [{ s: 'zoneRebond' }, { s: 'zoneTraverse' }, { s: 'zoneIgnore' }] },
+      { t: 'LVN et FVG notés', voir: 'Les creux du profil entre deux HVZ, et les écarts de prix laissés ouverts : le prix les traverse vite, ou vient les chercher.', faire: 'Note-les dans le champ LVN et FVG.', input: 'lvn', figs: [{ s: 'zoneLvn' }, { fvg: 1 }] },
+      { t: 'LVN historiques reportées', voir: 'Les creux des profils des jours précédents, jamais retraversés depuis.', faire: 'Reporte-les, puis enregistre tes zones pour le Labo : il les testera.', input: 'hist', figs: [{ lvnHist: 1 }, { ladder: 1 }] }] },
   { id: 'gex', t: 'Cibles GEX', short: 'GEX',
     k5: 'On pose des drapeaux d’arrivée avant la course. On ne s’arrête pas pile sur le drapeau : juste avant, parce que tout le monde y freine.',
-    quoi: [
-      { t: 'L’export du robot, vers 6 h', s: 'Colle sa réponse entière dans NQ › GEX : le desk la lit et la porte sur le NQ.', desk: 'nq', tab: 'gex', go: 'Coller le GEX' },
-      { t: 'Chaque niveau est une zone', s: 'Sa demi-largeur vaut 1,177 σ√T (ALP nº 3, partie XIX). L’objectif se pose avant la zone, pas dedans.' },
-      { t: 'Une cible dans la portée de la séance', s: 'Un niveau plus loin que ce qu’une séance parcourt d’habitude n’est pas une cible : prends la HVZ opposée.' }],
     items: [
-      { t: 'Export GEX collé', s: 'Vers 6 h, le jour même.' },
-      { t: 'Niveaux sur l’échelle du NQ', s: 'Base NQ − NDX appliquée si le robot publie des strikes NDX.' },
-      { t: 'Cibles repérées des deux côtés', s: 'Le premier niveau au-dessus, le premier au-dessous.' },
-      { t: 'Cibles hors de portée écartées', s: 'Remplacées par la HVZ opposée.' }],
-    schemas: ['gexPortee', 'gexLoin', 'gexZone'] },
+      { t: 'Export GEX collé', voir: 'L’export du robot, vers 6 h, collé tel quel dans NQ › GEX.', faire: 'Colle-le là-bas : le desk le lit et le porte sur le NQ. Il revient ici tout seul.', input: 'gex', desk: 'nq', tab: 'gex', go: 'Coller le GEX', figs: [{ s: 'gexZone' }] },
+      { t: 'Niveaux sur l’échelle du NQ', voir: 'Si le robot publie des strikes NDX, la base NQ − NDX doit être appliquée.', faire: 'Vérifie que les niveaux tombent près du prix du NQ, pas à des centaines de points.', figs: [{ ladder: 1 }] },
+      { t: 'Cibles repérées des deux côtés', voir: 'Le premier niveau au-dessus du prix, le premier au-dessous.', faire: 'L’objectif se pose juste avant la zone, pas dedans.', figs: [{ s: 'gexPortee' }, { ladder: 1 }] },
+      { t: 'Cibles hors de portée écartées', voir: 'Un niveau plus loin que ce qu’une séance parcourt n’arrive presque jamais avant la cloche.', faire: 'Remplace-le par la HVZ opposée.', figs: [{ s: 'gexLoin' }, { relief: 'fins' }] }] },
   { id: 'fenetre', t: 'Côté VWAP', short: 'VWAP',
     k5: 'La VWAP est le prix moyen de la journée. Quand on veut acheter, on attend que ce soit en solde, sous la bande. Quand on veut vendre, on attend que ce soit trop cher, au-dessus.',
-    quoi: [
-      { t: 'VWAP de séance et ses bandes', s: 'Sur le graphique : la VWAP et la bande choisie, à 1 ou 2 écarts-types.' },
-      { t: 'Le sens autorisé, écrit', s: 'Biais acheteur : achats seulement sous la bande basse. Biais vendeur : ventes seulement au-dessus de la bande haute.' }],
     items: [
-      { t: 'VWAP et bandes affichées', s: 'Une seule bande retenue, celle déclarée plus bas.' },
-      { t: 'Sens autorisé écrit', s: 'Il découle du biais : rien à décider en séance.' },
-      { t: 'Côté interdit compris', s: 'Prix du mauvais côté de la VWAP : on attend, on ne force pas.' }],
-    schemas: ['vwapAchat', 'vwapVente', 'vwapAttendre', 'vwapNeutre'] },
+      { t: 'VWAP et bandes affichées', voir: 'Comme sur ton graphique : la VWAP en blanc, ancrée à minuit, et ses bandes à ±1σ et ±2σ qui s’ouvrent quand le prix s’en écarte.', faire: 'Choisis la bande que tu joues : elle est mise en avant sur toutes les planches.', input: 'bande', figs: [{ v: 'neutre' }, { v: 'ouverture' }] },
+      { t: 'Sens autorisé écrit', voir: 'Biais acheteur : on n’achète qu’au contact de la bande basse. Biais vendeur : on ne vend qu’au contact de la bande haute.', faire: 'Le sens découle du biais : rien à décider en séance.', input: 'sens', figs: [{ v: 'achat', bias: 'long' }, { v: 'vente', bias: 'short' }] },
+      { t: 'Côté interdit compris', voir: 'Le prix reste du mauvais côté de la VWAP, ou tourne autour sans toucher une bande.', faire: 'On attend, on ne force pas. Pas de contact de bande, pas de trade.', figs: [{ v: 'attendre' }, { v: 'neutre' }] }] },
   { id: 'declencheur', t: 'Déclencheur', short: 'Signal',
     k5: 'On attend un signe précis avant d’appuyer, toujours le même. Demander deux signes au lieu d’un ne rend pas la réponse plus sûre : ça fait juste attendre plus longtemps.',
-    quoi: [
-      { t: 'Un seul signal, choisi d’avance', s: 'Absorption ou épuisement. Choisis-le plus bas : il reste le même chaque jour.' },
-      { t: 'Le footprint au contact de la zone', s: 'Le signal se lit dans les cellules bid × ask, pas dans la bougie.' },
-      { t: 'L’invalidation', s: 'Une clôture au-delà de la zone de plus d’un écart-type dans les 15 minutes : sortie.' }],
     items: [
-      { t: 'Signal choisi', s: 'Un seul, écrit plus bas.' },
-      { t: 'Définition relue', s: 'Les seuils exacts, pour ne rien interpréter en séance.' },
-      { t: 'Invalidation relue', s: 'La sortie si le prix traverse la zone.' }],
-    schemas: ['fpAbsorption', 'fpEpuisement', 'fpRate'], relief: 'delai' },
+      { t: 'Signal choisi', voir: 'Le footprint au contact de la zone : à gauche ce qui est vendu au bid, à droite ce qui est acheté à l’ask, le delta et le volume sous chaque barre.', faire: 'Choisis un seul signal. Absorption : au contact d’une zone qui doit tenir. Épuisement : au bout d’un mouvement rapide.', input: 'trig', figs: [{ fp: 'absorptionAcheteuse' }, { fp: 'absorptionVendeuse' }, { fp: 'epuisement' }, { relief: 'delai' }] },
+      { t: 'La zone lue au contact', voir: 'Ce que fait la grosse zone de liquidité quand le prix arrive : elle tient, se recharge, disparaît, se fait manger, ou le prix s’épuise avant. Carte du carnet et footprint, cas par cas.', faire: 'Seules « tient », « se recharge » et l’épuisement autorisent le trade. Mur retiré ou mangé : pas de contre-tendance.', figs: [{ liq: 'tient' }, { liq: 'resistance' }, { liq: 'recharge' }, { liq: 'retiree' }, { liq: 'mangee' }, { liq: 'epuisement' }, { liq: 'ignoree' }, { relief: 'liq' }] },
+      { t: 'Ce qui n’est pas ton signal', voir: 'Une initiative : des déséquilibres empilés côté ask qui cassent la zone. C’est l’inverse d’une absorption.', faire: 'Ne vends pas contre une initiative acheteuse ; n’achète pas contre une initiative vendeuse.', figs: [{ fp: 'initiative' }, { fp: 'mangee' }] },
+      { t: 'Invalidation relue', voir: 'L’absorption a eu lieu, puis une clôture traverse la zone de plus d’un écart-type dans les 15 minutes.', faire: 'Sortie immédiate. Le signal n’était pas une promesse.', figs: [{ fp: 'invalidation' }] }] },
   { id: 'risque', t: 'Risque et taille', short: 'Risque',
     k5: 'On pose le filet un peu plus bas que le trampoline, pas dessus. Et on décide combien on peut perdre avant de sauter, pas après.',
-    quoi: [
-      { t: 'Le stop au-delà de la zone', s: 'De l’autre côté de la zone entière, plus une marge en ticks. Un stop dans la zone est pris par le bruit.' },
-      { t: 'La taille se lit sur le stop', s: 'Risque par trade ÷ (stop en points × valeur du point) : le nombre de contrats, arrondi en dessous.', desk: 'risk', go: 'Risque' },
-      { t: 'L’objectif', s: 'La cible GEX, ou la HVZ opposée, dans la portée de la séance. Rapport gain sur risque au moins égal à ton minimum.' },
-      { t: 'Les limites du jour', s: 'Nombre de trades, nombre de pertes, perte du jour : atteintes, la journée est finie.' }],
     items: [
-      { t: 'Stop au-delà de la zone', s: 'Jamais dedans.' },
-      { t: 'Taille calculée', s: 'Sur le stop, avec le calcul plus bas.' },
-      { t: 'Objectif dans la portée', s: 'Cible GEX ou HVZ opposée.' },
-      { t: 'Limites du jour relues', s: 'Trades, pertes, perte maximale.' }],
-    schemas: ['risqueStop', 'risqueBruit', 'risqueFins'], relief: 'fins' },
+      { t: 'Stop au-delà de la zone', voir: 'Le stop de l’autre côté de toute la zone, plus une marge en ticks. Dans la zone, une mèche ordinaire le prend.', faire: 'Saisis la distance du stop en points (zone + marge).', input: 'stop', figs: [{ s: 'risqueStop' }, { s: 'risqueBruit' }] },
+      { t: 'Taille calculée', voir: 'Risque par trade ÷ (stop × valeur du point + commission), arrondi en dessous.', faire: 'Lis le nombre de contrats. Il ne se négocie pas en séance.', input: 'taille', desk: 'risk', go: 'Risque', figs: [] },
+      { t: 'Objectif dans la portée', voir: 'Une position a trois fins : stop, objectif, cloche. Plus l’objectif est loin, plus la cloche décide.', faire: 'Cible GEX ou HVZ opposée, au moins ton R:R minimal, et dans la portée de la séance.', input: 'rr', figs: [{ s: 'risqueFins' }, { relief: 'fins' }] },
+      { t: 'Limites du jour relues', voir: 'Trades, pertes et perte maximale du jour.', faire: 'Une limite atteinte, la journée est finie, gagnante ou non.', input: 'limites', figs: [] }] },
   { id: 'journal', t: 'Journal, après', short: 'Journal',
     k5: 'Pendant le match on joue, on ne prend pas de notes. Après le match, on écrit ce qui s’est passé, même les fois où on n’a pas tiré.',
-    quoi: [
-      { t: 'Les trades pris en live', s: 'Ils sont au journal, horodatés, statut « ouvert » : complète entrée, stop, sortie, résultat.', desk: 'journal', tab: 'registre', go: 'Registre' },
-      { t: 'Les passes aussi', s: 'Un setup vu et refusé compte : c’est ce qui montre où ton plan travaille.' }],
     items: [
-      { t: 'Trades du jour complétés', s: 'Plus aucun trade « ouvert » au registre.' },
-      { t: 'Plan respecté, oui ou non', s: 'Une case par trade, sans commentaire.' }],
-    schemas: [] },
+      { t: 'Trades du jour complétés', voir: 'Les trades pris en live sont au journal, horodatés, statut « ouvert ».', faire: 'Complète entrée, stop, sortie et résultat.', desk: 'journal', tab: 'registre', go: 'Registre', figs: [] },
+      { t: 'Plan respecté, oui ou non', voir: 'Une case par trade.', faire: 'Sans commentaire : oui ou non.', figs: [] }] },
   { id: 'revue', t: 'Revue du soir', short: 'Revue',
     k5: 'Le soir, on regarde ce qu’on a fait, pas ce que le marché a fait.',
-    quoi: [{ t: 'La routine du soir', s: 'Trois questions, cinq minutes.', desk: 'routine', go: 'Routine' }],
     items: [
-      { t: 'Revue faite', s: 'Dans le desk Routine.' },
-      { t: 'Une seule chose à changer', s: 'Ou rien : un plan ne se réécrit pas après une seule journée.' }],
-    schemas: [] }
+      { t: 'Revue faite', voir: 'La routine du soir : trois questions, cinq minutes.', faire: 'Réponds dans le desk Routine.', desk: 'routine', go: 'Routine', figs: [] },
+      { t: 'Une seule chose à changer', voir: 'Ce que la journée enseigne sur ton exécution, pas sur le marché.', faire: 'Une chose, ou rien : un plan ne se réécrit pas après une seule journée.', figs: [] }] }
 ];
 L.STEP = {}; L.STEPS.forEach(function (s, i) { s.n = i + 1; L.STEP[s.id] = s; });
 L.PREP = ['macro', 'biais', 'zones', 'gex', 'fenetre', 'declencheur', 'risque'];
@@ -149,7 +110,7 @@ L.normDay = function (raw, today) {
     dow: ['aligne', 'casse', 'flou'].indexOf(s.dow) >= 0 ? s.dow : null,
     invalid: str(s.invalid), hvz: str(s.hvz), lvn: str(s.lvn), hist: str(s.hist), gexMan: str(s.gexMan),
     stop: fin(s.stop) && s.stop > 0 ? s.stop : null,
-    live: { zone: !!live.zone, vwap: !!live.vwap, signal: !!live.signal, risque: !!live.risque }
+    live: { zone: !!live.zone, vwap: !!live.vwap, signal: !!live.signal, risque: !!live.risque, etat: ['tient', 'recharge', 'epuisement', 'retiree', 'mangee'].indexOf(live.etat) >= 0 ? live.etat : null }
   };
 };
 L.ownPct = function (day, id) { var c = day.checks[id] || []; return c.length ? Math.round(100 * c.filter(Boolean).length / c.length) : 0; };
@@ -230,7 +191,7 @@ L.liveState = function (day, fenetreOk) {
   L.LIVE.forEach(function (c) { var ok = c.auto ? fenetreOk : !!day.live[c.id]; if (!ok && !miss) miss = c; });
   return { ok: !miss, miss: miss, n: L.LIVE.filter(function (c) { return c.auto ? fenetreOk : !!day.live[c.id]; }).length };
 };
-L.resetLive = function (day) { var d = clone(day); d.live = { zone: false, vwap: false, signal: false, risque: false }; return d; };
+L.resetLive = function (day) { var d = clone(day); d.live = { zone: false, vwap: false, signal: false, risque: false, etat: null }; return d; };
 L.TRIG = { absorption: 'Absorption', epuisement: 'Épuisement' };
 L.setupText = function (prefs) { return 'Plan HVZ · ' + (L.TRIG[prefs.trig] || 'signal non choisi'); };
 L.prisEntry = function (side, prefs, ok, at, instrument) { return { kind: 'pris', side: side, setup: L.setupText(prefs), status: 'ouvert', plan: !!ok, at: at, instrument: instrument, note: 'Inscrit en live depuis le plan : à compléter.' }; };
@@ -400,22 +361,6 @@ L.SCHEMAS = {
   gexZone: { t: 'Un niveau GEX est une zone', lire: 'La courbure d’une option tombe à la moitié de son sommet à 1,177 σ√T du strike : le niveau a une largeur, qui grandit avec l’échéance. Ni entrée ni stop sur le trait.', k5: 'Le niveau n’est pas un fil : c’est un coussin.',
     d: { zones: [{ y0: 40, y1: 64, label: '± 1,177 σ√T', edge: true }], lines: [{ y: 52, label: 'strike publié', tone: 'fg', dash: true }], paths: [{ pts: N([[3, 20], [30, 44], [42, 58], [50, 47], [62, 61], [74, 45], [97, 62]], 2, 73) }] } },
 
-  vwapAchat: { t: 'Biais acheteur, prix sous la bande', lire: 'C’est la seule case où l’on cherche un achat : biais acheteur et prix sous la bande basse de la VWAP.', k5: 'On veut acheter : on attend les soldes.',
-    d: { paths: [{ pts: [[3, 54], [40, 56], [97, 60]], tone: 'soft', w: 1.2 }, { pts: [[3, 78], [40, 80], [97, 84]], tone: 'mute', dash: true, w: 1 }, { pts: [[3, 30], [40, 32], [97, 36]], tone: 'mute', dash: true, w: 1 }, { pts: N([[3, 52], [22, 62], [44, 40], [56, 26], [66, 34], [97, 58]], 2, 81) }], zones: [{ y0: 8, y1: 32, x0: 40, x1: 72, label: 'zone d’achat' }], dots: [{ x: 56, y: 26, label: 'achat', pos: 'b', tone: 'v' }], lines: [{ y: 57, x0: 82, label: 'VWAP', tone: 'mute' }] } },
-  vwapVente: { t: 'Biais vendeur, prix au-dessus de la bande', lire: 'Le miroir : biais vendeur et prix au-dessus de la bande haute. On cherche une vente, rien d’autre.', k5: 'On veut vendre : on attend que ce soit trop cher.',
-    d: { paths: [{ pts: [[3, 46], [40, 44], [97, 40]], tone: 'soft', w: 1.2 }, { pts: [[3, 70], [40, 68], [97, 64]], tone: 'mute', dash: true, w: 1 }, { pts: [[3, 22], [40, 20], [97, 16]], tone: 'mute', dash: true, w: 1 }, { pts: N([[3, 48], [22, 38], [44, 60], [56, 74], [66, 66], [97, 42]], 2, 82) }], zones: [{ y0: 68, y1: 92, x0: 40, x1: 72, label: 'zone de vente' }], dots: [{ x: 56, y: 74, label: 'vente', pos: 't', tone: 'v' }] } },
-  vwapAttendre: { t: 'Biais acheteur, prix au-dessus', lire: 'Le prix est du mauvais côté : un achat ici paie cher. On attend le retour sous la bande, ou on ne trade pas.', k5: 'Les soldes ne sont pas encore là : on garde son argent.',
-    d: { paths: [{ pts: [[3, 40], [97, 46]], tone: 'soft', w: 1.2 }, { pts: [[3, 18], [97, 24]], tone: 'mute', dash: true, w: 1 }, { pts: N([[3, 50], [30, 70], [55, 62], [80, 78], [97, 72]], 2, 83) }], zones: [{ y0: 54, y1: 90, x0: 20, x1: 97, tone: 'g', label: 'attendre' }] } },
-  vwapNeutre: { t: 'Biais neutre : pas de sens', lire: 'Range ou structure cassée : aucune bande n’est la bonne. Pas de trade, sauf règle écrite d’avance pour jouer les deux bandes.', k5: 'On ne sait pas où va la balle : on ne court pas.',
-    d: { paths: [{ pts: [[3, 50], [97, 50]], tone: 'soft', w: 1.2 }, { pts: [[3, 74], [97, 74]], tone: 'mute', dash: true, w: 1 }, { pts: [[3, 26], [97, 26]], tone: 'mute', dash: true, w: 1 }, { pts: N([[3, 50], [18, 76], [34, 28], [50, 74], [66, 27], [82, 72], [97, 48]], 2, 84) }], lines: [{ y: 50, label: 'VWAP', tone: 'mute', x0: 88 }] } },
-
-  fpAbsorption: { t: 'Absorption', lire: 'Au contact de la zone, beaucoup de contrats se vendent au bid, et le prix ne descend presque pas : quelqu’un achète tout. ALP nº 3 : volume au moins 1,5 fois le médian, |z| d’impact sous 0,25, clôture qui ne franchit pas le niveau.', k5: 'Les autres poussent très fort sur la porte, et elle ne bouge pas : quelqu’un la tient derrière.',
-    d: { zones: [{ y0: 22, y1: 36, label: 'zone', tone: 'g' }], fp: [{ x: 34, label: '1 · le choc', rows: [{ y: 62, b: .3, a: .25 }, { y: 56, b: .35, a: .3 }, { y: 50, b: .4, a: .3 }, { y: 44, b: .5, a: .35 }, { y: 38, b: .7, a: .4 }, { y: 32, b: 1, a: .55, hl: 1 }, { y: 26, b: .95, a: .6, hl: 1 }] }, { x: 70, label: '2 · ça tient', rows: [{ y: 66, b: .3, a: .5 }, { y: 60, b: .3, a: .45 }, { y: 54, b: .3, a: .45 }, { y: 48, b: .3, a: .4 }, { y: 42, b: .28, a: .36 }, { y: 36, b: .2, a: .3 }] }] } },
-  fpEpuisement: { t: 'Épuisement', lire: 'Au bout du mouvement, les derniers prix échangent très peu : il ne reste plus de vendeur. La barre suivante ne prolonge pas. Seuils déclarés par toi, à tester au Labo : ALP nº 3 ne publie pas de définition d’épuisement.', k5: 'Celui qui poussait n’a plus de forces : il s’arrête tout seul.',
-    d: { zones: [{ y0: 22, y1: 36, label: 'zone', tone: 'g' }], fp: [{ x: 34, label: '1 · plus rien', rows: [{ y: 62, b: .8, a: .5 }, { y: 56, b: .75, a: .45 }, { y: 50, b: .6, a: .4 }, { y: 44, b: .4, a: .3 }, { y: 38, b: .2, a: .15 }, { y: 32, b: .06, a: .05, hl: 1 }, { y: 26, b: .03, a: .02, hl: 1 }] }, { x: 70, label: '2 · demi-tour', rows: [{ y: 60, b: .25, a: .55 }, { y: 54, b: .3, a: .5 }, { y: 48, b: .3, a: .45 }, { y: 42, b: .3, a: .4 }, { y: 36, b: .2, a: .3 }] }] } },
-  fpRate: { t: 'Le signal échoue', lire: 'Absorption au contact, puis une clôture traverse la zone de plus d’un écart-type dans les 15 minutes : invalidation, on sort. Le signal n’est pas une promesse.', k5: 'La porte tenait, puis elle cède : on s’en va tout de suite.',
-    d: { zones: [{ y0: 40, y1: 54, label: 'zone', tone: 'g' }], fp: [{ x: 30, label: 'absorption', rows: [{ y: 74, b: .3, a: .25 }, { y: 68, b: .4, a: .3 }, { y: 62, b: .6, a: .35 }, { y: 56, b: .8, a: .4 }, { y: 50, b: 1, a: .5, hl: 1 }, { y: 44, b: .9, a: .55, hl: 1 }] }, { x: 70, label: 'sortie', rows: [{ y: 50, b: .5, a: .2 }, { y: 44, b: .6, a: .2 }, { y: 38, b: .7, a: .25 }, { y: 32, b: .8, a: .2 }, { y: 26, b: .6, a: .2 }, { y: 20, b: .4, a: .15 }] }] } },
-
   risqueStop: { t: 'Stop au-delà de la zone', lire: 'Entrée au bord de la zone, stop de l’autre côté de toute la zone, plus une marge en ticks. La taille se calcule sur cette distance, pas l’inverse.', k5: 'Le filet est sous le trampoline, pas au milieu.',
     d: { zones: [{ y0: 34, y1: 48, label: 'zone', edge: true }], lines: [{ y: 48, label: 'entrée', tone: 'fg', left: true }, { y: 28, label: 'stop : zone + marge', tone: 'v', dash: true, left: true }, { y: 80, label: 'objectif', tone: 'v', left: true }], paths: [{ pts: N([[30, 72], [44, 50], [52, 42], [58, 48], [76, 66], [92, 80]], 1.8, 91) }], brackets: [{ x: 98, y0: 28, y1: 48, label: 'risque' }] } },
   risqueBruit: { t: 'Stop dans la zone : pris par le bruit', lire: 'Un stop posé dans la zone se fait toucher par une mèche ordinaire, puis le prix part sans toi. La zone a une largeur : le stop la respecte.', k5: 'Si le filet est trop haut, le premier rebond normal le touche.',
@@ -429,7 +374,7 @@ L.SCHEMAS = {
    ===================================================================== */
 var CSS = '.pl-svg{display:block;width:100%;height:auto}.pl-t{font:500 9.5px var(--f-mono);fill:var(--soft)}.pl-t.v{fill:var(--violet-2)}.pl-t.w{fill:var(--hi)}' +
   '.pl-grid{display:grid;gap:12px;min-width:0}@media(min-width:760px){.pl-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}' +
-  '.pl-sit{display:flex;flex-direction:column;gap:8px;min-width:0}.pl-sit p{margin:0;font-size:13px;line-height:1.5;color:var(--fg)}.pl-sit .k5{color:var(--soft);font-family:var(--f-serif);font-style:italic;font-size:15px;line-height:1.35}' +
+  '.pl-sit{display:flex;flex-direction:column;gap:8px;min-width:0}.pl-sit p{margin:0;font-size:13px;line-height:1.5;color:var(--fg)}.pl-car .k5,.pl-now .k5{color:var(--soft);font-family:var(--f-serif);font-style:italic;font-size:15px;line-height:1.35}' +
   '.pl-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pl-back{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:999px;padding:6px 12px;background:var(--panel);color:var(--fg);font-size:12.5px}' +
   '.pl-ring{position:relative;width:64px;height:64px;flex:none}.pl-ring svg{width:64px;height:64px}.pl-ring b{position:absolute;inset:0;display:grid;place-items:center;font:600 15px var(--f-mono);color:var(--hi)}' +
   '.pl-sum{display:flex;gap:14px;align-items:center}.pl-sum .tx{display:flex;flex-direction:column;gap:3px;min-width:0}.pl-sum .tx b{color:var(--hi);font-size:15px}.pl-sum .tx span{color:var(--soft);font-size:12.5px;line-height:1.4}' +
@@ -441,6 +386,14 @@ var CSS = '.pl-svg{display:block;width:100%;height:auto}.pl-t{font:500 9.5px var
   '.pl-valid .btn,.pl-go .btn{height:auto;min-height:50px;white-space:normal;line-height:1.3}.pl-go{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pl-go .btn{justify-content:center;padding:16px 10px;font-size:15px}.pl-go .wide{grid-column:1/-1}' +
   '.pl-verdict{display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(--r);border:1px solid var(--line-2);background:var(--raise)}.pl-verdict b{flex:none;white-space:nowrap;font:600 13px var(--f-mono);letter-spacing:.08em;color:var(--hi)}.pl-verdict span{color:var(--soft);font-size:13px;line-height:1.4}.pl-verdict.ok{border-color:var(--violet);background:var(--violet-a)}.pl-verdict.ok b{color:var(--violet-2)}' +
   '.pl-ord{counter-reset:o;display:grid;gap:8px;margin:0;padding:0;list-style:none}.pl-ord li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:2px 10px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}.pl-ord li:before{counter-increment:o;content:counter(o);font:600 11px/22px var(--f-mono);color:var(--violet-2)}.pl-ord b{color:var(--hi);font-size:13.5px}.pl-ord span{grid-column:2;color:var(--soft);font-size:12.5px;line-height:1.45}' +
+  '.pl-mos{display:grid;gap:14px}.pl-mo{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);min-width:0}.pl-mo.on{border-color:var(--violet-b)}' +
+  '.pl-mh{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;width:100%;padding:0;background:none;border:0;color:var(--fg)}.pl-mh i{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--line-2);display:grid;place-items:center;font:700 12px/1 var(--f-mono);font-style:normal;color:var(--soft)}.pl-mo.on .pl-mh i{background:var(--violet);border-color:var(--violet);color:var(--ink)}.pl-mh b{font-size:15.5px;color:var(--hi);line-height:1.25}.pl-mh span{font:600 10px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}.pl-mo.on .pl-mh span{color:var(--violet-2)}' +
+  '.pl-vf{margin:0;font-size:13.5px;line-height:1.5;color:var(--fg)}.pl-vf .pl-tag{margin-right:8px}' +
+  '.pl-carw{min-width:0}.pl-car{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;-webkit-overflow-scrolling:touch}.pl-car>*{flex:0 0 88%;scroll-snap-align:start;min-width:0}.pl-car.one>*{flex-basis:100%}.pl-hint{font:500 10.5px var(--f-mono);color:var(--mute);margin-top:6px}' +
+  '@media(min-width:900px){.pl-car{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}.pl-car>*{flex:none}.pl-car.one{grid-template-columns:minmax(0,1fr)}.pl-hint{display:none}}' +
+  '.pl-fig{min-width:0}.pl-fig svg{display:block;width:100%;height:auto}.pl-n{font:500 10px var(--f-mono);fill:var(--fg)}.card p.pl-ill,.pl-ill{margin:0;font-size:11.5px;line-height:1.45;color:var(--mute)}' +
+  '.pl-badge{align-self:flex-start;font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 9px;border-radius:999px;border:1px solid var(--line-2);color:var(--soft)}.pl-badge.ok{border-color:var(--violet);color:var(--violet-2);background:var(--violet-a)}' +
+  '.pl-now{display:flex;flex-direction:column;gap:10px;padding:12px;border:1px solid var(--violet-b);border-radius:var(--r);background:var(--raise)}.pl-nowh{display:flex;flex-direction:column;gap:4px}.pl-nowh b{color:var(--hi);font-size:15px}.pl-nowh span{color:var(--soft);font-size:13px;line-height:1.4}.pl-lc.cur{border-color:var(--violet)}' +
   '.pl-flds .fld textarea{min-height:44px}.pl-tag{font:600 10px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--violet-2)}';
 function injectCss() { if (document.getElementById('plan-css')) return; var s = document.createElement('style'); s.id = 'plan-css'; s.textContent = CSS; document.head.appendChild(s); }
 
@@ -505,32 +458,87 @@ function summary(ctx, day, prefs) {
   return card;
 }
 
-function sitCard(key) {
-  var s = L.SCHEMAS[key]; if (!s) return null;
-  var box = h('div', { class: 'pl-sit' }); box.innerHTML = L.schemaSvg(Object.assign({ aria: s.t }, s.d));
-  box.appendChild(h('p', null, s.lire)); box.appendChild(h('p', { class: 'k5' }, s.k5));
-  return U.card({ title: s.t, body: box });
+/* ---------- Figures : une carte par figure, dans un carrousel qu’on fait glisser ---------- */
+function PF() { return T.lib.planFig; }
+function sgn(v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + F.int(Math.abs(v)); }
+function marked(bar, col) { return bar.rows.filter(function (r) { return r[3]; }).map(function (r) { return F.int(r[col]); }); }
+L.VTXT = {
+  achat: { t: 'Biais acheteur : contact de la bande basse', lire: function (k) { return 'Le prix descend toucher la bande −' + k + 'σ : c’est le seul endroit où le plan cherche un achat, au contact d’une zone et avec ton signal. Il revient ensuite vers la VWAP, l’objectif naturel du retour à la moyenne.'; } },
+  vente: { t: 'Biais vendeur : contact de la bande haute', lire: function (k) { return 'Le miroir : le prix monte toucher la bande +' + k + 'σ, seul endroit où le plan cherche une vente, puis revient vers la VWAP.'; } },
+  attendre: { t: 'Biais acheteur, prix au-dessus', lire: function () { return 'Le prix reste au-dessus de la VWAP toute la séance : aucune bande basse touchée, donc aucun achat. On ne court pas après le prix.'; } },
+  neutre: { t: 'Le prix tourne autour de la VWAP', lire: function () { return 'Ta VWAP comme sur le graphique : la ligne blanche, et les bandes ±1σ, ±2σ. Ici le prix croise la VWAP plusieurs fois sans toucher une bande à 2σ : pas de contact, pas de trade.'; } },
+  ouverture: { t: 'Choc à l’ouverture américaine', lire: function (k) { return 'À 15 h 30 le prix plonge et touche la bande −' + k + 'σ en quelques minutes, pendant la fenêtre interdite : les bandes s’ouvrent, ce contact ne se joue pas.'; } }
+};
+L.vMarks = function (name, m, k) {
+  if (!m) return [];
+  if (name === 'achat') return [{ i: m.i, at: 'l', label: 'contact −' + k + 'σ', pos: 'b' }].concat(m.j > 0 ? [{ i: m.j, at: 'h', label: 'retour VWAP', pos: 't' }] : []);
+  if (name === 'vente') return [{ i: m.i, at: 'h', label: 'contact +' + k + 'σ', pos: 't' }].concat(m.j > 0 ? [{ i: m.j, at: 'l', label: 'retour VWAP', pos: 'b' }] : []);
+  if (name === 'ouverture') return [{ i: m.i, at: 'l', label: 'fenêtre : pas d’ordre', pos: 'b' }];
+  return [];
+};
+L.FPTXT = {
+  absorptionAcheteuse: { t: 'Absorption acheteuse, chiffrée', lire: function (b) { return 'Barre d’arrivée : ' + marked(b[0], 1).join(', ') + ' contrats vendus au bid dans la zone (cellules entourées), et le prix ne descend pas plus bas. Delta ' + sgn(PF().fpStats(b[0].rows).delta) + ' sans progrès : un acheteur passif absorbe tout. La barre suivante repart, delta ' + sgn(PF().fpStats(b[1].rows).delta) + '.'; } },
+  absorptionVendeuse: { t: 'Absorption vendeuse, chiffrée', lire: function (b) { return 'Le miroir à la résistance : ' + marked(b[0], 2).join(', ') + ' contrats achetés à l’ask, et le prix ne monte plus. Delta ' + sgn(PF().fpStats(b[0].rows).delta) + ' sans progrès : un vendeur passif absorbe. Barre suivante, delta ' + sgn(PF().fpStats(b[1].rows).delta) + ', le prix redescend.'; } },
+  epuisement: { t: 'Épuisement, chiffré', lire: function (b) { var lo = b[0].rows[b[0].rows.length - 1]; return 'Au bas de la barre d’arrivée, les derniers prix n’échangent presque plus : ' + lo[1] + ' × ' + lo[2] + ' au plus bas. Il ne reste plus de vendeurs. La barre suivante ne prolonge pas et repart, delta ' + sgn(PF().fpStats(b[1].rows).delta) + '.'; } },
+  recharge: { t: 'Mur qui se recharge (iceberg), chiffré', lire: function (b) { var r = b[0].rows[b[0].rows.length - 1]; return 'Au niveau de la zone, ' + F.int(r[1]) + ' contrats vendus au bid alors que le mur n’en affichait qu’environ 300 : il se reforme à chaque frappe. Absorption cachée, plus forte qu’affichée.'; } },
+  mangee: { t: 'Zone mangée, chiffrée', lire: function (b) { return 'Gros volume au bid dans la zone (' + marked(b[0], 1).join(', ') + '), puis la barre suivante casse en dessous avec encore ' + marked(b[1], 1).join(', ') + ' au bid : les vendeurs gagnent. Delta ' + sgn(PF().fpStats(b[1].rows).delta) + '. Pas d’achat.'; } },
+  retiree: { t: 'Mur retiré, chiffré', lire: function (b) { return 'Au niveau où le mur était affiché, presque rien ne s’échange : ' + b[1].rows.filter(function (r) { return r[3]; }).map(function (r) { return r[1] + ' × ' + r[2]; }).join(' puis ') + '. Il n’y avait plus personne : le prix traverse.'; } },
+  initiative: { t: 'Initiative acheteuse : déséquilibres empilés', lire: function (b) { return 'Trois prix d’affilée où l’ask domine le bid d’au moins trois contre un (cellules entourées, à droite) : des acheteurs agressifs cassent la résistance. Delta ' + sgn(PF().fpStats(b[1].rows).delta) + '. Ne vends pas contre ça.'; } },
+  invalidation: { t: 'Absorption, puis invalidation', lire: function (b) { return 'Absorption au contact (' + marked(b[0], 1).join(', ') + ' au bid), puis la barre suivante clôture sous la zone, delta ' + sgn(PF().fpStats(b[1].rows).delta) + ' : sortie immédiate.'; } }
+};
+L.LIQ_OK = { tient: true, resistance: true, recharge: true, epuisement: true };
+function svgBox(svg) { var d = h('div', { class: 'pl-fig' }); d.innerHTML = svg; return d; }
+function figCard(f, ctx, day, prefs) {
+  var G = PF(), k = prefs.bande;
+  if (f.s) { var s = L.SCHEMAS[f.s]; if (!s) return null; return U.card({ title: s.t, body: [svgBox(L.schemaSvg(Object.assign({ aria: s.t }, s.d))), h('p', null, s.lire), h('p', { class: 'k5' }, s.k5)] }); }
+  if (f.v) { var sc = G.scen(f.v, k), vt = L.VTXT[f.v]; if (!sc) return null; return U.card({ title: vt.t, meta: '±' + k + 'σ en avant', body: [svgBox(G.vwapSvg(sc, { k: k, marks: L.vMarks(f.v, sc.m, k), zone: f.v === 'ouverture' ? sc.m : null, aria: vt.t })), h('p', null, vt.lire(k)), h('p', { class: 'pl-ill' }, G.DISCLAIMER)] }); }
+  if (f.fp) { var fp = G.FP[f.fp], ft = L.FPTXT[f.fp]; return U.card({ title: ft.t, meta: 'bid × ask', body: [svgBox(G.fpSvg(Object.assign({ aria: ft.t }, fp))), h('p', null, ft.lire(fp.bars)), h('p', { class: 'pl-ill' }, 'Gauche : vendu au bid. Droite : acheté à l’ask. Sous la barre : delta (ask − bid) et volume, calculés. ' + G.DISCLAIMER)] }); }
+  if (f.liq) {
+    var c = G.LIQ[f.liq], ok = !!L.LIQ_OK[f.liq], body = [h('div', { class: 'pl-badge' + (ok ? ' ok' : '') }, ok ? 'Trade possible' : 'Pas de retournement'), svgBox(G.heatSvg(f.liq))];
+    if (c.fp) body.push(svgBox(G.fpSvg(Object.assign({ aria: c.t }, G.FP[c.fp]))));
+    body.push(h('p', null, h('b', null, 'Ce qu’on voit. '), c.lire)); body.push(h('p', null, h('b', null, 'Ce qu’on fait. '), c.faire));
+    body.push(h('p', { class: 'pl-ill' }, 'En haut, le carnet dans le temps : la teinte dit la taille affichée, les cercles le volume échangé. En bas, le footprint du contact. ' + G.DISCLAIMER));
+    return U.card({ title: c.t, accent: ok, body: body });
+  }
+  if (f.vp) return U.card({ title: 'Le profil de volume d’hier', meta: 'calculé', body: [svgBox(G.vpSvg()), h('p', null, 'Le profil compte le volume échangé à chaque prix. Ses bosses (en violet) sont les HVN, donc tes HVZ ; le creux entre elles est la LVN, traversée vite hier. La barre blanche est le POC, le prix le plus échangé. HVZ et LVN sont détectées par une règle, pas posées à la main.'), h('p', { class: 'pl-ill' }, G.DISCLAIMER)] });
+  if (f.lvnHist) return U.card({ title: 'Une LVN historique', body: [svgBox(G.lvnHistSvg()), h('p', null, 'Le creux du profil de J−3 n’a jamais été retraversé : il reste un couloir vide que le prix peut venir chercher, des jours plus tard.'), h('p', { class: 'pl-ill' }, G.DISCLAIMER)] });
+  if (f.fvg) return U.card({ title: 'Le FVG', body: [svgBox(G.fvgSvg()), h('p', null, 'Trois bougies : le haut de la première reste sous le bas de la troisième. L’écart entre les deux n’a pas échangé ; le prix y revient souvent, comme dans une LVN.'), h('p', { class: 'pl-ill' }, G.DISCLAIMER)] });
+  if (f.day) { var ev = events(day); return U.card({ title: 'Ta journée', meta: 'heure de Paris', body: [svgBox(G.daySvg(ev, prefs.avant, prefs.apres, nowMin())), h('p', null, ev.length ? 'En violet, les fenêtres interdites : ' + prefs.avant + ' min avant et ' + prefs.apres + ' min après chaque annonce. Le trait blanc est l’heure présente.' : 'Aucune annonce saisie : la frise montre seulement la séance cash américaine. Écris les annonces du jour pour poser les fenêtres.')] }); }
+  if (f.ladder) { var lv = dayLevels(day); return U.card({ title: 'Tes niveaux du jour', meta: lv.length + ' niveau' + (lv.length > 1 ? 'x' : ''), body: lv.length ? [T.chart.ladder({ levels: lv, height: Math.max(200, lv.length * 26 + 24), fmt: function (v) { return F.num(v, 2); } }), h('p', { class: 'pl-ill' }, 'Violet : HVZ. Pointillé : LVN et FVG. Gris : GEX et LVN historiques. Le milieu de chaque fourchette.')] : [U.note('Rien de noté pour l’instant : tes HVZ, LVN et niveaux GEX apparaîtront ici à mesure que tu les écris.')] }); }
+  if (f.relief) return relief(f.relief);
+  return null;
+}
+/* L’ordre des planches : la situation choisie (ou celle du biais) passe en premier. */
+L.sortFigs = function (figs, day) {
+  var b = L.biasOf(day.veille, day.dow), score = function (f) { if (f.sel && (f.sel === day.veille || f.sel === day.dow)) return 0; if (f.bias && b && f.bias === b) return 0; if (f.bias && b && b !== 'both' && f.bias !== b) return 2; return 1; };
+  return figs.map(function (f, i) { return { f: f, i: i, s: score(f) }; }).sort(function (a, c) { return a.s - c.s || a.i - c.i; }).map(function (x) { return Object.assign({}, x.f, { chosen: x.s === 0 }); });
+};
+function carousel(figs, ctx, day, prefs) {
+  var cards = L.sortFigs(figs, day).map(function (f) { var c = figCard(f, ctx, day, prefs); if (c && f.chosen) c.classList.add('accent'); return c; }).filter(Boolean);
+  if (!cards.length) return null;
+  var wrap = h('div', { class: 'pl-carw' }), car = h('div', { class: 'pl-car' + (cards.length === 1 ? ' one' : '') }, cards);
+  wrap.appendChild(car);
+  if (cards.length > 1) wrap.appendChild(h('div', { class: 'pl-hint' }, cards.length + ' planches · glisse pour les voir'));
+  return wrap;
 }
 function relief(kind) {
-  var P = T.lib.perf; if (!P || !P.charts || !P.charts.surface3d) return U.note('Le relief demande le desk Métriques.');
+  var P = T.lib.perf; if (!P || !P.charts || !P.charts.surface3d) return U.card({ title: 'Relief', body: U.note('Le relief demande le desk Métriques.') });
   P.injectCss && P.injectCss();
-  var sf = kind === 'fins' ? L.surfFins() : kind === 'delai' ? L.surfDelai() : L.surfProfil();
-  var view = T.store.get(K.view + ':' + kind, '3d'), box = h('div');
+  var cas = T.store.get(K.view + ':liqcas', 'tient'), view = T.store.get(K.view + ':' + kind, '3d'), box = h('div'), titleEl = h('b');
+  function sf() { return kind === 'fins' ? L.surfFins() : kind === 'delai' ? L.surfDelai() : kind === 'liq' ? PF().surfLiq(cas) : L.surfProfil(); }
   function paint() {
-    T.clear(box);
+    T.clear(box); var s = sf();
+    if (kind === 'liq') box.appendChild(U.chips({ options: [['tient', 'Tient'], ['recharge', 'Se recharge'], ['retiree', 'Retiré'], ['mangee', 'Mangé']].map(function (o) { return { v: o[0], label: o[1] }; }), value: cas, onChange: function (v) { cas = v; T.store.set(K.view + ':liqcas', v); paint(); } }));
     box.appendChild(U.seg({ aria: 'Rendu', options: [{ v: '3d', label: 'Relief 3D' }, { v: '2d', label: 'Carte 2D' }], value: view, onChange: function (v) { view = v; T.store.set(K.view + ':' + kind, v); paint(); } }));
-    box.appendChild(view === '2d' ? P.charts.heatmap2d({ surf: sf }) : P.charts.surface3d({ surf: sf }));
+    box.appendChild(view === '2d' ? P.charts.heatmap2d({ surf: s }) : P.charts.surface3d({ surf: s }));
   }
   paint();
-  var txt = kind === 'fins' ? 'Calculé, sans dérive : la probabilité que l’objectif soit touché avant le stop et avant la cloche, selon la largeur du stop (en écarts-types de la séance) et le rapport gain sur risque. Un stop étroit avec un petit rapport touche souvent l’objectif ; un grand rapport sur un stop large laisse la cloche décider. L’unité est l’écart-type d’une séance : la distance que le prix parcourt d’habitude de l’ouverture à la clôture, à mesurer sur tes données.'
-    : kind === 'delai' ? 'Calculé : le temps qu’il faut pour réunir 619 décisions (ALP nº 3, table 14 : de quoi établir un Sharpe de 0,10 par trade) selon le nombre de contacts de zone par semaine et la part qu’un signal garde. Garder 5 % des contacts au lieu de 100 % multiplie le délai par vingt, et la partie III mesure que l’espérance ne bouge pas pour autant. Hauteur en échelle logarithmique.'
-      : 'Schéma, pas une donnée : un profil de volume qui se construit au fil de la séance. Deux crêtes (les HVN, donc tes HVZ) et un creux entre elles (la LVN). Le prix ralentit sur les crêtes et traverse vite le creux.';
-  return U.card({ title: sf.title, meta: kind === 'profil' ? 'schéma' : 'calculé', body: [h('p', { class: 'note', style: 'margin:0' }, txt), box] });
-}
-function quoiList(step, ctx) {
-  return h('div', { class: 'pl-quoi' }, step.quoi.map(function (q, i) {
-    return h('div', { class: 'pl-q' }, h('i', null, String(i + 1)), h('b', null, q.t), h('span', null, q.s), q.desk ? U.button({ label: 'Ouvrir · ' + q.go + ' ›', small: true, kind: 'ghost', onClick: function () { openDesk(step, q.desk, q.tab); } }) : null);
-  }));
+  var txt = kind === 'fins' ? 'Calculé, sans dérive : la probabilité que l’objectif soit touché avant le stop et avant la cloche, selon la largeur du stop (en écarts-types de la séance) et le rapport gain sur risque. Un grand rapport sur un stop large laisse la cloche décider.'
+    : kind === 'delai' ? 'Calculé : le temps qu’il faut pour réunir 619 décisions (ALP nº 3, table 14) selon le nombre de contacts par semaine et la part qu’un signal garde. Garder 5 % des contacts au lieu de 100 % multiplie le délai par vingt ; la partie III mesure que l’espérance ne bouge pas pour autant. Hauteur en échelle logarithmique.'
+      : kind === 'liq' ? 'Le carnet dans le temps, en relief : la crête est le mur de liquidité. Quand il tient, la crête court jusqu’au bout ; retiré, elle tombe d’un coup avant le contact ; mangé, elle s’érode pendant les frappes ; rechargé, elle redescend et remonte. Schéma, pas une donnée.'
+        : 'Schéma : un profil de volume qui se construit au fil de la séance. Deux crêtes (les HVN, donc tes HVZ) et un creux entre elles (la LVN).';
+  var title = kind === 'fins' ? 'Les trois fins, en relief' : kind === 'delai' ? 'Le prix d’une confirmation' : kind === 'liq' ? 'Le mur, en relief' : 'Le profil, en relief';
+  return U.card({ title: title, meta: kind === 'fins' || kind === 'delai' ? 'calculé' : 'schéma', body: [h('p', { class: 'note', style: 'margin:0' }, txt), box] });
 }
 function openDesk(step, desk, tab) {
   T.nav.setReturn({ desk: 'plan', tab: 'carte', label: function () { return 'Revenir au plan · ' + step.short + ' ' + pctOf(step.id) + ' %'; }, onBack: function () { T.store.set(K.open, step.id); } });
@@ -543,56 +551,165 @@ function textInput(value, ph, onInput) {
   var el = h('input', { type: 'text', placeholder: ph, autocomplete: 'off', value: value || '' });
   el.addEventListener('input', function () { onInput(el.value); }); return el;
 }
-
-/* Les champs propres à chaque étape. Ils enregistrent à la frappe, sans redessiner la vue. */
-function stepInputs(step, day, prefs, ctx, repaint) {
-  function put(patch) { var d = getDay(); Object.assign(d, patch); saveDay(d); return d; }
-  var set = ctx.settings, box = h('div', { class: 'fields pl-flds' });
-  if (step.id === 'macro') {
-    var info = hintEl();
-    var paintInfo = function () { var ev = events(getDay()); info.textContent = ev.length ? ev.map(function (e) { return e.hhmm + ' ' + e.label + ' → pas d’ordre ' + L.minText(e.min - prefs.avant) + '–' + L.minText(e.min + prefs.apres); }).join(' · ') : 'Format : « 14:30 CPI, 16:00 ISM ». Heure de Paris.'; };
-    box.appendChild(tfield('Annonces de rang 1', textInput(day.annonces, '14:30 CPI, 20:00 FOMC', function (v) { put({ annonces: v }); paintInfo(); }), info)); paintInfo();
-    box.appendChild(tfield('Régime', U.seg({ aria: 'Régime', value: day.regime, onChange: function (v) { put({ regime: v }); repaint(); }, options: [{ v: 'on', label: 'Risque recherché' }, { v: 'neutre', label: 'Neutre' }, { v: 'off', label: 'Risque fui' }] })));
-    box.appendChild(U.field({ label: 'Minutes avant', value: prefs.avant, unit: 'min', min: 0, max: 60, onChange: function (v) { var p = getPrefs(); p.avant = Math.round(v); savePrefs(p); paintInfo(); } }));
-    box.appendChild(U.field({ label: 'Minutes après', value: prefs.apres, unit: 'min', min: 0, max: 120, onChange: function (v) { var p = getPrefs(); p.apres = Math.round(v); savePrefs(p); paintInfo(); } }));
-  } else if (step.id === 'biais') {
-    var b = bias(day), rule = L.sideRule(b, prefs.bande);
-    box.appendChild(tfield('La veille', U.seg({ aria: 'Tendance de la veille', value: day.veille, onChange: function (v) { var d = put({ veille: v }); writeBias(d); repaint(); }, options: [{ v: 'hausse', label: 'Haussière' }, { v: 'range', label: 'Range' }, { v: 'baisse', label: 'Baissière' }] })));
-    box.appendChild(tfield('Structure de Dow aujourd’hui', U.seg({ aria: 'Structure intraday', value: day.dow, onChange: function (v) { var d = put({ dow: v }); writeBias(d); repaint(); }, options: [{ v: 'aligne', label: 'Alignée' }, { v: 'flou', label: 'Pas lisible' }, { v: 'casse', label: 'Cassée' }] })));
-    box.appendChild(tfield('Niveau d’invalidation', textInput(day.invalid, 'dernier HL ou LH, ex. 21452', function (v) { put({ invalid: v }); })));
-    box.appendChild(h('div', { style: 'grid-column:1/-1' }, U.callout([h('b', null, b ? 'Biais ' + L.biasWord(b) + '. ' : 'Pas encore de biais. '), rule.long])));
-  } else if (step.id === 'zones') {
-    [['hvz', 'HVZ (HVN de la veille)', '21480-21495, 21620-21640'], ['lvn', 'LVN et FVG', '21540-21552, FVG 21590-21598'], ['hist', 'LVN historiques', '21390, 21710-21718']].forEach(function (f) {
-      var info = hintEl(), paint = function () { var z = L.parseLevels(getDay()[f[0]]); info.textContent = z.length ? z.length + ' zone' + (z.length > 1 ? 's' : '') + ' lue' + (z.length > 1 ? 's' : '') + ' : ' + z.map(function (x) { return x.lo === x.hi ? F.num(x.lo, 2) : F.num(x.lo, 2) + '–' + F.num(x.hi, 2); }).join(' · ') : 'Un bas et un haut par zone ; une virgule suivie d’une espace sépare les zones.'; };
-      box.appendChild(tfield(f[1], textInput(day[f[0]], f[2], function (v) { var o = {}; o[f[0]] = v; put(o); paint(); }), info)); paint();
-    });
-    box.appendChild(h('div', { style: 'grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap' }, U.button({ label: 'Enregistrer ces zones pour le Labo', small: true, onClick: function () { saveForLab(); } })));
-  } else if (step.id === 'gex') {
+function put(patch) { var d = getDay(); Object.assign(d, patch); saveDay(d); return d; }
+function zoneField(key, label, ph, refresh) {
+  var info = hintEl(), paint = function () { var z = L.parseLevels(getDay()[key]); info.textContent = z.length ? z.length + ' zone' + (z.length > 1 ? 's' : '') + ' lue' + (z.length > 1 ? 's' : '') + ' : ' + z.map(function (x) { return x.lo === x.hi ? F.num(x.lo, 2) : F.num(x.lo, 2) + '–' + F.num(x.hi, 2); }).join(' · ') : 'Un bas et un haut par zone ; une virgule suivie d’une espace sépare les zones.'; };
+  paint(); return tfield(label, textInput(getDay()[key], ph, function (v) { var o = {}; o[key] = v; put(o); paint(); refresh(); }), info);
+}
+/* Les champs d’un moment. reg(f) inscrit un repeint appelé quand un autre champ de l’étape change. */
+L.INPUTS = ['annonces', 'fenetres', 'regime', 'veille', 'dow', 'invalid', 'biais', 'hvz', 'lvn', 'hist', 'gex', 'bande', 'sens', 'trig', 'stop', 'taille', 'rr', 'limites'];
+function inputNode(id, ctx, prefs, refresh, reg) {
+  var day = getDay(), set = ctx.settings, box = h('div', { class: 'fields pl-flds' });
+  if (id === 'annonces') {
+    var info = hintEl(), pi = function () { var ev = events(getDay()), p = getPrefs(); info.textContent = ev.length ? ev.map(function (e) { return e.hhmm + ' ' + e.label + ' → pas d’ordre ' + L.minText(e.min - p.avant) + '–' + L.minText(e.min + p.apres); }).join(' · ') : 'Format : « 14:30 CPI, 16:00 ISM ». Heure de Paris.'; };
+    pi(); reg(pi); box.appendChild(tfield('Annonces de rang 1', textInput(day.annonces, '14:30 CPI, 20:00 FOMC', function (v) { put({ annonces: v }); refresh(); }), info));
+  } else if (id === 'fenetres') {
+    box.appendChild(U.field({ label: 'Minutes avant', value: prefs.avant, unit: 'min', min: 0, max: 60, onChange: function (v) { var p = getPrefs(); p.avant = Math.round(v); savePrefs(p); refresh(); } }));
+    box.appendChild(U.field({ label: 'Minutes après', value: prefs.apres, unit: 'min', min: 0, max: 120, onChange: function (v) { var p = getPrefs(); p.apres = Math.round(v); savePrefs(p); refresh(); } }));
+  } else if (id === 'regime') {
+    box.appendChild(tfield('Régime', U.seg({ aria: 'Régime', value: day.regime, onChange: function (v) { put({ regime: v }); ctx.rerender(); }, options: [{ v: 'on', label: 'Risque recherché' }, { v: 'neutre', label: 'Neutre' }, { v: 'off', label: 'Risque fui' }] })));
+  } else if (id === 'veille') {
+    box.appendChild(tfield('La veille', U.seg({ aria: 'Tendance de la veille', value: day.veille, onChange: function (v) { writeBias(put({ veille: v })); ctx.rerender(); }, options: [{ v: 'hausse', label: 'Haussière' }, { v: 'range', label: 'Range' }, { v: 'baisse', label: 'Baissière' }] })));
+  } else if (id === 'dow') {
+    box.appendChild(tfield('Structure de Dow aujourd’hui', U.seg({ aria: 'Structure intraday', value: day.dow, onChange: function (v) { writeBias(put({ dow: v })); ctx.rerender(); }, options: [{ v: 'aligne', label: 'Alignée' }, { v: 'flou', label: 'Pas lisible' }, { v: 'casse', label: 'Cassée' }] })));
+  } else if (id === 'invalid') {
+    box.appendChild(tfield('Niveau d’invalidation', textInput(day.invalid, 'dernier HL ou LH, ex. 31052', function (v) { put({ invalid: v }); })));
+  } else if (id === 'biais' || id === 'sens') {
+    var b = bias(day); box.appendChild(h('div', { style: 'grid-column:1/-1' }, U.callout([h('b', null, b ? 'Biais ' + L.biasWord(b) + '. ' : 'Pas encore de biais. '), L.sideRule(b, prefs.bande).long])));
+  } else if (id === 'hvz') box.appendChild(zoneField('hvz', 'HVZ (HVN de la veille)', '31080-31095, 31220-31240', refresh));
+  else if (id === 'lvn') box.appendChild(zoneField('lvn', 'LVN et FVG', '31140-31152, FVG 31190-31198', refresh));
+  else if (id === 'hist') { box.appendChild(zoneField('hist', 'LVN historiques', '30990, 31310-31318', refresh)); box.appendChild(h('div', { style: 'grid-column:1/-1' }, U.button({ label: 'Enregistrer ces zones pour le Labo', small: true, onClick: saveForLab }))); }
+  else if (id === 'gex') {
     var gx = gexLevels();
-    box.appendChild(h('div', { style: 'grid-column:1/-1' }, gx.length ? U.callout([h('b', null, gx.length + ' niveau' + (gx.length > 1 ? 'x' : '') + ' GEX lu' + (gx.length > 1 ? 's' : '') + ' aujourd’hui. '), gx.map(function (g) { return g.label + ' ' + F.num(g.price, 2); }).join(' · ')]) : U.note('Aucun export GEX collé aujourd’hui dans NQ › GEX. Colle-le là-bas (le desk le lit et le porte sur le NQ), ou note les niveaux à la main ci-dessous.')));
-    if (!gx.length) box.appendChild(tfield('Niveaux GEX à la main', textInput(day.gexMan, 'CR 21700, PS 21400, HVL 21550', function (v) { put({ gexMan: v }); })));
-  } else if (step.id === 'fenetre') {
-    box.appendChild(tfield('Bande retenue', U.seg({ aria: 'Bande VWAP', value: prefs.bande, onChange: function (v) { var p = getPrefs(); p.bande = v; savePrefs(p); repaint(); }, options: [{ v: 1, label: '± 1 σ' }, { v: 2, label: '± 2 σ' }] }), hintEl('Choix durable : il ne change pas d’un jour à l’autre. La bande ±2σ est le niveau le plus touché du catalogue (12,68 contacts par séance, ALP nº 3).')));
-    box.appendChild(h('div', { style: 'grid-column:1/-1' }, U.callout([h('b', null, 'Aujourd’hui. '), L.sideRule(bias(day), prefs.bande).long])));
-  } else if (step.id === 'declencheur') {
-    box.appendChild(tfield('Ton signal, un seul', U.seg({ aria: 'Signal', value: prefs.trig, onChange: function (v) { var p = getPrefs(); p.trig = v; savePrefs(p); repaint(); }, options: [{ v: 'absorption', label: 'Absorption' }, { v: 'epuisement', label: 'Épuisement' }] }),
-      hintEl('Absorption : au contact d’une zone qui doit tenir (HVZ, bande VWAP). Épuisement : au bout d’un mouvement rapide, en sortie de LVN. Les deux à la fois, c’est une confirmation de plus : moins de trades, pas plus de réussite.')));
-  } else if (step.id === 'risque') {
-    var res = h('div', { style: 'grid-column:1/-1' });
-    var paintRes = function () {
-      var d = getDay(), p = getPrefs(), n = L.contracts(set.riskPerTrade, d.stop, set.pointValue, set.commissionRT); T.clear(res);
-      res.appendChild(U.kpis([
-        { label: 'Contrats', value: d.stop ? String(n) : '—', unit: set.instrument, hint: d.stop ? 'perte au stop ' + F.usd(n * (d.stop * set.pointValue + set.commissionRT), 0) : 'saisis le stop' },
-        { label: 'Objectif minimal', value: d.stop ? F.num(d.stop * p.rrMin, 2) : '—', unit: 'pt', hint: 'R:R ' + F.num(p.rrMin, 1) + ' × stop' },
-        { label: 'Limites', value: set.maxTradesDay + ' · ' + set.maxLossesDay, hint: 'trades · pertes par jour' }
-      ], 3));
-    };
-    box.appendChild(U.field({ label: 'Stop prévu (zone + marge)', value: day.stop, unit: 'pt', min: 0.25, max: 200, allowEmpty: true, onChange: function (v) { put({ stop: v > 0 ? v : null }); paintRes(); } }));
-    box.appendChild(U.field({ label: 'R:R minimal', value: prefs.rrMin, unit: '×', min: 0.5, max: 10, step: 0.1, hint: 'déclaré, modifiable', onChange: function (v) { var p = getPrefs(); p.rrMin = v; savePrefs(p); paintRes(); } }));
+    box.appendChild(h('div', { style: 'grid-column:1/-1' }, gx.length ? U.callout([h('b', null, gx.length + ' niveau' + (gx.length > 1 ? 'x' : '') + ' GEX lu' + (gx.length > 1 ? 's' : '') + ' aujourd’hui. '), gx.map(function (g) { return g.label + ' ' + F.num(g.price, 2); }).join(' · ')]) : U.note('Aucun export GEX collé aujourd’hui dans NQ › GEX. Colle-le là-bas, ou note les niveaux à la main.')));
+    if (!gx.length) box.appendChild(tfield('Niveaux GEX à la main', textInput(day.gexMan, 'CR 31400, PS 30900, HVL 31150', function (v) { put({ gexMan: v }); refresh(); })));
+  } else if (id === 'bande') {
+    box.appendChild(tfield('Bande jouée', U.seg({ aria: 'Bande VWAP', value: prefs.bande, onChange: function (v) { var p = getPrefs(); p.bande = v; savePrefs(p); ctx.rerender(); }, options: [{ v: 1, label: '± 1 σ' }, { v: 2, label: '± 2 σ' }] }), hintEl('Choix durable. La bande ±2σ est le niveau le plus touché du catalogue : 12,68 contacts par séance (ALP nº 3).')));
+  } else if (id === 'trig') {
+    box.appendChild(tfield('Ton signal, un seul', U.seg({ aria: 'Signal', value: prefs.trig, onChange: function (v) { var p = getPrefs(); p.trig = v; savePrefs(p); ctx.rerender(); }, options: [{ v: 'absorption', label: 'Absorption' }, { v: 'epuisement', label: 'Épuisement' }] }), hintEl('Les deux à la fois, c’est une confirmation de plus : 89 à 98 % d’occasions en moins pour une réussite qui ne bouge pas (49,4 % contre 50,1 %, ALP nº 3, partie III).')));
+  } else if (id === 'stop') {
+    box.appendChild(U.field({ label: 'Stop prévu (zone + marge)', value: day.stop, unit: 'pt', min: 0.25, max: 200, allowEmpty: true, onChange: function (v) { put({ stop: v > 0 ? v : null }); refresh(); } }));
     box.appendChild(U.field({ label: 'Marge au-delà de la zone', value: prefs.marge, unit: 'ticks', min: 0, max: 40, onChange: function (v) { var p = getPrefs(); p.marge = Math.round(v); savePrefs(p); } }));
-    box.appendChild(res); paintRes();
+  } else if (id === 'taille') {
+    var res = h('div', { style: 'grid-column:1/-1' }), pr = function () { var d = getDay(), n = L.contracts(set.riskPerTrade, d.stop, set.pointValue, set.commissionRT); T.clear(res); res.appendChild(U.kpis([{ label: 'Contrats', value: d.stop ? String(n) : '—', unit: set.instrument, hint: d.stop ? 'perte au stop ' + F.usd(n * (d.stop * set.pointValue + set.commissionRT), 0) : 'saisis le stop au moment 1' }, { label: 'Risque par trade', value: F.usd(set.riskPerTrade, 0), hint: 'réglages' }], 2)); };
+    pr(); reg(pr); box.appendChild(res);
+  } else if (id === 'rr') {
+    var rrInfo = hintEl(), prr = function () { var d = getDay(), p = getPrefs(); rrInfo.textContent = d.stop ? 'Objectif minimal : ' + F.num(d.stop * p.rrMin, 2) + ' pt pour un stop de ' + F.num(d.stop, 2) + ' pt.' : 'Déclaré, modifiable.'; };
+    prr(); reg(prr);
+    box.appendChild(h('div', { class: 'fld full' }, U.field({ label: 'R:R minimal', value: prefs.rrMin, unit: '×', min: 0.5, max: 10, step: 0.1, onChange: function (v) { var p = getPrefs(); p.rrMin = v; savePrefs(p); prr(); } }), rrInfo));
+  } else if (id === 'limites') {
+    var st = L.todayStats(T.journal.list(), T.day.key());
+    box.appendChild(h('div', { style: 'grid-column:1/-1' }, U.kpis([{ label: 'Trades', value: st.taken + ' / ' + set.maxTradesDay }, { label: 'Pertes', value: st.losses + ' / ' + set.maxLossesDay }, { label: 'Perte maximale', value: F.usd(set.dailyStop, 0), hint: 'desk Risque' }], 3)));
   } else return null;
   return box;
+}
+
+/* Un moment de l’étape : VOIR (les planches), FAIRE (le champ), et sa case. */
+function momentCard(step, it, i, ctx, prefs, onToggle, refresh, reg) {
+  var day = getDay(), on = !!day.checks[step.id][i], card = h('div', { class: 'pl-mo' + (on ? ' on' : '') });
+  var head = h('button', { class: 'pl-mh', type: 'button', role: 'checkbox', 'aria-checked': String(on) }, h('i', null, on ? '✓' : String(i + 1)), h('b', null, it.t), h('span', null, on ? 'fait' : 'à cocher'));
+  head.addEventListener('click', function () { var nd = L.toggle(getDay(), step.id, i); saveDay(nd); syncPct(nd, step.id); var v = nd.checks[step.id][i]; card.classList.toggle('on', v); head.setAttribute('aria-checked', String(v)); head.firstChild.textContent = v ? '✓' : String(i + 1); head.lastChild.textContent = v ? 'fait' : 'à cocher'; onToggle(); });
+  card.appendChild(head);
+  card.appendChild(h('p', { class: 'pl-vf' }, h('span', { class: 'pl-tag' }, 'Voir'), it.voir));
+  var figBox = h('div'), paintFigs = function () { T.clear(figBox); var c = carousel(it.figs || [], ctx, getDay(), getPrefs()); if (c) figBox.appendChild(c); };
+  paintFigs(); card.appendChild(figBox);
+  if ((it.figs || []).some(function (f) { return f.day || f.ladder; })) reg(paintFigs);
+  card.appendChild(h('p', { class: 'pl-vf' }, h('span', { class: 'pl-tag' }, 'Faire'), it.faire));
+  if (it.principe) card.appendChild(U.prose([
+    'Une information <b>publique et programmée</b> (CPI, emploi, FOMC) est dans le prix avant d’être publiée : le consensus l’est déjà. À l’heure dite, seul l’écart au consensus déplace le prix, en quelques secondes, et personne ne connaît son signe avant.',
+    'Une information <b>privée</b>, ou une rumeur, entre lentement : ceux qui savent, ou croient savoir, se placent d’abord, et le prix dérive. Le jour où elle devient publique, il ne reste plus d’acheteur nouveau. <b>Achète la rumeur, vends l’annonce</b> : ceux qui ont acheté la rumeur vendent la nouvelle, même bonne.',
+    'Principe de marché, non mesuré par ALP nº 3 : il dit quand ne pas trader, il ne donne aucun sens.']));
+  if (it.input) { var n = inputNode(it.input, ctx, prefs, refresh, reg); if (n) card.appendChild(n); }
+  if (it.desk) card.appendChild(U.button({ label: 'Ouvrir · ' + it.go + ' ›', small: true, kind: 'ghost', onClick: function () { openDesk(step, it.desk, it.tab); } }));
+  return card;
+}
+
+function renderStep(root, ctx, step, day, prefs) {
+  var idx = L.STEPS.indexOf(step), next = L.STEPS[idx + 1];
+  function back() { T.store.set(K.open, null); ctx.rerender(); window.scrollTo(0, 0); }
+  var tag = h('span', { class: 'pl-tag' });
+  root.appendChild(h('div', { class: 'pl-head' }, h('button', { class: 'pl-back', type: 'button', on: { click: back } }, '‹ Carte'), tag));
+  root.appendChild(U.page({ kicker: 'Plan · étape ' + step.n + ' / ' + L.STEPS.length, title: step.t.replace(/^(\S+)/, '*$1*'), lede: null }));
+  root.appendChild(h('p', { class: 'pl-k5' }, step.k5));
+  var regs = [], timer = 0, valid = h('div', { class: 'pl-valid' });
+  var reg = function (f) { regs.push(f); };
+  var refresh = function () { clearTimeout(timer); timer = setTimeout(function () { regs.forEach(function (f) { try { f(); } catch (e) {} }); }, 250); };
+  var paintValid = function () {
+    T.clear(valid); var pc = Math.max(L.ownPct(getDay(), step.id), pctOf(step.id)); tag.textContent = pc + ' %';
+    valid.appendChild(U.button({ label: 'Valider à ' + pc + ' % et revenir à la carte', kind: 'acc', onClick: function () { syncPct(getDay(), step.id); T.toast(step.short + ' validé à ' + pctOf(step.id) + ' %'); back(); } }));
+    if (next) valid.appendChild(U.button({ label: 'Étape suivante : ' + next.t + ' ›', kind: 'ghost', onClick: function () { syncPct(getDay(), step.id); T.store.set(K.open, next.id); ctx.rerender(); window.scrollTo(0, 0); } }));
+  };
+  var s1 = U.section('Le *déroulé*', step.items.length + ' moment' + (step.items.length > 1 ? 's' : '') + ', dans l’ordre');
+  var list = h('div', { class: 'pl-mos' });
+  step.items.forEach(function (it, i) { list.appendChild(momentCard(step, it, i, ctx, prefs, paintValid, refresh, reg)); });
+  s1.appendChild(list); root.appendChild(s1);
+  paintValid(); root.appendChild(valid);
+}
+
+/* Le mode Live : ce qu’il faut voir maintenant, pour la première case qui manque. */
+L.ETATS = [['tient', 'Elle tient'], ['recharge', 'Se recharge'], ['epuisement', 'Épuisement'], ['retiree', 'Mur retiré'], ['mangee', 'Mangée']];
+function nowPanel(ctx, day, prefs, stt, fw, paint) {
+  var b = bias(day), k = prefs.bande, box = h('div', { class: 'pl-now' }), m = stt.miss, set = ctx.settings;
+  var head = function (t, s) { box.appendChild(h('div', { class: 'pl-nowh' }, h('span', { class: 'pl-tag' }, stt.ok ? 'Feu vert' : 'Maintenant'), h('b', null, t), s ? h('span', null, s) : null)); };
+  if (!m) {
+    var n = L.contracts(set.riskPerTrade, day.stop, set.pointValue, set.commissionRT);
+    head('Tout est coché : l’ordre part.', (b === 'short' ? 'Vente' : 'Achat') + (day.stop ? ' · stop ' + F.num(day.stop, 2) + ' pt · ' + n + ' ' + set.instrument + ' · objectif ≥ ' + F.num(day.stop * prefs.rrMin, 2) + ' pt' : ' · saisis le stop à l’étape Risque'));
+    box.appendChild(figCard({ s: 'risqueStop' }, ctx, day, prefs));
+  } else if (m.id === 'fenetre') {
+    head('Fenêtre interdite', fw.now ? fw.now.ev.label + ' ' + fw.now.ev.hhmm + ' : aucun ordre avant ' + L.minText(fw.now.until) + '.' : '');
+    box.appendChild(figCard({ day: 1 }, ctx, day, prefs));
+  } else if (m.id === 'zone') {
+    head('Le prix est-il sur une de tes zones ?', 'HVZ au contact, LVN ou FVG qui aspire : sinon, rien à faire.');
+    box.appendChild(figCard({ ladder: 1 }, ctx, day, prefs)); box.appendChild(figCard({ s: 'zoneRebond' }, ctx, day, prefs));
+  } else if (m.id === 'vwap') {
+    head('Le prix touche-t-il la bande ' + (b === 'short' ? '+' : b === 'long' ? '−' : '±') + k + 'σ ?', L.sideRule(b, k).short + '.');
+    box.appendChild(figCard({ v: b === 'short' ? 'vente' : 'achat' }, ctx, day, prefs));
+  } else if (m.id === 'signal') {
+    head('Que fait la zone au contact ?', 'Choisis ce que tu vois : la planche te dit quoi faire.');
+    box.appendChild(U.chips({ options: L.ETATS.map(function (e) { return { v: e[0], label: e[1] }; }), value: day.live.etat, onChange: function (v) { var nd = getDay(); nd.live.etat = v; if (!L.LIQ_OK[v]) nd.live.signal = false; saveDay(nd); paint(); } }));
+    var et = day.live.etat || (prefs.trig === 'epuisement' ? 'epuisement' : (b === 'short' ? 'resistance' : 'tient'));
+    if (et === 'tient' && b === 'short') et = 'resistance';
+    box.appendChild(figCard({ liq: et }, ctx, day, prefs));
+  } else if (m.id === 'risque') {
+    var n2 = L.contracts(set.riskPerTrade, day.stop, set.pointValue, set.commissionRT);
+    head('Stop au-delà de toute la zone, cible dans la portée', day.stop ? 'Stop ' + F.num(day.stop, 2) + ' pt → ' + n2 + ' ' + set.instrument + ' · objectif ≥ ' + F.num(day.stop * prefs.rrMin, 2) + ' pt.' : 'Saisis le stop à l’étape Risque pour lire la taille ici.');
+    box.appendChild(figCard({ s: 'risqueStop' }, ctx, day, prefs));
+  }
+  return box;
+}
+function renderLive(root, ctx, day, prefs) {
+  var set = ctx.settings, b = bias(day);
+  root.appendChild(summary(ctx, day, prefs));
+  var s2 = U.section('Avant d’appuyer', 'dans l’ordre');
+  var list = h('div', { class: 'pl-live' }), now = h('div'), verdict = h('div'), go = h('div', { class: 'pl-go' });
+  var sigS = prefs.trig === 'absorption' ? 'Volume ≥ 1,5 × médian au contact, le prix n’avance plus, clôture qui ne franchit pas' : prefs.trig === 'epuisement' ? 'Les derniers prix de la barre n’échangent presque plus, la barre suivante ne prolonge pas' : 'Signal non choisi : étape Déclencheur';
+  var riskS = 'Stop de l’autre côté de la zone + ' + prefs.marge + ' ticks · cible GEX ou HVZ opposée · R:R ≥ ' + F.num(prefs.rrMin, 1);
+  function paint() {
+    var d = getDay(), fw = fenetre(d, prefs), fOk = !fw.now, stt = L.liveState(d, fOk); T.clear(list); T.clear(verdict); T.clear(go); T.clear(now);
+    L.LIVE.forEach(function (c) {
+      var on = c.auto ? fOk : !!d.live[c.id], sub = c.auto ? (fw.now ? fw.now.ev.label + ' ' + fw.now.ev.hhmm + ' : attendre ' + L.minText(fw.now.until) : fw.next ? 'prochaine à ' + L.minText(fw.next.from) : events(d).length ? 'plus d’annonce' : 'aucune annonce saisie') : c.id === 'signal' ? sigS : c.id === 'risque' ? riskS : c.id === 'vwap' ? L.sideRule(b, prefs.bande).short : c.s;
+      var cur = stt.miss && stt.miss.id === c.id;
+      list.appendChild(h('button', { class: 'pl-lc' + (c.auto ? ' auto' : '') + (on ? '' : ' no') + (cur ? ' cur' : ''), type: 'button', role: 'checkbox', 'aria-checked': String(on), 'aria-disabled': c.auto ? 'true' : null, on: c.auto ? null : { click: function () { var nd = getDay(); nd.live[c.id] = !nd.live[c.id]; saveDay(nd); paint(); } } }, h('i', null, on ? '✓' : ''), h('b', null, c.t), h('span', null, sub)));
+      if (cur) list.appendChild(nowPanel(ctx, d, prefs, stt, fw, paint));
+    });
+    if (stt.ok) now.appendChild(nowPanel(ctx, d, prefs, stt, fw, paint));
+    verdict.appendChild(h('div', { class: 'pl-verdict' + (stt.ok ? ' ok' : '') }, h('b', null, stt.ok ? 'FEU VERT' : stt.n + ' / ' + L.LIVE.length), h('span', null, stt.ok ? 'Tout est coché. Le sens est celui du biais ; l’ordre part, le journal attendra.' : 'Manque : ' + stt.miss.t.toLowerCase() + '. Sans lui, c’est une passe.')));
+    var take = function (side) { var at = Date.now(); T.journal.add(L.prisEntry(side, prefs, stt.ok, at, set.instrument)); saveDay(L.resetLive(getDay())); T.toast((side === 'long' ? 'Achat' : 'Vente') + ' inscrit à ' + F.time(at) + ' : à compléter après'); paint(); };
+    ['long', 'short'].forEach(function (side) {
+      var ok = L.allowed(b, side), lab = side === 'long' ? '▲ J’achète' : '▼ Je vends';
+      go.appendChild(U.button({ label: ok ? lab : lab + ' · contre le biais', kind: ok && stt.ok ? 'acc' : null, disabled: !ok, onClick: function () { take(side); } }));
+    });
+    var wide = U.button({ label: 'Je passe : inscrire le refus', kind: 'ghost', onClick: function () { var at = Date.now(), s2t = L.liveState(getDay(), !fenetre(getDay(), prefs).now); T.journal.add(L.refusEntry(s2t.miss, prefs, at)); saveDay(L.resetLive(getDay())); T.toast('Passe inscrite à ' + F.time(at)); paint(); } }); wide.classList.add('wide'); go.appendChild(wide);
+  }
+  paint();
+  s2.appendChild(list); s2.appendChild(now); s2.appendChild(h('div', { style: 'height:10px' })); s2.appendChild(verdict); s2.appendChild(h('div', { style: 'height:10px' })); s2.appendChild(go);
+  s2.appendChild(U.note('Sous la première case qui manque, la planche de ce qu’il faut voir maintenant. Un geste inscrit l’heure, le sens et le setup ; le reste se complète au journal après la séance. Une passe ne porte ni sens ni mise.'));
+  root.appendChild(s2);
+  var lv = dayLevels(day);
+  var s1 = U.section('Mes *zones*', lv.length ? lv.length + ' niveaux' : 'rien de noté');
+  if (lv.length) s1.appendChild(T.chart.ladder({ levels: lv, height: Math.max(220, lv.length * 26 + 24), fmt: function (v) { return F.num(v, 2); } }));
+  else s1.appendChild(U.empty({ title: 'Aucune zone notée ce matin', text: 'Les HVZ, LVN et niveaux GEX s’ajoutent aux étapes Zones et Cibles GEX de la carte.', action: U.button({ label: 'Ouvrir l’étape Zones', small: true, kind: 'sm', onClick: function () { T.store.set(K.open, 'zones'); ctx.setTab('carte'); } }) }));
+  root.appendChild(s1);
 }
 
 /* Les zones du jour vont au Labo, dans levels/items, au nom HVZ1…, LVN1…, LVH1… : la stratégie se testera dessus. */
@@ -622,83 +739,6 @@ function renderMap(root, ctx, day, prefs) {
   var s2 = U.section('En séance', 'un seul écran');
   s2.appendChild(U.button({ label: 'Passer en mode Live ›', onClick: function () { ctx.setTab('live'); } }));
   root.appendChild(s2);
-}
-
-function renderStep(root, ctx, step, day, prefs) {
-  var p = pctOf(step.id), own = L.ownPct(day, step.id), idx = L.STEPS.indexOf(step), next = L.STEPS[idx + 1];
-  function back() { T.store.set(K.open, null); ctx.rerender(); window.scrollTo(0, 0); }
-  root.appendChild(h('div', { class: 'pl-head' }, h('button', { class: 'pl-back', type: 'button', on: { click: back } }, '‹ Carte'), h('span', { class: 'pl-tag' }, 'Étape ' + step.n + ' / ' + L.STEPS.length + ' · ' + p + ' %')));
-  root.appendChild(U.page({ kicker: 'Plan · ' + step.short, title: step.t.replace(/^(\S+)/, '*$1*'), lede: null }));
-  root.appendChild(h('p', { class: 'pl-k5' }, step.k5));
-  var s1 = U.section('Quoi *préparer*', step.quoi.length + ' point' + (step.quoi.length > 1 ? 's' : '')); s1.appendChild(quoiList(step, ctx));
-  var repaint = function () { ctx.rerender(); };
-  var inp = stepInputs(step, day, prefs, ctx, repaint); if (inp) s1.appendChild(inp);
-  root.appendChild(s1);
-  if (step.id === 'macro') {
-    var sp = U.section('Le principe : *déjà dans le prix*');
-    sp.appendChild(U.prose([
-      'Une information <b>publique et programmée</b> (CPI, emploi, FOMC) est dans le prix avant d’être publiée : le consensus l’est déjà. À l’heure dite, seul l’écart au consensus déplace le prix, en quelques secondes, et personne ne connaît son signe avant.',
-      'Une information <b>privée</b>, ou une rumeur, entre lentement : ceux qui savent, ou croient savoir, se placent d’abord, et le prix dérive. Le jour où elle devient publique, il ne reste plus d’acheteur nouveau. <b>Achète la rumeur, vends l’annonce</b> : ceux qui ont acheté la rumeur vendent la nouvelle, même bonne.',
-      'Ce que cela change pour toi : ne jamais trader le chiffre ; aucun ordre dans la fenêtre interdite ; et si le prix a déjà couru vers l’annonce, une nouvelle conforme n’est pas un signal dans son sens.']));
-    sp.appendChild(U.note('Principe de marché, non mesuré par ALP nº 3 : il règle quand ne pas trader, il ne donne aucun sens.'));
-    root.appendChild(sp);
-  }
-  if (step.schemas.length) {
-    var s2 = U.section('Les *situations*', step.schemas.length + ' cas possibles');
-    s2.appendChild(h('div', { class: 'pl-grid' + (step.schemas.length === 3 ? ' g3' : '') }, step.schemas.map(sitCard)));
-    s2.appendChild(U.note('Schémas d’illustration : aucune donnée de marché, aucun prix réel.'));
-    root.appendChild(s2);
-  }
-  if (step.relief) { var s3 = U.section('En *relief*', step.relief === 'profil' ? 'schéma' : 'calculé'); s3.appendChild(relief(step.relief)); root.appendChild(s3); }
-  var s4 = U.section('Ma *liste*', own + ' %');
-  var box = h('div');
-  var paintList = function () {
-    T.clear(box); var d = getDay(), checked = {}; d.checks[step.id].forEach(function (v, i) { if (v) checked[i] = true; });
-    box.appendChild(U.checklist({ checked: checked, onToggle: function (i) { var nd = L.toggle(getDay(), step.id, +i); saveDay(nd); syncPct(nd, step.id); paintList(); paintValid(); }, items: step.items.map(function (it, i) { return { id: String(i), t: it.t, s: it.s }; }) }));
-  };
-  s4.appendChild(box); paintList();
-  var valid = h('div', { class: 'pl-valid' });
-  var paintValid = function () {
-    T.clear(valid); var d = getDay(), pc = Math.max(L.ownPct(d, step.id), pctOf(step.id));
-    var meta = s4.querySelector('.sh span'); if (meta) meta.textContent = L.ownPct(d, step.id) + ' %';
-    valid.appendChild(U.button({ label: 'Valider à ' + pc + ' % et revenir à la carte', kind: 'acc', onClick: function () { syncPct(getDay(), step.id); T.toast(step.short + ' validé à ' + pctOf(step.id) + ' %'); back(); } }));
-    if (next) valid.appendChild(U.button({ label: 'Étape suivante : ' + next.t + ' ›', kind: 'ghost', onClick: function () { syncPct(getDay(), step.id); T.store.set(K.open, next.id); ctx.rerender(); window.scrollTo(0, 0); } }));
-  };
-  s4.appendChild(valid); paintValid();
-  root.appendChild(s4);
-}
-
-function renderLive(root, ctx, day, prefs) {
-  var set = ctx.settings, b = bias(day), fw = fenetre(day, prefs), fOk = !fw.now;
-  root.appendChild(summary(ctx, day, prefs));
-
-  var s2 = U.section('Avant d’appuyer', 'dans l’ordre');
-  var list = h('div', { class: 'pl-live' }), verdict = h('div'), go = h('div', { class: 'pl-go' });
-  var sigS = prefs.trig === 'absorption' ? 'Volume ≥ 1,5 × médian au contact, le prix n’avance plus, clôture qui ne franchit pas' : prefs.trig === 'epuisement' ? 'Les derniers prix de la barre n’échangent presque plus, la barre suivante ne prolonge pas' : 'Signal non choisi : étape Déclencheur';
-  var riskS = 'Stop de l’autre côté de la zone + ' + prefs.marge + ' ticks · cible GEX ou HVZ opposée · R:R ≥ ' + F.num(prefs.rrMin, 1);
-  function paint() {
-    var d = getDay(), stt = L.liveState(d, fOk); T.clear(list); T.clear(verdict); T.clear(go);
-    L.LIVE.forEach(function (c) {
-      var on = c.auto ? fOk : !!d.live[c.id], sub = c.auto ? (fw.now ? fw.now.ev.label + ' ' + fw.now.ev.hhmm + ' : attendre ' + L.minText(fw.now.until) : fw.next ? 'prochaine à ' + L.minText(fw.next.from) : events(d).length ? 'plus d’annonce' : 'aucune annonce saisie') : c.id === 'signal' ? sigS : c.id === 'risque' ? riskS : c.id === 'vwap' ? L.sideRule(b, prefs.bande).short : c.s;
-      list.appendChild(h('button', { class: 'pl-lc' + (c.auto ? ' auto' : '') + (on ? '' : ' no'), type: 'button', role: 'checkbox', 'aria-checked': String(on), 'aria-disabled': c.auto ? 'true' : null, on: c.auto ? null : { click: function () { var nd = getDay(); nd.live[c.id] = !nd.live[c.id]; saveDay(nd); paint(); } } }, h('i', null, on ? '✓' : ''), h('b', null, c.t), h('span', null, sub)));
-    });
-    verdict.appendChild(h('div', { class: 'pl-verdict' + (stt.ok ? ' ok' : '') }, h('b', null, stt.ok ? 'FEU VERT' : stt.n + ' / ' + L.LIVE.length), h('span', null, stt.ok ? 'Tout est coché. Le sens est celui du biais ; l’ordre part, le journal attendra.' : 'Manque : ' + stt.miss.t.toLowerCase() + '. Sans lui, c’est une passe.')));
-    var take = function (side) { var at = Date.now(); T.journal.add(L.prisEntry(side, prefs, stt.ok, at, set.instrument)); saveDay(L.resetLive(getDay())); T.toast((side === 'long' ? 'Achat' : 'Vente') + ' inscrit à ' + F.time(at) + ' : à compléter après'); paint(); };
-    ['long', 'short'].forEach(function (side) {
-      var ok = L.allowed(b, side), lab = side === 'long' ? '▲ J’achète' : '▼ Je vends';
-      go.appendChild(U.button({ label: ok ? lab : lab + ' · contre le biais', kind: ok && stt.ok ? 'acc' : null, disabled: !ok, onClick: function () { take(side); } }));
-    });
-    var wide = U.button({ label: 'Je passe : inscrire le refus', kind: 'ghost', onClick: function () { var at = Date.now(), s2t = L.liveState(getDay(), fOk); T.journal.add(L.refusEntry(s2t.miss, prefs, at)); saveDay(L.resetLive(getDay())); T.toast('Passe inscrite à ' + F.time(at)); paint(); } }); wide.classList.add('wide'); go.appendChild(wide);
-  }
-  paint();
-  s2.appendChild(list); s2.appendChild(h('div', { style: 'height:10px' })); s2.appendChild(verdict); s2.appendChild(h('div', { style: 'height:10px' })); s2.appendChild(go);
-  s2.appendChild(U.note('Un geste inscrit l’heure, le sens et le setup ; entrée, stop, sortie et résultat se complètent au journal après la séance. Une passe ne porte ni sens ni mise.'));
-  root.appendChild(s2);
-  var lv = dayLevels(day);
-  var s1 = U.section('Mes *zones*', lv.length ? lv.length + ' niveaux' : 'rien de noté');
-  if (lv.length) s1.appendChild(T.chart.ladder({ levels: lv, height: Math.max(220, lv.length * 26 + 24), fmt: function (v) { return F.num(v, 2); } }));
-  else s1.appendChild(U.empty({ title: 'Aucune zone notée ce matin', text: 'Les HVZ, LVN et niveaux GEX s’ajoutent aux étapes Zones et Cibles GEX de la carte.', action: U.button({ label: 'Ouvrir l’étape Zones', small: true, kind: 'sm', onClick: function () { T.store.set(K.open, 'zones'); ctx.setTab('carte'); } }) }));
-  root.appendChild(s1);
 }
 
 /* La méthode : l’ordre retenu, ce qui manquait, et comment la tester. */

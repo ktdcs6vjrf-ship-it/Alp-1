@@ -1090,7 +1090,7 @@ visibles la moitié des défauts de rendu du document.
 (hub, plan de trading, macro, NQ, stratégie intraday, risque, labo, quant, métriques,
 journal, routine, données, réglages) assemblés par `desk/build.py` en **une seule page HTML**, publiée en
 artefact avec `db` + `user`. JavaScript sans dépendance, tests en node
-(`desk/test/*.test.js`, 8 455 contrôles) et banc de rendu Playwright à 390 et
+(`desk/test/*.test.js`, 8 625 contrôles) et banc de rendu Playwright à 390 et
 1280 px. Il ne participe à aucun test Python ; il cite ALP nº 3 avec sa source et
 recoupe ses nombres contre `desk/ref/alp3txt/`. **Aucun chiffre de marché n'y est
 écrit** : les rapports macro et le calendrier sont des documents que Claude écrit

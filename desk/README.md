@@ -13,7 +13,8 @@ Règle : **un nouveau lien à chaque amélioration** — on publie sous un nouve
 | Fichier | Desk | Ordre | Tests |
 |---|---|---|---|
 | `src/desks/home.js` | Desk (hub, carte de séance en pourcentages, flux des décisions) | 0 | — |
-| `src/desks/plan.js` | Plan de trading (carte des neuf étapes, schémas 2D et reliefs 3D par principe, mode Live, méthode) | 1 | 171 |
+| `src/desks/plan.js` | Plan de trading (carte des neuf étapes, déroulé voir / faire par moment, mode Live, méthode) | 1 | 341 |
+| `src/desks/plan-fig.js` | Figures du Plan : VWAP calculée et ses bandes, footprint chiffré, carte de liquidité (sept issues), profil de volume, FVG, frise du jour | — | (dans plan) |
 | `src/desks/macro.js` | Macro (rapports transcrits, régime, calendrier, méthode) | 10 | banc `test/macro-fixture.js` |
 | `src/desks/nq.js` | NQ futures (séance, niveaux GEX, contrat, taille) | 20 | 136 |
 | `src/desks/micro.js` | Stratégie intraday (plan VWAP, setups, seuil µ*, lectures) | 30 | 303 |
@@ -25,8 +26,13 @@ Règle : **un nouveau lien à chaque amélioration** — on publie sous un nouve
 
 Le desk **Plan** est le point d'entrée du jour. Sa carte reprend `T.DAY_STEPS` (macro,
 biais, zones, gex, fenetre, declencheur, risque, journal, revue) ; chaque étape dit quoi
-préparer, montre ses situations en schémas SVG (illustrations, jamais des données) et en
-relief calculé, et se valide d'un bouton qui ramène à la carte. Le pourcentage d'une étape
+est un **déroulé** de moments : chacun dit quoi VOIR (un carrousel de planches 2D et de
+reliefs 3D, la situation choisie en premier) puis quoi FAIRE (le champ ou le réglage du
+moment), et se coche ; l'étape se valide d'un bouton qui ramène à la carte. Les planches
+sont des illustrations calculées (`plan-fig.js`), jamais des données de marché : la VWAP
+est celle d'une séance synthétique et les contacts marqués sont trouvés par une règle ;
+delta et volume d'un footprint se calculent depuis ses cellules. En Live, la planche de
+ce qu'il faut voir s'ouvre sous la première case qui manque. Le pourcentage d'une étape
 suit sa liste (`T.day.setPct`) ; un autre desk qui marque l'étape (`T.day.mark`) la porte à
 100 %. Un desk ouvert depuis une étape porte en tête un bouton « Revenir au plan »
 (`T.nav.setReturn`). Le mode Live inscrit un trade ou une passe d'un geste, horodaté,

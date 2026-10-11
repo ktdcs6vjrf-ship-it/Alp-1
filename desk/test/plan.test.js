@@ -1,5 +1,5 @@
 // Desk Plan : fonctions pures, schémas, reliefs. node test/plan.test.js
-const { T, lib: L } = require('./harness')(['perf', 'plan']);
+const { T, lib: L } = require('./harness')(['perf', 'plan-fig', 'plan']);
 let pass = 0, fail = 0;
 function ok(c, m) { if (c) pass++; else { fail++; console.log('ÉCHEC', m); } }
 function near(a, b, tol, m) { ok(Math.abs(a - b) <= tol, m + ' : ' + a + ' ≠ ' + b + ' ± ' + tol); }
@@ -7,10 +7,20 @@ function section(t) { console.log('· ' + t); }
 
 section('Étapes : celles de la carte de séance, dans le même ordre');
 ok(JSON.stringify(L.STEPS.map(s => s.id)) === JSON.stringify(T.DAY_STEPS.map(s => s.id)), 'mêmes identifiants que T.DAY_STEPS');
+const G = T.lib.planFig;
 L.STEPS.forEach(s => {
-  ok(s.items.length > 0 && s.quoi.length > 0 && s.k5, s.id + ' : liste, préparation et version simple');
-  s.schemas.forEach(k => ok(!!L.SCHEMAS[k], s.id + ' : schéma ' + k + ' défini'));
+  ok(s.items.length > 0 && s.k5, s.id + ' : déroulé et version simple');
+  s.items.forEach((it, i) => {
+    ok(it.t && it.voir && it.faire && Array.isArray(it.figs), s.id + '.' + i + ' : voir, faire, figures');
+    if (it.input) ok(L.INPUTS.includes(it.input), s.id + '.' + i + ' : champ ' + it.input + ' connu');
+    it.figs.forEach(f => {
+      const k = Object.keys(f).filter(x => !['sel', 'bias'].includes(x))[0];
+      const okf = k === 's' ? !!L.SCHEMAS[f.s] : k === 'v' ? !!G.SCEN[f.v] && !!L.VTXT[f.v] : k === 'fp' ? !!G.FP[f.fp] && !!L.FPTXT[f.fp] : k === 'liq' ? !!G.LIQ[f.liq] : k === 'relief' ? ['fins', 'delai', 'profil', 'liq'].includes(f.relief) : ['vp', 'lvnHist', 'fvg', 'day', 'ladder'].includes(k);
+      ok(okf, s.id + '.' + i + ' : figure ' + JSON.stringify(f));
+    });
+  });
 });
+ok(L.STEP.declencheur.items[1].figs.filter(f => f.liq).length === 7, 'la zone au contact : les sept issues');
 ok(L.PREP.every(id => L.STEP[id]), 'étapes de préparation connues');
 
 section('État du jour');
@@ -64,11 +74,13 @@ section('Biais, sens, taille');
 
 section('Live et journal');
 {
-  const d = L.normDay({ date: 'x', live: { zone: true, vwap: true, signal: true, risque: true } }, 'x');
+  const d = L.normDay({ date: 'x', live: { zone: true, vwap: true, signal: true, risque: true, etat: 'tient' } }, 'x');
+  ok(d.live.etat === 'tient' && L.normDay({ date: 'x', live: { etat: 'zz' } }, 'x').live.etat === null, 'état de la zone en live');
   ok(L.liveState(d, true).ok && !L.liveState(d, false).ok && L.liveState(d, false).miss.id === 'fenetre', 'la fenêtre interdite bloque');
   const d2 = L.normDay({ date: 'x', live: { zone: true, vwap: false } }, 'x');
   ok(L.liveState(d2, true).miss.stage === 'vwap' && L.liveState(d2, true).n === 2, 'première case manquante et compte');
   ok(Object.values(L.resetLive(d).live).every(v => !v), 'remise à zéro après une décision');
+  ok(JSON.stringify(L.sortFigs([{ s: 'a', sel: 'hausse' }, { s: 'b', sel: 'baisse' }], { veille: 'baisse', dow: null }).map(f => f.s)) === '["b","a"]', 'la situation choisie passe en premier');
   const p = L.normPrefs({ trig: 'absorption' });
   const pr = L.prisEntry('long', p, true, 1000, 'MNQ');
   ok(pr.kind === 'pris' && pr.side === 'long' && pr.status === 'ouvert' && pr.plan === true && pr.setup === 'Plan HVZ · Absorption' && pr.at === 1000, 'un trade pris en un geste');
@@ -117,6 +129,39 @@ Object.keys(L.SCHEMAS).forEach(k => {
   const pts = L.noisy([[0, 10], [50, 60], [100, 20]], 3, 5);
   ok(pts[0][1] === 10 && pts.some(p => p[0] === 50 && p[1] === 60) && pts[pts.length - 1][1] === 20, 'le bruit garde les pivots');
   ok(JSON.stringify(pts) === JSON.stringify(L.noisy([[0, 10], [50, 60], [100, 20]], 3, 5)), 'bruit déterministe');
+}
+
+section('Figures calculées : VWAP, footprint, liquidité, profil');
+{
+  [1, 2].forEach(k => Object.keys(G.SCEN).forEach(n => {
+    const sc = G.scen(n, k); ok(!!sc, 'scénario VWAP ' + n + ' à ' + k + 'σ trouvé');
+    if (!sc) return;
+    const b = sc.bars; ok(b.every(x => x.h >= Math.max(x.o, x.c) - 1e-9 && x.l <= Math.min(x.o, x.c) + 1e-9 && x.sd >= 0), n + ' : barres cohérentes');
+    if (n === 'achat') { ok(b[sc.m.i].l <= b[sc.m.i].vwap - k * b[sc.m.i].sd && b[sc.m.j].h >= b[sc.m.j].vwap, 'achat : contact de la bande puis retour, mesurés'); }
+    if (n === 'vente') ok(b[sc.m.i].h >= b[sc.m.i].vwap + k * b[sc.m.i].sd, 'vente : contact mesuré');
+    if (n === 'attendre') ok(G.touch(b, k, -1, G.FROM) < 0, 'attendre : aucune bande basse touchée');
+    const svg = G.vwapSvg(sc, { k, marks: L.vMarks(n, sc.m, k) }); ok(!/NaN|undefined/.test(svg) && !/#[0-9a-fA-F]{3,6}\b/.test(svg), n + ' : SVG propre');
+  }));
+  { const b = G.session(5), last = b[b.length - 1]; let v = 0, pv = 0; b.forEach(x => { const tp = (x.h + x.l + x.c) / 3; v += x.v; pv += tp * x.v; }); near(last.vwap, pv / v, 1e-6, 'VWAP : prix moyen pondéré par le volume'); }
+  Object.keys(G.FP).forEach(k => {
+    const fp = G.FP[k], svg = G.fpSvg(fp);
+    ok(!/NaN|undefined/.test(svg), k + ' : footprint propre');
+    fp.bars.forEach(b => { const st = G.fpStats(b.rows); ok(svg.includes('Δ ' + (st.delta > 0 ? '+' : st.delta < 0 ? '−' : '') + Math.abs(st.delta)) && svg.includes('vol ' + st.vol), k + ' : delta et volume calculés et affichés'); ok(b.rows.some(r => r[0] === b.open) && b.rows.some(r => r[0] === b.close), k + ' : ouverture et clôture dans la barre'); });
+    ok(typeof L.FPTXT[k].lire(fp.bars) === 'string' && !/undefined|NaN/.test(L.FPTXT[k].lire(fp.bars)), k + ' : lecture chiffrée');
+  });
+  ok(G.fpStats(G.FP.absorptionAcheteuse.bars[0].rows).delta < 0 && G.fpStats(G.FP.absorptionVendeuse.bars[0].rows).delta > 0, 'absorptions : delta contre le prix');
+  ok(G.FP.recharge.bars[0].rows.some(r => r[1] > 4 * 300), 'iceberg : échangé bien au-delà de l’affiché');
+  G.LIQ_KEYS.forEach(k => {
+    const L2 = G.liqGrid(k), svg = G.heatSvg(k), c = G.LIQ[k];
+    ok(!/NaN|undefined/.test(svg) && c.lire && c.faire, k + ' : carte de liquidité');
+    const wallAt = t => L2.grid[c.w][t];
+    if (k === 'retiree') ok(wallAt(10) > 0.8 && wallAt(30) < 0.3, 'retiré : le mur disparaît avant le contact');
+    if (k === 'mangee') ok(wallAt(10) > 0.8 && wallAt(40) < 0.3 && Math.min(...L2.price.slice(40)) < c.w, 'mangé : le mur fond et le prix passe');
+    if (k === 'tient') ok(wallAt(40) > 0.8 && Math.min(...L2.price) > c.w - 1 && L2.price[47] > c.w + 5, 'tient : le mur reste, le prix repart');
+    const sf = G.surfLiq(k); ok(sf.vals.every(r => r.every(v => isFinite(v))) && sf.zmax > sf.zmin, k + ' : relief');
+  });
+  const pr = G.profile(G.vpSession(3)); ok(pr.hvz.length === 2 && pr.lvn.length === 1 && pr.lvn[0] > pr.hvz[0].hi && pr.lvn[0] < pr.hvz[1].lo, 'profil : deux HVZ, une LVN entre elles, détectées');
+  ok(!/NaN/.test(G.vpSvg() + G.lvnHistSvg() + G.fvgSvg() + G.daySvg([{ min: 870, hhmm: '14:30', label: 'CPI' }], 5, 15, 800)), 'profil, LVN historique, FVG, frise');
 }
 
 section('Textes : apostrophes typographiques, pas de chiffre de marché');
