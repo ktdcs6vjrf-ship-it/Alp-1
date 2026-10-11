@@ -1118,8 +1118,8 @@ LS.cusumArl0 = function (k, h, sigma) {
 /* ================================================================================================
    9. Gabarits (§5) : des points de départ. Aucun ne prétend à un avantage ; tous passent normalize.
    ================================================================================================ */
-/* Les zones que le desk Plan enregistre chaque matin dans levels/items (L.labLevels) : HVZ1…, LVN1…, LVH1…. */
-var PLAN_ZONES = ['HVZ1', 'HVZ2', 'HVZ3', 'HVZ4', 'LVN1', 'LVN2', 'LVN3', 'LVN4', 'LVH1', 'LVH2', 'LVH3', 'LVH4'];
+/* Les HVN que le desk Plan enregistre chaque matin dans levels/items (L.labLevels) : HVN1…. */
+var PLAN_ZONES = ['HVN1', 'HVN2', 'HVN3', 'HVN4', 'HVN5', 'HVN6'];
 var NEUTRE = ' Point de départ : aucun avantage n’est supposé ; le test, ses lois nulles et le registre des essais le diront.';
 LS.TEMPLATES = [
   { id: 'vwap-rejet', label: 'Rejet de bande VWAP',
@@ -1156,9 +1156,9 @@ LS.TEMPLATES = [
     spec: { name: 'Rejet du niveau le plus proche', hypothesis: '', side: 'both', mirror: true,
       long: { setup: [], trigger: { reject: { f: 'nearest', side: 'below' }, from: 'above' }, entry: { type: 'market' }, stop: { type: 'level', at: { f: 'nearest', side: 'below' }, buffer: '$marge' }, target: { type: 'level', at: { f: 'nearest', side: 'above' }, dynamic: false } },
       params: { marge: { v: 8, min: 4, max: 16, step: 4, label: 'Marge du stop (ticks)' } } } },
-  { id: 'plan-hvz', label: 'Plan HVZ : zone de la veille, côté VWAP',
-    description: 'La méthode du desk Plan : achat si la veille a clôturé au-dessus de son ouverture, prix sous la bande basse de la VWAP, et rejet de la zone notée la plus proche sous le prix (HVZ, LVN, LVN historique). Stop au-delà de la zone avec la marge, objectif sur la zone notée suivante au-dessus. Vente en miroir. Exige les zones du jour, enregistrées depuis l’étape Zones du plan.' + NEUTRE,
-    spec: { name: 'Plan HVZ', hypothesis: '', side: 'both', mirror: true,
+  { id: 'plan-hvz', label: 'Plan HVN : nœud de la veille, côté VWAP',
+    description: 'La méthode du desk Plan : achat si la veille a clôturé au-dessus de son ouverture, prix sous la bande basse de la VWAP, et rejet du HVN noté le plus proche sous le prix. Stop au-delà du HVN avec la marge, objectif sur le niveau noté suivant au-dessus. Vente en miroir. Exige les HVN du jour, enregistrés depuis l’étape HVN du plan.' + NEUTRE,
+    spec: { name: 'Plan HVN', hypothesis: '', side: 'both', mirror: true,
       long: { setup: [{ cmp: '>', a: { f: 'prev', of: 'close' }, b: { f: 'prev', of: 'open' } }, { cmp: '<', a: { f: 'close' }, b: { f: 'vwap', k: '$bande' } }],
         trigger: { reject: { f: 'nearest', side: 'below', names: PLAN_ZONES }, from: 'above' }, entry: { type: 'market' },
         stop: { type: 'level', at: { f: 'nearest', side: 'below', names: PLAN_ZONES }, buffer: '$marge' }, target: { type: 'level', at: { f: 'nearest', side: 'above' }, dynamic: false } },

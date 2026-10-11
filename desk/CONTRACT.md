@@ -103,7 +103,7 @@ Sauvegarde :
 - `T.day.mark(étape)` : marque une étape de la carte de séance comme faite aujourd'hui.
   `T.day.setPct(étape, p)` pose son avancement (0–100) ; `T.day.pct(étape)` lit 100 si
   elle est faite, sinon le pourcentage posé. Étapes, dans l'ordre du plan : `macro`,
-  `biais`, `zones`, `gex`, `fenetre`, `declencheur`, `risque`, `journal`, `revue`.
+  `biais`, `gex`, `zones`, `setup`, `fenetre`, `declencheur`, `mur`, `risque`, `journal`, `revue`.
 - `T.nav.setReturn({ desk, tab, label: () => texte, onBack })` : le prochain desk ouvert
   porte en tête un bouton qui ramène à `desk`/`tab` (le Plan s'en sert pour ses étapes).
 

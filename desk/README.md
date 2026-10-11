@@ -13,8 +13,9 @@ Règle : **un nouveau lien à chaque amélioration** — on publie sous un nouve
 | Fichier | Desk | Ordre | Tests |
 |---|---|---|---|
 | `src/desks/home.js` | Desk (hub, carte de séance en pourcentages, flux des décisions) | 0 | — |
-| `src/desks/plan.js` | Plan de trading (carte des neuf étapes, déroulé voir / faire par moment, mode Live, méthode) | 1 | 341 |
-| `src/desks/plan-fig.js` | Figures du Plan : VWAP calculée et ses bandes, footprint chiffré, carte de liquidité (sept issues), profil de volume, FVG, frise du jour | — | (dans plan) |
+| `src/desks/plan.js` | Plan de trading (onze étapes : tendance, gamma, HVN, carte du setup calculée sur les niveaux saisis, VWAP ±1,5σ/±2,5σ, flux, mur et stop, cible gamma et grand R:R ; mode Live, méthode) | 1 | 375 |
+| `src/desks/rnd.js` | Recherche & dév : stratégie de scalp « Mur » (six mots, quatre interdits), douze exemples à issue calculée, testeur en un geste, études sourcées sur la liquidité affichée | 44 | 26 |
+| `src/desks/plan-fig.js` | Figures du Plan et de la R&D : VWAP calculée et ses bandes ±1,5σ/±2,5σ, footprint chiffré, carte de liquidité (neuf issues), carte du setup, heatmaps de scalp dont le trade est simulé sur le chemin, profil de volume, frise du jour | — | (dans plan) |
 | `src/desks/macro.js` | Macro (rapports transcrits, régime, calendrier, méthode) | 10 | banc `test/macro-fixture.js` |
 | `src/desks/nq.js` | NQ futures (séance, niveaux GEX, contrat, taille) | 20 | 136 |
 | `src/desks/micro.js` | Stratégie intraday (plan VWAP, setups, seuil µ*, lectures) | 30 | 303 |

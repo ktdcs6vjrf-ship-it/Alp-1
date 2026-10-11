@@ -312,17 +312,19 @@
   };
 
   /* ================= Journée : les étapes de la carte de séance =================
-     Neuf étapes, dans l’ordre du plan de trading (desk Plan). Un desk marque une étape faite avec T.day.mark(id) ;
+     Onze étapes, dans l’ordre du plan de trading (desk Plan). Un desk marque une étape faite avec T.day.mark(id) ;
      le Plan pose en plus un pourcentage d’avancement avec T.day.setPct(id, p). T.day.pct(id) lit 100 si l’étape est
      faite, sinon le pourcentage posé, sinon 0. */
   T.DAY_STEPS = [
     { id: 'macro', t: 'Macro et calendrier', s: 'Ce qui est déjà dans le prix', desk: 'macro' },
-    { id: 'biais', t: 'Tendance de la veille', s: 'Le biais, puis la structure de Dow', desk: 'nq' },
-    { id: 'zones', t: 'Zones de la veille', s: 'HVZ, LVN, FVG au profil de volume', desk: 'plan' },
-    { id: 'gex', t: 'Cibles GEX', s: 'Les niveaux du matin, en objectifs', desk: 'nq' },
-    { id: 'fenetre', t: 'Côté VWAP', s: 'Le bon côté de la bande', desk: 'micro' },
-    { id: 'declencheur', t: 'Déclencheur', s: 'Absorption ou épuisement : un seul', desk: 'micro' },
-    { id: 'risque', t: 'Risque et taille', s: 'Le stop décide de la taille', desk: 'risk' },
+    { id: 'biais', t: 'Tendance', s: 'Haussière, neutre ou baissière', desk: 'nq' },
+    { id: 'gex', t: 'Niveaux gamma', s: 'Les cibles du jour', desk: 'nq' },
+    { id: 'zones', t: 'HVN', s: 'Les nœuds de haut volume de la veille', desk: 'plan' },
+    { id: 'setup', t: 'Ta carte', s: 'Le setup existe-t-il sur tes niveaux ?', desk: 'plan' },
+    { id: 'fenetre', t: 'VWAP ±1,5σ ou ±2,5σ', s: 'Le bon côté touché', desk: 'micro' },
+    { id: 'declencheur', t: 'Flux au contact', s: 'Absorption, épuisement ou continuation', desk: 'micro' },
+    { id: 'mur', t: 'Mur et stop', s: 'Un mur ancien, le stop derrière', desk: 'plan' },
+    { id: 'risque', t: 'Cible et R:R', s: 'Cible gamma, stop hors du bruit', desk: 'risk' },
     { id: 'journal', t: 'Journal, après', s: 'Compléter les trades pris en live', desk: 'journal' },
     { id: 'revue', t: 'Revue du soir', s: 'Ce que la journée enseigne', desk: 'routine' }
   ];

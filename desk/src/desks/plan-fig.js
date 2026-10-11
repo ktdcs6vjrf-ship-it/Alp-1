@@ -56,9 +56,11 @@ G.SCEN = {
   achat: function (k) { return G.find(11, { drift: 0 }, function (b) { return G.rebond(b, k, -1); }, 3000); },
   vente: function (k) { return G.find(2011, { drift: 0 }, function (b) { return G.rebond(b, k, 1); }, 3000); },
   attendre: function (k) { return G.find(411, { drift: 0.55, driftFrom: 9 }, function (b) { if (G.touch(b, k, -1, G.FROM) >= 0) return null; var up = 0, n = 0; for (var i = 150; i < b.length; i++) { n++; if (b[i].c > b[i].vwap) up++; } return up / n > 0.9 ? { up: up / n } : null; }); },
-  neutre: function (k) { return G.find(611, { drift: 0, sd: 1.6 }, function (b) { if (G.touch(b, 2, -1, G.FROM) >= 0 || G.touch(b, 2, 1, G.FROM) >= 0) return null; var x = 0; for (var i = G.FROM + 1; i < b.length; i++) if ((b[i].c - b[i].vwap) * (b[i - 1].c - b[i - 1].vwap) < 0) x++; return x >= 8 ? { x: x } : null; }); },
+  neutre: function (k) { return G.find(611, { drift: 0, sd: 1.6 }, function (b) { if (G.touch(b, 2.5, -1, G.FROM) >= 0 || G.touch(b, 2.5, 1, G.FROM) >= 0) return null; var x = 0; for (var i = G.FROM + 1; i < b.length; i++) if ((b[i].c - b[i].vwap) * (b[i - 1].c - b[i - 1].vwap) < 0) x++; return x >= 8 ? { x: x } : null; }); },
   ouverture: function (k) { return G.find(811, { drift: 0, shock: -55 }, function (b) { var i = G.touch(b, k, -1, 186); if (i < 0 || i > 200) return null; var j = G.backToVwap(b, i, -1); return { i: i, j: j }; }); }
 };
+/* Les bandes de l’utilisateur : ±1,5σ et ±2,5σ. Un contact de l’une ou de l’autre compte. */
+G.BANDS = [-2.5, -1.5, 1.5, 2.5];
 /* Les scénarios coûtent jusqu’à une demi-seconde de recherche : calculés une fois par bande. */
 var SC_CACHE = {};
 G.scen = function (name, k) { var key = name + ':' + k; if (!(key in SC_CACHE)) SC_CACHE[key] = G.SCEN[name] ? G.SCEN[name](k) : null; return SC_CACHE[key]; };
@@ -67,16 +69,16 @@ G.vwapSvg = function (sc, o) {
   o = o || {};
   var bars = sc.bars.slice(G.FROM), k = o.k || 2, n = bars.length, x0 = 6, x1 = VW - 40, y0 = 14, y1 = VH - 22;
   var lo = Infinity, hi = -Infinity;
-  bars.forEach(function (b) { lo = Math.min(lo, b.l, b.vwap - 2.15 * b.sd); hi = Math.max(hi, b.h, b.vwap + 2.15 * b.sd); });
+  bars.forEach(function (b) { lo = Math.min(lo, b.l, b.vwap - 2.65 * b.sd); hi = Math.max(hi, b.h, b.vwap + 2.65 * b.sd); });
   var X = function (i) { return +(x0 + (i + 0.5) / n * (x1 - x0)).toFixed(1); }, Y = function (p) { return +(y0 + (hi - p) / (hi - lo) * (y1 - y0)).toFixed(1); };
   var g = '<rect x="0" y="0" width="' + VW + '" height="' + VH + '" fill="var(--ink)" rx="6"/>';
   [12, 15, 18, 21].forEach(function (hh) { var i = hh * 12 - G.FROM; if (i < 0 || i >= n) return; g += '<line x1="' + X(i) + '" x2="' + X(i) + '" y1="' + y0 + '" y2="' + y1 + '" stroke="var(--line)"/><text class="pl-t" x="' + X(i) + '" y="' + (VH - 7) + '" text-anchor="middle">' + hh + ':00</text>'; });
   if (o.zone) { var zi = o.zone.i - G.FROM; g += '<rect x="' + X(Math.max(0, zi - 4)) + '" y="' + y0 + '" width="' + (X(Math.min(n - 1, zi + 4)) - X(Math.max(0, zi - 4))) + '" height="' + (y1 - y0) + '" fill="var(--violet-a)"/>'; }
   var line = function (f, cls) { return '<path d="' + bars.map(function (b, i) { return (i ? 'L' : 'M') + X(i) + ',' + Y(f(b)); }).join(' ') + '" fill="none" ' + cls + '/>'; };
-  [-2, -1, 1, 2].forEach(function (m) { var on = Math.abs(m) === k; g += line(function (b) { return b.vwap + m * b.sd; }, 'stroke="' + (on ? 'var(--soft)' : 'var(--line-2)') + '" stroke-width="' + (on ? 1.2 : 0.9) + '"'); });
+  G.BANDS.forEach(function (m) { var on = Math.abs(m) === k; g += line(function (b) { return b.vwap + m * b.sd; }, 'stroke="' + (on ? 'var(--soft)' : 'var(--line-2)') + '" stroke-width="' + (on ? 1.2 : 1) + '"'); });
   bars.forEach(function (b, i) { g += '<line x1="' + X(i) + '" x2="' + X(i) + '" y1="' + Y(b.h) + '" y2="' + Y(b.l) + '" stroke="var(--soft)" stroke-width="1" opacity=".85"/>'; });
   g += line(function (b) { return b.vwap; }, 'stroke="var(--hi)" stroke-width="2"');
-  var last = bars[n - 1], lab = [['VWAP', last.vwap, 'w'], ['+1σ', last.vwap + last.sd, ''], ['+2σ', last.vwap + 2 * last.sd, ''], ['−1σ', last.vwap - last.sd, ''], ['−2σ', last.vwap - 2 * last.sd, '']];
+  var last = bars[n - 1], lab = [['VWAP', last.vwap, 'w']].concat(G.BANDS.map(function (m) { return [(m > 0 ? '+' : '−') + String(Math.abs(m)).replace('.', ',') + 'σ', last.vwap + m * last.sd, '']; }));
   lab.sort(function (a, b) { return b[1] - a[1]; }); var prev = -99;
   lab.forEach(function (l) { var y = Math.max(prev + 11, Y(l[1]) + 3.5); prev = y; g += '<text class="pl-t' + (l[2] ? ' w' : '') + '" x="' + (x1 + 4) + '" y="' + y + '">' + l[0] + '</text>'; });
   (o.marks || []).forEach(function (m) {
@@ -179,12 +181,17 @@ G.LIQ = {
     lire: 'Le mur échange beaucoup et fond : sa taille baisse au fil des frappes, puis il disparaît et le prix passe. L’ancien support devient une résistance au retour.', faire: 'Pas d’achat. Si le biais est vendeur, le retour sous la zone est un contact de vente ; sinon on attend.' },
   epuisement: { t: 'Épuisement avant la zone', side: -1, w: 9, keys: [[0, 23], [14, 16], [22, 12.2], [28, 11.4], [34, 13], [47, 20]], wall: function (t) { return 0.9; }, hits: [[27, 0.25]], fp: 'epuisement',
     lire: 'Le prix ralentit en approchant de la zone : les derniers prix de la barre n’échangent presque plus rien. Il ne reste plus de vendeurs, sans même avoir besoin du mur.', faire: 'Achat possible si ton signal choisi est l’épuisement et que le biais est acheteur. Stop sous la zone, même si elle n’a pas été touchée.' },
+  continuation: { t: 'La zone ne tient pas : continuation', side: -1, w: 12, seed: 977, keys: [[0, 22], [12, 18], [22, 12.6], [28, 12.3], [33, 9], [38, 6], [42, 9.5], [44, 11.2], [47, 6]], wall: function (t) { return t < 22 ? 1 : t < 31 ? 1 - (t - 22) / 9 : 0; }, hits: [[23, 0.8], [26, 0.9], [29, 1]], fp: 'mangee',
+    lire: 'Les acheteurs défendent la zone, le mur fond sous les frappes et cède : le prix passe dessous et revient tester l’ancien support par en dessous, sans le reprendre.', faire: 'Si le biais est vendeur, c’est un setup : vente au retour sous l’ancienne zone, stop au-dessus d’elle, cible le niveau gamma suivant. Biais acheteur : pas de trade.' },
+  spawn: { t: 'Le mur apparaît au dernier moment', side: -1, w: 9, seed: 1201, keys: [[0, 22], [14, 15], [24, 10.6], [27, 10.4], [31, 7], [38, 4], [47, 3]], wall: function (t) { return t < 20 ? 0 : t < 27 ? 1 : 0; }, hits: [], fp: 'retiree',
+    lire: 'Rien au niveau, puis un mur énorme surgit quelques instants avant le contact, et disparaît dès que le prix arrive. C’est la forme exacte des ordres de manipulation sanctionnés sur le CME : posés pour être vus, pas pour être exécutés.', faire: 'Jamais d’entrée sur un mur qui vient d’apparaître. Un mur se joue s’il est là depuis plusieurs minutes et s’il échange au contact.' },
   ignoree: { t: 'Le prix n’y vient pas', side: -1, w: 7, keys: [[0, 22], [16, 18], [26, 15], [36, 19], [47, 17]], wall: function (t) { return 1; }, hits: [], fp: null,
     lire: 'Le mur reste là toute la séance, le prix ne le touche jamais.', faire: 'Rien à faire. Un plan qui force le contact invente des trades.' }
 };
 G.LIQ_KEYS = ['tient', 'resistance', 'recharge', 'retiree', 'mangee', 'epuisement', 'ignoree'];
+G.LIQ_PLUS = ['continuation', 'spawn'];
 G.liqGrid = function (key) {
-  var c = G.LIQ[key], seed = 1 + G.LIQ_KEYS.indexOf(key) * 97, r = T.rng(seed), px = path(c.keys, seed + 5, 0.45), grid = [];
+  var c = G.LIQ[key], seed = c.seed || 1 + G.LIQ_KEYS.indexOf(key) * 97, r = T.rng(seed), px = path(c.keys, seed + 5, 0.45), grid = [];
   for (var p = 0; p < NP; p++) {
     var row = [];
     for (var t = 0; t < NT; t++) {
@@ -192,7 +199,7 @@ G.liqGrid = function (key) {
       if (d < 4 && d > 0.6) base += 0.12 * (1 - d / 4);
       var ws = c.wall(t), dw = Math.abs(p - c.w), wall = dw === 0 ? ws : dw === 1 ? 0.55 * ws : 0;
       var traded = c.side < 0 ? px[t] < c.w + 0.5 && t > 22 : px[t] > c.w - 0.5 && t > 22;
-      if (key !== 'recharge' && key !== 'tient' && key !== 'resistance' && traded && dw <= 1) wall *= 0.4;
+      if (key !== 'recharge' && key !== 'tient' && key !== 'resistance' && key !== 'spawn' && traded && dw <= 1) wall *= 0.4;
       row.push(Math.min(1, base + wall));
     }
     grid.push(row);
@@ -302,4 +309,139 @@ G.daySvg = function (events, avant, apres, nowMin) {
   });
   if (fin(nowMin)) { var xn = X(nowMin); g += '<line x1="' + xn + '" x2="' + xn + '" y1="14" y2="54" stroke="var(--hi)" stroke-width="2"/><text class="pl-t w" x="' + xn + '" y="11" text-anchor="' + (xn > W * 0.8 ? 'end' : xn < W * 0.2 ? 'start' : 'middle') + '">maintenant</text>'; }
   return '<svg class="pl-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Frise du jour et fenêtres interdites">' + g + '</svg>';
+};
+
+/* ===================================================================
+   6. La carte du jour : le setup tracé avec les niveaux de l’utilisateur
+   =================================================================== */
+/* o : { price, hvn: [{lo, hi, label}], gamma: [{price, label}], best: {side, entry, stop, target, rr} | null }.
+   Rien n’est inventé : sans niveaux, la planche dit ce qui manque. */
+G.carteSvg = function (o) {
+  var W = 320, H = 240, x0 = 8, xl = 206, y0 = 14, y1 = H - 16, ps = [];
+  (o.hvn || []).forEach(function (z) { ps.push(z.lo, z.hi); }); (o.gamma || []).forEach(function (g) { ps.push(g.price); });
+  if (fin(o.price)) ps.push(o.price); if (o.best) ps.push(o.best.stop, o.best.target);
+  var g = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="var(--ink)" rx="6"/>';
+  if (ps.length < 2) return '<svg class="pl-svg" viewBox="0 0 ' + W + ' 80" role="img" aria-label="Carte du jour vide"><rect x="0" y="0" width="' + W + '" height="80" fill="var(--ink)" rx="6"/><text class="pl-t" x="' + (W / 2) + '" y="44" text-anchor="middle">Note le prix, tes HVN et tes niveaux gamma</text></svg>';
+  var lo = Math.min.apply(null, ps), hi = Math.max.apply(null, ps), pad = (hi - lo) * 0.07 || 5; lo -= pad; hi += pad;
+  var Y = function (p) { return +(y0 + (hi - p) / (hi - lo) * (y1 - y0)).toFixed(1); }, labs = [];
+  (o.hvn || []).forEach(function (z, i) { var a = Y(z.hi), b = Math.max(Y(z.lo), a + 3); g += '<rect x="' + x0 + '" y="' + a + '" width="' + (xl - x0) + '" height="' + (b - a) + '" fill="var(--violet-a)" stroke="var(--violet-b)"/>'; labs.push({ y: (a + b) / 2, t: (z.label || 'HVN ' + (i + 1)) + ' ' + F.num((z.lo + z.hi) / 2, 0), c: 'v' }); });
+  (o.gamma || []).forEach(function (q) { var y = Y(q.price); g += '<line x1="' + x0 + '" x2="' + xl + '" y1="' + y + '" y2="' + y + '" stroke="var(--soft)" stroke-dasharray="5 3"/>'; labs.push({ y: y, t: q.label + ' ' + F.num(q.price, 2), c: '' }); });
+  if (fin(o.price)) { var yp = Y(o.price); g += '<line x1="' + x0 + '" x2="' + xl + '" y1="' + yp + '" y2="' + yp + '" stroke="var(--hi)" stroke-width="1.6"/>'; labs.push({ y: yp, t: 'prix ' + F.num(o.price, 2), c: 'w' }); }
+  var b = o.best;
+  if (b) {
+    var xe = 116, xt = 190, ye = Y(b.entry), ys = Y(b.stop), yt = Y(b.target), up = b.side > 0;
+    g += '<rect x="' + xe + '" y="' + Math.min(ye, yt) + '" width="' + (xt - xe) + '" height="' + Math.abs(yt - ye) + '" fill="var(--violet)" fill-opacity=".14"/>';
+    g += '<rect x="' + xe + '" y="' + Math.min(ye, ys) + '" width="' + (xt - xe) + '" height="' + Math.max(1, Math.abs(ys - ye)) + '" fill="var(--soft)" fill-opacity=".22"/>';
+    if (fin(o.price)) g += '<path d="M' + (x0 + 30) + ',' + Y(o.price) + ' C' + (x0 + 70) + ',' + Y(o.price) + ' ' + (xe - 30) + ',' + ye + ' ' + xe + ',' + ye + '" fill="none" stroke="var(--hi)" stroke-dasharray="3 3" stroke-width="1.3"/>';
+    g += '<path d="M' + xe + ',' + ye + ' L' + (xt - 4) + ',' + (yt + (up ? 6 : -6)) + '" stroke="var(--violet)" stroke-width="2" fill="none"/><path d="M' + (xt - 9) + ',' + (yt + (up ? 6 : -6)) + ' L' + (xt - 3) + ',' + yt + ' L' + (xt + 1) + ',' + (yt + (up ? 8 : -8)) + '" fill="none" stroke="var(--violet)" stroke-width="2"/>';
+    g += '<circle cx="' + xe + '" cy="' + ye + '" r="4" fill="var(--violet)"/>';
+    g += '<text class="pl-t w" x="' + (xe - 4) + '" y="' + (yt + (up ? 3.5 : 3.5)) + '" text-anchor="end">' + (up ? 'achat' : 'vente') + ' · R:R 1:' + F.num(b.rr, b.rr < 10 ? 1 : 0) + '</text>';
+    labs.push({ y: ys, t: 'stop ' + F.num(b.stop, 2), c: '' });
+  }
+  labs.sort(function (a, c) { return a.y - c.y; }); var prev = -99;
+  labs.forEach(function (l) { var y = Math.max(prev + 11, l.y + 3.5); prev = y; g += '<text class="pl-t' + (l.c ? ' ' + l.c : '') + '" x="' + (xl + 6) + '" y="' + Math.min(H - 4, y).toFixed(1) + '">' + E(l.t) + '</text>'; });
+  return '<svg class="pl-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Carte du jour et setup">' + g + '</svg>';
+};
+
+/* ===================================================================
+   7. Scalp « Mur » : exemples à la heatmap, et le trade simulé sur le chemin dessiné
+   =================================================================== */
+/* Une colonne = 5 secondes (72 colonnes, six minutes). Une rangée = 1 point de NQ. Le risque vaut 4 rangées :
+   entrée 1 rangée devant le mur, stop 3 rangées derrière ; objectif 2R. Les règles sont celles de la carte :
+   sens, mur ancien (au moins 24 colonnes, deux minutes), espace jusqu’au mur opposé, touche, tenue, sortie à 3 min. */
+var SNT = 72, SNP = 36;
+G.SCALP_RULES = { front: 1, behind: 3, rr: 2, ageMin: 24, maxCols: 36, gone: 0.35 };
+G.SCALP = {
+  tient: { t: 'Mur ancien, il tient : achat', side: 1, trend: 1, wall: 10, wf: function () { return 1; }, keys: [[0, 24], [14, 19], [26, 10.7], [31, 10.5], [36, 14], [44, 21], [59, 24]], hits: 1, attendu: 'gain',
+    lire: 'Prix au-dessus de la VWAP, donc achats seulement. Le mur de bids est là depuis le début de la fenêtre ; le prix vient dessus, les bulles s’impriment, le mur ne fond pas. Le prix repart et touche 2R.' },
+  vente: { t: 'Mur ancien au-dessus : vente', side: -1, trend: -1, wall: 26, wf: function () { return 1; }, keys: [[0, 12], [14, 17], [26, 25.3], [31, 25.5], [36, 22], [44, 15], [59, 12]], hits: 1, attendu: 'gain',
+    lire: 'Prix sous la VWAP : ventes seulement. Le mur d’asks au-dessus tient au contact, les acheteurs s’y épuisent, le prix redescend à 2R.' },
+  recharge: { t: 'Le mur se recharge : achat', side: 1, trend: 1, wall: 10, wf: function (t) { return t < 26 ? 0.6 : 0.45 + 0.25 * ((t * 7) % 3) / 2; }, keys: [[0, 23], [14, 18], [26, 10.7], [34, 10.5], [40, 16], [48, 21], [59, 23]], hits: 2, attendu: 'gain',
+    lire: 'Le mur affiché est moyen et semble fondre, mais il se reforme à chaque frappe : il échange bien plus qu’il n’affiche. C’est un mur qui tient.' },
+  spawn: { t: 'Mur apparu au dernier moment : pas de trade', side: 1, trend: 1, wall: 10, wf: function (t) { return t < 22 ? 0 : t < 29 ? 1 : 0; }, keys: [[0, 23], [14, 18], [26, 11.6], [29, 11.2], [33, 8], [40, 5], [59, 4]], hits: 0, attendu: 'refus',
+    lire: 'Rien au niveau, puis un mur énorme surgit moins d’une minute avant le contact et disparaît quand le prix arrive. Règle du mur ancien : refus. Le prix traverse : l’achat aurait été stoppé.' },
+  retire: { t: 'Le mur est retiré pendant le trade : sortie', side: 1, trend: 1, wall: 10, wf: function (t) { return t < 30 ? 1 : 0; }, keys: [[0, 23], [14, 18], [26, 10.8], [30, 10.6], [32, 10.4], [36, 6], [44, 4], [59, 4]], hits: 1, attendu: 'sortie',
+    lire: 'Mur ancien, entrée au contact, puis le mur disparaît d’un coup. Règle de tenue : sortie immédiate, avant le stop. La perte est une fraction de R au lieu d’un R entier.' },
+  mange: { t: 'Le mur fond sous les frappes : sortie', side: 1, trend: 1, wall: 10, wf: function (t) { return t < 26 ? 1 : t < 34 ? 1 - (t - 26) / 8 : 0; }, keys: [[0, 23], [14, 18], [26, 10.8], [33, 10.5], [36, 8], [44, 5], [59, 4]], hits: 2, attendu: 'sortie',
+    lire: 'Gros volume au contact, mais la taille affichée baisse frappe après frappe : le mur se fait manger. Sortie dès qu’il passe sous un tiers de sa taille, avant le stop.' },
+  contre: { t: 'Mur contre le sens : pas de trade', side: 1, trend: -1, wall: 10, wf: function () { return 1; }, keys: [[0, 24], [14, 19], [26, 10.7], [31, 10.5], [36, 13], [44, 12], [59, 9]], hits: 1, attendu: 'refus',
+    lire: 'Le mur de bids tient, mais le prix est sous la VWAP : la règle du sens n’autorise que des ventes. Pas d’achat, même si le mur est beau.' },
+  espace: { t: 'Pas de place jusqu’au mur opposé : pas de trade', side: 1, trend: 1, wall: 10, wf: function () { return 1; }, wall2: { row: 16, wf: function () { return 1; } }, keys: [[0, 14], [14, 13], [26, 10.7], [31, 10.5], [38, 14.6], [46, 13], [59, 14]], hits: 1, attendu: 'refus',
+    lire: 'Mur sous le prix, mais un autre mur au-dessus, à moins de 2R : l’objectif est bloqué d’avance. Règle de l’espace : pas de trade. Le prix tourne entre les deux murs.' },
+  temps: { t: 'Il tient mais rien ne part : sortie au temps', side: 1, trend: 1, wall: 10, wf: function () { return 1; }, keys: [[0, 22], [14, 17], [26, 10.7], [32, 10.5], [44, 13], [56, 13.4], [59, 13]], hits: 1, attendu: 'temps',
+    lire: 'Le mur tient, le prix ne part pas. Au bout de trois minutes, sortie au marché : un petit gain ou une petite perte, jamais un trade qu’on garde par espoir.' },
+  pasTouche: { t: 'Le prix s’arrête avant : pas rempli', side: 1, trend: 1, wall: 10, wf: function () { return 1; }, keys: [[0, 23], [14, 18], [26, 13.4], [31, 13.2], [40, 18], [59, 23]], hits: 0, attendu: 'rien',
+    lire: 'Le prix rebondit deux points avant l’ordre limite. Pas rempli, pas de trade : on ne court pas après. C’est une issue normale.' },
+  annonce: { t: 'Pendant une annonce : pas de trade', side: 1, trend: 1, wall: 10, annonce: true, wf: function (t) { return t < 25 ? 1 : 0.2; }, keys: [[0, 22], [10, 20], [24, 11.6], [27, 4], [31, 18], [36, 6], [44, 15], [59, 10]], hits: 1, attendu: 'refus',
+    lire: 'Le mur est là, mais l’annonce tombe : le prix traverse dans les deux sens en quelques secondes. Fenêtre interdite : pas de trade, quoi que dise la heatmap.' },
+  stoppe: { t: 'Il tenait, puis le stop : la perte normale', side: 1, trend: 1, wall: 10, wf: function (t) { return t < 40 ? 1 : 0.5; }, keys: [[0, 23], [14, 18], [26, 10.7], [30, 10.5], [35, 14.5], [40, 10.5], [42, 6.8], [48, 5], [59, 5]], hits: 1, attendu: 'perte',
+    lire: 'Tout était juste : sens, mur ancien, espace, touche, tenue. Le prix repart, revient, et le mur cède au deuxième passage : stop, −1R. Une stratégie à 1:2 en a une sur deux ou trois, même quand elle fonctionne.' }
+};
+G.SCALP_KEYS = ['tient', 'vente', 'recharge', 'spawn', 'retire', 'mange', 'contre', 'espace', 'temps', 'pasTouche', 'annonce', 'stoppe'];
+G.scalpGrid = function (key) {
+  var c = G.SCALP[key], seed = 3001 + G.SCALP_KEYS.indexOf(key) * 131, r = T.rng(seed), r2 = T.rng(seed + 9);
+  var px = [], k = 0;
+  for (var t = 0; t < SNT; t++) { while (k < c.keys.length - 2 && c.keys[k + 1][0] <= t) k++; var a = c.keys[k], b = c.keys[k + 1], u = Math.max(0, Math.min(1, (t - a[0]) / Math.max(1, b[0] - a[0]))); px.push(a[1] + (b[1] - a[1]) * u + (r2() - 0.5) * 0.5); }
+  var grid = [];
+  for (var p = 0; p < SNP; p++) {
+    var row = [];
+    for (t = 0; t < SNT; t++) {
+      var v = r() < 0.16 ? r() * 0.2 : 0, d = Math.abs(p - px[t]); if (d < 4 && d > 0.7) v += 0.1 * (1 - d / 4);
+      var dw = Math.abs(p - c.wall); if (dw <= 1) v += (dw === 0 ? 1 : 0.5) * c.wf(t);
+      if (c.wall2) { var d2 = Math.abs(p - c.wall2.row); if (d2 <= 1) v += (d2 === 0 ? 1 : 0.5) * c.wall2.wf(t); }
+      row.push(Math.min(1, v));
+    }
+    grid.push(row);
+  }
+  return { grid: grid, price: px, c: c };
+};
+/* Les règles appliquées au chemin : le résultat se calcule, il n’est jamais écrit. */
+G.scalpTrade = function (key) {
+  var S = G.scalpGrid(key), c = S.c, R = G.SCALP_RULES, sd = c.side, px = S.price;
+  var E0 = c.wall + sd * R.front, St = c.wall - sd * R.behind, risk = Math.abs(E0 - St), Tg = E0 + sd * R.rr * risk;
+  var tc = -1; for (var t = 0; t < SNT; t++) if (sd > 0 ? px[t] <= E0 : px[t] >= E0) { tc = t; break; }
+  var out = { entry: E0, stop: St, target: Tg, risk: risk, tc: tc, tx: -1, r: null, issue: 'rien', why: '' };
+  if (tc < 0) { out.why = 'le prix n’atteint pas l’ordre limite'; return out; }
+  var born = -1; for (t = 0; t <= tc; t++) if (c.wf(t) >= 0.5) { born = t; break; }
+  var age = born < 0 ? 0 : tc - born, blocked = false;
+  if (c.wall2) { var lo2 = Math.min(E0, Tg), hi2 = Math.max(E0, Tg); blocked = c.wall2.row > lo2 && c.wall2.row < hi2; }
+  if (c.annonce) { out.issue = 'refus'; out.why = 'fenêtre interdite (annonce)'; return out; }
+  if (c.trend !== sd) { out.issue = 'refus'; out.why = 'contre le sens de la VWAP'; return out; }
+  if (age < R.ageMin) { out.issue = 'refus'; out.why = 'mur trop récent (' + Math.round(age * 5) + ' s)'; return out; }
+  if (blocked) { out.issue = 'refus'; out.why = 'mur opposé avant l’objectif'; return out; }
+  for (t = tc + 1; t < SNT; t++) {
+    var p = px[t];
+    if (sd > 0 ? p <= St : p >= St) { out.tx = t; out.r = -1; out.issue = 'perte'; out.why = 'stop'; return out; }
+    if (sd > 0 ? p >= Tg : p <= Tg) { out.tx = t; out.r = R.rr; out.issue = 'gain'; out.why = 'objectif 2R'; return out; }
+    if (c.wf(t) < R.gone) { out.tx = t; out.r = (p - E0) * sd / risk; out.issue = 'sortie'; out.why = 'le mur ne tient plus'; return out; }
+    if (t - tc >= R.maxCols) { out.tx = t; out.r = (p - E0) * sd / risk; out.issue = 'temps'; out.why = 'trois minutes'; return out; }
+  }
+  out.tx = SNT - 1; out.r = (px[SNT - 1] - E0) * sd / risk; out.issue = 'temps'; out.why = 'fin de la fenêtre'; return out;
+};
+G.scalpSvg = function (key) {
+  var S = G.scalpGrid(key), c = S.c, tr = G.scalpTrade(key), W = 320, H = 210, x0 = 4, x1 = W - 4, y0 = 16, y1 = H - 20, cw = (x1 - x0) / SNT, ch = (y1 - y0) / SNP;
+  var X = function (t) { return x0 + (t + 0.5) * cw; }, Y = function (p) { return y1 - (p + 0.5) * ch; };
+  var g = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="var(--ink)" rx="6"/>';
+  S.grid.forEach(function (row, p) { row.forEach(function (v, t) { if (v < 0.06) return; g += '<rect x="' + (x0 + t * cw).toFixed(1) + '" y="' + (y1 - (p + 1) * ch).toFixed(1) + '" width="' + (cw + 0.3).toFixed(1) + '" height="' + (ch + 0.3).toFixed(1) + '" fill="' + (v > 0.75 ? 'var(--violet-2)' : 'var(--violet)') + '" fill-opacity="' + Math.min(0.95, 0.15 + 0.8 * v).toFixed(2) + '"/>'; }); });
+  if (c.hits) for (var t = 0; t < SNT; t++) { var near = Math.abs(S.price[t] - c.wall) <= 1.7 && c.wf(t) > 0.2; if (near && t % 2 === 0) g += '<circle cx="' + X(t).toFixed(1) + '" cy="' + Y(c.wall + c.side * 0.6).toFixed(1) + '" r="' + (2 + 1.6 * c.hits).toFixed(1) + '" fill="var(--hi)" fill-opacity=".2" stroke="var(--hi)" stroke-width=".9"/>'; }
+  g += '<path d="' + S.price.map(function (p, t) { return (t ? 'L' : 'M') + X(t).toFixed(1) + ',' + Y(p).toFixed(1); }).join(' ') + '" fill="none" stroke="var(--hi)" stroke-width="1.8" stroke-linejoin="round"/>';
+  if (tr.tc >= 0 && tr.issue !== 'refus') {
+    var ta = X(tr.tc), tb = X(tr.tx >= 0 ? tr.tx : SNT - 1);
+    g += '<line x1="' + ta + '" x2="' + tb + '" y1="' + Y(tr.target) + '" y2="' + Y(tr.target) + '" stroke="var(--hi)" stroke-dasharray="4 3"/><text class="pl-t w" x="' + (ta - 6) + '" y="' + (Y(tr.target) + 3.5) + '" text-anchor="end">2R</text>';
+    g += '<line x1="' + ta + '" x2="' + tb + '" y1="' + Y(tr.entry) + '" y2="' + Y(tr.entry) + '" stroke="var(--violet)" stroke-width="1.6"/>';
+    g += '<line x1="' + ta + '" x2="' + tb + '" y1="' + Y(tr.stop) + '" y2="' + Y(tr.stop) + '" stroke="var(--soft)" stroke-dasharray="3 3"/><text class="pl-t" x="' + (ta - 6) + '" y="' + (Y(tr.stop) + 3.5) + '" text-anchor="end">stop</text>';
+    g += '<circle cx="' + ta + '" cy="' + Y(tr.entry) + '" r="4.5" fill="var(--violet)"/>';
+    if (tr.tx >= 0) g += '<circle cx="' + tb + '" cy="' + Y(S.price[tr.tx]) + '" r="4.5" fill="none" stroke="var(--hi)" stroke-width="1.8"/>';
+  } else if (tr.tc >= 0) g += '<circle cx="' + X(tr.tc) + '" cy="' + Y(S.price[tr.tc]) + '" r="5" fill="none" stroke="var(--soft)" stroke-width="1.6" stroke-dasharray="2 2"/>';
+  var born = -1; for (t = 0; t < SNT; t++) if (c.wf(t) >= 0.5) { born = t; break; }
+  if (born > 0) g += '<line x1="' + X(born) + '" x2="' + X(born) + '" y1="' + y0 + '" y2="' + y1 + '" stroke="var(--soft)" stroke-dasharray="2 3"/><text class="pl-t" x="' + (X(born) - 3) + '" y="' + (y0 - 4) + '" text-anchor="end">le mur apparaît</text>';
+  g += '<text class="pl-t" x="' + x0 + '" y="' + (H - 6) + '">' + (c.trend > 0 ? 'prix au-dessus de la VWAP' : 'prix sous la VWAP') + '</text><text class="pl-t" x="' + x1 + '" y="' + (H - 6) + '" text-anchor="end">6 minutes →</text>';
+  return '<svg class="pl-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + E(c.t) + '">' + g + '</svg>';
+};
+G.surfScalp = function (key) {
+  var S = G.scalpGrid(key), xs = [], ys = [], vals = [], lo = Infinity, hi = -Infinity, am = [0, 0];
+  for (var t = 0; t < SNT; t += 2) xs.push(t); for (var p = 0; p < SNP; p++) ys.push(p);
+  ys.forEach(function (p, j) { vals.push(xs.map(function (t, i) { var v = S.grid[p][t]; if (v < lo) lo = v; if (v > hi) { hi = v; am = [i, j]; } return v; })); });
+  return { title: 'Carnet en relief : ' + S.c.t.toLowerCase(), x: { name: 'temps', dom: [0, SNT - 2], fmt: function (v) { return Math.round(v * 5) + ' s'; } }, y: { name: 'prix', dom: [0, SNP - 1], fmt: function (v) { var d = Math.round(v) - S.c.wall; return d === 0 ? 'niveau du mur' : (d > 0 ? '+' : '−') + Math.abs(d) + ' pt du mur'; } },
+    z: { name: 'taille affichée', fmt: function (v) { return F.pct(v, 0) + ' du mur'; } }, fn: function (t, p) { return S.grid[Math.max(0, Math.min(SNP - 1, Math.round(p)))][Math.max(0, Math.min(SNT - 1, Math.round(t)))]; }, mid: null, xs: xs, ys: ys, vals: vals, zmin: lo, zmax: hi, argmax: am };
 };
