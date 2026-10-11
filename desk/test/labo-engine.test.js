@@ -646,7 +646,9 @@ section('Croisé avec Quant : le gabarit de rejet de bande rend les trades de T.
       setup: [{ cmp: '<', a: { f: 'close' }, b: { f: 'vwap' } }], trigger: { all: [{ cmp: '<=', a: { f: 'low' }, b: { f: 'vwap', k: -k } }, { cmp: '>', a: { f: 'close' }, b: { f: 'vwap', k: -k } }] },
       stop: { type: 'level', at: { f: 'vwap', k: -k }, buffer: stop / 0.25 }, target: { type: 'level', at: { f: 'vwap' }, dynamic: true },
       risk: { maxPerSession: 0, maxLossesPerSession: 0, dailyStopUsd: 0, cooldown: 1, minStopTicks: 0 }, costs: { commissionRT: 1.24, slipTicks: 0 } });
-    const r = run(sb, spec, { settings: { commissionRT: 1.24 } });
+    // Quant exécute ses ordres à des prix hors de la grille du tick (VWAP exacte) : la comparaison se fait dans sa
+    // convention, grid: false. Par défaut le Labo pose ses ordres sur la grille (voir tickGrid dans le moteur).
+    const r = run(sb, spec, { settings: { commissionRT: 1.24, grid: false } });
     if (q.trades.length !== r.trades.length) { bad++; msg = msg || ('graine ' + seed + ' : ' + q.trades.length + ' contre ' + r.trades.length); return; }
     q.trades.forEach((a, x) => {
       const b = r.trades[x]; tot++;

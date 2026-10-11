@@ -30,7 +30,8 @@ function setAt(o, path, v) {
   else x[last] = v;
   return o;
 }
-function cap(s) { s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
+/* Majuscule à la première lettre, après une ponctuation d’ouverture éventuelle : « (la barre… » → « (La barre… ». */
+function cap(s) { s = String(s); var m = /^([(«\s\u00A0]*)(.)/.exec(s); return m ? m[1] + m[2].toUpperCase() + s.slice(m[0].length) : s; }
 function lowFirst(s) { s = String(s); return /^.[a-zà-ÿ’ ,]/.test(s) || s.length === 1 ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
 function plural(n, one, many) { return F.int(n) + ' ' + (Math.abs(n) >= 2 ? (many || one + 's') : one); }
 function sentence(t) { t = String(t == null ? '' : t).trim(); if (!t) t = 'Non renseigné'; t = cap(t); if (!/[.!?»…]$/.test(t)) t += '.'; return T.typo ? T.typo(t) : t; }
@@ -108,14 +109,15 @@ LB.fieldsFor = function (args, obj, owner) {
 };
 
 /* ================================================================================================
-   2. Valeurs de départ (init de la grammaire). Un argument requis, ou doté d’un init sans être « omis par
-      défaut », est écrit ; les autres sont laissés à normalize.
+   2. Valeurs de départ (init de la grammaire). Un argument requis, ou dont l’init diffère de son défaut, est
+      écrit ; les autres sont laissés à normalize (le champ montre le défaut). Ainsi seul un nombre écrit devient
+      un paramètre : la longueur 14 d’un ATR par défaut n’en crée pas.
    ================================================================================================ */
 var DEFAULT_COND = { bar: 'up' };
 function initArgs(args, out) {
   (args || []).forEach(function (a) {
-    var v = a.init;
-    if (!(a.req || (v !== undefined && v !== null && !a.omit))) return;
+    var v = a.init, differs = v !== undefined && v !== null && JSON.stringify(v) !== JSON.stringify(a.def);
+    if (!(a.req || (differs && !a.omit))) return;
     if (a.type === 'cond' && v === undefined) v = clone(DEFAULT_COND);
     if (a.type === 'conds' && (!Array.isArray(v) || !v.length)) v = [clone(DEFAULT_COND)];
     if (v === undefined) return;
@@ -145,6 +147,8 @@ LB.initOrder = function (kind, type) {
 LB.initManage = function (which) {
   var M = GR().manage, o = initArgs(M[which].args, {});
   if (which === 'trail' && o.type !== 'atr') delete o.n;
+  /* Le break-even n’a qu’un nombre, celui qu’on vient régler : il est écrit (donc nommé) même égal au défaut. */
+  if (which === 'breakeven' && o.r === undefined) { var a0 = M.breakeven.args.filter(function (a) { return a.k === 'r'; })[0]; if (a0 && a0.def != null) o.r = a0.def; }
   return o;
 };
 LB.defaultRule = function () { return { setup: [], trigger: clone(DEFAULT_COND), entry: { type: 'market' }, stop: LB.initOrder('stop', 'pts'), target: LB.initOrder('target', 'r') }; };
@@ -152,7 +156,7 @@ LB.defaultRule = function () { return { setup: [], trigger: clone(DEFAULT_COND),
 LB.blank = function () {
   return { name: 'Nouvelle stratégie', hypothesis: '', side: 'long', mirror: true,
     long: { setup: [], trigger: { bar: 'up' }, entry: { type: 'market' }, stop: { type: 'pts', value: '$stop' }, target: { type: 'r', value: '$objectif' } },
-    params: { stop: { v: 10, label: 'Stop, distance (points)' }, objectif: { v: 2, label: 'Objectif, multiple (R)' } } };
+    params: { stop: { v: 10, label: 'Distance (stop, points)' }, objectif: { v: 2, label: 'Multiple (objectif, R)' } } };
 };
 /* Changer le genre d’une condition : une condition simple devenue « non », « pour n barres »… est enveloppée,
    et les enfants passent d’un regroupement à l’autre. */
@@ -270,9 +274,11 @@ function labelOf(owner, a) {
   if (p[0] === 'operand') { var d = opDef(p[1]); head = d ? bare(d.label) : ''; }
   else if (p[0] === 'cond') { var c = condDef(p[1]); head = c ? bare(c.label) : ''; }
   else head = OWNER_HEAD[p[0]] || '';
-  var t = bare(a.label), lab = head && t ? head + ', ' + lowFirst(t) : (head || t || 'Paramètre');
-  if (a.unit && lab.indexOf(a.unit) < 0) lab += ' (' + a.unit + ')';
-  return lab;
+  /* « Distance (stop, points) » : se lit aussi bien seul que dans la phrase de describe (« stop = 10, distance (stop, points) »). */
+  var t = bare(a.label), lab = t || head || 'Paramètre', extra = [];
+  if (t && head && t.toLowerCase().indexOf(head.toLowerCase()) < 0) extra.push(lowFirst(head));
+  if (a.unit && lab.indexOf(a.unit) < 0) extra.push(a.unit);
+  return extra.length ? lab + ' (' + extra.join(', ') + ')' : lab;
 }
 LB.labelOf = labelOf;
 LB.autoName = function (hint, params) {
@@ -419,7 +425,10 @@ LB.humanize = function (msg) {
   msg = String(msg == null ? '' : msg);
   var i = msg.indexOf(' : '), path = '', rest = msg;
   if (i > 0 && /^[A-Za-z_$][\w$]*(\.[\w$]+|\[\d+\])*$/.test(msg.slice(0, i))) { path = msg.slice(0, i); rest = msg.slice(i + 3); }
-  var where = path ? cap(LB.pathText(path)) : '';
+  var segs = path ? LB.pathText(path).split(' › ') : [];
+  /* « hypothesis : hypothèse vide… » se lit « Hypothèse vide… », pas « Hypothèse : Hypothèse vide… ». */
+  if (segs.length && rest.toLowerCase().indexOf(segs[segs.length - 1].toLowerCase()) === 0) segs.pop();
+  var where = segs.length ? cap(segs.join(' › ')) : '';
   return { path: path, card: LB.cardOf(path), text: T.typo((where ? where + ' : ' : '') + cap(rest)) };
 };
 
@@ -427,6 +436,7 @@ LB.humanize = function (msg) {
    7. Cartes : une par bloc, dans l’ordre de LABO.md §6, avec la phrase de describe, les erreurs et les
       avertissements de normalize rangés par carte, et les blocs avancés.
    ================================================================================================ */
+LB.PARTIAL = 'La phrase ci-dessus lit la règle sans la pièce en erreur.';
 LB.CARDS = [
   { id: 'seance', title: 'Séance et ancrage', edit: true },
   { id: 'sens', title: 'Sens et miroir', edit: true },
@@ -461,8 +471,9 @@ LB.cards = function (spec, o) {
   var L = LSx(), side = o.side === 'short' ? 'short' : 'long';
   var n = L.normalize(spec, dsCtx(o.dataset));
   var d = {};
-  try { L.describe(spec, { values: o.values }).forEach(function (b) { d[b.id] = b.text; }); } catch (e) { d = {}; }
   var s = n.spec || (isObj(spec) ? spec : {});
+  /* La phrase lit la spec normalisée : une pièce fautive y est retirée (son erreur s’affiche dans la carte), jamais lue « undefined ». */
+  try { L.describe(s, { values: o.values }).forEach(function (b) { d[b.id] = b.text; }); } catch (e) { d = {}; }
   if (side === 'short') { var st = shortTexts(s); for (var k in st) if (own(st, k)) d[k] = sentence(st[k]); }
   var by = {}, general = { errors: [], warnings: [] };
   LB.CARDS.forEach(function (c) { by[c.id] = { id: c.id, title: c.title, edit: c.edit, rule: !!c.rule, texts: [], errors: [], warnings: [], advanced: [] }; });
@@ -477,10 +488,11 @@ LB.cards = function (spec, o) {
   n.errors.forEach(function (m) { var x = LB.humanize(m); if (by[x.card]) by[x.card].errors.push(x.text); else general.errors.push(x.text); });
   n.warnings.forEach(function (m) {
     var x = LB.humanize(m);
-    if (x.path === 'sid' || x.path === 'id') return;
+    if (x.path === 'sid' || x.path === 'id' || x.path === 'hypothesis') return;
     if (by[x.card]) by[x.card].warnings.push(x.text); else general.warnings.push(x.text);
   });
   LB.deepItems(s, side).forEach(function (x) { by[x.card].advanced.push(sentence(x.text)); });
+  LB.CARDS.forEach(function (c) { if (by[c.id].errors.length && c.id !== 'hypothese' && c.id !== 'parametres') by[c.id].partial = LB.PARTIAL; });
   return { list: LB.CARDS.map(function (c) { return by[c.id]; }), general: general, errors: n.errors.length, norm: n };
 };
 
@@ -527,6 +539,22 @@ LB.shortName = function (x, params) {
   return go(x);
 };
 var NO_SERIES = { time: 1, dow: 1, sessmin: 1 };
+/* Forme canonique d’un opérande pour repérer les doublons : un argument égal à sa valeur par défaut est retiré
+   (le miroir du moteur écrit { f: 'vwap', k: 0 } là où la règle écrit { f: 'vwap' }). */
+function canonOp(x) {
+  var k = opKind(x);
+  if (k === 'const' || !k) return x;
+  if (k === 'op') return { op: x.op, a: canonOp(x.a), b: canonOp(x.b) };
+  var L = LSx(), o = {};
+  for (var key in x) if (own(x, key)) o[key] = x[key];
+  opDef(k).args.forEach(function (a) {
+    if (!own(o, a.k)) return;
+    if (a.type === 'operand' && o[a.k] != null) o[a.k] = canonOp(o[a.k]);
+    if (a.def !== undefined && L.canonical(a.type === 'operand' && a.def != null ? canonOp(a.def) : a.def) === L.canonical(o[a.k])) delete o[a.k];
+  });
+  return o;
+}
+LB.canonOp = canonOp;
 /* operandsOf(spec, o) → [{ operand (résolu), name, cls, text }] : les opérandes que lisent contexte, déclencheur et
    niveaux d’ordre, sans doublon, sans constante ni clôture simple (le prix est tracé de toute façon). */
 LB.operandsOf = function (spec, o) {
@@ -537,7 +565,7 @@ LB.operandsOf = function (spec, o) {
     var k = opKind(x);
     if (!k || k === 'const' || NO_SERIES[k]) return;
     if (k === 'close' && !x.lag) return;
-    var key = L.canonical(x);
+    var key = L.canonical(canonOp(x));
     if (seen[key]) return;
     seen[key] = 1;
     var cls = 'neutre'; try { cls = L.classOf(x); } catch (e) { cls = 'neutre'; }
@@ -564,6 +592,26 @@ LB.operandsOf = function (spec, o) {
     else rule(r.short);
   }
   return out;
+};
+/* seriesNames(spec) → { lecture longue : { name (nom court), cls, close } } : le desk nomme les séries de l’aperçu par la
+   lecture de reader().op ; l’éditeur les renomme en noms courts (« EMA 20 », « VWAP −2 σ ») et écarte la clôture,
+   déjà tracée. Les opérandes viennent de T.lib.labo.operandsOf (ceux du desk) et d’operandsOf (ceux de l’éditeur). */
+LB.seriesNames = function (spec) {
+  var map = {}, L = LSx(), res, ops = [];
+  try { res = L.resolve(L.normalize(spec).spec || spec, {}); } catch (e) { return map; }
+  var Lb = T.lib && T.lib.labo;
+  if (Lb && typeof Lb.operandsOf === 'function') { try { ops = (Lb.operandsOf(res.long) || []).slice(); } catch (e) { ops = []; } }
+  LB.operandsOf(spec).forEach(function (o) { ops.push(o.operand); });
+  if (isObj(res.long)) ops.push({ f: 'close' });
+  var R0 = L.reader({});
+  ops.forEach(function (o) {
+    var t = null, cls = null;
+    try { t = R0.op(o); } catch (e) { t = null; }
+    if (!t || own(map, t)) return;
+    try { cls = L.classOf(o); } catch (e) { cls = null; }
+    map[t] = { name: LB.shortName(o), cls: cls, close: L.canonical(canonOp(o)) === L.canonical({ f: 'close' }) };
+  });
+  return map;
 };
 /* previewFromFeatures(feat, ops) : feat = sortie de l’op features ({t,o,h,l,c,sm,keys,series,sig}), ops = sortie
    d’operandsOf (même ordre que feat.series). → { key, series:[{name, cls, points:[[t, v]]}], bars:{t,o,h,l,c},
@@ -626,13 +674,34 @@ LB.parseJson = function (text, cur, dataset) {
   var n = LSx().normalize(raw, dsCtx(dataset));
   return { ok: !n.errors.length && !!n.spec, spec: n.spec, raw: raw, errors: n.errors, warnings: n.warnings, text: text };
 };
+/* JSON indenté, mais une liste de valeurs simples et un petit objet tiennent sur une ligne :
+   « "days": [1, 2, 3, 4, 5] », « "a": { "f": "ema", "n": "$ema" } ». Le texte reste du JSON valide. */
+function prim(x) { return x === null || typeof x !== 'object'; }
+function jsonPrim(x) { var t = JSON.stringify(x); return t === undefined ? 'null' : t; }
+LB.pretty = function (x, ind) {
+  ind = ind || '';
+  var i2 = ind + '  ';
+  if (Array.isArray(x)) {
+    if (!x.length) return '[]';
+    if (x.every(prim)) return '[' + x.map(jsonPrim).join(', ') + ']';
+    return '[\n' + x.map(function (y) { return i2 + LB.pretty(y, i2); }).join(',\n') + '\n' + ind + ']';
+  }
+  if (isObj(x)) {
+    var ks = Object.keys(x).filter(function (k) { return x[k] !== undefined && typeof x[k] !== 'function'; });
+    if (!ks.length) return '{}';
+    var flat = ks.every(function (k) { return prim(x[k]) || (Array.isArray(x[k]) && x[k].every(prim)); });
+    if (flat) { var one = '{ ' + ks.map(function (k) { return JSON.stringify(k) + ': ' + LB.pretty(x[k], i2); }).join(', ') + ' }'; if (one.length + ind.length <= 76) return one; }
+    return '{\n' + ks.map(function (k) { return i2 + JSON.stringify(k) + ': ' + LB.pretty(x[k], i2); }).join(',\n') + '\n' + ind + '}';
+  }
+  return jsonPrim(x);
+};
 LB.claudeText = function (spec, info) {
   spec = spec || {};
   var name = typeof spec.name === 'string' && spec.name.trim() ? spec.name.trim() : 'sans nom';
   var id = spec.id || '(pas encore enregistrée)', st = info && LB.STATUS[info.status] ? ' (' + LB.STATUS[info.status].toLowerCase() + ')' : '';
   return 'Stratégie « ' + name + ' » — version ' + id + st + '\n\n' +
     'Ce que je veux changer, en mots :\n…\n\n' +
-    'Document JSON de la version (Labo de stratégie, ALP Desk) :\n' + JSON.stringify(spec, null, 2) + '\n';
+    'Document JSON de la version (Labo de stratégie, ALP Desk) :\n' + LB.pretty(spec) + '\n';
 };
 /* La spec à écrire : normalisée si elle est valide, telle quelle sinon (normalize retirerait les pièces fautives). */
 LB.specForSave = function (draft, dataset) {
@@ -689,7 +758,12 @@ var CSS = '.lb{display:flex;flex-direction:column;gap:22px;min-width:0}' +
   '.lb-fb{display:flex;gap:8px}.lb-fb .btn{flex:1;min-width:0}' +
   '.lb-json{width:100%;min-height:46vh;border:1px solid var(--line-2);border-radius:9px;background:var(--raise);color:var(--fg);font:12.5px/1.45 var(--f-mono);padding:10px;resize:vertical;white-space:pre;overflow:auto}' +
   '.lb-chk{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}.lb-chk li{display:flex;gap:8px;font-size:13px;line-height:1.45;color:var(--fg)}.lb-chk li i{flex:none;width:18px;font-style:normal;font-family:var(--f-mono);color:var(--violet)}.lb-chk li.no{color:var(--soft)}.lb-chk li.no i{color:var(--mute)}' +
-  '.lb .fld input[type=time],.lb-ov .fld input[type=time],.lb .fld input[type=date]{font-family:var(--f-mono)}';
+  '.lb .fld input[type=time],.lb-ov .fld input[type=time],.lb .fld input[type=date]{font-family:var(--f-mono)}' +
+  '.lb .fld .in:not(.ta),.lb-ov .fld .in:not(.ta){height:44px}' +
+  '.lb-cards{display:grid;gap:12px;min-width:0}.lb-cards>.card{display:flex;flex-direction:column;min-width:0}.lb-cards>.card>.cb{flex:1;display:flex;flex-direction:column;gap:10px}.lb-cards .lb-cf{margin-top:auto}@media(min-width:1000px){.lb-cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}' +
+  '.lb-strip{display:flex;flex-direction:column;gap:4px;margin:-4px 0 8px}.lb-strip-in{position:relative;padding:0 14px 0 46px}.lb-strip-in svg{display:block}.lb-strip-l{position:absolute;left:0;top:8px;font:500 9.5px/1.2 var(--f-mono);color:var(--mute)}' +
+  '.lb-strip-k{display:flex;flex-wrap:wrap;gap:4px 14px;padding-left:46px;font:500 10.5px/1.3 var(--f-mono);color:var(--mute)}.lb-strip-k span{display:inline-flex;align-items:center;gap:6px}.lb-strip-k i{width:2px;height:10px;background:var(--soft)}.lb-strip-k i.up{background:var(--violet)}' +
+  '.lb .fields .fld>label,.lb-ov .fields .fld>label{flex:1 0 auto}.lb-ov .fields .fld .hint{min-height:1.35em}';
 function injectCss() { if (typeof document === 'undefined' || document.getElementById('labo-builder-css')) return; var s = document.createElement('style'); s.id = 'labo-builder-css'; s.textContent = CSS; document.head.appendChild(s); }
 LB.injectCss = injectCss;
 
@@ -698,29 +772,58 @@ LB.injectCss = injectCss;
        le brouillon non enregistré est aussi gardé dans T.store, pour survivre à un rechargement.
    ================================================================================================ */
 var DRAFT_KEY = 'labo:concevoir:brouillon';
-var ST = { key: null, draft: null, base: null, baseU: null, dirty: false, isNew: false, newLabel: '', side: 'long', panel: null, prev: {}, listAll: false, confirm: null, copy: null, busy: false, restored: false };
-var OV = { el: null, body: null, foot: null, say: null, sayFn: null, R: null };
+var ST = { curSeen: null, key: null, draft: null, base: null, baseU: null, dirty: false, isNew: false, newLabel: '', side: 'long', panel: null, prev: {}, listAll: false, confirm: null, copy: null, busy: false, restored: false };
+var OV = { el: null, body: null, foot: null, live: null, say: null, sayFn: null, R: null };
 var FID = 0;
 function has(api, k) { return !!api && typeof api[k] === 'function'; }
 function ac(R, k, args) { if (!has(R.api, k)) return null; try { return R.api[k].apply(R.api, args || []); } catch (e) { if (typeof console !== 'undefined') console.error(e); return null; } }
 function toast(m) { try { T.toast(m); } catch (e) { /* hors navigateur */ } }
-function storeDraft() {
-  try { T.store.set(DRAFT_KEY, ST.isNew ? { id: 'new', spec: ST.draft, label: ST.newLabel, at: Date.now() } : { id: ST.key, u0: ST.baseU, spec: ST.draft, at: Date.now() }); } catch (e) { /* stockage indisponible */ }
+/* Brouillons non enregistrés, un par version (et « new » pour une stratégie neuve), huit au plus. */
+function drafts() { try { var d = T.store.get(DRAFT_KEY, null); return isObj(d) && isObj(d.items) ? d : { items: {} }; } catch (e) { return { items: {} }; } }
+function putDrafts(d) {
+  try {
+    Object.keys(d.items).sort(function (a, b) { return (d.items[b].at || 0) - (d.items[a].at || 0); }).slice(8).forEach(function (k) { delete d.items[k]; });
+    T.store.set(DRAFT_KEY, d);
+  } catch (e) { /* stockage indisponible */ }
 }
-function clearDraft() { try { T.store.set(DRAFT_KEY, null); } catch (e) { /* idem */ } }
-function storedDraft() { try { return T.store.get(DRAFT_KEY, null); } catch (e) { return null; } }
+function storeDraft() {
+  var id = ST.isNew ? 'new' : ST.key;
+  if (!id || !ST.draft) return;
+  var d = drafts();
+  d.items[id] = ST.isNew ? { id: 'new', spec: ST.draft, label: ST.newLabel, at: Date.now() } : { id: id, u0: ST.baseU, spec: ST.draft, at: Date.now() };
+  putDrafts(d);
+}
+function clearDraft(id) { id = id || (ST.isNew ? 'new' : ST.key); var d = drafts(); if (id && d.items[id]) { delete d.items[id]; putDrafts(d); } }
+function storedDraft(id) { var d = drafts().items[id]; return isObj(d) ? d : null; }
 function load(cur) {
   var same = ST.key === cur.id;
   ST.key = cur.id; ST.base = clone(cur); ST.baseU = cur.u || 0; ST.draft = clone(cur); ST.dirty = false; ST.isNew = false;
   if (!same) { ST.side = 'long'; ST.panel = null; ST.confirm = null; ST.copy = null; }
-  var sd = storedDraft();
+  var sd = storedDraft(cur.id);
   if (sd && sd.id === cur.id && sd.u0 === ST.baseU && isObj(sd.spec) && cur.status !== 'scellee') { ST.draft = sd.spec; ST.dirty = true; }
 }
+/* La version telle qu’elle est écrite dans la base : le desk rend current() normalisée, et normalize retire les
+   pièces fautives (un "$nom" non déclaré, une heure illisible). L’éditeur doit les montrer avec leur erreur, et
+   ne jamais les effacer en silence : il lit le document brut dans versions() quand il y est. */
+function rawOf(R, cur) {
+  if (!cur || !cur.id) return cur;
+  var vs = ac(R, 'versions') || [];
+  for (var i = 0; i < vs.length; i++) if (vs[i] && vs[i].id === cur.id && !vs[i].deleted) return vs[i];
+  return cur;
+}
 function sync(R) {
-  if (ST.isNew) return;
-  var cur = ac(R, 'current');
+  var cur = rawOf(R, ac(R, 'current')), cid = cur && cur.id ? cur.id : null;
+  /* Une nouvelle stratégie non enregistrée reste ouverte, sauf si une autre version est choisie ailleurs (en-tête du
+     desk, boîte de réception) : le brouillon est alors mis de côté, et la liste propose de le reprendre. */
+  if (ST.isNew) {
+    if (!cid || cid === ST.curSeen) return;
+    if (ST.busy) clearDraft('new'); /* l’enregistrement en cours vient de choisir la version créée */
+    else { storeDraft(); toast('Brouillon non enregistré mis de côté : il se reprend depuis la liste.'); }
+    ST.isNew = false; ST.newLabel = ''; ST.key = null; ST.panel = null; removeOverlay();
+  }
+  ST.curSeen = cid;
   if (!cur) {
-    if (!ST.restored) { ST.restored = true; var sd = storedDraft(); if (sd && sd.id === 'new' && isObj(sd.spec)) { ST.isNew = true; ST.key = 'new'; ST.draft = sd.spec; ST.dirty = true; ST.newLabel = sd.label || ''; return; } }
+    if (!ST.restored) { ST.restored = true; var sd = storedDraft('new'); if (sd && sd.id === 'new' && isObj(sd.spec)) { ST.isNew = true; ST.key = 'new'; ST.draft = sd.spec; ST.dirty = true; ST.newLabel = sd.label || ''; return; } }
     ST.key = null; ST.draft = null; ST.base = null; ST.dirty = false; ST.panel = null;
     return;
   }
@@ -745,12 +848,28 @@ LB.render = function (root, ctx, api) {
   var R = { root: wrap, ctx: ctx || {}, api: api || {}, alive: function () { return alive && wrap.isConnected !== false; } };
   try { paint(R); } catch (e) { if (typeof console !== 'undefined') console.error(e); wrap.appendChild(U.empty({ title: 'L’éditeur a rencontré une erreur', text: errMsg(e) })); }
   if (ST.panel && ST.draft) showOverlay(R);
-  return function cleanup() { alive = false; removeOverlay(); };
+  /* Le desk ne redessine pas cet onglet quand le jeu finit de charger ou change (il ne détruit aucun champ en
+     cours de frappe) : l’éditeur le surveille et ne redessine que l’aperçu et la carte de la coupure. */
+  var timer = setInterval(function () {
+    if (!R.alive()) { clearInterval(timer); return; }
+    var sig = dsSig(R);
+    if (sig !== R.dsSig) { R.dsSig = sig; try { refreshLive(R); } catch (e) { if (typeof console !== 'undefined') console.error(e); } }
+  }, 600);
+  return function cleanup() { alive = false; clearInterval(timer); removeOverlay(); };
 };
 
 /* ---------- Vue principale ---------- */
+function dsSig(R) { var d = dataset(R), m = d && isObj(d.meta) ? d.meta : null; return m ? String(m.fingerprint || m.id || m.name || '?') + '|' + (d.ready !== false) : ''; }
+function refreshLive(R) {
+  if (!ST.draft || !R.C || !R.pv || !R.pv.parentNode) return;
+  var pv = previewSection(R, R.C);
+  R.pv.parentNode.replaceChild(pv, R.pv); R.pv = pv;
+  if (R.oos && R.oos.parentNode) { var c = R.C.list.filter(function (x) { return x.id === 'oos'; })[0]; if (c) { var el = cardEl(R, c, readOnly()); R.oos.parentNode.replaceChild(el, R.oos); R.oos = el; } }
+  try { T.typoTree(R.pv); if (R.oos) T.typoTree(R.oos); } catch (e) { /* hors navigateur */ }
+}
 function paint(R) {
   sync(R);
+  R.dsSig = dsSig(R); R.C = null; R.pv = null; R.oos = null;
   T.clear(R.root);
   R.root.appendChild(listSection(R));
   if (!ST.draft) {
@@ -758,9 +877,11 @@ function paint(R) {
     return;
   }
   var C = LB.cards(ST.draft, { side: viewSide(), dataset: dataset(R) });
+  R.C = C;
   R.root.appendChild(headSection(R, C));
   R.root.appendChild(stackSection(R, C));
-  R.root.appendChild(previewSection(R, C));
+  R.pv = previewSection(R, C);
+  R.root.appendChild(R.pv);
   try { T.typoTree(R.root); } catch (e) { /* hors navigateur */ }
 }
 
@@ -792,6 +913,12 @@ function listSection(R) {
     h('p', { class: 'lb-sub' }, 'Nouvelle stratégie'),
     h('div', { class: 'lb-chips' }, opts.map(function (o) { return h('button', { class: 'chip', type: 'button', 'aria-pressed': String(ST.isNew && ST.newLabel === o.label), on: { click: function () { askNew(R, o.v, o.label); } } }, o.label); })),
     U.note('Les gabarits sont des points de départ : aucun ne prétend à un avantage. Le test, ses lois nulles et le registre des essais le diront.')));
+  var sd = storedDraft('new');
+  if (!ST.isNew && sd && sd.id === 'new' && isObj(sd.spec)) {
+    var nm = typeof sd.spec.name === 'string' && sd.spec.name.trim() ? sd.spec.name.trim() : 'Sans nom';
+    s.appendChild(U.callout([h('b', null, 'Brouillon non enregistré : « ' + nm + ' ». '), 'Il a été mis de côté quand une autre version a été ouverte.',
+      h('div', { class: 'row', style: 'margin-top:10px' }, U.button({ label: 'Reprendre', kind: 'pri', onClick: function () { resumeNew(R); } }), U.button({ label: 'Jeter', kind: 'ghost', onClick: function () { clearDraft('new'); paint(R); } }))]));
+  }
   if (ST.confirm && ST.confirm.kind === 'new') {
     s.appendChild(U.callout([h('b', null, 'Modifications non enregistrées. '), 'Elles seront perdues si tu ouvres une nouvelle stratégie.',
       h('div', { class: 'row', style: 'margin-top:10px' }, U.button({ label: 'Continuer', kind: 'pri', onClick: function () { var c = ST.confirm; ST.confirm = null; startNew(R, c.key, c.label); } }), U.button({ label: 'Garder', kind: 'ghost', onClick: function () { ST.confirm = null; paint(R); } }))]));
@@ -805,6 +932,14 @@ function selectVersion(R, id) {
   if (has(R.api, 'select')) ac(R, 'select', [id]);
   if (R.alive()) paint(R);
 }
+function resumeNew(R) {
+  var sd = storedDraft('new');
+  if (!sd || sd.id !== 'new' || !isObj(sd.spec)) { paint(R); return; }
+  if (ST.dirty && ST.draft && !ST.isNew) toast('Les modifications de la version ouverte sont perdues.');
+  var c0 = ac(R, 'current'); ST.curSeen = c0 && c0.id ? c0.id : null;
+  ST.isNew = true; ST.key = 'new'; ST.draft = sd.spec; ST.base = null; ST.dirty = true; ST.newLabel = sd.label || ''; ST.panel = null; ST.side = 'long'; ST.confirm = null; ST.copy = null;
+  paint(R);
+}
 function askNew(R, key, label) {
   if (ST.dirty && ST.draft) { ST.confirm = { kind: 'new', key: key, label: label }; paint(R); return; }
   startNew(R, key, label);
@@ -816,6 +951,7 @@ function startNew(R, key, label) {
     else spec = has(R.api, 'fromTemplate') ? ac(R, 'fromTemplate', [key]) : LSx().fromTemplate(key);
   } catch (e) { toast(errMsg(e)); return; }
   if (!isObj(spec)) { toast('Impossible de créer cette stratégie.'); return; }
+  var c0 = ac(R, 'current'); ST.curSeen = c0 && c0.id ? c0.id : null;
   ST.isNew = true; ST.key = 'new'; ST.draft = clone(spec); ST.base = null; ST.dirty = true; ST.newLabel = label || ''; ST.panel = null; ST.side = 'long'; ST.confirm = null; ST.copy = null;
   storeDraft();
   paint(R);
@@ -911,13 +1047,16 @@ function stackSection(R, C) {
     s.appendChild(U.seg({ options: [{ v: 'long', label: 'Règle d’achat' }, { v: 'short', label: 'Règle de vente' }], value: viewSide(), onChange: function (v) { ST.side = v; paint(R); } }));
   }
   C.general.warnings.slice(0, 2).forEach(function (t) { s.appendChild(h('p', { class: 'lb-wrn' }, t)); });
-  C.list.forEach(function (c) { s.appendChild(cardEl(R, c, ro)); });
+  var grid = h('div', { class: 'lb-cards' });
+  C.list.forEach(function (c) { var el = cardEl(R, c, ro); if (c.id === 'oos') R.oos = el; grid.appendChild(el); });
+  s.appendChild(grid);
   return s;
 }
 function cardEl(R, c, ro) {
   var body = [];
   c.texts.forEach(function (t) { body.push(h('p', { class: 'lb-say' }, t)); });
   c.advanced.forEach(function (t) { body.push(h('p', { class: 'lb-adv' }, t)); });
+  if (c.partial) body.push(h('p', { class: 'lb-wrn' }, c.partial));
   c.errors.forEach(function (t) { body.push(h('p', { class: 'lb-err' }, t)); });
   c.warnings.slice(0, 3).forEach(function (t) { body.push(h('p', { class: 'lb-wrn' }, t)); });
   if (c.warnings.length > 3) body.push(h('p', { class: 'lb-wrn' }, 'Et ' + plural(c.warnings.length - 3, 'autre remarque', 'autres remarques') + ' : voir le JSON.'));
@@ -933,7 +1072,7 @@ function oosBody(R) {
     return out;
   }
   out.push(h('p', { class: 'lb-say' }, sentence('Pas encore fixée pour ' + inst + '. Elle se pose une fois, au plus tard au premier lancement sur données réelles, et ne bouge plus ensuite')));
-  if (!o.proposal) { out.push(h('p', { class: 'lb-wrn' }, sentence('Choisis un jeu de données dans l’en-tête pour obtenir une proposition'))); return out; }
+  if (!o.proposal) { out.push(h('p', { class: 'lb-wrn' }, sentence(oosWhy(R, inst)))); return out; }
   out.push(h('p', { class: 'lb-say' }, sentence('Proposition : ' + keyText(o.proposal) + ', qui laisse 30 % des séances après elle')));
   if (readOnly()) return out;
   var id = 'lbf' + (++FID), input = h('input', { id: id, type: 'date', value: o.proposal, autocomplete: 'off' });
@@ -947,6 +1086,14 @@ function oosBody(R) {
     }, function (e) { toast(errMsg(e)); });
   } })));
   return out;
+}
+/* Pourquoi aucune coupure n’est proposée : aucun jeu, jeu synthétique, autre instrument, trop peu de séances. */
+function oosWhy(R, inst) {
+  var ds = dataset(R), m = ds && isObj(ds.meta) ? ds.meta : null;
+  if (!m) return 'Choisis un jeu de barres de ' + inst + ' dans l’en-tête : la coupure se propose sur ses séances.';
+  if (m.source === 'synthetique' || m.id === 'synthetique') return 'Le jeu courant est une marche synthétique : la coupure de ' + inst + ' se pose sur un jeu réel de l’instrument. Envoie ton fichier de barres à Claude, il l’importe.';
+  if (m.instrument && m.instrument !== inst) return 'Le jeu courant porte sur ' + m.instrument + ' : choisis un jeu de ' + inst + ' pour obtenir une proposition.';
+  return 'Aucune proposition sur ce jeu : il compte trop peu de séances.';
 }
 function keyText(k) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(k || '')); return m ? m[3] + '/' + m[2] + '/' + m[1] : String(k || '—'); }
 
@@ -980,26 +1127,70 @@ function previewSection(R, C) {
 function drawPreview(box, res, spec) {
   T.clear(box);
   if (!res || res.error) { box.appendChild(U.note(sentence('Aperçu impossible : ' + lowFirst(res && res.error ? String(res.error) : 'réponse vide')), true)); return; }
-  var b = res.bars || {}, ts = b.t || [], tz = (spec.session && spec.session.tz) || 'Europe/Paris';
-  if (!ts.length) { box.appendChild(U.note('Aucune barre dans la séance témoin.')); return; }
-  var sig = res.signals || [], nL = sig.filter(function (x) { return x.side === 'long'; }).length, nS = sig.length - nL;
+  var b0 = res.bars || {}, ts0 = b0.t || [], tz = (spec.session && spec.session.tz) || 'Europe/Paris';
+  if (!ts0.length) { box.appendChild(U.note('Aucune barre dans la séance témoin.')); return; }
+  var sig = (res.signals || []).filter(function (x) { return x && isNum(x.t); }).sort(function (a, b) { return a.t - b.t; });
+  /* Signaux groupés dans une petite part de la séance (une fenêtre RTH dans 23 heures de Globex) : le graphique
+     se recadre deux heures avant le premier et deux heures après le dernier. */
+  var crop = LB.cropWindow(ts0, sig, 120), b = crop.sliceBars(b0), ts = b.t;
+  var nL = sig.filter(function (x) { return x.side === 'long'; }).length, nS = sig.length - nL;
   var sigText = sig.length ? plural(sig.length, 'signal', 'signaux') + (nL && nS ? ' (' + nL + ' à l’achat, ' + nS + ' à la vente)' : nS ? ' à la vente' : ' à l’achat') : 'aucun signal';
   box.appendChild(h('p', { class: 'lb-pvh' }, h('b', null, 'Séance du ' + keyText(res.key)), ' · ' + sigText + (res.none ? ' dans les dernières séances de l’échantillon' : '')));
   function fmtT(t) { try { return T.time.hhmm(tz, new Date(t)); } catch (e) { return F.time(t); } }
   function ok(s) { return s && s.points && s.points.some(function (p) { return p[1] != null && isFinite(p[1]); }); }
-  var lv = (res.series || []).filter(function (x) { return x.cls === 'niveau' && ok(x); }), other = (res.series || []).filter(function (x) { return x.cls !== 'niveau' && ok(x); });
+  var names = LB.seriesNames(spec), all = [];
+  (res.series || []).forEach(function (x) {
+    var m = names[x.name];
+    if (m && m.close) return;
+    all.push({ name: m ? m.name : cap(String(x.name || 'Série')), cls: x.cls || (m && m.cls) || 'neutre', points: crop.slice(x.points || []) });
+  });
+  var lv = all.filter(function (x) { return x.cls === 'niveau' && ok(x); }), other = all.filter(function (x) { return x.cls !== 'niveau' && ok(x); });
   var TONES = [['violet', false], ['mute', true], ['violet', true], ['mute', false]];
   var series = [{ name: 'Clôture', points: ts.map(function (t, i) { return [t, b.c[i]]; }), tone: 'fg', width: 1.3 }].concat(lv.slice(0, 4).map(function (x, i) { return { name: x.name, points: x.points, tone: TONES[i][0], dash: TONES[i][1], width: 1.4 }; }));
-  var span = (ts[ts.length - 1] - ts[0]) || 1, lastX = -Infinity, vl = [];
-  sig.slice(0, 40).forEach(function (x) { var lab = x.t - lastX > span * 0.08 ? (x.side === 'long' ? '▲' : '▼') : ''; if (lab) lastX = x.t; vl.push({ x: x.t, label: lab }); });
-  box.appendChild(T.chart.line({ series: series, x: { type: 'num', fmt: fmtT }, vlines: vl, height: 240 }));
+  /* Peu de signaux : une verticale par signal sur le prix. Beaucoup : les verticales noieraient le prix, la bande
+     dessous suffit. La bande reprend les marges du graphique (46 px à gauche, 14 à droite) pour s’aligner sur lui. */
+  var vl = sig.length <= 12 ? sig.map(function (x) { return { x: x.t }; }) : [];
+  var chart = T.chart.line({ series: series, x: { type: 'num', fmt: fmtT }, vlines: vl, height: 240 });
+  box.appendChild(chart);
+  if (sig.length) {
+    /* La bande se glisse entre l’axe du temps et la légende du graphique. */
+    var strip = signalStrip(sig, ts[0], ts[ts.length - 1]), leg = chart.querySelector ? chart.querySelector('.legend') : null;
+    if (leg && leg.parentNode) leg.parentNode.insertBefore(strip, leg); else box.appendChild(strip);
+  }
   other.slice(0, 3).forEach(function (x) {
     box.appendChild(h('p', { class: 'lb-pvs' }, x.name + ' · ' + x.cls));
     box.appendChild(T.chart.line({ series: [{ name: x.name, points: x.points, tone: 'violet', width: 1.4 }], x: { type: 'num', fmt: fmtT }, vlines: vl.map(function (v) { return { x: v.x }; }), height: 120, legend: false }));
   });
   if (lv.length > 4 || other.length > 3) box.appendChild(U.note('Séries supplémentaires masquées : la règle en lit ' + (lv.length + other.length) + '.'));
-  box.appendChild(U.note('Séries calculées par le moteur sur la séance témoin : la dernière de l’échantillon qui porte un signal. ▲ achat, ▼ vente, à la clôture de la barre du signal ; rien ne s’exécute avant la barre suivante. Heures : ' + (tz === 'Europe/Paris' ? 'Paris' : tz) + '.'));
-  if (sig.length > 40) box.appendChild(U.note('Seuls les 40 premiers signaux sont marqués.'));
+  box.appendChild(U.note('Séries calculées par le moteur sur la séance témoin : la dernière de l’échantillon qui porte un signal. Chaque trait de la bande marque un signal à la clôture de sa barre' + (vl.length ? ' (verticale pointillée sur le prix)' : '') + ' ; rien ne s’exécute avant la barre suivante. Heures : ' + (TZ_LABEL[tz] || tz) + '.' + (crop.cropped ? ' Graphique recadré de deux heures autour des signaux.' : '')));
+}
+/* cropWindow(ts, sig, pad) : bornes [i0, i1) des barres à montrer. Recadre quand les signaux tiennent dans moins du
+   tiers de la séance ; sinon toute la séance. → { i0, i1, cropped, slice(points), sliceBars(bars) }. */
+LB.cropWindow = function (ts, sig, pad) {
+  var n = ts.length, i0 = 0, i1 = n, span = n ? ts[n - 1] - ts[0] : 0, m = (pad == null ? 120 : pad) * 60000;
+  if (n && sig && sig.length && span > 0 && sig[sig.length - 1].t - sig[0].t < span / 3) {
+    var a = sig[0].t - m, z = sig[sig.length - 1].t + m;
+    while (i0 < n - 1 && ts[i0] < a) i0++;
+    while (i1 > i0 + 1 && ts[i1 - 1] > z) i1--;
+  }
+  function slice(arr) { return arr ? Array.prototype.slice.call(arr, i0, i1) : []; }
+  return { i0: i0, i1: i1, cropped: i0 > 0 || i1 < n, slice: slice,
+    sliceBars: function (bb) { return { t: slice(bb.t), o: slice(bb.o), h: slice(bb.h), l: slice(bb.l), c: slice(bb.c) }; } };
+};
+function signalStrip(sig, t0, t1) {
+  var span = (t1 - t0) || 1, NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 1000 28'); svg.setAttribute('preserveAspectRatio', 'none'); svg.setAttribute('width', '100%'); svg.setAttribute('height', '28');
+  svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Signaux de la séance témoin');
+  var base = document.createElementNS(NS, 'line');
+  [['x1', 0], ['x2', 1000], ['y1', 14], ['y2', 14], ['stroke', 'var(--line)'], ['vector-effect', 'non-scaling-stroke']].forEach(function (a) { base.setAttribute(a[0], a[1]); });
+  svg.appendChild(base);
+  sig.forEach(function (x) {
+    var l = document.createElementNS(NS, 'line'), px = Math.max(0, Math.min(1000, (x.t - t0) / span * 1000)), up = x.side === 'long';
+    [['x1', px], ['x2', px], ['y1', up ? 1 : 15], ['y2', up ? 13 : 27], ['stroke', up ? 'var(--violet)' : 'var(--soft)'], ['stroke-width', 2], ['vector-effect', 'non-scaling-stroke']].forEach(function (a) { l.setAttribute(a[0], a[1]); });
+    svg.appendChild(l);
+  });
+  return h('div', { class: 'lb-strip' }, h('div', { class: 'lb-strip-in' }, h('span', { class: 'lb-strip-l' }, 'signaux'), svg),
+    h('div', { class: 'lb-strip-k' }, h('span', null, h('i', { class: 'up' }), 'achat, au-dessus'), h('span', null, h('i'), 'vente, au-dessous')));
 }
 
 /* ================================================================================================
@@ -1021,7 +1212,7 @@ function openPanel(R, block) {
   showOverlay(R);
 }
 function openJson(R) {
-  ST.panel = { block: 'json', work: clone(ST.draft), before: clone(ST.draft), side: viewSide(), text: JSON.stringify(ST.isNew ? ST.draft : LB.specForSave(ST.draft, dataset(R)), null, 2), check: null, stack: [{ v: 'json', title: BLOCK_TITLE.json }] };
+  ST.panel = { block: 'json', work: clone(ST.draft), before: clone(ST.draft), side: viewSide(), text: LB.pretty(ST.isNew ? ST.draft : LB.specForSave(ST.draft, dataset(R))), check: null, stack: [{ v: 'json', title: BLOCK_TITLE.json }] };
   showOverlay(R);
 }
 function openSeal(R) {
@@ -1041,7 +1232,7 @@ function showOverlay(R) {
 }
 function removeOverlay() {
   if (OV.el && OV.el.parentNode) OV.el.parentNode.removeChild(OV.el);
-  OV.el = null; OV.body = null; OV.foot = null; OV.say = null; OV.sayFn = null;
+  OV.el = null; OV.body = null; OV.foot = null; OV.live = null; OV.say = null; OV.sayFn = null;
   if (typeof document !== 'undefined') document.documentElement.classList.remove('lb-lock');
 }
 function closePanel(R) { ST.panel = null; removeOverlay(); if (R.alive()) paint(R); }
@@ -1049,11 +1240,25 @@ function topView() { var P = ST.panel; return P ? P.stack[P.stack.length - 1] : 
 function push(R, view) { var top = topView(); if (top && OV.body) top.scroll = OV.body.scrollTop; ST.panel.stack.push(view); paintOverlay(R); }
 function pop(R) { if (ST.panel.stack.length > 1) ST.panel.stack.pop(); paintOverlay(R); }
 function repaint(R) { var top = topView(); if (top && OV.body) top.scroll = OV.body.scrollTop; paintOverlay(R); }
-/* Après une retouche : structurelle (un type a changé) → la vue est redessinée ; sinon seuls la phrase et le pied. */
+/* Après une retouche : structurelle (un type a changé) → la vue est redessinée ; sinon seules la phrase du haut et
+   la lecture du pied changent. Les boutons du pied ne sont jamais refaits ici : un champ quitté par un toucher sur
+   « Appliquer » déclenche « change » avant le clic, et un bouton refait entre les deux perdrait ce clic. */
 function edited(R, structural) {
   if (structural) { repaint(R); return; }
   if (OV.say && OV.sayFn) { try { OV.say.textContent = OV.sayFn(); } catch (e) { /* rien */ } }
-  paintFoot(R);
+  var top = topView();
+  if (top && FOOTS[top.v]) paintFoot(R); else liveFoot(R);
+}
+function liveFoot(R) {
+  var P = ST.panel, live = OV.live;
+  if (!P || !live) return;
+  T.clear(live);
+  var bc = blockCard(P, dataset(R));
+  if (bc) {
+    bc.card.texts.forEach(function (t) { live.appendChild(h('p', null, t)); });
+    bc.card.errors.forEach(function (t) { live.appendChild(h('p', { class: 'lb-err' }, t)); });
+  }
+  try { T.typoTree(live); } catch (e) { /* rien */ }
 }
 function paintOverlay(R) {
   var P = ST.panel;
@@ -1084,15 +1289,13 @@ function blockCard(P, ds) {
 function paintFoot(R) {
   var P = ST.panel, f = OV.foot;
   if (!P || !f) return;
-  T.clear(f);
+  T.clear(f); OV.live = null;
   var top = topView();
   if (FOOTS[top.v]) { FOOTS[top.v](R, P, f); return; }
-  var bc = blockCard(P, dataset(R)), live = h('div', { class: 'lb-live', 'aria-live': 'polite' });
-  if (bc) {
-    bc.card.texts.forEach(function (t) { live.appendChild(h('p', null, t)); });
-    bc.card.errors.forEach(function (t) { live.appendChild(h('p', { class: 'lb-err' }, t)); });
-  }
+  var live = h('div', { class: 'lb-live', 'aria-live': 'polite' });
+  OV.live = live;
   f.appendChild(live);
+  liveFoot(R);
   f.appendChild(h('div', { class: 'lb-fb' }, U.button({ label: 'Annuler', kind: 'ghost', onClick: function () { closePanel(R); } }), U.button({ label: 'Appliquer', kind: 'pri', onClick: function () { applyPanel(R); } })));
   try { T.typoTree(f); } catch (e) { /* rien */ }
 }
@@ -1108,13 +1311,17 @@ function applyPanel(R) {
 }
 
 /* ---------- Champs ---------- */
+/* Groupe de puces. el.lbSync(valeur) remet les états pressés sans rien redessiner (après une saisie au clavier). */
 function chipGroup(o) {
-  var box = h('div', { class: 'lb-chips', role: 'group', 'aria-label': o.label || null });
+  var box = h('div', { class: 'lb-chips', role: 'group', 'aria-label': o.label || null }), cur = o.value, btns = [];
+  function isOn(v) { return o.multi ? (cur || []).indexOf(v) >= 0 : v === cur; }
   (o.options || []).forEach(function (op) {
-    var on = o.multi ? (o.value || []).indexOf(op.v) >= 0 : op.v === o.value;
-    box.appendChild(h('button', { class: 'chip', type: 'button', 'aria-pressed': String(on), disabled: op.disabled || null, title: op.title || null, on: { click: function () { o.onPick(op.v, !on); } } }, op.label));
+    var b = h('button', { class: 'chip', type: 'button', 'aria-pressed': String(isOn(op.v)), disabled: op.disabled || null, title: op.title || null, on: { click: function () { o.onPick(op.v, !isOn(op.v)); } } }, op.label);
+    btns.push([b, op.v]); box.appendChild(b);
   });
-  return h('div', { class: 'fld full lb-grp', style: 'gap:6px' }, o.label ? h('span', { class: 'lb-lab' }, o.label) : null, box, o.hint ? h('span', { class: 'hint' }, o.hint) : null);
+  var el = h('div', { class: 'fld full lb-grp', style: 'gap:6px' }, o.label ? h('span', { class: 'lb-lab' }, o.label) : null, box, o.hint ? h('span', { class: 'hint' }, o.hint) : null);
+  el.lbSync = function (v) { cur = v; btns.forEach(function (x) { x[0].setAttribute('aria-pressed', String(isOn(x[1]))); }); };
+  return el;
 }
 function numText(v) { return v == null || v === '' ? '' : isNum(v) ? String(v).replace('.', ',') : String(v); }
 /* Champ numérique : accepte la virgule, « $nom » pour relier un paramètre existant, vide si permis. */
@@ -1142,13 +1349,13 @@ function textField(o) {
   var id = 'lbf' + (++FID), input = o.area ? h('textarea', { id: id, placeholder: o.placeholder || null }) : h('input', { id: id, type: o.type || 'text', autocomplete: 'off', placeholder: o.placeholder || null });
   input.value = o.value == null ? '' : o.value;
   input.addEventListener('change', function () { o.set(input.value); });
-  return h('div', { class: 'fld' + (o.full ? ' full' : '') }, h('label', { for: id }, o.label), h('div', { class: 'in' + (o.area ? ' ta' : '') }, input), o.hint ? h('span', { class: 'hint' }, o.hint) : null);
+  return h('div', { class: 'fld' + (o.full ? ' full' : '') }, h('label', { for: id }, o.label), h('div', { class: 'in' + (o.area ? ' ta' : '') }, input), o.hint || !o.full ? h('span', { class: 'hint' }, o.hint || '') : null);
 }
 function selectField(o) {
   var id = 'lbf' + (++FID), sel = h('select', { id: id });
   o.options.forEach(function (op) { sel.appendChild(h('option', { value: String(op.v), selected: String(op.v) === String(o.value) || null }, op.label)); });
   sel.addEventListener('change', function () { var op = o.options.filter(function (x) { return String(x.v) === sel.value; })[0]; o.set(op ? op.v : sel.value); });
-  return h('div', { class: 'fld' }, h('label', { for: id }, o.label), h('div', { class: 'in' }, sel), o.hint ? h('span', { class: 'hint' }, o.hint) : null);
+  return h('div', { class: 'fld' }, h('label', { for: id }, o.label), h('div', { class: 'in' }, sel), h('span', { class: 'hint' }, o.hint || ''));
 }
 function paramHint(P, path, param, f) {
   return function () {
@@ -1190,7 +1397,7 @@ function fieldEl(R, P, f, base, owner, param) {
       return (function () {
         var id = 'lbf' + (++FID), input = h('input', { id: id, type: 'time', value: typeof v === 'string' ? v : '' });
         input.addEventListener('change', function () { var t = input.value; if (!t) { if (!f.req) set(undefined); else input.value = getAt(P.work, path) || ''; } else set(t.slice(0, 5)); edited(R, false); });
-        return h('div', { class: 'fld' }, h('label', { for: id }, f.label), h('div', { class: 'in' }, input), !f.req && f.def ? h('span', { class: 'hint' }, 'vide : ' + f.def) : null);
+        return h('div', { class: 'fld' }, h('label', { for: id }, f.label), h('div', { class: 'in' }, input), h('span', { class: 'hint' }, !f.req && f.def ? 'vide : ' + f.def : ''));
       })();
     case 'timePair':
       return (function () {
@@ -1220,9 +1427,10 @@ function fieldEl(R, P, f, base, owner, param) {
       return condsList(R, P, path, f.label);
     case 'name':
       return (function () {
-        var tf = textField({ label: f.label, value: typeof v === 'string' ? v : '', set: function (x) { x = String(x || '').trim(); set(x || undefined); edited(R, true); } });
+        var cg = null, tf = textField({ label: f.label, value: typeof v === 'string' ? v : '', set: function (x) { x = String(x || '').trim(); set(x || undefined); if (cg) cg.lbSync(x); edited(R, false); } });
         var hints = (f.options || []).map(function (n) { return { v: n, label: n }; });
-        return h('div', { class: 'lb-grp' }, tf, chipGroup({ label: 'Noms courants', options: hints, value: v, onPick: function (x) { set(x); edited(R, true); } }));
+        cg = chipGroup({ label: 'Noms courants', options: hints, value: v, onPick: function (x) { set(x); edited(R, true); } });
+        return h('div', { class: 'lb-grp' }, tf, cg);
       })();
     case 'names':
       return (function () {
@@ -1233,7 +1441,7 @@ function fieldEl(R, P, f, base, owner, param) {
         var tf = textField({ label: 'Autres noms, séparés par des virgules', value: extra.join(', '), set: function (txt) {
           var base0 = (getAt(P.work, path) || []).filter(function (n) { return hints.indexOf(n) >= 0; });
           String(txt || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (n) { if (base0.indexOf(n) < 0) base0.push(n); });
-          set(base0.length ? base0 : undefined); edited(R, true);
+          set(base0.length ? base0 : undefined); edited(R, false);
         } });
         return h('div', { class: 'lb-grp' }, chips, tf);
       })();
@@ -1471,7 +1679,7 @@ var VIEWS = {
       'La commission de tes réglages est figée dans l’empreinte si la stratégie n’en déclare pas.',
       'Seule une version scellée ouvre le hors échantillon de l’instrument, une seule fois par lignée : c’est le seul test qui n’a pas servi à la choisir. Une seconde ouverture est enregistrée et fait tomber ce critère du verdict.'
     ].map(T.esc)));
-    var cutText = o.fixed && o.oosFrom ? 'Coupure hors échantillon de ' + inst + ' fixée au ' + keyText(o.oosFrom) + '.' : o.proposal ? 'Coupure hors échantillon de ' + inst + ' : pas encore fixée ; elle le sera au ' + keyText(o.proposal) + ' (30 % des séances après elle), sauf si tu la choisis d’abord dans la carte dédiée.' : 'Coupure hors échantillon de ' + inst + ' : aucune proposition sans jeu de données. Choisis un jeu dans l’en-tête.';
+    var cutText = o.fixed && o.oosFrom ? 'Coupure hors échantillon de ' + inst + ' fixée au ' + keyText(o.oosFrom) + '.' : o.proposal ? 'Coupure hors échantillon de ' + inst + ' : pas encore fixée ; elle le sera au ' + keyText(o.proposal) + ' (30 % des séances après elle), sauf si tu la choisis d’abord dans la carte dédiée.' : 'Coupure hors échantillon de ' + inst + ' : pas encore fixée. ' + oosWhy(R, inst);
     el.appendChild(h('ul', { class: 'lb-chk' },
       h('li', { class: hyp ? null : 'no' }, h('i', null, hyp ? '✓' : '✗'), hyp ? 'Hypothèse écrite.' : 'Hypothèse vide : écris-la dans la carte Hypothèse.'),
       h('li', { class: valid ? null : 'no' }, h('i', null, valid ? '✓' : '✗'), valid ? 'Aucune erreur de validation.' : plural(n.errors.length, 'erreur') + ' à corriger d’abord.'),
@@ -1511,13 +1719,16 @@ function viewParams(R, P, el) {
   el.appendChild(U.note('Chaque nombre d’une règle devient un paramètre nommé. Min, max et pas déclarent la grille d’un balayage (onglet Valider) : déclare-la avant de regarder les résultats. Pour qu’un même nombre serve à plusieurs champs, tape « $nom » dans le champ.'));
   if (!names.length) { el.appendChild(h('p', { class: 'lb-say' }, 'Aucun paramètre pour l’instant.')); return; }
   names.forEach(function (name) {
-    var p = w.params[name], n = LB.useCount(w, name);
+    var p = w.params[name], n = LB.useCount(w, name), ref = { name: name }, head = null;
     if (!isObj(p)) return;
     function setK(k) { return function (x) { if (x === null) delete p[k]; else p[k] = x; edited(R, false); }; }
+    function headText() { return '$' + ref.name + ' · ' + (n ? 'lu par ' + plural(n, 'champ') : 'inutilisé'); }
     var nameF = textField({ label: 'Nom', value: name, set: function (x) {
-      var why = LB.renameParam(w, name, x);
-      if (why) { toast(why); repaint(R); return; }
-      edited(R, true);
+      x = String(x == null ? '' : x).trim();
+      var why = LB.renameParam(w, ref.name, x), inp = nameF.querySelector('input');
+      if (why) { toast(why); if (inp) inp.value = ref.name; return; }
+      ref.name = x; if (head) head.textContent = headText();
+      edited(R, false);
     } });
     var grid = h('div', { class: 'fields' }, nameF,
       numField({ label: 'Valeur', get: function () { return p.v; }, allowEmpty: false, set: function (x) { if (typeof x === 'number') { p.v = x; edited(R, false); } } }),
@@ -1525,7 +1736,8 @@ function viewParams(R, P, el) {
       numField({ label: 'Maximum', get: function () { return p.max; }, allowEmpty: true, set: setK('max') }),
       numField({ label: 'Pas', get: function () { return p.step; }, allowEmpty: true, set: setK('step') }));
     var lab = textField({ label: 'Libellé', full: true, value: p.label || '', set: function (x) { x = String(x || '').trim(); if (x) p.label = x; else delete p.label; edited(R, false); } });
-    el.appendChild(h('div', { class: 'lb-item' }, h('span', { class: 'lb-lab' }, '$' + name + ' · ' + (n ? 'lu par ' + plural(n, 'champ') : 'inutilisé')), grid, lab,
-      n ? null : itemActions([U.button({ label: 'Supprimer ce paramètre', kind: 'ghost', small: true, onClick: function () { delete w.params[name]; edited(R, true); } })])));
+    head = h('span', { class: 'lb-lab' }, headText());
+    el.appendChild(h('div', { class: 'lb-item' }, head, grid, lab,
+      n ? null : itemActions([U.button({ label: 'Supprimer ce paramètre', kind: 'ghost', small: true, onClick: function () { delete w.params[ref.name]; edited(R, true); } })])));
   });
 }

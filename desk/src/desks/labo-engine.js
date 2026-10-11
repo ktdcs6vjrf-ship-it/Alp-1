@@ -23,7 +23,9 @@ function laboEngine(a) {
        d’amorçage (séries calculées, aucun trade). Réutilise a.cache.ctx si la clé (fp, ancrage, fuseau, sel,
        niveaux, nouvelles, tick…) est la même.
        ctx = { a, spec0 (défauts §3.0), anchor, tz, tick, pv, comm, maxC, S, F1, n, tf, dom, smc, lv, news,
-               warn (avertissements de l’appel), fwarn (avertissements des séries, gardés avec le cache), off0 }
+               warn (avertissements de l’appel), gwarn (de la préparation), wk/deps/used/stk (avertissements des séries rangés
+               par clé, gardés avec le cache ; seuls ceux des clés lues par l’appel sont publiés), gD (pas du tick si les prix
+               sont sur sa grille, sinon 0 : les prix d’ordre y sont alors arrondis, voir execute), off0 }
        S[s] = { key, dn, dow, i0, i1 (barres de la séance dans F1), A (ms de l’ancre nominale), end, exp (barres
                attendues : 1380 globex, 390 rth), sel (séance jouable), roll }
        F1 = cadre d’une minute = { ctx, t, o, h, l, c, v (null sans volume), lf (lowFirst ou null), wk (walk ou null),
@@ -341,13 +343,31 @@ function laboEngine(a) {
     for (i = 1; i < n; i++) if (!(t[i] > t[i - 1])) fail('Barres non triées ou en double (rang ' + i + ').');
     return { t: t, o: o, h: h, l: l, c: c, v: v, lf: lf, wk: wk, n: n };
   }
-  /* Deux registres d’avertissements : fwarn suit les caches (séries, domaine) et survit avec eux d’un appel à
-     l’autre ; warn appartient à l’appel (exécution). warnList les réunit. */
-  function warn(ctx, m) { ctx.fwarn[m] = (ctx.fwarn[m] || 0) + 1; }
+  /* Trois registres d’avertissements. warn appartient à l’appel (exécution, aperçu). wk suit les caches
+     (séries, domaine) et survit avec eux d’un appel à l’autre dans le worker : chaque avertissement y est rangé
+     sous la clé de la série (ou du domaine) en cours de calcul, et un appel ne publie que ceux des clés qu’il a
+     lues, dépendances comprises — sans quoi une série calculée pour une autre stratégie, ou l’aperçu, signait
+     les avertissements de l’appel suivant. gwarn : ceux de la préparation (niveaux), toujours publiés.
+     ctx.wk = { clé: {message: n} }, ctx.deps = { clé: [clés lues pendant son calcul] }, ctx.used = clés lues par
+     l’appel (remis à zéro à chaque appel), ctx.stk = pile des clés en cours de calcul. */
+  function wkey(F, key) { return F.m + '|' + key; }
+  function touch(ctx, k) {
+    if (ctx.stk.length) { var top = ctx.stk[ctx.stk.length - 1], d = ctx.deps[top] || (ctx.deps[top] = []); if (d.indexOf(k) < 0) d.push(k); }
+    mark(ctx, k);
+  }
+  function mark(ctx, k) { if (ctx.used[k]) return; ctx.used[k] = 1; var d = ctx.deps[k]; if (d) for (var q = 0; q < d.length; q++) mark(ctx, d[q]); }
+  function enter(ctx, k) { touch(ctx, k); ctx.stk.push(k); }
+  function leave(ctx) { ctx.stk.pop(); }
+  function warn(ctx, m) {
+    if (!ctx.stk.length) { ctx.gwarn[m] = (ctx.gwarn[m] || 0) + 1; return; }
+    var k = ctx.stk[ctx.stk.length - 1], r = ctx.wk[k] || (ctx.wk[k] = {});
+    r[m] = (r[m] || 0) + 1;
+  }
   function rwarn(ctx, m) { ctx.warn[m] = (ctx.warn[m] || 0) + 1; }
   function warnList(ctx) {
-    var out = [], all = {}, k;
-    for (k in ctx.fwarn) if (own(ctx.fwarn, k)) all[k] = ctx.fwarn[k];
+    var out = [], all = {}, k, m;
+    for (k in ctx.gwarn) if (own(ctx.gwarn, k)) all[k] = ctx.gwarn[k];
+    for (k in ctx.used) if (own(ctx.used, k) && ctx.wk[k]) for (m in ctx.wk[k]) if (own(ctx.wk[k], m)) all[m] = (all[m] || 0) + ctx.wk[k][m];
     for (k in ctx.warn) if (own(ctx.warn, k)) all[k] = (all[k] || 0) + ctx.warn[k];
     for (k in all) if (own(all, k)) out.push(all[k] > 1 ? k + ' (' + all[k] + ' fois)' : k);
     return out;
@@ -377,10 +397,10 @@ function laboEngine(a) {
       fail('Hors échantillon protégé : la sélection doit finir avant le ' + a.oosFrom + ' (sel.to < oosFrom).');
     /* cache d’un appel à l’autre (worker) : même jeu, même ancrage, même sélection → mêmes séries */
     if (a.cache && typeof a.cache === 'object' && a.fp) {
-      ck = [a.fp, anchor, (spec0.session && spec0.session.tz) || PAR, canon(a.sel || null), canon(a.warmSessions), canon(a.rolls || null), canon(a.levels || null), canon(a.adj || null), canon(a.news || null), canon(st.tick)].join('|');
+      ck = [a.fp, anchor, (spec0.session && spec0.session.tz) || PAR, canon(a.sel || null), canon(a.warmSessions), canon(a.rolls || null), canon(a.levels || null), canon(a.adj || null), canon(a.news || null), canon(st.tick), canon(st.grid === false)].join('|');
       var hc = a.cache.ctx;
       if (hc && a.cache.key === ck) {
-        hc.a = a; hc.spec0 = spec0; hc.warn = {};
+        hc.a = a; hc.spec0 = spec0; hc.warn = {}; hc.used = {}; hc.stk = [];
         hc.pv = isNum(st.pointValue) && st.pointValue > 0 ? st.pointValue : 2; hc.comm = isNum(st.commissionRT) ? st.commissionRT : 0; hc.maxC = isNum(st.maxContracts) && st.maxContracts > 0 ? st.maxContracts : 0;
         return hc;
       }
@@ -407,7 +427,7 @@ function laboEngine(a) {
     var rolls = {}, rl = a.rolls;
     if (Array.isArray(rl)) rl.forEach(function (k) { rolls[k] = 1; }); else if (rl && typeof rl === 'object') for (var rk in rl) if (own(rl, rk) && rl[rk]) rolls[rk] = 1;
     var ctx = { a: a, spec0: spec0, anchor: anchor, tz: (spec0.session && spec0.session.tz) || PAR, tick: isNum(st.tick) && st.tick > 0 ? st.tick : 0.25, pv: isNum(st.pointValue) && st.pointValue > 0 ? st.pointValue : 2,
-      comm: isNum(st.commissionRT) ? st.commissionRT : 0, maxC: isNum(st.maxContracts) && st.maxContracts > 0 ? st.maxContracts : 0, S: [], tf: {}, dom: {}, smc: {}, warn: {}, fwarn: {}, off0: i0 };
+      comm: isNum(st.commissionRT) ? st.commissionRT : 0, maxC: isNum(st.maxContracts) && st.maxContracts > 0 ? st.maxContracts : 0, S: [], tf: {}, dom: {}, smc: {}, warn: {}, gwarn: {}, wk: {}, deps: {}, used: {}, stk: [], off0: i0 };
     var S = ctx.S, sess = new Int32Array(n), sm = new Float64Array(n), seg = new Int32Array(n), segStart = 0;
     for (s = w0; s <= s1; s++) {
       var dn = dns[s], A = anchorOf(anchor, dn), end = wallAt(dn, 17 * 60, NY), key = dayStr(dn);
@@ -419,6 +439,7 @@ function laboEngine(a) {
     }
     ctx.F1 = frame(ctx, cols, sess, sm, 1, seg);
     ctx.n = n;
+    ctx.gD = st.grid === false ? 0 : tickGrid(cols, n, ctx.tick);
     /* niveaux nommés (2.2) : niveau + base NDX éventuelle + ajustement de la séance */
     var lv = a.levels || {}, adj = a.adj || {};
     ctx.lv = S.map(function (se) {
@@ -433,12 +454,21 @@ function laboEngine(a) {
     if (ck) { a.cache.ctx = ctx; a.cache.key = ck; }
     return ctx;
   }
+  /* Pas de prix D = 1/tick si toutes les barres sont sur la grille du tick (MNQ, NQ, marche au tick), sinon 0. Sur
+     une telle série, un prix d’ordre hors grille (stop en ATR, bande de VWAP, suiveur…) n’est jamais un prix
+     d’exécution : execute l’arrondit au premier prix négociable qui le déclenche (voir gStop / gTgt). */
+  function tickGrid(cols, n, tick) {
+    var D = Math.round(1 / tick), P = [cols.o, cols.h, cols.l, cols.c], f, i, y;
+    if (!(D >= 1) || Math.abs(D * tick - 1) > 1e-12) return 0;
+    for (f = 0; f < 4; f++) for (i = 0; i < n; i++) { y = P[f][i] * D; if (!(Math.abs(y - Math.round(y)) <= 1e-6)) return 0; }
+    return D;
+  }
   function withBars(ctx, cols) {
     var F = ctx.F1, c2 = {}, k;
     for (k in ctx) if (own(ctx, k)) c2[k] = ctx[k];
     if (!cols || cols.c.length !== F.n) fail('withBars : colonnes de longueur ' + F.n + ' attendues.');
     c2.F1 = frame(c2, { t: F.t, o: cols.o, h: cols.h, l: cols.l, c: cols.c, v: cols.v === undefined ? F.v : cols.v, lf: cols.lowFirst || cols.lf || null, wk: cols.walk || cols.wk || null }, F.sess, F.sm, 1, F.seg);
-    c2.tf = {}; c2.warn = ctx.warn; c2.fwarn = {};
+    c2.tf = {}; c2.warn = ctx.warn; c2.gwarn = {}; c2.wk = {}; c2.deps = {}; c2.used = {}; c2.stk = [];
     return c2;
   }
   /* Heure HH:MM (fuseau tz) → minutes depuis l’ancre de la séance s : première occurrence à partir de l’ancre. */
@@ -487,8 +517,12 @@ function laboEngine(a) {
     }
     if (typeof x === 'string') fail(x.charAt(0) === '$' ? 'Paramètre non résolu : « ' + x + ' ».' : 'Opérande inconnu : « ' + x + ' ».');
     if (!x || typeof x !== 'object') fail('Opérande invalide.');
-    key = canon(x); hit = F.cache[key]; if (hit) return hit;
+    key = canon(x); hit = F.cache[key];
+    var wk = wkey(F, key);
+    if (hit) { touch(F.ctx, wk); return hit; }
+    enter(F.ctx, wk);
     out = own(x, 'op') ? evOp(F, x) : evF(F, x);
+    leave(F.ctx);
     F.cache[key] = out;
     return out;
   }
@@ -808,8 +842,9 @@ function laboEngine(a) {
 
   /* ---------- Conditions (3.3) : 1 vraie, 0 fausse, 2 indéfinie ---------- */
   function cv(F, c) {
-    var kind = condKind(c), key = 'c:' + canon(c), hit = F.cache[key];
-    if (hit) return hit;
+    var kind = condKind(c), key = 'c:' + canon(c), hit = F.cache[key], wkc = wkey(F, key);
+    if (hit) { touch(F.ctx, wkc); return hit; }
+    enter(F.ctx, wkc);
     var n = F.n, out = new Uint8Array(n), i, A, B, C = F.c, x, y, x0, y0;
     function edge(j) { return j === 0 || F.firstA[j] || j - 1 < F.seg[j]; }
     switch (kind) {
@@ -916,6 +951,7 @@ function laboEngine(a) {
         break;
       }
     }
+    leave(F.ctx);
     F.cache[key] = out;
     return out;
   }
@@ -935,8 +971,9 @@ function laboEngine(a) {
     return out;
   }
   function domain(ctx, spec) {
-    var ses = spec.session || {}, key = canon(ses), d = ctx.dom[key];
-    if (d) return d;
+    var ses = spec.session || {}, key = canon(ses), d = ctx.dom[key], wkd = 'D|' + key;
+    if (d) { touch(ctx, wkd); return d; }
+    enter(ctx, wkd);
     var S = ctx.S, F = ctx.F1, ns = S.length, tz = ses.tz || PAR, s, i;
     var from = new Float64Array(ns), to = new Float64Array(ns), flat = new Float64Array(ns), end = new Float64Array(ns), trade = new Uint8Array(ns), cons = new Uint8Array(F.n);
     var days = null, warm = isNum(ses.warmup) ? ses.warmup : 0;
@@ -953,6 +990,7 @@ function laboEngine(a) {
       if (!ok) continue;
       for (i = F.si0[s]; i <= F.si1[s]; i++) { var m = F.sm[i]; if (F.anch[i] && m >= warm && m + 1 >= from[s] && m < end[s]) cons[i] = 1; }
     }
+    leave(ctx);
     d = ctx.dom[key] = { from: from, to: to, flat: flat, end: end, trade: trade, cons: cons, warm: warm };
     return d;
   }
@@ -1039,7 +1077,17 @@ function laboEngine(a) {
        suivante au lieu de lire chaque barre. Données par l’appelant (o.cand) ou gardées sur cfg pour cfg.sig. */
     var cand = o.cand || (o.sig ? candOf(cfg, sig) : cfg.cand || (cfg.cand = candOf(cfg, cfg.sig))), cp = 0;
     var counts = { signals: 0, ambigu: 0, taille: 0, stopcourt: 0, ecart: 0, annule: 0, expire: 0, trou: 0, marketable: 0, limite: 0 };
-    var trades = [], sessions = [], legsSum = 0;
+    var trades = [], sessions = [], legsSum = 0, gD = ctx.gD || 0;
+    /* Prix d’ordre sur la grille du tick (si la série y est) : un ordre hors grille se déclenche au premier prix
+       négociable qui le franchit, et c’est à ce prix qu’il s’exécute. Stop de protection (et limite d’entrée) :
+       arrondi vers le bas à l’achat, vers le haut à la vente ; objectif (et stop d’entrée) : l’inverse. Les
+       conditions de déclenchement sont inchangées sur des barres de la grille ; sans cet arrondi, un stop à
+       19 998,15 sortait à 19 998,15 quand le marché ne traite qu’à 19 998,00, et la loi nulle exacte de la marche
+       au tick ne l’était plus (biais favorable d’un demi-tick par sortie au stop en moyenne). */
+    function gDn(x) { return gD ? Math.floor(x * gD + 1e-7) / gD : x; }
+    function gUp(x) { return gD ? Math.ceil(x * gD - 1e-7) / gD : x; }
+    function gStop(x, side) { return side > 0 ? gDn(x) : gUp(x); }
+    function gTgt(x, side) { return side > 0 ? gUp(x) : gDn(x); }
     function reachT(px, tg, side, through) { return side > 0 ? (through ? px > tg + xtT : px >= tg + xtT) : (through ? px < tg - xtT : px <= tg - xtT); }
     /* Remplissage vrai sur une marche au tick (walk) : premier passage exact, après le remplissage de l’ordre
        sur sa barre d’entrée. Rend 0 (rien), 1 (stop), 2 (objectif), ou −1 (chemin indisponible → lowFirst). */
@@ -1119,12 +1167,12 @@ function laboEngine(a) {
           var atv = ev(F, E.at)[i];
           if (!(atv - atv === 0)) { counts.annule++; i++; continue; }
           var ofs = (isNum(E.offset) ? E.offset : 0) * tick;
-          price = type === 'limit' ? atv - side * ofs : atv + side * ofs;
+          price = type === 'limit' ? gStop(atv - side * ofs, side) : gTgt(atv + side * ofs, side);
         } else if (type !== 'market') fail('Entrée inconnue : « ' + type + ' ».');
         var qty;
         if (R.mode === 'risk') {
-          var ref = type === 'market' ? F.c[i] : price, sref = stopFrom(rule.stop, side, ref, i);
-          if (!(sref - sref === 0)) { if (fb && rule.stop.type === 'level') sref = ref - side * fb.stop; else { counts.annule++; i++; continue; } }
+          var ref = type === 'market' ? F.c[i] : price, sref = gStop(stopFrom(rule.stop, side, ref, i), side);
+          if (!(sref - sref === 0)) { if (fb && rule.stop.type === 'level') sref = gStop(ref - side * fb.stop, side); else { counts.annule++; i++; continue; } }
           var dist = Math.abs(ref - sref);
           qty = Math.floor(R.riskUsd / (dist * pv + comm) + 1e-9);
           if (isNum(R.maxQty) && R.maxQty > 0) qty = Math.min(qty, Math.floor(R.maxQty));
@@ -1158,18 +1206,18 @@ function laboEngine(a) {
         }
         /* stop et objectif fixés à l’exécution */
         var entry = slipped ? raw + side * slipT : raw, useFb = false;
-        var stop0 = stopFrom(rule.stop, side, entry, i);
+        var stop0 = gStop(stopFrom(rule.stop, side, entry, i), side);
         var beyond = side > 0 ? raw <= stop0 : raw >= stop0;
         if (!(stop0 - stop0 === 0) || beyond) {
-          if (fb && rule.stop.type === 'level') { stop0 = entry - side * fb.stop; useFb = true; }
+          if (fb && rule.stop.type === 'level') { stop0 = gStop(entry - side * fb.stop, side); useFb = true; }
           else { counts[beyond ? 'ecart' : 'annule']++; i = e; continue; }
         }
         var L = Math.abs(entry - stop0);
         if (!(L > 0) || L < minStop - 1e-9) { counts.stopcourt++; i = e; continue; }
         var TG = rule.target || { type: 'none' }, dyn = TG.type === 'level' && !!TG.dynamic, tdyn = dyn ? ev(F, TG.at) : null;
-        var tgt0 = dyn ? tdyn[e - 1] : targetFrom(TG, side, entry, L, i), hasT = TG.type && TG.type !== 'none';
+        var tgt0 = gTgt(dyn ? tdyn[e - 1] : targetFrom(TG, side, entry, L, i), side), hasT = TG.type && TG.type !== 'none';
         if (hasT && (!(tgt0 - tgt0 === 0) || reachT(raw, tgt0, side, through))) {
-          if (fb && TG.type === 'level') { tgt0 = entry + side * fb.target; dyn = false; useFb = true; }
+          if (fb && TG.type === 'level') { tgt0 = gTgt(entry + side * fb.target, side); dyn = false; useFb = true; }
           else { counts.annule++; i = e; continue; }
         }
         /* gestion barre par barre (3.6) */
@@ -1183,7 +1231,7 @@ function laboEngine(a) {
         }
         var oppA = side > 0 ? oppL : oppS, xj = -1, xp = NaN, fin = '', xleg = 0, how = '', tgL = tgt0;
         for (var jj = e; ; jj++) {
-          var Oj = F.o[jj], Hj = F.h[jj], Lj = F.l[jj], Cj = F.c[jj], tg = dyn ? tdyn[jj - 1] : tgt0, hasTg = hasT && tg - tg === 0;
+          var Oj = F.o[jj], Hj = F.h[jj], Lj = F.l[jj], Cj = F.c[jj], tg = dyn ? gTgt(tdyn[jj - 1], side) : tgt0, hasTg = hasT && tg - tg === 0;
           tgL = tg;
           if (jj > e) {
             if (F.sm[jj] >= flatS) { xj = jj; xp = Oj - side * slipT; fin = 'flat'; xleg = 1; how = 'open'; break; }
@@ -1215,8 +1263,8 @@ function laboEngine(a) {
           if (jj >= sI1) { xj = jj; xp = Cj - side * slipT; fin = 'cloche'; xleg = 1; how = 'C'; break; }
           advX = side > 0 ? Math.min(advX, Lj) : Math.max(advX, Hj);
           favX = side > 0 ? Math.max(favX, Hj) : Math.min(favX, Lj);
-          if (be && side * ((side > 0 ? Hj : Lj) - entry) >= be.r * L) { var nb_ = entry + side * be.off; if (side * (nb_ - stop) > 0) { stop = nb_; sKind = 'be'; } }
-          if (trDist === trDist && side * (favX - entry) >= trStart * L) { var nt = favX - side * trDist; if (side * (nt - stop) > 0) { stop = nt; sKind = 'trail'; } }
+          if (be && side * ((side > 0 ? Hj : Lj) - entry) >= be.r * L) { var nb_ = gStop(entry + side * be.off, side); if (side * (nb_ - stop) > 0) { stop = nb_; sKind = 'be'; } }
+          if (trDist === trDist && side * (favX - entry) >= trStart * L) { var nt = gStop(favX - side * trDist, side); if (side * (nt - stop) > 0) { stop = nt; sKind = 'trail'; } }
         }
         /* excursions : barres avant la sortie entières, barre de sortie bornée par le stop et l’objectif */
         var aX = advX, fX = favX;
@@ -1392,11 +1440,23 @@ function laboEngine(a) {
   function objVal(st, obj) { return obj === 'net' ? st.net : obj === 'sharpe' ? st.sharpeTrade : obj === 'pf' ? st.pf : st.meanR; }
 
   /* ---------- 4.2 Entrées au hasard : seul l’instant change ----------
-     Par séance jouée, autant de signaux que la stratégie en a lus (sig − amb : un signal ambigu n’a pas de sens),
-     tirés sans remise parmi les barres exécutables (3.5) de la séance ; chacun suit execute tel quel (même ordre,
-     « at » lu à la barre tirée, offset, valid, through, stop, objectif, gestion, taille, coûts, limites). Sens :
-     celui de la stratégie ; « both » : achat avec la proportion observée. Stop ou objectif « level » indéfini à la
-     barre tirée : distance médiane observée (fallback). */
+     Les comptes de signaux de la stratégie par séance jouée (sig − amb : un signal ambigu n’a pas de sens) sont
+     redistribués entre les séances jouées par une permutation tirée à chaque tirage, puis tirés sans remise parmi
+     les barres exécutables (3.5) de la séance qui les reçoit ; chacun suit execute tel quel (même ordre, « at » lu
+     à la barre tirée, offset, valid, through, stop, objectif, gestion, taille, coûts, limites). Sens : celui de la
+     stratégie ; « both » : achat avec la proportion observée. Stop ou objectif « level » indéfini à la barre
+     tirée : distance médiane observée (fallback).
+     Deux corrections à la lettre de LABO.md 4.2, chacune mesurée sur la marche sans dérive :
+     – Garder chaque compte sur SA séance conditionne le tirage au chemin réalisé : une stratégie ne tire que les
+       séances où son déclencheur a vu passer quelque chose (une chute de 15 points, une cassure), et des entrées
+       posées avant ce passage en héritent. Un achat après chute, sans aucun avantage, sortait p < 0,05 sur 8
+       graines sur 20. Permuter les comptes garde leur loi (et l’effet des limites de séance) sans ce lien.
+     – meanR mêle l’instant et la géométrie : c/L dépend de la distance du stop, qui n’est pas la même à une barre
+       tirée et à un signal. Chaque tirage est donc ramené au coût par R de la stratégie (meanR du tirage − son
+       costR + costR observé) : la comparaison porte sur le seul mouvement de prix, et la loi nulle reste centrée
+       sur −c/L de la stratégie. Sans cela, une stratégie à stop serré était « pire que le hasard » (p ≈ 1) et une
+       stratégie à stop large « meilleure », sans le moindre avantage. means : tirages à coût égal ; net : les
+       mêmes tirages en meanR brut de coûts propres. */
   function fallbackOf(trades) {
     var ds = [], dt = [];
     for (var i = 0; i < trades.length; i++) { var t = trades[i]; if (t.fb) continue; ds.push(Math.abs(t.entry - t.stop0)); if (t.target0 != null) dt.push(Math.abs(t.target0 - t.entry)); }
@@ -1408,37 +1468,47 @@ function laboEngine(a) {
     for (var j = m - k; j < m; j++) { var t = Math.floor(r() * (j + 1)); if (out.indexOf(t) >= 0) t = j; out.push(t); }
     return out;
   }
+  /* coût moyen par R d’une liste de trades (même somme que statsOf.costR) */
+  function costROf(tr, pv) { var s = 0, m = 0; for (var i = 0; i < tr.length; i++) { var t = tr[i]; if (isNum(t.c) && t.risk > 0) { s += t.c / (t.risk * pv); m++; } } return m ? s / m : NaN; }
   function randomNull(ctx, cfg, o) {
     o = o || {};
-    var F = ctx.F1, draws = posInt(o.draws, 'draws', 200), seed = isNum(o.seed) ? o.seed : 1;
-    var x0 = execute(ctx, cfg, execOpts({ sessions: o.sessions })), obs = meanROf(x0.trades), ex = executable(ctx, cfg);
-    var pools = [], need = [], nL = 0, x, i, q;
+    var F = ctx.F1, pv = ctx.pv, draws = posInt(o.draws, 'draws', 200), seed = isNum(o.seed) ? o.seed : 1;
+    var x0 = execute(ctx, cfg, execOpts({ sessions: o.sessions })), obs = meanROf(x0.trades), cObs = costROf(x0.trades, pv), ex = executable(ctx, cfg);
+    var pools = [], cnt = [], nL = 0, x, i, q, P;
     for (x = 0; x < x0.sessions.length; x++) {
       var sr = x0.sessions[x], pl = [];
       for (i = F.si0[sr.s]; i <= F.si1[sr.s]; i++) if (ex[i]) pl.push(i);
-      pools.push(pl); need.push(Math.min(pl.length, Math.max(0, sr.sig - (sr.amb || 0))));
+      pools.push(pl); cnt.push(Math.max(0, sr.sig - (sr.amb || 0)));
     }
+    P = pools.length;
     for (i = 0; i < x0.trades.length; i++) if (x0.trades[i].side > 0) nL++;
     var pLong = cfg.sides.L && cfg.sides.S ? (x0.trades.length ? nL / x0.trades.length : 0.5) : cfg.sides.L ? 1 : 0;
-    var fb = fallbackOf(x0.trades), sL = new Uint8Array(F.n), sS = new Uint8Array(F.n), set = [], tmp = [], means = [], nT = 0, nFb = 0;
+    var fb = fallbackOf(x0.trades), sL = new Uint8Array(F.n), sS = new Uint8Array(F.n), set = [], tmp = [], perm = [], means = [], nets = [], costs = [], nT = 0, nFb = 0, nSig = 0;
     for (var d = 0; d < draws; d++) {
       var r = rng(drawSeed(seed, d));
-      for (x = 0; x < pools.length; x++) {
-        if (!need[x]) continue;
-        pickK(r, pools[x].length, need[x], tmp);
+      for (x = 0; x < P; x++) perm[x] = x;
+      for (x = P - 1; x > 0; x--) { var j = Math.floor(r() * (x + 1)), tq = perm[x]; perm[x] = perm[j]; perm[j] = tq; }
+      for (x = 0; x < P; x++) {
+        var need = Math.min(pools[x].length, cnt[perm[x]]);
+        if (!need) continue;
+        nSig += need;
+        pickK(r, pools[x].length, need, tmp);
         for (q = 0; q < tmp.length; q++) { var b = pools[x][tmp[q]]; if (r() < pLong) sL[b] = 1; else sS[b] = 1; set.push(b); }
       }
       set.sort(function (u, w) { return u - w; });
       var xr = execute(ctx, cfg, execOpts({ sig: { L: sL, S: sS }, cand: new Int32Array(set), fallback: fb, sessions: o.sessions }));
       for (q = 0; q < set.length; q++) { sL[set[q]] = 0; sS[set[q]] = 0; }
       set.length = 0;
-      means.push(meanROf(xr.trades)); nT += xr.trades.length;
+      var mR = meanROf(xr.trades), cR = costROf(xr.trades, pv);
+      /* même liste de trades → même somme : le tirage identique à l’observé rend exactement obs */
+      means.push(mR + (cR - cObs)); nets.push(mR); costs.push(cR); nT += xr.trades.length;
       for (q = 0; q < xr.trades.length; q++) if (xr.trades[q].fb) nFb++;
       progress(d + 1, draws);
     }
-    var srt = sortNum(means);
+    var srt = sortNum(means), sn = sortNum(nets);
     return { means: means.map(nul), obs: nul(obs), p: pOf(means, obs), pmin: 1 / (draws + 1), lo: nul(qtl(srt, 0.05)), hi: nul(qtl(srt, 0.95)), mid: nul(qtl(srt, 0.5)),
-      draws: draws, n: x0.trades.length, nMean: nT / draws, signals: need.reduce(function (s, k) { return s + k; }, 0), pLong: pLong,
+      stat: 'meanR à coût égal', costR: nul(cObs), costRDraws: nul(median(costs)), net: { means: nets.map(nul), lo: nul(qtl(sn, 0.05)), hi: nul(qtl(sn, 0.95)), mid: nul(qtl(sn, 0.5)) },
+      draws: draws, n: x0.trades.length, nMean: nT / draws, signals: draws ? nSig / draws : 0, pLong: pLong,
       fallback: { stop: nul(fb.stop), target: nul(fb.target) }, fbShare: nT ? nFb / nT : 0, label: labelOf('configuration isolée') };
   }
 
@@ -1833,7 +1903,7 @@ function laboEngine(a) {
     features: function () {
       var ctx = prepare(a), F = ctx.F1, S = ctx.S, list = [], s;
       for (s = 0; s < S.length; s++) if (S[s].sel) list.push(s);
-      if (list.length > 5) { list = list.slice(-5); warn(ctx, 'aperçu limité aux cinq dernières séances'); }
+      if (list.length > 5) { list = list.slice(-5); rwarn(ctx, 'aperçu limité aux cinq dernières séances'); }
       var i0 = F.si0[list[0]], i1 = F.si1[list[list.length - 1]];
       var series = (a.operands || []).map(function (x) { return toList(ev(F, x), i0, i1); }), sig = null;
       if (a.spec && a.spec.long) {

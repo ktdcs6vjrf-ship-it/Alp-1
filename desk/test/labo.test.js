@@ -231,6 +231,18 @@ eq([hm.days, hm.hours, hm.mean, hm.n], [[1, 3], [9, 14], [[2, null], [null, -1]]
 const eg = LB.envelopeGap([1, -1, 2], { pess: -0.2, opt: 0.3, costR: 0.1 });
 eq([eg.n, eg.cum, eg.where, eg.pess[3][1], eg.opt[3][1], eg.nul[3][1]], [3, 2, 'dessus', -0.6000000000000001, 0.8999999999999999, -0.30000000000000004], 'écart à l’enveloppe');
 
+eq([LB.decOf([-3, -2.5, -1]), LB.decOf([0, 4, 8]), LB.decOf([0.25, 0.125]), LB.decOf([1 / 3])], [1, 0, 3, 3], 'décimales utiles d’une grille');
+// carte 2D en blocs : chaque échantillon prend la cellule calculée la plus proche, la meilleure cellule reste repérée.
+const nearestIdx = (a, v) => { let b = 0; for (let i = 1; i < a.length; i++) if (Math.abs(a[i] - v) < Math.abs(a[b] - v)) b = i; return b; };
+const surf0 = { x: { dom: [-3, -1] }, y: { dom: [0, 20] }, xs: [-3, -2, -1], ys: [0, 10, 20], vals: [[1, 2, 3], [4, 5, 6], [7, 8, 9]], argmax: [2, 2] };
+const bl = LB.blocks(surf0, nearestIdx);
+eq([bl.xs.length, bl.ys.length, bl.vals.length, bl.vals[0].length], [60, 60, 60, 60], 'blocs : au moins 60 échantillons par axe');
+eq([bl.vals[0][0], bl.vals[0][59], bl.vals[59][0], bl.vals[59][59], bl.vals[30][30]], [1, 3, 7, 9, 5], 'blocs : valeurs des cellules les plus proches');
+const distinct = new Set(); bl.vals.forEach(r => r.forEach(v => distinct.add(v)));
+eq(distinct.size, 9, 'blocs : aucune valeur interpolée');
+eq(bl.vals[bl.argmax[1]][bl.argmax[0]], 9, 'blocs : la meilleure cellule reste repérée');
+eq(surf0.xs.length, 3, 'blocs : la surface d’origine est intacte');
+
 /* ---------- 9. Saisie rapide ---------- */
 let q = LB.quickTrade({ side: 'long', entry: 20000, stop: 19990, target: 20020, exit: 20020, qty: 2, pointValue: 2, commissionRT: 1.24 });
 eq([q.ok, q.pnl, q.r, q.fin], [true, 77.52, 1.938, 'objectif'], 'achat à l’objectif : pnl et R nets de commission');

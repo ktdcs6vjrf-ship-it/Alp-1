@@ -37,6 +37,9 @@ function plural(n, s, p) { return F.int(n) + ' ' + (n > 1 ? (p || s + 's') : s);
 function fR(v, nd) { return fin(v) ? F.r(v, nd == null ? 3 : nd) : '—'; }
 function fP(p) { return fin(p) ? F.num(p, 3) : '—'; }
 function sig6(x) { return fin(x) ? +x.toPrecision(6) : null; }
+/* Décimales utiles d’une grille de valeurs (au plus 3) : −3, −2,5 → 1 ; 0, 4, 8 → 0. */
+LB.decOf = decOf;
+function decOf(a) { var d = 0; (a || []).forEach(function (v) { if (!fin(v)) return; for (var k = 0; k < 3 && Math.abs(v * Math.pow(10, k) - Math.round(v * Math.pow(10, k))) > 1e-9; k++); d = Math.max(d, k); }); return d; }
 var MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 var JOURS = ['', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.', 'dim.'];
 function monthLabel(m) { var p = /^(\d{4})-(\d{2})$/.exec(m || ''); return p ? MOIS[+p[2] - 1] + ' ' + p[1].slice(2) : m; }
@@ -128,9 +131,9 @@ LB.planSave = function (spec, o) {
 LB.planSeal = function (spec, o) {
   o = o || {};
   if (!spec) return { ok: false, why: 'Aucune stratégie à sceller.' };
-  if (o.stored && o.stored.status === 'scellee') return sameSeal(o.stored, spec) ? { ok: true, doc: null, hash: o.stored.hash, already: true } : { ok: false, why: 'Cette version est déjà scellée : enregistrez d’abord la modification, elle deviendra une nouvelle version.' };
-  if (!String(spec.hypothesis || '').trim()) return { ok: false, why: 'Écrivez d’abord l’hypothèse : ce que la règle exploite, et pourquoi.' };
-  if (!o.oosFrom) return { ok: false, why: 'La coupure hors échantillon de l’instrument n’est pas fixée : ouvrez un jeu réel de l’instrument, elle y sera proposée.' };
+  if (o.stored && o.stored.status === 'scellee') return sameSeal(o.stored, spec) ? { ok: true, doc: null, hash: o.stored.hash, already: true } : { ok: false, why: 'Cette version est déjà scellée : enregistre d’abord la modification, elle deviendra une nouvelle version.' };
+  if (!String(spec.hypothesis || '').trim()) return { ok: false, why: 'Écris d’abord l’hypothèse : ce que la règle exploite, et pourquoi.' };
+  if (!o.oosFrom) return { ok: false, why: 'La coupure hors échantillon de l’instrument n’est pas fixée : ouvre un jeu réel de l’instrument, elle y sera proposée.' };
   var n = stats().normalize(spec);
   if (!n.spec) return { ok: false, why: n.errors[0] || 'Stratégie illisible.' };
   if (n.errors.length) return { ok: false, why: n.errors[0] };
@@ -197,7 +200,7 @@ LB.canSetOos = function (cfgDoc, essais, instrument, key) {
 LB.canOpenOos = function (o) {
   o = o || {};
   if (!o.status) return { ok: false, why: 'Aucune stratégie choisie.' };
-  if (o.status === 'brouillon') return { ok: false, why: 'Scellez d’abord la version (onglet Concevoir) : le hors échantillon ne s’ouvre qu’après scellement.' };
+  if (o.status === 'brouillon') return { ok: false, why: 'Scelle d’abord la version (onglet Concevoir) : le hors échantillon ne s’ouvre qu’après scellement.' };
   if (o.status === 'alteree') return { ok: false, why: 'Le hachage ne correspond plus à la version scellée : elle est altérée et ne peut ouvrir le hors échantillon.' };
   if (!o.oosN) return { ok: false, why: 'Ce jeu n’a aucune séance au-delà de la coupure.' };
   if (o.opened) return { ok: false, why: 'Cette version a déjà ouvert le hors échantillon de cette période.' };
@@ -244,20 +247,24 @@ LB.tradeRows = function (trades, max) {
   for (var i = from; i < list.length; i++) { var t = list[i]; rows.push([t.t, t.side > 0 ? 1 : -1, fin(t.r) ? +t.r.toFixed(4) : null, fin(t.pnl) ? +t.pnl.toFixed(2) : null, t.fin || null]); }
   return { rows: rows, omitted: from, total: list.length };
 };
-/* Borne du document (≤ 200 Ko) : nombres compactés, puis trades retirés par les plus anciens, puis vues
-   allégées. Le document garde toujours sa clé, ses statistiques et ses lois nulles. */
+/* Borne du document (≤ 200 Ko) : nombres compactés et trades limités aux 3 000 derniers ; au-delà, on allège
+   d’abord ce qui se recalcule (vues sous-échantillonnées puis retirées, sections lourdes, tirages des lois
+   nulles), et les trades ne sont coupés, par les plus anciens, qu’en dernier. Le document garde toujours sa
+   clé, ses statistiques et les p de ses lois nulles. */
 LB.fitDoc = function (doc, max) {
   max = fin(max) ? max : MAX_BYTES;
   var d = LB.compact(doc), size = function () { return LB.byteLength(JSON.stringify(d)); };
   if (Array.isArray(d.trades) && d.trades.length > MAX_TRADES) { d.tradesOmitted = (d.tradesOmitted || 0) + d.trades.length - MAX_TRADES; d.trades = d.trades.slice(d.trades.length - MAX_TRADES); }
+  if (size() <= max) return d;
+  if (d.view) ['maemfe', 'eq'].forEach(function (k) { if (Array.isArray(d.view[k]) && d.view[k].length > 200) { d.view[k] = LB.downsample(d.view[k], 200); d.trimmed = true; } });
+  if (size() > max && d.view) ['maemfe', 'eq', 'heat', 'months'].forEach(function (k) { if (size() > max && d.view[k]) { delete d.view[k]; d.trimmed = true; } });
+  if (size() > max) ['envelope', 'sweep', 'wfa', 'boot', 'stress'].forEach(function (k) { if (size() > max && d[k] && typeof d[k] === 'object') { d[k] = { omitted: true }; d.trimmed = true; } });
+  if (size() > max && d.nulls) ['random', 'permute'].forEach(function (k) { if (d.nulls[k] && d.nulls[k].means) { delete d.nulls[k].means; d.trimmed = true; } });
   var s = size();
   while (s > max && Array.isArray(d.trades) && d.trades.length > 0) {
     var keep = Math.max(0, Math.floor(d.trades.length * Math.min(0.9, max / s * 0.95)));
     d.tradesOmitted = (d.tradesOmitted || 0) + d.trades.length - keep; d.trades = d.trades.slice(d.trades.length - keep); s = size();
   }
-  if (s > max && d.view) { ['maemfe', 'eq', 'months', 'heat'].forEach(function (k) { if (size() > max && d.view[k]) { delete d.view[k]; d.trimmed = true; } }); s = size(); }
-  if (s > max) { ['envelope', 'sweep', 'wfa', 'boot', 'stress'].forEach(function (k) { if (size() > max && d[k]) { d[k] = { omitted: true }; d.trimmed = true; } }); }
-  if (s > max && d.nulls) { ['random', 'permute'].forEach(function (k) { if (d.nulls[k] && d.nulls[k].means) { delete d.nulls[k].means; d.trimmed = true; } }); }
   return d;
 };
 
@@ -319,6 +326,19 @@ LB.gridValues = function (min, max, step) {
   var o = []; for (var i = 0; i <= 400; i++) { var x = +(min + i * step).toFixed(10); if (x > max + 1e-9) break; o.push(x); }
   return o;
 };
+/* Carte 2D d’une grille grossière : la carte de Métriques lisse son image ; on lui donne donc des blocs (chaque
+   pixel prend la cellule calculée la plus proche), pour qu’une grille de 30 cellules ne se lise pas comme une surface
+   continue. Échantillons aux centres des pixels, au moins 60 par axe. */
+LB.blocks = function (surf, nearest) {
+  var xs = surf.xs, ys = surf.ys, nx = xs.length, ny = ys.length, kx = Math.max(1, Math.ceil(60 / nx)), ky = Math.max(1, Math.ceil(60 / ny));
+  var NX = nx * kx, NY = ny * ky, x0 = surf.x.dom[0], x1 = surf.x.dom[1], y0 = surf.y.dom[0], y1 = surf.y.dom[1], fx = [], fy = [], vals = [];
+  for (var i = 0; i < NX; i++) fx.push(x0 + (i + 0.5) / NX * (x1 - x0));
+  for (var j = 0; j < NY; j++) fy.push(y0 + (j + 0.5) / NY * (y1 - y0));
+  var ix = fx.map(function (x) { return nearest(xs, x); }), iy = fy.map(function (y) { return nearest(ys, y); });
+  for (j = 0; j < NY; j++) vals.push(ix.map(function (c) { return surf.vals[iy[j]][c]; }));
+  var am = surf.argmax || [0, 0], close = function (f, v) { var b = 0; for (var q = 1; q < f.length; q++) if (Math.abs(f[q] - v) < Math.abs(f[b] - v)) b = q; return b; };
+  return Object.assign({}, surf, { xs: fx, ys: fy, vals: vals, argmax: [close(fx, xs[am[0]]), close(fy, ys[am[1]])] });
+};
 /* Saisie rapide (Suivre) : pnl = qty·(sens·(sortie − entrée)·pv − commission) ; r = pnl / (qty·|entrée − stop|·pv). */
 LB.quickTrade = function (o) {
   o = o || {}; var sd = o.side === 'short' ? -1 : 1, q = o.qty, pv = o.pointValue, cm = fin(o.commissionRT) ? o.commissionRT : 0;
@@ -377,6 +397,7 @@ function workerOk() { try { return typeof Worker === 'function' && typeof Blob =
 function closeVisit() {
   Object.keys(S.jobs).forEach(function (k) { try { S.jobs[k].cancel(true); } catch (e) {} });
   S.jobs = {}; S.jobEls = {};
+  if (S.pv) { try { S.pv.cancel(); } catch (e) {} S.pv = null; }
   if (S.ex) { try { S.ex.close(); } catch (e) {} }
   S.ex = null; S.exFp = null; S.exReady = null;
 }
@@ -403,10 +424,11 @@ function dsOptions(want) {
 function wantDs() { var id = T.store.get(KEY.ds, 'synthetique'), ok = dsOptions().some(function (o) { return o.v === id; }); return ok ? id : (id === 'visite' || !donnees() || !/^ds[a-z0-9]{6,20}$/.test(id) ? 'synthetique' : id); }
 function setDs(ds) {
   S.ds = ds; S.loading = null; S.dsErr = null;
-  var fp = fpOf(ds); if (S.exFp === fp) return;
-  S.exFp = fp; S.exReady = null;
+  var fp = fpOf(ds); if (S.ex && S.exFp === fp) return;
+  /* L’exécuteur d’abord : sa création remet exFp à zéro. */
   var ex; try { ex = exec(); } catch (e) { S.dsErr = msg(e); return; }
-  ex.load(fp, ds.bars).then(function () { if (S.exFp === fp) { S.exReady = fp; schedule(); } }, function () {});
+  S.exFp = fp; S.exReady = null;
+  ex.load(fp, ds.bars).then(function () { if (S.exFp === fp) { S.exReady = fp; schedule(); } }, function (e) { if (S.exFp === fp) { S.dsErr = 'Chargement du jeu dans le calcul en tâche de fond impossible : ' + msg(e); schedule(); } });
 }
 function ensureDs() {
   var D = donnees(), id = wantDs();
@@ -424,7 +446,7 @@ function ensureDs() {
     }, 40);
     return;
   }
-  if (id === 'visite') { var vv = D.visit(); if (vv) setDs(vv); else S.dsErr = 'Le fichier de la visite n’est plus en mémoire : rechargez-le dans Données.'; return; }
+  if (id === 'visite') { var vv = D.visit(); if (vv) setDs(vv); else S.dsErr = 'Le fichier de la visite n’est plus en mémoire : recharge-le dans Données.'; return; }
   S.loading = 'Chargement du jeu…';
   D.loadDataset(id).then(function (ds) { if (S.dsId !== id) return; setDs(ds); schedule(); }, function (e) { if (S.dsId !== id) return; S.loading = null; S.dsErr = (D.errorText && e && e.code ? D.errorText(e) : msg(e)); schedule(); });
 }
@@ -566,34 +588,71 @@ function schedule() { clearTimeout(S.timer); S.timer = setTimeout(repaint, 40); 
 function repaint() {
   var v = S.view; if (!v || !v.root.isConnected) return;
   if (v.tab === 'concevoir') { paintHead(); return; }
+  /* Jamais pendant une frappe : le rendu attend que le champ perde le focus. */
+  var ae = document.activeElement;
+  if (ae && v.root.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName)) {
+    if (!S.deferred) { S.deferred = true; ae.addEventListener('blur', function () { S.deferred = false; schedule(); }, { once: true }); }
+    return;
+  }
   var y = window.scrollY; paint(); try { window.scrollTo(0, y); } catch (e) {}
 }
 
 /* =====================================================================================================
    7. Composants locaux
    ===================================================================================================== */
-var CSS = '.lb-head{display:grid;gap:10px;margin:2px 0 16px;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);min-width:0}' +
-  '.lb-tags{display:flex;flex-wrap:wrap;gap:6px}.lb-tag{display:inline-flex;align-items:baseline;gap:5px;max-width:100%;padding:4px 8px;border:1px solid var(--line-2);border-radius:7px;background:var(--raise);font:500 11.5px/1.35 var(--f-mono);color:var(--soft);overflow-wrap:anywhere}.lb-tag b{color:var(--fg);font-weight:600}.lb-tag.acc{border-color:var(--violet-b);background:var(--violet-a)}.lb-tag.no{background-image:var(--hatch);color:var(--fg)}' +
-  '.lb-job{display:grid;gap:8px;padding:12px;margin:0 0 14px;border:1px solid var(--violet-b);border-radius:var(--r);background:var(--violet-a)}.lb-job .lb-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.lb-job b{color:var(--fg);font-weight:600;font-size:13.5px}' +
-  '.lb-bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.lb-bar i{display:block;height:100%;width:0;background:var(--violet);transition:width .25s}' +
-  '.lb-step{font:500 11.5px/1.45 var(--f-mono);color:var(--soft);overflow-wrap:anywhere}' +
-  '.lb-launch{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 16px}.lb-launch p{margin:0;flex:1 1 220px;min-width:0;color:var(--soft);font-size:13px;line-height:1.5}' +
-  '.lb-items{display:grid;gap:8px}.lb-it{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:3px 10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}' +
-  '.lb-it .ic{font:600 13px/1.35 var(--f-mono);color:var(--mute)}.lb-it[data-p=ok] .ic{color:var(--violet)}.lb-it[data-p=ko]{background-image:var(--hatch)}.lb-it[data-p=ko] .ic{color:var(--fg)}' +
-  '.lb-it b{font-weight:600;color:var(--fg);font-size:13.5px}.lb-it .v{font:600 12px/1.35 var(--f-mono);color:var(--fg);text-align:right;max-width:46vw;overflow-wrap:anywhere}.lb-it .nd{display:block;font:500 10.5px/1.3 var(--f-mono);color:var(--mute)}.lb-it .w{grid-column:2/4;color:var(--soft);font-size:12.5px;line-height:1.5}' +
-  '.lb-grid{display:grid;gap:14px;min-width:0}@media(min-width:900px){.lb-grid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}' +
-  '.lb-kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:13px}.lb-kv dt{color:var(--mute)}.lb-kv dd{margin:0;color:var(--fg);text-align:right;font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}' +
-  '.lb-tpl{display:grid;gap:10px}@media(min-width:760px){.lb-tpl{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}.lb-tpl .card p{margin:0 0 10px;color:var(--soft);font-size:13px;line-height:1.5}' +
-  '.lb-read{margin:0;padding:0;list-style:none;display:grid;gap:9px}.lb-read li{font-size:13.5px;line-height:1.55;color:var(--soft)}.lb-read b{display:block;color:var(--fg);font-weight:600;font-size:12.5px;margin-bottom:1px}' +
-  '.lb-mono{font:500 11.5px/1.5 var(--f-mono);color:var(--mute);overflow-wrap:anywhere}.lb-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}' +
-  '.lb-lvl{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}.lb-lvl em{font-family:var(--f-serif);font-style:italic;font-size:28px;line-height:1.1;color:var(--hi)}' +
-  '.lb-txt{margin:0;color:var(--soft);font-size:13.5px;line-height:1.55}.lb-txt b{color:var(--fg);font-weight:600}' +
-  '.lb-stack{display:grid;gap:12px;min-width:0}.lb-ver{display:grid;gap:4px;width:100%;text-align:left;padding:11px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--fg);cursor:pointer;font:inherit}.lb-ver[aria-current=true]{border-color:var(--violet)}.lb-ver span{color:var(--soft);font-size:12.5px;line-height:1.45}';
+var CSS = '.lab-body{display:flex;flex-direction:column;gap:22px;min-width:0}.lab-wrap{display:grid;gap:10px;min-width:0}' +
+  '@media(max-width:560px){.lab-f1 .fld{grid-column:1/-1}}.fields.f3.lab-f3{grid-template-columns:repeat(3,minmax(0,1fr))}' +
+  '.lab-head{display:grid;gap:10px;margin:0;padding:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);min-width:0}' +
+  '.lab-tags{display:flex;flex-wrap:wrap;gap:6px}.lab-tag{display:inline-flex;align-items:baseline;gap:5px;max-width:100%;padding:4px 8px;border:1px solid var(--line-2);border-radius:7px;background:var(--raise);font:500 11.5px/1.35 var(--f-mono);color:var(--soft);overflow-wrap:anywhere}.lab-tag b{color:var(--fg);font-weight:600}.lab-tag.acc{border-color:var(--violet-b);background:var(--violet-a)}.lab-tag.no{background-image:var(--hatch);color:var(--fg)}' +
+  '.lab-job{display:grid;gap:8px;padding:12px;margin:0;border:1px solid var(--violet-b);border-radius:var(--r);background:var(--violet-a)}.lab-job .lab-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.lab-job b{color:var(--fg);font-weight:600;font-size:13.5px}' +
+  '.lab-bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.lab-bar i{display:block;height:100%;width:0;background:var(--violet);transition:width .25s}' +
+  '.lab-step{font:500 11.5px/1.45 var(--f-mono);color:var(--soft);overflow-wrap:anywhere}' +
+  '.lab-launch{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0}.lab-launch p{margin:0;flex:1 1 220px;min-width:0;color:var(--soft);font-size:13px;line-height:1.5}' +
+  '.lab-items{display:grid;gap:8px}.lab-it{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:3px 10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}' +
+  '.lab-it .ic{font:600 13px/1.35 var(--f-mono);color:var(--mute)}.lab-it[data-p=ok] .ic{color:var(--violet)}.lab-it[data-p=ko]{background-image:var(--hatch)}.lab-it[data-p=ko] .ic{color:var(--fg)}' +
+  '.lab-it b{font-weight:600;color:var(--fg);font-size:13.5px}.lab-it .v{font:600 12px/1.35 var(--f-mono);color:var(--fg);text-align:right;max-width:46vw;overflow-wrap:anywhere}.lab-it .nd{display:block;font:500 10.5px/1.3 var(--f-mono);color:var(--mute)}.lab-it .w{grid-column:2/4;color:var(--soft);font-size:12.5px;line-height:1.5}' +
+  '.lab-grid{display:grid;gap:14px;min-width:0}@media(min-width:900px){.lab-grid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}' +
+  '.lab-kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:13px}.lab-kv dt{color:var(--mute)}.lab-kv dd{margin:0;color:var(--fg);text-align:right;font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}' +
+  '.lab-tpl{display:grid;gap:10px}@media(min-width:760px){.lab-tpl{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}.lab-tpl .card p{margin:0 0 10px;color:var(--soft);font-size:13px;line-height:1.5}' +
+  '.lab-read{margin:0;padding:0;list-style:none;display:grid;gap:9px}.lab-read li{font-size:13.5px;line-height:1.55;color:var(--soft)}.lab-read b{display:block;color:var(--fg);font-weight:600;font-size:12.5px;margin-bottom:1px}' +
+  '.lab-mono{font:500 11.5px/1.5 var(--f-mono);color:var(--mute);overflow-wrap:anywhere}.lab-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}' +
+  '.lab-lvl{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}.lab-lvl em{font-family:var(--f-serif);font-style:italic;font-size:28px;line-height:1.1;color:var(--hi)}' +
+  '.lab-txt{margin:0;color:var(--soft);font-size:13.5px;line-height:1.55}.lab-txt b{color:var(--fg);font-weight:600}' +
+  '.lab-stack{display:grid;gap:12px;min-width:0}.lab-ver{display:grid;gap:4px;width:100%;text-align:left;padding:11px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);color:var(--fg);cursor:pointer;font:inherit}.lab-ver[aria-current=true]{border-color:var(--violet)}.lab-ver span{color:var(--soft);font-size:12.5px;line-height:1.45}' +
+  '.lab-cap{margin:4px 0 0;font:500 11px/1.4 var(--f-mono);color:var(--mute)}' +
+  /* Au doigt : toute commande du desk offre au moins 44 px de haut (boutons courts, champs, choix). */
+  '@media(max-width:760px){.lab-head .fld .in,.lab-body .fld .in:not(.ta){height:46px}.lab-body .btn.sm{height:44px}.lab-body .seg{min-height:46px}.lab-body .chip{height:44px}}';
 function injectCss() { if (document.getElementById('labo-css')) return; var s = document.createElement('style'); s.id = 'labo-css'; s.textContent = CSS; document.head.appendChild(s); }
-function tag(text, strong, kind) { return h('span', { class: 'lb-tag' + (kind ? ' ' + kind : '') }, text, strong != null ? h('b', null, strong) : null); }
-function kv(rows) { return h('dl', { class: 'lb-kv' }, rows.filter(Boolean).map(function (r) { return [h('dt', null, r[0]), h('dd', null, r[1] == null || r[1] === '' ? '—' : r[1])]; })); }
-function txt(parts) { return h('p', { class: 'lb-txt' }, parts); }
+function tag(text, strong, kind) { return h('span', { class: 'lab-tag' + (kind ? ' ' + kind : '') }, text, strong != null ? h('b', null, strong) : null); }
+function kv(rows) { return h('dl', { class: 'lab-kv' }, rows.filter(Boolean).map(function (r) { return [h('dt', null, r[0]), h('dd', null, r[1] == null || r[1] === '' ? '—' : r[1])]; })); }
+function txt(parts) { return h('p', { class: 'lab-txt' }, parts); }
 function sec(root, title, meta) { var s = U.section(title, meta); root.appendChild(s); return s; }
+/* Légende des repères d’un histogramme : le socle écrit le nom à côté du trait, et deux traits proches
+   (moyenne et coût, observé et −c/L) se barrent l’un l’autre. Les traits restent nus, la légende les nomme. */
+function refLegend(items) {
+  return h('div', { class: 'legend' }, items.filter(function (it) { return it && fin(it.x); }).map(function (it) {
+    return h('span', null, h('i', { class: (it.tone && it.tone !== 'fg' ? it.tone : '') + (it.dash ? ' dash' : '') }), it.label + ' ' + fR(it.x));
+  }));
+}
+function capLine(t) { return h('p', { class: 'lab-cap' }, t); }
+/* Une stratégie lit-elle des niveaux nommés ? (level, nearest ; stop ou objectif posés sur un niveau compris) */
+function readsLevels(spec) { try { return /"f":"(level|nearest)"/.test(JSON.stringify([spec.long, spec.short])); } catch (e) { return false; } }
+function hasLevels(ds) { var lv = ds && ds.levels; return !!lv && Object.keys(lv).some(function (k) { return lv[k] && Object.keys(lv[k]).length > 0; }); }
+/* Enveloppe nulle : pessimiste et optimiste rendent le même résultat (aucune barre n’a touché stop et objectif). */
+function flatEnvelope(env) {
+  var a = env && env.pess && env.pess.stats, b = env && env.opt && env.opt.stats;
+  return !!a && !!b && a.n === b.n && a.meanR === b.meanR && a.net === b.net;
+}
+/* Heures d’une carte heure × jour, sans trou : de la première à la dernière heure jouée, en suivant la séance
+   (une fenêtre qui passe minuit, 20 h → 1 h, se lit dans cet ordre). */
+function hourRange(hours) {
+  var hs = (hours || []).slice().sort(function (a, b) { return a - b; }); if (hs.length < 2) return hs;
+  var best = 0, gap = -1;
+  for (var i = 0; i < hs.length; i++) { var nx = hs[(i + 1) % hs.length], g = (nx - hs[i] + 24) % 24; if (g > gap) { gap = g; best = (i + 1) % hs.length; } }
+  var out = [], h0 = hs[best], n = (hs[(best + hs.length - 1) % hs.length] - h0 + 24) % 24;
+  for (var k = 0; k <= n; k++) out.push((h0 + k) % 24);
+  return out;
+}
 function noData(W, t) { return { svg: '<svg viewBox="0 0 ' + W + ' 60" height="60"><text class="ax" x="' + (W / 2) + '" y="34" text-anchor="middle">' + T.esc(t || 'Pas encore de données') + '</text></svg>' }; }
 /* Nuage de points (MAE/MFE) : le socle n’en a pas ; même grammaire que C.line (classes ax, gl, zl). */
 function scatter(o) {
@@ -618,7 +677,7 @@ function nullHist(r, o) {
   var means = (r.means || []).filter(fin), obs = r.obs, lo = means.length ? Math.min.apply(null, means) : 0, hi = means.length ? Math.max.apply(null, means) : 1;
   if (fin(obs)) { lo = Math.min(lo, obs); hi = Math.max(hi, obs); }
   var pad = (hi - lo) * 0.06 || 0.05, refs = [];
-  if (fin(obs)) refs.push({ x: obs, label: 'observé ' + F.num(obs, 3), tone: 'violet' });
+  if (fin(obs)) refs.push({ x: obs, label: 'observé', tone: 'violet' });
   if (o && fin(o.zero)) refs.push({ x: o.zero, label: o.zeroLabel || '', tone: 'mute', dash: true });
   return C.hist({ values: means, refs: refs, min: lo - pad, max: hi + pad, fmt: function (v) { return F.num(v, 2); }, height: 160 });
 }
@@ -638,14 +697,15 @@ var HEAD = {
   suivre: { k: 'Labo de stratégie · Suivre', t: 'Le réel, trade par *trade*.', l: 'Les trades du journal qui portent la stratégie, lus par un test séquentiel et une alarme d’usure.' }
 };
 function headEl(X) {
-  var box = h('div', { class: 'lb-head', role: 'region', 'aria-label': 'Stratégie et jeu courants' });
+  var box = h('div', { class: 'lab-head', role: 'region', 'aria-label': 'Stratégie et jeu courants' });
   var vs = versions();
   var vOpts = vs.length ? vs.map(function (d) { return { v: d.id, label: (d.name || 'Sans nom') + ' · v' + d.version + ' · ' + (LB.STATUS[d.status === 'scellee' ? 'scellee' : 'brouillon']).toLowerCase() }; }) : [{ v: '', label: 'Aucune stratégie' }];
-  box.appendChild(U.fields([
+  var hf = U.fields([
     U.field({ label: 'Stratégie', type: 'select', value: X.doc ? X.doc.id : '', options: vOpts, onChange: function (v) { if (v) selectVersion(v); } }),
     U.field({ label: 'Jeu de barres', type: 'select', value: wantDs(), options: dsOptions(wantDs()), onChange: function (v) { T.store.set(KEY.ds, v); S.dsId = null; ensureDs(); if (S.view) S.view.ctx.rerender(); } })
-  ]));
-  var tags = h('div', { class: 'lb-tags' });
+  ]);
+  hf.classList.add('lab-f1'); box.appendChild(hf);
+  var tags = h('div', { class: 'lab-tags' });
   if (X.spec) {
     var st = X.status;
     tags.appendChild(tag('', LB.STATUS[st], st === 'scellee' ? 'acc' : st === 'alteree' ? 'no' : null));
@@ -659,8 +719,9 @@ function headEl(X) {
     tags.appendChild(tag(X.synth ? 'essais de la visite ' : 'N = ', F.int(N) + (X.synth ? '' : ' essai' + (N > 1 ? 's' : '')) + (X.trials.inherited ? ' · dont ' + F.int(X.trials.inherited) + ' hérités' : (X.synth ? '' : ' · dont 0 hérité'))));
     if (X.cut) tags.appendChild(tag(X.cutDemo ? 'coupure de démonstration ' : 'hors échantillon dès le ', fmtKey(X.cut) + (X.cutDemo ? '' : X.cutFixed ? ' · fixée' : ' · proposée')));
   }
+  if (X.lineage && X.lineage.sources) tags.appendChild(tag('migré ', (fin(X.lineage.migreLe) ? 'le ' + F.date(X.lineage.migreLe) + ' · ' : '') + plural(X.lineage.sources, 'lien précédent', 'liens précédents')));
   box.appendChild(tags);
-  if (X.ds && X.synth) box.appendChild(U.note('Marche sans dérive : ' + SYNTH_NOTE.charAt(0).toLowerCase() + SYNTH_NOTE.slice(1) + ' Rien de ce qui s’y calcule n’entre au registre des essais.', true));
+  if (X.ds && X.synth) box.appendChild(U.note('Marche sans dérive. ' + SYNTH_NOTE + ' Rien de ce qui s’y calcule n’entre au registre des essais.', true));
   if (X.ds && X.spec && X.spec.instrument && X.inst && X.spec.instrument !== X.inst) box.appendChild(U.note('La stratégie vise ' + X.spec.instrument + ', le jeu porte sur ' + X.inst + ' : les essais se comptent sur l’instrument du jeu.', true));
   if (S.loading) box.appendChild(U.note(S.loading));
   if (S.dsErr) box.appendChild(U.note(S.dsErr, true));
@@ -678,17 +739,17 @@ function paintHead() {
    9. Lancement, progression, erreurs
    ===================================================================================================== */
 function launchBar(tab, o) {
-  var job = S.jobs[tab], wrap = h('div');
+  var job = S.jobs[tab], wrap = h('div', { class: 'lab-wrap' });
   if (job) {
-    var bar = h('i'), t = h('span', { class: 'lb-step', role: 'status' }, job.step);
-    wrap.appendChild(h('div', { class: 'lb-job' }, h('div', { class: 'lb-row' }, h('b', null, job.label), U.button({ label: 'Annuler', small: true, kind: 'ghost', onClick: function () { job.cancel(); } })), h('div', { class: 'lb-bar', role: 'progressbar', 'aria-label': job.label }, bar), t));
+    var bar = h('i'), t = h('span', { class: 'lab-step', role: 'status' }, job.step);
+    wrap.appendChild(h('div', { class: 'lab-job' }, h('div', { class: 'lab-row' }, h('b', null, job.label), U.button({ label: 'Annuler', small: true, kind: 'ghost', onClick: function () { job.cancel(); } })), h('div', { class: 'lab-bar', role: 'progressbar', 'aria-label': job.label }, bar), t));
     S.jobEls[tab] = { bar: bar, txt: t }; paintJob(job);
     return wrap;
   }
   if (S.errs[tab]) wrap.appendChild(U.note('Le calcul a échoué : ' + S.errs[tab], true));
-  var row = h('div', { class: 'lb-launch' }, U.button({ label: o.label, kind: 'pri', disabled: o.disabled || null, onClick: o.onClick }), h('p', null, o.text));
+  var row = h('div', { class: 'lab-launch' }, U.button({ label: o.label, kind: 'pri', disabled: o.disabled || null, onClick: o.onClick }), h('p', null, o.text));
   wrap.appendChild(row);
-  if (o.doc) wrap.appendChild(h('p', { class: 'lb-mono', style: 'margin:-6px 0 14px' }, 'Calculé le ' + F.dateLong(o.doc.at) + ' à ' + F.time(o.doc.at) + ' · ' + (o.doc.dsName || o.doc.ds) + ' · ' + fmtKey(o.doc.sel && o.doc.sel.from) + ' → ' + fmtKey(o.doc.sel && o.doc.sel.to) + (o.fresh === false ? ' · réglages ou coûts modifiés depuis : relancez' : '')));
+  if (o.doc) wrap.appendChild(h('p', { class: 'lab-mono', style: 'margin:0' }, 'Calculé le ' + F.dateLong(o.doc.at) + ' à ' + F.time(o.doc.at) + ' · ' + (o.doc.dsName || o.doc.ds) + ' · ' + fmtKey(o.doc.sel && o.doc.sel.from) + ' → ' + fmtKey(o.doc.sel && o.doc.sel.to) + (o.fresh === false ? ' · réglages ou coûts modifiés depuis : relance' : '')));
   return wrap;
 }
 function useTemplate(id) {
@@ -700,7 +761,7 @@ function useTemplate(id) {
 }
 function templateCards(compact) {
   var L = T.lib.laboStats; if (!L || !L.TEMPLATES) return h('div');
-  return h('div', { class: 'lb-tpl' }, L.TEMPLATES.map(function (t) {
+  return h('div', { class: 'lab-tpl' }, L.TEMPLATES.map(function (t) {
     return U.card({ title: t.label, body: [compact ? null : h('p', null, t.description), U.button({ label: 'Partir de ce gabarit', small: true, onClick: function () { useTemplate(t.id); } })] });
   }));
 }
@@ -708,7 +769,7 @@ function templateCards(compact) {
 function guard(body, X) {
   if (!hasLibs()) { body.appendChild(U.empty({ title: 'Le moteur du Labo n’est pas chargé', text: 'Cette page a été construite sans labo-engine ou labo-stats.' })); return false; }
   if (!X.spec) {
-    body.appendChild(U.empty({ title: 'Aucune stratégie pour l’instant', text: 'Écrivez-en une dans Concevoir, envoyez sa description à Claude, ou partez d’un gabarit. Aucun gabarit ne prétend à un avantage : ce sont des points de départ.' }));
+    body.appendChild(U.empty({ title: 'Aucune stratégie pour l’instant', text: 'Écris-en une dans Concevoir, envoie sa description à Claude, ou pars d’un gabarit. Aucun gabarit ne prétend à un avantage : ce sont des points de départ.' }));
     body.appendChild(templateCards(true));
     return false;
   }
@@ -765,7 +826,7 @@ function renderTester(body, X) {
     { label: 'Espérance', value: fR(st.meanR), hint: 'sans avantage ' + fR(fin(st.costR) ? -st.costR : NaN), tone: st.meanR > 0 ? 'acc' : st.meanR < 0 ? 'neg' : null },
     { label: 'Espérance pondérée', value: fR(st.rW), hint: 'sans avantage ' + fR(st.rW0) },
     { label: 'Net', value: fin(st.net) ? F.usd(st.net, 0, true) : '—', hint: fin(st.expectancy) ? F.usd(st.expectancy, 2, true) + ' par trade' : null, tone: st.net < 0 ? 'neg' : null },
-    { label: 'Facteur de profit', value: fin(st.pf) ? F.num(st.pf, 2) : '—', hint: 'gains bruts sur pertes brutes' },
+    { label: 'Facteur de profit', value: fin(st.pf) ? F.num(st.pf, 2) : '—', hint: 'gains / pertes bruts' },
     { label: 'Sharpe par trade', value: fin(st.sharpeTrade) ? F.num(st.sharpeTrade, 3) : '—', hint: 'écart-type ' + (fin(st.sdR) ? F.num(st.sdR, 2) + ' R' : '—') },
     { label: 'Perte maximale', value: fin(st.maxDD) ? F.usd(st.maxDD, 0) : '—', hint: 'creux de l’équité' }
   ], 4));
@@ -775,12 +836,15 @@ function renderTester(body, X) {
 
   var s2 = sec(body, 'Équité et *enveloppe*', 'pessimiste · déclaré · optimiste');
   var eq = (doc.view && doc.view.eq) || [], env = doc.envelope || {};
-  s2.appendChild(C.line({ series: [{ name: 'déclaré (' + (doc.fill || 'pessimiste') + ')', points: eq, tone: 'fg' }, { name: 'pessimiste', points: env.pess ? env.pess.eq : [], tone: 'mute', dash: true }, { name: 'optimiste', points: env.opt ? env.opt.eq : [], tone: 'violet', dash: true }], x: { type: 'time' }, y: { zero: true, fmt: function (v) { return F.usd(v, 0); } }, height: 220 }));
-  s2.appendChild(U.note('L’enveloppe rejoue les mêmes ordres quand le stop et l’objectif tombent dans la même barre : le pessimiste prend le stop, l’optimiste l’objectif. La vérité est entre les deux.'));
+  /* Le déclaré se trace en dernier : en remplissage pessimiste il couvre exactement la borne basse. */
+  s2.appendChild(C.line({ series: [{ name: 'pessimiste', points: env.pess ? env.pess.eq : [], tone: 'mute', dash: true }, { name: 'optimiste', points: env.opt ? env.opt.eq : [], tone: 'violet', dash: true }, { name: 'déclaré (' + (doc.fill || 'pessimiste') + ')', points: eq, tone: 'fg' }], x: { type: 'time' }, y: { zero: true, fmt: function (v) { return F.usd(v, 0); } }, height: 220 }));
+  var eS = function (k) { return env[k] && env[k].stats ? env[k].stats : {}; };
+  s2.appendChild(kv([['espérance pessimiste', fR(eS('pess').meanR) + ' · ' + (fin(eS('pess').net) ? F.usd(eS('pess').net, 0, true) : '—')], ['espérance optimiste', fR(eS('opt').meanR) + ' · ' + (fin(eS('opt').net) ? F.usd(eS('opt').net, 0, true) : '—')]]));
+  s2.appendChild(U.note('L’enveloppe rejoue les mêmes ordres quand le stop et l’objectif tombent dans la même barre : le pessimiste prend le stop, l’optimiste l’objectif. La vérité est entre les deux ; un écart nul veut dire qu’aucune barre n’a touché les deux.'));
   s2.appendChild(C.line({ series: [{ name: 'sous l’eau', points: LB.underwater(eq), tone: 'violet', area: true }], x: { type: 'time' }, y: { zero: true, fmt: function (v) { return F.usd(v, 0); } }, height: 140 }));
 
   var rs = (doc.trades || []).map(function (r) { return r[2]; }).filter(fin);
-  var g3 = h('div', { class: 'lb-grid two' });
+  var g3 = h('div', { class: 'lab-grid two' });
   var c1 = U.card({ title: 'Distribution des R', meta: plural(rs.length, 'trade'), body: [C.hist({ values: rs, refs: [{ x: st.meanR, label: 'moyenne', tone: 'violet' }, { x: fin(st.costR) ? -st.costR : NaN, label: 'sans avantage', tone: 'fg', dash: true }], fmt: function (v) { return F.num(v, 1); }, height: 170 })] });
   var mm = (doc.view && doc.view.maemfe) || [];
   var c2 = U.card({ title: 'Excursions MAE et MFE', meta: 'en R du risque initial', body: [scatter({ points: mm, xName: 'MAE (R)', yName: 'MFE (R)', vlines: [{ x: 1, label: 'stop' }], fmtTip: function (p) { return 'MAE ' + F.num(p[0], 2) + ' R · MFE ' + F.num(p[1], 2) + ' R · ' + F.r(p[2], 2); } }), U.note('En violet les trades gagnants. Un gagnant loin à droite a frôlé son stop ; un perdant haut placé a laissé filer un gain.')] });
@@ -796,7 +860,7 @@ function renderTester(body, X) {
   if (doc.counts && doc.counts.limite) s5.appendChild(U.note(plural(doc.counts.limite, 'signal refusé', 'signaux refusés') + ' par une limite de séance (entrées, pertes, perte du jour) : non comptés ci-dessus.'));
 
   var s6 = sec(body, 'Les trois *lois nulles*', 'aucun résultat ne s’affiche seul');
-  var g6 = h('div', { class: 'lb-grid two' });
+  var g6 = h('div', { class: 'lab-grid two' });
   [['random', 'Entrées au hasard', 'Mêmes ordres, même nombre par séance, posés à des instants tirés au sort.'], ['permute', 'Prix permutés', null]].forEach(function (q) {
     var r = nl[q[0]];
     if (!r) { g6.appendChild(U.card({ title: q[1], body: U.note('Pas calculé.') })); return; }
@@ -812,7 +876,7 @@ function renderTester(body, X) {
   s6.appendChild(g6);
 
   var s7 = sec(body, 'Les *trades*', doc.tradesOmitted ? 'les ' + F.int((doc.trades || []).length) + ' derniers sur ' + F.int((doc.trades || []).length + doc.tradesOmitted) : plural((doc.trades || []).length, 'trade'));
-  var FINS = stats().FINS, shown = (doc.trades || []).slice(-150).reverse();
+  var FINS = stats().FINS, shown = (doc.trades || []).slice(S.allTrades ? -150 : -30).reverse();
   s7.appendChild(U.table({ cols: [
     { k: 0, label: 'Entrée', fmt: function (v) { return F.date(v) + ' ' + F.time(v); } },
     { k: 1, label: 'Sens', fmt: function (v) { return v > 0 ? 'achat' : 'vente'; } },
@@ -820,24 +884,27 @@ function renderTester(body, X) {
     { k: 3, label: 'Net', align: 'r', fmt: function (v) { return fin(v) ? F.usd(v, 2, true) : '—'; } },
     { k: 4, label: 'Sortie', fmt: function (v) { return FINS[v] || v || '—'; } }
   ], rows: shown, rowClass: function (r) { return r[3] < 0 ? 'neg' : null; }, empty: 'Aucun trade.' }));
-  if ((doc.trades || []).length > shown.length) s7.appendChild(U.note('Les ' + F.int(shown.length) + ' plus récents sont listés ; tous partent vers Métriques.'));
-  s7.appendChild(h('div', { class: 'lb-acts', style: 'margin-top:12px' }, U.button({ label: 'Ouvrir dans Métriques', small: true, kind: 'pri', disabled: !(doc.trades || []).length || null, onClick: function () { openMetrics(X, doc); } }), h('span', { class: 'lb-mono' }, 'Écrit les trades comme source « Backtest » du desk Métriques.')));
+  if ((doc.trades || []).length > shown.length) s7.appendChild(h('div', { class: 'lab-acts', style: 'margin-top:10px' }, S.allTrades ? null : U.button({ label: 'Afficher les ' + F.int(Math.min(150, doc.trades.length)) + ' plus récents', small: true, kind: 'ghost', onClick: function () { S.allTrades = true; schedule(); } }), h('span', { class: 'lab-mono' }, 'Les ' + F.int(shown.length) + ' plus récents sont listés ; tous partent vers Métriques.')));
+  s7.appendChild(h('div', { class: 'lab-acts', style: 'margin-top:12px' }, U.button({ label: 'Ouvrir dans Métriques', small: true, kind: 'pri', disabled: !(doc.trades || []).length || null, onClick: function () { openMetrics(X, doc); } }), h('span', { class: 'lab-mono' }, 'Écrit les trades comme source « Backtest » du desk Métriques.')));
 }
 function nullLabel(label, X) {
-  var N = X.trials ? X.trials.N || 0 : 0;
-  return String(label || 'configuration isolée').replace(/N = <a\.N>|N( =)? …|N essais|N = \d+ essais/, 'N = ' + F.int(Math.max(1, N)) + ' essais') + (/essais/.test(String(label || '')) ? '' : ', non corrigée des N = ' + F.int(Math.max(1, N)) + ' essais') + '.';
+  var N = Math.max(1, X.trials ? X.trials.N || 0 : 0), nn = 'N = ' + F.int(N) + (N > 1 ? ' essais' : ' essai'), L = String(label || 'configuration isolée');
+  L = L.replace(/N = <a\.N> essais|N = \d+ essais|N … essais|N essais/, nn);
+  if (!/N = /.test(L) && !/meilleure/.test(L)) L += ', non corrigée des ' + nn;
+  return L.charAt(0).toUpperCase() + L.slice(1) + (/[.!?]$/.test(L) ? '' : '.');
 }
 function openMetrics(X, doc) {
   var total = (doc.trades || []).length + (doc.tradesOmitted || 0);
   var bt = LB.lastBacktest(doc.trades, { label: (X.spec.name || 'Stratégie') + ' · v' + X.spec.version + ' · ' + (X.synth ? 'synthétique' : (X.ds.meta.name || X.inst)), source: X.synth ? 'synth' : 'csv', total: total });
   T.store.set('quant:lastBacktest', bt);
   T.toast('Trades envoyés au desk Métriques');
-  if (T.desks().some(function (d) { return d.id === 'perf'; })) T.nav.go('perf');
+  /* Le desk Métriques lit ces trades comme source « Backtest » : on l’y ouvre directement. */
+  if (T.desks().some(function (d) { return d.id === 'perf'; })) { T.store.set('perf:src', 'backtest'); T.nav.go('perf'); }
 }
 function readingCard(X) {
   var items = [];
   try { items = stats().describe(X.spec, { values: {} }); } catch (e) { items = []; }
-  return U.card({ title: 'La règle, en *français*', meta: X.spec.name || '', body: items.length ? h('ul', { class: 'lb-read' }, items.map(function (b) { return h('li', null, h('b', null, b.title), b.text); })) : U.note('Lecture indisponible.') });
+  return U.card({ title: 'La règle, en français', meta: X.spec.name || '', body: items.length ? h('ul', { class: 'lab-read' }, items.map(function (b) { return h('li', null, h('b', null, b.title), b.text); })) : U.note('Lecture indisponible.') });
 }
 
 /* =====================================================================================================
@@ -925,17 +992,19 @@ function renderValider(body, X) {
     var refreshCells = function () { var g = gridOf(valState(X)); cellsNote.textContent = g ? F.int(g.cells) + ' configuration' + (g.cells > 1 ? 's' : '') + (g.cells > 100 ? ' : au-delà de 100, le calcul dépasse la minute sur un an de données.' : '.') + (g.cells > 400 ? ' Le moteur en accepte 400 au plus.' : '') : ''; };
     var flds = [U.field({ label: 'Premier paramètre', type: 'select', value: vs.p1, options: nameOpt, onChange: function (v) { setVal(X, { p1: v, p2: v === vs.p2 ? '' : vs.p2 }); schedule(); } }),
       U.field({ label: 'Second paramètre', type: 'select', value: vs.p2, options: [{ v: '', label: 'aucun' }].concat(nameOpt.filter(function (o) { return o.v !== vs.p1; })), onChange: function (v) { setVal(X, { p2: v }); schedule(); } })];
-    sC.appendChild(U.fields(flds));
+    var pf = U.fields(flds); pf.classList.add('lab-f1'); sC.appendChild(pf);
     [vs.p1, vs.p2].filter(Boolean).forEach(function (n) {
       var rg = vs.r[n];
       function upd(k) { return function (x) { var all = valState(X).r; all[n] = Object.assign({}, all[n]); all[n][k] = x; setVal(X, { r: all }); refreshCells(); }; }
-      sC.appendChild(h('p', { class: 'lb-mono', style: 'margin:12px 0 6px' }, ((P[n] && P[n].label) || n) + ' · $' + n));
-      sC.appendChild(U.fields([U.field({ label: 'De', value: rg.min, onChange: upd('min') }), U.field({ label: 'À', value: rg.max, onChange: upd('max') }), U.field({ label: 'Pas', value: rg.step, min: 1e-9, onChange: upd('step') })], 3));
+      sC.appendChild(h('p', { class: 'lab-mono', style: 'margin:12px 0 6px' }, ((P[n] && P[n].label) || n) + ' · $' + n));
+      var rf = U.fields([U.field({ label: 'De', value: rg.min, onChange: upd('min') }), U.field({ label: 'À', value: rg.max, onChange: upd('max') }), U.field({ label: 'Pas', value: rg.step, min: 1e-9, onChange: upd('step') })], 3);
+      rf.classList.add('lab-f3'); sC.appendChild(rf);
     });
     refreshCells(); sC.appendChild(cellsNote);
-    sC.appendChild(h('p', { class: 'lb-mono', style: 'margin:14px 0 6px' }, 'Analyse en avant'));
+    sC.appendChild(h('p', { class: 'lab-mono', style: 'margin:14px 0 6px' }, 'Analyse en avant'));
     sC.appendChild(U.fields([U.field({ label: 'Fenêtre en échantillon', unit: 'séances', value: vs.is, min: 1, onChange: function (x) { setVal(X, { is: Math.round(x) }); } }), U.field({ label: 'Fenêtre hors échantillon', unit: 'séances', value: vs.oos, min: 1, onChange: function (x) { setVal(X, { oos: Math.round(x) }); } })]));
     sC.appendChild(h('div', { style: 'margin-top:10px' }, U.seg({ options: [{ v: 'rolling', label: 'Fenêtre glissante' }, { v: 'anchored', label: 'Fenêtre ancrée' }], value: vs.mode, onChange: function (v) { setVal(X, { mode: v }); schedule(); } })));
+    sC.appendChild(U.note('Glissante : chaque fenêtre en échantillon garde la même longueur. Ancrée : elle part toujours de la première séance.'));
   } else sC.appendChild(U.note('Cette stratégie ne déclare aucun paramètre : rien à balayer. PBO, plateau et analyse en avant sont sans objet ; le stress, le bootstrap et le Sharpe déflaté restent calculés.'));
   body.appendChild(launchBar('valider', { label: doc ? 'Relancer la validation' : 'Lancer la validation', onClick: function () { runValider(context()); }, disabled: !X.ready && !S.jobs.valider, doc: doc, fresh: fresh,
     text: sampleLine(X) + (grid ? ' Balayage de ' + plural(grid.cells, 'configuration') + ', analyse en avant, stress des coûts, bootstrap.' : ' Stress des coûts et bootstrap.') }));
@@ -954,13 +1023,14 @@ function renderSweep(body, X, doc) {
   var sw = doc.sweep, P = X.spec.params || {}, cells = sw.cells || [], nx = sw.xs.length, ny = (sw.ys || [null]).length;
   var lab = function (n) { return n ? ((P[n] && P[n].label) || n) : ''; }, st = doc.stats || {};
   var s = sec(body, 'Le *balayage*', plural(sw.configs, 'configuration') + ' · espérance par trade');
-  var best = sw.best;
+  var best = sw.best, dx = decOf(sw.xs), dy = decOf(sw.ys || []);
   s.appendChild(U.kpis([
-    { label: 'Meilleure cellule', value: best ? fR(best.meanR) : '—', hint: best ? Object.keys(best.values || {}).map(function (k) { return k + ' = ' + F.num(best.values[k], 2); }).join(' · ') + ' · ' + plural(best.n, 'trade') : 'aucune configuration jouée', tone: best && best.meanR > 0 ? 'acc' : null },
-    { label: 'Plateau', value: doc.plateau === false ? 'aucun' : fin(doc.plateau) ? F.num(doc.plateau, 2) : '—', hint: 'voisins / meilleur · seuil 0,7' },
-    { label: 'Stabilité', value: doc.stability && fin(doc.stability.value) ? F.pct(doc.stability.value, 0) : '—', hint: 'cellules au-dessus de zéro' },
-    { label: 'PBO', value: doc.pbo === 'na' ? 'sans objet' : doc.pbo && fin(doc.pbo.value) ? F.pct(doc.pbo.value, 0) : '—', hint: doc.pbo && doc.pbo.error ? doc.pbo.error : 'probabilité de surajustement' }
+    { label: 'Meilleure cellule', value: best ? fR(best.meanR) : '—', hint: best ? plural(best.n, 'trade') : 'aucune jouée', tone: best && best.meanR > 0 ? 'acc' : null },
+    { label: 'Plateau', value: doc.plateau === false ? 'aucun' : fin(doc.plateau) ? F.num(doc.plateau, 2) : '—', hint: 'seuil 0,7' },
+    { label: 'Stabilité', value: doc.stability && fin(doc.stability.value) ? F.pct(doc.stability.value, 0) : '—', hint: 'cellules > 0' },
+    { label: 'PBO', value: doc.pbo === 'na' ? 'sans objet' : doc.pbo && fin(doc.pbo.value) ? F.pct(doc.pbo.value, 0) : '—', hint: doc.pbo && doc.pbo.error ? doc.pbo.error : 'seuil 20 %' }
   ], 4));
+  if (best) s.appendChild(txt(['Meilleure cellule : ', h('b', null, Object.keys(best.values || {}).filter(function (k) { return k === sw.p1 || k === sw.p2; }).map(function (k) { return lab(k) + ' = ' + F.num(best.values[k], k === sw.p1 ? dx : dy); }).join(', ')), '. Plateau : moyenne des cellules voisines rapportée à la meilleure. Stabilité : part des cellules jouées dont l’espérance dépasse zéro. PBO : probabilité que le meilleur choix en échantillon tombe sous la médiane hors échantillon.']));
   if (sw.ys && sw.ys.length > 1 && nx > 1 && T.lib.perf && T.lib.perf.charts) {
     T.lib.perf.injectCss();
     var vals = cells.map(function (row) { return row.map(function (c) { return c && c.n > 0 && fin(c.meanR) ? c.meanR : NaN; }); }), lo = Infinity, hi = -Infinity, am = [0, 0];
@@ -968,26 +1038,27 @@ function renderSweep(body, X, doc) {
     if (!fin(lo)) { lo = -1; hi = 0; }
     var dom = function (a) { return a[a.length - 1] > a[0] ? [a[0], a[a.length - 1]] : [a[0] - 0.5, a[0] + 0.5]; };
     var nearest = function (a, v) { var b = 0; for (var i = 1; i < a.length; i++) if (Math.abs(a[i] - v) < Math.abs(a[b] - v)) b = i; return b; };
-    var surf = { kind: 'labo', title: 'Espérance par trade', x: { name: lab(sw.p1), dom: dom(sw.xs), fmt: function (v) { return F.num(v, 2); } }, y: { name: lab(sw.p2), dom: dom(sw.ys), fmt: function (v) { return F.num(v, 2); } },
+    var surf = { kind: 'labo', title: 'Espérance par trade', x: { name: sw.p1, dom: dom(sw.xs), fmt: function (v) { return F.num(v, dx); } }, y: { name: sw.p2, dom: dom(sw.ys), fmt: function (v) { return F.num(v, dy); } },
       z: { name: 'espérance', fmt: function (v) { return fin(v) ? F.r(v, 3) : '—'; } }, xs: sw.xs, ys: sw.ys, vals: vals, zmin: lo, zmax: hi > lo ? hi : lo + 1e-9, mid: fin(st.costR) ? -st.costR : 0, midLabel: 'sans avantage', line: [], lineLabel: '',
       fn: function (x, y) { return vals[nearest(sw.ys, y)][nearest(sw.xs, x)]; }, argmax: am };
     s.appendChild(h('div', { style: 'margin:12px 0 10px' }, U.seg({ options: [{ v: '2d', label: 'Carte 2D' }, { v: '3d', label: 'Relief 3D' }], value: S.vue3d ? '3d' : '2d', onChange: function (v) { S.vue3d = v === '3d'; schedule(); } })));
-    s.appendChild(S.vue3d ? T.lib.perf.charts.surface3d({ surf: surf }) : T.lib.perf.charts.heatmap2d({ surf: surf }));
+    s.appendChild(S.vue3d ? T.lib.perf.charts.surface3d({ surf: surf }) : T.lib.perf.charts.heatmap2d({ surf: LB.blocks(surf, nearest) }));
   } else if (sw.ys && sw.ys.length > 1) {
-    s.appendChild(C.heat({ rows: sw.ys.map(function (y) { return F.num(y, 2); }), cols: sw.xs.map(function (x) { return F.num(x, 2); }), values: cells.map(function (row) { return row.map(function (c) { return c && c.n ? c.meanR : NaN; }); }), fmt: function (v) { return F.num(v, 2); }, diverging: true, corner: lab(sw.p2) + ' \\ ' + lab(sw.p1) }));
+    s.appendChild(C.heat({ rows: sw.ys.map(function (y) { return F.num(y, dy); }), cols: sw.xs.map(function (x) { return F.num(x, dx); }), values: cells.map(function (row) { return row.map(function (c) { return c && c.n ? c.meanR : NaN; }); }), fmt: function (v) { return F.num(v, 2); }, diverging: true, corner: sw.p2 + ' \\ ' + sw.p1 }));
   } else {
     var row = cells[0] || [];
-    s.appendChild(C.line({ series: [{ name: 'espérance', points: sw.xs.map(function (x, i) { return [x, row[i] && row[i].n ? row[i].meanR : null]; }), tone: 'violet' }], x: { type: 'num', fmt: function (v) { return F.num(v, 2); } }, y: { fmt: function (v) { return F.num(v, 2); } }, hlines: [{ y: fin(st.costR) ? -st.costR : 0, label: 'sans avantage' }], height: 190 }));
+    s.appendChild(C.line({ series: [{ name: 'espérance', points: sw.xs.map(function (x, i) { return [x, row[i] && row[i].n ? row[i].meanR : null]; }), tone: 'violet' }], x: { type: 'num', fmt: function (v) { return F.num(v, dx); } }, y: { fmt: function (v) { return F.num(v, 2); } }, hlines: [{ y: fin(st.costR) ? -st.costR : 0, label: 'sans avantage' }], height: 190 }));
   }
-  s.appendChild(U.note('Un résultat qui ne vaut qu’en un point de la grille est un artefact : on cherche un plateau, pas un sommet. Le PBO mesure, par validation croisée combinatoire, la probabilité que la meilleure configuration en échantillon tombe sous la médiane hors échantillon.'));
+  if (sw.p2) s.appendChild(h('p', { class: 'lab-mono' }, sw.p1 + ' : ' + lab(sw.p1) + ' · ' + sw.p2 + ' : ' + lab(sw.p2)));
+  s.appendChild(U.note('Un résultat qui ne vaut qu’en un point de la grille est un artefact : on cherche un plateau, pas un sommet. Le PBO se mesure par validation croisée combinatoire sur les séances.'));
   var w = doc.wfa;
   var sW = sec(body, 'Analyse *en avant*', w && w.windows ? plural(w.windows.length, 'fenêtre') + ' · ' + (w.mode === 'anchored' ? 'ancrée' : 'glissante') : '');
   if (!w || w === 'na' || !w.windows) { sW.appendChild(U.note(w && w.error ? w.error : 'Non calculée.')); return; }
   sW.appendChild(U.kpis([
-    { label: 'Efficacité (WFE)', value: fin(w.wfe) ? F.num(w.wfe, 2) : 'indéfinie', hint: 'seuil 0,5', tone: fin(w.wfe) && w.wfe >= 0.5 ? 'acc' : null },
-    { label: 'Meilleurs en échantillon', value: fR(w.isMeanR), hint: plural(w.isN || 0, 'trade') },
-    { label: 'Hors échantillon cousu', value: fR(w.stitched && w.stitched.meanR), hint: plural((w.stitched && w.stitched.n) || 0, 'trade') },
-    { label: 'Net cousu', value: w.stitched && fin(w.stitched.net) ? F.usd(w.stitched.net, 0, true) : '—', hint: 'coût par trade ' + fR(fin(w.costR) ? -w.costR : NaN) }
+    { label: 'WFE', value: fin(w.wfe) ? F.num(w.wfe, 2) : 'indéfinie', hint: 'seuil 0,5', tone: fin(w.wfe) && w.wfe >= 0.5 ? 'acc' : null },
+    { label: 'Choix en échantillon', value: fR(w.isMeanR), hint: plural(w.isN || 0, 'trade') },
+    { label: 'Hors échantillon', value: fR(w.stitched && w.stitched.meanR), hint: plural((w.stitched && w.stitched.n) || 0, 'trade') + ' cousus' },
+    { label: 'Net cousu', value: w.stitched && fin(w.stitched.net) ? F.usd(w.stitched.net, 0, true) : '—', hint: 'coût ' + fR(fin(w.costR) ? -w.costR : NaN) }
   ], 4));
   sW.appendChild(C.bar({ cats: w.windows.map(function (x, i) { return 'F' + (i + 1); }), series: [{ name: 'meilleure en échantillon', values: w.windows.map(function (x) { return fin(x.isMeanR) ? x.isMeanR : 0; }), tone: 'mute' }, { name: 'appliquée hors échantillon', values: w.windows.map(function (x) { return fin(x.oosMeanR) ? x.oosMeanR : 0; }), tone: 'violet' }], fmt: function (v) { return F.num(v, 2); }, height: 180 }));
   sW.appendChild(C.line({ series: [{ name: 'hors échantillon cousu', points: (w.eq || []).map(function (p) { return [p[0] && DAYKEY.test(p[0]) ? Date.parse(p[0] + 'T12:00:00Z') : p[0], p[1]]; }), tone: 'violet', area: true }], x: { type: 'time' }, y: { zero: true, fmt: function (v) { return F.usd(v, 0); } }, height: 160 }));
@@ -1007,9 +1078,10 @@ function renderBoot(body, doc) {
   var b = doc.boot; if (!b || b.omitted) return;
   var s = sec(body, 'Bootstrap des *séances*', F.int(b.draws) + ' tirages · bloc moyen ' + F.int(b.block));
   s.appendChild(U.kpis([
-    { label: 'Espérance', value: fR(b.meanR && b.meanR.obs), hint: '90 % : ' + fR(b.meanR && b.meanR.lo) + ' à ' + fR(b.meanR && b.meanR.hi) },
-    { label: 'Net annuel', value: b.annual && fin(b.annual.obs) ? F.usd(b.annual.obs, 0, true) : '—', hint: b.annual ? '90 % : ' + F.usd(b.annual.lo, 0, true) + ' à ' + F.usd(b.annual.hi, 0, true) : null }
+    { label: 'Espérance', value: fR(b.meanR && b.meanR.obs), hint: 'par trade, observée' },
+    { label: 'Net annuel', value: b.annual && fin(b.annual.obs) ? F.usd(b.annual.obs, 0, true) : '—', hint: F.int(Math.round(b.perYear || 0)) + ' séances par an' }
   ]));
+  s.appendChild(kv([['espérance, 90 % des tirages', fR(b.meanR && b.meanR.lo) + ' à ' + fR(b.meanR && b.meanR.hi)], ['net annuel, 90 % des tirages', b.annual && fin(b.annual.lo) ? F.usd(b.annual.lo, 0, true) + ' à ' + F.usd(b.annual.hi, 0, true) : '—']]));
   if (b.fan && b.fan.q && b.fan.q.p50 && b.fan.q.p50.length > 1) s.appendChild(C.fan({ q: b.fan.q, paths: b.fan.paths || [], hlines: [{ y: 0, label: 'zéro' }], fmt: function (v) { return F.usd(v, 0); }, xLabel: function (i) { return i === 0 ? 'départ' : i + ' séances'; } }));
   s.appendChild(U.note('Rééchantillonnage stationnaire des séances (Politis et Romano), séances sans trade comprises : la dépendance d’un jour à l’autre est gardée. L’éventail donne 50 % et 90 % des trajectoires sur ' + F.int(b.fan ? b.fan.horizon : 60) + ' séances.'));
 }
@@ -1018,8 +1090,8 @@ function renderDsr(body, X, doc) {
   var s = sec(body, 'Sharpe *déflaté*', 'N compté au registre');
   s.appendChild(U.kpis([
     { label: 'Sharpe par trade', value: fin(d.sr) ? F.num(d.sr, 3) : '—', hint: plural(d.n || 0, 'trade') },
-    { label: 'Essais comptés', value: F.int(d.N || 0), hint: X.synth ? 'visite, marche synthétique' : 'dont ' + F.int(d.inherited || 0) + ' hérités' },
-    { label: 'Seuil sans avantage', value: fin(d.sr0) ? F.num(d.sr0, 3) : '—', hint: 'maximum attendu de N essais' },
+    { label: 'Essais comptés', value: F.int(d.N || 0), hint: X.synth ? 'visite seulement' : 'dont ' + F.int(d.inherited || 0) + ' hérités' },
+    { label: 'Seuil sans avantage', value: fin(d.sr0) ? F.num(d.sr0, 3) : '—', hint: 'max. de N essais' },
     { label: 'Sharpe déflaté', value: fin(d.dsr) ? F.pct(d.dsr, 1) : '—', hint: 'seuil 95 %', tone: fin(d.dsr) && d.dsr >= 0.95 ? 'acc' : null }
   ], 4));
   s.appendChild(U.note('N compte les configurations distinctes essayées sur l’instrument et la période, toutes stratégies et versions confondues ; la dispersion des essais vient du registre dès dix essais (' + (d.sdSource === 'registre' ? 'c’est le cas' : 'sinon 1/√n') + '). Surcompter coûte peu ; sous-compter rend le test faux.'));
@@ -1054,7 +1126,8 @@ function runVerdict(X) {
   var vdoc = anyDoc('valider', X), opts = verdictOpts(X), grid = opts.grid, pp = opts.prop, N = Math.max(1, (X.trials && X.trials.N) || 0);
   startJob('verdict', 'Verdict aux coûts planchers', 5, function (job) {
     return job.call('run', a, 'Exécution aux coûts planchers').then(function (r) {
-      out.run = r; return job.call('random', Object.assign({}, a, { draws: 200, N: N }), 'Entrées au hasard (200 tirages)');
+      out.run = r; recordEssais(X, 'run', X.configHash ? [X.configHash] : [], [r.stats.sharpeTrade]);
+      return job.call('random', Object.assign({}, a, { draws: 200, N: N }), 'Entrées au hasard (200 tirages)');
     }).then(function (r) {
       out.random = r;
       if (grid) return job.call('permuteGrid', Object.assign({}, a, { p1: grid.p1, p2: grid.p2 || undefined, xs: grid.xs, ys: grid.ys || undefined, objective: 'meanR', minTrades: 1, draws: 100, minDraws: 20, budgetMs: 60000 }), 'Grille rejouée sur prix permutés');
@@ -1094,16 +1167,17 @@ function renderVerdict(body, X) {
   var doc = findDoc('verdict', X), fresh = doc ? doc.variant === variantOf('verdict', X, verdictOpts(X)) : null;
   var fl = floorCosts(X);
   body.appendChild(launchBar('verdict', { label: doc ? 'Recalculer le verdict' : 'Calculer le verdict', onClick: function () { runVerdict(context()); }, disabled: !X.ready && !S.jobs.verdict, doc: doc, fresh: fresh,
-    text: 'Aux coûts planchers : commission ' + F.usd(fl.commissionRT, 2) + ' aller-retour, glissement ' + F.num(fl.slipTicks, 0) + ' tick par jambe' + (fl.raised ? ' (relevés depuis la stratégie)' : '') + '. Exécution, hasard, permutation, stress, Sharpe déflaté et passage du compte.' }));
+    text: 'Aux coûts planchers : commission ' + F.usd(fl.commissionRT, 2) + ' aller-retour, glissement ' + F.num(fl.slipTicks, 0) + ' tick par jambe' + (fl.raised ? ' (au-dessus de ceux qu’écrit la stratégie)' : '') + '. Exécution, hasard, permutation, stress, Sharpe déflaté et passage du compte.' }));
   if (doc) {
     var v = verdictNow(X, doc) || doc.verdict, LV = stats().LEVELS;
-    var sL = sec(body, 'Le *verdict*', LV[v.level] || v.level);
-    sL.appendChild(h('div', { class: 'lb-lvl' }, h('em', null, LV[v.level] || v.level), U.pill(v.level === 'prete-simulateur' ? 'prête' : v.level === 'rejetee' ? 'rejetée' : 'à approfondir', v.level === 'prete-simulateur' ? 'acc' : v.level === 'rejetee' ? 'no' : null)));
+    var nOk = v.items.filter(function (it) { return it.pass === true; }).length, nNa = v.items.filter(function (it) { return it.pass === 'na'; }).length;
+    var sL = sec(body, 'Le *verdict*', F.int(nOk) + (nOk > 1 ? ' critères remplis' : ' critère rempli') + ' sur ' + F.int(v.items.length - nNa));
+    sL.appendChild(h('div', { class: 'lab-lvl' }, h('em', null, LV[v.level] || v.level)));
     sL.appendChild(txt(v.text));
     if (!doc.grid && X.params.length) sL.appendChild(U.note('Aucun balayage enregistré pour cette version : PBO, plateau et analyse en avant restent à calculer dans Valider.', true));
-    sL.appendChild(h('div', { class: 'lb-items', style: 'margin-top:12px' }, v.items.map(function (it) {
+    sL.appendChild(h('div', { class: 'lab-items', style: 'margin-top:12px' }, v.items.map(function (it) {
       var p = it.pass === true ? 'ok' : it.pass === false ? 'ko' : it.pass === 'na' ? 'na' : 'nul';
-      return h('div', { class: 'lb-it', 'data-p': p }, h('span', { class: 'ic', 'aria-hidden': 'true' }, p === 'ok' ? '✓' : p === 'ko' ? '✗' : p === 'na' ? '–' : '?'), h('b', null, it.label), h('span', { class: 'v' }, it.value, h('span', { class: 'nd' }, it.need)), h('span', { class: 'w' }, it.why));
+      return h('div', { class: 'lab-it', 'data-p': p }, h('span', { class: 'ic', 'aria-hidden': 'true' }, p === 'ok' ? '✓' : p === 'ko' ? '✗' : p === 'na' ? '–' : '?'), h('b', null, it.label), h('span', { class: 'v' }, it.value, h('span', { class: 'nd' }, it.need)), h('span', { class: 'w' }, it.why));
     })));
     sL.appendChild(U.note('Les seuils sont des constantes du code, chacune justifiée ; aucun n’est tiré de ce qu’il évalue. « Prête » veut dire prête pour le simulateur : ce n’est pas une promesse de gain.'));
     renderProp(body, X, doc);
@@ -1124,8 +1198,8 @@ function renderProp(body, X, doc) {
       { label: 'Sans conclusion', value: F.pct(p.pNone, 1), hint: 'après ' + F.int(p.maxDays) + ' séances' },
       { label: 'Tirages', value: F.int(p.n), hint: 'minimum ' + F.int(p.minDays) + ' jours' }
     ], 4));
-    s.appendChild(U.note('Règles du desk Risque appliquées séance par séance (plancher qui suit le plus haut, limite du jour, constance) sur des séances rééchantillonnées aux coûts planchers. Les règles d’une prop firm changent : vérifiez-les dans Risque.'));
-  } else s.appendChild(U.note('Pas encore calculé avec ces réglages : recalculez le verdict.'));
+    s.appendChild(U.note('Règles du desk Risque appliquées séance par séance (plancher qui suit le plus haut, limite du jour, constance) sur des séances rééchantillonnées aux coûts planchers. Les règles d’une prop firm changent : vérifie-les dans Risque.'));
+  } else s.appendChild(U.note('Pas encore calculé avec ces réglages : recalcule le verdict.'));
 }
 function renderOos(body, X, vdoc) {
   var s = sec(body, 'Le hors *échantillon*', X.cutDemo ? 'démonstration sur la marche' : X.inst);
@@ -1139,7 +1213,7 @@ function renderOos(body, X, vdoc) {
     var plan = stats().oosPlan({ nIS: st.n, sessionsIS: X.split.is.n, sessionsOOS: X.split.oos.n, meanR: st.meanR, costR: st.costR, sdR: st.sdR });
     s.appendChild(U.callout([txt(['Au rythme de l’échantillon (', F.num(plan.rate, 2), ' trade par séance), on attend ', h('b', null, F.int(Math.round(plan.expected || 0))), ' trades hors échantillon. ',
       plan.required === Infinity ? 'L’espérance en échantillon ne dépasse pas le coût : aucun nombre de trades ne la séparerait de l’absence d’avantage.' : ['Il en faut ', h('b', null, F.int(plan.required)), ' pour séparer ', fR(st.meanR), ' de ', fR(-st.costR), ' (5 % unilatéral, puissance 80 %). ', plan.enough ? 'L’échantillon attendu suffit.' : 'Il en manque : le test ne pourra pas trancher, et une seconde ouverture ne comptera plus.']])]));
-  } else if (X.split.oos.n) s.appendChild(U.note('Lancez d’abord le test ou le verdict : le nombre de trades attendus se calcule sur l’échantillon.'));
+  } else if (X.split.oos.n) s.appendChild(U.note('Lance d’abord le test ou le verdict : le nombre de trades attendus se calcule sur l’échantillon.'));
   if (op) {
     var rd = findDoc('oos', X, X.split.oos), first = LB.oosOpening(rows, { root: op.root, instrument: op.instrument, from: op.from, to: op.to, self: op.id, before: op.at }).first;
     s.appendChild(txt(['Ouvert le ', h('b', null, F.dateLong(op.at) + ' à ' + F.time(op.at)), ' par cette version' + (first ? ' : première ouverture de la lignée.' : ' : la lignée l’avait déjà vu, le critère tombe.')]));
@@ -1153,8 +1227,8 @@ function renderOos(body, X, vdoc) {
   }
   if (!can.ok) { s.appendChild(U.note(can.why, X.status === 'alteree')); return; }
   if (S.confirmOos === X.vid) {
-    s.appendChild(U.callout([h('b', null, 'Une seule ouverture compte.'), h('p', null, 'L’ouverture est enregistrée pour la lignée ' + (X.spec.root || X.spec.sid) + ' et ne se décompte jamais. Toute ouverture suivante de la même période fera tomber le critère.'), h('div', { class: 'lb-acts' }, U.button({ label: 'Confirmer l’ouverture', kind: 'pri', small: true, onClick: function () { S.confirmOos = null; openOos(context()); } }), U.button({ label: 'Annuler', kind: 'ghost', small: true, onClick: function () { S.confirmOos = null; schedule(); } }))]));
-  } else s.appendChild(h('div', { class: 'lb-acts', style: 'margin-top:10px' }, U.button({ label: 'Ouvrir le hors échantillon', kind: 'acc', onClick: function () { S.confirmOos = X.vid; schedule(); } })));
+    s.appendChild(U.callout([h('b', null, 'Une seule ouverture compte.'), h('p', null, 'L’ouverture est enregistrée pour la lignée ' + (X.spec.root || X.spec.sid) + ' et ne se décompte jamais. Toute ouverture suivante de la même période fera tomber le critère.'), h('div', { class: 'lab-acts' }, U.button({ label: 'Confirmer l’ouverture', kind: 'pri', small: true, onClick: function () { S.confirmOos = null; openOos(context()); } }), U.button({ label: 'Annuler', kind: 'ghost', small: true, onClick: function () { S.confirmOos = null; schedule(); } }))]));
+  } else s.appendChild(h('div', { class: 'lab-acts', style: 'margin-top:10px' }, U.button({ label: 'Ouvrir le hors échantillon', kind: 'acc', onClick: function () { S.confirmOos = X.vid; schedule(); } })));
 }
 function openOos(X) {
   var can = LB.canOpenOos({ status: X.status, oosN: X.split.oos.n, opened: !!myOpening(X) });
@@ -1190,20 +1264,20 @@ function renderSuivre(body, X) {
   if (!X.spec) { guard(body, X); return; }
   var all = T.journal.list().filter(function (r) { return r.strat === X.spec.sid; }), sealed = X.status === 'scellee';
   var s1 = sec(body, 'Saisie *rapide*', X.spec.name + ' · v' + X.spec.version);
-  var pv = X.settings.pointValue, cm = X.settings.commissionRT, q = S.quick, prev = h('p', { class: 'lb-txt', role: 'status' });
+  var pv = X.settings.pointValue, cm = X.settings.commissionRT, q = S.quick, prev = h('p', { class: 'lab-txt', role: 'status' });
   function upd() { var r = LB.quickTrade(Object.assign({}, q, { pointValue: pv, commissionRT: cm })); T.clear(prev); if (!fin(q.entry) || !fin(q.exit)) prev.appendChild(document.createTextNode('Entrée et sortie donnent le P&L ; le stop donne le R.')); else if (!r.ok) prev.appendChild(document.createTextNode(r.why)); else { prev.appendChild(document.createTextNode('P&L ')); prev.appendChild(h('b', null, F.usd(r.pnl, 2, true))); prev.appendChild(document.createTextNode(' · ' + (r.r === null ? 'R inconnu sans stop' : F.r(r.r, 2)) + ' · sortie : ' + r.fin + '.')); } }
   function set(k) { return function (x) { q[k] = x; upd(); }; }
   s1.appendChild(h('div', { style: 'margin-bottom:10px' }, U.seg({ options: [{ v: 'long', label: 'Achat' }, { v: 'short', label: 'Vente' }], value: q.side, onChange: function (v) { q.side = v; schedule(); } })));
   s1.appendChild(U.fields([U.field({ label: 'Entrée', value: q.entry, allowEmpty: true, onChange: set('entry') }), U.field({ label: 'Stop', value: q.stop, allowEmpty: true, onChange: set('stop') }), U.field({ label: 'Objectif', value: q.target, allowEmpty: true, onChange: set('target') }), U.field({ label: 'Sortie', value: q.exit, allowEmpty: true, onChange: set('exit') }), U.field({ label: 'Quantité', value: q.qty, unit: 'contrats', min: 1, onChange: set('qty') })], 3));
   upd(); s1.appendChild(prev);
-  s1.appendChild(h('div', { class: 'lb-acts', style: 'margin-top:10px' }, U.button({ label: 'Écrire dans le journal', kind: 'pri', small: true, onClick: function () {
+  s1.appendChild(h('div', { class: 'lab-acts', style: 'margin-top:10px' }, U.button({ label: 'Écrire dans le journal', kind: 'pri', small: true, onClick: function () {
     var r = LB.quickTrade(Object.assign({}, q, { pointValue: pv, commissionRT: cm }));
     if (!r.ok) { T.toast(r.why); return; }
     var now = Date.now();
     T.journal.add({ at: now, kind: 'pris', side: q.side, setup: (X.spec.name || 'Stratégie') + ' · v' + X.spec.version, entry: q.entry, stop: fin(q.stop) ? q.stop : null, target: fin(q.target) ? q.target : null, exit: q.exit, qty: q.qty, instrument: X.spec.instrument || X.inst || 'MNQ', status: 'clos', closedAt: now, pnl: r.pnl, r: r.r, fin: r.fin, plan: true, strat: X.spec.sid, stratV: X.spec.version });
     S.quick = { side: q.side, entry: null, stop: null, target: null, exit: null, qty: q.qty };
     T.toast('Trade écrit dans le journal'); schedule();
-  } }), h('span', { class: 'lb-mono' }, 'Écrit avec strat ' + X.spec.sid + ' et version ' + X.spec.version + '.')));
+  } }), h('span', { class: 'lab-mono' }, 'Le trade porte l’identifiant de la stratégie et sa version (v' + X.spec.version + ').')));
   if (!sealed) s1.appendChild(U.note('Cette version n’est pas scellée : ses trades sont gardés, mais le test séquentiel ne lit que ceux d’une version scellée, postérieurs à son scellement.', true));
 
   var follow = sealed ? stats().followTrades(T.journal.list(), { sid: X.spec.sid, version: X.spec.version, sealedAt: X.spec.sealedAt }) : [];
@@ -1211,11 +1285,12 @@ function renderSuivre(body, X) {
   var ref = X.ds && X.split && X.split.is.n ? (findDoc('verdict', X) || findDoc('tester', X)) : null, vdoc = X.ds && X.split && X.split.is.n ? findDoc('valider', X) : null;
   var st = ref && ref.stats, bootLo = ref && ref.boot && ref.boot.meanR ? ref.boot.meanR.lo : (vdoc && vdoc.boot && vdoc.boot.meanR ? vdoc.boot.meanR.lo : null);
   var s2 = sec(body, 'Test *séquentiel*', plural(rs.length, 'trade de suivi', 'trades de suivi'));
-  if (!st) s2.appendChild(U.note('Lancez le test ou le verdict sur le jeu courant : H0 et H1 se posent sur l’échantillon.'));
+  if (!st) s2.appendChild(U.note('Lance le test ou le verdict sur le jeu courant : H0 et H1 se posent sur l’échantillon.'));
   else {
     var plan = stats().sprtPlan(X.spec, st, bootLo), pr = stats().sprt(rs, plan);
     var dec = { 'avantage-confirme': 'Avantage confirmé', 'aucun-avantage': 'Aucun avantage', continuer: 'Continuer', na: 'Sans objet' }[pr.decision] || pr.decision;
-    s2.appendChild(U.kpis([{ label: 'Décision', value: dec, tone: pr.decision === 'avantage-confirme' ? 'acc' : pr.decision === 'aucun-avantage' ? 'neg' : null }, { label: 'Forme', value: pr.form === 'binomial' ? 'binomiale exacte' : 'normale', hint: pr.form === 'binomial' ? 'p0 ' + F.pct(pr.p0, 1) + ' · p1 ' + F.pct(pr.p1, 1) : 'H0 ' + fR(pr.mu0) + ' · H1 ' + fR(pr.mu1) }, { label: 'Log-vraisemblance', value: F.num(pr.llr, 2), hint: 'bornes ' + F.num(pr.lower, 2) + ' et ' + F.num(pr.upper, 2) }, { label: 'Trades lus', value: F.int(pr.n), hint: 'α 5 % · β 20 %' }], 4));
+    s2.appendChild(U.kpis([{ label: 'Décision', value: dec, tone: pr.decision === 'avantage-confirme' ? 'acc' : pr.decision === 'aucun-avantage' ? 'neg' : null }, { label: 'Forme', value: pr.form === 'binomial' ? 'binomiale' : 'normale', hint: pr.form === 'binomial' ? 'exacte, sur le taux' : 'sur l’espérance' }, { label: 'Log-vraisemblance', value: fin(pr.llr) ? F.num(pr.llr, 2) : '—', hint: 'bornes ' + F.num(pr.lower, 2) + ' et ' + F.num(pr.upper, 2) }, { label: 'Trades lus', value: F.int(pr.n || 0), hint: 'α 5 % · β 20 %' }], 4));
+    s2.appendChild(kv(pr.form === 'binomial' ? [['H0, taux d’équilibre', fin(pr.p0) ? F.pct(pr.p0, 1) : '—'], ['H1, taux en échantillon', fin(pr.p1) ? F.pct(pr.p1, 1) : '—']] : [['H0, espérance sans avantage', fR(pr.mu0)], ['H1, borne basse du bootstrap', fR(pr.mu1)], ['écart-type par trade', fin(pr.sigma) ? F.num(pr.sigma, 2) + ' R' : '—']]));
     if (pr.decision === 'na') s2.appendChild(U.note(pr.why || 'Le test n’a pas d’objet.', true));
     else s2.appendChild(C.line({ series: [{ name: 'log-vraisemblance', points: [[0, 0]].concat(pr.path.map(function (v, i) { return [i + 1, v]; })), tone: 'violet' }], x: { type: 'num', fmt: function (v) { return F.int(v); } }, y: { fmt: function (v) { return F.num(v, 1); } }, hlines: [{ y: pr.upper, label: 'avantage confirmé', tone: 'fg' }, { y: pr.lower, label: 'aucun avantage', tone: 'mute' }], height: 190 }));
     s2.appendChild(U.note('H0 : aucun avantage (' + (pr.form === 'binomial' ? 'taux d’équilibre' : 'espérance −costR') + '). H1 : ' + (pr.form === 'binomial' ? 'le taux de réussite en échantillon' : 'la borne basse à 90 % du bootstrap en échantillon, jamais la moyenne brute') + '. Le test s’arrête au premier franchissement d’une borne.'));
@@ -1231,7 +1306,7 @@ function renderSuivre(body, X) {
     s4.appendChild(U.note(eg.where === 'dessous' ? 'Le suivi passe sous l’enveloppe du backtest : l’exécution réelle coûte plus que prévu, ou l’avantage s’use.' : eg.where === 'dessus' ? 'Le suivi passe au-dessus de l’enveloppe : peu de trades, ou une exécution meilleure que les conventions du moteur.' : eg.where === 'dedans' ? 'Le suivi reste dans l’enveloppe du backtest.' : 'Les droites prolongent l’espérance par trade du backtest, pessimiste et optimiste, et le coût seul.'));
   }
   var s5 = sec(body, 'Trades de la *stratégie*', plural(all.length, 'entrée') + ' au journal');
-  s5.appendChild(U.table({ cols: [{ k: 'at', label: 'Date', fmt: function (v) { return F.date(v) + ' ' + F.time(v); } }, { k: 'stratV', label: 'Version', fmt: function (v) { return 'v' + v; } }, { k: 'side', label: 'Sens', fmt: function (v) { return v === 'short' ? 'vente' : 'achat'; } }, { k: 'r', label: 'R', align: 'r', fmt: function (v) { return fR(v, 2); } }, { k: 'pnl', label: 'Net', align: 'r', fmt: function (v) { return fin(v) ? F.usd(v, 2, true) : '—'; } }], rows: all.slice().reverse().slice(0, 200), rowClass: function (r) { return r.pnl < 0 ? 'neg' : null; }, empty: { title: 'Aucun trade ne porte cette stratégie', text: 'La saisie rapide ci-dessus écrit au journal avec la stratégie et sa version. Claude peut aussi importer l’export de votre plateforme.' } }));
+  s5.appendChild(U.table({ cols: [{ k: 'at', label: 'Date', fmt: function (v) { return F.date(v) + ' ' + F.time(v); } }, { k: 'stratV', label: 'Version', fmt: function (v) { return 'v' + v; } }, { k: 'side', label: 'Sens', fmt: function (v) { return v === 'short' ? 'vente' : 'achat'; } }, { k: 'r', label: 'R', align: 'r', fmt: function (v) { return fR(v, 2); } }, { k: 'pnl', label: 'Net', align: 'r', fmt: function (v) { return fin(v) ? F.usd(v, 2, true) : '—'; } }], rows: all.slice().reverse().slice(0, 200), rowClass: function (r) { return r.pnl < 0 ? 'neg' : null; }, empty: { title: 'Aucun trade ne porte cette stratégie', text: 'La saisie rapide ci-dessus écrit au journal avec la stratégie et sa version. Claude peut aussi importer l’export de ta plateforme.' } }));
 }
 
 /* =====================================================================================================
@@ -1283,18 +1358,24 @@ function preview(spec) {
   X.spec = n.spec; X.norm = n;
   var a = baseA(X, X.split.is), ex = exec(), res;
   try { res = stats().resolve(n.spec, {}); } catch (e) { res = n.spec; }
-  var ops = LB.operandsOf(res.long);
-  return ex.call('run', a).promise.then(function (r) {
+  /* La clôture est déjà tracée par l’aperçu : on ne la répète pas comme série. */
+  var ops = LB.operandsOf(res.long || res.short).filter(function (o) { return !(o.f === 'close' && !o.lag); });
+  /* Un nouvel aperçu annule le précédent s’il est encore en file : la saisie ne fait pas la queue. */
+  if (S.pv) { try { S.pv.cancel(); } catch (e) {} }
+  var mine = { h: null, cancel: function () { mine.dead = true; if (mine.h) mine.h.cancel(); } };
+  S.pv = mine;
+  function call(op, x) { if (mine.dead) return Promise.reject(cancelErr()); mine.h = ex.call(op, x); return mine.h.promise; }
+  return call('run', a).then(function (r) {
     var ss = (r.sessions || []).filter(function (x) { return x.sig > 0; });
-    if (!ss.length) return { error: 'Aucun signal en échantillon : rien à montrer. Assouplissez le contexte ou le déclencheur.' };
+    if (!ss.length) return { error: 'Aucun signal en échantillon : rien à montrer. Assouplis le contexte ou le déclencheur.' };
     var key = ss[ss.length - 1].key;
-    return ex.call('features', Object.assign({}, a, { operands: ops, sel: { from: key, to: key } })).promise.then(function (f) {
+    return call('features', Object.assign({}, a, { operands: ops, sel: { from: key, to: key } })).then(function (f) {
       var t = Array.prototype.slice.call(f.t), pick = function (x) { return x ? Array.prototype.slice.call(x) : null; }, sigs = [];
       if (f.sig) ['L', 'S'].forEach(function (k) { var arr = f.sig[k]; if (!arr) return; for (var i = 0; i < arr.length; i++) if (arr[i] === 1) sigs.push({ t: t[i], side: k === 'L' ? 'long' : 'short' }); });
       return { key: key, series: ops.map(function (o, i) { var cls = null; try { cls = stats().classOf(o); } catch (e) {} return { name: opName(o), cls: cls, points: t.map(function (x, j) { var v = f.series[i] ? f.series[i][j] : null; return [x, v == null || !fin(v) ? null : v]; }) }; }),
         bars: { t: t, o: pick(f.o), h: pick(f.h), l: pick(f.l), c: pick(f.c) }, signals: sigs, warnings: f.warnings || [] };
     });
-  }).catch(function (e) { return { error: msg(e) }; });
+  }).then(function (r) { if (S.pv === mine) S.pv = null; return r; }, function (e) { if (S.pv === mine) S.pv = null; return { error: e && e.cancelled ? 'Aperçu remplacé par un plus récent.' : msg(e) }; });
 }
 function opName(o) {
   try { var R = stats().reader({}); if (R && typeof R.op === 'function') { var s = R.op(o); if (s) return String(s); } } catch (e) {}
@@ -1322,14 +1403,14 @@ function renderConcevoir(body, ctx, X) {
   if (B && typeof B.render === 'function' && hasLibs()) {
     try { var cl = B.render(body, ctx, builderApi(ctx)); S.builderCleanup = typeof cl === 'function' ? cl : null; return; }
     catch (e) { body.appendChild(U.note('L’éditeur a rencontré une erreur : ' + msg(e), true)); }
-  } else body.appendChild(U.empty({ title: 'L’éditeur de stratégie n’est pas chargé', text: 'Cette page a été construite sans l’éditeur. Claude peut écrire une stratégie en JSON dans votre base ; vous pouvez aussi partir d’un gabarit ci-dessous, puis tester.' }));
+  } else body.appendChild(U.empty({ title: 'L’éditeur de stratégie n’est pas chargé', text: 'Cette page a été construite sans l’éditeur. Claude peut écrire une stratégie en JSON dans ta base ; tu peux aussi partir d’un gabarit ci-dessous, puis tester.' }));
   if (!hasLibs()) return;
   var vs = versions();
   if (vs.length) {
     var s1 = sec(body, 'Vos *stratégies*', plural(vs.length, 'version'));
-    s1.appendChild(h('div', { class: 'lb-stack' }, vs.slice(0, 30).map(function (d) {
+    s1.appendChild(h('div', { class: 'lab-stack' }, vs.slice(0, 30).map(function (d) {
       var st = d.status === 'scellee' ? 'scellée' : 'brouillon';
-      return h('button', { class: 'lb-ver', type: 'button', 'aria-current': String(X.doc && X.doc.id === d.id), on: { click: function () { selectVersion(d.id); } } }, h('b', null, (d.name || 'Sans nom') + ' · v' + d.version), h('span', null, st + ' · ' + d.id + (d.template ? ' · gabarit ' + d.template : '')));
+      return h('button', { class: 'lab-ver', type: 'button', 'aria-current': String(X.doc && X.doc.id === d.id), on: { click: function () { selectVersion(d.id); } } }, h('b', null, (d.name || 'Sans nom') + ' · v' + d.version), h('span', null, st + ' · ' + d.id + (d.template ? ' · gabarit ' + d.template : '')));
     })));
   }
   if (X.spec) body.appendChild(h('div', { style: 'margin:16px 0' }, readingCard(X)));
@@ -1362,7 +1443,7 @@ function paint() {
   catch (e) { root.appendChild(U.note('État du Labo illisible : ' + msg(e), true)); X = { spec: null }; }
   v.head = hasLibs() ? headEl(X) : h('div');
   root.appendChild(v.head);
-  var body = h('div', { class: 'lb-body' }); root.appendChild(body);
+  var body = h('div', { class: 'lab-body' }); root.appendChild(body);
   S.jobEls = {};
   if (tab === 'concevoir') renderConcevoir(body, ctx, X);
   else RENDER[tab](body, X);
@@ -1371,6 +1452,7 @@ LB.ui = {
   /* Crochets de vérification (banc Playwright) : lancer un calcul, savoir s’il tourne, partir d’un gabarit. */
   launch: function (tab) { var X = context(); if (!X.spec || !X.ds) return false; if (tab === 'tester') runTester(X); else if (tab === 'valider') runValider(X); else if (tab === 'verdict') runVerdict(X); else if (tab === 'oos') { if (myOpening(X)) runOos(X, null); else openOos(X); } else return false; return true; },
   busy: function () { return Object.keys(S.jobs).length > 0 || !!S.loading; },
+  state: function () { return { dsId: S.dsId, loading: S.loading, dsErr: S.dsErr, exFp: S.exFp, exReady: S.exReady, mode: S.ex ? S.ex.mode : null, jobs: Object.keys(S.jobs) }; },
   ready: function () { var X = context(); return !!(X.ds && X.ready); },
   errors: function () { return clone(S.errs); },
   useTemplate: function (id) { return useTemplate(id); },
@@ -1390,7 +1472,9 @@ T.desk({
     paint();
     var uns = [];
     if (hasLibs()) {
-      ['strategies', 'essais', 'oos', 'config'].forEach(function (k) { uns.push(coll(k).on(function () { schedule(); })); });
+      ['strategies', 'essais', 'oos', 'config', 'results'].forEach(function (k) { uns.push(coll(k).on(function () { schedule(); })); });
+      /* Le calendrier (filtre news) reste frais tant que le desk est ouvert. */
+      if (T.shared && typeof T.shared.watch === 'function') uns.push(T.shared.watch('calendar', function () {}));
       if (tab === 'suivre') uns.push(T.journal.on(function () { schedule(); }));
       var D = donnees(); if (D && D.onVisit) uns.push(D.onVisit(function () { schedule(); }));
       uns.push(T.store.on(KEY.lignee, function () { schedule(); }));
