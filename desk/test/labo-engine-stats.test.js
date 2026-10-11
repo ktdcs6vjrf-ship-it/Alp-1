@@ -225,11 +225,12 @@ section('Balayage : chaque cellule = le run de sa configuration (miroir recalcul
     shorts += r.trades.filter(t => t.side < 0).length;
     const m = sw.mat[k], sum = f => m.reduce((a, e) => a + e[f], 0);
     if (sum('n') !== s.n || Math.abs(sum('sumR') - s.meanR * s.n) > 1e-9 || Math.abs(sum('net') - s.net) > 1e-9 || Math.abs(sum('gw') - sum('gl') - s.net) > 1e-9 || Math.abs(sum('sumC') / s.n - s.costR) > 1e-12) rows = false;
+    if (sum('w') !== s.wins || sum('l') !== s.losses) rows = false;
     if (s.meanR > bestV) { bestV = s.meanR; bestK = k; }
   }));
   ok(same, 'n, meanR, sdR, net, pf, sharpe, maxDD, winRate et costR de chaque cellule = run individuel');
   ok(shorts > 0, 'les ventes reflétées sont recalculées pour chaque k : ' + shorts + ' ventes');
-  ok(rows, 'mat se referme sur la cellule : Σn, ΣsumR, Σnet, Σgw − Σgl, ΣsumC');
+  ok(rows, 'mat se referme sur la cellule : Σn, ΣsumR, Σnet, Σgw − Σgl, ΣsumC, Σw, Σl');
   ok(sw.best && sw.best.k === bestK && sw.best.meanR === bestV && sw.best.values.k === sw.configs[bestK].k, 'meilleure configuration (meanR) : k = ' + sw.best.values.k + ', stop ' + sw.best.values.st);
   const one = E.op('sweep', { bars: lat, spec, settings: SET, p1: 'st', xs: [2, 2.5, 3] });
   ok(one.ys.length === 1 && one.ys[0] === null && one.p2 === null && one.cells[0].length === 3 && one.configs[1].st === 2.5 && one.configs[1].k === undefined, 'un seul paramètre : ys = [null], valeurs données par la liste');
@@ -243,7 +244,7 @@ section('Balayage : chaque cellule = le run de sa configuration (miroir recalcul
 /* =================================== Analyse en avant =================================== */
 section('Analyse en avant : matrice construite, réponses calculées à la main');
 {
-  const cell = (n, sumR, extra) => Object.assign({ n, sumR, sumR2: n ? sumR * sumR / n : 0, net: 10 * sumR, gw: sumR > 0 ? 10 * sumR : 0, gl: sumR < 0 ? -10 * sumR : 0, sumC: 0 }, extra);
+  const cell = (n, sumR, extra) => Object.assign({ n, sumR, sumR2: n ? sumR * sumR / n : 0, net: 10 * sumR, gw: sumR > 0 ? 10 * sumR : 0, gl: sumR < 0 ? -10 * sumR : 0, sumC: 0, w: sumR > 0 ? n : 0, l: sumR < 0 ? n : 0 }, extra);
   const A = [1, 1, -1, -1, 1, 1], B = [-1, -1, 1, 1, -1, -1];
   const mat = [A.map(x => cell(1, x)), B.map(x => cell(1, x))], keys = ['2026-03-02', '2026-03-03', '2026-03-04', '2026-03-05', '2026-03-06', '2026-03-09'];
   const w = E.op('wfa', { mat, keys, configs: [{ p: 1 }, { p: 2 }], wfa: { is: 2, oos: 1, mode: 'rolling' } });
@@ -254,6 +255,7 @@ section('Analyse en avant : matrice construite, réponses calculées à la main'
   near(w.isMeanR, 0.5, 1e-12, 'meanR des meilleurs IS pondérée par les trades = 4/8');
   near(w.wfe, -1, 1e-12, 'wfe = −0,5 / 0,5');
   ok(w.stitched.n === 4 && w.stitched.net === -20 && w.eq.length === 4 && w.eq[3][1] === -20 && w.stitched.maxDD === 30, 'équité OOS cousue par séance : net −20, perte maximale 30');
+  ok(w.stitched.wins === 1 && w.stitched.losses === 3 && w.stitched.winRate === 0.25 && w.stitched.pf === 10 / 30, 'statistiques cousues : 1 gain sur 4, pf = 10/30');
   const wa = E.op('wfa', { mat, keys, wfa: { is: 2, oos: 1, mode: 'anchored' } });
   ok(wa.windows.map(x => x.best).join() === '0,0,0,0' && wa.windows.map(x => x.oosMeanR).join() === '-1,-1,1,1', 'anchored : IS depuis la 1re séance, meilleure 0 partout');
   near(wa.isMeanR, 4 / 14, 1e-12, 'anchored : dénominateur (2 + 1 + 0 + 1) / (2 + 3 + 4 + 5)');
@@ -309,7 +311,8 @@ section('Stress des coûts : monotonie, glissement d’équilibre, cas « na »'
   ok(m[0] > 0 && m[4] < 0 && typeof st.breakEven === 'number' && st.breakEven > 0 && st.breakEven < 4, 'meanR passe sous zéro dans la grille : équilibre à ' + (typeof st.breakEven === 'number' ? st.breakEven.toFixed(2) : st.breakEven) + ' tick par jambe');
   const s0 = Math.floor(st.breakEven);
   near(st.breakEven, s0 + m[s0] / (m[s0] - m[s0 + 1]), 1e-12, 'interpolation linéaire entre les deux glissements qui encadrent zéro');
-  ok(st.criterion.kind === 'slip' && st.criterion.slip === 2 && st.criterion.meanR === m[2] && st.criterion.pass === (m[2] > 0), 'critère : meanR à +1 tick par jambe');
+  ok(st.criterion.kind === 'slip' && st.criterion.slip === 2 && st.criterion.meanR === m[2] && st.criterion.pass === (m[1] > 0 && m[2] > 0), 'critère : meanR aux coûts de base puis à +1 tick par jambe');
+  ok(st.gate.na === false && st.gate.floor === st.base.meanR && st.gate.plus1 === m[2] && st.gate.through1 === st.meanR[1][0][1], 'gate (forme lue par le verdict) : floor, plus1, through1');
   const big = E.op('stress', { bars: plant(E.lattice({ sessions: 60, sigma: 1, seed: 41, minutes: 300 }), 1, 120, 10, 300), spec, settings: S1 });
   ok(big.breakEven === null && big.beyond === true, 'toujours positif à 4 ticks : équilibre au-delà de la grille');
   const ov = E.op('stress', { bars: lat, spec, settings: S1, override: { slipTicks: 2, commissionRT: 3 } });
@@ -328,6 +331,7 @@ section('Stress des coûts : monotonie, glissement d’équilibre, cas « na »'
   ok(na.meanR[0][0].every(x => x === 0.25) && na.meanR[0][1].every(x => x === 0.125) && na.meanR[0][2].every(x => x === 0), 'glissement sans effet ; commission ×1, ×1,5, ×2 : 0,25, 0,125, 0 R (calcul à la main)');
   ok(na.meanR[1][0][0] === 0.25 && na.n[2][0][0] === 0 && na.meanR[2][0][0] !== na.meanR[2][0][0], 'dépassement 1 tick : rempli ; 2 ticks : l’ordre expire');
   ok(na.criterion.kind === 'through' && na.criterion.through === 1 && na.criterion.meanR === 0.25 && na.criterion.pass === true, 'critère lu sur le dépassement à 1 tick');
+  ok(na.gate.na === true && na.gate.plus1 === null && na.gate.floor === 0.25 && na.gate.through1 === 0.25, 'gate : na, plus1 absent, through1 lu');
 }
 
 /* =================================== Bootstrap et passage prop =================================== */
@@ -477,6 +481,40 @@ section('Exécuteur local : les opérations lourdes sont refusées dans le fil p
   const st = await ex.call('stress', { spec: mk({ session: { to: '02:00', flat: '02:00' } }), settings: SET }).promise;
   ok(st.rows.length === 45, 'stress tourne en local (rejoue seulement l’exécution)');
   ex.close();
+}
+
+section('Fil worker réel : opérations lourdes, progression postée, résultat identique au calcul synchrone');
+{
+  const { Worker } = require('worker_threads');
+  const shim = 'const { parentPort } = require("worker_threads"); var self = { postMessage: (m, t) => parentPort.postMessage(m, t) }; parentPort.on("message", d => self.onmessage({ data: d }));\n';
+  const w = new Worker(shim + E.workerSource(), { eval: true });
+  const lat = E.lattice({ sessions: 150, sigma: 1, seed: 23 });
+  const spec = mk({ session: { to: '09:00', flat: '09:00' }, stop: { type: 'pts', value: '$st' }, params: { st: { v: 2, min: 1, max: 4, step: 0.25 } } });
+  const call = (id, op, a) => new Promise((res, rej) => {
+    const prog = [];
+    const on = m => { if (m.id !== id) return; if (m.type === 'progress') prog.push(m.progress); else { w.off('message', on); m.type === 'done' ? res({ r: m.r, prog }) : rej(new Error(m.e)); } };
+    w.on('message', on);
+    w.postMessage({ type: 'call', id, op, a });
+  });
+  const cols = { t: Float64Array.from(lat.t), o: Float64Array.from(lat.o), h: Float64Array.from(lat.h), l: Float64Array.from(lat.l), c: Float64Array.from(lat.c), v: Float64Array.from(lat.v), lowFirst: Uint8Array.from(lat.lowFirst), walk: Float64Array.from(lat.walk) };
+  const loaded = new Promise(res => w.once('message', res));
+  w.postMessage({ type: 'load', id: 1, fp: 'fpS', cols }, Object.values(cols).map(x => x.buffer));
+  await loaded;
+  const a = { spec, settings: SET, p1: 'st', fp: 'fpS' };
+  const ws = await call(2, 'sweep', a), ss = E.op('sweep', Object.assign({ bars: lat }, a));
+  ok(JSON.stringify(ws.r.cells) === JSON.stringify(ss.cells) && JSON.stringify(ws.r.mat) === JSON.stringify(ss.mat), 'sweep dans le worker = sweep synchrone (13 cellules, ' + ss.keys.length + ' séances)');
+  const pa = { spec, settings: SET, draws: 30, minDraws: 30, seed: 2, budgetMs: Infinity };
+  const wp = await call(6, 'permute', Object.assign({ fp: 'fpS' }, pa)), sp = E.op('permute', Object.assign({ bars: lat }, pa));
+  ok(JSON.stringify(wp.r.means) === JSON.stringify(sp.means) && wp.r.p === sp.p, 'permute dans le worker = permute synchrone (30 tirages)');
+  ok(wp.prog.length >= 1 && wp.prog.every((p, k) => p > 0 && p <= 1 && (!k || p >= wp.prog[k - 1])), 'progression postée par le worker, au plus toutes les 250 ms : ' + wp.prog.map(p => p.toFixed(2)).join(', '));
+  const wr = await call(3, 'random', { spec, settings: SET, draws: 100, seed: 3, fp: 'fpS' }), sr = E.op('random', { bars: lat, spec, settings: SET, draws: 100, seed: 3 });
+  ok(JSON.stringify(wr.r.means) === JSON.stringify(sr.means) && wr.r.p === sr.p, 'random dans le worker = random synchrone (cache du contexte compris)');
+  const ww = await call(4, 'wfa', { mat: ss.mat, keys: ss.keys, wfa: { is: 60, oos: 30 } });
+  ok(ww.r.windows.length === 3 && ww.r.wfe === E.op('wfa', { mat: ss.mat, keys: ss.keys, wfa: { is: 60, oos: 30 } }).wfe, 'wfa sur une matrice donnée : pas de colonnes requises');
+  let err = '';
+  try { await call(5, 'permute', { spec, settings: SET, draws: 2, fp: 'autre' }); } catch (e) { err = e.message; }
+  ok(/non chargées/.test(err), 'empreinte différente : refus, jamais une permutation du mauvais jeu');
+  await w.terminate();
 }
 
 /* =================================== Performance =================================== */

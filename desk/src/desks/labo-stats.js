@@ -153,7 +153,7 @@ LS.GRAMMAR = {
   groups: [opt('prix', 'Prix de la barre'), opt('volume', 'Volume'), opt('seance', 'Séance'), opt('moyennes', 'Moyennes et indicateurs'), opt('niveaux', 'Niveaux nommés'), opt('temps', 'Temps'), opt('calcul', 'Calculs')],
   operands: OPERANDS, conditions: CONDITIONS, entries: ENTRIES, stops: STOPS, targets: TARGETS,
   manage: MANAGE, risk: RISK, costs: COSTS, session: SESSION,
-  anchors: [opt('globex', 'Globex : 18 h 00 New York, ouverture de la séance'), opt('paris', 'Paris : 00 h 00 heure de Paris'), opt('rth', 'Séance régulière : 09 h 30 New York (fenêtre dans 09 h 30–16 h 00)')],
+  anchors: [opt('globex', 'Globex : 18 h 00 New York, ouverture de la séance'), opt('paris', 'Paris : 00 h 00 heure de Paris'), opt('rth', 'Séance régulière : 09 h 30 New York (fenêtre dans 09 h 30–16 h 00)')],
   sides: [opt('long', 'Achat seulement'), opt('short', 'Vente seulement'), opt('both', 'Achat et vente')],
   fills: [opt('pessimiste', 'Pessimiste : le stop d’abord'), opt('optimiste', 'Optimiste : l’objectif d’abord (borne haute)'), opt('chemin', 'Chemin probable de la barre')],
   instruments: [opt('MNQ', 'Micro E-mini Nasdaq-100'), opt('NQ', 'E-mini Nasdaq-100')],
@@ -418,6 +418,7 @@ LS.normalize = function (raw, ctx) {
     var ks = COND_KEYS.filter(function (k) { return own(c, k); });
     if (!ks.length) { err(path, 'condition inconnue (clés : ' + Object.keys(c).join(', ') + ').'); return undefined; }
     if (ks.length > 1) { err(path, 'une seule forme par condition (trouvé : ' + ks.join(', ') + ') ; combinez-les par all ou any.'); return undefined; }
+    if (ks[0] === 'news' && !isObj(c.news)) { err(path + '.news', 'un objet { impact, before, after } est attendu.'); return undefined; }
     var g = CONDMAP[ks[0]], o = normArgs(c, g.args, path, {});
     for (var i = 0; i < g.args.length; i++) if (g.args[i].req && getPath(o, g.args[i].k) === undefined) return undefined;
     return o;
@@ -741,6 +742,7 @@ function fmtSigned(x) { return isNum(x) ? (x > 0 ? '+' : '') + fmtN(x) : '—'; 
 function plural(n, one, many) { return isNum(n) && Math.abs(n) >= 2 ? many : one; }
 function deX(s) { return /^le /.test(s) ? 'du ' + s.slice(3) : /^les /.test(s) ? 'des ' + s.slice(4) : 'de ' + s; }
 function cap(s) { s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
+function lowFirst(s) { s = String(s); return /^.[a-zà-ÿ’ ]/.test(s) || s.length === 1 ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
 var DAYS = ['', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 function daysText(ds) {
   if (!Array.isArray(ds) || !ds.length) return 'aucun jour';
@@ -751,12 +753,14 @@ function daysText(ds) {
 }
 function Reader(params) {
   var P = params || {};
+  /* unit : un texte, ou [singulier, pluriel] choisi sur la valeur (celle du paramètre pour "$nom"). */
   function num(x, unit) {
-    var u = unit ? ' ' + unit : '';
-    if (isRef(x)) { var nm = x.slice(1), p = P[nm]; return (p && isNum(p.v) ? fmtN(p.v) + u + ' (paramètre ' + nm + ')' : 'le paramètre ' + nm + u); }
+    var ref = isRef(x), nm = ref ? x.slice(1) : '', p = ref ? P[nm] : null, v = ref ? (p && isNum(p.v) ? p.v : NaN) : x;
+    var un = Array.isArray(unit) ? (isNum(v) ? plural(v, unit[0], unit[1]) : unit[1]) : unit, u = un ? ' ' + un : '';
+    if (ref) return isNum(v) ? fmtN(v) + u + ' (paramètre ' + nm + ')' : 'le paramètre ' + nm + u;
     return isNum(x) ? fmtN(x) + u : 'une valeur non reconnue';
   }
-  function lag(x) { var k = x.lag; return isRef(k) ? ' décalé de ' + num(k, 'barres') : k === 1 ? ' de la barre précédente' : isNum(k) && k > 1 ? ' d’il y a ' + fmtN(k) + ' barres' : ''; }
+  function lag(x) { var k = x.lag; return isRef(k) ? ' décalé de ' + num(k, ['barre', 'barres']) : k === 1 ? ' de la barre précédente' : isNum(k) && k > 1 ? ' d’il y a ' + fmtN(k) + ' barres' : ''; }
   function tzs(x) { return x && x.tz ? ' (' + tzText(x.tz) + ')' : ''; }
   var BASE = { close: 'la clôture', open: 'l’ouverture', high: 'le plus haut', low: 'le plus bas', hl2: 'le milieu de la barre', hlc3: 'le prix typique', volume: 'le volume', range: 'l’amplitude de la barre', body: 'le corps de la barre' };
   var SESS = { high: 'le plus haut de la séance jusqu’ici', low: 'le plus bas de la séance jusqu’ici', open: 'l’ouverture de la séance' };
@@ -777,24 +781,24 @@ function Reader(params) {
     switch (x.f) {
       case 'close': case 'open': case 'high': case 'low': case 'hl2': case 'hlc3': case 'volume': case 'range': case 'body': return BASE[x.f] + lag(x);
       case 'vwap': return x.k == null || x.k === 0 ? 'la VWAP de séance' : isRef(x.k) ? 'la bande VWAP à ' + num(x.k, 'σ') : 'la bande VWAP à ' + fmtSigned(x.k) + ' σ';
-      case 'sma': case 'ema': of = x.of == null ? 'la clôture' : op(x.of); return 'la moyenne ' + (x.f === 'sma' ? 'simple ' : 'exponentielle ') + deX(of) + ' sur ' + num(n, 'barres');
-      case 'hh': return x.of == null ? 'le plus haut des ' + num(n, 'barres') + ' précédentes' : 'le maximum ' + deX(op(x.of)) + ' sur les ' + num(n, 'barres') + ' précédentes';
-      case 'll': return x.of == null ? 'le plus bas des ' + num(n, 'barres') + ' précédentes' : 'le minimum ' + deX(op(x.of)) + ' sur les ' + num(n, 'barres') + ' précédentes';
-      case 'sd': return 'l’écart-type ' + deX(x.of == null ? 'la clôture' : op(x.of)) + ' sur ' + num(n, 'barres');
-      case 'atr': return 'l’ATR sur ' + num(n == null ? 14 : n, 'barres') + lag(x);
-      case 'rsi': return 'le RSI sur ' + num(n == null ? 14 : n, 'barres') + lag(x);
-      case 'rvol': return 'le volume relatif (rapporté à la même minute des ' + num(n, 'séances') + ' précédentes)';
-      case 'prev': return (PREV[x.of || 'close'] || 'la clôture') + (x.n == null || x.n === 1 ? ' de la séance précédente' : ' de la séance d’il y a ' + num(x.n, 'séances'));
+      case 'sma': case 'ema': of = x.of == null ? 'la clôture' : op(x.of); return 'la moyenne ' + (x.f === 'sma' ? 'simple ' : 'exponentielle ') + deX(of) + ' sur ' + num(n, ['barre', 'barres']);
+      case 'hh': return x.of == null ? 'le plus haut des ' + num(n, ['barre', 'barres']) + ' précédentes' : 'le maximum ' + deX(op(x.of)) + ' sur les ' + num(n, ['barre', 'barres']) + ' précédentes';
+      case 'll': return x.of == null ? 'le plus bas des ' + num(n, ['barre', 'barres']) + ' précédentes' : 'le minimum ' + deX(op(x.of)) + ' sur les ' + num(n, ['barre', 'barres']) + ' précédentes';
+      case 'sd': return 'l’écart-type ' + deX(x.of == null ? 'la clôture' : op(x.of)) + ' sur ' + num(n, ['barre', 'barres']);
+      case 'atr': return 'l’ATR sur ' + num(n == null ? 14 : n, ['barre', 'barres']) + lag(x);
+      case 'rsi': return 'le RSI sur ' + num(n == null ? 14 : n, ['barre', 'barres']) + lag(x);
+      case 'rvol': return 'le volume relatif (rapporté à la même minute des ' + num(n, ['séance', 'séances']) + ' précédentes)';
+      case 'prev': return (PREV[x.of || 'close'] || 'la clôture') + (x.n == null || x.n === 1 ? ' de la séance précédente' : ' de la séance d’il y a ' + num(x.n, ['séance', 'séances']));
       case 'sess': return SESS[x.of || 'high'] || SESS.high;
       case 'or': return (ORT[x.of || 'high'] || ORT.high) + ' du range ' + hText(x.from) + '–' + hText(x.to) + tzs(x);
       case 'at': return (x.of === 'open' ? 'l’ouverture' : 'la clôture') + ' de la barre de ' + hText(x.time) + tzs(x);
-      case 'tf': return (x.of == null ? 'la clôture' : op(x.of)) + ' en barres de ' + num(x.m, 'minutes');
+      case 'tf': return (x.of == null ? 'la clôture' : op(x.of)) + ' en barres de ' + num(x.m, ['minute', 'minutes']);
       case 'level': return 'le niveau ' + (x.name || 'nommé');
       case 'nearest': return 'le niveau nommé le plus proche ' + (x.side === 'below' ? 'au-dessous' : 'au-dessus') + ' de la clôture' + (Array.isArray(x.names) && x.names.length ? ' (parmi ' + x.names.join(', ') + ')' : '');
       case 'time': return 'l’heure' + tzs(x);
       case 'dow': return 'le jour de la semaine (1 = lundi)';
       case 'sessmin': return 'les minutes écoulées depuis l’ancre';
-      case 'dist': return 'l’écart entre ' + op(x.a) + ' et ' + op(x.b) + ', ' + (x.unit === 'atr' ? 'en ATR sur ' + num(x.n == null ? 14 : x.n, 'barres') : UNIT[x.unit || 'pts'] || 'en points');
+      case 'dist': return 'l’écart entre ' + op(x.a) + ' et ' + op(x.b) + ', ' + (x.unit === 'atr' ? 'en ATR sur ' + num(x.n == null ? 14 : x.n, ['barre', 'barres']) : UNIT[x.unit || 'pts'] || 'en points');
     }
     return 'un opérande non reconnu';
   }
@@ -811,18 +815,23 @@ function Reader(params) {
     if (own(c, 'news')) { var nw = isObj(c.news) ? c.news : {}; return 'aucune publication d’impact ' + num(nw.impact == null ? 1 : nw.impact) + ' ou plus entre ' + num(nw.before == null ? 0 : nw.before, 'min') + ' avant et ' + num(nw.after == null ? 0 : nw.after, 'min') + ' après'; }
     if (own(c, 'all')) return Array.isArray(c.all) && c.all.length ? c.all.map(cond).join(' et ') : 'une liste vide';
     if (own(c, 'any')) return Array.isArray(c.any) && c.any.length ? '(' + c.any.map(cond).join(', ou ') + ')' : 'une liste vide';
-    if (own(c, 'not')) return 'il est faux que ' + cond(c.not);
+    if (own(c, 'not')) {
+      var nt = c.not;
+      if (isObj(nt) && own(nt, 'news')) { var nn = isObj(nt.news) ? nt.news : {}; return 'une publication d’impact ' + num(nn.impact == null ? 1 : nn.impact) + ' ou plus tombe entre ' + num(nn.before == null ? 0 : nn.before, 'min') + ' avant et ' + num(nn.after == null ? 0 : nn.after, 'min') + ' après'; }
+      if (isObj(nt) && own(nt, 'bar')) return nt.bar === 'down' ? 'la barre n’est pas baissière' : 'la barre n’est pas haussière';
+      return 'la condition « ' + cond(nt) + ' » est fausse';
+    }
     if (own(c, 'for')) return cond(c.cond) + ', sur chacune des ' + num(c['for'], 'dernières barres');
     if (own(c, 'within')) return cond(c.cond) + ', au moins une fois sur les ' + num(c.within, 'dernières barres');
     return 'une condition non reconnue';
   }
-  function bars(v) { return isRef(v) || isNum(v) ? num(v, plural(v, 'barre', 'barres')) : 'jusqu’à ' + hText(v); }
+  function bars(v) { return isRef(v) || isNum(v) ? num(v, ['barre', 'barres']) : 'jusqu’à ' + hText(v); }
   function entry(e, side) {
     e = e || { type: 'market' };
     var up = side > 0;
     if (e.type === 'limit' || e.type === 'stop') {
       var off = e.offset, inside = e.type === 'limit' ? (up ? 'sous' : 'au-dessus de') : (up ? 'au-dessus de' : 'sous');
-      var at = op(e.at), where = off == null || off === 0 ? 'sur ' + at : num(off, plural(off, 'tick', 'ticks')) + ' ' + (inside === 'sous' ? 'sous ' + at : 'au-dessus ' + deX(at));
+      var at = op(e.at), where = off == null || off === 0 ? 'sur ' + at : num(off, ['tick', 'ticks']) + ' ' + (inside === 'sous' ? 'sous ' + at : 'au-dessus ' + deX(at));
       var valid = e.valid == null ? '1 barre' : typeof e.valid === 'string' && !isRef(e.valid) ? 'jusqu’à ' + hText(e.valid) + (e.tz ? ' (' + tzText(e.tz) + ')' : '') : bars(e.valid);
       if (e.type === 'limit') return 'à cours limité ' + where + ', valable ' + valid + ' ; ' + (e.through ? 'remplie seulement si le prix passe au travers' : 'remplie au contact') + ', sans glissement ; une limite déjà franchie à l’ouverture part au marché (marketable)';
       return 'par un ordre stop ' + where + ', valable ' + valid + ' ; rempli au pire de l’ouverture et du prix de l’ordre, glissement compris';
@@ -833,10 +842,10 @@ function Reader(params) {
   function stop(s, side) {
     if (!isObj(s)) return 'un stop non reconnu';
     var below = side > 0 ? 'sous' : 'au-dessus de', buf = s.buffer;
-    var marge = buf == null || buf === 0 ? '' : ', avec ' + num(buf, plural(buf, 'tick', 'ticks')) + ' de marge vers l’extérieur';
+    var marge = buf == null || buf === 0 ? '' : ', avec ' + num(buf, ['tick', 'ticks']) + ' de marge vers l’extérieur';
     switch (s.type) {
       case 'pts': return num(s.value, 'points') + ' ' + below + ' l’entrée' + marge;
-      case 'atr': return num(s.value, 'ATR') + ' (ATR sur ' + num(s.n == null ? 14 : s.n, 'barres') + ', lu à la barre du signal) ' + below + ' l’entrée' + marge;
+      case 'atr': return num(s.value, 'ATR') + ' (ATR sur ' + num(s.n == null ? 14 : s.n, ['barre', 'barres']) + ', lu à la barre du signal) ' + below + ' l’entrée' + marge;
       case 'swing': return (side > 0 ? 'sous le plus bas' : 'au-dessus du plus haut') + ' des ' + num(s.n, 'dernières barres') + ' (barre du signal comprise)' + marge;
       case 'level': return 'sur ' + op(s.at) + ', lu à la barre du signal' + marge;
     }
@@ -848,7 +857,7 @@ function Reader(params) {
     switch (t.type) {
       case 'r': return num(t.value, 'R') + ' ' + beyond + ' l’entrée (en multiples de la distance du stop)';
       case 'pts': return num(t.value, 'points') + ' ' + beyond + ' l’entrée';
-      case 'atr': return num(t.value, 'ATR') + ' (ATR sur ' + num(t.n == null ? 14 : t.n, 'barres') + ') ' + beyond + ' l’entrée';
+      case 'atr': return num(t.value, 'ATR') + ' (ATR sur ' + num(t.n == null ? 14 : t.n, ['barre', 'barres']) + ') ' + beyond + ' l’entrée';
       case 'level': return 'sur ' + op(t.at) + (t.dynamic ? ', relu à chaque barre (valeur de la barre précédente)' : ', figé à la barre du signal');
       case 'none': return 'aucun : la sortie vient du stop, de la gestion ou de la fin de fenêtre';
     }
@@ -864,35 +873,38 @@ var FILL_TEXT = {
 };
 LS.describe = function (spec, o) {
   o = o || {};
-  var n = LS.normalize(spec), s = n.spec || {}, out = [];
+  var n = LS.normalize(spec), s = n.spec || LS.normalize({}).spec, out = [];
   var R = Reader(s.params), ses = s.session || {}, side = s.side || 'long', mirror = s.mirror !== false;
-  function push(id, title, text) { text = String(text || '').trim(); if (!text) text = 'Non renseigné.'; if (!/[.!?»)]$/.test(text)) text += '.'; out.push({ id: id, title: title, text: T.typo ? T.typo(cap(text)) : cap(text) }); }
+  function push(id, title, text) { text = String(text || '').trim(); if (!text) text = 'Non renseigné.'; if (!/[.!?»]$/.test(text)) text += '.'; out.push({ id: id, title: title, text: T.typo ? T.typo(cap(text)) : cap(text) }); }
   /* Séance et ancrage */
   var anc = { globex: 'les grandeurs de séance (VWAP, σ, range, heures) repartent de l’ouverture Globex, 18 h 00 New York', paris: 'les grandeurs de séance repartent de 00 h 00, heure de Paris', rth: 'les grandeurs de séance repartent de l’ouverture régulière, 09 h 30 New York, et n’existent qu’entre 09 h 30 et 16 h 00' }[s.anchor] || 'ancrage non reconnu';
   var flat = ses.flat && ses.flat !== ses.to ? ', sortie forcée à ' + hText(ses.flat) : ', sortie forcée en fin de fenêtre';
-  push('seance', 'Séance et ancrage', 'Séance Globex ; ' + anc + '. Entrées entre ' + hText(ses.from) + ' et ' + hText(ses.to) + ' (' + tzText(ses.tz || PAR) + ')' + flat + ', ' + daysText(ses.days) + ' ; aucun signal pendant les ' + R.num(ses.warmup == null ? 0 : ses.warmup, 'minutes') + ' qui suivent l’ancre');
+  push('seance', 'Séance et ancrage', 'Séance Globex ; ' + anc + '. Entrées entre ' + hText(ses.from) + ' et ' + hText(ses.to) + ' (' + tzText(ses.tz || PAR) + ')' + flat + ', ' + daysText(ses.days) + ' ; aucun signal pendant les ' + R.num(ses.warmup == null ? 0 : ses.warmup, ['minute', 'minutes']) + ' qui suivent l’ancre');
   /* Sens et miroir */
   var sens = side === 'long' ? 'Achat seulement' + (mirror ? ' ; le côté vendeur n’est pas joué' : '') : side === 'short' ? (mirror ? 'Vente seulement, jouée en miroir de la règle écrite à l’achat' : 'Vente seulement, sur la règle écrite côté vendeur') : (mirror ? 'Achat et vente. La vente est le miroir exact de l’achat : chaque prix p devient K − p, les comparaisons s’inversent, un écart change de signe, un oscillateur x devient 100 − x' : 'Achat et vente, chaque côté écrit séparément');
   push('sens', 'Sens et miroir', sens + '. Un signal d’achat et de vente sur la même barre ne donne aucun trade');
   /* Côté acheteur (ou règle source) */
-  var L = s.long, srcNote = side === 'short' && mirror ? 'Règle écrite à l’achat, jouée seulement en miroir : ' : '';
+  /* Règle source : celle de l’achat ; pour une vente seule écrite côté vendeur (mirror false), celle de la vente. */
+  var L = s.long, ls = 1, srcNote = side === 'short' && mirror ? 'Règle écrite à l’achat, jouée seulement en miroir : ' : '';
+  if (!L && side === 'short' && !mirror && s.short) { L = s.short; ls = -1; }
+  var aS = ls > 0 ? 'à l’achat' : 'à la vente';
   if (L) {
-    push('contexte', 'Contexte', L.setup && L.setup.length ? srcNote + 'à l’achat, il faut que ' + L.setup.map(R.cond).join(' ; et que ') : 'Aucun contexte : le déclencheur suffit');
-    push('declencheur', 'Déclencheur', (L.setup && L.setup.length ? '' : srcNote) + 'à l’achat, le signal tombe à la clôture d’une barre où ' + (L.trigger ? R.cond(L.trigger) : 'rien n’est défini') + ' ; rien ne s’exécute avant la barre suivante');
-    push('entree', 'Entrée', 'Achat ' + R.entry(L.entry, 1));
-    push('stop', 'Stop', 'Stop ' + R.stop(L.stop, 1) + ' ; un stop plus court que ' + R.num(s.risk && s.risk.minStopTicks != null ? s.risk.minStopTicks : 0, 'ticks') + ' annule le trade');
-    push('objectif', 'Objectif', 'Objectif ' + R.target(L.target, 1));
-  } else if (side !== 'short' || mirror) push('declencheur', 'Déclencheur', 'Aucune règle d’achat n’est écrite');
+    push('contexte', 'Contexte', L.setup && L.setup.length ? srcNote + aS + ', un signal n’est retenu que si ' + L.setup.map(R.cond).join(' et si ') : srcNote + 'aucun contexte : le déclencheur suffit');
+    push('declencheur', 'Déclencheur', aS + ', le signal tombe à la clôture d’une barre où ' + (L.trigger ? R.cond(L.trigger) : 'rien n’est défini') + ' ; rien ne s’exécute avant la barre suivante');
+    push('entree', 'Entrée', (ls > 0 ? 'Achat ' : 'Vente ') + R.entry(L.entry, ls));
+    push('stop', 'Stop', 'Stop ' + R.stop(L.stop, ls) + ' ; un stop plus court que ' + R.num(s.risk && s.risk.minStopTicks != null ? s.risk.minStopTicks : 0, ['tick', 'ticks']) + ' annule le trade');
+    push('objectif', 'Objectif', L.target && L.target.type === 'none' ? 'Aucun objectif : la sortie vient du stop, de la gestion ou de la fin de fenêtre' : 'Objectif ' + R.target(L.target, ls));
+  } else push('declencheur', 'Déclencheur', side === 'short' && !mirror ? 'Aucune règle de vente n’est écrite' : 'Aucune règle d’achat n’est écrite');
   /* Côté vendeur, reflété compris */
-  if (side !== 'long') {
+  if (side !== 'long' && ls > 0) {
     var S = null, why = '', Rs = R;
     if (mirror) {
       try { S = LE().mirror(s, 'spec', o.values); Rs = Reader({}); } catch (e) { why = e.message; }
     } else S = s.short;
     if (S) {
       var parts = [];
-      if (S.setup && S.setup.length) parts.push('contexte : ' + S.setup.map(Rs.cond).join(' ; et ') );
-      parts.push('signal quand ' + (S.trigger ? Rs.cond(S.trigger) : 'rien n’est défini'));
+      if (S.setup && S.setup.length) parts.push('un signal n’est retenu que si ' + S.setup.map(Rs.cond).join(' et si '));
+      parts.push((parts.length ? 'il' : 'le signal') + ' tombe à la clôture d’une barre où ' + (S.trigger ? Rs.cond(S.trigger) : 'rien n’est défini'));
       parts.push('entrée ' + Rs.entry(S.entry, -1));
       parts.push('stop ' + Rs.stop(S.stop, -1));
       parts.push('objectif ' + Rs.target(S.target, -1));
@@ -901,30 +913,30 @@ LS.describe = function (spec, o) {
   }
   /* Gestion */
   var M = s.manage || {}, g = [];
-  if (M.breakeven) g.push('stop ramené à l’entrée' + (M.breakeven.offset ? ' ' + (isRef(M.breakeven.offset) || M.breakeven.offset > 0 ? 'plus ' : 'moins ') + R.num(isNum(M.breakeven.offset) ? Math.abs(M.breakeven.offset) : M.breakeven.offset, 'ticks') : '') + ' dès que le plus haut atteint +' + R.num(M.breakeven.r == null ? 1 : M.breakeven.r, 'R') + ' (le plus bas, à la vente)');
-  if (M.trail) { var tt = M.trail, dist = tt.type === 'atr' ? R.num(tt.value, 'ATR') + ' (ATR sur ' + R.num(tt.n == null ? 14 : tt.n, 'barres') + ')' : tt.type === 'r' ? R.num(tt.value, 'R') : R.num(tt.value, 'points'); g.push('stop suiveur à ' + dist + ' du meilleur prix atteint depuis l’entrée' + (tt.start ? ', actif dès +' + R.num(tt.start, 'R') : '')); }
+  if (M.breakeven) g.push('stop ramené à l’entrée' + (M.breakeven.offset ? ' ' + (isRef(M.breakeven.offset) || M.breakeven.offset > 0 ? 'plus ' : 'moins ') + R.num(isNum(M.breakeven.offset) ? Math.abs(M.breakeven.offset) : M.breakeven.offset, ['tick', 'ticks']) : '') + ' dès que le plus haut atteint +' + R.num(M.breakeven.r == null ? 1 : M.breakeven.r, 'R') + ' (le plus bas, à la vente)');
+  if (M.trail) { var tt = M.trail, dist = tt.type === 'atr' ? R.num(tt.value, 'ATR') + ' (ATR sur ' + R.num(tt.n == null ? 14 : tt.n, ['barre', 'barres']) + ')' : tt.type === 'r' ? R.num(tt.value, 'R') : R.num(tt.value, 'points'); g.push('stop suiveur à ' + dist + ' du meilleur prix atteint depuis l’entrée' + (tt.start ? ', actif dès +' + R.num(tt.start, 'R') : '')); }
   if (M.maxBars != null) g.push('sortie à la clôture de la ' + R.num(M.maxBars) + 'e barre, entrée comprise');
   if (M.exitOnOpposite) g.push('sortie à l’ouverture suivante sur un signal opposé');
   push('gestion', 'Gestion', g.length ? 'Position suivie barre par barre : ' + g.join(' ; ') + '. Les mises à jour valent pour la barre suivante, jamais pour la courante' : 'Aucune gestion : le stop et l’objectif restent où ils ont été posés');
   /* Risque */
-  var K = s.risk || {}, rk = K.mode === 'risk' ? 'Taille calculée pour risquer ' + R.num(K.riskUsd, '$') + ' par trade, stop et commission compris' + (K.maxQty != null ? ', au plus ' + R.num(K.maxQty, plural(K.maxQty, 'contrat', 'contrats')) : '') + ' (plafond du compte en plus)' : R.num(K.contracts == null ? 1 : K.contracts, plural(K.contracts, 'contrat', 'contrats')) + ' par trade';
+  var K = s.risk || {}, rk = K.mode === 'risk' ? 'Taille calculée pour risquer ' + R.num(K.riskUsd, '$') + ' par trade, stop et commission compris' + (K.maxQty != null ? ', au plus ' + R.num(K.maxQty, ['contrat', 'contrats']) : '') + ' (plafond du compte en plus)' : R.num(K.contracts == null ? 1 : K.contracts, ['contrat', 'contrats']) + ' par trade';
   var lim = [];
-  if (K.maxPerSession != null) lim.push('au plus ' + R.num(K.maxPerSession, plural(K.maxPerSession, 'entrée', 'entrées')));
-  if (K.maxLossesPerSession != null) lim.push(R.num(K.maxLossesPerSession, plural(K.maxLossesPerSession, 'perte', 'pertes')) + ' au plus');
+  if (K.maxPerSession != null) lim.push('au plus ' + R.num(K.maxPerSession, ['entrée', 'entrées']));
+  if (K.maxLossesPerSession != null) lim.push(R.num(K.maxLossesPerSession, ['perte', 'pertes']) + ' au plus');
   if (K.dailyStopUsd != null) lim.push('plus d’entrée après ' + R.num(K.dailyStopUsd, '$') + ' de perte nette');
-  var cd = K.cooldown == null || K.cooldown === 0 ? 'la barre de sortie peut porter un nouveau signal' : 'pause de ' + R.num(K.cooldown, plural(K.cooldown, 'barre', 'barres')) + ' après une sortie, barre de sortie comprise';
+  var cd = K.cooldown == null || K.cooldown === 0 ? 'la barre de sortie peut porter un nouveau signal' : K.cooldown === 1 ? 'aucun signal sur la barre de sortie' : 'aucun signal pendant ' + R.num(K.cooldown, ['barre', 'barres']) + ' à partir de la barre de sortie, celle-ci comprise';
   push('risque', 'Risque', rk + '. Une position à la fois ; par séance, ' + (lim.length ? lim.join(', ') : 'aucune limite') + ' ; ' + cd);
   /* Coûts et convention de glissement */
   var C = s.costs || {}, com = C.commissionRT == null ? 'Commission : celle de tes réglages, figée dans le hachage au scellement' : 'Commission : ' + R.num(C.commissionRT, '$') + ' aller-retour par contrat';
   var sl = C.slipTicks == null ? 0 : C.slipTicks, rt = isRef(sl) ? null : 2 * sl;
-  var slipText = 'Glissement : ' + R.num(sl, plural(sl, 'tick', 'ticks')) + ' par jambe exécutée au marché ou au stop (entrée au marché, stop ou marketable ; sorties au stop, break-even, suiveur, temps, sortie forcée, cloche ou signal opposé), jamais sur une limite ni sur l’objectif. Le desk Quant compte son glissement par aller-retour : ici, une entrée au marché sortie au stop paie ' + (rt === null ? 'deux fois ce glissement' : R.num(rt, plural(rt, 'tick', 'ticks'))) + ', une limite sortie à l’objectif n’en paie aucun';
+  var slipText = 'Glissement : ' + R.num(sl, ['tick', 'ticks']) + ' par jambe exécutée au marché ou au stop (entrée au marché, stop ou marketable ; sorties au stop, break-even, suiveur, temps, sortie forcée, cloche ou signal opposé), jamais sur une limite ni sur l’objectif. Le desk Quant compte son glissement par aller-retour : ici, une entrée au marché sortie au stop paie ' + (rt === null ? 'deux fois ce glissement' : R.num(rt, ['tick', 'ticks'])) + ', une limite sortie à l’objectif n’en paie aucun';
   if (isNum(o.slipTicksRT)) slipText += ' ; coût réalisé moyen : ' + fmtN(Math.round(o.slipTicksRT * 100) / 100) + ' ' + plural(o.slipTicksRT, 'tick', 'ticks') + ' par aller-retour';
   push('couts', 'Coûts et glissement', com + '. ' + slipText);
   /* Remplissage */
   push('remplissage', 'Remplissage', FILL_TEXT[s.fill] || FILL_TEXT.pessimiste);
   /* Paramètres */
   var pn = Object.keys(s.params || {});
-  if (pn.length) push('parametres', 'Paramètres', pn.map(function (k) { var p = s.params[k]; return k + ' = ' + fmtN(p.v) + (p.label ? ' (' + p.label + ')' : '') + (isNum(p.min) && isNum(p.max) ? ', de ' + fmtN(p.min) + ' à ' + fmtN(p.max) + (isNum(p.step) ? ' par pas de ' + fmtN(p.step) : '') : ''); }).join(' ; '));
+  if (pn.length) push('parametres', 'Paramètres', 'Paramètres : ' + pn.map(function (k) { var p = s.params[k]; return k + ' = ' + fmtN(p.v) + (p.label ? ', ' + lowFirst(p.label) : '') + (isNum(p.min) && isNum(p.max) ? ', balayable de ' + fmtN(p.min) + ' à ' + fmtN(p.max) + (isNum(p.step) ? ' par pas de ' + fmtN(p.step) : '') : ''); }).join(' ; '));
   return out;
 };
 
@@ -945,7 +957,7 @@ function essaisFor(rows, instrument, from, to) {
 /* trials(essais, instrument, from, to, o?) → { N, sdTrials, inherited, docs, srs, sdSource }.
    N = configHash distincts des essais de même instrument dont [from, to] recoupe la période — toutes stratégies,
    versions et jeux confondus (§2.5). sdTrials = écart-type des Sharpe (un par configHash, le premier vu) s’il y
-   en a au moins dix, sinon null (le DSR prend alors 1/√n). inherited = configHash dont le premier essai précède
+   en a au moins dix, sinon 1/√n quand o.n (trades du run évalué) est donné, null sinon (le DSR prend alors 1/√n). inherited = configHash dont le premier essai précède
    la migration (o.migratedAt en ms, ou o.lignee = document T.store labo:lignee). */
 LS.trials = function (rows, instrument, from, to, o) {
   o = o || {};
@@ -960,8 +972,8 @@ LS.trials = function (rows, instrument, from, to, o) {
       if (isNum(mig) && isNum(r.at) && r.at < mig) inh++;
     });
   });
-  var sd = srs.length >= 10 ? sdev(srs) : null;
-  return { N: N, sdTrials: sd, sdSource: sd === null ? 'defaut' : 'registre', inherited: inh, docs: list.length, srs: srs.length };
+  var sd = srs.length >= 10 ? sdev(srs) : isNum(o.n) && o.n > 0 ? 1 / Math.sqrt(o.n) : null;
+  return { N: N, sdTrials: sd, sdSource: srs.length >= 10 ? 'registre' : 'defaut', inherited: inh, docs: list.length, srs: srs.length };
 };
 /* Les configHash d’un lancement jamais vus sur l’instrument et la période (ceux qui créent un essai). */
 LS.newHashes = function (rows, instrument, from, to, hashes) {
@@ -1272,10 +1284,10 @@ LS.verdict = function (r) {
     text = 'Rejetée : ' + (under ? 'l’espérance (' + F.r(r.meanR, 3) + ') ne dépasse pas ce que coûte une stratégie sans avantage (' + F.r(-r.costR, 3) + ')' : '') + (under && coin ? ', et ' : '') + (coin ? 'des entrées tirées au hasard font aussi bien une fois sur deux (p = ' + p3(pr) + ')' : '') + '.';
   } else if (fails.length) {
     level = 'a-approfondir';
-    text = 'À approfondir : ' + fails.length + ' critère' + (fails.length > 1 ? 's ne tiennent' : ' ne tient') + ' pas (' + fails.map(function (x) { return x.label.toLowerCase(); }).join(', ') + ').' + (nulls.length ? ' ' + nulls.length + ' autre' + (nulls.length > 1 ? 's restent' : ' reste') + ' à calculer.' : '');
+    text = 'À approfondir : ' + fails.length + ' critère' + (fails.length > 1 ? 's ne tiennent' : ' ne tient') + ' pas (' + fails.map(function (x) { return lowFirst(x.label); }).join(', ') + ').' + (nulls.length ? ' ' + nulls.length + ' autre' + (nulls.length > 1 ? 's restent' : ' reste') + ' à calculer.' : '');
   } else if (nulls.length) {
     level = 'a-approfondir';
-    text = 'À approfondir : ' + nulls.length + ' critère' + (nulls.length > 1 ? 's restent' : ' reste') + ' à calculer (' + nulls.map(function (x) { return x.label.toLowerCase(); }).join(', ') + ').';
+    text = 'À approfondir : ' + nulls.length + ' critère' + (nulls.length > 1 ? 's restent' : ' reste') + ' à calculer (' + nulls.map(function (x) { return lowFirst(x.label); }).join(', ') + ').';
   } else if (r.blocked) {
     level = 'a-approfondir'; text = 'À approfondir : ' + r.blocked;
   } else {

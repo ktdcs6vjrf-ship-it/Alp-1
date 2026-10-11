@@ -1550,10 +1550,11 @@ function laboEngine(a) {
     }
     return { p1: p1, p2: p2, xs: xs, ys: ys, configs: configs };
   }
-  function zeroRec() { return { n: 0, sumR: 0, sumR2: 0, net: 0, gw: 0, gl: 0, sumC: 0 }; }
+  function zeroRec() { return { n: 0, sumR: 0, sumR2: 0, net: 0, gw: 0, gl: 0, sumC: 0, w: 0, l: 0 }; }
   /* ---------- Balayage : chaque configuration résolue puis reflétée (config), exécutée une fois ----------
      cells[iy][ix] = {n, meanR, sdR, net, pf, sharpe, maxDD, winRate, costR} ; mat[k][x] = {n, sumR, sumR2, net,
-     gw, gl, sumC} pour k = iy·nx + ix et x = colonne de séance (union des séances jouées, ordre des clés). */
+     gw, gl (gains et pertes bruts en $), sumC (Σ c/(L·pv)), w, l (trades à r > 0 et à r < 0)} pour k = iy·nx + ix
+     et x = colonne de séance (union des séances jouées, ordre des clés). */
   function sweepCore(ctx) {
     var G = gridOf(ctx.spec0, a.grid || a), nx = G.xs.length, ny = G.ys.length, nC = nx * ny, obj = objOf(a.objective), minT = isNum(a.minTrades) ? a.minTrades : 1;
     var cells = [], recs = [], used = new Uint8Array(ctx.S.length), best = null, bv = -Infinity, pv = ctx.pv;
@@ -1566,6 +1567,7 @@ function laboEngine(a) {
         for (q = 0; q < x.trades.length; q++) {
           var t = x.trades[q], ee = m[x.sessions[t.sx].s];
           if (t.pnl > 0) ee.gw += t.pnl; else if (t.pnl < 0) ee.gl -= t.pnl;
+          if (t.r > 0) ee.w++; else if (t.r < 0) ee.l++;
           if (isNum(t.c) && t.risk > 0) ee.sumC += t.c / (t.risk * pv);
         }
         recs.push(m);
@@ -1607,7 +1609,7 @@ function laboEngine(a) {
      première ; moins de minTrades trades → exclue), appliquée telle quelle à l’OOS suivante.
      wfe = meanR des OOS cousues / meanR des meilleurs IS pondérée par les trades (Σ sumR / Σ n), quel que soit
      l’objectif ; null si ce dénominateur est ≤ costR (moyenne des c/(L·pv) des mêmes trades IS, colonne sumC). */
-  var WF = ['n', 'sumR', 'sumR2', 'net', 'gw', 'gl', 'sumC'];
+  var WF = ['n', 'sumR', 'sumR2', 'net', 'gw', 'gl', 'sumC', 'w', 'l'];
   function aggOf(row, x0, x1) {
     var g = zeroRec(), x, f;
     for (x = x0; x <= x1; x++) { var e = row[x] || {}; for (f = 0; f < WF.length; f++) { var v = e[WF[f]]; if (isNum(v)) g[WF[f]] += v; } }
@@ -1651,7 +1653,8 @@ function laboEngine(a) {
     var mOos = so.n ? so.sumR / so.n : NaN, sv = so.n > 1 ? (so.sumR2 - so.n * mOos * mOos) / (so.n - 1) : NaN, sdO = Math.sqrt(Math.max(0, sv));
     var den = isNt ? isS / isNt : NaN, costR = isNum(o.costR) ? o.costR : isNt ? isC / isNt : NaN;
     var stitched = { n: so.n, sumR: so.sumR, meanR: mOos, sdR: so.n > 1 ? sdO : NaN, sharpe: so.n > 1 && sdO > 0 ? mOos / sdO : NaN, net: so.net,
-      pf: so.gl > 0 ? so.gw / so.gl : so.gw > 0 ? Infinity : NaN, maxDD: dd, sessions: eq.length, costR: so.n ? so.sumC / so.n : NaN };
+      pf: so.gl > 0 ? so.gw / so.gl : so.gw > 0 ? Infinity : NaN, maxDD: dd, sessions: eq.length, costR: so.n ? so.sumC / so.n : NaN,
+      nz: so.w + so.l, wins: so.w, losses: so.l, winRate: so.w + so.l ? so.w / (so.w + so.l) : NaN };
     return { mode: mode, is: isN, oos: ooN, objective: obj, minTrades: minT, windows: windows, stitched: stitched, eq: eq,
       isMeanR: den, isN: isNt, costR: costR, wfe: so.n > 0 && den === den && den > (isNum(costR) ? costR : 0) ? mOos / den : null };
   }
@@ -1661,7 +1664,7 @@ function laboEngine(a) {
     var ov = a.override || {}, costs = cfg.spec.costs || {}, fill = ov.fill || a.fill;
     var comm0 = isNum(ov.commissionRT) ? ov.commissionRT : isNum(costs.commissionRT) ? costs.commissionRT : ctx.comm;
     var slip0 = isNum(ov.slipTicks) ? ov.slipTicks : isNum(costs.slipTicks) ? costs.slipTicks : 0;
-    var slips = [0, 1, 2, 3, 4], mults = [1, 1.5, 2], thrs = [0, 1, 2], nAll = slips.length * mults.length * thrs.length + 2, kk = 0;
+    var slips = [0, 1, 2, 3, 4], mults = [1, 1.5, 2], thrs = [0, 1, 2], nAll = slips.length * mults.length * thrs.length + 3, kk = 0;
     function one(sl, cm, th) {
       var x = execute(ctx, cfg, { fill: fill, slipTicks: sl, commissionRT: cm, throughTicks: th, progress: false }), st = statsOf(x.trades, ctx.pv), lg = 0;
       for (var q = 0; q < x.trades.length; q++) lg += x.trades[q].legs;
@@ -1690,10 +1693,13 @@ function laboEngine(a) {
       for (var s = 1; s < slips.length; s++) if (!(m0[s] > 0)) { be = isNum(m0[s]) ? slips[s - 1] + (slips[s] - slips[s - 1]) * m0[s - 1] / (m0[s - 1] - m0[s]) : slips[s - 1]; break; }
       if (be === null) beyond = true;
     }
-    var plus = base.legs ? one(slip0 + 1, comm0, 0) : one(slip0, comm0, 1);
+    /* critère 7 de LABO.md §5 : meanR aux coûts de base, puis à +1 tick par jambe glissée, ou à 1 tick de dépassement
+       exigé quand aucune jambe ne glisse ; gate reprend la forme r.costs que lit le verdict de labo-stats */
+    var p1 = one(slip0 + 1, comm0, 0), t1 = one(slip0, comm0, 1), plus = base.legs ? p1 : t1;
     return { slips: slips, mults: mults, throughs: thrs, slip: slip0, comm: comm0, meanR: meanR, net: net, n: nn, rows: rows,
       base: base, legs: base.legs, breakEven: be, beyond: beyond,
-      criterion: { kind: base.legs ? 'slip' : 'through', slip: plus.slip, through: plus.through, meanR: plus.meanR, n: plus.n, pass: plus.meanR > 0 },
+      criterion: { kind: base.legs ? 'slip' : 'through', slip: plus.slip, through: plus.through, meanR: plus.meanR, n: plus.n, pass: base.meanR > 0 && plus.meanR > 0 },
+      gate: { floor: base.meanR, plus1: base.legs ? p1.meanR : null, through1: t1.meanR, na: !base.legs },
       warnings: warnList(ctx) };
   }
 
@@ -1872,6 +1878,8 @@ function laboEngine(a) {
     },
     /* 4.3 : { means, obs, p, draws, pmin, cut, ms, block, lo, hi, mid, n, nMean, h0, label, warnings } */
     permute: function () { return permuteNull(prepare(a), a.values); },
+    /* grille (p1, p2?, xs?, ys?, objective, minTrades) rejouée sur chaque permutation : { means (meilleur permuté par
+       tirage), obs (meilleur observé), p, draws, pmin, cut, ms, block, objective, configs, lo, hi, mid, h0, label, warnings } */
     permuteGrid: function () { return permuteGridNull(prepare(a)); },
     /* colonnes permutées d’un tirage (contrôle et diagnostic) : { t, o, h, l, c, v, lowFirst, walk, perm, keys, block } ;
        indices de la sélection découpée (séances de sel + amorçage) */
@@ -1880,6 +1888,9 @@ function laboEngine(a) {
       r.t = ctx.F1.t; r.block = block; r.keys = ctx.S.map(function (x) { return x.key; });
       return r;
     },
+    /* { p1, p2|null, xs, ys ([null] à un paramètre), objective, minTrades, cells[ny][nx]: {n, meanR, sdR, net, pf, sharpe,
+       maxDD, winRate, costR}, mat[k][x]: {n, sumR, sumR2, net, gw, gl, sumC, w, l}, keys (clé de chaque colonne x),
+       configs[k] (valeurs de la configuration k = iy·nx + ix), best: {k, ix, iy, values, value, meanR, n}|null, warnings } */
     sweep: function () {
       var ctx = prepare(a), r = sweepCore(ctx);
       r.warnings = warnList(ctx);
@@ -1900,6 +1911,9 @@ function laboEngine(a) {
       if (src.warnings) w.warnings = src.warnings;
       return w;
     },
+    /* { slips, mults, throughs, slip, comm, meanR[it][im][is], net[…], n[…], rows, base, legs, breakEven (ticks par
+       jambe | 'na' | null au-delà de la grille), beyond, criterion: {kind, slip, through, meanR, n, pass},
+       gate: {floor, plus1, through1, na} (forme r.costs du verdict de labo-stats), warnings } */
     stress: function () { var ctx = prepare(a); return stressOf(ctx, config(ctx, a.values)); },
     /* 4.6 : sur a.records (enregistrements de séance d’un run) ou sur le run calculé ici */
     boot: function () {
