@@ -1118,6 +1118,8 @@ LS.cusumArl0 = function (k, h, sigma) {
 /* ================================================================================================
    9. Gabarits (§5) : des points de départ. Aucun ne prétend à un avantage ; tous passent normalize.
    ================================================================================================ */
+/* Les zones que le desk Plan enregistre chaque matin dans levels/items (L.labLevels) : HVZ1…, LVN1…, LVH1…. */
+var PLAN_ZONES = ['HVZ1', 'HVZ2', 'HVZ3', 'HVZ4', 'LVN1', 'LVN2', 'LVN3', 'LVN4', 'LVH1', 'LVH2', 'LVH3', 'LVH4'];
 var NEUTRE = ' Point de départ : aucun avantage n’est supposé ; le test, ses lois nulles et le registre des essais le diront.';
 LS.TEMPLATES = [
   { id: 'vwap-rejet', label: 'Rejet de bande VWAP',
@@ -1153,7 +1155,15 @@ LS.TEMPLATES = [
     description: 'Achat quand le prix redescend toucher le niveau nommé le plus proche sous lui puis clôture au-dessus ; vente en miroir sur le plus proche au-dessus. Stop au-delà du niveau, objectif sur le niveau suivant. Exige des niveaux par séance et un jeu dont le raccord des contrats est connu.' + NEUTRE,
     spec: { name: 'Rejet du niveau le plus proche', hypothesis: '', side: 'both', mirror: true,
       long: { setup: [], trigger: { reject: { f: 'nearest', side: 'below' }, from: 'above' }, entry: { type: 'market' }, stop: { type: 'level', at: { f: 'nearest', side: 'below' }, buffer: '$marge' }, target: { type: 'level', at: { f: 'nearest', side: 'above' }, dynamic: false } },
-      params: { marge: { v: 8, min: 4, max: 16, step: 4, label: 'Marge du stop (ticks)' } } } }
+      params: { marge: { v: 8, min: 4, max: 16, step: 4, label: 'Marge du stop (ticks)' } } } },
+  { id: 'plan-hvz', label: 'Plan HVZ : zone de la veille, côté VWAP',
+    description: 'La méthode du desk Plan : achat si la veille a clôturé au-dessus de son ouverture, prix sous la bande basse de la VWAP, et rejet de la zone notée la plus proche sous le prix (HVZ, LVN, LVN historique). Stop au-delà de la zone avec la marge, objectif sur la zone notée suivante au-dessus. Vente en miroir. Exige les zones du jour, enregistrées depuis l’étape Zones du plan.' + NEUTRE,
+    spec: { name: 'Plan HVZ', hypothesis: '', side: 'both', mirror: true,
+      long: { setup: [{ cmp: '>', a: { f: 'prev', of: 'close' }, b: { f: 'prev', of: 'open' } }, { cmp: '<', a: { f: 'close' }, b: { f: 'vwap', k: '$bande' } }],
+        trigger: { reject: { f: 'nearest', side: 'below', names: PLAN_ZONES }, from: 'above' }, entry: { type: 'market' },
+        stop: { type: 'level', at: { f: 'nearest', side: 'below', names: PLAN_ZONES }, buffer: '$marge' }, target: { type: 'level', at: { f: 'nearest', side: 'above' }, dynamic: false } },
+      risk: { cooldown: 1 },
+      params: { bande: { v: -2, min: -3, max: -1, step: 0.5, label: 'Bande VWAP en σ (négative à l’achat)' }, marge: { v: 4, min: 0, max: 16, step: 4, label: 'Marge du stop au-delà de la zone (ticks)' } } } }
 ];
 /* Un gabarit en brouillon neuf : identité posée par l’appelant (sid), spec normalisée. */
 LS.fromTemplate = function (id, sid, now) {

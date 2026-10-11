@@ -11,12 +11,13 @@ function hub(set) {
   var pnl = taken.reduce(function (a, r) { return a + (isFinite(r.pnl) ? r.pnl : 0); }, 0);
   var losses = taken.filter(function (r) { return r.pnl < 0; }).length;
   var left = Math.max(0, set.dailyStop + Math.min(0, pnl));
-  var g = T.time.globex(), win = T.time.inWindow(set.winFrom, set.winTo, set.tz), all = T.journal.list().length;
+  var g = T.time.globex(), win = T.time.inWindow(set.winFrom, set.winTo, set.tz), allDay = set.winFrom === 0 && set.winTo >= 24, all = T.journal.list().length;
   var tiles = [
     { label: 'P&L du jour', value: F.usd(pnl, 0, true), tone: pnl < 0 ? 'neg' : null, hint: taken.length + ' trade' + (taken.length > 1 ? 's' : '') + ' pris', go: 'journal' },
     { label: 'Risque restant', value: F.usd(left, 0), tone: left <= 0 ? 'neg' : null, hint: 'stop du jour ' + F.usd(set.dailyStop, 0), go: 'risk' },
     { label: 'Pertes du jour', value: losses + ' / ' + set.maxLossesDay, tone: losses >= set.maxLossesDay ? 'neg' : null, hint: losses >= set.maxLossesDay ? 'arrêt : journée finie' : 'avant l’arrêt', go: 'risk' },
-    { label: 'Fenêtre ' + String(set.winFrom).padStart(2, '0') + '–' + String(set.winTo).padStart(2, '0') + ' h', value: win ? 'ouverte' : 'fermée', tone: win ? 'acc' : null, hint: 'heure de Paris ' + T.time.hhmm('Europe/Paris'), go: 'micro' },
+    allDay ? { label: 'Fenêtre', value: 'toute heure', tone: 'acc', hint: 'heure de Paris ' + T.time.hhmm('Europe/Paris'), go: 'plan' }
+      : { label: 'Fenêtre ' + String(set.winFrom).padStart(2, '0') + '–' + String(set.winTo).padStart(2, '0') + ' h', value: win ? 'ouverte' : 'fermée', tone: win ? 'acc' : null, hint: 'heure de Paris ' + T.time.hhmm('Europe/Paris'), go: 'micro' },
     { label: 'Globex', value: g.open ? 'ouvert' : 'fermé', hint: 'New York ' + g.ny + (g.cash ? ' · cash ouvert' : ''), go: 'nq' },
     { label: 'Preuve', value: F.int(all), unit: '/ 619', hint: 'décisions au journal', go: 'quant' }
   ];
@@ -41,10 +42,12 @@ function hub(set) {
   return wrap;
 }
 
+/* La carte de séance : chaque étape ouvre son étape du desk Plan, avec son pourcentage. */
 function flowMap() {
-  var d = T.day.get(), firstOpen = T.DAY_STEPS.findIndex(function (s) { return !d.done[s.id]; });
+  var d = T.day.get(), firstOpen = T.DAY_STEPS.findIndex(function (s) { return T.day.pct(s.id, d) < 100; });
   return U.flow({ nodes: T.DAY_STEPS.map(function (s, i) {
-    return { title: s.t, sub: s.s, state: d.done[s.id] ? 'done' : i === firstOpen ? 'active' : 'todo', go: 'ouvrir ›', onClick: function () { T.nav.go(s.desk); } };
+    var p = T.day.pct(s.id, d);
+    return { title: s.t, sub: s.s, pct: p, state: p >= 100 ? 'done' : i === firstOpen ? 'active' : 'todo', go: p + ' % ›', onClick: function () { T.store.set('plan:open', s.id); T.nav.go('plan', 'carte'); } };
   }) });
 }
 
@@ -74,7 +77,7 @@ T.desk({
     var jours = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
     root.appendChild(U.page({ kicker: 'Desk · ' + jours[p.wd] + ' ' + F.dateLong(Date.now()), title: 'Préparer, *puis* trader.', lede: 'Chaque étape du jour a son desk. Le terminal ne promet aucun avantage : il t’aide à décider toujours de la même façon, à tenir ton risque et à tout inscrire.' }));
     var s1 = U.section('Le *hub* du jour', 'touche une tuile pour ouvrir son desk'); s1.appendChild(hub(set)); root.appendChild(s1);
-    var s2 = U.section('Carte de séance', 'dans l’ordre, chaque jour'); s2.appendChild(flowMap()); root.appendChild(s2);
+    var s2 = U.section('Carte de séance', 'dans l’ordre, chaque jour'); s2.appendChild(flowMap()); s2.appendChild(h('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-top:12px' }, U.button({ label: 'Ouvrir le plan', small: true, onClick: function () { T.store.set('plan:open', null); T.nav.go('plan', 'carte'); } }), U.button({ label: 'Mode Live ›', small: true, kind: 'acc', onClick: function () { T.store.set('plan:open', null); T.nav.go('plan', 'live'); } }))); root.appendChild(s2);
     var s3 = U.section('Où vont tes *décisions*', 'tout le journal'); s3.appendChild(decisionsSankey()); s3.appendChild(U.note('Sans dérive, un filtre réduit le nombre d’occasions sans améliorer l’espérance (ALP nº 3, partie III). Le schéma sert à voir ton plan travailler, pas à juger une compétence avant 619 décisions.')); root.appendChild(s3);
     var un1 = T.journal.on(function () { ctx.rerender(); }), un2 = T.day.on(function () { ctx.rerender(); });
     var tick = setInterval(function () { if (document.visibilityState === 'visible') ctx.rerender(); }, 60000);

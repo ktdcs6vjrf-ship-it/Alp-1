@@ -578,7 +578,7 @@ section('CUSUM et sa loi nulle');
 section('Gabarits : six points de départ, valides, neutres');
 {
   const ids = LS.TEMPLATES.map(t => t.id);
-  eq(ids, ['vwap-rejet', 'or-cassure', 'rsi-retour', 'veille-rejet', 'ema-poursuite', 'gex-proche'], 'les six gabarits de §5');
+  eq(ids, ['vwap-rejet', 'or-cassure', 'rsi-retour', 'veille-rejet', 'ema-poursuite', 'gex-proche', 'plan-hvz'], 'les six gabarits de §5, plus celui du desk Plan');
   const lat = LE.lattice({ sessions: 8, seed: 12 });
   LS.TEMPLATES.forEach(t => {
     const n = norm(t.spec);

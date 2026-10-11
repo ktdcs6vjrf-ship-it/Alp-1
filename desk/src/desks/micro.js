@@ -28,7 +28,7 @@ L.SIGNALS = [{ v: 'rejet', label: 'Rejet' }, { v: 'absorption', label: 'Absorpti
 L.DIRS = ['long', 'both', 'short'];
 function hh(n) { return pad2(n) + ' h'; }
 function hourWord(n) { return n === 0 ? 'minuit' : n + ' h'; }
-L.window = function (set) { var a = set && fin(set.winFrom) ? set.winFrom : 0, b = set && fin(set.winTo) ? set.winTo : 9; return { from: a, to: b, range: hh(a) + ' – ' + hh(b) }; };
+L.window = function (set) { var a = set && fin(set.winFrom) ? set.winFrom : 0, b = set && fin(set.winTo) ? set.winTo : 24, all = a === 0 && b >= 24; return { from: a, to: b, all: all, range: all ? 'toute heure' : hh(a) + ' – ' + hh(b) }; };
 
 L.stages = function (set) {
   var w = L.window(set);
@@ -38,7 +38,8 @@ L.stages = function (set) {
       { t: 'Niveaux GEX reportés', s: 'Place HVL, CR, PS et GW du jour. Ce sont des zones larges, environ 1,2 écart-type de la journée, pas des prix exacts. Le HVL n’est jamais un prix d’entrée ni de stop.', k: 'Les niveaux GEX sont de gros coussins posés sur la route : le prix peut rebondir dessus, mais ce sont des coussins, pas des traits fins.' },
       { t: 'Régime gamma lu', s: 'Prix au-dessus du HVL : gamma positif, le marché tourne plutôt en rond. En dessous : gamma négatif, mouvements plus amples, taille réduite. Le gamma règle la taille et la durée, jamais le sens.', k: 'Au-dessus de la ligne, le marché se balance doucement. En dessous, il saute comme sur un trampoline : on fait de plus petits sauts.' }] },
     { k: 'B', title: 'Filtre VWAP', sub: 'Le bon côté de la moyenne · ' + w.range, k5: 'On ne pêche qu’au bon endroit et au bon moment.', win: true, items: [
-      { t: 'Dans la fenêtre ' + w.range, s: 'Cherche des trades seulement entre ' + hourWord(w.from) + ' et ' + hourWord(w.to) + '. La VWAP part de l’ouverture Globex, minuit à Paris. Ta fenêtre se prouve avec ton journal, pas avec le document.', k: 'On ne joue que pendant la récréation du matin, quand la cour est calme.' },
+      w.all ? { t: 'Hors des fenêtres interdites', s: 'Ta fenêtre est ouverte à toute heure (réglages). Seules les annonces de rang 1 bloquent les ordres : quelques minutes avant, un quart d’heure après (desk Plan, étape Macro). La VWAP part de l’ouverture Globex, minuit à Paris.', k: 'On peut jouer à toute heure, sauf quand l’orage est annoncé.' }
+        : { t: 'Dans la fenêtre ' + w.range, s: 'Cherche des trades seulement entre ' + hourWord(w.from) + ' et ' + hourWord(w.to) + '. La VWAP part de l’ouverture Globex, minuit à Paris. Ta fenêtre se prouve avec ton journal, pas avec le document.', k: 'On ne joue que pendant la récréation du matin, quand la cour est calme.' },
       { t: 'Bon côté de la VWAP', dyn: 'vwap', s: '', k: 'La VWAP, c’est le prix moyen de la journée, comme la ligne au milieu du terrain. On vend quand le prix est monté trop haut au-dessus, on achète quand il est descendu trop bas en dessous.' },
       { t: 'Contact de la bande ±2σ', s: 'Attends que le prix touche la bande à deux écarts-types : un niveau recalculé chaque minute, le plus touché du catalogue (12,68 contacts par séance dans le document). Jamais au milieu, jamais à l’œil.', k: 'On attend que l’élastique soit bien tiré avant de le lâcher.' },
       { t: 'Stop hors du bruit', s: 'Stop au-delà de la bande, plus large qu’une minute de bruit.', k: 'On pose le filet assez loin pour qu’un petit coup de vent ne le touche pas.' },
@@ -52,7 +53,7 @@ L.stages = function (set) {
 };
 L.TRADE = {
   k5: 'Le jeu s’arrête de quatre façons seulement. On écrit dans le cahier avant de savoir si on a gagné, et on ne change pas les règles en cours de partie.',
-  rules: function (set) { var w = L.window(set); return [['Objectif :', 'retour à la VWAP.'], ['Quatre fins :', 'stop, VWAP atteinte, démenti à 15 min, ou ' + hourWord(w.to) + ' (fin de ta fenêtre).'], ['Rien d’autre :', 'ni point mort, ni stop suiveur. Ils raccourcissent l’exposition (−0,164 R et −1,353 R dans le document).'], ['Avant l’issue :', 'note l’heure, le niveau, le sens, la mise et ta conviction.']]; }
+  rules: function (set) { var w = L.window(set); return [['Objectif :', 'retour à la VWAP.'], ['Quatre fins :', 'stop, VWAP atteinte, démenti à 15 min, ou ' + (w.all ? 'la fin de la séance.' : hourWord(w.to) + ' (fin de ta fenêtre).')], ['Rien d’autre :', 'ni point mort, ni stop suiveur. Ils raccourcissent l’exposition (−0,164 R et −1,353 R dans le document).'], ['Avant l’issue :', 'note l’heure, le niveau, le sens, la mise et ta conviction.']]; }
 };
 L.FOOT = { n: 'Sans dérive, chaque filtre réduit les occasions sans déplacer l’espérance (ALP nº 3, partie III). Ce plan sert à décider toujours de la même façon et à tout inscrire, refus compris. Le biais de l’étape 1, la lecture la moins prouvable, ne se décide qu’une fois par séance.', k: 'Un filtre ne rend pas le jeu plus facile à gagner. Il t’aide à jouer toujours pareil, et à tout écrire dans ton cahier, même quand tu choisis de ne pas jouer.' };
 L.vwapSub = function (d) {

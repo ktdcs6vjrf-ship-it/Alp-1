@@ -12,7 +12,8 @@ Règle : **un nouveau lien à chaque amélioration** — on publie sous un nouve
 
 | Fichier | Desk | Ordre | Tests |
 |---|---|---|---|
-| `src/desks/home.js` | Desk (hub, carte de séance, flux des décisions) | 0 | — |
+| `src/desks/home.js` | Desk (hub, carte de séance en pourcentages, flux des décisions) | 0 | — |
+| `src/desks/plan.js` | Plan de trading (carte des neuf étapes, schémas 2D et reliefs 3D par principe, mode Live, méthode) | 1 | 171 |
 | `src/desks/macro.js` | Macro (rapports transcrits, régime, calendrier, méthode) | 10 | banc `test/macro-fixture.js` |
 | `src/desks/nq.js` | NQ futures (séance, niveaux GEX, contrat, taille) | 20 | 136 |
 | `src/desks/micro.js` | Stratégie intraday (plan VWAP, setups, seuil µ*, lectures) | 30 | 303 |
@@ -21,6 +22,17 @@ Règle : **un nouveau lien à chaque amélioration** — on publie sous un nouve
 | `src/desks/perf.js` | Métriques & espaces (41 métriques, heatmaps 2D, surfaces 3D) | 55 | 240 |
 | `src/desks/journal.js` | Journal (saisie scellée, registre, statistiques) | 60 | 149 |
 | `src/desks/routine.js` | Routine & revue (avant, pendant, après, progression) + Réglages | 70 / 90 | 71 |
+
+Le desk **Plan** est le point d'entrée du jour. Sa carte reprend `T.DAY_STEPS` (macro,
+biais, zones, gex, fenetre, declencheur, risque, journal, revue) ; chaque étape dit quoi
+préparer, montre ses situations en schémas SVG (illustrations, jamais des données) et en
+relief calculé, et se valide d'un bouton qui ramène à la carte. Le pourcentage d'une étape
+suit sa liste (`T.day.setPct`) ; un autre desk qui marque l'étape (`T.day.mark`) la porte à
+100 %. Un desk ouvert depuis une étape porte en tête un bouton « Revenir au plan »
+(`T.nav.setReturn`). Le mode Live inscrit un trade ou une passe d'un geste, horodaté,
+statut `ouvert` : le journal se complète après la séance. Le bouton « Enregistrer ces zones
+pour le Labo » écrit les HVZ, LVN et LVN historiques du jour dans `levels/items` (noms
+`HVZ1…`, `LVN1…`, `LVH1…`), que lit le gabarit `plan-hvz` du Labo.
 
 Le socle est `src/core.js` + `src/core.css` + `src/shell.html` ; le contrat d'un desk
 (API `T.*`, schéma du journal, règle « aucun chiffre de marché inventé ») est dans

@@ -270,3 +270,9 @@ a{color:var(--violet-2)}
 .rt-c span{font-size:12px;color:var(--mute);line-height:1.4}
 .fld input[type="text"]:not([inputmode]){font-family:var(--f-sans);font-size:15px}
 .fld input::placeholder,.fld textarea::placeholder{color:var(--mute);opacity:1}
+
+/* Étape en cours d’avancement, et bouton de retour au plan */
+.fn .pc{display:block;height:3px;border-radius:2px;background:var(--line);margin-top:7px;overflow:hidden}.fn .pc i{display:block;height:100%;background:var(--violet);border-radius:2px}
+.fn[data-s="done"] .pc i{background:var(--hi)}
+.retbar{position:sticky;top:calc(var(--bar-h) + env(safe-area-inset-top,0px) + 8px);z-index:30;display:flex;align-items:center;gap:10px;width:100%;margin:0 0 14px;padding:10px 14px;border:1px solid var(--violet-b);border-radius:var(--r);background:rgba(22,22,26,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--fg);text-align:left;font-size:13px}
+.retbar span{font:600 18px/1 var(--f-mono);color:var(--violet)}.retbar b{font-weight:600;min-width:0}

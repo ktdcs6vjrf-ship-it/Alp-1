@@ -101,7 +101,11 @@ Sauvegarde :
 - `T.shared.watch(collection, fn)` → reçoit la liste des documents (écrits par Claude) et
   rend une fonction de désabonnement. Collections : `macro`, `calendar`.
 - `T.day.mark(étape)` : marque une étape de la carte de séance comme faite aujourd'hui.
-  Étapes : `macro`, `biais`, `fenetre`, `declencheur`, `risque`, `journal`, `revue`.
+  `T.day.setPct(étape, p)` pose son avancement (0–100) ; `T.day.pct(étape)` lit 100 si
+  elle est faite, sinon le pourcentage posé. Étapes, dans l'ordre du plan : `macro`,
+  `biais`, `zones`, `gex`, `fenetre`, `declencheur`, `risque`, `journal`, `revue`.
+- `T.nav.setReturn({ desk, tab, label: () => texte, onBack })` : le prochain desk ouvert
+  porte en tête un bouton qui ramène à `desk`/`tab` (le Plan s'en sert pour ses étapes).
 
 Navigation : `T.nav.go(deskId, tabId)`, `T.toast(message)`.
 

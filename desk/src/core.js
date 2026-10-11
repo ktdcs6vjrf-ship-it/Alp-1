@@ -304,7 +304,7 @@
   };
 
   /* ================= Réglages communs ================= */
-  var SET_DEF = { instrument: 'MNQ', pointValue: 2, tick: 0.25, commissionRT: 1.24, tz: 'Europe/Paris', winFrom: 0, winTo: 9, riskPerTrade: 150, maxTradesDay: 3, maxLossesDay: 2, dailyStop: 400 };
+  var SET_DEF = { instrument: 'MNQ', pointValue: 2, tick: 0.25, commissionRT: 1.24, tz: 'Europe/Paris', winFrom: 0, winTo: 24, riskPerTrade: 150, maxTradesDay: 3, maxLossesDay: 2, dailyStop: 400 };
   T.settings = {
     get: function () { return Object.assign({}, SET_DEF, T.store.get('settings', {})); },
     set: function (patch) { T.store.set('settings', Object.assign(T.store.get('settings', {}), patch)); },
@@ -312,21 +312,27 @@
   };
 
   /* ================= Journée : les étapes de la carte de séance =================
-     Étapes : macro, biais, fenetre, declencheur, risque, journal, revue. Un desk marque une étape faite avec T.day.mark(id). */
+     Neuf étapes, dans l’ordre du plan de trading (desk Plan). Un desk marque une étape faite avec T.day.mark(id) ;
+     le Plan pose en plus un pourcentage d’avancement avec T.day.setPct(id, p). T.day.pct(id) lit 100 si l’étape est
+     faite, sinon le pourcentage posé, sinon 0. */
   T.DAY_STEPS = [
-    { id: 'macro', t: 'Macro', s: 'Régime, calendrier, risques du jour', desk: 'macro' },
-    { id: 'biais', t: 'Biais et niveaux GEX', s: 'Une fois par séance', desk: 'nq' },
-    { id: 'fenetre', t: 'Fenêtre et VWAP', s: 'Le bon côté de la moyenne', desk: 'micro' },
-    { id: 'declencheur', t: 'Déclencheur', s: 'Un seul signal écrit d’avance', desk: 'micro' },
+    { id: 'macro', t: 'Macro et calendrier', s: 'Ce qui est déjà dans le prix', desk: 'macro' },
+    { id: 'biais', t: 'Tendance de la veille', s: 'Le biais, puis la structure de Dow', desk: 'nq' },
+    { id: 'zones', t: 'Zones de la veille', s: 'HVZ, LVN, FVG au profil de volume', desk: 'plan' },
+    { id: 'gex', t: 'Cibles GEX', s: 'Les niveaux du matin, en objectifs', desk: 'nq' },
+    { id: 'fenetre', t: 'Côté VWAP', s: 'Le bon côté de la bande', desk: 'micro' },
+    { id: 'declencheur', t: 'Déclencheur', s: 'Absorption ou épuisement : un seul', desk: 'micro' },
     { id: 'risque', t: 'Risque et taille', s: 'Le stop décide de la taille', desk: 'risk' },
-    { id: 'journal', t: 'Exécution et journal', s: 'Chaque décision, refus compris', desk: 'journal' },
+    { id: 'journal', t: 'Journal, après', s: 'Compléter les trades pris en live', desk: 'journal' },
     { id: 'revue', t: 'Revue du soir', s: 'Ce que la journée enseigne', desk: 'routine' }
   ];
   function dayKey() { var p = partsIn('Europe/Paris'); return p.y + '-' + pad(p.mo) + '-' + pad(p.d); }
   T.day = {
     key: dayKey,
-    get: function () { var d = T.store.get('day', { date: '', done: {} }); if (d.date !== dayKey()) d = { date: dayKey(), done: {} }; return d; },
+    get: function () { var d = T.store.get('day', { date: '', done: {} }); if (d.date !== dayKey()) d = { date: dayKey(), done: {} }; if (!d.pct || typeof d.pct !== 'object') d.pct = {}; return d; },
     mark: function (id, on) { var d = T.day.get(); if (on === false) delete d.done[id]; else d.done[id] = Date.now(); T.store.set('day', d); },
+    setPct: function (id, p) { var d = T.day.get(), v = Math.max(0, Math.min(100, Math.round(+p || 0))); if (d.pct[id] === v) return; d.pct[id] = v; T.store.set('day', d); },
+    pct: function (id, d) { d = d || T.day.get(); return d.done[id] ? 100 : (isFinite(d.pct[id]) ? d.pct[id] : 0); },
     on: function (f) { return T.store.on('day', function () { f(T.day.get()); }); }
   };
 
@@ -384,7 +390,7 @@
   U.flow = function (o) {
     var wrap = h('div', { class: 'flow' }), svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'fw'); wrap.appendChild(svg);
     var els = o.nodes.map(function (n, i) {
-      var el = h('button', { class: 'fn', type: 'button', 'data-s': n.state || 'todo', on: n.onClick ? { click: n.onClick } : null }, h('span', { class: 'ix' }, n.ix || String(i + 1)), h('span', { class: 'tx' }, h('b', null, n.title), n.sub ? h('span', null, n.sub) : null), n.go ? h('span', { class: 'go' }, n.go) : null);
+      var el = h('button', { class: 'fn', type: 'button', 'data-s': n.state || 'todo', on: n.onClick ? { click: n.onClick } : null }, h('span', { class: 'ix' }, n.ix || String(i + 1)), h('span', { class: 'tx' }, h('b', null, n.title), n.sub ? h('span', null, n.sub) : null, n.pct != null ? h('span', { class: 'pc', role: 'progressbar', 'aria-valuenow': String(n.pct), 'aria-valuemin': '0', 'aria-valuemax': '100' }, h('i', { style: 'width:' + Math.max(0, Math.min(100, n.pct)) + '%' })) : null), n.go ? h('span', { class: 'go' }, n.go) : null);
       wrap.appendChild(el); return el;
     });
     function draw() {
@@ -656,9 +662,11 @@
   /* ================= Coquille : menu, navigation ================= */
   T.desk = function (def) { DESKS.push(def); DESKS.sort(function (a, b) { return (a.order == null ? 99 : a.order) - (b.order == null ? 99 : b.order); }); };
   T.desks = function () { return DESKS.slice(); };
-  var cur = { id: null, tab: null, cleanup: null };
+  var cur = { id: null, tab: null, cleanup: null }, RET = null;
   T.nav = {
     current: function () { return cur.id; },
+    /* Retour : un desk ouvert depuis une étape du plan porte en tête un bouton qui y ramène. r = { desk, tab, label: function () → texte, onBack } */
+    setReturn: function (r) { RET = r || null; },
     go: function (id, tab, keep) {
       var d = DESKS.find(function (x) { return x.id === id; }) || DESKS[0]; if (!d) return;
       if (cur.cleanup) { try { cur.cleanup(); } catch (e) {} cur.cleanup = null; }
@@ -668,6 +676,8 @@
       view.classList.toggle('still', !!keep); var sy = sy0;
       try { var c = d.render(view, ctx); if (typeof c === 'function') cur.cleanup = c; }
       catch (e) { console.error(e); view.appendChild(U.empty({ title: 'Ce desk a rencontré une erreur', text: String(e && e.message || e) })); }
+      if (RET && RET.desk === d.id) RET = null;
+      else if (RET) { var rt = RET, lab = ''; try { lab = rt.label(); } catch (e) { lab = 'Revenir au plan'; } view.insertBefore(h('button', { class: 'retbar', type: 'button', on: { click: function () { var r2 = rt; RET = null; if (r2.onBack) r2.onBack(); T.nav.go(r2.desk, r2.tab); } } }, h('span', null, '‹'), h('b', null, lab)), view.firstChild); }
       try { T.typoTree(view); } catch (e) {}
       try { history.replaceState(null, '', '#' + d.id); } catch (e) {}
       lsSet('last', d.id);
