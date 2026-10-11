@@ -1097,7 +1097,7 @@ recoupe ses nombres contre `desk/ref/alp3txt/`. **Aucun chiffre de marché n'y e
 dans les collections `macro` et `calendar` de l'artefact (schémas dans
 `desk/CONTRACT.md`) à partir des captures que l'utilisateur envoie, traduites en
 français. Un nouveau lien à chaque amélioration, comme pour le reste. Dernier
-artefact : https://claude.ai/artifact/RUirhupXYNSPHSMGp9BTDH (précédents 1772yYTUpYmuAkEJ7DQWm2, DgoivKfGJjD8mrJ4UFzGwD). Lire
+artefact : https://claude.ai/artifact/LMuRjnu65akSE8LeEggTvN (précédents RUirhupXYNSPHSMGp9BTDH, 1772yYTUpYmuAkEJ7DQWm2, DgoivKfGJjD8mrJ4UFzGwD). Lire
 `desk/README.md` avant d'y toucher.
 
 ## Carte des modules
