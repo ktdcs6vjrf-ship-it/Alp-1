@@ -78,9 +78,20 @@ bougies colorées se superposent.
 
 ## 1 ter. Si rien ne s'affiche
 
-Regarder d'abord le tableau, en haut à droite.
+**D'abord, le mode démo.** Groupe ⑤, case « Mode démo : niveaux synthétiques
+autour du prix ». L'indicateur ignore alors les zones de texte et pose, sur la
+séance de la dernière bougie, des niveaux, trois confluences et un profil 0DTE
+**inventés**, en pour-mille du prix d'ouverture, marqués « DÉMO » partout
+(tableau : « ⚠ MODE DÉMO · Alp-0 Zones v4 »). Sur NQ1! : 13 traits pointillés,
+les zones « CW 0D · 1D · VAH », « GF 0D · HVN », « MaxPain 0D · POC », des
+pastilles de touche, et le profil à droite de la dernière bougie. Si la démo
+s'affiche, l'indicateur fonctionne et c'est le texte collé qu'il faut
+regarder ; sinon, c'est le script ou TradingView — envoyer une capture du
+tableau ou le message d'erreur. **À éteindre avant tout usage réel.**
 
-1. **La première ligne** dit la version qui tourne (`Alp-0 Zones v3`). Si elle
+Ensuite, lire le tableau, en haut à droite.
+
+1. **La première ligne** dit la version qui tourne (`Alp-0 Zones v4`). Si elle
    n'y est pas, ou si les bougies ne sont pas colorées par le z-score, c'est
    une ancienne version du script qui est sur le graphique.
 2. **Lecture** dit ce qui a été lu dans chaque zone de texte. `A 33 lignes ·
@@ -462,7 +473,7 @@ repaint ; gel à 22 h ; créneaux NQ / MNQ ; profil 0DTE ; VWAP et bandes ;
 l'exemple fictif ci-dessus ; z-score (valeur exacte contre une référence
 indépendante, préchauffage en na, marche isolée à z = 7, dégradé, mèches et
 bordures, T2 ≤ T1) ; un texte collé sans retours à la ligne ; la situation
-d'un graphique regardé le week-end, séance close. 117 contrôles.
+d'un graphique regardé le week-end, séance close ; le mode démo. 131 contrôles.
 
 Ce que ces essais **ne prouvent pas** : PineTS n'est pas le compilateur de
 TradingView. Il ne vérifie ni toutes les règles de typage (qualificatifs

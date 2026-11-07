@@ -487,5 +487,28 @@ console.log('P. Exemple de la consigne du bot');
   verifie('P confluence « MaxPain 0D · POC »', noms.includes('FICTIF · MaxPain 0D · POC'), JSON.stringify(noms));
 }
 
+// ── Q. Mode démo : tester l'affichage sans aucune donnée ──
+console.log('Q. Mode démo');
+{
+  // Séance du vendredi 6, vue après la clôture ; la zone A contient un texte
+  // faux, qui doit être ignoré. Démo : 13 niveaux (6 + 1 + 2 + 4), trois
+  // confluences, profil de 33 strikes, aucun avertissement.
+  const b = seance(J, '00:00', '23:00', [['00:00', 29250], ['09:00', 29330], ['15:00', 29180], ['23:00', 29260]]);
+  const r = await lancer('n importe quoi', b, { 'Mode démo : niveaux synthétiques autour du prix': true });
+  verifie('Q en-tête « ⚠ MODE DÉMO · Alp-0 Zones v4 »', r.cellules.includes('⚠ MODE DÉMO · Alp-0 Zones v4'), r.cellules[0]);
+  verifie('Q zone A ignorée, aucun avertissement', !r.cellules.some(c => c.startsWith('Avertissements')), msgs(r).split('\n').filter(c => c.includes('—')).join(' | '));
+  const traits = r.lignes.filter(l => l.xloc === 'bt');
+  verifie('Q 13 niveaux, du début de séance au gel', traits.length === 13 && traits.every(l => l.x1 === paris(J, '00:01') && l.x2 === paris(J, '22:00')), `${traits.length}`);
+  const noms = r.etiquettes.filter(e => e.style === 'style_label_left' && !e.text.startsWith('-')).map(e => e.text.split('  ◦')[0]);
+  for (const n of ['DÉMO · CW 0D · 1D · VAH', 'DÉMO · GF 0D · HVN', 'DÉMO · MaxPain 0D · POC'])
+    verifie(`Q confluence « ${n} »`, noms.includes(n), JSON.stringify(noms));
+  const prof = r.lignes.filter(l => l.xloc === 'bi' && l.y1 === l.y2);
+  verifie('Q profil de 33 strikes, à droite de la dernière bougie', prof.length === 33 && prof.every(l => Math.min(l.x1, l.x2) >= b.length - 1 + 6), String(prof.length));
+  verifie('Q en-tête du profil marqué DÉMO', r.etiquettes.some(e => e.text.startsWith('DÉMO · GEX 0DTE')));
+  verifie('Q des touches ont lieu et sont jugées', marqueurs(r).length > 0, String(marqueurs(r).length));
+  const r2 = await lancer('', b);
+  verifie('Q démo éteinte : rien de synthétique', !r2.lignes.some(l => l.xloc === 'bt') && !r2.cellules.some(c => c.includes('DÉMO')));
+}
+
 console.log(`\n${ok} contrôle(s) réussi(s), ${ko} échec(s)`);
 if (ko) { console.log('Échecs : ' + echecs.join(' | ')); process.exitCode = 1; }

@@ -167,13 +167,15 @@ confirmée, profil GEX 0DTE à droite. **Étape 1** de son cahier des charges
 (plus le profil de l'étape 2) ; restent la comparaison minuit / 5 h et
 l'étape 3 (structures, confirmations, statistiques). Le format, l'exemple
 fictif et les règles sont dans `docs/zones-gamma-format.md` ; le banc
-`tools/zones-pinets/` exécute le vrai fichier sous PineTS (121 contrôles) —
+`tools/zones-pinets/` exécute le vrai fichier sous PineTS (131 contrôles) —
 ce n'est pas le compilateur TradingView. Le z-score de l'utilisateur
 (« Z + Single Prints (OPEX) ») y est intégré en tête, corrigé. Version
 affichée en tête du tableau (`VERSION`), à incrémenter à chaque livraison :
-c'est elle qui dit à l'utilisateur quel code tourne sur son graphique. Page :
-https://claude.ai/artifact/7Nvvsf92N1ZESrvg48PFG5 (précédentes 2kE8QktJ7nGt8GfjENGA6f,
-HPJD3LA8YSHLMpdZusxYWF). Consigne du bot de relevés (« Lou », que
+c'est elle qui dit à l'utilisateur quel code tourne sur son graphique. Un **mode
+démo** (groupe ⑤) pose des niveaux inventés, marqués DÉMO, pour tester
+l'affichage sans donnée. Page :
+https://claude.ai/artifact/HxTeeNfPKF52SyL24oyzMN (v4, mode démo ; précédentes
+7Nvvsf92N1ZESrvg48PFG5, 2kE8QktJ7nGt8GfjENGA6f, HPJD3LA8YSHLMpdZusxYWF). Consigne du bot de relevés (« Lou », que
 l'utilisateur appelle aussi « grok bot ») : `docs/consigne-lou-alpz.md`, page
 https://claude.ai/artifact/F18pWMEua798hG23GEM4Q5 ; son exemple est exécuté
 par le banc (scénario P). Session du 7 novembre 2026

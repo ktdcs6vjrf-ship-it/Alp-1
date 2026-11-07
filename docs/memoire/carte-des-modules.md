@@ -489,6 +489,13 @@ Hors du noyau Python
   la relecture par marqueurs d'un texte collé sans retours à la ligne, et le
   profil à 6 barres. **Leçon : un indicateur qui peut ne rien afficher pour
   de bonnes raisons doit dire lesquelles, à l'écran.**
+  Deuxième retour (v3) : « aucune ligne ni graphique » encore, sans capture.
+  Réponse v4 : un **mode démo** (groupe ⑤) qui ignore les zones de texte et
+  pose des niveaux inventés en ‰ du prix d'ouverture (`rel=1` sur la ligne R,
+  résolu à l'activation), datés de la séance de la dernière bougie
+  (`last_bar_time`), marqués DÉMO partout. Il sépare les deux pannes
+  possibles : si la démo s'affiche, c'est le texte collé ; sinon, c'est le
+  script ou TradingView.
   Pièges enterrés : **une fonction Pine ne peut pas modifier une variable
   globale** (`n += 1` dans une fonction est refusé) — les compteurs vivent
   dans un tableau global (`cpt`), dont une fonction peut changer le contenu ;
@@ -509,7 +516,7 @@ Hors du noyau Python
   dépôt.** PineTS (runtime Pine v6 libre de LuxAlgo, `pinets@0.13.1`)
   transpile le vrai fichier et l'exécute sur des bougies synthétiques ; le
   banc lit lignes, étiquettes, boîtes, cellules de tableau et couleurs de
-  `plotcandle`. 121 contrôles, dont l'exemple fictif lu dans la doc, le
+  `plotcandle`. 131 contrôles, dont l'exemple fictif lu dans la doc, le
   z-score contre une référence indépendante, et la situation exacte du
   premier retour de l'utilisateur (exemple collé, NQ1!, vu le week-end).
   **Piège du banc** : PineTS traite une bougie postérieure à l'horloge du

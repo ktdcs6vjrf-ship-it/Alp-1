@@ -46,7 +46,7 @@ MAX_OBS  = 5000
 MAX_EPQ  = 3000
 // Affichée en tête du tableau : la première chose à vérifier quand le
 // graphique ne montre pas ce qu'on attend est la version qui tourne.
-VERSION  = "v3"
+VERSION  = "v4"
 
 
 // ─── ①–③ Z-score (heatmap des bougies) ────────────────────────────────────
@@ -123,6 +123,8 @@ plausPct = input.float(5.0, "Plausibilité : écart max au prix, en %", minval =
 syncSec  = input.int(60, "Base : écart d'horodatage toléré (s)", minval = 0, maxval = 86400,
      group = gR, display = display.none,
      tooltip = "Si les deux prix qui ont servi à calculer la base sont relevés à des instants plus éloignés que cela, la base est déclarée APPROXIMATIVE.")
+demoOn = input.bool(false, "Mode démo : niveaux synthétiques autour du prix", group = gR,
+     tooltip = "Pour tester l'affichage sans aucune donnée. Les zones de texte sont ignorées ; des niveaux, des confluences et un profil 0DTE SYNTHÉTIQUES sont posés autour du prix de la dernière séance, marqués DÉMO partout. Ce ne sont pas des données : à éteindre avant tout usage réel.")
 gardeCumul = input.bool(false, "Garder les plages cumulatives recouvrantes", group = gR,
      tooltip = "Une plage 0-10 DTE recouvre la 0DTE déjà fournie : par défaut elle est écartée pour ne pas compter deux fois la même échéance.")
 
@@ -467,6 +469,7 @@ type Rel
     bool   doublon = false
     bool   recouvre = false
     bool   fictif = false
+    bool   relatif = false
     bool   affiche = false
     bool   actif = false
     bool   vu = false
@@ -526,6 +529,8 @@ msg(string m) =>
 
 racine = racineIn != "" ? str.upper(str.trim(racineIn)) : str.upper(syminfo.root)
 tickPx = na(syminfo.mintick) or syminfo.mintick <= 0 ? tickIn : syminfo.mintick
+// Préfixe des étiquettes d'un relevé qui n'est pas une donnée réelle.
+PFX = demoOn ? "DÉMO · " : "FICTIF · "
 
 // Les mots séparés par des espaces, les vides ôtés.
 mots(string l) =>
@@ -784,6 +789,31 @@ fermer(int ci) =>
             msg(r.ref + " — « " + r.id + " » : des strikes GEX dans un relevé de famille " + r.fam + " → ignorés")
             r.strBad := true
 
+// Le texte de la démo, écrit comme Lou l'écrirait, mais en prix RELATIFS
+// (rel=1 : ‰ de l'ouverture de la première bougie disponible). Sa date est
+// celle de la dernière bougie du graphique : la démo tombe toujours sur la
+// séance qu'on regarde. Ses valeurs sont inventées et marquées DÉMO partout.
+demoTexte() =>
+    t = last_bar_time
+    j = str.format_time(t, "yyyy-MM-dd", tzIn)
+    jm1 = str.format_time(t - JOUR_MS, "yyyy-MM-dd", tzIn)
+    int k = 1
+    while dayofweek(t + k * JOUR_MS, tzIn) == dayofweek.saturday or dayofweek(t + k * JOUR_MS, tzIn) == dayofweek.sunday
+        k += 1
+    j1 = str.format_time(t + k * JOUR_MS, "yyyy-MM-dd", tzIn)
+    tete = " inst=" + racine + " cible=" + racine + " date=" + j + " collecte=" + j + "T00:00 dispo=" + j + "T00:01 rel=1"
+    "ALPZ 1\n" +
+         "R id=DEMO-G0 src=DEMO fam=GEX cmd=demo" + tete + " dte=0-0 ech=" + j + "\n" +
+         "N CW 5.0 démo\nN PS -5.0 démo\nN GF -1.4 démo\nN R1 3.0 démo\nN S1 -3.0 démo\nN MaxPain 0.4 démo\n" +
+         "G unite=démo signe=calls+/puts- origine=api net=1\n" +
+         "S -8:-0.2 -7.5:-0.3 -7:-0.4 -6.5:-0.6 -6:-0.8 -5.5:-1.1 -5:-1.6 -4.5:-1.0 -4:-0.7 -3.5:-0.5 -3:-0.6\n" +
+         "S -2.5:-0.4 -2:-0.3 -1.5:-0.1 -1:0.1 -0.5:0.3 0:0.4 0.5:0.5 1:0.6 1.5:0.5 2:0.7 2.5:0.6\n" +
+         "S 3:0.9 3.5:0.8 4:1.0 4.5:1.2 5:1.8 5.5:1.1 6:0.7 6.5:0.5 7:0.4 7.5:0.3 8:0.2\n" +
+         "R id=DEMO-G1 src=DEMO fam=GEX cmd=demo" + tete + " dte=1-1 ech=" + j1 + "\nN CW 5.1 démo\n" +
+         "R id=DEMO-IV src=DEMO fam=IV cmd=demo" + tete + " dte=0-0 ech=" + j + "\nN IV+1 7.5 démo\nN IV-1 -7.5 démo\n" +
+         "R id=DEMO-VP src=DEMO fam=VP cmd=demo" + tete + " seance=" + jm1 + "\n" +
+         "N POC 0.5 démo\nN VAH 5.2 démo\nN VAL -4.2 démo\nN HVN -1.6 démo"
+
 // Un texte collé sans aucun retour à la ligne (certains champs de saisie
 // les remplacent par des espaces) est relu par MARQUEURS : une nouvelle ligne
 // commence à « ALPZ 1 », à un « # », à R / B / G suivis d'un « clé=valeur »,
@@ -830,7 +860,7 @@ resegmenter(string brut) =>
 // Ce qui a été lu, zone par zone, est écrit au tableau (ligne « Lecture ») :
 // c'est la première chose à regarder quand rien ne s'affiche.
 if barstate.isfirst
-    zonesTxt = array.from(txtA, txtB, txtC)
+    zonesTxt = demoOn ? array.from(demoTexte(), "", "") : array.from(txtA, txtB, txtC)
     for zi = 0 to 2
         brut = zonesTxt.get(zi)
         zl = zi == 0 ? "A" : zi == 1 ? "B" : "C"
@@ -880,7 +910,8 @@ if barstate.isfirst
                 r.cible := str.upper(val(m, "cible"))
                 r.contrat := str.upper(val(m, "contrat"))
                 r.dDate := val(m, "date")
-                r.fictif := r.src == "FICTIF"
+                r.fictif := r.src == "FICTIF" or r.src == "DEMO"
+                r.relatif := val(m, "rel") == "1"
                 if r.id == ""
                     msg(ref + " — relevé sans id : refusé")
                     r.valide := false
@@ -1138,7 +1169,10 @@ if barstate.isfirst
     for r in rels
         ir = racineDe(r.inst)
         nqFam = (ir == "NQ" or ir == "MNQ") and (racine == "NQ" or racine == "MNQ")
-        if ir == racine
+        if r.relatif
+            r.ajout := 0.0
+            r.convNote := "démo : prix en ‰ du prix d'ouverture à l'activation"
+        else if ir == racine
             r.ajout := 0.0
         else if nqFam
             r.ajout := 0.0
@@ -1158,7 +1192,7 @@ if barstate.isfirst
         ciblOk = contientMot(r.cible, racine)
         slotRef = r.fam == "VP" ? slotVP * 60 + slotVPm : racine == "MNQ" ? slotMNQ * 60 + slotMNQm : slotNQ * 60 + slotNQm
         slotOk = not na(r.slotMin) and ecartCreneau(r.slotMin, slotRef) <= slotTol
-        filtre = filtreMode == "Tous" ? true : filtreMode == "Identifiants listés" ? contientMot(idsIn, r.id) : ciblOk and slotOk
+        filtre = demoOn or filtreMode == "Tous" ? true : filtreMode == "Identifiants listés" ? contientMot(idsIn, r.id) : ciblOk and slotOk
         r.affiche := r.valide and r.convOk and not r.doublon and (not r.recouvre or gardeCumul) and famOk and dteOk and filtre
         if r.valide and not r.convOk and filtre
             msg("« " + r.id + " » : " + r.convNote)
@@ -1270,7 +1304,7 @@ archiver(int tFin) =>
             epLo.push(z.lo)
             epHi.push(z.hi)
             epN.push(z.n)
-            epLab.push((z.fictif ? "FICTIF · " : "") + z.lab)
+            epLab.push((z.fictif ? PFX : "") + z.lab)
             epDet.push(z.det)
 
 // La dernière touche connue d'une zone qui recouvre la bande : le délai de
@@ -1409,6 +1443,16 @@ if barstate.isconfirmed
             chg := true
             if doit and not r.vu
                 r.vu := true
+                // Démo : les prix sont des ‰ de l'ouverture de la première
+                // bougie disponible ; ils deviennent des prix ici, une fois.
+                if r.relatif
+                    if r.nNiv > 0
+                        for q = r.n0 to r.n0 + r.nNiv - 1
+                            nv = nivs.get(q)
+                            nv.px := math.round(open * (1.0 + nv.pxSrc / 1000.0) / tickPx) * tickPx
+                    if r.nStr > 0
+                        for q = r.s0 to r.s0 + r.nStr - 1
+                            stK.set(q, math.round(open * (1.0 + stK.get(q) / 1000.0) / tickPx) * tickPx)
                 if r.nNiv > 0
                     for q = r.n0 to r.n0 + r.nNiv - 1
                         nv = nivs.get(q)
@@ -1447,7 +1491,7 @@ if barstate.isconfirmed
         inter = high >= bLo and low <= bHi
         if z.arme and inter
             cote = open > bHi ? 1 : open < bLo ? -1 : z.cote
-            o = Obs.new(z.lo, z.hi, cote, time, z.n >= 2, (z.fictif ? "FICTIF · " : "") + z.lab)
+            o = Obs.new(z.lo, z.hi, cote, time, z.n >= 2, (z.fictif ? PFX : "") + z.lab)
             o.gel := z.gel
             [e, mtf] = jugerTouche(o, open, high, low, close, bLo, bHi)
             o.etat := e
@@ -1598,7 +1642,7 @@ if barstate.islast
                      color = color.new(#9598A1, 60), style = line.style_dotted, width = 1))
             regime = na(r.gNet) ? "régime : net non fourni" :
                  "net source " + str.tostring(r.gNet, "#.##") + " " + r.gUnite + (r.gNet > 0 ? " → positif" : r.gNet < 0 ? " → négatif" : " → nul")
-            entete = (r.fictif ? "FICTIF · " : "") + "GEX 0DTE · " + r.src + " · " + r.id + "\néch. " + r.ech +
+            entete = (r.fictif ? PFX : "") + "GEX 0DTE · " + r.src + " · " + r.id + "\néch. " + r.ech +
                  " · relevé " + hDisp(r.tCol) + " · " + r.gUnite + " · " + r.gSigne +
                  (r.gOrig == "image" ? " · lu sur image (approx.)" : "") + "\n" + regime + " · instantané figé, pas un flux live"
             if nLab() < QE
@@ -1657,7 +1701,7 @@ if barstate.islast
                         o = obs.get(i)
                         if etat == "" and o.t0 >= epT0 and math.abs(o.lo - z.lo) < 0.000001 and math.abs(o.hi - z.hi) < 0.000001
                             etat := "  ◦ " + o.etat
-                txt = (z.fictif ? "FICTIF · " : "") + z.lab + etat
+                txt = (z.fictif ? PFX : "") + z.lab + etat
                 if vif
                     etq(bar_index + labOff, (z.lo + z.hi) / 2.0, txt, z.det, false)
                 else
@@ -1717,12 +1761,12 @@ if barstate.islast
                 nVenir += 1
             if not r.valide or r.doublon or (r.recouvre and not gardeCumul) or not r.convOk
                 nEcart += 1
-        table.cell(tb, 0, row, (fict ? "⚠ EXEMPLE FICTIF · " : "") + "Alp-0 Zones " + VERSION, text_color = fict ? cW : cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 0, row, (demoOn ? "⚠ MODE DÉMO · " : fict ? "⚠ EXEMPLE FICTIF · " : "") + "Alp-0 Zones " + VERSION, text_color = fict ? cW : cT, text_size = size.small, text_halign = text.align_left)
         table.cell(tb, 1, row, "ALPZ 1 · " + syminfo.ticker + (syminfo.current_contract != "" ? " (" + syminfo.current_contract + ")" : "") + " · " + filtreMode,
              text_color = cT, text_size = size.small, text_halign = text.align_right)
         row += 1
         table.cell(tb, 0, row, "Lecture", text_color = cT, text_size = size.small, text_halign = text.align_left)
-        table.cell(tb, 1, row, lecture.join("\n"), text_color = nLus == 0 ? cW : cT, text_size = size.small, text_halign = text.align_right)
+        table.cell(tb, 1, row, (demoOn ? "démo : niveaux synthétiques, zones A à C ignorées\n" : "") + lecture.join("\n"), text_color = nLus == 0 ? cW : cT, text_size = size.small, text_halign = text.align_right)
         row += 1
         table.cell(tb, 0, row, "Relevés", text_color = cT, text_size = size.small, text_halign = text.align_left)
         table.cell(tb, 1, row, "lus " + str.tostring(nLus) + " · actifs " + str.tostring(nAct) + " · à venir " + str.tostring(nVenir) + " · écartés " + str.tostring(nEcart),
