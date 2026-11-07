@@ -158,6 +158,21 @@ français. Un nouveau lien à chaque amélioration, comme pour le reste. Dernier
 artefact : https://claude.ai/artifact/LMuRjnu65akSE8LeEggTvN (précédents RUirhupXYNSPHSMGp9BTDH, 1772yYTUpYmuAkEJ7DQWm2, DgoivKfGJjD8mrJ4UFzGwD). Lire
 `desk/README.md` avant d'y toucher.
 
+## Hors du corpus — Alp-0 Zones (Pine)
+
+`pine/alp0-zones.pine` : l'indicateur TradingView de l'utilisateur pour NQ /
+MNQ — VWAP σ réglé comme « The Strategists », relevés Gexbot collés par son
+assistant Lou au format **ALPZ 1**, confluences, touches et issues sur bougie
+confirmée, profil GEX 0DTE à droite. **Étape 1** de son cahier des charges
+(plus le profil de l'étape 2) ; restent la comparaison minuit / 5 h et
+l'étape 3 (structures, confirmations, statistiques). Le format, l'exemple
+fictif et les règles sont dans `docs/zones-gamma-format.md` ; le banc
+`tools/zones-pinets/` exécute le vrai fichier sous PineTS (95 contrôles) —
+ce n'est pas le compilateur TradingView. **Le code z-score demandé n'a pas
+été fourni** : à intégrer quand l'utilisateur le collera. Page :
+https://claude.ai/artifact/HPJD3LA8YSHLMpdZusxYWF. Session du 7 novembre 2026
+sur la branche `claude/exciting-dijkstra-ks25vr`, imposée par la session.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas

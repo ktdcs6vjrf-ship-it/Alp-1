@@ -1,0 +1,12 @@
+{
+  "name": "alp0-zones-banc",
+  "private": true,
+  "type": "module",
+  "description": "Banc d'essai de pine/alp0-zones.pine sous PineTS (runtime Pine v6). Hors des tests Python du dépôt.",
+  "scripts": {
+    "test": "node scenarios.mjs"
+  },
+  "dependencies": {
+    "pinets": "0.13.1"
+  }
+}

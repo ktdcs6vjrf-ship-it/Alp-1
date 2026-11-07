@@ -462,7 +462,49 @@ Hors du noyau Python
   défaut d'un `switch` est indenté de quatre **à juste titre** : c'est une
   branche, pas une continuation.
   Voir `docs/gex-discord-vers-tradingview.md`.
-- Ces trois fichiers ne participent ni aux documents ni aux tests : ils n'ont
+- `pine/alp0-zones.pine` — **étape 1** du cahier des charges « zones gamma,
+  IV et VP » de l'utilisateur, plus le profil 0DTE de l'étape 2. Un seul
+  indicateur : ① le VWAP et ses six bandes σ, VWAP précédent ±1/±2,
+  étiquettes — réplique des réglages de « The Strategists - Aggregated VWAP »
+  saisis sur le graphique (agrégation multi-places non reprise : sans objet au
+  CME) ; ② le lecteur du format **ALPZ 1** que l'assistant Lou remplit à partir
+  des commandes Discord Gexbot (spécification complète, exemple fictif et
+  règles dans `docs/zones-gamma-format.md`) ; ③ niveaux gris pointillés de la
+  disponibilité au **gel de 22 h** (posé à 22:00 exactes, appliqué à la
+  bougie suivante) ; ④ CONFLUENCES (écart ≤ 8 pt ET diamètre ≤ 16 pt, prix
+  jamais déplacés, minuit et 5 h jamais fusionnés) ; ⑤ touches et issues sur
+  bougie confirmée — rejetée, cassée, ambiguë, non résolue ; ⑥ profil GEX signé
+  0DTE à droite du prix, jamais reconstruit depuis CW/PS/GF.
+  Pièges enterrés : **une fonction Pine ne peut pas modifier une variable
+  globale** (`n += 1` dans une fonction est refusé) — les compteurs vivent
+  dans un tableau global (`cpt`), dont une fonction peut changer le contenu ;
+  un ternaire qui contient `.get()` peut déborder si Pine évalue la branche
+  non prise — on passe par un `if` ; sous quota, le premier jet dessinait les
+  jours **les plus anciens** d'abord et sacrifiait le jour courant — trouvé par
+  le scénario E du banc, corrigé (jour courant d'abord, zones vivantes avant
+  les archives) ; la bougie de touche ne peut pas compter une réaction dont
+  l'ordre par rapport à la touche est inconnu — seule la **clôture** au-delà
+  du seuil la rend certaine.
+  Gexbot (docs.gexbot.com, lu en novembre 2026) : fenêtres DTE inclusives et
+  **cumulatives** ; fenêtre vide → première échéance suivante ; `NQ` est un
+  alias de `NDX` ; cartes **image** en Discord, nombres par strike seulement
+  par l'API Research ; rien n'est recalculé entre la clôture et l'avant-
+  ouverture — donc à minuit comme à 5 h à Paris, `0-0` et `1-1` peuvent rendre
+  **la même échéance** : le script le traite en doublon d'échéance.
+- `tools/zones-pinets/` — **le premier banc qui exécute un fichier Pine du
+  dépôt.** PineTS (runtime Pine v6 libre de LuxAlgo, `pinets@0.13.1`)
+  transpile le vrai fichier et l'exécute sur des bougies synthétiques ; le
+  banc lit lignes, étiquettes, boîtes et cellules de tableau. 95 contrôles,
+  dont l'exemple fictif lu dans la doc. Trois écarts de PineTS sont
+  contournés dans le code sans effet pour TradingView (voir son README). Ce
+  n'est pas le compilateur TradingView : la vérification finale reste
+  l'éditeur Pine de l'utilisateur. Hors des tests Python.
+- Documentation Pine officielle : `www.tradingview.com` est joignable depuis
+  l'environnement « X » (ajouté le 7 novembre 2026). Les pages du manuel
+  (`/pine-script-docs/...`) se lisent avec `curl --compressed` et une
+  conversion HTML → texte ; le manuel de référence (`/pine-script-reference/v6/`)
+  est une application JavaScript et ne se lit pas ainsi.
+- Ces quatre fichiers ne participent ni aux documents ni aux tests : ils n'ont
   pas de loi nulle et n'en revendiquent aucune. **La version déployée sur le
   graphique peut donc diverger de celle du dépôt sans que rien ne le
   signale** — c'est arrivé sur `alp0.pine`, dont le panneau imprimait une

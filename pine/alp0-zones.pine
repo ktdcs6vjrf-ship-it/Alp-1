@@ -1,0 +1,1666 @@
+//@version=6
+indicator("Alp-0 Zones", "Alp-0 Zones", overlay = true,
+     max_lines_count = 500, max_labels_count = 500, max_boxes_count = 500)
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Alp-0 Zones — VWAP σ · zones gamma, IV et profil de volume · touches
+//
+//  ÉTAPE 1 du cahier des charges (docs/zones-gamma-format.md) :
+//    ① VWAP et six bandes σ, VWAP de la période précédente : les réglages de
+//       « The Strategists - Aggregated VWAP » tels qu'ils sont saisis sur le
+//       graphique (agrégation désactivée — sans objet sur un future CME) ;
+//    ② import texte des relevés Gexbot que Lou colle, format ALPZ 1 ;
+//    ③ niveaux en gris pointillé, étiquettes à droite, filtres ;
+//    ④ CONFLUENCES : les niveaux proches forment une seule zone, sans
+//       qu'aucun prix soit déplacé ;
+//    ⑤ touches et réactions, jugées sur bougies confirmées seulement ;
+//    ⑥ profil GEX signé 0DTE, à droite du prix, s'il est fourni par strike.
+//
+//  Ce que le script ne fait pas — et ne peut pas faire
+//  ---------------------------------------------------
+//  · Pine n'a aucun accès réseau : il ne lit pas Discord, ne lance aucune
+//    commande, n'interroge aucune API. Le collage de Lou est la seule entrée.
+//  · Il ne fabrique aucune valeur : une donnée absente reste absente, une
+//    donnée invalide est refusée et signalée au tableau.
+//  · Il ne passe aucun ordre et n'affiche aucune probabilité ni aucun score.
+//    Une confluence est une hypothèse de travail, pas une preuve.
+//  · Il ne s'exécute qu'aux mises à jour du graphique. Le gel de 22 h est
+//    POSÉ à 22 h (la fin du segment est l'horodatage exact), mais il n'est
+//    APPLIQUÉ qu'à la première bougie qui suit : sans bougie, rien ne bouge.
+//  · Il n'a pas de mémoire propre : le texte collé EST l'archive. Le
+//    modifier réécrit l'historique ; le script ne peut pas le détecter.
+//
+//  Vocabulaire. On parle de CONFLUENCE, jamais de co-intégration : la
+//  proximité de deux niveaux n'est pas un test économétrique.
+// ═══════════════════════════════════════════════════════════════════════════
+
+JOUR_MS  = 86400000
+HEURE_MS = 3600000
+MIN_MS   = 60000
+MAX_MSG  = 80
+MAX_OBS  = 5000
+MAX_EPQ  = 3000
+
+
+// ─── ① VWAP — réglages repris de « The Strategists » ───────────────────────
+gV = "① VWAP SELECTION"
+vwAnc    = input.string("Day", "VWAP and SDev:", group = gV,
+     options = ["Day", "Week", "Month", "Quarter", "Year", "AVWAP"])
+vwSrc    = input.source(hlc3, "VWAP Source", group = gV)
+vwStart  = input.time(timestamp("26 Jan 2023 00:00:00 UTC+0"), "Start Date AVWAP",
+     group = gV, tooltip = "Lu seulement en mode AVWAP : le VWAP part de cette date et ne se remet plus à zéro.")
+vwPlotSd = input.bool(true, "Plot Standard Deviation", group = gV, inline = "sd")
+vwFill   = input.bool(true, "Fill Bands", group = gV, inline = "sd")
+
+gS = "STANDARD DEVIATION SELECTION"
+on1 = input.bool(true, "", group = gS, inline = "m1")
+k1  = input.float(1.0, "StDev mult 1", minval = 0.0, step = 0.5, group = gS, inline = "m1")
+on2 = input.bool(true, "", group = gS, inline = "m2")
+k2  = input.float(2.0, "StDev mult 2", minval = 0.0, step = 0.5, group = gS, inline = "m2")
+on3 = input.bool(true, "", group = gS, inline = "m3")
+k3  = input.float(3.0, "StDev mult 3", minval = 0.0, step = 0.5, group = gS, inline = "m3")
+on4 = input.bool(true, "", group = gS, inline = "m4")
+k4  = input.float(0.5, "StDev mult 4", minval = 0.0, step = 0.5, group = gS, inline = "m4")
+on5 = input.bool(true, "", group = gS, inline = "m5")
+k5  = input.float(1.5, "StDev mult 5", minval = 0.0, step = 0.5, group = gS, inline = "m5")
+on6 = input.bool(true, "", group = gS, inline = "m6")
+k6  = input.float(2.5, "StDev mult 6", minval = 0.0, step = 0.5, group = gS, inline = "m6")
+
+gP = "PREVIOUS PERIOD VWAP"
+pv1    = input.bool(true, "Plot PVWAP 1+- Levels", group = gP)
+pv2    = input.bool(true, "Plot PVWAP 2+- Levels", group = gP)
+pvFill = input.bool(true, "Fill Previous Bands", group = gP)
+
+gL = "LABELS"
+vwLab    = input.bool(true, "Show Labels", group = gL, inline = "lb")
+vwPLab   = input.bool(false, "Show Previous Labels", group = gL, inline = "lb")
+vwLabCol = input.color(color.white, "Label Color", group = gL)
+vwLabOff = input.int(1, "Label offset", minval = 0, maxval = 300, group = gL)
+
+
+// ─── ② Relevés (format ALPZ 1) ────────────────────────────────────────────
+gR = "② Relevés Gexbot — format ALPZ 1"
+txtA = input.text_area("ALPZ 1\n# Collez ici les relevés de Lou (docs/zones-gamma-format.md).",
+     "Zone A — relevés du jour", group = gR, display = display.none,
+     tooltip = "Première ligne utile : « ALPZ 1 ». Puis un bloc par relevé : une ligne R (en-tête), une ligne B (base) si l'instrument source n'est pas le contrat du graphique, des lignes N (niveaux), et en option G + S (GEX signé par strike). 40 960 caractères au plus par zone.")
+txtB = input.text_area("", "Zone B — historique", group = gR, display = display.none,
+     tooltip = "Même format, en-tête « ALPZ 1 » compris. Les trois zones sont lues séparément : un texte ne peut pas dépasser 40 960 caractères.")
+txtC = input.text_area("", "Zone C — historique", group = gR, display = display.none)
+tzIn    = input.string("Europe/Paris", "Fuseau des heures saisies", group = gR, display = display.none,
+     tooltip = "Identifiant IANA. Les changements d'heure sont appliqués automatiquement ; une heure inexistante ou ambiguë le jour du changement est refusée.")
+racineIn = input.string("", "Contrat du graphique (vide = automatique)", group = gR, display = display.none,
+     tooltip = "Racine du contrat : NQ ou MNQ. Vide : lue sur le graphique (syminfo.root).")
+plausPct = input.float(5.0, "Plausibilité : écart max au prix, en %", minval = 0.1, maxval = 50.0, step = 0.5,
+     group = gR, display = display.none,
+     tooltip = "Contrôlé à l'activation du relevé, contre l'ouverture de la première bougie disponible. Au-delà, le niveau est écarté et signalé : c'est presque toujours une faute de frappe ou une base oubliée.")
+syncSec  = input.int(60, "Base : écart d'horodatage toléré (s)", minval = 0, maxval = 86400,
+     group = gR, display = display.none,
+     tooltip = "Si les deux prix qui ont servi à calculer la base sont relevés à des instants plus éloignés que cela, la base est déclarée APPROXIMATIVE.")
+gardeCumul = input.bool(false, "Garder les plages cumulatives recouvrantes", group = gR,
+     tooltip = "Une plage 0-10 DTE recouvre la 0DTE déjà fournie : par défaut elle est écartée pour ne pas compter deux fois la même échéance.")
+
+
+// ─── ③ Horaires (Europe/Paris) ────────────────────────────────────────────
+gH = "③ Horaires des instantanés"
+filtreMode = input.string("Auto (contrat du graphique)", "Instantanés affichés", group = gH,
+     options = ["Auto (contrat du graphique)", "Tous", "Identifiants listés"],
+     tooltip = "Auto : NQ affiche les relevés gamma/IV du créneau NQ, MNQ ceux du créneau MNQ, et chacun le profil de volume de son créneau VP. Les instantanés de minuit et de 5 h restent séparés : aucun ne remplace l'autre.")
+idsIn    = input.string("", "Identifiants (séparés par des virgules)", group = gH, display = display.none)
+slotNQ   = input.int(0, "Créneau gamma/IV NQ — heure", minval = 0, maxval = 23, group = gH, inline = "nq", display = display.none)
+slotNQm  = input.int(0, "min", minval = 0, maxval = 59, group = gH, inline = "nq", display = display.none)
+slotMNQ  = input.int(5, "Créneau gamma/IV MNQ — heure", minval = 0, maxval = 23, group = gH, inline = "mnq", display = display.none)
+slotMNQm = input.int(0, "min", minval = 0, maxval = 59, group = gH, inline = "mnq", display = display.none)
+slotVP   = input.int(0, "Créneau profil de volume — heure", minval = 0, maxval = 23, group = gH, inline = "vp", display = display.none)
+slotVPm  = input.int(0, "min", minval = 0, maxval = 59, group = gH, inline = "vp", display = display.none)
+slotTol  = input.int(45, "Tolérance de créneau (min)", minval = 1, maxval = 180, group = gH, display = display.none)
+gelH     = input.int(22, "Gel des niveaux — heure", minval = 0, maxval = 23, group = gH, inline = "gel", display = display.none)
+gelM     = input.int(0, "min", minval = 0, maxval = 59, group = gH, inline = "gel", display = display.none,
+     tooltip = "Les niveaux s'étendent à l'infini pendant la journée, puis deviennent des segments arrêtés à cette heure. Le script n'est exécuté qu'aux mises à jour du graphique : le gel prend effet à la première bougie qui suit.")
+
+
+// ─── ④ Niveaux et style ───────────────────────────────────────────────────
+gN = "④ Niveaux et style"
+famGEX  = input.bool(true, "Gamma (GEX)", group = gN, inline = "fam")
+famIV   = input.bool(true, "IV", group = gN, inline = "fam")
+famVP   = input.bool(true, "Profil de volume", group = gN, inline = "fam")
+dteMax  = input.int(10, "Échéance max (DTE ouvrés réels)", minval = 0, maxval = 10, group = gN, display = display.none)
+voirSec = input.bool(false, "Afficher les niveaux secondaires", group = gN)
+secList = input.string("S2,R2,LVN,IV+2σ,IV-2σ", "Codes secondaires", group = gN, display = display.none,
+     tooltip = "Masqués par défaut : ils ne sont ni tracés ni comptés dans les confluences, mais restent listés au tableau.")
+nivCol  = input.color(color.new(#9598A1, 0), "Trait", group = gN, inline = "tr")
+nivTr   = input.int(25, "transparence", minval = 0, maxval = 100, group = gN, inline = "tr", display = display.none)
+nivW    = input.int(1, "Épaisseur", minval = 1, maxval = 4, group = gN, inline = "ep", display = display.none)
+nivSty  = input.string("Pointillé", "style", options = ["Pointillé", "Tirets", "Continu"], group = gN, inline = "ep", display = display.none)
+labOn   = input.bool(true, "Étiquettes à droite", group = gN, inline = "lab")
+labOff  = input.int(4, "décalage (barres)", minval = 0, maxval = 300, group = gN, inline = "lab", display = display.none)
+labCol  = input.color(color.new(#B2B5BE, 0), "Couleur des étiquettes", group = gN, inline = "lc")
+labTaille = input.string("Petite", "taille", options = ["Minuscule", "Petite", "Normale"], group = gN, inline = "lc", display = display.none)
+labPasse = input.bool(false, "Étiquettes des jours passés", group = gN)
+joursAff = input.int(3, "Jours affichés", minval = 1, maxval = 30, group = gN, display = display.none)
+
+
+// ─── ⑤ Confluences ────────────────────────────────────────────────────────
+gC = "⑤ Confluences"
+dConf  = input.float(8.0, "Distance de regroupement (points)", minval = 0.25, step = 0.25, group = gC, display = display.none,
+     tooltip = "Deux niveaux consécutifs plus proches que cela rejoignent la même zone. Distincte de la tolérance de touche.")
+dMax   = input.float(16.0, "Diamètre maximal d'une zone (points)", minval = 0.25, step = 0.25, group = gC, display = display.none,
+     tooltip = "Borne l'enchaînement : une zone ne s'étend jamais au-delà de ce diamètre, même si chaque pas est plus court que la distance de regroupement.")
+zoneCol = input.color(color.new(#9598A1, 86), "Fond de zone", group = gC, inline = "zc")
+zoneBrd = input.color(color.new(#9598A1, 55), "bord", group = gC, inline = "zc")
+
+
+// ─── ⑥ Touches et réactions ───────────────────────────────────────────────
+gT = "⑥ Touches et réactions"
+tolTicks = input.int(4, "Tolérance de touche (ticks)", minval = 0, maxval = 200, group = gT, display = display.none)
+tickIn   = input.float(0.25, "Tick si inconnu", minval = 0.0001, step = 0.25, group = gT, display = display.none)
+rxPts    = input.float(30.0, "Réaction (points)", minval = 0.25, step = 0.25, group = gT, display = display.none)
+advPts   = input.float(20.0, "Dépassement adverse (points)", minval = 0.25, step = 0.25, group = gT, display = display.none)
+fenMin   = input.int(60, "Fenêtre d'observation (min)", minval = 1, maxval = 1440, group = gT, display = display.none)
+rearmMin = input.int(15, "Délai de réarmement (min)", minval = 0, maxval = 1440, group = gT, display = display.none,
+     tooltip = "Une seule touche par excursion : la zone se réarme quand une bougie entière est sortie de la bande ET que ce délai est écoulé depuis la dernière touche.")
+mrkOn    = input.bool(true, "Marqueurs de touche", group = gT, inline = "mk")
+mrkN     = input.int(40, "dernières", minval = 1, maxval = 150, group = gT, inline = "mk", display = display.none)
+
+
+// ─── ⑦ Profil GEX signé 0DTE (à droite) ───────────────────────────────────
+gG = "⑦ Profil GEX 0DTE à droite"
+profOn  = input.bool(true, "Afficher le profil", group = gG)
+profId  = input.string("auto", "Relevé du profil", group = gG, display = display.none,
+     tooltip = "auto : le dernier relevé GEX disponible dont l'échéance RÉELLE est le jour même (0DTE) et qui porte des valeurs par strike. Sinon, l'identifiant d'un relevé.")
+profOff = input.int(30, "Distance au prix (barres)", minval = 1, maxval = 200, group = gG, display = display.none)
+profW   = input.int(40, "Demi-largeur max (barres)", minval = 5, maxval = 140, group = gG, display = display.none)
+profDisp = input.string("Axe central", "Disposition", options = ["Axe central", "Base commune"], group = gG, display = display.none,
+     tooltip = "Axe central : négatif à gauche, positif à droite d'un axe vertical. Base commune : toutes les barres partent de la même verticale vers la droite, le signe se lit à la couleur.")
+profPos = input.color(color.new(#26A69A, 35), "GEX positif", group = gG, inline = "pc")
+profNeg = input.color(color.new(#EF5350, 35), "GEX négatif", group = gG, inline = "pc")
+profLw  = input.int(2, "Épaisseur", minval = 1, maxval = 6, group = gG, display = display.none)
+profMax = input.int(120, "Strikes max (les plus proches du prix)", minval = 5, maxval = 200, group = gG, display = display.none)
+
+
+// ─── ⑧ Tableau et alertes ─────────────────────────────────────────────────
+gX = "⑧ Tableau et alertes"
+tabOn   = input.bool(true, "Tableau", group = gX, inline = "tb")
+tabPos  = input.string("Haut droite", "position", options = ["Haut droite", "Haut gauche", "Bas droite", "Bas gauche"],
+     group = gX, inline = "tb", display = display.none)
+tabDet  = input.bool(false, "Détail des zones", group = gX)
+tabMsgN = input.int(6, "Avertissements affichés", minval = 0, maxval = 30, group = gX, display = display.none)
+alerteOn = input.bool(false, "Alertes (désactivées par défaut)", group = gX,
+     tooltip = "N'émet que sur bougie confirmée, en temps réel : touche, puis issue. Créer ensuite l'alerte « Any alert() function call » dans TradingView.")
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  A. VWAP et écart-type pondérés par le volume
+//     Var = Σ(v·P²)/Σv − VWAP² : la forme exacte, celle du VWAP intégré.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Les cinq changements de période sont évalués à chaque bougie, hors de
+// toute condition : un appel conditionnel d'une fonction qui regarde la
+// bougie précédente est la source classique d'un résultat incohérent.
+chD = timeframe.change("D")
+chW = timeframe.change("W")
+chM = timeframe.change("M")
+chQ = timeframe.change("3M")
+chY = timeframe.change("12M")
+vwNew = switch vwAnc
+    "Day"     => chD
+    "Week"    => chW
+    "Month"   => chM
+    "Quarter" => chQ
+    "Year"    => chY
+    => false
+
+avDebut = vwAnc == "AVWAP" and time >= vwStart and (bar_index == 0 or time[1] < vwStart)
+vwReset = vwAnc == "AVWAP" ? avDebut : (vwNew or bar_index == 0)
+
+vwVol = na(volume) or volume <= 0 ? 1.0 : volume
+
+var float sPV  = 0.0
+var float sV   = 0.0
+var float sP2V = 0.0
+var float pvVw = na
+var float pvSd = na
+var bool  vwOn = false
+
+if vwReset
+    if vwAnc != "AVWAP" and vwOn and sV > 0
+        pvVw := sPV / sV
+        pvSd := math.sqrt(math.max(sP2V / sV - pvVw * pvVw, 0.0))
+    sPV  := 0.0
+    sV   := 0.0
+    sP2V := 0.0
+    vwOn := true
+
+if vwOn
+    sPV  += vwSrc * vwVol
+    sV   += vwVol
+    sP2V += vwSrc * vwSrc * vwVol
+
+vw   = vwOn and sV > 0 ? sPV / sV : na
+vwSd = vwOn and sV > 0 ? math.sqrt(math.max(sP2V / sV - vw * vw, 0.0)) : na
+bd   = vwPlotSd and vwOn
+
+u1 = bd and on1 ? vw + k1 * vwSd : na
+u2 = bd and on2 ? vw + k2 * vwSd : na
+u3 = bd and on3 ? vw + k3 * vwSd : na
+u4 = bd and on4 ? vw + k4 * vwSd : na
+u5 = bd and on5 ? vw + k5 * vwSd : na
+u6 = bd and on6 ? vw + k6 * vwSd : na
+l1 = bd and on1 ? vw - k1 * vwSd : na
+l2 = bd and on2 ? vw - k2 * vwSd : na
+l3 = bd and on3 ? vw - k3 * vwSd : na
+l4 = bd and on4 ? vw - k4 * vwSd : na
+l5 = bd and on5 ? vw - k5 * vwSd : na
+l6 = bd and on6 ? vw - k6 * vwSd : na
+
+pvOk = vwAnc != "AVWAP" and pv1 and not na(pvVw)
+pp0 = pvOk ? pvVw : na
+pu1 = pvOk ? pvVw + pvSd : na
+pl1 = pvOk ? pvVw - pvSd : na
+pu2 = pvOk and pv2 ? pvVw + 2.0 * pvSd : na
+pl2 = pvOk and pv2 ? pvVw - 2.0 * pvSd : na
+
+cIn  = color.new(#B2B5BE, 35)
+cOut = color.new(#787B86, 55)
+
+pVW = plot(vw, "VWAP", color = color.white, linewidth = 2)
+pU6 = plot(u6, "VWAP - STDEV +6", color = cOut)
+pU5 = plot(u5, "VWAP - STDEV +5", color = cOut)
+pU4 = plot(u4, "VWAP - STDEV +4", color = cOut)
+pU3 = plot(u3, "VWAP - STDEV +3", color = cIn)
+pU2 = plot(u2, "VWAP - STDEV +2", color = cIn)
+pU1 = plot(u1, "VWAP - STDEV +1", color = cIn)
+pL1 = plot(l1, "VWAP - STDEV -1", color = cIn)
+pL2 = plot(l2, "VWAP - STDEV -2", color = cIn)
+pL3 = plot(l3, "VWAP - STDEV -3", color = cIn)
+pL4 = plot(l4, "VWAP - STDEV -4", color = cOut)
+pL5 = plot(l5, "VWAP - STDEV -5", color = cOut)
+pL6 = plot(l6, "VWAP - STDEV -6", color = cOut)
+pP0 = plot(pp0, "Previous VWAP", color = color.new(#B2B5BE, 25))
+pP2 = plot(pu2, "Previous VWAP - STDEV +2", color = color.new(#787B86, 45))
+pP1 = plot(pu1, "Previous VWAP - STDEV +1", color = color.new(#787B86, 45))
+pQ1 = plot(pl1, "Previous VWAP - STDEV -1", color = color.new(#787B86, 45))
+pQ2 = plot(pl2, "Previous VWAP - STDEV -2", color = color.new(#787B86, 45))
+
+fill(pU2, pU1, color = vwFill ? color.new(#787B86, 90) : na, title = "Sdev 2 1")
+fill(pU1, pL1, color = vwFill ? color.new(#787B86, 84) : na, title = "Sdev 1 -1")
+fill(pL1, pL2, color = vwFill ? color.new(#787B86, 90) : na, title = "Sdev -1 -2")
+fill(pP2, pP1, color = pvFill ? color.new(#787B86, 93) : na, title = "Previous Sdev 2 1")
+fill(pP1, pQ1, color = pvFill ? color.new(#787B86, 90) : na, title = "Previous Sdev 1 -1")
+fill(pQ1, pQ2, color = pvFill ? color.new(#787B86, 93) : na, title = "Previous Sdev -1 -2")
+
+// Étiquettes en bout de bande, comme l'original : un tiret de rappel, puis
+// le nom. Elles sont refaites à chaque exécution de la dernière bougie.
+var array<label> vwLabs = array.new<label>()
+
+vwTxt(float k, bool haut) =>
+    "--------- SD " + (haut ? "+" : "-") + str.tostring(k, "#.##")
+
+vwPose(float y, string t) =>
+    if not na(y)
+        vwLabs.push(label.new(bar_index + vwLabOff, y, t, xloc = xloc.bar_index,
+             style = label.style_label_left, color = color.new(color.black, 100),
+             textcolor = vwLabCol, size = size.small))
+
+if barstate.islast
+    while vwLabs.size() > 0
+        label.delete(vwLabs.pop())
+    if vwLab and vwOn
+        vwPose(vw, "--------- VWAP")
+        vwPose(u1, vwTxt(k1, true))
+        vwPose(u2, vwTxt(k2, true))
+        vwPose(u3, vwTxt(k3, true))
+        vwPose(u4, vwTxt(k4, true))
+        vwPose(u5, vwTxt(k5, true))
+        vwPose(u6, vwTxt(k6, true))
+        vwPose(l1, vwTxt(k1, false))
+        vwPose(l2, vwTxt(k2, false))
+        vwPose(l3, vwTxt(k3, false))
+        vwPose(l4, vwTxt(k4, false))
+        vwPose(l5, vwTxt(k5, false))
+        vwPose(l6, vwTxt(k6, false))
+    if vwPLab and pvOk
+        vwPose(pp0, "--------- pVWAP")
+        vwPose(pu1, "--------- pSD +1")
+        vwPose(pl1, "--------- pSD -1")
+        vwPose(pu2, "--------- pSD +2")
+        vwPose(pl2, "--------- pSD -2")
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  B. Le lecteur ALPZ 1
+//
+//  Un relevé (ligne R) porte : identifiant, source, famille (GEX, IV, VP),
+//  instrument source, contrat(s) cible(s), date des données, heure de
+//  collecte, heure de disponibilité, et — pour GEX et IV — le DTE DEMANDÉ et
+//  les échéances RÉELLEMENT retournées. Le DTE réel se recalcule à partir des
+//  échéances : c'est lui qui fait foi, jamais le DTE demandé.
+//
+//  Toute ligne fautive est refusée et signalée ; rien n'est deviné. Un
+//  nombre n'est accepté que sous la forme que str.tonumber() reconnaît —
+//  chiffres ASCII, signe en tête, un point décimal — donc « 25,100 » et
+//  « 25 100 » sont refusés plutôt que lus de travers.
+// ═══════════════════════════════════════════════════════════════════════════
+
+type Rel
+    string id = ""
+    string src = ""
+    string fam = ""
+    string cmd = ""
+    string inst = ""
+    string cible = ""
+    string contrat = ""
+    string dDate = ""
+    int    tCol = na
+    int    tDispo = na
+    int    tGel = na
+    int    slotMin = na
+    string dteDem = ""
+    int    dteA = na
+    int    dteB = na
+    string ech = ""
+    int    nEch = 0
+    int    dteMin = na
+    int    dteMaxR = na
+    bool   cumul = false
+    string seance = ""
+    float  base = na
+    bool   baseLue = false
+    string baseFut = ""
+    string baseIdx = ""
+    bool   baseApprox = false
+    string baseNote = ""
+    float  ajout = 0.0
+    bool   convOk = true
+    string convNote = ""
+    string gUnite = ""
+    string gSigne = ""
+    string gOrig = ""
+    float  gNet = na
+    int    n0 = 0
+    int    nNiv = 0
+    int    s0 = 0
+    int    nStr = 0
+    bool   strBad = false
+    bool   valide = true
+    bool   doublon = false
+    bool   recouvre = false
+    bool   fictif = false
+    bool   affiche = false
+    bool   actif = false
+    bool   vu = false
+    string ref = ""
+
+type Niv
+    int    r = 0
+    string code = ""
+    string fam = ""
+    string nom = ""
+    float  pxSrc = na
+    float  px = na
+    bool   sec = false
+    bool   ok = true
+    string note = ""
+
+type Zone
+    float  lo = na
+    float  hi = na
+    int    n = 0
+    string lab = ""
+    string det = ""
+    bool   fictif = false
+    bool   arme = false
+    int    cote = 0
+    int    tTouche = na
+    int    gel = na
+
+type Obs
+    float  lo = na
+    float  hi = na
+    int    cote = 0
+    int    t0 = na
+    bool   confl = false
+    string lab = ""
+    string etat = "en observation"
+    string motif = ""
+    int    tFin = na
+    int    gel = na
+
+var array<Rel>    rels  = array.new<Rel>()
+var array<Niv>    nivs  = array.new<Niv>()
+var array<float>  stK   = array.new<float>()
+var array<float>  stG   = array.new<float>()
+var array<string> msgs  = array.new<string>()
+// Compteurs tenus dans un tableau : une fonction Pine ne peut pas modifier
+// une variable globale, mais peut modifier le contenu d'un tableau global.
+// 0 : messages émis ; 1 : objets refusés faute de quota.
+var array<int>    cpt   = array.new<int>(2, 0)
+
+msg(string m) =>
+    cpt.set(0, cpt.get(0) + 1)
+    if msgs.size() < MAX_MSG
+        msgs.push(m)
+
+racine = racineIn != "" ? str.upper(str.trim(racineIn)) : str.upper(syminfo.root)
+tickPx = na(syminfo.mintick) or syminfo.mintick <= 0 ? tickIn : syminfo.mintick
+
+// Les mots séparés par des espaces, les vides ôtés.
+mots(string l) =>
+    out = array.new<string>()
+    for t in str.split(l, " ")
+        if t != ""
+            out.push(t)
+    out
+
+// « clé=valeur », dans n'importe quel ordre. Une clé répétée ou un mot sans
+// « = » est rendu dans `bad` : il ne sera pas deviné.
+cles(array<string> toks) =>
+    m = map.new<string, string>()
+    bad = array.new<string>()
+    if toks.size() > 1
+        for i = 1 to toks.size() - 1
+            t = toks.get(i)
+            p = str.pos(t, "=")
+            ok = not na(p) and p > 0 and p < str.length(t) - 1
+            if ok
+                k = str.lower(str.substring(t, 0, p))
+                if m.contains(k)
+                    bad.push(t)
+                else
+                    m.put(k, str.substring(t, p + 1))
+            else
+                bad.push(t)
+    [m, bad]
+
+val(map<string, string> m, string k) =>
+    string v = ""
+    if m.contains(k)
+        v := m.get(k)
+    v
+
+// AAAA-MM-JJ → [ok, a, m, j]. La date doit exister.
+lireDate(string s) =>
+    p = str.split(s, "-")
+    bool ok = false
+    int y = 0
+    int mo = 0
+    int d = 0
+    if p.size() == 3
+        if str.length(p.get(0)) == 4 and str.length(p.get(1)) == 2 and str.length(p.get(2)) == 2
+            fy = str.tonumber(p.get(0))
+            fm = str.tonumber(p.get(1))
+            fd = str.tonumber(p.get(2))
+            if not na(fy) and not na(fm) and not na(fd)
+                y  := int(fy)
+                mo := int(fm)
+                d  := int(fd)
+                if mo >= 1 and mo <= 12 and d >= 1 and d <= 31 and y >= 2000 and y <= 2100
+                    t = timestamp("UTC", y, mo, d, 0, 0, 0)
+                    ok := dayofmonth(t, "UTC") == d and month(t, "UTC") == mo
+    [ok, y, mo, d]
+
+// Minuit UTC d'une date AAAA-MM-JJ (na si invalide) : sert aux écarts de
+// jours, qui n'ont pas à connaître le fuseau.
+jourUTC(string s) =>
+    [ok, y, mo, d] = lireDate(s)
+    ok ? timestamp("UTC", y, mo, d, 0, 0, 0) : na
+
+// AAAA-MM-JJTHH:MM[:SS] dans le fuseau `tz` → [code, t].
+// code 0 : valide ; 1 : format ; 2 : heure inexistante (passage à l'heure
+// d'été) ; 3 : heure ambiguë (passage à l'heure d'hiver).
+lireInstant(string s, string tz) =>
+    int code = 1
+    int t = na
+    parts = str.split(s, "T")
+    if parts.size() == 2
+        [okD, y, mo, d] = lireDate(parts.get(0))
+        hm = str.split(parts.get(1), ":")
+        if okD and (hm.size() == 2 or hm.size() == 3)
+            if str.length(hm.get(0)) == 2 and str.length(hm.get(1)) == 2
+                fh = str.tonumber(hm.get(0))
+                fi = str.tonumber(hm.get(1))
+                float fs = 0.0
+                if hm.size() == 3
+                    fs := str.tonumber(hm.get(2))
+                if not na(fh) and not na(fi) and not na(fs)
+                    if fh >= 0 and fh <= 23 and fi >= 0 and fi <= 59 and fs >= 0 and fs <= 59
+                        h  = int(fh)
+                        mi = int(fi)
+                        t := timestamp(tz, y, mo, d, h, mi, int(fs))
+                        if hour(t, tz) != h or minute(t, tz) != mi or dayofmonth(t, tz) != d
+                            code := 2
+                        else if (hour(t - HEURE_MS, tz) == h and minute(t - HEURE_MS, tz) == mi) or
+                             (hour(t + HEURE_MS, tz) == h and minute(t + HEURE_MS, tz) == mi)
+                            code := 3
+                        else
+                            code := 0
+    [code, t]
+
+instantErr(int code) =>
+    code == 2 ? "heure inexistante (passage à l'heure d'été)" :
+         code == 3 ? "heure ambiguë (passage à l'heure d'hiver)" :
+         "format attendu AAAA-MM-JJTHH:MM"
+
+// Le premier gel strictement postérieur à la disponibilité. On cherche la
+// date locale par pas de six heures : un jour de changement d'heure dure 23
+// ou 25 heures, et un pas de 24 heures sauterait une date.
+gelApres(int tD) =>
+    int best = na
+    for k = 0 to 5
+        tt = tD + k * 6 * HEURE_MS
+        c = timestamp(tzIn, year(tt, tzIn), month(tt, tzIn), dayofmonth(tt, tzIn), gelH, gelM, 0)
+        if c > tD and (na(best) or c < best)
+            best := c
+    best
+
+minutesDuJour(int t) =>
+    hour(t, tzIn) * 60 + minute(t, tzIn)
+
+// Écart circulaire entre deux heures de la journée, en minutes.
+ecartCreneau(int a, int b) =>
+    d = math.abs(a - b)
+    math.min(d, 1440 - d)
+
+// Jours ouvrés (lundi-vendredi, fériés inconnus) de la date de séance à
+// l'échéance. -1 si l'échéance précède la séance.
+joursOuvres(int tRef, int tExp) =>
+    int n = 0
+    nj = int(math.round((tExp - tRef) / JOUR_MS))
+    if nj > 0
+        for k = 1 to nj
+            dw = dayofweek(tRef + k * JOUR_MS, "UTC")
+            if dw != dayofweek.saturday and dw != dayofweek.sunday
+                n += 1
+    nj < 0 ? -1 : n
+
+// Codes acceptés, ramenés à leur forme canonique. « σ » se tape mal : IV+1,
+// IV+1S et IV+1σ désignent le même niveau.
+canon(string raw) =>
+    u = str.upper(str.trim(raw))
+    u := str.replace_all(u, "Σ", "")
+    u := str.replace_all(u, "σ", "")
+    if str.endswith(u, "S") and str.startswith(u, "IV") and str.length(u) == 5
+        u := str.substring(u, 0, 4)
+    switch u
+        "CW"      => "CW"
+        "PS"      => "PS"
+        "GF"      => "GF"
+        "S1"      => "S1"
+        "S2"      => "S2"
+        "R1"      => "R1"
+        "R2"      => "R2"
+        "MAXPAIN" => "MaxPain"
+        "MP"      => "MaxPain"
+        "HVN"     => "HVN"
+        "LVN"     => "LVN"
+        "POC"     => "POC"
+        "VAH"     => "VAH"
+        "VAL"     => "VAL"
+        "IV+1"    => "IV+1σ"
+        "IV-1"    => "IV-1σ"
+        "IV+2"    => "IV+2σ"
+        "IV-2"    => "IV-2σ"
+        "IV-C"    => "IV-C"
+        "IVC"     => "IV-C"
+        "IV-P"    => "IV-P"
+        "IVP"     => "IV-P"
+        "IVGB"    => "IVgb"
+        => ""
+
+famDe(string c) =>
+    c == "HVN" or c == "LVN" or c == "POC" or c == "VAH" or c == "VAL" ? "VP" :
+         str.startswith(c, "IV") ? "IV" : "GEX"
+
+// Rang d'affichage dans une étiquette : famille, puis code.
+rangCode(string c) =>
+    switch c
+        "CW"      => 1
+        "PS"      => 2
+        "GF"      => 3
+        "R1"      => 4
+        "R2"      => 5
+        "S1"      => 6
+        "S2"      => 7
+        "MaxPain" => 8
+        "IV+1σ"   => 21
+        "IV-1σ"   => 22
+        "IV+2σ"   => 23
+        "IV-2σ"   => 24
+        "IV-C"    => 25
+        "IV-P"    => 26
+        "IVgb"    => 27
+        "POC"     => 41
+        "VAH"     => 42
+        "VAL"     => 43
+        "HVN"     => 44
+        "LVN"     => 45
+        => 60
+
+// Un même code ne peut porter qu'un prix par relevé, sauf HVN et LVN.
+codeUnique(string c) =>
+    c != "HVN" and c != "LVN"
+
+// La liste des secondaires passe par la même forme canonique que les codes :
+// « IV+2 », « IV+2s » et « IV+2σ » y désignent le même niveau.
+estSecondaire(string c) =>
+    bool trouve = false
+    for e in str.split(secList, ",")
+        if canon(e) == c
+            trouve := true
+    trouve
+
+// Racine d'un instrument : NQZ2026 → NQ, MNQH2027 → MNQ, NDX → NDX.
+racineDe(string inst) =>
+    u = str.upper(inst)
+    str.startswith(u, "MNQ") ? "MNQ" : str.startswith(u, "NQ") ? "NQ" : u
+
+contientMot(string liste, string mot) =>
+    str.contains("," + str.replace_all(str.upper(liste), " ", "") + ",", "," + str.upper(mot) + ",")
+
+// Les échéances, triées et sans doublon, rejointes par des virgules.
+lireEcheances(string s) =>
+    out = array.new<string>()
+    bool ok = s != ""
+    if ok
+        for e in str.split(s, ",")
+            if na(jourUTC(e))
+                ok := false
+            else if not out.includes(e)
+                out.push(e)
+    if ok
+        out.sort(order.ascending)
+    [ok, out]
+
+// « CONTRAT:PRIX@AAAA-MM-JJTHH:MM[:SS] » → [ok, symbole, prix, t].
+lirePrixDate(string s) =>
+    bool ok = false
+    string sym = ""
+    float px = na
+    int t = na
+    a = str.split(s, "@")
+    if a.size() == 2
+        b = str.split(a.get(0), ":")
+        if b.size() == 2
+            sym := str.upper(b.get(0))
+            px := str.tonumber(b.get(1))
+            [code, tt] = lireInstant(a.get(1), tzIn)
+            t := tt
+            ok := sym != "" and not na(px) and code == 0
+    [ok, sym, px, t]
+
+// Ferme le relevé courant : contrôles qui demandent le bloc entier.
+fermer(int ci) =>
+    if ci >= 0
+        r = rels.get(ci)
+        if r.valide and r.nNiv == 0 and r.nStr == 0
+            msg(r.ref + " — relevé « " + r.id + " » sans niveau ni strike : rien à tracer")
+        if r.nStr > 0 and (r.gUnite == "" or r.gSigne == "")
+            msg(r.ref + " — « " + r.id + " » : GEX par strike sans unité ou sans convention de signe (ligne G) → profil indisponible")
+            r.strBad := true
+        if r.nStr > 0 and r.fam != "GEX"
+            msg(r.ref + " — « " + r.id + " » : des strikes GEX dans un relevé de famille " + r.fam + " → ignorés")
+            r.strBad := true
+
+// ─── La lecture, une fois, sur la première bougie ─────────────────────────
+// Le texte est une constante : le relire à chaque bougie ne servirait à
+// rien. Tout ce qui dépend du prix (plausibilité) attend l'activation.
+if barstate.isfirst
+    zonesTxt = array.from(txtA, txtB, txtC)
+    for zi = 0 to 2
+        brut = zonesTxt.get(zi)
+        zl = zi == 0 ? "A" : zi == 1 ? "B" : "C"
+        lignes = str.split(str.replace_all(brut, "\t", " "), "\n")
+        bool vOk = false
+        int ci = -1
+        int li = 0
+        for brute in lignes
+            li += 1
+            l = str.trim(brute)
+            ref = zl + ":" + str.tostring(li)
+            if l == "" or str.startswith(l, "#")
+                continue
+            toks = mots(l)
+            k = str.upper(toks.get(0))
+            if not vOk
+                if k == "ALPZ" and toks.size() == 2 and toks.get(1) == "1"
+                    vOk := true
+                else
+                    msg(ref + " — en-tête « ALPZ 1 » absent ou version inconnue : zone " + zl + " ignorée en entier")
+                    break
+                continue
+            if k == "ALPZ"
+                msg(ref + " — en-tête répété : ignoré")
+                continue
+            if k == "R"
+                fermer(ci)
+                [m, bad] = cles(toks)
+                r = Rel.new()
+                r.ref := ref
+                r.n0 := nivs.size()
+                r.s0 := stK.size()
+                for b in bad
+                    msg(ref + " — champ illisible « " + b + " » (attendu clé=valeur, clé unique)")
+                    r.valide := false
+                r.id := val(m, "id")
+                r.src := str.upper(val(m, "src"))
+                r.fam := str.upper(val(m, "fam"))
+                r.cmd := val(m, "cmd")
+                r.inst := str.upper(val(m, "inst"))
+                r.cible := str.upper(val(m, "cible"))
+                r.contrat := str.upper(val(m, "contrat"))
+                r.dDate := val(m, "date")
+                r.fictif := r.src == "FICTIF"
+                if r.id == ""
+                    msg(ref + " — relevé sans id : refusé")
+                    r.valide := false
+                else
+                    for o in rels
+                        if o.id == r.id
+                            msg(ref + " — id « " + r.id + " » déjà utilisé (" + o.ref + ") : refusé")
+                            r.valide := false
+                if r.src == "" or r.inst == "" or r.cible == ""
+                    msg(ref + " — « " + r.id + " » : src, inst et cible sont obligatoires")
+                    r.valide := false
+                if r.fam != "GEX" and r.fam != "IV" and r.fam != "VP"
+                    msg(ref + " — « " + r.id + " » : fam doit valoir GEX, IV ou VP")
+                    r.valide := false
+                if na(jourUTC(r.dDate))
+                    msg(ref + " — « " + r.id + " » : date des données absente ou invalide (AAAA-MM-JJ)")
+                    r.valide := false
+                [c1, t1] = lireInstant(val(m, "collecte"), tzIn)
+                [c2, t2] = lireInstant(val(m, "dispo"), tzIn)
+                if c1 != 0
+                    msg(ref + " — « " + r.id + " » : collecte — " + instantErr(c1))
+                    r.valide := false
+                if c2 != 0
+                    msg(ref + " — « " + r.id + " » : dispo — " + instantErr(c2))
+                    r.valide := false
+                if c1 == 0 and c2 == 0
+                    r.tCol := t1
+                    r.tDispo := t2
+                    r.slotMin := minutesDuJour(t1)
+                    r.tGel := gelApres(t2)
+                    if t2 < t1
+                        msg(ref + " — « " + r.id + " » : disponibilité antérieure à la collecte")
+                        r.valide := false
+                    tData = jourUTC(r.dDate)
+                    tColJour = timestamp("UTC", year(t1, tzIn), month(t1, tzIn), dayofmonth(t1, tzIn), 0, 0, 0)
+                    if not na(tData) and tData > tColJour
+                        msg(ref + " — « " + r.id + " » : date des données postérieure à la collecte")
+                        r.valide := false
+                if r.fam == "GEX" or r.fam == "IV"
+                    r.dteDem := val(m, "dte")
+                    dd = str.split(r.dteDem, "-")
+                    bool dteOk = false
+                    if dd.size() == 2
+                        fa = str.tonumber(dd.get(0))
+                        fb = str.tonumber(dd.get(1))
+                        if not na(fa) and not na(fb) and fa >= 0 and fb >= fa and fb <= 1000
+                            r.dteA := int(fa)
+                            r.dteB := int(fb)
+                            dteOk := true
+                    if not dteOk
+                        msg(ref + " — « " + r.id + " » : dte demandé absent ou invalide (forme a-b, ex. 0-0)")
+                        r.valide := false
+                    [okE, eList] = lireEcheances(val(m, "ech"))
+                    if not okE or eList.size() == 0
+                        msg(ref + " — « " + r.id + " » : ech (échéance réellement retournée) absente ou invalide")
+                        r.valide := false
+                    else
+                        r.ech := eList.join(",")
+                        r.nEch := eList.size()
+                        r.cumul := eList.size() > 1 or (dteOk and r.dteB > r.dteA)
+                        if not na(r.tGel)
+                            tRef = timestamp("UTC", year(r.tGel, tzIn), month(r.tGel, tzIn), dayofmonth(r.tGel, tzIn), 0, 0, 0)
+                            int dMin = na
+                            int dMax = na
+                            for e in eList
+                                jo = joursOuvres(tRef, jourUTC(e))
+                                if jo < 0
+                                    msg(ref + " — « " + r.id + " » : échéance " + e + " antérieure au jour de séance — échéance expirée, le robot n'a pas encore roulé ?")
+                                    r.valide := false
+                                else
+                                    dMin := na(dMin) ? jo : math.min(dMin, jo)
+                                    dMax := na(dMax) ? jo : math.max(dMax, jo)
+                            r.dteMin := dMin
+                            r.dteMaxR := dMax
+                            if r.valide and dteOk and not na(dMin) and (dMin < r.dteA or dMin > r.dteB)
+                                msg(ref + " — « " + r.id + " » : DTE demandé " + r.dteDem + ", échéance réelle à " + str.tostring(dMin) + " jour(s) ouvré(s) — c'est l'échéance réelle qui est retenue")
+                if r.fam == "VP"
+                    r.seance := val(m, "seance")
+                    tS = jourUTC(r.seance)
+                    if na(tS)
+                        msg(ref + " — « " + r.id + " » : seance (date de la séance décrite) absente ou invalide")
+                        r.valide := false
+                    else if not na(r.tGel)
+                        tRefV = timestamp("UTC", year(r.tGel, tzIn), month(r.tGel, tzIn), dayofmonth(r.tGel, tzIn), 0, 0, 0)
+                        if tS >= tRefV
+                            msg(ref + " — « " + r.id + " » : la séance du profil n'est pas antérieure au jour d'usage — séance incomplète ?")
+                            r.valide := false
+                rels.push(r)
+                ci := rels.size() - 1
+            else if k == "B" or k == "N" or k == "G" or k == "S"
+                if ci < 0
+                    msg(ref + " — ligne " + k + " avant toute ligne R : ignorée")
+                    continue
+                r = rels.get(ci)
+                if k == "B"
+                    [m, bad] = cles(toks)
+                    for b in bad
+                        msg(ref + " — base : champ illisible « " + b + " »")
+                    fb = str.tonumber(val(m, "base"))
+                    if na(fb)
+                        msg(ref + " — « " + r.id + " » : base absente ou invalide → conversion impossible")
+                    else
+                        r.base := fb
+                        r.baseLue := true
+                        sf = val(m, "fut")
+                        si = val(m, "idx")
+                        r.baseFut := sf
+                        r.baseIdx := si
+                        if sf == "" or si == ""
+                            r.baseApprox := true
+                            r.baseNote := "base déclarée sans les deux prix sources"
+                        else
+                            [okF, symF, pxF, tF] = lirePrixDate(sf)
+                            [okI, symI, pxI, tI] = lirePrixDate(si)
+                            if not okF or not okI
+                                msg(ref + " — « " + r.id + " » : fut/idx illisibles (forme CONTRAT:PRIX@AAAA-MM-JJTHH:MM)")
+                                r.baseApprox := true
+                                r.baseNote := "prix sources illisibles"
+                            else
+                                if math.abs(pxF - pxI - fb) > 0.01
+                                    msg(ref + " — « " + r.id + " » : base " + str.tostring(fb) + " ≠ fut − idx = " + str.tostring(pxF - pxI) + " → relevé refusé")
+                                    r.valide := false
+                                dt = math.abs(tF - tI) / 1000.0
+                                if dt > syncSec
+                                    r.baseApprox := true
+                                    r.baseNote := "prix non synchronisés (écart " + str.tostring(dt / 60.0, "#.#") + " min)"
+                                    msg(ref + " — « " + r.id + " » : base APPROXIMATIVE — " + r.baseNote)
+                                else
+                                    r.baseNote := symF + " − " + symI + " au même instant"
+                                cc = str.upper(syminfo.current_contract)
+                                if str.length(symF) >= 5 and str.length(cc) >= 5
+                                    if str.substring(symF, str.length(symF) - 5) != str.substring(cc, str.length(cc) - 5)
+                                        r.baseApprox := true
+                                        msg(ref + " — « " + r.id + " » : base mesurée sur " + symF + ", graphique sur " + cc + " — roll ? base approximative")
+                else if k == "N"
+                    if toks.size() < 3
+                        msg(ref + " — niveau incomplet (attendu : N CODE PRIX [nom source])")
+                        continue
+                    c = canon(toks.get(1))
+                    p = str.tonumber(toks.get(2))
+                    if c == ""
+                        msg(ref + " — code inconnu « " + toks.get(1) + " » : ignoré")
+                        continue
+                    if na(p)
+                        msg(ref + " — prix invalide « " + toks.get(2) + " » (chiffres et un point, sans séparateur de milliers) : ignoré")
+                        continue
+                    if famDe(c) != r.fam
+                        msg(ref + " — " + c + " appartient à la famille " + famDe(c) + ", pas " + r.fam + " : ignoré")
+                        continue
+                    string nom = ""
+                    if toks.size() > 3
+                        for q = 3 to toks.size() - 1
+                            nom := nom + (q > 3 ? " " : "") + toks.get(q)
+                    bool garde = true
+                    if r.nNiv > 0
+                        for q = r.n0 to r.n0 + r.nNiv - 1
+                            o = nivs.get(q)
+                            if o.code == c and math.abs(o.pxSrc - p) < 0.000001
+                                msg(ref + " — " + c + " " + str.tostring(p) + " en double dans « " + r.id + " » : ignoré")
+                                garde := false
+                            else if o.code == c and codeUnique(c)
+                                msg(ref + " — conflit dans « " + r.id + " » : " + c + " à " + str.tostring(o.pxSrc) + " et à " + str.tostring(p) + " — les deux sont écartés")
+                                o.ok := false
+                                o.note := "conflit"
+                                garde := false
+                    if garde
+                        nivs.push(Niv.new(ci, c, r.fam, nom, p, na, estSecondaire(c), true, ""))
+                        r.nNiv += 1
+                else if k == "G"
+                    [m, bad] = cles(toks)
+                    for b in bad
+                        msg(ref + " — G : champ illisible « " + b + " »")
+                    r.gUnite := val(m, "unite")
+                    r.gSigne := val(m, "signe")
+                    r.gOrig := val(m, "origine")
+                    sn = val(m, "net")
+                    if sn != ""
+                        r.gNet := str.tonumber(sn)
+                        if na(r.gNet)
+                            msg(ref + " — net invalide « " + sn + " » : ignoré")
+                    if r.gOrig == "image"
+                        msg(ref + " — « " + r.id + " » : GEX relevés à l'œil sur une image → profil APPROXIMATIF")
+                else
+                    if toks.size() > 1
+                        for q = 1 to toks.size() - 1
+                            pr = str.split(toks.get(q), ":")
+                            float kk = na
+                            float gg = na
+                            if pr.size() == 2
+                                kk := str.tonumber(pr.get(0))
+                                gg := str.tonumber(pr.get(1))
+                            if na(kk) or na(gg)
+                                msg(ref + " — strike illisible « " + toks.get(q) + " » (forme STRIKE:GEX)")
+                                r.strBad := true
+                            else
+                                bool neuf = true
+                                if r.nStr > 0
+                                    for s = r.s0 to r.s0 + r.nStr - 1
+                                        if math.abs(stK.get(s) - kk) < 0.000001
+                                            neuf := false
+                                            if math.abs(stG.get(s) - gg) > 0.000001
+                                                msg(ref + " — strike " + str.tostring(kk) + " donné deux fois avec deux valeurs → profil de « " + r.id + " » indisponible")
+                                                r.strBad := true
+                                if neuf
+                                    stK.push(kk)
+                                    stG.push(gg)
+                                    r.nStr += 1
+            else
+                msg(ref + " — ligne non reconnue « " + str.substring(l, 0, math.min(str.length(l), 24)) + " » : ignorée")
+        fermer(ci)
+
+    // ─── Contrôles entre relevés ──────────────────────────────────────────
+    // Une même échéance renvoyée deux fois au même créneau — le cas typique :
+    // « 0-0 » et « 1-1 » demandés hors séance rendent la même échéance — ne
+    // compte qu'une fois. On garde le relevé dont le DTE demandé contient le
+    // DTE réel, sinon le premier lu.
+    nR = rels.size()
+    if nR > 1
+        for i = 0 to nR - 2
+            a = rels.get(i)
+            for j = i + 1 to nR - 1
+                b = rels.get(j)
+                memeLot = a.valide and b.valide and a.fam == b.fam and a.cible == b.cible and
+                     a.tGel == b.tGel and math.abs(a.tCol - b.tCol) <= slotTol * MIN_MS
+                if memeLot and a.fam != "VP" and not a.doublon and not b.doublon
+                    if a.ech == b.ech
+                        bOk = not na(b.dteMin) and b.dteMin >= b.dteA and b.dteMin <= b.dteB
+                        aOk = not na(a.dteMin) and a.dteMin >= a.dteA and a.dteMin <= a.dteB
+                        perdant = bOk and not aOk ? a : b
+                        gagnant = bOk and not aOk ? b : a
+                        perdant.doublon := true
+                        msg("« " + perdant.id + " » renvoie la même échéance (" + perdant.ech + ") que « " + gagnant.id + " » au même créneau : doublon écarté")
+                    else
+                        ea = str.split(a.ech, ",")
+                        eb = str.split(b.ech, ",")
+                        bool inter = false
+                        for e in ea
+                            if eb.includes(e)
+                                inter := true
+                        if inter and (a.cumul or b.cumul)
+                            cum = a.cumul and not b.cumul ? a : b.cumul and not a.cumul ? b : a.nEch >= b.nEch ? a : b
+                            if not cum.recouvre
+                                cum.recouvre := true
+                                msg("« " + cum.id + " » (plage cumulative " + cum.dteDem + ") recouvre une échéance déjà fournie au même créneau : " +
+                                     (gardeCumul ? "gardé à la demande, NON indépendant" : "écarté pour ne pas la compter deux fois"))
+
+    // ─── Conversion et filtre d'affichage ─────────────────────────────────
+    for r in rels
+        ir = racineDe(r.inst)
+        nqFam = (ir == "NQ" or ir == "MNQ") and (racine == "NQ" or racine == "MNQ")
+        if ir == racine
+            r.ajout := 0.0
+        else if nqFam
+            r.ajout := 0.0
+            r.convNote := ir + " → " + racine + " : base nulle par convention (même indice, même échéance, même règlement)"
+        else if ir == "NDX" and (racine == "NQ" or racine == "MNQ")
+            if r.baseLue
+                r.ajout := r.base
+                r.convNote := "NDX → " + racine + " : + " + str.tostring(r.base, "#.##") + (r.baseApprox ? " (APPROXIMATIVE : " + r.baseNote + ")" : " (" + r.baseNote + ")")
+            else
+                r.convOk := false
+                r.convNote := "NDX → " + racine + " : base absente (ligne B) → niveaux non tracés"
+        else
+            r.convOk := false
+            r.convNote := ir + " → " + racine + " : conversion non prise en charge"
+        famOk = r.fam == "GEX" ? famGEX : r.fam == "IV" ? famIV : famVP
+        dteOk = r.fam == "VP" or (not na(r.dteMaxR) and r.dteMaxR <= dteMax)
+        ciblOk = contientMot(r.cible, racine)
+        slotRef = r.fam == "VP" ? slotVP * 60 + slotVPm : racine == "MNQ" ? slotMNQ * 60 + slotMNQm : slotNQ * 60 + slotNQm
+        slotOk = not na(r.slotMin) and ecartCreneau(r.slotMin, slotRef) <= slotTol
+        filtre = filtreMode == "Tous" ? true : filtreMode == "Identifiants listés" ? contientMot(idsIn, r.id) : ciblOk and slotOk
+        r.affiche := r.valide and r.convOk and not r.doublon and (not r.recouvre or gardeCumul) and famOk and dteOk and filtre
+        if r.valide and not r.convOk and filtre
+            msg("« " + r.id + " » : " + r.convNote)
+        if r.nNiv > 0
+            for q = r.n0 to r.n0 + r.nNiv - 1
+                nv = nivs.get(q)
+                nv.px := r.convOk ? nv.pxSrc + r.ajout : na
+
+    if rels.size() == 0
+        msg("Aucun relevé lu : collez un bloc ALPZ 1 dans la zone A.")
+    if advPts <= tolTicks * tickPx or rxPts <= tolTicks * tickPx
+        msg("Réaction et dépassement adverse doivent dépasser la tolérance de touche.")
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  C. Activation, époques, confluences
+//
+//  Un relevé est ACTIF sur les bougies qui ouvrent à partir de sa
+//  disponibilité et avant son gel. Rien ne compte avant : ni touche, ni
+//  armement. Chaque fois que l'ensemble des relevés actifs change, les zones
+//  sont refaites — c'est une nouvelle ÉPOQUE.
+//
+//  Regroupement : niveaux triés par prix, un niveau rejoint la zone si son
+//  écart au précédent est ≤ distance ET si le diamètre reste ≤ diamètre
+//  maximal. Les membres gardent leur prix exact ; la zone va du plus bas au
+//  plus haut d'entre eux. Deux relevés gamma/IV de créneaux différents (minuit
+//  et 5 h) ne fusionnent jamais.
+// ═══════════════════════════════════════════════════════════════════════════
+
+var array<Zone>   zones   = array.new<Zone>()
+var int           epT0    = na
+var array<int>    epA     = array.new<int>()
+var array<int>    epB     = array.new<int>()
+var array<int>    epGel   = array.new<int>()
+var array<float>  epLo    = array.new<float>()
+var array<float>  epHi    = array.new<float>()
+var array<int>    epN     = array.new<int>()
+var array<string> epLab   = array.new<string>()
+var array<string> epDet   = array.new<string>()
+var array<Obs>    obs     = array.new<Obs>()
+var array<int>    obsOuv  = array.new<int>()
+var int           nObsPerdus = 0
+
+tolPts = tolTicks * tickPx
+
+prix2(float v) =>
+    str.tostring(v, "0.00")
+
+hDisp(int t) =>
+    na(t) ? "—" : str.format_time(t, "dd/MM HH:mm", tzIn)
+
+dteTxt(Rel r) =>
+    r.fam == "VP" or na(r.dteMin) ? "" : r.dteMin == r.dteMaxR ? str.tostring(r.dteMin) + "D" :
+         str.tostring(r.dteMin) + "-" + str.tostring(r.dteMaxR) + "D"
+
+// L'étiquette courte : « CW 0D · 10D · HVN ». Un code répété avec une autre
+// échéance n'ajoute que l'échéance ; répété à l'identique, il devient « ×2 ».
+etiquette(array<int> mem) =>
+    cle = array.new<float>()
+    for q in mem
+        nv = nivs.get(q)
+        r = rels.get(nv.r)
+        cle.push(rangCode(nv.code) * 100.0 + (na(r.dteMin) ? 0 : math.min(r.dteMin, 99)))
+    ordre = cle.sort_indices(order.ascending)
+    segs = array.new<string>()
+    string prevCode = ""
+    string prevDte = ""
+    int rep = 1
+    for o in ordre
+        nv = nivs.get(mem.get(o))
+        d = dteTxt(rels.get(nv.r))
+        if nv.code == prevCode and d == prevDte
+            rep += 1
+            segs.set(segs.size() - 1, nv.code + (d != "" ? " " + d : "") + " ×" + str.tostring(rep))
+        else if nv.code == prevCode and d != ""
+            segs.push(d)
+            rep := 1
+        else
+            segs.push(nv.code + (d != "" ? " " + d : ""))
+            rep := 1
+        prevCode := nv.code
+        prevDte := d
+    segs.join(" · ")
+
+detail(array<int> mem) =>
+    string t = ""
+    for q in mem
+        nv = nivs.get(q)
+        r = rels.get(nv.r)
+        d = dteTxt(r)
+        t := t + (t == "" ? "" : "\n") + nv.code + (d != "" ? " " + d : "") + "  " + prix2(nv.px) +
+             (r.ajout != 0 ? "  (" + r.inst + " " + prix2(nv.pxSrc) + " + " + prix2(r.ajout) + ")" : "") +
+             "  · " + r.id + " · coll. " + hDisp(r.tCol) + " · dispo " + hDisp(r.tDispo) +
+             (r.fam != "VP" ? " · éch. " + r.ech : " · séance " + r.seance) +
+             (nv.nom != "" ? " · « " + nv.nom + " »" : "")
+    t
+
+creneauDe(Niv nv) =>
+    r = rels.get(nv.r)
+    r.slotMin
+
+// Ferme l'époque en cours : ses zones passent aux archives de dessin.
+archiver(int tFin) =>
+    for z in zones
+        if epA.size() < MAX_EPQ
+            epA.push(epT0)
+            epB.push(tFin)
+            epGel.push(z.gel)
+            epLo.push(z.lo)
+            epHi.push(z.hi)
+            epN.push(z.n)
+            epLab.push((z.fictif ? "FICTIF · " : "") + z.lab)
+            epDet.push(z.det)
+
+// La dernière touche connue d'une zone qui recouvre la bande : le délai de
+// réarmement survit à la reconstruction des zones.
+derniereTouche(float lo, float hi) =>
+    int t = na
+    if obs.size() > 0
+        for i = obs.size() - 1 to math.max(0, obs.size() - 50)
+            o = obs.get(i)
+            if o.hi >= lo - tolPts and o.lo <= hi + tolPts
+                t := na(t) ? o.t0 : math.max(t, o.t0)
+    t
+
+refaireZones() =>
+    zones.clear()
+    cand = array.new<int>()
+    pxs  = array.new<float>()
+    int gelMin = na
+    for r in rels
+        if r.actif
+            gelMin := na(gelMin) ? r.tGel : math.min(gelMin, r.tGel)
+            if r.nNiv > 0
+                for q = r.n0 to r.n0 + r.nNiv - 1
+                    nv = nivs.get(q)
+                    if nv.ok and not na(nv.px) and (voirSec or not nv.sec)
+                        cand.push(q)
+                        pxs.push(nv.px)
+    nC = cand.size()
+    if nC > 0
+        ordre = pxs.sort_indices(order.ascending)
+        int ia = 0
+        while ia < nC
+            q0 = cand.get(ordre.get(ia))
+            nv0 = nivs.get(q0)
+            mem = array.from(q0)
+            float lo = nv0.px
+            float hi = nv0.px
+            int slot = nv0.fam != "VP" ? creneauDe(nv0) : na
+            bool fict = rels.get(nv0.r).fictif
+            int ib = ia + 1
+            while ib < nC
+                q = cand.get(ordre.get(ib))
+                nv = nivs.get(q)
+                bool conflit = false
+                if nv.fam != "VP" and not na(slot)
+                    conflit := ecartCreneau(creneauDe(nv), slot) > slotTol
+                if nv.px - hi <= dConf and nv.px - lo <= dMax and not conflit
+                    mem.push(q)
+                    hi := nv.px
+                    if nv.fam != "VP" and na(slot)
+                        slot := creneauDe(nv)
+                    if rels.get(nv.r).fictif
+                        fict := true
+                    ib += 1
+                else
+                    break
+            z = Zone.new(lo, hi, mem.size(), etiquette(mem), detail(mem), fict)
+            z.gel := gelMin
+            z.tTouche := derniereTouche(lo, hi)
+            zones.push(z)
+            ia := ib
+
+// ─── Issue d'une observation ──────────────────────────────────────────────
+// cote = +1 : prix venu d'en haut, test de SUPPORT, réaction = hausse.
+// cote = −1 : prix venu d'en bas, test de RÉSISTANCE, réaction = baisse.
+// Seuils mesurés depuis les bords de la zone (membres extrêmes, sans la
+// tolérance) : réaction au-delà du bord proche, adverse au-delà du bord
+// opposé. Une zone d'un seul niveau a deux bords confondus.
+seuils(Obs o) =>
+    float reac = o.cote == 1 ? o.hi + rxPts : o.lo - rxPts
+    float adv  = o.cote == 1 ? o.lo - advPts : o.hi + advPts
+    [reac, adv]
+
+atteint(Obs o, float h, float l) =>
+    [reac, adv] = seuils(o)
+    bool A = o.cote == 1 ? l <= adv : h >= adv
+    bool B = o.cote == 1 ? h >= reac : l <= reac
+    [A, B]
+
+// La bougie de touche. Ce qu'elle contient AVANT la touche n'est pas une
+// réaction : seul ce qui est certain d'être venu après compte.
+//  · ouverture dans la bande : la touche est l'ouverture, tout est après ;
+//  · ouverture hors bande : l'adverse est forcément après (il faut traverser
+//    la zone pour l'atteindre) ; la réaction n'est certaine que si la
+//    CLÔTURE est au-delà du seuil — un plus haut a pu précéder la touche.
+jugerTouche(Obs o, float op, float h, float l, float c, float bLo, float bHi) =>
+    [A, B] = atteint(o, h, l)
+    [reac, adv] = seuils(o)
+    dedans = op >= bLo and op <= bHi
+    Bc = o.cote == 1 ? c >= reac : c <= reac
+    string etat = "en observation"
+    string motif = ""
+    if A and B
+        etat := "ambiguë"
+        motif := "réaction et adverse dans la bougie de touche, ordre inconnu"
+    else if A
+        etat := "cassée"
+        motif := "adverse dans la bougie de touche"
+    else if B and (dedans or Bc)
+        etat := "rejetée"
+        motif := "réaction dans la bougie de touche"
+    else if B
+        etat := "ambiguë"
+        motif := "seuil de réaction atteint, peut-être avant la touche"
+    [etat, motif]
+
+jugerSuite(Obs o, float h, float l) =>
+    [A, B] = atteint(o, h, l)
+    string etat = "en observation"
+    string motif = ""
+    if A and B
+        etat := "ambiguë"
+        motif := "réaction et adverse dans la même bougie, ordre inconnu"
+    else if A
+        etat := "cassée"
+        motif := "adverse avant réaction"
+    else if B
+        etat := "rejetée"
+        motif := "réaction avant adverse"
+    [etat, motif]
+
+alerteTxt(Obs o, string quoi) =>
+    "Alp-0 Zones · " + quoi + " · " + o.lab + " · " + (o.cote == 1 ? "support" : "résistance") +
+         " · zone " + prix2(o.lo) + (o.hi > o.lo ? "–" + prix2(o.hi) : "")
+
+// ─── Chaque bougie CONFIRMÉE ──────────────────────────────────────────────
+// Rien de ce qui suit ne s'exécute sur une bougie en cours : un état ne
+// change qu'à la clôture, et ne change plus ensuite. Pas de repaint.
+if barstate.isconfirmed
+    // 1. Activation et gel.
+    bool chg = false
+    for r in rels
+        doit = r.affiche and time >= r.tDispo and time < r.tGel
+        if doit != r.actif
+            r.actif := doit
+            chg := true
+            if doit and not r.vu
+                r.vu := true
+                if r.nNiv > 0
+                    for q = r.n0 to r.n0 + r.nNiv - 1
+                        nv = nivs.get(q)
+                        if nv.ok and not na(nv.px) and math.abs(nv.px - open) > open * plausPct / 100.0
+                            nv.ok := false
+                            nv.note := "implausible"
+                            msg("« " + r.id + " » : " + nv.code + " " + prix2(nv.px) + " à plus de " + str.tostring(plausPct) + " % du prix à l'activation (" + prix2(open) + ") — écarté")
+    if chg
+        archiver(time)
+        refaireZones()
+        epT0 := time
+
+    // 2. Les observations ouvertes, sur les bougies qui suivent la touche.
+    if obsOuv.size() > 0
+        for i = obsOuv.size() - 1 to 0
+            o = obs.get(obsOuv.get(i))
+            if time >= o.t0 + fenMin * MIN_MS
+                o.etat := "non résolue"
+                o.motif := "ni réaction ni adverse dans la fenêtre"
+                o.tFin := time
+            else
+                [e, mtf] = jugerSuite(o, high, low)
+                if e != "en observation"
+                    o.etat := e
+                    o.motif := mtf
+                    o.tFin := time
+            if o.etat != "en observation"
+                obsOuv.remove(i)
+                if alerteOn
+                    alert(alerteTxt(o, o.etat), alert.freq_once_per_bar_close)
+
+    // 3. Touches et armement.
+    for z in zones
+        bLo = z.lo - tolPts
+        bHi = z.hi + tolPts
+        inter = high >= bLo and low <= bHi
+        if z.arme and inter
+            cote = open > bHi ? 1 : open < bLo ? -1 : z.cote
+            o = Obs.new(z.lo, z.hi, cote, time, z.n >= 2, (z.fictif ? "FICTIF · " : "") + z.lab)
+            o.gel := z.gel
+            [e, mtf] = jugerTouche(o, open, high, low, close, bLo, bHi)
+            o.etat := e
+            o.motif := mtf
+            if e != "en observation"
+                o.tFin := time
+            if obs.size() < MAX_OBS
+                obs.push(o)
+                if e == "en observation"
+                    obsOuv.push(obs.size() - 1)
+            else
+                nObsPerdus += 1
+            z.arme := false
+            z.tTouche := time
+            if alerteOn
+                alert(alerteTxt(o, "touche"), alert.freq_once_per_bar_close)
+        else if not inter
+            side = low > bHi ? 1 : -1
+            if z.arme
+                z.cote := side
+            else if na(z.tTouche) or time >= z.tTouche + rearmMin * MIN_MS
+                z.arme := true
+                z.cote := side
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  D. Dessin — refait à chaque exécution de la dernière bougie
+//
+//  Le script ne touche qu'à SES objets : il ne lit ni n'efface aucun dessin
+//  manuel, ni ceux d'un autre indicateur. Ses propres objets sont tenus
+//  sous les quotas (500 lignes, 500 étiquettes, 500 boîtes) ; au-delà,
+//  TradingView effacerait les plus anciens sans prévenir, donc le script
+//  s'arrête avant et le dit.
+// ═══════════════════════════════════════════════════════════════════════════
+
+var array<line>  dLines  = array.new<line>()
+var array<label> dLabels = array.new<label>()
+var array<box>   dBoxes  = array.new<box>()
+
+refus() =>
+    cpt.set(1, cpt.get(1) + 1)
+
+QL = 470
+QB = 470
+QE = 460
+
+styleNiv = nivSty == "Tirets" ? line.style_dashed : nivSty == "Continu" ? line.style_solid : line.style_dotted
+tailleLab = labTaille == "Minuscule" ? size.tiny : labTaille == "Normale" ? size.normal : size.small
+cNiv = color.new(nivCol, nivTr)
+
+nLab() =>
+    dLabels.size() + vwLabs.size()
+
+ligne(int x1, float y, int x2, bool ext, color c, string sty, int w) =>
+    if dLines.size() < QL
+        dLines.push(line.new(x1, y, x2, y, xloc = xloc.bar_time, extend = ext ? extend.right : extend.none,
+             color = c, style = sty, width = w))
+    else
+        refus()
+
+etq(int x, float y, string t, string tip, bool enTemps) =>
+    if nLab() < QE
+        dLabels.push(label.new(x, y, t, xloc = enTemps ? xloc.bar_time : xloc.bar_index,
+             style = label.style_label_left, color = color.new(color.black, 100),
+             textcolor = labCol, size = tailleLab, tooltip = tip))
+    else
+        refus()
+
+// Le profil 0DTE : le relevé choisi, ses strikes convertis, ou la raison pour
+// laquelle il n'y a rien à tracer. Jamais reconstruit depuis CW/PS/GF.
+profilChoisi() =>
+    int best = -1
+    string pourquoi = "aucun relevé GEX 0DTE avec valeurs par strike n'est disponible"
+    for [i, r] in rels
+        bool vise = profId == "auto" ? r.affiche and r.vu and r.fam == "GEX" and r.dteMin == 0 and r.dteMaxR == 0 : r.id == profId
+        if vise
+            if profId != "auto" and (r.fam != "GEX" or r.dteMin != 0 or r.dteMaxR != 0)
+                pourquoi := "« " + r.id + " » n'est pas un relevé GEX 0DTE (échéance réelle)"
+            else if profId != "auto" and not r.vu
+                pourquoi := "« " + r.id + " » n'est pas encore disponible"
+            else if r.nStr < 3
+                pourquoi := "« " + r.id + " » : moins de trois strikes fournis"
+            else if r.strBad
+                pourquoi := "« " + r.id + " » : strikes incohérents ou sans unité/signe"
+            else if not r.convOk
+                pourquoi := "« " + r.id + " » : " + r.convNote
+            else if best < 0 or r.tDispo > rels.get(best).tDispo
+                best := i
+    [best, best >= 0 ? "" : pourquoi]
+
+if barstate.islast
+    while dLines.size() > 0
+        line.delete(dLines.pop())
+    while dLabels.size() > 0
+        label.delete(dLabels.pop())
+    while dBoxes.size() > 0
+        box.delete(dBoxes.pop())
+    cpt.set(1, 0)
+
+    // ─── Les jours affichés : les plus récents d'abord ────────────────────
+    jours = array.new<int>()
+    for r in rels
+        if r.affiche and r.vu and not jours.includes(r.tGel)
+            jours.push(r.tGel)
+    jours.sort(order.descending)
+    while jours.size() > joursAff
+        jours.pop()
+    int jourCourant = na
+    if jours.size() > 0
+        jourCourant := jours.get(0)
+    vif = not na(jourCourant) and time < jourCourant
+
+    // ─── Le profil, d'abord : il a son propre budget de lignes ────────────
+    [pIdx, pPourquoi] = profilChoisi()
+    string profInfo = profOn ? pPourquoi : "masqué"
+    if profOn and pIdx >= 0
+        r = rels.get(pIdx)
+        ks = array.new<float>()
+        gs = array.new<float>()
+        ds = array.new<float>()
+        for s = r.s0 to r.s0 + r.nStr - 1
+            ks.push(stK.get(s) + r.ajout)
+            gs.push(stG.get(s))
+            ds.push(math.abs(stK.get(s) + r.ajout - close))
+        garde = ds.sort_indices(order.ascending)
+        nG = math.min(garde.size(), profMax)
+        float gMax = 0.0
+        float yMin = na
+        float yMax = na
+        for q = 0 to nG - 1
+            j = garde.get(q)
+            gMax := math.max(gMax, math.abs(gs.get(j)))
+            yMin := na(yMin) ? ks.get(j) : math.min(yMin, ks.get(j))
+            yMax := na(yMax) ? ks.get(j) : math.max(yMax, ks.get(j))
+        if gMax > 0
+            x0 = bar_index + profOff
+            axe = profDisp == "Axe central" ? x0 + profW : x0
+            for q = 0 to nG - 1
+                j = garde.get(q)
+                g = gs.get(j)
+                lg = int(math.round(profW * math.abs(g) / gMax))
+                if g != 0 and lg >= 1 and dLines.size() < QL
+                    x2 = profDisp == "Axe central" ? (g > 0 ? axe + lg : axe - lg) : axe + lg
+                    dLines.push(line.new(axe, ks.get(j), x2, ks.get(j), xloc = xloc.bar_index,
+                         color = g > 0 ? profPos : profNeg, style = line.style_solid, width = profLw))
+            if dLines.size() < QL
+                dLines.push(line.new(axe, yMin, axe, yMax, xloc = xloc.bar_index,
+                     color = color.new(#9598A1, 60), style = line.style_dotted, width = 1))
+            regime = na(r.gNet) ? "régime : net non fourni" :
+                 "net source " + str.tostring(r.gNet, "#.##") + " " + r.gUnite + (r.gNet > 0 ? " → positif" : r.gNet < 0 ? " → négatif" : " → nul")
+            entete = (r.fictif ? "FICTIF · " : "") + "GEX 0DTE · " + r.src + " · " + r.id + "\néch. " + r.ech +
+                 " · relevé " + hDisp(r.tCol) + " · " + r.gUnite + " · " + r.gSigne +
+                 (r.gOrig == "image" ? " · lu sur image (approx.)" : "") + "\n" + regime + " · instantané figé, pas un flux live"
+            if nLab() < QE
+                dLabels.push(label.new(axe, yMax, entete, xloc = xloc.bar_index, style = label.style_label_down,
+                     color = color.new(color.black, 100), textcolor = labCol, size = size.tiny))
+            profInfo := r.id + " · éch. " + r.ech + " · " + hDisp(r.tCol) + " · " + str.tostring(nG) + " strikes"
+        else
+            profInfo := "« " + r.id + " » : toutes les valeurs GEX sont nulles"
+
+    // ─── Les niveaux : un trait par niveau, de la disponibilité au gel ────
+    // Jour par jour, du plus récent au plus ancien : sous quota, ce sont les
+    // jours anciens qui manquent, jamais celui qu'on trade.
+    for g in jours
+        for r in rels
+            if r.affiche and r.vu and r.tGel == g and r.nNiv > 0
+                gele = time >= r.tGel
+                for q = r.n0 to r.n0 + r.nNiv - 1
+                    nv = nivs.get(q)
+                    if nv.ok and not na(nv.px) and (voirSec or not nv.sec)
+                        ligne(r.tDispo, nv.px, gele ? r.tGel : time, not gele, cNiv, styleNiv, nivW)
+
+    // ─── Les confluences : une boîte par zone d'au moins deux membres ─────
+    // Les zones vivantes d'abord, puis les époques archivées, des plus
+    // récentes aux plus anciennes.
+    // Une zone encore en mémoire après l'heure du gel (la bougie qui
+    // l'archivera n'est pas close) s'arrête quand même au gel.
+    for z in zones
+        if z.n >= 2 and not na(epT0)
+            if dBoxes.size() < QB
+                dBoxes.push(box.new(epT0, z.hi, vif ? time : math.min(time, z.gel), z.lo, xloc = xloc.bar_time,
+                     extend = vif ? extend.right : extend.none,
+                     border_color = zoneBrd, border_style = line.style_dotted, bgcolor = zoneCol))
+            else
+                refus()
+    nEp = epA.size()
+    if nEp > 0
+        for i = nEp - 1 to 0
+            if epN.get(i) >= 2 and jours.includes(epGel.get(i))
+                if dBoxes.size() < QB
+                    dBoxes.push(box.new(epA.get(i), epHi.get(i), math.min(epB.get(i), epGel.get(i)), epLo.get(i),
+                         xloc = xloc.bar_time, border_color = zoneBrd, border_style = line.style_dotted,
+                         bgcolor = zoneCol))
+                else
+                    refus()
+
+    // ─── Étiquettes à droite ──────────────────────────────────────────────
+    // Jour vivant : en bout d'écran, au décalage choisi. Jour gelé : juste
+    // après la fin du segment, pour qu'un nom reste lisible après 22 h.
+    if labOn
+        zonesVives = zones.size() > 0
+        if zonesVives
+            for z in zones
+                etat = ""
+                if obs.size() > 0
+                    for i = obs.size() - 1 to math.max(0, obs.size() - 30)
+                        o = obs.get(i)
+                        if etat == "" and o.t0 >= epT0 and math.abs(o.lo - z.lo) < 0.000001 and math.abs(o.hi - z.hi) < 0.000001
+                            etat := "  ◦ " + o.etat
+                txt = (z.fictif ? "FICTIF · " : "") + z.lab + etat
+                if vif
+                    etq(bar_index + labOff, (z.lo + z.hi) / 2.0, txt, z.det, false)
+                else
+                    etq(z.gel, (z.lo + z.hi) / 2.0, txt, z.det, true)
+        // Jour gelé : les zones de sa DERNIÈRE époque, nommées au bout du
+        // segment. Les jours passés n'ont d'étiquettes que sur demande.
+        if nEp > 0
+            for g in jours
+                courant = g == jourCourant
+                if (courant and not vif and not zonesVives) or (labPasse and not courant)
+                    int dernierA = na
+                    for i = 0 to nEp - 1
+                        if epGel.get(i) == g
+                            dernierA := na(dernierA) ? epA.get(i) : math.max(dernierA, epA.get(i))
+                    if not na(dernierA)
+                        for i = 0 to nEp - 1
+                            if epGel.get(i) == g and epA.get(i) == dernierA
+                                etq(g, (epLo.get(i) + epHi.get(i)) / 2.0, epLab.get(i), epDet.get(i), true)
+
+    // ─── Marqueurs de touche ──────────────────────────────────────────────
+    if mrkOn and obs.size() > 0
+        int posees = 0
+        for i = obs.size() - 1 to 0
+            o = obs.get(i)
+            if posees < mrkN and jours.includes(o.gel)
+                cM = o.etat == "rejetée" ? color.new(#26A69A, 20) : o.etat == "cassée" ? color.new(#EF5350, 20) :
+                     o.etat == "ambiguë" ? color.new(#F2B138, 10) : o.etat == "non résolue" ? color.new(#787B86, 20) :
+                     color.new(color.white, 10)
+                tip = "touche " + hDisp(o.t0) + " · " + o.lab + " · " + (o.cote == 1 ? "venu d'en haut → test de support" : "venu d'en bas → test de résistance") +
+                     "\n" + o.etat + (o.motif != "" ? " — " + o.motif : "") + (na(o.tFin) ? "" : " · " + hDisp(o.tFin))
+                if nLab() < QE
+                    dLabels.push(label.new(o.t0, o.cote == 1 ? o.hi : o.lo, "", xloc = xloc.bar_time,
+                         style = label.style_circle, color = cM, size = size.tiny, tooltip = tip))
+                    posees += 1
+
+    // ─── Tableau ──────────────────────────────────────────────────────────
+    if tabOn
+        posT = tabPos == "Haut gauche" ? position.top_left : tabPos == "Bas droite" ? position.bottom_right :
+             tabPos == "Bas gauche" ? position.bottom_left : position.top_right
+        var table tb = table.new(posT, 2, 60, bgcolor = color.new(#131722, 15),
+             border_color = color.new(#787B86, 70), border_width = 1)
+        table.clear(tb, 0, 0, 1, 59)
+        int row = 0
+        cT = color.new(#B2B5BE, 0)
+        cW = color.new(#F2B138, 0)
+        bool fict = false
+        int nLus = 0
+        int nAct = 0
+        int nVenir = 0
+        int nEcart = 0
+        for r in rels
+            fict := fict or r.fictif
+            nLus += 1
+            if r.actif
+                nAct += 1
+            if r.affiche and time < r.tDispo
+                nVenir += 1
+            if not r.valide or r.doublon or (r.recouvre and not gardeCumul) or not r.convOk
+                nEcart += 1
+        table.cell(tb, 0, row, fict ? "⚠ EXEMPLE FICTIF" : "Alp-0 Zones", text_color = fict ? cW : cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 1, row, "ALPZ 1 · " + syminfo.ticker + (syminfo.current_contract != "" ? " (" + syminfo.current_contract + ")" : "") + " · " + filtreMode,
+             text_color = cT, text_size = size.small, text_halign = text.align_right)
+        row += 1
+        table.cell(tb, 0, row, "Relevés", text_color = cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 1, row, "lus " + str.tostring(nLus) + " · actifs " + str.tostring(nAct) + " · à venir " + str.tostring(nVenir) + " · écartés " + str.tostring(nEcart),
+             text_color = cT, text_size = size.small, text_halign = text.align_right)
+        row += 1
+        int nConf = 0
+        for z in zones
+            if z.n >= 2
+                nConf += 1
+        table.cell(tb, 0, row, "Zones", text_color = cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 1, row, vif ? str.tostring(zones.size()) + " dont " + str.tostring(nConf) + " confluence(s)" : "aucune zone vivante (gelé ou hors fenêtre)",
+             text_color = cT, text_size = size.small, text_halign = text.align_right)
+        row += 1
+        // Les comptes : descriptifs, pas une performance. Un taux de rejet
+        // n'est pas une rentabilité après coûts.
+        for t = 0 to 1
+            int nT = 0
+            int nRj = 0
+            int nCs = 0
+            int nAm = 0
+            int nNr = 0
+            int nOb = 0
+            for o in obs
+                if (t == 1 and o.confl) or (t == 0 and not o.confl)
+                    nT += 1
+                    if o.etat == "rejetée"
+                        nRj += 1
+                    else if o.etat == "cassée"
+                        nCs += 1
+                    else if o.etat == "ambiguë"
+                        nAm += 1
+                    else if o.etat == "non résolue"
+                        nNr += 1
+                    else
+                        nOb += 1
+            table.cell(tb, 0, row, t == 0 ? "Touches · zones simples" : "Touches · confluences", text_color = cT, text_size = size.small, text_halign = text.align_left)
+            table.cell(tb, 1, row, "n " + str.tostring(nT) + " · rejet " + str.tostring(nRj) + " · cassée " + str.tostring(nCs) +
+                 " · ambiguë " + str.tostring(nAm) + " · délai " + str.tostring(nNr) + " · en cours " + str.tostring(nOb),
+                 text_color = cT, text_size = size.small, text_halign = text.align_right)
+            row += 1
+        table.cell(tb, 0, row, "Profil 0DTE", text_color = cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 1, row, profInfo == "" ? "—" : profInfo, text_color = pIdx >= 0 ? cT : cW, text_size = size.small, text_halign = text.align_right)
+        row += 1
+        for r in rels
+            if r.affiche and r.actif and r.convNote != "" and row < 40
+                table.cell(tb, 0, row, "Base · " + r.id, text_color = cT, text_size = size.tiny, text_halign = text.align_left)
+                table.cell(tb, 1, row, r.convNote, text_color = r.baseApprox ? cW : cT, text_size = size.tiny, text_halign = text.align_right)
+                row += 1
+        string masques = ""
+        if not voirSec
+            for nv in nivs
+                rr = rels.get(nv.r)
+                if nv.sec and nv.ok and rr.actif and not na(nv.px)
+                    masques := masques + (masques == "" ? "" : " · ") + nv.code + " " + prix2(nv.px)
+        if masques != ""
+            table.cell(tb, 0, row, "Secondaires masqués", text_color = cT, text_size = size.tiny, text_halign = text.align_left)
+            table.cell(tb, 1, row, masques, text_color = cT, text_size = size.tiny, text_halign = text.align_right)
+            row += 1
+        if tabDet and vif
+            for z in zones
+                if row < 52
+                    // État de la zone dans l'époque : non touchée, ou l'issue
+                    // de sa dernière touche (en observation tant qu'elle court).
+                    string etatZ = "non touchée"
+                    if obs.size() > 0
+                        for i = obs.size() - 1 to math.max(0, obs.size() - 30)
+                            o = obs.get(i)
+                            if etatZ == "non touchée" and o.t0 >= epT0 and math.abs(o.lo - z.lo) < 0.000001 and math.abs(o.hi - z.hi) < 0.000001
+                                etatZ := o.etat
+                    table.cell(tb, 0, row, z.lab + "  ◦ " + etatZ, text_color = cT, text_size = size.tiny, text_halign = text.align_left)
+                    table.cell(tb, 1, row, z.det, text_color = cT, text_size = size.tiny, text_halign = text.align_right)
+                    row += 1
+        if cpt.get(1) > 0 or nObsPerdus > 0
+            table.cell(tb, 0, row, "Quotas", text_color = cW, text_size = size.small, text_halign = text.align_left)
+            table.cell(tb, 1, row, str.tostring(cpt.get(1)) + " objet(s) non dessiné(s) · " + str.tostring(nObsPerdus) + " touche(s) non archivée(s) — réduire « Jours affichés »",
+                 text_color = cW, text_size = size.small, text_halign = text.align_right)
+            row += 1
+        if tabMsgN > 0 and msgs.size() > 0
+            for i = 0 to math.min(msgs.size(), tabMsgN) - 1
+                if row < 59
+                    table.cell(tb, 0, row, i == 0 ? "Avertissements (" + str.tostring(cpt.get(0)) + ")" : "", text_color = cW, text_size = size.tiny, text_halign = text.align_left)
+                    table.cell(tb, 1, row, msgs.get(i), text_color = cW, text_size = size.tiny, text_halign = text.align_right)
+                    row += 1
