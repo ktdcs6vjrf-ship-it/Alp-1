@@ -302,10 +302,10 @@ console.log('J. Profil');
   const dernier = b.length - 1;
   verifie('J cinq barres de strike', prof.length === 5, String(prof.length));
   verifie('J strikes convertis (+200) sans déplacement', JSON.stringify(prof.map(l => l.y1).sort()) === JSON.stringify([29150, 29200, 29250, 29300, 29350]));
-  verifie('J entièrement à droite du prix', prof.every(l => Math.min(l.x1, l.x2) >= dernier + 30), JSON.stringify(prof.map(l => [l.x1, l.x2])));
+  verifie('J entièrement à droite du prix (6 barres)', prof.every(l => Math.min(l.x1, l.x2) >= dernier + 6), JSON.stringify(prof.map(l => [l.x1, l.x2])));
   const pos = prof.filter(l => l.x2 > l.x1).map(l => l.y1).sort();
   verifie('J positifs à droite de l\'axe, négatifs à gauche', JSON.stringify(pos) === JSON.stringify([29250, 29300, 29350]), JSON.stringify(pos));
-  verifie('J longueur ∝ |GEX| (2.0 → 40 barres)', prof.some(l => l.y1 === 29300 && l.x2 - l.x1 === 40));
+  verifie('J longueur ∝ |GEX| (2.0 → 20 barres)', prof.some(l => l.y1 === 29300 && l.x2 - l.x1 === 20));
   const ent = r.etiquettes.find(e => e.text.startsWith('GEX 0DTE'));
   verifie('J en-tête : source, échéance, heure, figé', !!ent && ent.text.includes('éch. 2026-11-06') && ent.text.includes('06/11 00:00') && ent.text.includes('figé'), ent?.text);
   verifie('J régime lu dans le net source', !!ent && ent.text.includes('net source 1.25 Mds$ → positif'));
@@ -361,7 +361,9 @@ console.log('L. Exemple fictif de docs/zones-gamma-format.md');
     .replace(/^\s*```\s*\n/, '').replace(/\n```\s*$/, '');
   const b = seance(J, '00:00', '08:00', [['00:00', 29300], ['08:00', 29310]]).filter((_, i) => i % 5 === 0);
   const rn = await lancer(ex, b, { 'Contrat du graphique (vide = automatique)': 'NQ' });
-  verifie('L en-tête « ⚠ EXEMPLE FICTIF »', rn.cellules.includes('⚠ EXEMPLE FICTIF'));
+  verifie('L en-tête « ⚠ EXEMPLE FICTIF » et version', rn.cellules.some(c => c.startsWith('⚠ EXEMPLE FICTIF · Alp-0 Zones v')), rn.cellules[0]);
+  verifie('L ligne « Lecture » : 5 relevés, 20 niveaux (6 + 2 + 4 + 5 + 3), 11 strikes', cell(rn, 'A ').includes('5 relevés · 20 niveaux · 11 strikes'), cell(rn, 'A '));
+  verifie('L ligne « Jour affiché » : en cours', cell(rn, '06/11 ·').includes('en cours'), cell(rn, '06/11'));
   verifie('L aucun avertissement sur l\'exemple', !rn.cellules.some(c => c.startsWith('Avertissements')), msgs(rn).split('\n').filter(c => c.includes('—')).join(' | '));
   const noms = rn.etiquettes.filter(e => e.style === 'style_label_left' && !e.text.startsWith('-')).map(e => e.text.split('  ◦')[0]);
   verifie('L NQ : « FICTIF · CW 0D · 1D · VAH · HVN »', noms.includes('FICTIF · CW 0D · 1D · VAH · HVN'), JSON.stringify(noms));
@@ -431,6 +433,42 @@ console.log('M. Z-score');
   verifie('M T2 ≤ T1 : neutre ou magenta, rien entre les deux', [...cols].every(c => c === 'rgb(51, 51, 51)' || c === 'rgb(229, 5, 255)'), JSON.stringify([...cols]));
   const ro = await lancer('', b, { 'Colorer les bougies (heatmap)': false });
   verifie('M heatmap désactivée : aucune bougie tracée', ro.ctx.plots['Z-Score Heatmap'].data.every(x => x.value.every(v => v === null || Number.isNaN(v))));
+}
+
+// ── N. Texte collé sans retours à la ligne ──
+console.log('N. Collage sans retours à la ligne');
+{
+  // Certains champs de saisie remplacent les retours à la ligne par des
+  // espaces : l'exemple de la doc, aplati, doit rendre exactement les mêmes
+  // niveaux que l'exemple d'origine.
+  const doc = fs.readFileSync(new URL('../../docs/zones-gamma-format.md', import.meta.url), 'utf8');
+  const ex = doc.split('<!-- EXEMPLE FICTIF : début -->')[1].split('<!-- EXEMPLE FICTIF : fin -->')[0]
+    .replace(/^\s*```\s*\n/, '').replace(/\n```\s*$/, '');
+  const b = seance(J, '00:00', '08:00', [['00:00', 29300], ['08:00', 29310]]).filter((_, i) => i % 5 === 0);
+  const ys = r => r.lignes.filter(l => l.xloc === 'bt').map(l => l.y1).sort((a, c) => a - c);
+  const r1 = await lancer(ex, b);
+  const r2 = await lancer(ex.replace(/\n/g, ' '), b);
+  verifie('N mêmes niveaux, aplati ou non', JSON.stringify(ys(r1)) === JSON.stringify(ys(r2)) && ys(r1).length > 0, `${ys(r1).length} / ${ys(r2).length}`);
+  verifie('N même profil', r2.lignes.filter(l => l.xloc === 'bi' && l.y1 === l.y2).length === 11);
+  verifie('N la ligne « Lecture » le signale', cell(r2, 'A ').includes('relu par marqueurs'), cell(r2, 'A '));
+  verifie('N aucun avertissement de lecture', !r2.cellules.some(c => c.startsWith('Avertissements')), msgs(r2).split('\n').filter(c => c.includes('—')).join(' | '));
+}
+
+// ── O. La situation de l'utilisateur : l'exemple, NQ1!, vu le week-end ──
+console.log('O. Exemple vu le week-end (séance du vendredi close)');
+{
+  const doc = fs.readFileSync(new URL('../../docs/zones-gamma-format.md', import.meta.url), 'utf8');
+  const ex = doc.split('<!-- EXEMPLE FICTIF : début -->')[1].split('<!-- EXEMPLE FICTIF : fin -->')[0]
+    .replace(/^\s*```\s*\n/, '').replace(/\n```\s*$/, '');
+  const b = seance(J, '00:00', '23:00', [['00:00', 29250], ['10:00', 29420], ['16:00', 29150], ['23:00', 29300]]);
+  const r = await lancer(ex, b);
+  const traits = r.lignes.filter(l => l.xloc === 'bt');
+  // 20 niveaux − 3 du relevé MNQ de 5 h − 4 secondaires masqués (S2, IV+2σ, IV−2σ, LVN) = 13.
+  verifie('O 13 niveaux tracés le vendredi, de 00:04 à 22:00', traits.length === 13 && traits.every(l => l.x1 >= paris(J, '00:03') && l.x2 === paris(J, '22:00') && l.extend === 'n'), `${traits.length} traits`);
+  verifie('O noms posés à 22:00', r.etiquettes.some(e => e.text === 'FICTIF · CW 0D · 1D · VAH · HVN' && e.x === paris(J, '22:00')));
+  const prof = r.lignes.filter(l => l.xloc === 'bi' && l.y1 === l.y2);
+  verifie('O profil 0DTE à droite de la dernière bougie', prof.length === 11 && prof.every(l => Math.min(l.x1, l.x2) >= b.length - 1 + 6));
+  verifie('O le tableau dit où regarder', cell(r, '06/11 ·').includes('gelé à 22:00 : niveaux à gauche de la dernière bougie'), cell(r, '06/11'));
 }
 
 console.log(`\n${ok} contrôle(s) réussi(s), ${ko} échec(s)`);

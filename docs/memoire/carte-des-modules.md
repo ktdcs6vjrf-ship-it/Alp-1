@@ -479,6 +479,16 @@ Hors du noyau Python
   jamais déplacés, minuit et 5 h jamais fusionnés) ; ⑤ touches et issues sur
   bougie confirmée — rejetée, cassée, ambiguë, non résolue ; ⑥ profil GEX signé
   0DTE à droite du prix, jamais reconstruit depuis CW/PS/GF.
+  Premier retour de l'utilisateur (v2) : « je ne vois ni les lignes ni le
+  profil ». Il avait installé le code de la première page (sans z-score) ;
+  l'exemple est daté du vendredi, donc vu le week-end ses niveaux sont gelés
+  à 22:00, une heure avant la dernière bougie ; et le profil, à 30 barres de
+  la dernière bougie, était hors de l'écran d'un téléphone. Réponse v3 : la
+  version en tête du tableau, une ligne **Lecture** (ce qui a été lu dans
+  chaque zone), une ligne **Jour affiché** (en cours ou gelé, où regarder),
+  la relecture par marqueurs d'un texte collé sans retours à la ligne, et le
+  profil à 6 barres. **Leçon : un indicateur qui peut ne rien afficher pour
+  de bonnes raisons doit dire lesquelles, à l'écran.**
   Pièges enterrés : **une fonction Pine ne peut pas modifier une variable
   globale** (`n += 1` dans une fonction est refusé) — les compteurs vivent
   dans un tableau global (`cpt`), dont une fonction peut changer le contenu ;
@@ -499,8 +509,9 @@ Hors du noyau Python
   dépôt.** PineTS (runtime Pine v6 libre de LuxAlgo, `pinets@0.13.1`)
   transpile le vrai fichier et l'exécute sur des bougies synthétiques ; le
   banc lit lignes, étiquettes, boîtes, cellules de tableau et couleurs de
-  `plotcandle`. 107 contrôles, dont l'exemple fictif lu dans la doc et le
-  z-score contre une référence indépendante. PineTS écrit une couleur tantôt
+  `plotcandle`. 117 contrôles, dont l'exemple fictif lu dans la doc, le
+  z-score contre une référence indépendante, et la situation exacte du
+  premier retour de l'utilisateur (exemple collé, NQ1!, vu le week-end). PineTS écrit une couleur tantôt
   `rgb(r, g, b)`, tantôt `#RRGGBB` : lire les deux. Trois écarts de PineTS sont
   contournés dans le code sans effet pour TradingView (voir son README). Ce
   n'est pas le compilateur TradingView : la vérification finale reste

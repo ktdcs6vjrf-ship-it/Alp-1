@@ -76,6 +76,33 @@ bougies colorées se superposent.
 
 ---
 
+## 1 ter. Si rien ne s'affiche
+
+Regarder d'abord le tableau, en haut à droite.
+
+1. **La première ligne** dit la version qui tourne (`Alp-0 Zones v3`). Si elle
+   n'y est pas, ou si les bougies ne sont pas colorées par le z-score, c'est
+   une ancienne version du script qui est sur le graphique.
+2. **Lecture** dit ce qui a été lu dans chaque zone de texte. `A 33 lignes ·
+   5 relevés · 20 niveaux · 11 strikes` pour l'exemple fictif. « en-tête ALPZ 1
+   absent » : la première ligne utile n'est pas `ALPZ 1`. « relu par
+   marqueurs » : le champ a perdu les retours à la ligne, et le script les a
+   reconstitués.
+3. **Jour affiché** dit où sont les niveaux. Un relevé n'existe qu'à partir de
+   sa disponibilité et jusqu'au gel de 22 h : l'exemple est daté du **vendredi
+   6 novembre**, ses niveaux vont de 00:04 à 22:00 ce jour-là. Regardé le
+   week-end, la dernière heure (22:00-23:00) n'en porte plus : faire défiler
+   vers la gauche.
+4. **Le profil 0DTE** est dessiné **à droite de la dernière bougie**, dans
+   l'espace vide : faire glisser le graphique vers la gauche pour le découvrir.
+5. Les traits et les étiquettes ne modifient pas l'échelle de prix : un niveau
+   à 300 points du prix peut sortir de l'écran quand on est zoomé. Dézoomer
+   l'échelle verticale.
+6. Les avertissements, en bas du tableau, donnent la ligne fautive
+   (`A:12` = zone A, ligne 12).
+
+---
+
 ## 2. Le format ALPZ 1 — ce que Lou remplit
 
 Un texte, ligne par ligne. La **première ligne utile** est l'en-tête de
@@ -338,7 +365,7 @@ plus ensuite. Les essais le vérifient en rejouant la même séance tronquée.
 **Profil 0DTE à droite.** Le relevé GEX disponible le plus récent dont
 l'échéance **réelle** est le jour même, s'il porte des valeurs par strike.
 Une barre horizontale par strike, à son prix exact converti, entièrement à
-droite du prix (30 barres par défaut) ; négatif à gauche d'un axe vertical,
+droite de la dernière bougie (6 barres par défaut, demi-largeur 20) ; négatif à gauche d'un axe vertical,
 positif à droite, longueur proportionnelle à |GEX|. L'en-tête rappelle
 source, échéance, heure du relevé, unité, convention de signe, régime **si
 la source donne le net**, et que l'instantané est figé : ce n'est pas un flux
@@ -346,7 +373,10 @@ gamma en direct. Le profil n'est **jamais reconstruit** à partir de
 CW/PS/GF : sans valeurs par strike, il est indisponible et le tableau dit
 pourquoi.
 
-**Tableau.** Relevés lus / actifs / à venir / écartés ; zones et confluences ;
+**Tableau.** Version de l'indicateur ; **Lecture** — ce qui a été lu dans chaque
+zone de texte (lignes, relevés, niveaux, strikes) ; relevés lus / actifs / à
+venir / écartés ; **Jour affiché** — date, zones, confluences, et s'il est en
+cours ou gelé ;
 comptes de touches par issue, zones simples et confluences séparées ; profil ;
 base et sa qualité ; secondaires masqués ; quotas ; avertissements.
 **Ce sont des comptes, pas une performance.** La comparaison simple /
@@ -431,7 +461,8 @@ en heure d'été, d'hiver et en semaine décalée) ; absence d'anticipation et d
 repaint ; gel à 22 h ; créneaux NQ / MNQ ; profil 0DTE ; VWAP et bandes ;
 l'exemple fictif ci-dessus ; z-score (valeur exacte contre une référence
 indépendante, préchauffage en na, marche isolée à z = 7, dégradé, mèches et
-bordures, T2 ≤ T1). 107 contrôles.
+bordures, T2 ≤ T1) ; un texte collé sans retours à la ligne ; la situation
+d'un graphique regardé le week-end, séance close. 117 contrôles.
 
 Ce que ces essais **ne prouvent pas** : PineTS n'est pas le compilateur de
 TradingView. Il ne vérifie ni toutes les règles de typage (qualificatifs

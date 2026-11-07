@@ -44,6 +44,9 @@ MIN_MS   = 60000
 MAX_MSG  = 80
 MAX_OBS  = 5000
 MAX_EPQ  = 3000
+// Affichée en tête du tableau : la première chose à vérifier quand le
+// graphique ne montre pas ce qu'on attend est la version qui tourne.
+VERSION  = "v3"
 
 
 // ─── ①–③ Z-score (heatmap des bougies) ────────────────────────────────────
@@ -191,8 +194,9 @@ gG = "⑩ Profil GEX 0DTE à droite"
 profOn  = input.bool(true, "Afficher le profil", group = gG)
 profId  = input.string("auto", "Relevé du profil", group = gG, display = display.none,
      tooltip = "auto : le dernier relevé GEX disponible dont l'échéance RÉELLE est le jour même (0DTE) et qui porte des valeurs par strike. Sinon, l'identifiant d'un relevé.")
-profOff = input.int(30, "Distance au prix (barres)", minval = 1, maxval = 200, group = gG, display = display.none)
-profW   = input.int(40, "Demi-largeur max (barres)", minval = 5, maxval = 140, group = gG, display = display.none)
+profOff = input.int(6, "Distance au prix (barres)", minval = 1, maxval = 200, group = gG, display = display.none,
+     tooltip = "Le profil est dessiné dans l'espace à droite de la dernière bougie : faire glisser le graphique vers la gauche pour le découvrir.")
+profW   = input.int(20, "Demi-largeur max (barres)", minval = 5, maxval = 140, group = gG, display = display.none)
 profDisp = input.string("Axe central", "Disposition", options = ["Axe central", "Base commune"], group = gG, display = display.none,
      tooltip = "Axe central : négatif à gauche, positif à droite d'un axe vertical. Base commune : toutes les barres partent de la même verticale vers la droite, le signe se lit à la couleur.")
 profPos = input.color(color.new(#26A69A, 35), "GEX positif", group = gG, inline = "pc")
@@ -512,6 +516,8 @@ var array<string> msgs  = array.new<string>()
 // une variable globale, mais peut modifier le contenu d'un tableau global.
 // 0 : messages émis ; 1 : objets refusés faute de quota.
 var array<int>    cpt   = array.new<int>(2, 0)
+// Ce qui a été lu dans chaque zone de texte, pour le tableau.
+var array<string> lecture = array.new<string>()
 
 msg(string m) =>
     cpt.set(0, cpt.get(0) + 1)
@@ -778,15 +784,62 @@ fermer(int ci) =>
             msg(r.ref + " — « " + r.id + " » : des strikes GEX dans un relevé de famille " + r.fam + " → ignorés")
             r.strBad := true
 
+// Un texte collé sans aucun retour à la ligne (certains champs de saisie
+// les remplacent par des espaces) est relu par MARQUEURS : une nouvelle ligne
+// commence à « ALPZ 1 », à un « # », à R / B / G suivis d'un « clé=valeur »,
+// à N suivi d'un code connu puis d'un nombre, à S suivi d'un « strike:gex ».
+// Une ligne normale, elle, n'est jamais redécoupée.
+estMarqueur(array<string> toks, int i) =>
+    t = toks.get(i)
+    tu = str.upper(t)
+    n = toks.size()
+    string s1 = ""
+    string s2 = ""
+    if i + 1 < n
+        s1 := toks.get(i + 1)
+    if i + 2 < n
+        s2 := toks.get(i + 2)
+    p1 = str.pos(s1, "=")
+    cleValeur = s1 != "" and not na(p1) and p1 > 0
+    bool m = false
+    if str.startswith(t, "#")
+        m := true
+    else if tu == "ALPZ" and s1 == "1"
+        m := true
+    else if (tu == "R" or tu == "B" or tu == "G") and cleValeur
+        m := true
+    else if tu == "N" and s1 != "" and canon(s1) != "" and not na(str.tonumber(s2))
+        m := true
+    else if tu == "S" and str.contains(s1, ":")
+        m := not na(str.tonumber(str.split(s1, ":").get(0)))
+    m
+
+resegmenter(string brut) =>
+    toks = mots(str.replace_all(brut, "\t", " "))
+    string out = ""
+    for [i, t] in toks
+        string sep = ""
+        if i > 0
+            sep := estMarqueur(toks, i) ? "\n" : " "
+        out := out + sep + t
+    out
+
 // ─── La lecture, une fois, sur la première bougie ─────────────────────────
 // Le texte est une constante : le relire à chaque bougie ne servirait à
 // rien. Tout ce qui dépend du prix (plausibilité) attend l'activation.
+// Ce qui a été lu, zone par zone, est écrit au tableau (ligne « Lecture ») :
+// c'est la première chose à regarder quand rien ne s'affiche.
 if barstate.isfirst
     zonesTxt = array.from(txtA, txtB, txtC)
     for zi = 0 to 2
         brut = zonesTxt.get(zi)
         zl = zi == 0 ? "A" : zi == 1 ? "B" : "C"
-        lignes = str.split(str.replace_all(brut, "\t", " "), "\n")
+        aplati = str.length(str.trim(brut)) > 0 and not str.contains(brut, "\n")
+        lignes = str.split(str.replace_all(aplati ? resegmenter(brut) : brut, "\t", " "), "\n")
+        nR0 = rels.size()
+        nN0 = nivs.size()
+        nS0 = stK.size()
+        int nUtiles = 0
         bool vOk = false
         int ci = -1
         int li = 0
@@ -796,6 +849,7 @@ if barstate.isfirst
             ref = zl + ":" + str.tostring(li)
             if l == "" or str.startswith(l, "#")
                 continue
+            nUtiles += 1
             toks = mots(l)
             k = str.upper(toks.get(0))
             if not vOk
@@ -1037,6 +1091,13 @@ if barstate.isfirst
             else
                 msg(ref + " — ligne non reconnue « " + str.substring(l, 0, math.min(str.length(l), 24)) + " » : ignorée")
         fermer(ci)
+        if str.length(str.trim(brut)) == 0
+            lecture.push(zl + " vide")
+        else
+            lecture.push(zl + " " + str.tostring(nUtiles) + " lignes · " + str.tostring(rels.size() - nR0) + " relevés · " +
+                 str.tostring(nivs.size() - nN0) + " niveaux · " + str.tostring(stK.size() - nS0) + " strikes" +
+                 (aplati ? " · texte sans retour à la ligne, relu par marqueurs" : "") +
+                 (vOk ? "" : " · en-tête ALPZ 1 absent : zone ignorée"))
 
     // ─── Contrôles entre relevés ──────────────────────────────────────────
     // Une même échéance renvoyée deux fois au même créneau — le cas typique :
@@ -1656,21 +1717,44 @@ if barstate.islast
                 nVenir += 1
             if not r.valide or r.doublon or (r.recouvre and not gardeCumul) or not r.convOk
                 nEcart += 1
-        table.cell(tb, 0, row, fict ? "⚠ EXEMPLE FICTIF" : "Alp-0 Zones", text_color = fict ? cW : cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 0, row, (fict ? "⚠ EXEMPLE FICTIF · " : "") + "Alp-0 Zones " + VERSION, text_color = fict ? cW : cT, text_size = size.small, text_halign = text.align_left)
         table.cell(tb, 1, row, "ALPZ 1 · " + syminfo.ticker + (syminfo.current_contract != "" ? " (" + syminfo.current_contract + ")" : "") + " · " + filtreMode,
              text_color = cT, text_size = size.small, text_halign = text.align_right)
+        row += 1
+        table.cell(tb, 0, row, "Lecture", text_color = cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 1, row, lecture.join("\n"), text_color = nLus == 0 ? cW : cT, text_size = size.small, text_halign = text.align_right)
         row += 1
         table.cell(tb, 0, row, "Relevés", text_color = cT, text_size = size.small, text_halign = text.align_left)
         table.cell(tb, 1, row, "lus " + str.tostring(nLus) + " · actifs " + str.tostring(nAct) + " · à venir " + str.tostring(nVenir) + " · écartés " + str.tostring(nEcart),
              text_color = cT, text_size = size.small, text_halign = text.align_right)
         row += 1
-        int nConf = 0
-        for z in zones
-            if z.n >= 2
-                nConf += 1
-        table.cell(tb, 0, row, "Zones", text_color = cT, text_size = size.small, text_halign = text.align_left)
-        table.cell(tb, 1, row, vif ? str.tostring(zones.size()) + " dont " + str.tostring(nConf) + " confluence(s)" : "aucune zone vivante (gelé ou hors fenêtre)",
-             text_color = cT, text_size = size.small, text_halign = text.align_right)
+        // Le jour affiché : vivant (zones en mémoire) ou gelé (dernière
+        // époque archivée). Dire où regarder vaut mieux qu'un tableau vide.
+        int nZJ = 0
+        int nCJ = 0
+        if vif
+            for z in zones
+                nZJ += 1
+                if z.n >= 2
+                    nCJ += 1
+        else if not na(jourCourant) and epA.size() > 0
+            int dA = na
+            for i = 0 to epA.size() - 1
+                if epGel.get(i) == jourCourant
+                    dA := na(dA) ? epA.get(i) : math.max(dA, epA.get(i))
+            if not na(dA)
+                for i = 0 to epA.size() - 1
+                    if epGel.get(i) == jourCourant and epA.get(i) == dA
+                        nZJ += 1
+                        if epN.get(i) >= 2
+                            nCJ += 1
+        string jourTxt = "aucun relevé disponible sur ces bougies"
+        if not na(jourCourant)
+            jourTxt := str.format_time(jourCourant, "dd/MM", tzIn) + " · " + str.tostring(nZJ) + " zone(s) dont " + str.tostring(nCJ) + " confluence(s) · " +
+                 (vif ? "en cours, gel à " + str.format_time(jourCourant, "HH:mm", tzIn) :
+                 "gelé à " + str.format_time(jourCourant, "HH:mm", tzIn) + " : niveaux à gauche de la dernière bougie")
+        table.cell(tb, 0, row, "Jour affiché", text_color = cT, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 1, row, jourTxt, text_color = na(jourCourant) ? cW : cT, text_size = size.small, text_halign = text.align_right)
         row += 1
         // Les comptes : descriptifs, pas une performance. Un taux de rejet
         // n'est pas une rentabilité après coûts.

@@ -9,7 +9,7 @@ boîtes, tableau) et le compare à des issues calculées à la main.
 
 ```
 npm install        # pinets 0.13.1, figé
-node scenarios.mjs # ~12 s, 107 contrôles
+node scenarios.mjs # ~15 s, 117 contrôles
 ```
 
 - `banc.mjs` — heure de Paris → UTC sans table d'heure d'été écrite à la main
@@ -20,7 +20,9 @@ node scenarios.mjs # ~12 s, 107 contrôles
   données absentes, D doublons, E quotas, F changements d'heure, G anticipation
   et repaint, H gel à 22 h, I créneaux NQ / MNQ, J profil 0DTE, K VWAP,
   L l'exemple fictif de `docs/zones-gamma-format.md` lu dans le fichier,
-  M la heatmap z-score (référence indépendante, préchauffage, couleurs).
+  M la heatmap z-score (référence indépendante, préchauffage, couleurs),
+  N un texte collé sans retours à la ligne, O l'exemple regardé le week-end
+  (séance close, niveaux gelés, profil à droite, tableau qui dit où regarder).
 
 Ce que le banc ne prouve pas : PineTS n'est pas le compilateur de TradingView
 (qualificatifs *simple* / *series*, avertissements de l'éditeur). Trois écarts
