@@ -189,35 +189,55 @@ d'`alp0-zones.pine`. Banc : `tools/zones-pinets/zscore-vwap.mjs`
 (17 contrôles). Page : https://claude.ai/artifact/7rxojTDt5ut2jV7XfADyFM.
 `alp0-zones.pine` reste dans le dépôt, en sommeil.
 
-## Demande en attente — graphique option animé du challenge (7 novembre 2026)
+## Hors du corpus — Option du challenge (prop)
 
-**À faire en premier dans la session suivante.** L'utilisateur : « fais un
-graphique option animé où la prime est le prix de mon challenge prop firm,
-avec un plafond max de 4 000 $, et je peux retirer seulement 50 % et 2 000 $
-au plus ». Référence visuelle : le *Strategy builder* des options TradingView
-(payoff rouge puis vert, cloche orange en tirets, courbe bleue en tirets,
-point mort marqué). Rien n'est commencé : la session a atteint 81 % de
-contexte.
+`prop/challenge-option.html` : le challenge prop firm de l'utilisateur lu comme
+une option, page autonome sombre (un `<style>`, un `<script>`, fontes Google).
+Demande du 7 novembre 2026 : « graphique option animé où la prime est le prix
+de mon challenge, plafond max de 4 000 $, je peux retirer seulement 50 % et
+2 000 $ au plus », sur le modèle du *Strategy builder* d'options TradingView.
+Page : https://claude.ai/artifact/Rh9t6JoxvBy1jspmZECW1z (v1). Un nouveau lien
+à chaque amélioration : copier le fichier sous un nouveau nom.
 
-- `prop/palier10.html` (application « Palier ») a déjà une vue « Challenge =
-  option » : prime = prix du challenge, barrière haute = objectif, barrière
-  basse = drawdown, Monte Carlo µ / σ. Son exemple : compte 50 k, objectif
-  3 000, drawdown 2 000 EOD, prix 150 $, σ 450 $/j. **Le prix réel du
-  challenge n'a pas été donné** : champ modifiable, 150 $ marqué « exemple ».
-- Payoff au retrait, y = profit du compte : `retrait(y) = min(0,5 ×
-  clip(y, 0, 4 000), 2 000)`, net = retrait − F. Perte max −F, gain max
-  2 000 − F, point mort à y = 2F : un call spread de ratio 0,5.
-- Valeur avant le retrait : brownien (µ, σ par jour) tué à b = −D. Densité
-  `p(y) = [φ((y−x−µτ)/s) − e^{2µ(b−x)/σ²} φ((y−2b+x−µτ)/s)] / s`, s = σ√τ ;
-  survie `Φ((x−b+µτ)/s) − e^{2µ(b−x)/σ²} Φ((b−x+µτ)/s)` ; valeur =
-  ∫ retrait·p dy − F, intégrée sur x + µτ ± 8s (pas plus large : la
-  précision s'effondre près de l'échéance).
-- Plan : page autonome `prop/challenge-option.html`, sombre, SVG dimensionné
-  au pixel du conteneur (texte lisible à 390 px), animation du jour 0 au jour
-  du retrait (courbe bleue qui converge vers le payoff, densité orange, point
-  qui suit une trajectoire tirée et graine), statistiques (garder le compte,
-  toucher le plafond, prime équitable = E[retrait] contre F), contrôle Node
-  (formules fermées contre intégrale et Monte Carlo), nouveau lien.
+- **Lecture retenue** : `retrait(y) = r · clip(y, 0, K)`, `K = min(plafond,
+  retrait max / r)` — call spread de ratio 0,5, exercices 0 et 4 000 ; net =
+  retrait − F, point mort y = F/r. Le « plafond de 4 000 $ » est lu comme le
+  profit compté au plus ; avec 50 % il coïncide avec les 2 000 $. **Le prix réel
+  du challenge n'a jamais été donné** : 150 $ marqué « exemple », comme le
+  drawdown 2 000, l'objectif 3 000, N 20 jours, σ 450 $/j (repris de Palier).
+- **Modèle** : brownien (µ, σ par jour) éteint à b = −D. Densité, survie,
+  queue et valeur sont **fermées** (la valeur s'intègre sans quadrature :
+  `V = G(x+µτ) − e^{2µ(b−x)/σ²} G(2b−x+µτ)`), ce qui supprime l'effondrement de
+  précision près de l'échéance prévu par le plan initial. Évaluation sans
+  limite de temps : `(e^{2µD/σ²} − 1)/(e^{2µD/σ²} − e^{−2µa/σ²})`, D/(D+a) à µ = 0.
+- **Ce que la page affiche** : figure 1 animée (payoff rouge/vert, valeur en
+  tirets bleus qui rejoint le payoff, densité orange amputée des trajectoires
+  éteintes, bande de trajectoire sous l'axe sur la même échelle de profit,
+  traces des courses précédentes) ; tuiles façon TradingView ; figure 2 =
+  surface 3D de la valeur (profit × jour), nuage de points, coupe du jour et
+  trajectoire posées dessus ; « le prix du challenge » = verdict calculé,
+  tableau plancher fixe (fermé) contre plancher trailing (Monte Carlo :
+  plancher = min(plus haut de clôture − D, 0), touché en séance, objectif à la
+  clôture) et figure 3 (valeur du challenge selon µ, µ* aux croisements).
+- **Résultat à l'exemple, µ = 0** : compte financé 384 $ (fixe) / 355 $
+  (trailing) ; évaluation 40 % / 26 % ; challenge 154 $ / 92 $ pour 150 $ ;
+  µ* = −1 $/j (fixe), +18 $/j (trailing). Un seul retrait compté : la suite du
+  compte ne peut qu'ajouter de la valeur, la perte restant bornée au prix.
+- **Contrôles** : `node tools/challenge-option/controle.mjs` extrait le bloc
+  `MODELE:DEBUT … MODELE:FIN` de la page et le vérifie (90 contrôles, 3 s) :
+  fermé contre Simpson, contre Monte Carlo à pont brownien (exact pour la
+  surveillance continue), cas fermés à µ = 0, monotonies, µ*, trajectoires
+  communes. `node tools/challenge-option/rendu.mjs [dossier]` récupère les
+  vraies fontes par npm et balaie 360 → 1 280 px (erreurs, défilement, hors
+  cadre, animation, Monte Carlo rendu).
+- **Pièges** : `text-transform: uppercase` change « µ » en « M » et « σ » en
+  « Σ » — toute lettre grecque d'un intitulé passe par `<span class="gr">`.
+  Les trajectoires communes (graine égale d'une dérive à l'autre) rendent les
+  écarts Monte Carlo corrélés entre dérives : un écart de 2 erreurs types aux
+  trois µ est **un seul** tirage, pas un biais (vérifié sur dix graines).
+  Depuis le bloc-notes, `import 'playwright'` échoue en ESM : passer par
+  `createRequire`. Un script à `${…}` écrit par heredoc déclenche le garde-fou
+  de suppression : l'écrire avec l'outil d'écriture.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

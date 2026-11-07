@@ -1,0 +1,774 @@
+<title>Option du challenge</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Une colonne : le graphique d'abord, ce qu'il chiffre ensuite, ce qu'il suppose à la fin.
+   Noir, blanc, gris. La couleur n'existe que dans les tracés et garde partout le même sens :
+   vert / rouge = signe du payoff, bleu = valeur sous plancher fixe, orange = densité du profit,
+   rose = règle trailing. Un seul thème, sombre, par choix. */
+:root{
+  color-scheme:dark;
+  --bg:#000;--panel:#07080a;--chart:#0b0b0d;--line:#262626;--line2:#3b3b3b;--grid:#19191c;
+  --fg:#f4f4f4;--mut:#8e8e8e;--dim:#5c5c5c;
+  --gain:#4fe3a1;--loss:#e8736c;--val:#5b8cff;--dens:#f5b041;--trail:#e27bc0;
+  --f-d:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-m:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.55 var(--f-d);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding-block:22px 56px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font:500 10.5px/1.4 var(--f-m);letter-spacing:.22em;text-transform:uppercase;color:var(--mut);margin:0 0 10px}
+.eyebrow::before{content:"// ";color:var(--dim)}
+h1{margin:0;font:800 clamp(31px,8vw,48px)/.98 var(--f-d);letter-spacing:-.012em;text-transform:uppercase;text-wrap:balance}
+h2{margin:0 0 10px;font:800 21px/1.12 var(--f-d);text-transform:uppercase;letter-spacing:.005em;text-wrap:balance}
+p{margin:0}
+.lede{color:var(--mut);margin-top:12px;max-width:62ch}
+.lede b{color:var(--fg);font-weight:600}
+.head{padding-block:4px 6px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+@media (min-width:640px){.panel{padding:18px}}
+.fhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;margin-bottom:10px}
+.fhead .eyebrow{margin:0}
+.hud{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font:500 12px/1.5 var(--f-m);color:var(--mut);font-variant-numeric:tabular-nums}
+.hud b{color:var(--fg);font-weight:600}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:99px;padding:1px 9px;font:600 10.5px/1.7 var(--f-m);letter-spacing:.1em;text-transform:uppercase;color:var(--fg);white-space:nowrap}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--val);flex:none}
+.chip.ko i{background:var(--loss)}.chip.plus i{background:var(--gain)}.chip.zero i{background:var(--mut)}
+.plot{position:relative;min-width:0}
+.plot svg{display:block;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.plot svg:focus-visible{outline:2px solid var(--fg);outline-offset:3px;border-radius:4px}
+canvas.surf{display:block;touch-action:pan-y;cursor:grab;border-radius:8px}
+canvas.surf:active{cursor:grabbing}
+
+/* tracés */
+svg text{font-family:var(--f-m);font-size:10.5px;fill:var(--mut)}
+.bgp{fill:var(--chart)}
+.kozone{fill:var(--loss);fill-opacity:.07}
+.grid line{stroke:var(--grid);stroke-width:1;shape-rendering:crispEdges}
+.zero{stroke:var(--line2);stroke-width:1;shape-rendering:crispEdges}
+.bellf{fill:var(--dens);fill-opacity:.08;stroke:none}
+.bell{fill:none;stroke:var(--dens);stroke-width:1.7;stroke-dasharray:3 3;stroke-linejoin:round}
+.aloss{fill:var(--loss);fill-opacity:.13}
+.again{fill:var(--gain);fill-opacity:.12}
+.ploss,.pgain{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.ploss{stroke:var(--loss)}.pgain{stroke:var(--gain)}
+.val{fill:none;stroke:var(--val);stroke-width:2;stroke-dasharray:7 5;stroke-linejoin:round}
+.barrier{stroke:var(--loss);stroke-width:1.2;stroke-dasharray:4 4}
+.capl{stroke:var(--gain);stroke-opacity:.35;stroke-width:1;stroke-dasharray:2 4}
+.now{stroke:var(--fg);stroke-opacity:.5;stroke-width:1;stroke-dasharray:2 3}
+.pt{fill:var(--val);stroke:var(--chart);stroke-width:2.5}
+.pt.ko{fill:var(--loss)}
+.dots{fill:var(--fg);stroke:var(--chart);stroke-width:2}
+.dots.ko{fill:var(--loss)}
+.traj{fill:none;stroke:var(--fg);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.ghost{fill:none;stroke-width:1;stroke-opacity:.4}
+.ghost.ko{stroke:var(--loss)}.ghost.plus{stroke:var(--gain)}.ghost.zero{stroke:var(--mut)}
+.lab{font-size:11px;fill:var(--fg);paint-order:stroke;stroke:var(--chart);stroke-width:4px;stroke-linejoin:round}
+.lab.mu{fill:var(--mut)}
+.bem{fill:var(--chart);stroke:var(--fg);stroke-width:2}
+.tagr{fill:var(--fg)}
+svg text.tagt{fill:var(--bg);font-weight:600}
+.ch line{stroke:var(--fg);stroke-opacity:.55;stroke-width:1}
+.chp{fill:var(--fg);stroke:var(--chart);stroke-width:2}
+.chv{fill:var(--val);stroke:var(--chart);stroke-width:2}
+.chs{fill:var(--trail);stroke:var(--chart);stroke-width:2}
+.s-stat{fill:none;stroke:var(--val);stroke-width:2;stroke-linejoin:round}
+.s-trail{fill:none;stroke:var(--trail);stroke-width:2;stroke-linejoin:round}
+.d-trail{fill:var(--trail);stroke:var(--chart);stroke-width:2}
+.fline{stroke:var(--fg);stroke-opacity:.55;stroke-width:1.2;stroke-dasharray:5 4}
+.eqm{stroke-width:1;stroke-dasharray:2 3}
+.eqm.st{stroke:var(--val)}.eqm.tr{stroke:var(--trail)}
+.mum{stroke:var(--fg);stroke-opacity:.35;stroke-width:1}
+
+.tip{position:absolute;top:8px;pointer-events:none;background:rgba(10,10,12,.95);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font:500 11.5px/1.55 var(--f-m);color:var(--mut);min-width:178px;z-index:2;font-variant-numeric:tabular-nums}
+.tip .h{color:var(--fg);font-weight:600;margin-bottom:3px}
+.tip .r{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.tip .r b{color:var(--fg);min-width:72px;text-align:right;font-weight:600}
+.tip .k{width:14px;height:0;border-top:2px solid var(--mut);flex:none}
+.tip .k.d{border-top-style:dashed}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;padding:0;margin:12px 0 0;font:500 11px/1.4 var(--f-m);color:var(--mut)}
+.legend li{display:flex;align-items:center;gap:7px}
+.legend svg{flex:none;display:block}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin-top:14px;align-items:end}
+.controls .rng{grid-column:1/-1}
+@media (min-width:720px){.controls{grid-template-columns:auto auto 1fr 1fr}.controls .rng{grid-column:auto}}
+.btn{min-height:44px;border-radius:8px;border:1px solid var(--line2);background:var(--panel);font:600 11.5px var(--f-m);letter-spacing:.08em;text-transform:uppercase;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.btn.ghost{background:transparent}
+.btn svg{width:12px;height:12px;flex:none}
+.rng{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rng .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:500 10.5px var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.rng output{font:600 12.5px var(--f-m);letter-spacing:0;text-transform:none;color:var(--fg);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line2);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--fg);margin-top:-8px;border:3px solid var(--bg)}
+input[type=range]::-moz-range-track{height:4px;background:var(--line2);border-radius:2px}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--fg);border:3px solid var(--bg)}
+.figcap{color:var(--mut);font-size:13px;line-height:1.55;margin-top:12px;max-width:72ch}
+.figcap b{color:var(--fg);font-weight:600}
+
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (min-width:600px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:920px){.tiles{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.tile{background:var(--panel);padding:11px 12px 12px;min-width:0}
+.tile span{display:block;font:500 9.5px/1.35 var(--f-m);letter-spacing:.13em;text-transform:uppercase;color:var(--mut)}
+.tile strong{display:block;font:600 18px/1.3 var(--f-m);margin-top:6px;overflow-wrap:anywhere}
+.tile small{display:block;font:400 11px/1.4 var(--f-m);color:var(--dim);margin-top:2px}
+.tile .mk{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+
+.params{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:760px){.params{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font:500 10px/1.35 var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.field label em{font-style:normal;color:var(--dim);letter-spacing:.06em;text-transform:none;margin-left:4px}
+.inp{display:flex;align-items:center;background:#121212;border:1px solid var(--line2);border-radius:8px;min-height:46px;padding:0 12px;gap:6px}
+.inp:focus-within{border-color:var(--fg)}
+.inp input{flex:1;min-width:0;width:100%;background:none;border:0;outline:0;font:500 16px var(--f-m);min-height:44px;font-variant-numeric:tabular-nums}
+.inp span{color:var(--mut);font:500 12px var(--f-m)}
+.inp[aria-invalid="true"]{border-color:var(--loss)}
+.field .hint{font-size:11.5px;line-height:1.4;color:var(--dim)}
+.prow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-top:14px}
+.prow p{color:var(--dim);font-size:12.5px;max-width:60ch}
+
+.verdict{display:flex;flex-direction:column;gap:8px;font-size:16px;line-height:1.5;max-width:66ch}
+.verdict b{font-weight:700;color:var(--fg)}
+.tw{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:10px}
+table.t{width:100%;border-collapse:collapse;font:500 13px/1.4 var(--f-m);font-variant-numeric:tabular-nums}
+table.t th,table.t td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+@media (min-width:640px){table.t th,table.t td{padding:9px 12px}}
+table.t th:first-child,table.t td:first-child{padding-left:12px}table.t th:last-child,table.t td:last-child{padding-right:12px}
+table.t tr:last-child th,table.t tr:last-child td{border-bottom:0}
+table.t thead th{font:500 10px/1.35 var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);background:var(--chart)}
+table.t th[scope=row]{text-align:left;font:500 13.5px/1.35 var(--f-d);color:var(--fg)}
+table.t th[scope=row] small,table.t td small{display:block;font:400 11px/1.4 var(--f-m);color:var(--dim)}
+table.t tr.sum th,table.t tr.sum td{background:#0e0f12}
+table.t td b{font-weight:600}
+.sw{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:3px;margin-right:6px}
+.sw.st{border-color:var(--val)}.sw.tr{border-color:var(--trail)}
+details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font:500 11px var(--f-m);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);min-height:32px;display:flex;align-items:center}
+summary:hover{color:var(--fg)}
+.notes{display:flex;flex-direction:column;gap:6px;color:var(--mut);font-size:13px;line-height:1.55;margin-top:14px;padding-left:18px;max-width:72ch}
+.notes li::marker{color:var(--dim)}
+.eq{font:500 12.5px/1.75 var(--f-m);white-space:pre;color:var(--fg);background:var(--chart);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:8px 0 14px}
+.eq var{font-style:italic}
+.prose{max-width:68ch;color:var(--mut);font-size:14px}
+.prose b{color:var(--fg);font-weight:600}
+.prose p+p{margin-top:8px}
+.ctrl{font:500 12px/1.6 var(--f-m);color:var(--mut);font-variant-numeric:tabular-nums;margin-top:6px}
+.ctrl b{color:var(--fg);font-weight:600}
+.foot{color:var(--dim);font:400 11px/1.6 var(--f-m);letter-spacing:.04em;padding-top:4px}
+.pending{color:var(--dim)}
+.tnote{color:var(--dim);font:400 11.5px/1.5 var(--f-m);margin-top:8px}
+.gr{text-transform:none;letter-spacing:0}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<main class="wrap">
+  <header class="head">
+    <p class="eyebrow">Prop firm · challenge = option</p>
+    <h1>Option du challenge</h1>
+    <p class="lede" id="lede">Le prix du challenge est la prime. Le sous-jacent est le profit du compte financé ; l’échéance, le jour du retrait.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="f1-t">
+    <div class="fhead">
+      <p class="eyebrow" id="f1-t">Payoff, valeur, densité</p>
+      <div class="hud" aria-hidden="true">
+        <span class="chip" id="h-etat"><i></i><span>En cours</span></span>
+        <span><b id="h-jour">J 0,0</b> / <span id="h-n">20</span></span>
+        <span>profit <b id="h-x">0 $</b></span>
+        <span>valeur <b id="h-v">0 $</b></span>
+        <span>survie <b id="h-s">–</b></span>
+      </div>
+    </div>
+    <div class="plot" id="p1">
+      <svg id="s1" tabindex="0" role="img" aria-label="Payoff du compte financé au jour du retrait, prix du challenge déduit, avec sa valeur avant l’échéance, la densité du profit au retrait et la trajectoire tirée. Les valeurs sont dans les tuiles et dans le tableau sous la figure."></svg>
+      <div class="tip" id="t1" hidden></div>
+    </div>
+    <ul class="legend">
+      <li><svg width="26" height="10" aria-hidden="true"><path d="M1 8H11L13 5" class="ploss"/><path d="M13 5L25 2" class="pgain"/></svg>Payoff au retrait, prix déduit</li>
+      <li><svg width="26" height="10" aria-hidden="true"><path d="M1 5H25" class="val"/></svg>Valeur aujourd’hui</li>
+      <li><svg width="26" height="10" aria-hidden="true"><path d="M1 5H25" class="bell"/></svg>Profit au retrait, densité</li>
+      <li><svg width="12" height="12" aria-hidden="true"><path d="M6 0V12" class="barrier"/></svg>Drawdown, l’option s’éteint</li>
+      <li><svg width="26" height="10" aria-hidden="true"><path d="M1 8C8 2 14 9 25 3" class="traj"/></svg>Trajectoire du compte</li>
+    </ul>
+    <div class="controls">
+      <button class="btn primary" type="button" id="b-play" aria-pressed="true"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2h2v8H3zM7 2h2v8H7z" fill="currentColor"/></svg><span>Pause</span></button>
+      <button class="btn ghost" type="button" id="b-new">Nouvelle trajectoire</button>
+      <div class="rng"><div class="top"><label for="r-jour">Jour</label><output id="o-jour" for="r-jour">0,0</output></div><input type="range" id="r-jour" min="0" max="20" step="0.05" value="0"></div>
+      <div class="rng"><div class="top"><label for="r-mu">Dérive <span class="gr">µ</span>, $ par jour</label><output id="o-mu" for="r-mu">+0 $/j</output></div><input type="range" id="r-mu" min="-90" max="90" step="1" value="0"></div>
+    </div>
+    <p class="figcap" id="f1-cap"><b>Figure 1.</b> En trait plein, ce que rapporte le compte le jour du retrait, prix déduit : rouge tant que le retrait ne rembourse pas le prix, vert ensuite. En tirets bleus, ce que vaut la même position avant l’échéance ; elle rejoint le payoff à mesure que les jours passent. En tirets orange, la loi du profit au retrait vue d’aujourd’hui, privée des trajectoires que le drawdown éteint. Sous le graphique, sur la même échelle de profit, le compte jour après jour : le temps descend.</p>
+    <details id="d1"><summary>Valeurs de la figure 1</summary><div class="tw"><table class="t" id="tb1"></table></div></details>
+  </section>
+
+  <section aria-labelledby="tl-t">
+    <p class="eyebrow" id="tl-t">Compte financé, vu du jour 0</p>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="pa-t">
+    <p class="eyebrow" id="pa-t">Ton challenge</p>
+    <div class="params" id="params"></div>
+    <div class="prow"><p id="pa-note">Plafond, part retirable et retrait maximal sont tes règles. Les autres valeurs sont des exemples : remplace-les par les tiennes.</p><button class="btn ghost" type="button" id="b-reset">Revenir à l’exemple</button></div>
+  </section>
+
+  <section class="panel" aria-labelledby="px-t">
+    <p class="eyebrow">Le prix du challenge</p>
+    <h2 id="px-t">Ce que vaut la prime</h2>
+    <div class="verdict" id="verdict"><p class="pending">Calcul en cours.</p></div>
+    <div class="tw"><table class="t" id="tbp"></table></div>
+    <p class="tnote">Colonne rose : 20 000 trajectoires, graine fixe ; « ± » vaut deux erreurs types.</p>
+    <div class="plot" id="p3" style="margin-top:18px"><svg id="s3" tabindex="0" role="img" aria-label="Valeur du challenge selon la dérive quotidienne, sous plancher fixe et sous plancher trailing, comparée au prix payé. Les valeurs sont dans le tableau au-dessus et sous la figure."></svg><div class="tip" id="t3" hidden></div></div>
+    <ul class="legend">
+      <li><svg width="26" height="10" aria-hidden="true"><path d="M1 5H25" class="s-stat"/></svg>Plancher fixe, formule fermée</li>
+      <li><svg width="26" height="10" aria-hidden="true"><path d="M1 5H25" class="s-trail"/><circle cx="13" cy="5" r="3" class="d-trail"/></svg>Plancher trailing, Monte Carlo</li>
+      <li><svg width="26" height="10" aria-hidden="true"><path d="M1 5H25" class="fline"/></svg>Prix payé</li>
+    </ul>
+    <p class="figcap" id="f3-cap"><b>Figure 3.</b> Valeur du challenge selon ta dérive quotidienne µ : probabilité de réussir l’évaluation, multipliée par le retrait moyen du compte financé. Elle croise le prix payé en µ*, la dérive à partir de laquelle la prime est couverte.</p>
+    <details id="d3"><summary>Valeurs de la figure 3</summary><div class="tw"><table class="t" id="tb3"></table></div></details>
+  </section>
+
+  <section class="panel" aria-labelledby="f2-t">
+    <div class="fhead"><p class="eyebrow" id="f2-t">Surface de valeur</p><span class="hud"><span>glisser pour tourner</span></span></div>
+    <div class="plot" id="p2"><canvas class="surf" id="c2" role="img" aria-label="Surface de la valeur nette selon le profit du compte et le jour, avec la coupe du jour en cours et la trajectoire tirée."></canvas></div>
+    <p class="figcap"><b>Figure 2.</b> La valeur nette selon le profit du compte (largeur) et le jour (profondeur), du jour 0 au premier plan jusqu’au retrait au fond, où la surface devient le payoff. La coupe bleue est la courbe bleue de la figure 1 au même instant ; le trait blanc suit la trajectoire en cours sur la surface.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="md-t">
+    <p class="eyebrow">Ce que le calcul suppose</p>
+    <h2 id="md-t">Le modèle</h2>
+    <div class="prose">
+      <p>Le profit du compte suit un mouvement brownien de dérive <var>µ</var> et de volatilité <var>σ</var> par jour de bourse, éteint au plancher <var>b</var> = −<var>D</var>. Le retrait est un call spread de ratio <var>r</var>, d’exercices 0 et <var>K</var> :</p>
+    </div>
+    <div class="eq" id="eq1">retrait(<var>y</var>) = <var>r</var> · min(max(<var>y</var>, 0), <var>K</var>)<br><var>K</var> = min(<var>C</var>, <var>W</var>/<var>r</var>)</div>
+    <div class="prose"><p>Avec <var>τ</var> jours restants et <var>s</var> = <var>σ</var>√<var>τ</var>, la densité du profit au retrait, privée des trajectoires éteintes, et la survie sont fermées :</p></div>
+    <div class="eq">p(<var>y</var>) = [φ((<var>y</var> − <var>x</var> − <var>µτ</var>)/<var>s</var>)<br>   − e<sup>2<var>µ</var>(<var>b</var>−<var>x</var>)/<var>σ</var>²</sup> φ((<var>y</var> − 2<var>b</var> + <var>x</var> − <var>µτ</var>)/<var>s</var>)] / <var>s</var><br>   pour <var>y</var> &gt; <var>b</var><br><br>survie = Φ((<var>x</var> − <var>b</var> + <var>µτ</var>)/<var>s</var>)<br>   − e<sup>2<var>µ</var>(<var>b</var>−<var>x</var>)/<var>σ</var>²</sup> Φ((<var>b</var> − <var>x</var> + <var>µτ</var>)/<var>s</var>)</div>
+    <div class="prose"><p>La valeur s’intègre sans quadrature. Avec <var>G</var>(<var>m</var>) = <var>r</var>[<var>m</var>(Φ(<var>u</var>) − Φ(<var>l</var>)) + <var>s</var>(φ(<var>l</var>) − φ(<var>u</var>)) + <var>K</var>(1 − Φ(<var>u</var>))], <var>l</var> = −<var>m</var>/<var>s</var>, <var>u</var> = (<var>K</var> − <var>m</var>)/<var>s</var> :</p></div>
+    <div class="eq"><var>V</var>(<var>x</var>, <var>τ</var>) = <var>G</var>(<var>x</var> + <var>µτ</var>)<br>   − e<sup>2<var>µ</var>(<var>b</var>−<var>x</var>)/<var>σ</var>²</sup> <var>G</var>(2<var>b</var> − <var>x</var> + <var>µτ</var>)<br>valeur nette = <var>V</var> − <var>F</var></div>
+    <div class="prose"><p>L’évaluation, sans limite de temps, se réussit si l’objectif <var>a</var> est touché avant le plancher :</p></div>
+    <div class="eq">P(réussite) = (e<sup>2<var>µD</var>/<var>σ</var>²</sup> − 1)<br>   / (e<sup>2<var>µD</var>/<var>σ</var>²</sup> − e<sup>−2<var>µa</var>/<var>σ</var>²</sup>)<br>   = <var>D</var>/(<var>D</var> + <var>a</var>) à <var>µ</var> = 0</div>
+    <div class="prose"><p><b>Contrôle.</b> Les mêmes grandeurs, simulées à pas quotidien avec la correction du pont brownien, qui rend exacte la surveillance continue du plancher :</p></div>
+    <p class="ctrl" id="ctrl"><span class="pending">Simulation en cours.</span></p>
+    <ul class="notes">
+      <li>La figure 1, la figure 2, les tuiles et la colonne bleue supposent un plancher fixe à −<var>D</var>, surveillé en continu.</li>
+      <li>La colonne rose applique une règle trailing : le plancher suit le plus haut de clôture à <var>D</var> en dessous et se bloque au solde initial ; il se touche en séance, l’objectif se constate à la clôture. Elle n’a pas de forme fermée : 20 000 trajectoires, graine fixe.</li>
+      <li>Un seul retrait, au jour <var>N</var>. La suite du compte n’est pas comptée ; elle ne peut qu’ajouter de la valeur, puisque la perte reste bornée au prix.</li>
+      <li>Ni perte journalière maximale, ni règle de régularité, ni frais d’activation ou d’abonnement. Le P&amp;L quotidien est gaussien et indépendant d’un jour à l’autre.</li>
+    </ul>
+  </section>
+
+  <p class="foot">ALP · prop · tout se calcule dans la page, formules fermées et Monte Carlo à graine fixe · paramètres gardés sur cet appareil</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* MODELE:DEBUT — fonctions pures, sans DOM. tools/challenge-option/controle.mjs les extrait et les vérifie. */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function graine(a,b,c){let h=Math.imul((a|0)^0x9E3779B9,0x85EBCA6B)^Math.imul((b|0)+0x632BE5AB,0xC2B2AE35)^Math.imul((c|0)+0x165667B1,0x27D4EB2F);h^=h>>>16;h=Math.imul(h,0x7FEB352D);h^=h>>>15;h=Math.imul(h,0x846CA68B);h^=h>>>16;return h>>>0}
+const SQ2PI=Math.sqrt(2*Math.PI);
+function erfc(x){const z=Math.abs(x),t=1/(1+0.5*z);const r=t*Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+t*(-0.82215223+t*0.17087277)))))))));return x>=0?r:2-r}
+function Q(z){return 0.5*erfc(z/Math.SQRT2)}                 /* P(Z > z) */
+function Phi(z){return z<0?Q(-z):1-Q(z)}                     /* P(Z < z) */
+function phi(z){return Math.exp(-0.5*z*z)/SQ2PI}
+function pin(l,u){return l>=0?Q(l)-Q(u):(u<=0?Q(-u)-Q(-l):1-Q(-l)-Q(u))}   /* P(l < Z < u), sans annulation dans les queues */
+/* Retrait : r · min(max(y,0), K), K = min(plafond, retrait max / r). */
+function kSat(p){return Math.min(p.cap,p.wmax/p.r)}
+function retrait(p,y){return p.r*Math.min(Math.max(y,0),kSat(p))}
+function pointMort(p){const K=kSat(p);return p.F<p.r*K?p.F/p.r:null}
+/* Brownien de dérive mu, volatilité sigma par jour, éteint en b < x. */
+function noyau(p,x,tau){const s=p.sigma*Math.sqrt(tau);return{s,A:Math.exp(2*p.mu*(p.b-x)/(p.sigma*p.sigma)),m:x+p.mu*tau,m2:2*p.b-x+p.mu*tau}}
+function survie(p,x,tau){if(x<=p.b)return 0;if(tau<=1e-12)return 1;const k=noyau(p,x,tau);return Math.min(1,Math.max(0,Phi((x-p.b+p.mu*tau)/k.s)-k.A*Phi((p.b-x+p.mu*tau)/k.s)))}
+function gN(p,m,s){const K=kSat(p),l=-m/s,u=(K-m)/s;return p.r*(m*pin(l,u)+s*(phi(l)-phi(u))+K*Q(u))}
+function valeur(p,x,tau){if(x<=p.b)return 0;if(tau<=1e-12)return retrait(p,x);const k=noyau(p,x,tau);return Math.max(0,gN(p,k.m,k.s)-k.A*gN(p,k.m2,k.s))}
+function densite(p,y,x,tau){if(y<=p.b||x<=p.b||tau<=1e-12)return 0;const k=noyau(p,x,tau);return Math.max(0,(phi((y-k.m)/k.s)-k.A*phi((y-k.m2)/k.s))/k.s)}
+function queue(p,y,x,tau){if(x<=p.b)return 0;if(tau<=1e-12)return x>y?1:0;const yy=Math.max(y,p.b),k=noyau(p,x,tau);return Math.min(1,Math.max(0,Q((yy-k.m)/k.s)-k.A*Q((yy-k.m2)/k.s)))}
+/* Évaluation sans limite de temps : objectif a avant le plancher b = -D, plancher fixe, surveillance continue. */
+function reussite(p){const a=p.obj,D=-p.b;if(!(a>0))return 1;const k=2*p.mu/(p.sigma*p.sigma);if(Math.abs(k)*(a+D)<1e-8)return D/(a+D);return Math.expm1(k*D)/(Math.exp(k*D)-Math.exp(-k*a))}
+function valeurChallenge(p){return reussite(p)*valeur(p,0,p.N)}
+function resume(p){const N=p.N,K=kSat(p),be=pointMort(p),E=valeur(p,0,N),pass=reussite(p),pP=be==null?0:queue(p,be,0,N);
+  return{K,be,E,pass,V:pass*E,surv:survie(p,0,N),pRetrait:queue(p,0,0,N),pProfit:pP,pPlafond:queue(p,K,0,N),pProfitChal:pass*pP}}
+/* Dérive mu* où la valeur du challenge égale le prix ; la valeur croît avec mu. cote : -1 déjà couvert au bas de la plage, +1 jamais couvert. */
+function deriveEquilibre(p,lo,hi){const f=mu=>valeurChallenge(Object.assign({},p,{mu}))-p.F;
+  if(f(lo)>=0)return{mu:null,cote:-1};if(f(hi)<0)return{mu:null,cote:1};
+  for(let i=0;i<60;i++){const m=(lo+hi)/2;if(f(m)>=0)hi=m;else lo=m}return{mu:(lo+hi)/2,cote:0}}
+/* Monte Carlo à pas quotidien. Le pont brownien tue avec la probabilité exacte de franchissement en séance.
+   trailing = false : plancher fixe, objectif surveillé en continu (mêmes hypothèses que les formules).
+   trailing = true  : plancher = min(plus haut de clôture - D, 0), touché en séance ; objectif constaté à la clôture.
+   Chaque trajectoire a ses deux flux (évaluation, compte financé) et consomme quatre tirages par jour quel que soit mu :
+   à graine égale, les trajectoires sont communes d'une dérive à l'autre. */
+function mcRegle(p,i0,i1,seed,trailing,acc){
+  const s=p.sigma,s2=s*s,mu=p.mu,D=-p.b,a=p.obj,N=p.N,TP=2*Math.PI,MAXJ=1500,K=kSat(p),be=pointMort(p);
+  acc=acc||{n:0,pass:0,surv:0,sR:0,sR2:0,profit:0,plafond:0};
+  for(let i=i0;i<i1;i++){
+    let ok=true;
+    if(a>0){const g=mulberry32(graine(seed,i,1));let x=0,M=0,f=-D,fini=false;
+      for(let d=0;d<MAXJ;d++){const u1=g()||1e-300,u2=g(),u3=g(),u4=g();
+        const y=x+mu+s*Math.sqrt(-2*Math.log(u1))*Math.cos(TP*u2);
+        if(y<=f||u3<Math.exp(-2*(x-f)*(y-f)/s2)){ok=false;fini=true;break}
+        if(trailing){if(y>=a){fini=true;break}}
+        else if(y>=a||u4<Math.exp(-2*(a-x)*(a-y)/s2)){fini=true;break}
+        x=y;if(trailing){if(x>M)M=x;f=Math.min(M-D,0)}}
+      if(!fini)ok=false}
+    if(ok)acc.pass++;
+    const h=mulberry32(graine(seed,i,2));let x=0,M=0,f=-D,vivant=true;
+    for(let d=0;d<N;d++){const u1=h()||1e-300,u2=h(),u3=h();h();
+      const y=x+mu+s*Math.sqrt(-2*Math.log(u1))*Math.cos(TP*u2);
+      if(y<=f||u3<Math.exp(-2*(x-f)*(y-f)/s2)){vivant=false;break}
+      x=y;if(trailing){if(x>M)M=x;f=Math.min(M-D,0)}}
+    acc.n++;
+    if(vivant){acc.surv++;const R=retrait(p,x);acc.sR+=R;acc.sR2+=R*R;if(be!=null&&x>be)acc.profit++;if(x>=K)acc.plafond++}
+  }
+  return acc}
+function lireMC(acc){const n=acc.n,pp=acc.pass/n,E=acc.sR/n,vr=Math.max(0,acc.sR2/n-E*E);
+  return{n,pass:pp,sePass:Math.sqrt(pp*(1-pp)/n),surv:acc.surv/n,seSurv:Math.sqrt(acc.surv/n*(1-acc.surv/n)/n),E,seE:Math.sqrt(vr/n),
+    V:pp*E,seV:Math.sqrt(E*E*pp*(1-pp)/n+pp*pp*vr/n),pProfit:acc.profit/n,pProfitChal:pp*acc.profit/n,pPlafond:acc.plafond/n}}
+/* Trajectoire affichée : sous-pas réguliers, plancher fixe, pont brownien entre deux sous-pas. ko = jour d'extinction ou null. */
+function trajectoire(p,seed,sub){const g=mulberry32(graine(seed,7,11)),n=p.N*sub,dt=1/sub,sd=p.sigma*Math.sqrt(dt),s2=p.sigma*p.sigma*dt,b=p.b,TP=2*Math.PI;
+  const xs=new Float64Array(n+1);let x=0,ko=null;
+  for(let k=1;k<=n;k++){const u1=g()||1e-300,u2=g(),u3=g();
+    if(ko!==null){xs[k]=b;continue}
+    const y=x+p.mu*dt+sd*Math.sqrt(-2*Math.log(u1))*Math.cos(TP*u2);
+    if(y<=b){ko=(k-1+(x-b)/(x-y))*dt;xs[k]=b;continue}
+    if(u3<Math.exp(-2*(x-b)*(y-b)/s2)){ko=(k-0.5)*dt;xs[k]=b;continue}
+    xs[k]=y;x=y}
+  return{xs,sub,n,ko}}
+/* MODELE:FIN */
+
+/* ---------- outils ---------- */
+const $=s=>document.querySelector(s);
+const reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+const NS="http://www.w3.org/2000/svg";
+function S(tag,at,par){const e=document.createElementNS(NS,tag);if(at)for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e}
+const MINUS="−",NB=" ";
+const nf0=new Intl.NumberFormat("fr-FR",{maximumFractionDigits:0});
+const nf1=new Intl.NumberFormat("fr-FR",{minimumFractionDigits:1,maximumFractionDigits:1});
+function num(v,signed,one){const r=one?Math.round(v*10)/10:Math.round(v);if(r===0)return(one?nf1:nf0).format(0);return(r<0?MINUS:(signed?"+":""))+(one?nf1:nf0).format(Math.abs(r))}
+const usd=(v,s)=>num(v,s)+NB+"$";
+const pct=(p,dec)=>(dec===0?nf0:nf1).format(p*100)+NB+"%";
+const muTxt=m=>num(m,true)+NB+"$/j";
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+function ticks(lo,hi,n){const span=hi-lo;if(!(span>0))return{step:1,out:[lo]};const raw=span/Math.max(1,n),mag=Math.pow(10,Math.floor(Math.log10(raw))),r=raw/mag,step=(r<1.5?1:r<3?2:r<7?5:10)*mag,out=[];
+  for(let v=Math.ceil(lo/step-1e-9)*step;v<=hi+1e-9*span;v+=step)out.push(Math.round(v/step)*step);return{step,out}}
+const CH=10.5*0.6; /* chasse de JetBrains Mono à 10,5 px */
+
+/* ---------- état ---------- */
+const LS="alp-option-challenge-v1";
+const DEF={F:150,D:2000,obj:3000,cap:4000,r:50,wmax:2000,N:20,sigma:450,mu:0};
+const FIELDS=[
+  {k:"F",l:"Prix du challenge",u:"$",ex:1,min:0,max:1e5,h:"La prime de l’option."},
+  {k:"D",l:"Drawdown",u:"$",ex:1,min:1,max:1e6,h:"Le plancher, sous le solde initial."},
+  {k:"obj",l:"Objectif d’évaluation",u:"$",ex:1,min:0,max:1e6,h:"0 si le compte est financé d’emblée."},
+  {k:"cap",l:"Plafond du profit",u:"$",min:1,max:1e6,h:"Profit compté au plus."},
+  {k:"r",l:"Part retirable",u:"%",min:1,max:100,h:"Du profit compté."},
+  {k:"wmax",l:"Retrait maximal",u:"$",min:1,max:1e6,h:"Par retrait."},
+  {k:"N",l:"Jour du retrait",u:"j",ex:1,min:1,max:250,int:1,h:"Jours de bourse après le financement."},
+  {k:"sigma",l:"Volatilité <span class=\"gr\">σ</span>",u:"$/j",ex:1,min:1,max:1e5,h:"Écart-type de ton P&L quotidien."}];
+let P=Object.assign({},DEF);
+try{const s=JSON.parse(localStorage.getItem(LS)||"null");if(s&&typeof s==="object")for(const k in DEF)if(typeof s[k]==="number"&&isFinite(s[k]))P[k]=s[k]}catch(e){}
+function save(){try{localStorage.setItem(LS,JSON.stringify(P))}catch(e){}}
+function mkp(o){o=o||P;return{F:o.F,D:o.D,b:-o.D,obj:o.obj,cap:o.cap,r:o.r/100,wmax:o.wmax,N:Math.max(1,Math.round(o.N)),sigma:o.sigma,mu:o.mu}}
+
+let ST=null;
+function derive(){
+  const p=mkp(),K=kSat(p),s=p.sigma*Math.sqrt(p.N),res=resume(p);
+  const muMax=Math.max(5,Math.round(0.2*p.sigma/5)*5),muSearch=0.5*p.sigma;
+  const hi0=Math.max(1.3*K,Math.max(0,p.mu*p.N)+2.75*s,(res.be||0)*1.3,600);
+  const lo=p.b-0.07*(hi0-p.b),st=ticks(lo,hi0,5).step/2,xmax=Math.ceil(hi0/st-1e-9)*st,xmin=lo;
+  const xt=ticks(xmin,xmax,5).out;
+  const lowV=-p.F,highV=Math.max(p.r*K-p.F,0),pad=0.13*Math.max(1,highV-lowV);
+  const xg=[];for(let i=0;i<=240;i++)xg.push(xmin+(xmax-xmin)*i/240);
+  for(const v of[p.b,0,K,res.be])if(v!=null&&v>xmin&&v<xmax){const e=1e-6*(xmax-xmin);xg.push(v-e,v,v+e)}
+  xg.sort((a,b)=>a-b);
+  ST={p,K,s,res,muMax,muSearch,xmin,xmax,xt,ymin:lowV-pad,ymax:highV+pad,xg,eqS:deriveEquilibre(p,-muSearch,muSearch)};
+}
+
+/* ---------- animation ---------- */
+const DUR=12,HOLD=2.4,SUB=12,NGH=14;
+const A={t:0,playing:!reduce,seed:1,tr:null,hold:0,done:false,last:0,ghosts:[],dragDay:false,dirty:true};
+function newPath(){A.tr=trajectoire(ST.p,A.seed,SUB)}
+function endT(){return A.tr.ko!==null?Math.min(ST.p.N,A.tr.ko):ST.p.N}
+function posAt(t){const tr=A.tr;if(tr.ko!==null&&t>=tr.ko)return ST.p.b;const k=t*tr.sub,i=Math.min(tr.n-1,Math.floor(k)),f=k-i;return tr.xs[i]*(1-f)+tr.xs[i+1]*f}
+function issue(){const p=ST.p;if(A.tr.ko!==null)return"ko";const R=retrait(p,A.tr.xs[A.tr.n]);return R>p.F?"plus":"zero"}
+function finishRun(){if(A.done)return;A.done=true;A.ghosts.push({xs:A.tr.xs,ko:A.tr.ko,cls:issue()});if(A.ghosts.length>NGH)A.ghosts.shift();drawGhosts()}
+function nextRun(){A.seed++;A.t=0;A.hold=0;A.done=false;newPath();A.dirty=true}
+function setPlay(on){A.playing=on;const b=$("#b-play");b.setAttribute("aria-pressed",on?"true":"false");
+  b.innerHTML=on?'<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2h2v8H3zM7 2h2v8H7z" fill="currentColor"/></svg><span>Pause</span>':'<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7-4.5z" fill="currentColor"/></svg><span>Lecture</span>'}
+
+/* ---------- figure 1 ---------- */
+const F1={};
+const X1=v=>F1.x0+(v-ST.xmin)/(ST.xmax-ST.xmin)*(F1.x1-F1.x0);
+const Y1=v=>F1.y0+(ST.ymax-v)/(ST.ymax-ST.ymin)*(F1.y1-F1.y0);
+const T1=t=>F1.s0+t/ST.p.N*(F1.s1-F1.s0);
+const iX1=px=>ST.xmin+(px-F1.x0)/(F1.x1-F1.x0)*(ST.xmax-ST.xmin);
+const cx1=v=>clamp(v,ST.xmin,ST.xmax);
+function pathD(pts){let d="";for(let i=0;i<pts.length;i++)d+=(i?"L":"M")+pts[i][0].toFixed(1)+","+pts[i][1].toFixed(1);return d}
+function build1(){
+  const box=$("#p1"),W=Math.max(280,Math.floor(box.clientWidth));
+  const plotH=Math.round(clamp(W*0.56,232,420)),stripH=Math.round(clamp(W*0.24,96,150));
+  const m={l:W<480?42:54,r:12,t:12},axH=24,gap=8;
+  Object.assign(F1,{W,x0:m.l,x1:W-m.r,y0:m.t,y1:m.t+plotH,s0:m.t+plotH+axH+gap,s1:m.t+plotH+axH+gap+stripH});
+  F1.H=F1.s1+6;
+  const svg=$("#s1");svg.textContent="";svg.setAttribute("viewBox",`0 0 ${W} ${F1.H}`);svg.setAttribute("width",W);svg.setAttribute("height",F1.H);
+  const p=ST.p,K=ST.K,F=p.F,gm=p.r*K-F,be=ST.res.be,pw=F1.x1-F1.x0;
+  const defs=S("defs",null,svg);
+  S("rect",{x:F1.x0,y:F1.y0,width:pw,height:F1.y1-F1.y0},S("clipPath",{id:"c1"},defs));
+  S("rect",{x:F1.x0,y:F1.s0,width:pw,height:F1.s1-F1.s0},S("clipPath",{id:"c1s"},defs));
+  S("rect",{x:F1.x0,y:F1.y0,width:pw,height:F1.y1-F1.y0,class:"bgp"},svg);
+  S("rect",{x:F1.x0,y:F1.s0,width:pw,height:F1.s1-F1.s0,class:"bgp"},svg);
+  const xb=X1(p.b);
+  S("rect",{x:F1.x0,y:F1.y0,width:Math.max(0,xb-F1.x0),height:F1.y1-F1.y0,class:"kozone"},svg);
+  S("rect",{x:F1.x0,y:F1.s0,width:Math.max(0,xb-F1.x0),height:F1.s1-F1.s0,class:"kozone"},svg);
+  const g=S("g",{class:"grid"},svg),yt=ticks(ST.ymin,ST.ymax,plotH<300?4:5).out;
+  for(const v of ST.xt){const x=Math.round(X1(v))+.5;S("line",{x1:x,x2:x,y1:F1.y0,y2:F1.y1},g);S("line",{x1:x,x2:x,y1:F1.s0,y2:F1.s1},g)}
+  for(const v of yt){const y=Math.round(Y1(v))+.5;S("line",{x1:F1.x0,x2:F1.x1,y1:y,y2:y},g)}
+  const dst=p.N<=12?2:p.N<=30?5:p.N<=80?10:25,dl=[];for(let d=0;d<=p.N;d+=dst)dl.push(d);if(dl[dl.length-1]!==p.N)dl.push(p.N);
+  for(const d of dl){const y=Math.round(T1(d))+.5;S("line",{x1:F1.x0,x2:F1.x1,y1:y,y2:y},g)}
+  const ax=S("g",null,svg);
+  for(const v of ST.xt){const x=X1(v),lb=num(v),w=lb.length*CH;let an="middle",xx=x;if(x+w/2>W-1){an="end";xx=W-1}if(x-w/2<F1.x0-6){an="start";xx=F1.x0-6}
+    S("text",{x:xx,y:F1.y1+15,"text-anchor":an},ax).textContent=lb}
+  for(const v of yt)S("text",{x:F1.x0-6,y:Y1(v)+3.6,"text-anchor":"end"},ax).textContent=num(v,true);
+  const dlab=[0,p.N];if(p.N>=8)dlab.splice(1,0,dl[Math.floor(dl.length/2)]);
+  for(const d of dlab)S("text",{x:F1.x0-6,y:clamp(T1(d)+3.6,F1.s0+9,F1.s1),"text-anchor":"end"},ax).textContent="J"+d;
+  S("line",{x1:F1.x0,x2:F1.x1,y1:Math.round(Y1(0))+.5,y2:Math.round(Y1(0))+.5,class:"zero"},svg);
+  const gc=S("g",{"clip-path":"url(#c1)"},svg);
+  F1.bellF=S("path",{class:"bellf"},gc);F1.bell=S("path",{class:"bell"},gc);
+  const P0=[ST.xmin,-F],P1=[0,-F],P2=[K,gm],P3=[ST.xmax,gm],sc=q=>[X1(q[0]),Y1(q[1])];
+  if(be!=null){
+    S("path",{d:pathD([[ST.xmin,0],P0,P1,[be,0]].map(sc))+"Z",class:"aloss"},gc);
+    S("path",{d:pathD([[be,0],P2,P3,[ST.xmax,0]].map(sc))+"Z",class:"again"},gc);
+    S("path",{d:pathD([P0,P1,[be,0]].map(sc)),class:"ploss"},gc);
+    S("path",{d:pathD([[be,0],P2,P3].map(sc)),class:"pgain"},gc);
+  }else{
+    S("path",{d:pathD([[ST.xmin,0],P0,P1,P2,P3,[ST.xmax,0]].map(sc))+"Z",class:"aloss"},gc);
+    S("path",{d:pathD([P0,P1,P2,P3].map(sc)),class:"ploss"},gc);
+  }
+  S("line",{x1:xb,x2:xb,y1:F1.y0,y2:F1.y1,class:"barrier"},svg);
+  S("line",{x1:xb,x2:xb,y1:F1.s0,y2:F1.s1,class:"barrier"},svg);
+  if(K<ST.xmax){const xk=X1(K);S("line",{x1:xk,x2:xk,y1:F1.s0,y2:F1.s1,class:"capl"},svg)}
+  F1.val=S("path",{class:"val"},gc);
+  const gs=S("g",{"clip-path":"url(#c1s)"},svg);
+  F1.gh=S("g",null,gs);F1.path=S("path",{class:"traj"},gs);
+  F1.now=S("line",{class:"now",y1:F1.y0,y2:F1.s1},svg);
+  /* étiquettes fixes, posées après les tracés, avec un liseré de fond pour qu'aucun trait ne les barre */
+  const L=S("g",null,svg);
+  const lw=t=>t.length*11*0.6,boxes=[],hit=q=>boxes.some(o=>q[0]<o[2]+6&&o[0]<q[2]+6&&q[1]<o[3]+3&&o[1]<q[3]+3);
+  const put=(t,x,y,an,cls,opt)=>{const w=lw(t),x0=an==="end"?x-w:an==="middle"?x-w/2:x,q=[x0,y-9,x0+w,y+3];
+    if(opt&&(hit(q)||x0<F1.x0+2||x0+w>F1.x1-2))return null;boxes.push(q);const e=S("text",{x,y,"text-anchor":an,class:cls},L);e.textContent=t;return e};
+  put("Drawdown "+usd(p.b),xb+5,F1.y0+14,"start","lab mu");boxes.push([xb+5,F1.y0+17,xb+5+lw("KO 100 %"),F1.y0+31]);
+  const yR=Y1(gm)-8;put(usd(gm,true),F1.x1-4,yR,"end","lab");
+  if(K<ST.xmax)put("plafond "+usd(K),X1(K)-8,yR,"end","lab mu",true);
+  put(usd(-F),Math.max(F1.x0+4,xb+5),Y1(-F)+15,"start","lab");
+  if(be!=null){const xe=X1(be),ye=Y1(0),t="Point mort "+usd(be);
+    S("circle",{cx:xe,cy:ye,r:4,class:"bem"},L);
+    const right=xe+8+lw(t)<F1.x1;put(t,right?xe+8:xe-8,ye+16,right?"start":"end","lab")}
+  F1.ko=S("text",{x:xb+5,y:F1.y0+28,"text-anchor":"start",class:"lab"},L);
+  F1.lt=S("text",{x:F1.x1-6,y:F1.s0+13,"text-anchor":"end",class:"lab mu"},L);
+  F1.dot=S("circle",{r:4,class:"dots"},svg);
+  F1.pt=S("circle",{r:5.5,class:"pt"},svg);
+  F1.tagR=S("rect",{class:"tagr",rx:3,height:15,y:F1.y1+3},svg);F1.tagT=S("text",{class:"tagt","text-anchor":"middle",y:F1.y1+14},svg);
+  F1.ch=S("g",{class:"ch",visibility:"hidden"},svg);F1.chL=S("line",{y1:F1.y0,y2:F1.s1},F1.ch);F1.chP=S("circle",{r:4,class:"chp"},F1.ch);F1.chV=S("circle",{r:4,class:"chv"},F1.ch);
+  drawGhosts();A.dirty=true;
+}
+function ghostD(xs,ko){const p=ST.p,sub=SUB,n=xs.length-1;let d="";const last=ko!==null?Math.min(n,Math.ceil(ko*sub)):n;
+  for(let k=0;k<=last;k++){const t=ko!==null&&k===last?ko:k/sub;d+=(k?"L":"M")+X1(cx1(xs[k])).toFixed(1)+","+T1(Math.min(t,p.N)).toFixed(1)}return d}
+function drawGhosts(){if(!F1.gh)return;F1.gh.textContent="";for(const q of A.ghosts)S("path",{d:ghostD(q.xs,q.ko),class:"ghost "+q.cls},F1.gh)}
+function setText(el,t){if(el&&el.textContent!==t)el.textContent=t}
+function draw1(){
+  const p=ST.p,t=A.t,tau=Math.max(0,p.N-t),tr=A.tr,dead=tr.ko!==null&&t>=tr.ko,x=posAt(t),xc=cx1(x);
+  let d="";for(let i=0;i<ST.xg.length;i++){const xv=ST.xg[i],v=(xv<=p.b?0:valeur(p,xv,tau))-p.F;d+=(i?"L":"M")+X1(xv).toFixed(1)+","+Y1(v).toFixed(1)}
+  F1.val.setAttribute("d",d);
+  const Hb=0.42*(F1.y1-F1.y0),base=F1.y1;
+  if(dead){F1.bell.setAttribute("d","");F1.bellF.setAttribute("d","")}
+  else if(tau<1e-6){const px=X1(xc).toFixed(1);F1.bell.setAttribute("d",`M${px},${base}L${px},${(base-Hb).toFixed(1)}`);F1.bellF.setAttribute("d","")}
+  else{const s=p.sigma*Math.sqrt(tau),m=x+p.mu*tau,lo=Math.max(p.b,ST.xmin),hi=ST.xmax,ys=[];
+    for(let i=0;i<=140;i++)ys.push(lo+(hi-lo)*i/140);
+    const a=Math.max(lo,m-5*s),bb=Math.min(hi,m+5*s);if(bb>a)for(let i=0;i<=140;i++)ys.push(a+(bb-a)*i/140);
+    ys.sort((u,v)=>u-v);const kk=s*SQ2PI,pts=[];
+    for(const y of ys)pts.push([X1(y),base-Hb*Math.min(1.2,kk*densite(p,y,x,tau))]);
+    const dd=pathD(pts);F1.bell.setAttribute("d",dd);
+    F1.bellF.setAttribute("d",dd+"L"+pts[pts.length-1][0].toFixed(1)+","+base+"L"+pts[0][0].toFixed(1)+","+base+"Z")}
+  const vNow=(dead?0:valeur(p,x,tau))-p.F,surv=dead?0:survie(p,x,tau);
+  F1.pt.setAttribute("cx",X1(xc).toFixed(1));F1.pt.setAttribute("cy",Y1(vNow).toFixed(1));F1.pt.setAttribute("class","pt"+(dead?" ko":""));
+  F1.now.setAttribute("x1",X1(xc).toFixed(1));F1.now.setAttribute("x2",X1(xc).toFixed(1));
+  const tg=num(x),w=tg.length*CH+10,tx=clamp(X1(xc),F1.x0+w/2,F1.x1-w/2);
+  F1.tagR.setAttribute("x",(tx-w/2).toFixed(1));F1.tagR.setAttribute("width",w.toFixed(1));F1.tagT.setAttribute("x",tx.toFixed(1));setText(F1.tagT,tg);
+  const tt=dead?tr.ko:t,nk=Math.min(tr.n,Math.floor(tt*tr.sub+1e-9));
+  let sp="";for(let k=0;k<=nk;k++)sp+=(k?"L":"M")+X1(cx1(tr.xs[k])).toFixed(1)+","+T1(k/tr.sub).toFixed(1);
+  sp+="L"+X1(xc).toFixed(1)+","+T1(tt).toFixed(1);F1.path.setAttribute("d",sp);
+  F1.dot.setAttribute("cx",X1(xc).toFixed(1));F1.dot.setAttribute("cy",T1(tt).toFixed(1));F1.dot.setAttribute("class","dots"+(dead?" ko":""));
+  setText(F1.ko,"KO "+pct(1-surv,0));
+  setText(F1.lt,"trajectoire nº "+A.seed);
+  /* tête de figure */
+  setText($("#h-jour"),"J "+nf1.format(dead?tr.ko:t));setText($("#h-x"),usd(x,true));setText($("#h-v"),usd(vNow,true));setText($("#h-s"),pct(surv,0));
+  const fin=!dead&&t>=p.N-1e-9,chip=$("#h-etat");let cls="chip",lab="En cours";
+  if(dead){cls+=" ko";lab="KO · J "+nf1.format(tr.ko)}else if(fin){const R=retrait(p,x);cls+=R>p.F?" plus":" zero";lab="Retrait "+usd(R)+" · net "+usd(R-p.F,true)}
+  if(chip.className!==cls)chip.className=cls;setText(chip.lastChild,lab);
+  if(F1.hx!=null)hover1(F1.hx);
+}
+function hover1(xv){
+  const p=ST.p,t=A.t,tau=Math.max(0,p.N-t),dead=A.tr.ko!==null&&t>=A.tr.ko,x=posAt(t);
+  const pay=retrait(p,xv)-p.F,val=(xv<=p.b?0:valeur(p,xv,tau))-p.F,above=dead?0:queue(p,xv,x,tau);
+  const px=X1(xv);F1.chL.setAttribute("x1",px);F1.chL.setAttribute("x2",px);
+  F1.chP.setAttribute("cx",px);F1.chP.setAttribute("cy",Y1(pay));F1.chV.setAttribute("cx",px);F1.chV.setAttribute("cy",Y1(val));
+  F1.ch.setAttribute("visibility","visible");
+  const tip=$("#t1");tip.hidden=false;
+  tip.innerHTML=`<div class="h">${usd(xv)} de profit</div><div class="r"><b>${usd(pay,true)}</b><span class="k" style="border-color:var(--${pay>=0?"gain":"loss"})"></span>payoff au retrait</div><div class="r"><b>${usd(val,true)}</b><span class="k d" style="border-color:var(--val)"></span>valeur aujourd’hui</div><div class="r"><b>${pct(above)}</b><span class="k d" style="border-color:var(--dens)"></span>finir au-dessus</div>`;
+  const bw=$("#p1").clientWidth,tw=tip.offsetWidth;tip.style.left=(px>bw/2?Math.max(4,px-tw-14):Math.min(bw-tw-4,px+14))+"px";
+}
+function unhover1(){F1.hx=null;if(F1.ch)F1.ch.setAttribute("visibility","hidden");$("#t1").hidden=true}
+function bindHover(id,fnMove,fnOut,getX){const el=$(id);
+  el.addEventListener("pointermove",e=>{const r=el.getBoundingClientRect();fnMove(e.clientX-r.left)});
+  el.addEventListener("pointerdown",e=>{const r=el.getBoundingClientRect();fnMove(e.clientX-r.left)});
+  el.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse")fnOut()});
+  el.addEventListener("pointerup",e=>{if(e.pointerType!=="mouse")setTimeout(fnOut,1600)});
+  el.addEventListener("blur",fnOut);
+  el.addEventListener("keydown",e=>{if(e.key==="ArrowLeft"||e.key==="ArrowRight"){e.preventDefault();getX(e.key==="ArrowRight"?1:-1)}else if(e.key==="Escape")fnOut()});
+}
+bindHover("#s1",px=>{if(px<F1.x0-4||px>F1.x1+4){unhover1();return}F1.hx=cx1(iX1(px));hover1(F1.hx)},unhover1,
+  dir=>{const st=(ST.xmax-ST.xmin)/80;F1.hx=cx1((F1.hx==null?posAt(A.t):F1.hx)+dir*st);hover1(F1.hx)});
+function table1(){const d=$("#d1");if(!d.open)return;const p=ST.p,t=A.t,tau=Math.max(0,p.N-t),dead=A.tr.ko!==null&&t>=A.tr.ko,x=posAt(t);
+  const st=ticks(ST.xmin,ST.xmax,10).step;let h=`<thead><tr><th scope="col" style="text-align:left">Profit</th><th scope="col">Payoff au retrait</th><th scope="col">Valeur au jour ${nf1.format(t)}</th><th scope="col">Finir au-dessus</th></tr></thead><tbody>`;
+  for(let v=Math.ceil(p.b/st)*st;v<=ST.xmax+1e-9;v+=st){const pay=retrait(p,v)-p.F,val=(v<=p.b?0:valeur(p,v,tau))-p.F;
+    h+=`<tr><td style="text-align:left">${usd(v)}</td><td>${usd(pay,true)}</td><td>${usd(val,true)}</td><td>${dead?"–":pct(queue(p,v,x,tau))}</td></tr>`}
+  $("#tb1").innerHTML=h+"</tbody>"}
+
+/* ---------- figure 2 : surface ---------- */
+const F2={yaw:-0.55,pitch:0.62,dir:1,drag:null,idle:1e9};
+const C={};
+function readColors(){const cs=getComputedStyle(document.documentElement);for(const k of["gain","loss","val","dens","trail","fg","mut","dim","line","line2","grid","chart"])C[k]=cs.getPropertyValue("--"+k).trim()}
+function rgba(hex,a){const h=hex.replace("#","");const n=parseInt(h.length===3?h.split("").map(c=>c+c).join(""):h,16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
+function build2(){
+  const box=$("#p2"),W=Math.max(280,Math.floor(box.clientWidth)),H=Math.round(clamp(W*0.74,290,540)),dpr=Math.min(2,window.devicePixelRatio||1),cv=$("#c2");
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.width=W+"px";cv.style.height=H+"px";
+  const sc=Math.min((W-76)/1.45,(H-74)/1.3);
+  Object.assign(F2,{W,H,dpr,ctx:cv.getContext("2d"),cx:W*0.5,sc});
+  const p=ST.p,big=W>640,NX=big?66:48,NT=big?41:31,xs=[],ts=[],z=new Float64Array(NX*NT);
+  for(let i=0;i<NX;i++)xs.push(ST.xmin+(ST.xmax-ST.xmin)*i/(NX-1));
+  for(let j=0;j<NT;j++)ts.push(p.N*j/(NT-1));
+  for(let j=0;j<NT;j++)for(let i=0;i<NX;i++)z[j*NX+i]=(xs[i]<=p.b?0:valeur(p,xs[i],p.N-ts[j]))-p.F;
+  Object.assign(F2,{NX,NT,xs,ts,z,zmin:-p.F,zmax:Math.max(p.r*ST.K-p.F,-p.F+1)});A.dirty=true;
+}
+function P3(x,t,z){const X=(x-ST.xmin)/(ST.xmax-ST.xmin)-0.5,Y=t/ST.p.N-0.5,Z=(z-F2.zmin)/(F2.zmax-F2.zmin)*0.55;
+  const cy=Math.cos(F2.yaw),sy=Math.sin(F2.yaw),cp=Math.cos(F2.pitch),sp=Math.sin(F2.pitch),x1=X*cy-Y*sy,y1=X*sy+Y*cy;
+  const top=34+F2.sc*(0.55*cp+0.7072*sp);
+  return[F2.cx+F2.sc*x1,top-F2.sc*(Z*cp+y1*sp),y1*cp-Z*sp]}
+function draw2(){
+  const c=F2.ctx,p=ST.p,W=F2.W,H=F2.H;if(!c)return;
+  c.setTransform(F2.dpr,0,0,F2.dpr,0,0);c.fillStyle=C.chart;c.fillRect(0,0,W,H);
+  c.lineWidth=1;c.strokeStyle=C.line2;c.font='500 10.5px "JetBrains Mono", ui-monospace, monospace';
+  const fl=(x,t)=>P3(x,t,F2.zmin);
+  /* sol */
+  const corners=[[ST.xmin,0],[ST.xmax,0],[ST.xmax,p.N],[ST.xmin,p.N]].map(q=>fl(q[0],q[1]));
+  c.beginPath();corners.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.closePath();c.fillStyle=rgba(C.grid,0.6);c.fill();c.stroke();
+  c.strokeStyle=rgba(C.line2,0.6);
+  for(const v of ST.xt){if(v<=ST.xmin||v>=ST.xmax)continue;const a=fl(v,0),b=fl(v,p.N);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+  /* plancher */
+  c.setLineDash([4,4]);c.strokeStyle=C.loss;const b0=fl(p.b,0),b1=fl(p.b,p.N);c.beginPath();c.moveTo(b0[0],b0[1]);c.lineTo(b1[0],b1[1]);c.stroke();c.setLineDash([]);
+  /* axe vertical, au coin arrière gauche */
+  const v0=P3(ST.xmin,p.N,F2.zmin),v1=P3(ST.xmin,p.N,F2.zmax);c.strokeStyle=C.line2;c.beginPath();c.moveTo(v0[0],v0[1]);c.lineTo(v1[0],v1[1]);c.stroke();
+  /* nervures par jour */
+  const NX=F2.NX,NT=F2.NT,z=F2.z,pr=new Array(NX*NT);
+  for(let j=0;j<NT;j++)for(let i=0;i<NX;i++)pr[j*NX+i]=P3(F2.xs[i],F2.ts[j],z[j*NX+i]);
+  c.lineWidth=1;
+  for(let j=0;j<NT;j+=NT>31?4:2){c.beginPath();for(let i=0;i<NX;i++){const q=pr[j*NX+i];i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1])}c.strokeStyle=rgba(C.mut,0.16);c.stroke()}
+  /* nuage de points, du plus loin au plus proche */
+  const ord=[];for(let k=0;k<NX*NT;k++)ord.push(k);ord.sort((a,b)=>pr[b][2]-pr[a][2]);
+  const gmax=Math.max(1,F2.zmax),lmax=Math.max(1,-F2.zmin);
+  for(const k of ord){const q=pr[k],v=z[k],near=clamp(0.5-q[2],0,1);
+    c.fillStyle=v>=0?rgba(C.gain,0.35+0.6*Math.min(1,v/gmax)):rgba(C.loss,0.35+0.55*Math.min(1,-v/lmax));
+    const r=(1.05+1.25*near)*clamp(F2.sc/200,0.9,1.35);c.fillRect(q[0]-r,q[1]-r,2*r,2*r)}
+  /* coupe du jour et trajectoire */
+  const t=A.t,tau=Math.max(0,p.N-t),dead=A.tr.ko!==null&&t>=A.tr.ko;
+  c.beginPath();for(let i=0;i<NX;i++){const xv=F2.xs[i],q=P3(xv,t,(xv<=p.b?0:valeur(p,xv,tau))-p.F);i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1])}
+  c.strokeStyle=C.val;c.lineWidth=2.2;c.stroke();
+  const tr=A.tr,tt=dead?tr.ko:t,nk=Math.min(tr.n,Math.floor(tt*tr.sub+1e-9));
+  c.beginPath();for(let k=0;k<=nk;k++){const tk=k/tr.sub,xv=cx1(tr.xs[k]),q=P3(xv,tk,(xv<=p.b?0:valeur(p,xv,p.N-tk))-p.F);k?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1])}
+  const xn=cx1(posAt(tt)),qn=P3(xn,tt,(dead?0:valeur(p,xn,Math.max(0,p.N-tt)))-p.F);c.lineTo(qn[0],qn[1]);
+  c.strokeStyle=C.fg;c.lineWidth=1.6;c.stroke();
+  c.beginPath();c.arc(qn[0],qn[1],5,0,2*Math.PI);c.fillStyle=dead?C.loss:C.val;c.fill();c.lineWidth=2.5;c.strokeStyle=C.chart;c.stroke();
+  /* graduations */
+  c.fillStyle=C.mut;c.textBaseline="middle";
+  const lab=(txt,q,dx,dy,al)=>{c.textAlign=al||"center";c.fillText(txt,q[0]+(dx||0),q[1]+(dy||0))};
+  for(const v of[p.b,0,ST.K])if(v>ST.xmin&&v<ST.xmax){lab(num(v),fl(v,0),0,13)}
+  lab("profit $",fl(ST.xmin,0),0,28,"center");
+  const sideX=Math.cos(F2.yaw)>0?ST.xmax:ST.xmin;
+  lab("J0",fl(sideX,0),sideX===ST.xmax?10:-10,0,sideX===ST.xmax?"left":"right");
+  lab("J"+p.N,fl(sideX,p.N),sideX===ST.xmax?10:-10,0,sideX===ST.xmax?"left":"right");
+  lab(num(F2.zmin,true),v0,-6,0,"right");lab(num(F2.zmax,true),v1,-6,0,"right");lab("valeur nette $",v1,0,-12,"center");
+}
+(function(){const cv=$("#c2");
+  cv.addEventListener("pointerdown",e=>{F2.drag={x:e.clientX,y:e.clientY,yaw:F2.yaw,pitch:F2.pitch};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+  cv.addEventListener("pointermove",e=>{if(!F2.drag)return;F2.yaw=F2.drag.yaw+(e.clientX-F2.drag.x)*0.008;if(e.pointerType==="mouse")F2.pitch=clamp(F2.drag.pitch+(e.clientY-F2.drag.y)*0.006,0.18,1.25);F2.idle=0;A.dirty=true});
+  const end=()=>{F2.drag=null;F2.idle=0};cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+})();
+
+/* ---------- figure 3 : valeur du challenge selon la dérive ---------- */
+const F3={};
+function build3(){
+  const box=$("#p3"),W=Math.max(280,Math.floor(box.clientWidth)),H=Math.round(clamp(W*0.52,236,340)),m={l:W<480?46:56,r:14,t:14,b:34};
+  const svg=$("#s3");svg.textContent="";svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.setAttribute("width",W);svg.setAttribute("height",H);
+  const p=ST.p,M=ST.muMax,mus=[],vs=[];for(let i=0;i<=120;i++){const mu=-M+2*M*i/120;mus.push(mu);vs.push(valeurChallenge(Object.assign({},p,{mu})))}
+  const cur=MC.curve;let vmax=Math.max(p.F*1.25,...vs);if(cur)for(const o of cur)vmax=Math.max(vmax,o.V);
+  const yt=ticks(0,vmax*1.04,4),ymax=Math.max(yt.out[yt.out.length-1],vmax*1.04);
+  Object.assign(F3,{W,H,x0:m.l,x1:W-m.r,y0:m.t,y1:H-m.b,ymax,M});
+  const X=v=>F3.x0+(v+M)/(2*M)*(F3.x1-F3.x0),Y=v=>F3.y1-v/ymax*(F3.y1-F3.y0);F3.X=X;F3.Y=Y;
+  S("rect",{x:F3.x0,y:F3.y0,width:F3.x1-F3.x0,height:F3.y1-F3.y0,class:"bgp"},svg);
+  const g=S("g",{class:"grid"},svg),xt=ticks(-M,M,4).out;
+  for(const v of yt.out){const y=Math.round(Y(v))+.5;S("line",{x1:F3.x0,x2:F3.x1,y1:y,y2:y},g);S("text",{x:F3.x0-6,y:Y(v)+3.6,"text-anchor":"end"},svg).textContent=num(v)}
+  for(const v of xt){const x=Math.round(X(v))+.5;S("line",{x1:x,x2:x,y1:F3.y0,y2:F3.y1},g);S("text",{x:X(v),y:F3.y1+15,"text-anchor":"middle"},svg).textContent=num(v,true)}
+  S("text",{x:F3.x1,y:F3.y1+29,"text-anchor":"end"},svg).textContent="dérive µ, $ par jour";
+  S("line",{x1:X(p.mu),x2:X(p.mu),y1:F3.y0,y2:F3.y1,class:"mum"},svg);
+  const yF=Y(p.F);S("line",{x1:F3.x0,x2:F3.x1,y1:yF,y2:yF,class:"fline"},svg);
+  S("path",{d:pathD(mus.map((mu,i)=>[X(mu),Y(vs[i])])),class:"s-stat"},svg);
+  if(cur){S("path",{d:pathD(cur.map(o=>[X(o.mu),Y(o.V)])),class:"s-trail"},svg);for(const o of cur)S("circle",{cx:X(o.mu),cy:Y(o.V),r:2.6,class:"d-trail"},svg)}
+  const L=S("g",null,svg),lw=t=>t.length*6.6;
+  S("text",{x:F3.x0+6,y:yF-7,"text-anchor":"start",class:"lab"},L).textContent="Prix "+usd(p.F);
+  const eqs=[];if(ST.eqS&&ST.eqS.cote===0&&Math.abs(ST.eqS.mu)<=M)eqs.push({mu:ST.eqS.mu,c:"st"});
+  if(MC.eqT&&MC.eqT.cote===0&&Math.abs(MC.eqT.mu)<=M)eqs.push({mu:MC.eqT.mu,c:"tr"});
+  eqs.forEach((q,i)=>{const x=X(q.mu);S("line",{x1:x,x2:x,y1:yF,y2:F3.y1,class:"eqm "+q.c},svg);S("circle",{cx:x,cy:yF,r:4,class:q.c==="st"?"chv":"chs"},L);
+    const t="µ* "+muTxt(q.mu),right=x+8+lw(t)<F3.x1,other=eqs[1-i];let dy=i===0?-8:16;
+    if(other&&Math.abs(X(other.mu)-x)>lw(t)+16)dy=16;
+    S("text",{x:right?x+8:x-8,y:yF+dy+(dy>0?0:0),"text-anchor":right?"start":"end",class:"lab"},L).textContent=t});
+  F3.ch=S("g",{class:"ch",visibility:"hidden"},svg);F3.chL=S("line",{y1:F3.y0,y2:F3.y1},F3.ch);F3.chS=S("circle",{r:4,class:"chv"},F3.ch);F3.chT=S("circle",{r:4,class:"chs"},F3.ch);
+  F3.mus=mus;F3.vs=vs;
+}
+function hover3(px){const p=ST.p,M=F3.M;let mu=clamp(-M+(px-F3.x0)/(F3.x1-F3.x0)*2*M,-M,M);
+  const cur=MC.curve;let o=null;if(cur){o=cur.reduce((a,b)=>Math.abs(b.mu-mu)<Math.abs(a.mu-mu)?b:a);mu=o.mu}
+  F3.hmu=mu;const vS=valeurChallenge(Object.assign({},p,{mu})),x=F3.X(mu);
+  F3.chL.setAttribute("x1",x);F3.chL.setAttribute("x2",x);F3.chS.setAttribute("cx",x);F3.chS.setAttribute("cy",F3.Y(vS));
+  if(o){F3.chT.setAttribute("cx",x);F3.chT.setAttribute("cy",F3.Y(o.V));F3.chT.setAttribute("visibility","visible")}else F3.chT.setAttribute("visibility","hidden");
+  F3.ch.setAttribute("visibility","visible");
+  const tip=$("#t3");tip.hidden=false;
+  tip.innerHTML=`<div class="h">µ = ${muTxt(mu)}</div><div class="r"><b>${usd(vS)}</b><span class="k" style="border-color:var(--val)"></span>plancher fixe</div>`+(o?`<div class="r"><b>${usd(o.V)}</b><span class="k" style="border-color:var(--trail)"></span>trailing, ± ${nf0.format(2*o.se)} $</div>`:"")+`<div class="r"><b>${usd(p.F)}</b><span class="k d"></span>prix payé</div>`;
+  const bw=$("#p3").clientWidth,tw=tip.offsetWidth;tip.style.left=(x>bw/2?Math.max(4,x-tw-14):Math.min(bw-tw-4,x+14))+"px"}
+function unhover3(){F3.hmu=null;if(F3.ch)F3.ch.setAttribute("visibility","hidden");$("#t3").hidden=true}
+bindHover("#s3",px=>{if(px<F3.x0-4||px>F3.x1+4){unhover3();return}hover3(px)},unhover3,dir=>{const M=F3.M,st=MC.curve?(2*M/(MC.curve.length-1)):M/20;const mu=clamp((F3.hmu==null?ST.p.mu:F3.hmu)+dir*st,-M,M);hover3(F3.x0+(mu+M)/(2*M)*(F3.x1-F3.x0))});
+
+/* ---------- Monte Carlo, découpé pour ne jamais figer l'animation ---------- */
+const NC=20000,NCU=4000,NB_MU=17,SEED_C=101,SEED_T=202;
+const MC={ctrl:null,trail:null,curve:null,eqT:null,stale:true};
+let job=0,tmr=0;
+function planMC(full,delay){clearTimeout(tmr);tmr=setTimeout(()=>runMC(full),delay==null?160:delay)}
+function runMC(full){
+  const id=++job,p=ST.p,tasks=[],ac={},at={};MC.stale=true;if(full){MC.curve=null;MC.eqT=null}
+  const CHUNK=2500;
+  for(let i=0;i<NC;i+=CHUNK)tasks.push(()=>{mcRegle(p,i,Math.min(NC,i+CHUNK),SEED_C,false,ac.a||(ac.a={n:0,pass:0,surv:0,sR:0,sR2:0,profit:0,plafond:0}))});
+  tasks.push(()=>{MC.ctrl=lireMC(ac.a);renderCtrl()});
+  for(let i=0;i<NC;i+=CHUNK)tasks.push(()=>{mcRegle(p,i,Math.min(NC,i+CHUNK),SEED_T,true,at.a||(at.a={n:0,pass:0,surv:0,sR:0,sR2:0,profit:0,plafond:0}))});
+  tasks.push(()=>{MC.trail=lireMC(at.a);MC.stale=false;renderPrix()});
+  if(full){const M=ST.muMax,cur=[],vT=mu=>{const r=lireMC(mcRegle(Object.assign({},p,{mu}),0,NCU,SEED_T,true));return r};
+    for(let k=0;k<NB_MU;k++)tasks.push(()=>{const mu=-M+2*M*k/(NB_MU-1),r=vT(mu);cur.push({mu,V:r.V,se:r.seV})});
+    tasks.push(()=>{MC.curve=cur;build3();table3()});
+    /* mu* trailing : encadrement sur la grille, puis bissection sur trajectoires communes */
+    const st={lo:null,hi:null,it:0};
+    tasks.push(()=>{const F=p.F,lo=-ST.muSearch,hi=ST.muSearch,f=mu=>vT(mu).V-F;
+      let a=null,b=null;for(let k=1;k<cur.length;k++)if(cur[k-1].V<F&&cur[k].V>=F){a=cur[k-1].mu;b=cur[k].mu;break}
+      if(a===null){if(cur[0].V>=F){if(f(lo)>=0){MC.eqT={mu:null,cote:-1};return}a=lo;b=cur[0].mu}else{if(f(hi)<0){MC.eqT={mu:null,cote:1};return}a=cur[cur.length-1].mu;b=hi}}
+      st.lo=a;st.hi=b});
+    for(let i=0;i<12;i++)tasks.push(()=>{if(MC.eqT||st.lo===null)return;const m=(st.lo+st.hi)/2;if(vT(m).V>=p.F)st.hi=m;else st.lo=m});
+    tasks.push(()=>{if(!MC.eqT&&st.lo!==null)MC.eqT={mu:(st.lo+st.hi)/2,cote:0};build3();renderPrix()});
+  }
+  (function step(){if(id!==job)return;const t0=performance.now();while(tasks.length&&performance.now()-t0<9)tasks.shift()();if(tasks.length)setTimeout(step,0)})();
+}
+
+/* ---------- rendus chiffrés ---------- */
+function renderLede(){const p=ST.p;$("#lede").innerHTML=`Le prix du challenge est la prime. Le sous-jacent est le profit du compte financé ; l’échéance, le jour du retrait. Ce jour-là, tu retires <b>${nf0.format(p.r*100)}${NB}%</b> du profit, compté jusqu’à <b>${usd(p.cap)}</b>, au plus <b>${usd(p.wmax)}</b>. Si le drawdown est touché avant, l’option s’éteint et la prime est perdue.`}
+function renderTiles(){const p=ST.p,r=ST.res,gm=p.r*ST.K-p.F;
+  const T=(l,v,s,mk)=>`<div class="tile"><span>${mk?`<i class="mk" style="background:var(--${mk})"></i>`:""}${l}</span><strong>${v}</strong>${s?`<small>${s}</small>`:""}</div>`;
+  $("#tiles").innerHTML=T("Perte max",usd(-p.F),"le prix du challenge","loss")+T("Gain max",usd(gm,true),"retrait saturé dès "+usd(ST.K),"gain")
+    +T("Point mort",r.be==null?"aucun":usd(r.be),r.be==null?"le retrait ne couvre jamais le prix":"de profit au retrait")
+    +T("Probabilité de profit",pct(r.pProfit),"retrait supérieur au prix")
+    +T("Garder le compte",pct(r.surv),"jusqu’au jour "+p.N)
+    +T("Valeur au jour 0",usd(r.E),"retrait moyen, µ = "+muTxt(p.mu),"val");
+  $("#tl-t").innerHTML="Compte financé, vu du jour 0 · <span class=\"gr\">µ = "+muTxt(p.mu)+"</span>"}
+function eqTxt(e,lab){if(!e)return null;if(e.cote===0)return`Sous ${lab}, il couvre son prix à partir de µ* = <b>${muTxt(e.mu)}</b>.`;
+  if(e.cote<0)return`Sous ${lab}, il couvre son prix pour toute dérive supérieure à <b>${muTxt(-ST.muSearch)}</b>.`;return`Sous ${lab}, il ne couvre pas son prix, même à <b>${muTxt(ST.muSearch)}</b>.`}
+function renderPrix(){
+  const p=ST.p,r=ST.res,T=MC.stale?null:MC.trail,F=p.F,pend='<span class="pending">calcul…</span>';
+  const sv=v=>v>=F?"couvre son prix":"ne couvre pas son prix";
+  let h=`<p>À µ = <b>${muTxt(p.mu)}</b>, le challenge vaut <b>${usd(r.V)}</b> sous un plancher fixe${T?` et <b>${usd(T.V)}</b> sous un plancher trailing`:""}, pour un prix de <b>${usd(F)}</b>.</p>`;
+  const a=eqTxt(ST.eqS,"plancher fixe"),b=MC.stale?null:eqTxt(MC.eqT,"plancher trailing");
+  h+=`<p>${a}${b?" "+b:""}</p>`;
+  if(p.obj>0)h+=`<p>Le compte financé vaut ${usd(r.E)}${T?` ou ${usd(T.E)}`:""}, mais seulement après l’évaluation, réussie ${pct(r.pass,0)}${T?` ou ${pct(T.pass,0)}`:""} du temps à cette dérive.</p>`;
+  $("#verdict").innerHTML=h;
+  const se=(v,s,f)=>`<small>± ${f(2*s)}</small>`,fp=x=>nf1.format(x*100)+NB+"%",fd=x=>nf0.format(x)+NB+"$";
+  const row=(l,sub,a,b,cls)=>`<tr${cls?` class="${cls}"`:""}><th scope="row">${l}${sub?`<small>${sub}</small>`:""}</th><td>${a}</td><td>${b}</td></tr>`;
+  let t=`<thead><tr><th scope="col" style="text-align:left">Grandeur</th><th scope="col"><span class="sw st"></span>Plancher fixe</th><th scope="col"><span class="sw tr"></span>Plancher trailing</th></tr></thead><tbody>`;
+  t+=row("Réussir l’évaluation",p.obj>0?"objectif "+usd(p.obj):"pas d’évaluation",pct(r.pass),T?pct(T.pass)+(p.obj>0?se(0,T.sePass,fp):""):pend);
+  t+=row("Garder le compte financé",`jusqu’au retrait, jour ${p.N}`,pct(r.surv),T?pct(T.surv)+se(0,T.seSurv,fp):pend);
+  t+=row("Retrait moyen","premier retrait",usd(r.E),T?usd(T.E)+se(0,T.seE,fd):pend);
+  t+=row("Valeur du challenge","réussite × retrait moyen",`<b>${usd(r.V)}</b><small>${sv(r.V)}</small>`,T?`<b>${usd(T.V)}</b><small>${sv(T.V)} · ± ${fd(2*T.seV)}</small>`:pend,"sum");
+  t+=row("Finir au-dessus du point mort","retrait supérieur au prix",pct(r.pProfitChal),T?pct(T.pProfitChal):pend);
+  const eqc=e=>!e?pend:e.cote===0?muTxt(e.mu):e.cote<0?"< "+muTxt(-ST.muSearch):"> "+muTxt(ST.muSearch);
+  t+=row("Dérive d’équilibre µ*","valeur = prix",eqc(ST.eqS),eqc(MC.eqT));
+  $("#tbp").innerHTML=t+"</tbody>"}
+function renderCtrl(){const c=MC.ctrl,r=ST.res;if(!c)return;
+  const it=(l,m,s,f,fo)=>`${l} <b>${f(m)}</b> ± ${f(2*s)} <span style="color:var(--dim)">(formule ${fo})</span>`;
+  const fp=x=>nf1.format(x*100)+NB+"%",fd=x=>nf0.format(x)+NB+"$";
+  const parts=[];if(ST.p.obj>0)parts.push(it("réussite",c.pass,c.sePass,fp,fp(r.pass)));
+  parts.push(it("survie",c.surv,c.seSurv,fp,fp(r.surv)),it("retrait moyen",c.E,c.seE,fd,fd(r.E)));
+  const z=Math.abs(c.E-r.E)/Math.max(1e-9,c.seE),zs=Math.abs(c.surv-r.surv)/Math.max(1e-9,c.seSurv);
+  $("#ctrl").innerHTML=`${nf0.format(c.n)} trajectoires, graine fixe, ± deux erreurs types : `+parts.join(" · ")+`. Écart ${z<3&&zs<3?"inférieur à trois erreurs types":"supérieur à trois erreurs types : à examiner"}.`}
+function table3(){const cur=MC.curve,p=ST.p;if(!cur)return;let h=`<thead><tr><th scope="col" style="text-align:left">Dérive <span class="gr">µ</span></th><th scope="col">Plancher fixe</th><th scope="col">Plancher trailing</th></tr></thead><tbody>`;
+  for(const o of cur)h+=`<tr><td style="text-align:left">${muTxt(o.mu)}</td><td>${usd(valeurChallenge(Object.assign({},p,{mu:o.mu})))}</td><td>${usd(o.V)} <small style="display:inline">± ${nf0.format(2*o.se)}</small></td></tr>`;
+  $("#tb3").innerHTML=h+"</tbody>"}
+
+/* ---------- paramètres ---------- */
+function parseNum(s){const v=parseFloat(String(s).replace(/[\s  ]/g,"").replace(",","."));return isFinite(v)?v:NaN}
+function buildParams(){$("#params").innerHTML=FIELDS.map(f=>`<div class="field"><label for="f-${f.k}">${f.l}${f.ex?"<em>exemple</em>":""}</label><div class="inp" id="w-${f.k}"><input id="f-${f.k}" inputmode="${f.int?"numeric":"decimal"}" autocomplete="off" value="${nf0.format(P[f.k]).replace(/ /g," ")}"><span>${f.u}</span></div><span class="hint" id="h-${f.k}">${f.h}</span></div>`).join("");
+  for(const f of FIELDS){const el=$("#f-"+f.k);el.addEventListener("input",()=>{let v=parseNum(el.value);const w=$("#w-"+f.k),hint=$("#h-"+f.k);
+    if(f.int&&isFinite(v))v=Math.round(v);
+    if(!isFinite(v)||v<f.min||v>f.max){w.setAttribute("aria-invalid","true");hint.textContent=`Entre un nombre entre ${nf0.format(f.min)} et ${nf0.format(f.max)}.`;return}
+    w.removeAttribute("aria-invalid");hint.textContent=f.h;if(P[f.k]===v)return;P[f.k]=v;save();changed(true)})}}
+function syncMu(){const r=$("#r-mu");r.min=-ST.muMax;r.max=ST.muMax;if(P.mu<-ST.muMax||P.mu>ST.muMax){P.mu=clamp(P.mu,-ST.muMax,ST.muMax);derive()}r.value=P.mu;$("#o-mu").textContent=muTxt(P.mu)}
+function changed(full){
+  derive();syncMu();A.ghosts=[];A.t=Math.min(A.t,ST.p.N);A.done=false;newPath();
+  $("#r-jour").max=ST.p.N;$("#h-n").textContent=ST.p.N;
+  build1();build2();build3();renderLede();renderTiles();renderPrix();table1();
+  planMC(full)}
+$("#r-mu").addEventListener("input",e=>{P.mu=+e.target.value;save();$("#o-mu").textContent=muTxt(P.mu);
+  derive();newPath();A.done=false;A.ghosts=[];build1();build2();build3();renderLede();renderTiles();renderPrix();planMC(false,220)});
+$("#r-jour").addEventListener("input",e=>{setPlay(false);A.hold=0;A.t=+e.target.value;A.done=A.t>=endT();A.dirty=true});
+$("#b-play").addEventListener("click",()=>{if(!A.playing&&(A.t>=endT()-1e-9))nextRun();setPlay(!A.playing)});
+$("#b-new").addEventListener("click",()=>{nextRun();setPlay(true)});
+$("#b-reset").addEventListener("click",()=>{P=Object.assign({},DEF);save();buildParams();changed(true)});
+$("#d1").addEventListener("toggle",table1);
+
+/* ---------- boucle ---------- */
+const vis={f1:true,f2:true};
+if("IntersectionObserver"in window){const io=new IntersectionObserver(es=>{for(const e of es){if(e.target.id==="p1")vis.f1=e.isIntersecting;else vis.f2=e.isIntersecting}},{rootMargin:"80px"});io.observe($("#p1"));io.observe($("#p2"))}
+let lastTable=0;
+function frame(now){
+  const dt=Math.min(0.1,(now-(A.last||now))/1000);A.last=now;
+  if(A.playing){
+    if(A.hold>0){A.hold-=dt;if(A.hold<=0)nextRun()}
+    else{const e=endT();A.t=Math.min(e,A.t+dt*ST.p.N/DUR);if(A.t>=e-1e-9){A.t=e;A.hold=HOLD;finishRun()}}
+    A.dirty=true}
+  if(!reduce&&!F2.drag){F2.idle+=dt;if(F2.idle>3){F2.yaw+=dt*0.07*F2.dir;if(F2.yaw>-0.2)F2.dir=-1;if(F2.yaw<-1.05)F2.dir=1;A.dirtyS=true}}
+  if(A.dirty||F1.hx!=null){if(vis.f1)draw1();const r=$("#r-jour");if(document.activeElement!==r)r.value=A.t;setText($("#o-jour"),nf1.format(A.t))}
+  if((A.dirty||A.dirtyS)&&vis.f2)draw2();
+  A.dirty=false;A.dirtyS=false;
+  if(now-lastTable>500&&$("#d1").open){lastTable=now;table1()}
+  requestAnimationFrame(frame)}
+
+/* ---------- départ ---------- */
+readColors();derive();buildParams();syncMu();newPath();setPlay(!reduce);
+$("#r-jour").max=ST.p.N;$("#h-n").textContent=ST.p.N;
+build1();build2();build3();renderLede();renderTiles();renderPrix();draw1();draw2();
+planMC(true,60);
+let rz=0;const ro=new ResizeObserver(()=>{clearTimeout(rz);rz=setTimeout(()=>{const w1=Math.floor($("#p1").clientWidth);if(w1!==F1.W){build1();draw1()}const w2=Math.floor($("#p2").clientWidth);if(w2!==F2.W){build2();draw2()}const w3=Math.floor($("#p3").clientWidth);if(w3!==F3.W)build3()},80)});
+ro.observe($("#p1"));ro.observe($("#p2"));ro.observe($("#p3"));
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{build1();build3();A.dirty=true});
+requestAnimationFrame(frame);
+})();
+</script>
