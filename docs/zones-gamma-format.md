@@ -7,7 +7,8 @@ mesure rien et ne porte aucune loi nulle. L'indicateur est `pine/alp0-zones.pine
 probabilité, et un comptage de rejets n'est pas une rentabilité après coûts.
 
 Ce document fixe l'**étape 1** du cahier des charges : import texte, niveaux,
-regroupement lisible, touches. Le profil GEX signé 0DTE à droite du prix
+regroupement lisible, touches. L'indicateur porte aussi, en tête, la heatmap
+z-score des bougies (l'ancien « Z + Single Prints (OPEX) », corrigé — §1 bis). Le profil GEX signé 0DTE à droite du prix
 (début de l'étape 2) y est déjà, parce qu'il ne demande aucune donnée de plus
 que le format. Restent pour la suite : la comparaison minuit / 5 h, les
 extrémités de structure, les confirmations et les statistiques de confluence
@@ -24,7 +25,7 @@ extrémités de structure, les confirmations et les statistiques de confluence
    `pine/alp0-zones.pine`, *Enregistrer* sous le nom « Alp-0 Zones », puis
    *Ajouter au graphique*.
 3. Ouvrir les réglages de l'indicateur → *Paramètres en entrée* → groupe
-   **② Relevés Gexbot** : coller le texte de Lou dans **Zone A**. Les zones B et
+   **⑤ Relevés Gexbot** : coller le texte de Lou dans **Zone A**. Les zones B et
    C servent à l'historique (chaque zone accepte 40 960 caractères au plus,
    limite documentée de Pine pour un texte).
 4. Graphique conseillé : **NQ1!** ou **MNQ1!** en **1 minute**. Les touches et
@@ -36,7 +37,7 @@ extrémités de structure, les confirmations et les statistiques de confluence
    le dépôt, et c'est la seule vérification que les essais ci-dessous ne font
    pas.
 
-Le groupe **① VWAP SELECTION** reprend un par un les réglages de « The
+Le groupe **④ VWAP SELECTION** reprend un par un les réglages de « The
 Strategists - Aggregated VWAP » tels qu'ils sont saisis sur le graphique :
 ancrage *Day*, source hlc3, six multiplicateurs (1, 2, 3, 0.5, 1.5, 2.5) avec
 leur case, *Plot Standard Deviation*, *Fill Bands*, VWAP de la période
@@ -46,6 +47,32 @@ depuis l'ancrage, `σ² = Σ(v·P²)/Σv − VWAP²`, la forme du VWAP intégré
 réglages de l'original ne sont pas repris : l'**agrégation multi-places**
 (propre au bitcoin, sans objet sur un future qui ne cote qu'au CME) et
 l'affichage des VWAP par symbole agrégé.
+
+---
+
+## 1 bis. La heatmap z-score — ce qui a été corrigé
+
+Groupes **① Z-Score**, **② Z-Score Colors**, **③ Z-Score Brightness**. Le calcul
+est celui du script d'origine : `z = (ohlc4 − SMA50) / σ50` (σ par division
+par N, comme `ta.stdev`), corps neutre sous T1 = 2, dégradé cyan → magenta de
+T1 à T2 = 3, magenta au-delà ; c'est la valeur **absolue** du z-score qui est
+lue. Ce qui a changé :
+
+| avant | après |
+|---|---|
+| nommé « Z + Single Prints (OPEX) », sans aucun calcul de single prints ni d'OPEX | rangé sous son vrai nom, en tête d'Alp-0 Zones |
+| série « ΓΣZera Heatmap » : titre corrompu à l'encodage | « Z-Score Heatmap » |
+| z = 0 tant que les 50 bougies ne sont pas réunies, et sur un prix immobile | z = na : bougie neutre, « n/a » dans la fenêtre de données — un zéro aurait été une valeur fabriquée |
+| l'éclaircissement des mèches et bordures remettait la transparence à zéro | transparence conservée |
+| libellés « Cyan (2σ) » / « Magenta (3σ) » figés quel que soit le seuil, variables `c_neg` / `c_pos` qui désignaient deux intensités et non deux signes | « Cyan (T1) » / « Magenta (T2) », variables nommées d'après ce qu'elles sont |
+| T2 ≤ T1 : dégradé dégénéré | tout ce qui dépasse T1 prend la couleur de T2 |
+| `max_bars_back = 5000`, quotas de lignes et d'étiquettes inutilisés | retirés |
+
+La bougie en cours change de couleur jusqu'à sa clôture, comme le prix
+qu'elle porte : ce n'est pas un repaint de l'historique, mais la couleur n'est
+définitive qu'à la clôture. Une fois Alp-0 Zones installé, l'ancien indicateur
+« Z + Single Prints (OPEX) » peut être retiré du graphique : sinon deux jeux de
+bougies colorées se superposent.
 
 ---
 
@@ -402,7 +429,9 @@ secondaires) ; saisie invalide et données absentes ; doublons et plages
 cumulatives ; quotas ; changements d'heure (heure inexistante, ambiguë, gel
 en heure d'été, d'hiver et en semaine décalée) ; absence d'anticipation et de
 repaint ; gel à 22 h ; créneaux NQ / MNQ ; profil 0DTE ; VWAP et bandes ;
-l'exemple fictif ci-dessus.
+l'exemple fictif ci-dessus ; z-score (valeur exacte contre une référence
+indépendante, préchauffage en na, marche isolée à z = 7, dégradé, mèches et
+bordures, T2 ≤ T1). 107 contrôles.
 
 Ce que ces essais **ne prouvent pas** : PineTS n'est pas le compilateur de
 TradingView. Il ne vérifie ni toutes les règles de typage (qualificatifs

@@ -3,18 +3,21 @@ indicator("Alp-0 Zones", "Alp-0 Zones", overlay = true,
      max_lines_count = 500, max_labels_count = 500, max_boxes_count = 500)
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  Alp-0 Zones — VWAP σ · zones gamma, IV et profil de volume · touches
+//  Alp-0 Zones — z-score · VWAP σ · zones gamma, IV et profil de volume
 //
 //  ÉTAPE 1 du cahier des charges (docs/zones-gamma-format.md) :
-//    ① VWAP et six bandes σ, VWAP de la période précédente : les réglages de
+//    ①–③ la heatmap z-score des bougies — l'ancien « Z + Single Prints
+//       (OPEX) », corrigé (voir la section A) ;
+//    ④ VWAP et six bandes σ, VWAP de la période précédente : les réglages de
 //       « The Strategists - Aggregated VWAP » tels qu'ils sont saisis sur le
 //       graphique (agrégation désactivée — sans objet sur un future CME) ;
-//    ② import texte des relevés Gexbot que Lou colle, format ALPZ 1 ;
-//    ③ niveaux en gris pointillé, étiquettes à droite, filtres ;
-//    ④ CONFLUENCES : les niveaux proches forment une seule zone, sans
+//    ⑤ import texte des relevés Gexbot que Lou colle, format ALPZ 1 ;
+//    ⑥–⑦ horaires, niveaux en gris pointillé, étiquettes à droite, filtres ;
+//    ⑧ CONFLUENCES : les niveaux proches forment une seule zone, sans
 //       qu'aucun prix soit déplacé ;
-//    ⑤ touches et réactions, jugées sur bougies confirmées seulement ;
-//    ⑥ profil GEX signé 0DTE, à droite du prix, s'il est fourni par strike.
+//    ⑨ touches et réactions, jugées sur bougies confirmées seulement ;
+//    ⑩ profil GEX signé 0DTE, à droite du prix, s'il est fourni par strike ;
+//    ⑪ tableau et alertes.
 //
 //  Ce que le script ne fait pas — et ne peut pas faire
 //  ---------------------------------------------------
@@ -22,8 +25,9 @@ indicator("Alp-0 Zones", "Alp-0 Zones", overlay = true,
 //    commande, n'interroge aucune API. Le collage de Lou est la seule entrée.
 //  · Il ne fabrique aucune valeur : une donnée absente reste absente, une
 //    donnée invalide est refusée et signalée au tableau.
-//  · Il ne passe aucun ordre et n'affiche aucune probabilité ni aucun score.
-//    Une confluence est une hypothèse de travail, pas une preuve.
+//  · Il ne passe aucun ordre et n'affiche aucune probabilité ni aucun score
+//    de confiance. Une confluence est une hypothèse de travail, pas une
+//    preuve.
 //  · Il ne s'exécute qu'aux mises à jour du graphique. Le gel de 22 h est
 //    POSÉ à 22 h (la fin du segment est l'horodatage exact), mais il n'est
 //    APPLIQUÉ qu'à la première bougie qui suit : sans bougie, rien ne bouge.
@@ -42,8 +46,28 @@ MAX_OBS  = 5000
 MAX_EPQ  = 3000
 
 
-// ─── ① VWAP — réglages repris de « The Strategists » ───────────────────────
-gV = "① VWAP SELECTION"
+// ─── ①–③ Z-score (heatmap des bougies) ────────────────────────────────────
+gZ = "① Z-Score"
+zOn  = input.bool(true, "Colorer les bougies (heatmap)", group = gZ)
+zSrc = input.source(ohlc4, "Source", group = gZ, display = display.none)
+zLen = input.int(50, "Lookback", minval = 2, group = gZ, display = display.none)
+zT1  = input.float(2.0, "Threshold T1 (σ)", minval = 0.1, step = 0.1, group = gZ, inline = "t", display = display.none)
+zT2  = input.float(3.0, "Threshold T2 (σ)", minval = 0.1, step = 0.1, group = gZ, inline = "t", display = display.none,
+     tooltip = "Sous T1 : neutre. De T1 à T2 : dégradé. Au-delà de T2 : couleur pleine. La valeur absolue du z-score est lue : un excès au-dessus et un excès au-dessous de la moyenne prennent la même couleur.")
+
+gZC = "② Z-Score Colors"
+zcT1  = input.color(color.rgb(45, 171, 173), "Cyan (T1 extreme)", group = gZC)
+zcT2  = input.color(color.rgb(229, 5, 255), "Magenta (T2 extreme)", group = gZC)
+zcNeu = input.color(color.rgb(51, 51, 51), "Neutral (within thresholds)", group = gZC)
+
+gZB = "③ Z-Score Brightness"
+zCustom  = input.bool(false, "Custom Wick/Border", group = gZB)
+zBordPct = input.int(-20, "Border %", minval = -100, maxval = 100, group = gZB, inline = "b", display = display.none)
+zWickPct = input.int(10, "Wick %", minval = -100, maxval = 100, group = gZB, inline = "b", display = display.none)
+
+
+// ─── ④ VWAP — réglages repris de « The Strategists » ───────────────────────
+gV = "④ VWAP SELECTION"
 vwAnc    = input.string("Day", "VWAP and SDev:", group = gV,
      options = ["Day", "Week", "Month", "Quarter", "Year", "AVWAP"])
 vwSrc    = input.source(hlc3, "VWAP Source", group = gV)
@@ -78,8 +102,8 @@ vwLabCol = input.color(color.white, "Label Color", group = gL)
 vwLabOff = input.int(1, "Label offset", minval = 0, maxval = 300, group = gL)
 
 
-// ─── ② Relevés (format ALPZ 1) ────────────────────────────────────────────
-gR = "② Relevés Gexbot — format ALPZ 1"
+// ─── ⑤ Relevés (format ALPZ 1) ────────────────────────────────────────────
+gR = "⑤ Relevés Gexbot — format ALPZ 1"
 txtA = input.text_area("ALPZ 1\n# Collez ici les relevés de Lou (docs/zones-gamma-format.md).",
      "Zone A — relevés du jour", group = gR, display = display.none,
      tooltip = "Première ligne utile : « ALPZ 1 ». Puis un bloc par relevé : une ligne R (en-tête), une ligne B (base) si l'instrument source n'est pas le contrat du graphique, des lignes N (niveaux), et en option G + S (GEX signé par strike). 40 960 caractères au plus par zone.")
@@ -100,8 +124,8 @@ gardeCumul = input.bool(false, "Garder les plages cumulatives recouvrantes", gro
      tooltip = "Une plage 0-10 DTE recouvre la 0DTE déjà fournie : par défaut elle est écartée pour ne pas compter deux fois la même échéance.")
 
 
-// ─── ③ Horaires (Europe/Paris) ────────────────────────────────────────────
-gH = "③ Horaires des instantanés"
+// ─── ⑥ Horaires (Europe/Paris) ────────────────────────────────────────────
+gH = "⑥ Horaires des instantanés"
 filtreMode = input.string("Auto (contrat du graphique)", "Instantanés affichés", group = gH,
      options = ["Auto (contrat du graphique)", "Tous", "Identifiants listés"],
      tooltip = "Auto : NQ affiche les relevés gamma/IV du créneau NQ, MNQ ceux du créneau MNQ, et chacun le profil de volume de son créneau VP. Les instantanés de minuit et de 5 h restent séparés : aucun ne remplace l'autre.")
@@ -118,8 +142,8 @@ gelM     = input.int(0, "min", minval = 0, maxval = 59, group = gH, inline = "ge
      tooltip = "Les niveaux s'étendent à l'infini pendant la journée, puis deviennent des segments arrêtés à cette heure. Le script n'est exécuté qu'aux mises à jour du graphique : le gel prend effet à la première bougie qui suit.")
 
 
-// ─── ④ Niveaux et style ───────────────────────────────────────────────────
-gN = "④ Niveaux et style"
+// ─── ⑦ Niveaux et style ───────────────────────────────────────────────────
+gN = "⑦ Niveaux et style"
 famGEX  = input.bool(true, "Gamma (GEX)", group = gN, inline = "fam")
 famIV   = input.bool(true, "IV", group = gN, inline = "fam")
 famVP   = input.bool(true, "Profil de volume", group = gN, inline = "fam")
@@ -139,8 +163,8 @@ labPasse = input.bool(false, "Étiquettes des jours passés", group = gN)
 joursAff = input.int(3, "Jours affichés", minval = 1, maxval = 30, group = gN, display = display.none)
 
 
-// ─── ⑤ Confluences ────────────────────────────────────────────────────────
-gC = "⑤ Confluences"
+// ─── ⑧ Confluences ────────────────────────────────────────────────────────
+gC = "⑧ Confluences"
 dConf  = input.float(8.0, "Distance de regroupement (points)", minval = 0.25, step = 0.25, group = gC, display = display.none,
      tooltip = "Deux niveaux consécutifs plus proches que cela rejoignent la même zone. Distincte de la tolérance de touche.")
 dMax   = input.float(16.0, "Diamètre maximal d'une zone (points)", minval = 0.25, step = 0.25, group = gC, display = display.none,
@@ -149,8 +173,8 @@ zoneCol = input.color(color.new(#9598A1, 86), "Fond de zone", group = gC, inline
 zoneBrd = input.color(color.new(#9598A1, 55), "bord", group = gC, inline = "zc")
 
 
-// ─── ⑥ Touches et réactions ───────────────────────────────────────────────
-gT = "⑥ Touches et réactions"
+// ─── ⑨ Touches et réactions ───────────────────────────────────────────────
+gT = "⑨ Touches et réactions"
 tolTicks = input.int(4, "Tolérance de touche (ticks)", minval = 0, maxval = 200, group = gT, display = display.none)
 tickIn   = input.float(0.25, "Tick si inconnu", minval = 0.0001, step = 0.25, group = gT, display = display.none)
 rxPts    = input.float(30.0, "Réaction (points)", minval = 0.25, step = 0.25, group = gT, display = display.none)
@@ -162,8 +186,8 @@ mrkOn    = input.bool(true, "Marqueurs de touche", group = gT, inline = "mk")
 mrkN     = input.int(40, "dernières", minval = 1, maxval = 150, group = gT, inline = "mk", display = display.none)
 
 
-// ─── ⑦ Profil GEX signé 0DTE (à droite) ───────────────────────────────────
-gG = "⑦ Profil GEX 0DTE à droite"
+// ─── ⑩ Profil GEX signé 0DTE (à droite) ───────────────────────────────────
+gG = "⑩ Profil GEX 0DTE à droite"
 profOn  = input.bool(true, "Afficher le profil", group = gG)
 profId  = input.string("auto", "Relevé du profil", group = gG, display = display.none,
      tooltip = "auto : le dernier relevé GEX disponible dont l'échéance RÉELLE est le jour même (0DTE) et qui porte des valeurs par strike. Sinon, l'identifiant d'un relevé.")
@@ -177,8 +201,8 @@ profLw  = input.int(2, "Épaisseur", minval = 1, maxval = 6, group = gG, display
 profMax = input.int(120, "Strikes max (les plus proches du prix)", minval = 5, maxval = 200, group = gG, display = display.none)
 
 
-// ─── ⑧ Tableau et alertes ─────────────────────────────────────────────────
-gX = "⑧ Tableau et alertes"
+// ─── ⑪ Tableau et alertes ─────────────────────────────────────────────────
+gX = "⑪ Tableau et alertes"
 tabOn   = input.bool(true, "Tableau", group = gX, inline = "tb")
 tabPos  = input.string("Haut droite", "position", options = ["Haut droite", "Haut gauche", "Bas droite", "Bas gauche"],
      group = gX, inline = "tb", display = display.none)
@@ -189,7 +213,61 @@ alerteOn = input.bool(false, "Alertes (désactivées par défaut)", group = gX,
 
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  A. VWAP et écart-type pondérés par le volume
+//  A. Z-score des bougies — l'ancien « Z + Single Prints (OPEX) », corrigé
+//
+//  z = (source − moyenne) / écart-type, sur `zLen` bougies (ohlc4, 50 :
+//  cinquante minutes sur un graphique 1 min). Le corps de la bougie est neutre
+//  sous T1, passe du cyan au magenta de T1 à T2, magenta au-delà.
+//
+//  Ce qui a été corrigé, et pourquoi :
+//  · le nom annonçait des « Single Prints » et l'« OPEX » : le code n'en
+//    calculait aucun. Le z-score vit maintenant ici, sous son vrai nom ;
+//  · le titre de la série était corrompu à l'encodage (« ΓΣZera Heatmap ») ;
+//  · le z-score valait 0 tant que la fenêtre n'était pas pleine, et sur un
+//    prix immobile : un zéro fabriqué. Il vaut maintenant na — la bougie reste
+//    neutre, la fenêtre de données affiche « n/a » ;
+//  · l'éclaircissement des mèches et bordures remettait la transparence à
+//    zéro : elle est conservée ;
+//  · « Cyan (2σ) » et « Magenta (3σ) » restaient écrits 2σ et 3σ quel que
+//    soit le seuil choisi : les libellés disent maintenant T1 et T2, et les
+//    variables portent le nom de ce qu'elles sont (c_neg / c_pos désignaient
+//    deux intensités, pas deux signes) ;
+//  · T2 ≤ T1 donnait un dégradé dégénéré : tout ce qui dépasse T1 prend
+//    alors la couleur de T2 ;
+//  · max_bars_back = 5000 et les quotas de lignes et d'étiquettes ne
+//    servaient à rien : retirés.
+//
+//  La bougie en cours change de couleur jusqu'à sa clôture, comme le prix
+//  qu'elle porte : la couleur n'est définitive qu'une fois la bougie close.
+// ═══════════════════════════════════════════════════════════════════════════
+
+zMean = ta.sma(zSrc, zLen)
+zDev  = ta.stdev(zSrc, zLen)
+float zScore = na(zDev) or zDev == 0 ? na : (zSrc - zMean) / zDev
+
+// Éclaircit (pct > 0) ou assombrit (pct < 0) une couleur, transparence
+// conservée.
+zLum(color c, int pct) =>
+    f = 1.0 + pct / 100.0
+    color.rgb(math.min(255, math.max(0, color.r(c) * f)),
+         math.min(255, math.max(0, color.g(c) * f)),
+         math.min(255, math.max(0, color.b(c) * f)), color.t(c))
+
+zAbs = math.abs(zScore)
+color zBody = na(zScore) or zAbs < zT1 ? zcNeu :
+     zAbs >= zT2 or zT2 <= zT1 ? zcT2 :
+     color.from_gradient(zAbs, zT1, zT2, zcT1, zcT2)
+color zWick   = zCustom ? zLum(zBody, zWickPct) : zBody
+color zBorder = zCustom ? zLum(zBody, zBordPct) : zBody
+
+// Déclarées avant le VWAP : les bougies passent sous ses traits.
+plotcandle(zOn ? open : na, zOn ? high : na, zOn ? low : na, zOn ? close : na, "Z-Score Heatmap",
+     color = zBody, wickcolor = zWick, bordercolor = zBorder)
+plot(zScore, "Z-Score", display = display.data_window)
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  B. VWAP et écart-type pondérés par le volume
 //     Var = Σ(v·P²)/Σv − VWAP² : la forme exacte, celle du VWAP intégré.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -327,7 +405,7 @@ if barstate.islast
 
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  B. Le lecteur ALPZ 1
+//  C. Le lecteur ALPZ 1
 //
 //  Un relevé (ligne R) porte : identifiant, source, famille (GEX, IV, VP),
 //  instrument source, contrat(s) cible(s), date des données, heure de
@@ -1035,7 +1113,7 @@ if barstate.isfirst
 
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  C. Activation, époques, confluences
+//  D. Activation, époques, confluences
 //
 //  Un relevé est ACTIF sur les bougies qui ouvrent à partir de sa
 //  disponibilité et avant son gel. Rien ne compte avant : ni touche, ni
@@ -1335,7 +1413,7 @@ if barstate.isconfirmed
 
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  D. Dessin — refait à chaque exécution de la dernière bougie
+//  E. Dessin — refait à chaque exécution de la dernière bougie
 //
 //  Le script ne touche qu'à SES objets : il ne lit ni n'efface aucun dessin
 //  manuel, ni ceux d'un autre indicateur. Ses propres objets sont tenus

@@ -167,10 +167,10 @@ confirmée, profil GEX 0DTE à droite. **Étape 1** de son cahier des charges
 (plus le profil de l'étape 2) ; restent la comparaison minuit / 5 h et
 l'étape 3 (structures, confirmations, statistiques). Le format, l'exemple
 fictif et les règles sont dans `docs/zones-gamma-format.md` ; le banc
-`tools/zones-pinets/` exécute le vrai fichier sous PineTS (95 contrôles) —
-ce n'est pas le compilateur TradingView. **Le code z-score demandé n'a pas
-été fourni** : à intégrer quand l'utilisateur le collera. Page :
-https://claude.ai/artifact/HPJD3LA8YSHLMpdZusxYWF. Session du 7 novembre 2026
+`tools/zones-pinets/` exécute le vrai fichier sous PineTS (107 contrôles) —
+ce n'est pas le compilateur TradingView. Le z-score de l'utilisateur
+(« Z + Single Prints (OPEX) ») y est intégré en tête, corrigé. Page :
+https://claude.ai/artifact/2kE8QktJ7nGt8GfjENGA6f (précédente HPJD3LA8YSHLMpdZusxYWF). Session du 7 novembre 2026
 sur la branche `claude/exciting-dijkstra-ks25vr`, imposée par la session.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc

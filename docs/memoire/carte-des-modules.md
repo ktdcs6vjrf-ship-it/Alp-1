@@ -464,7 +464,11 @@ Hors du noyau Python
   Voir `docs/gex-discord-vers-tradingview.md`.
 - `pine/alp0-zones.pine` — **étape 1** du cahier des charges « zones gamma,
   IV et VP » de l'utilisateur, plus le profil 0DTE de l'étape 2. Un seul
-  indicateur : ① le VWAP et ses six bandes σ, VWAP précédent ±1/±2,
+  indicateur : ⓪ la heatmap z-score des bougies — l'ancien « Z + Single
+  Prints (OPEX) » de l'utilisateur, corrigé (nom trompeur, titre corrompu
+  « ΓΣZera », zéro fabriqué en préchauffage remplacé par na, transparence
+  perdue à l'éclaircissement, libellés 2σ/3σ figés, T2 ≤ T1) ; ① le VWAP et
+  ses six bandes σ, VWAP précédent ±1/±2,
   étiquettes — réplique des réglages de « The Strategists - Aggregated VWAP »
   saisis sur le graphique (agrégation multi-places non reprise : sans objet au
   CME) ; ② le lecteur du format **ALPZ 1** que l'assistant Lou remplit à partir
@@ -494,8 +498,10 @@ Hors du noyau Python
 - `tools/zones-pinets/` — **le premier banc qui exécute un fichier Pine du
   dépôt.** PineTS (runtime Pine v6 libre de LuxAlgo, `pinets@0.13.1`)
   transpile le vrai fichier et l'exécute sur des bougies synthétiques ; le
-  banc lit lignes, étiquettes, boîtes et cellules de tableau. 95 contrôles,
-  dont l'exemple fictif lu dans la doc. Trois écarts de PineTS sont
+  banc lit lignes, étiquettes, boîtes, cellules de tableau et couleurs de
+  `plotcandle`. 107 contrôles, dont l'exemple fictif lu dans la doc et le
+  z-score contre une référence indépendante. PineTS écrit une couleur tantôt
+  `rgb(r, g, b)`, tantôt `#RRGGBB` : lire les deux. Trois écarts de PineTS sont
   contournés dans le code sans effet pour TradingView (voir son README). Ce
   n'est pas le compilateur TradingView : la vérification finale reste
   l'éditeur Pine de l'utilisateur. Hors des tests Python.

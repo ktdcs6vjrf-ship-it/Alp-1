@@ -375,5 +375,63 @@ console.log('L. Exemple fictif de docs/zones-gamma-format.md');
   verifie('L MNQ : GF de 5 h (29178.5), pas celui de minuit', rm.lignes.some(l => l.y1 === 29178.5) && !rm.lignes.some(l => l.y1 === 29168.5));
 }
 
+// ── M. Z-score (heatmap des bougies) ──
+console.log('M. Z-score');
+{
+  // Référence : z = (ohlc4 − SMA50) / σ50, σ « biaisé » (division par N),
+  // comme ta.stdev par défaut.
+  const o4 = x => (x.open + x.high + x.low + x.close) / 4;
+  const zRef = (bs, i, n = 50) => {
+    if (i < n - 1) return NaN;
+    const w = bs.slice(i - n + 1, i + 1).map(o4);
+    const m = w.reduce((a, b) => a + b, 0) / n;
+    const sd = Math.sqrt(w.reduce((a, b) => a + (b - m) * (b - m), 0) / n);
+    return sd === 0 ? NaN : (o4(bs[i]) - m) / sd;
+  };
+  const b = seance(J, '00:00', '02:30', [['00:00', 29200], ['00:40', 29230], ['01:10', 29190], ['01:40', 29260], ['02:30', 29240]]);
+  const r = await lancer('', b);
+  const z = r.ctx.plots['Z-Score'].data.map(x => x.value);
+  verifie('M préchauffage : z = na sur les 49 premières bougies (pas de zéro fabriqué)', z.slice(0, 49).every(v => v === null || Number.isNaN(v)), JSON.stringify(z.slice(45, 50)));
+  const ecart = Math.max(...b.map((_, i) => i).filter(i => i >= 49).map(i => Math.abs(z[i] - zRef(b, i))));
+  verifie('M z-score = référence sur toutes les bougies', ecart < 1e-9, String(ecart));
+  // Un plat puis une marche isolée : z = 0,98 / 0,14 = 7 exactement.
+  const plat = seance(J, '00:00', '01:01', [['00:00', 29200]]);
+  plat.at(-1).open = 29200; plat.at(-1).close = 29230; plat.at(-1).high = 29230; plat.at(-1).low = 29200;
+  const rp = await lancer('', plat);
+  const zp = rp.ctx.plots['Z-Score'].data.map(x => x.value);
+  const hm = rp.ctx.plots['Z-Score Heatmap'].data;
+  verifie('M prix immobile : z = na, bougie neutre', (zp.at(-2) === null || Number.isNaN(zp.at(-2))) && hm.at(-2).options.color === 'rgb(51, 51, 51)', `${zp.at(-2)} ${hm.at(-2).options.color}`);
+  verifie('M marche isolée : z = 7', Math.abs(zp.at(-1) - 7) < 1e-9, String(zp.at(-1)));
+  verifie('M au-delà de T2 : magenta', hm.at(-1).options.color === 'rgb(229, 5, 255)', hm.at(-1).options.color);
+  // Entre T1 et T2 : dégradé, rouge strictement entre le cyan (45) et le
+  // magenta (229), croissant avec |z|.
+  const grad = b.map((_, i) => i).filter(i => i >= 49 && Math.abs(zRef(b, i)) >= 2 && Math.abs(zRef(b, i)) < 3);
+  // PineTS écrit une couleur « rgb(r, g, b) » ou « #RRGGBB » selon son origine.
+  const canal = c => c.startsWith('#') ? parseInt(c.slice(1, 3), 16) : +c.match(/\d+/)[0];
+  const rouge = i => canal(r.ctx.plots['Z-Score Heatmap'].data[i].options.color);
+  // Dégradé : rouge de 45 (cyan, à T1) à 229 (magenta, à T2), bleu ≥ 173 ;
+  // le neutre (51, 51, 51) a un bleu de 51 : les deux ne se confondent pas.
+  const bleu = i => { const c = r.ctx.plots['Z-Score Heatmap'].data[i].options.color; return c.startsWith('#') ? parseInt(c.slice(5, 7), 16) : +c.match(/\d+/g)[2]; };
+  const okGrad = grad.length > 0 && grad.every(i => rouge(i) >= 45 && rouge(i) < 229 && bleu(i) >= 173);
+  verifie('M entre T1 et T2 : dégradé cyan → magenta', okGrad, `${grad.length} bougies ; ${grad.slice(0, 3).map(i => r.ctx.plots['Z-Score Heatmap'].data[i].options.color)}`);
+  const tri = [...grad].sort((i, j) => Math.abs(zRef(b, i)) - Math.abs(zRef(b, j)));
+  verifie('M dégradé croissant avec |z|', tri.every((i, k) => k === 0 || rouge(i) >= rouge(tri[k - 1])));
+  const neutres = b.map((_, i) => i).filter(i => i >= 49 && Math.abs(zRef(b, i)) < 2);
+  verifie('M sous T1 : neutre', neutres.length > 0 && neutres.every(i => r.ctx.plots['Z-Score Heatmap'].data[i].options.color === 'rgb(51, 51, 51)'));
+  // Mèche +10 %, bordure −20 % : plus claire, plus sombre que le corps.
+  const rc = await lancer('', plat, { 'Custom Wick/Border': true });
+  const o = rc.ctx.plots['Z-Score Heatmap'].data.at(-1).options;
+  const rgb = c => c.match(/[\d.]+/g).map(Number);
+  verifie('M mèche éclaircie de 10 %', Math.abs(rgb(o.wickcolor)[0] - Math.min(255, 229 * 1.1)) < 1 && rgb(o.wickcolor)[1] >= 5, o.wickcolor);
+  verifie('M bordure assombrie de 20 %', Math.abs(rgb(o.bordercolor)[0] - 229 * 0.8) < 1, o.bordercolor);
+  // T2 ≤ T1 : pas de dégradé dégénéré.
+  const ri = await lancer('', b, { 'Threshold T1 (σ)': 3, 'Threshold T2 (σ)': 2 });
+  const hi = ri.ctx.plots['Z-Score Heatmap'].data;
+  const cols = new Set(b.map((_, i) => i).filter(i => i >= 49).map(i => hi[i].options.color));
+  verifie('M T2 ≤ T1 : neutre ou magenta, rien entre les deux', [...cols].every(c => c === 'rgb(51, 51, 51)' || c === 'rgb(229, 5, 255)'), JSON.stringify([...cols]));
+  const ro = await lancer('', b, { 'Colorer les bougies (heatmap)': false });
+  verifie('M heatmap désactivée : aucune bougie tracée', ro.ctx.plots['Z-Score Heatmap'].data.every(x => x.value.every(v => v === null || Number.isNaN(v))));
+}
+
 console.log(`\n${ok} contrôle(s) réussi(s), ${ko} échec(s)`);
 if (ko) { console.log('Échecs : ' + echecs.join(' | ')); process.exitCode = 1; }
