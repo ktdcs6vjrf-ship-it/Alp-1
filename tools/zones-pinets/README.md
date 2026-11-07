@@ -44,4 +44,7 @@ connus de PineTS, sans effet pour TradingView :
    d'après le jour où l'on lance le banc ne trace rien. Sur TradingView, une
    bougie n'est jamais dans le futur.
 
+`zscore-vwap.mjs` vérifie de la même façon `pine/alp0-zscore-vwap.pine`, le
+script autonome z-score + VWAP (17 contrôles : `node zscore-vwap.mjs`).
+
 Il ne participe pas à `python main.py --tests`.

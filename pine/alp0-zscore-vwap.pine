@@ -1,0 +1,267 @@
+//@version=6
+indicator("Alp-0 Z-Score + VWAP", "Z+VWAP v5", overlay = true, max_labels_count = 50)
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Alp-0 Z-Score + VWAP — v5
+//
+//  Deux choses, et rien d'autre :
+//    ①–③ la heatmap z-score des bougies — l'ancien « Z + Single Prints
+//       (OPEX) », corrigé (voir la section A) ;
+//    ④ le VWAP de séance, ses six bandes σ pondérées par le volume et le
+//       VWAP de la période précédente ±1 / ±2 : les réglages de « The
+//       Strategists - Aggregated VWAP » tels qu'ils sont saisis sur le
+//       graphique (agrégation désactivée — sans objet sur un future CME).
+//
+//  Il remplace les deux indicateurs d'origine : les garder en plus
+//  superpose deux jeux de bougies colorées et deux VWAP.
+//
+//  Extrait tel quel de pine/alp0-zones.pine (mêmes entrées, même calcul) ;
+//  le banc tools/zones-pinets/zscore-vwap.mjs l'exécute et le vérifie.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── ①–③ Z-score (heatmap des bougies) ────────────────────────────────────
+gZ = "① Z-Score"
+zOn  = input.bool(true, "Colorer les bougies (heatmap)", group = gZ)
+zSrc = input.source(ohlc4, "Source", group = gZ, display = display.none)
+zLen = input.int(50, "Lookback", minval = 2, group = gZ, display = display.none)
+zT1  = input.float(2.0, "Threshold T1 (σ)", minval = 0.1, step = 0.1, group = gZ, inline = "t", display = display.none)
+zT2  = input.float(3.0, "Threshold T2 (σ)", minval = 0.1, step = 0.1, group = gZ, inline = "t", display = display.none,
+     tooltip = "Sous T1 : neutre. De T1 à T2 : dégradé. Au-delà de T2 : couleur pleine. La valeur absolue du z-score est lue : un excès au-dessus et un excès au-dessous de la moyenne prennent la même couleur.")
+
+gZC = "② Z-Score Colors"
+zcT1  = input.color(color.rgb(45, 171, 173), "Cyan (T1 extreme)", group = gZC)
+zcT2  = input.color(color.rgb(229, 5, 255), "Magenta (T2 extreme)", group = gZC)
+zcNeu = input.color(color.rgb(51, 51, 51), "Neutral (within thresholds)", group = gZC)
+
+gZB = "③ Z-Score Brightness"
+zCustom  = input.bool(false, "Custom Wick/Border", group = gZB)
+zBordPct = input.int(-20, "Border %", minval = -100, maxval = 100, group = gZB, inline = "b", display = display.none)
+zWickPct = input.int(10, "Wick %", minval = -100, maxval = 100, group = gZB, inline = "b", display = display.none)
+
+
+// ─── ④ VWAP — réglages repris de « The Strategists » ───────────────────────
+gV = "④ VWAP SELECTION"
+vwAnc    = input.string("Day", "VWAP and SDev:", group = gV,
+     options = ["Day", "Week", "Month", "Quarter", "Year", "AVWAP"])
+vwSrc    = input.source(hlc3, "VWAP Source", group = gV)
+vwStart  = input.time(timestamp("26 Jan 2023 00:00:00 UTC+0"), "Start Date AVWAP",
+     group = gV, tooltip = "Lu seulement en mode AVWAP : le VWAP part de cette date et ne se remet plus à zéro.")
+vwPlotSd = input.bool(true, "Plot Standard Deviation", group = gV, inline = "sd")
+vwFill   = input.bool(true, "Fill Bands", group = gV, inline = "sd")
+
+gS = "STANDARD DEVIATION SELECTION"
+on1 = input.bool(true, "", group = gS, inline = "m1")
+k1  = input.float(1.0, "StDev mult 1", minval = 0.0, step = 0.5, group = gS, inline = "m1")
+on2 = input.bool(true, "", group = gS, inline = "m2")
+k2  = input.float(2.0, "StDev mult 2", minval = 0.0, step = 0.5, group = gS, inline = "m2")
+on3 = input.bool(true, "", group = gS, inline = "m3")
+k3  = input.float(3.0, "StDev mult 3", minval = 0.0, step = 0.5, group = gS, inline = "m3")
+on4 = input.bool(true, "", group = gS, inline = "m4")
+k4  = input.float(0.5, "StDev mult 4", minval = 0.0, step = 0.5, group = gS, inline = "m4")
+on5 = input.bool(true, "", group = gS, inline = "m5")
+k5  = input.float(1.5, "StDev mult 5", minval = 0.0, step = 0.5, group = gS, inline = "m5")
+on6 = input.bool(true, "", group = gS, inline = "m6")
+k6  = input.float(2.5, "StDev mult 6", minval = 0.0, step = 0.5, group = gS, inline = "m6")
+
+gP = "PREVIOUS PERIOD VWAP"
+pv1    = input.bool(true, "Plot PVWAP 1+- Levels", group = gP)
+pv2    = input.bool(true, "Plot PVWAP 2+- Levels", group = gP)
+pvFill = input.bool(true, "Fill Previous Bands", group = gP)
+
+gL = "LABELS"
+vwLab    = input.bool(true, "Show Labels", group = gL, inline = "lb")
+vwPLab   = input.bool(false, "Show Previous Labels", group = gL, inline = "lb")
+vwLabCol = input.color(color.white, "Label Color", group = gL)
+vwLabOff = input.int(1, "Label offset", minval = 0, maxval = 300, group = gL)
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  A. Z-score des bougies — l'ancien « Z + Single Prints (OPEX) », corrigé
+//
+//  z = (source − moyenne) / écart-type, sur `zLen` bougies (ohlc4, 50 :
+//  cinquante minutes sur un graphique 1 min). Le corps de la bougie est neutre
+//  sous T1, passe du cyan au magenta de T1 à T2, magenta au-delà.
+//
+//  Ce qui a été corrigé, et pourquoi :
+//  · le nom annonçait des « Single Prints » et l'« OPEX » : le code n'en
+//    calculait aucun. Le z-score vit maintenant ici, sous son vrai nom ;
+//  · le titre de la série était corrompu à l'encodage (« ΓΣZera Heatmap ») ;
+//  · le z-score valait 0 tant que la fenêtre n'était pas pleine, et sur un
+//    prix immobile : un zéro fabriqué. Il vaut maintenant na — la bougie reste
+//    neutre, la fenêtre de données affiche « n/a » ;
+//  · l'éclaircissement des mèches et bordures remettait la transparence à
+//    zéro : elle est conservée ;
+//  · « Cyan (2σ) » et « Magenta (3σ) » restaient écrits 2σ et 3σ quel que
+//    soit le seuil choisi : les libellés disent maintenant T1 et T2, et les
+//    variables portent le nom de ce qu'elles sont (c_neg / c_pos désignaient
+//    deux intensités, pas deux signes) ;
+//  · T2 ≤ T1 donnait un dégradé dégénéré : tout ce qui dépasse T1 prend
+//    alors la couleur de T2 ;
+//  · max_bars_back = 5000 et les quotas de lignes et d'étiquettes ne
+//    servaient à rien : retirés.
+//
+//  La bougie en cours change de couleur jusqu'à sa clôture, comme le prix
+//  qu'elle porte : la couleur n'est définitive qu'une fois la bougie close.
+// ═══════════════════════════════════════════════════════════════════════════
+
+zMean = ta.sma(zSrc, zLen)
+zDev  = ta.stdev(zSrc, zLen)
+float zScore = na(zDev) or zDev == 0 ? na : (zSrc - zMean) / zDev
+
+// Éclaircit (pct > 0) ou assombrit (pct < 0) une couleur, transparence
+// conservée.
+zLum(color c, int pct) =>
+    f = 1.0 + pct / 100.0
+    color.rgb(math.min(255, math.max(0, color.r(c) * f)),
+         math.min(255, math.max(0, color.g(c) * f)),
+         math.min(255, math.max(0, color.b(c) * f)), color.t(c))
+
+zAbs = math.abs(zScore)
+color zBody = na(zScore) or zAbs < zT1 ? zcNeu :
+     zAbs >= zT2 or zT2 <= zT1 ? zcT2 :
+     color.from_gradient(zAbs, zT1, zT2, zcT1, zcT2)
+color zWick   = zCustom ? zLum(zBody, zWickPct) : zBody
+color zBorder = zCustom ? zLum(zBody, zBordPct) : zBody
+
+// Déclarées avant le VWAP : les bougies passent sous ses traits.
+plotcandle(zOn ? open : na, zOn ? high : na, zOn ? low : na, zOn ? close : na, "Z-Score Heatmap",
+     color = zBody, wickcolor = zWick, bordercolor = zBorder)
+plot(zScore, "Z-Score", display = display.data_window)
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  B. VWAP et écart-type pondérés par le volume
+//     Var = Σ(v·P²)/Σv − VWAP² : la forme exacte, celle du VWAP intégré.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Les cinq changements de période sont évalués à chaque bougie, hors de
+// toute condition : un appel conditionnel d'une fonction qui regarde la
+// bougie précédente est la source classique d'un résultat incohérent.
+chD = timeframe.change("D")
+chW = timeframe.change("W")
+chM = timeframe.change("M")
+chQ = timeframe.change("3M")
+chY = timeframe.change("12M")
+vwNew = switch vwAnc
+    "Day"     => chD
+    "Week"    => chW
+    "Month"   => chM
+    "Quarter" => chQ
+    "Year"    => chY
+    => false
+
+avDebut = vwAnc == "AVWAP" and time >= vwStart and (bar_index == 0 or time[1] < vwStart)
+vwReset = vwAnc == "AVWAP" ? avDebut : (vwNew or bar_index == 0)
+
+vwVol = na(volume) or volume <= 0 ? 1.0 : volume
+
+var float sPV  = 0.0
+var float sV   = 0.0
+var float sP2V = 0.0
+var float pvVw = na
+var float pvSd = na
+var bool  vwOn = false
+
+if vwReset
+    if vwAnc != "AVWAP" and vwOn and sV > 0
+        pvVw := sPV / sV
+        pvSd := math.sqrt(math.max(sP2V / sV - pvVw * pvVw, 0.0))
+    sPV  := 0.0
+    sV   := 0.0
+    sP2V := 0.0
+    vwOn := true
+
+if vwOn
+    sPV  += vwSrc * vwVol
+    sV   += vwVol
+    sP2V += vwSrc * vwSrc * vwVol
+
+vw   = vwOn and sV > 0 ? sPV / sV : na
+vwSd = vwOn and sV > 0 ? math.sqrt(math.max(sP2V / sV - vw * vw, 0.0)) : na
+bd   = vwPlotSd and vwOn
+
+u1 = bd and on1 ? vw + k1 * vwSd : na
+u2 = bd and on2 ? vw + k2 * vwSd : na
+u3 = bd and on3 ? vw + k3 * vwSd : na
+u4 = bd and on4 ? vw + k4 * vwSd : na
+u5 = bd and on5 ? vw + k5 * vwSd : na
+u6 = bd and on6 ? vw + k6 * vwSd : na
+l1 = bd and on1 ? vw - k1 * vwSd : na
+l2 = bd and on2 ? vw - k2 * vwSd : na
+l3 = bd and on3 ? vw - k3 * vwSd : na
+l4 = bd and on4 ? vw - k4 * vwSd : na
+l5 = bd and on5 ? vw - k5 * vwSd : na
+l6 = bd and on6 ? vw - k6 * vwSd : na
+
+pvOk = vwAnc != "AVWAP" and pv1 and not na(pvVw)
+pp0 = pvOk ? pvVw : na
+pu1 = pvOk ? pvVw + pvSd : na
+pl1 = pvOk ? pvVw - pvSd : na
+pu2 = pvOk and pv2 ? pvVw + 2.0 * pvSd : na
+pl2 = pvOk and pv2 ? pvVw - 2.0 * pvSd : na
+
+cIn  = color.new(#B2B5BE, 35)
+cOut = color.new(#787B86, 55)
+
+pVW = plot(vw, "VWAP", color = color.white, linewidth = 2)
+pU6 = plot(u6, "VWAP - STDEV +6", color = cOut)
+pU5 = plot(u5, "VWAP - STDEV +5", color = cOut)
+pU4 = plot(u4, "VWAP - STDEV +4", color = cOut)
+pU3 = plot(u3, "VWAP - STDEV +3", color = cIn)
+pU2 = plot(u2, "VWAP - STDEV +2", color = cIn)
+pU1 = plot(u1, "VWAP - STDEV +1", color = cIn)
+pL1 = plot(l1, "VWAP - STDEV -1", color = cIn)
+pL2 = plot(l2, "VWAP - STDEV -2", color = cIn)
+pL3 = plot(l3, "VWAP - STDEV -3", color = cIn)
+pL4 = plot(l4, "VWAP - STDEV -4", color = cOut)
+pL5 = plot(l5, "VWAP - STDEV -5", color = cOut)
+pL6 = plot(l6, "VWAP - STDEV -6", color = cOut)
+pP0 = plot(pp0, "Previous VWAP", color = color.new(#B2B5BE, 25))
+pP2 = plot(pu2, "Previous VWAP - STDEV +2", color = color.new(#787B86, 45))
+pP1 = plot(pu1, "Previous VWAP - STDEV +1", color = color.new(#787B86, 45))
+pQ1 = plot(pl1, "Previous VWAP - STDEV -1", color = color.new(#787B86, 45))
+pQ2 = plot(pl2, "Previous VWAP - STDEV -2", color = color.new(#787B86, 45))
+
+fill(pU2, pU1, color = vwFill ? color.new(#787B86, 90) : na, title = "Sdev 2 1")
+fill(pU1, pL1, color = vwFill ? color.new(#787B86, 84) : na, title = "Sdev 1 -1")
+fill(pL1, pL2, color = vwFill ? color.new(#787B86, 90) : na, title = "Sdev -1 -2")
+fill(pP2, pP1, color = pvFill ? color.new(#787B86, 93) : na, title = "Previous Sdev 2 1")
+fill(pP1, pQ1, color = pvFill ? color.new(#787B86, 90) : na, title = "Previous Sdev 1 -1")
+fill(pQ1, pQ2, color = pvFill ? color.new(#787B86, 93) : na, title = "Previous Sdev -1 -2")
+
+// Étiquettes en bout de bande, comme l'original : un tiret de rappel, puis
+// le nom. Elles sont refaites à chaque exécution de la dernière bougie.
+var array<label> vwLabs = array.new<label>()
+
+vwTxt(float k, bool haut) =>
+    "--------- SD " + (haut ? "+" : "-") + str.tostring(k, "#.##")
+
+vwPose(float y, string t) =>
+    if not na(y)
+        vwLabs.push(label.new(bar_index + vwLabOff, y, t, xloc = xloc.bar_index,
+             style = label.style_label_left, color = color.new(color.black, 100),
+             textcolor = vwLabCol, size = size.small))
+
+if barstate.islast
+    while vwLabs.size() > 0
+        label.delete(vwLabs.pop())
+    if vwLab and vwOn
+        vwPose(vw, "--------- VWAP")
+        vwPose(u1, vwTxt(k1, true))
+        vwPose(u2, vwTxt(k2, true))
+        vwPose(u3, vwTxt(k3, true))
+        vwPose(u4, vwTxt(k4, true))
+        vwPose(u5, vwTxt(k5, true))
+        vwPose(u6, vwTxt(k6, true))
+        vwPose(l1, vwTxt(k1, false))
+        vwPose(l2, vwTxt(k2, false))
+        vwPose(l3, vwTxt(k3, false))
+        vwPose(l4, vwTxt(k4, false))
+        vwPose(l5, vwTxt(k5, false))
+        vwPose(l6, vwTxt(k6, false))
+    if vwPLab and pvOk
+        vwPose(pp0, "--------- pVWAP")
+        vwPose(pu1, "--------- pSD +1")
+        vwPose(pl1, "--------- pSD -1")
+        vwPose(pu2, "--------- pSD +2")
+        vwPose(pl2, "--------- pSD -2")

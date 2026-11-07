@@ -512,6 +512,16 @@ Hors du noyau Python
   par l'API Research ; rien n'est recalculé entre la clôture et l'avant-
   ouverture — donc à minuit comme à 5 h à Paris, `0-0` et `1-1` peuvent rendre
   **la même échéance** : le script le traite en doublon d'échéance.
+- `pine/alp0-zscore-vwap.pine` — ce que l'utilisateur garde quand il abandonne
+  les zones Gexbot (7 novembre 2026) : la heatmap z-score corrigée et le VWAP
+  σ de « The Strategists », seuls, dans un script autonome de 268 lignes.
+  **Extrait ligne pour ligne** d'`alp0-zones.pine` (groupes ① à ④, sections A
+  et B) plutôt que réécrit : le code était déjà vérifié, une réécriture
+  aurait été du code nouveau à revérifier. Version dans le titre court
+  (`Z+VWAP v5`), visible dans la légende, faute de tableau. Banc dédié
+  `tools/zones-pinets/zscore-vwap.mjs` (17 contrôles), qui passe par
+  `executer()` de `banc.mjs` — un lanceur pour n'importe quel fichier de
+  `pine/`.
 - `tools/zones-pinets/` — **le premier banc qui exécute un fichier Pine du
   dépôt.** PineTS (runtime Pine v6 libre de LuxAlgo, `pinets@0.13.1`)
   transpile le vrai fichier et l'exécute sur des bougies synthétiques ; le

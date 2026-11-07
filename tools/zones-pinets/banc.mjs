@@ -52,6 +52,15 @@ export function seance(jour, debut, fin, jalons, imposees = {}) {
   return out;
 }
 
+// Exécute un fichier Pine quelconque du dossier pine/ (sans entrée imposée).
+export async function executer(fichier, bougies, entrees = {}) {
+  const source = fs.readFileSync(path.join(ICI, '..', '..', 'pine', fichier), 'utf8');
+  const ctx = await new PineTS(bougies, 'NQ1!', '1').run(new Indicator(source, entrees));
+  const der = k => ((ctx.plots[k]?.data ?? []).at(-1)?.value ?? []).filter(o => !o._deleted);
+  return { ctx, etiquettes: der('__labels__'), lignes: der('__lines__'), boites: der('__boxes__'),
+           vwap: (ctx.plots['VWAP']?.data ?? []).map(x => x.value) };
+}
+
 export async function lancer(texte, bougies, entrees = {}) {
   const ind = new Indicator(SRC, {
     'Zone A — relevés du jour': texte,

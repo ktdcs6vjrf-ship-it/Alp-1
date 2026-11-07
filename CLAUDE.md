@@ -181,6 +181,14 @@ https://claude.ai/artifact/F18pWMEua798hG23GEM4Q5 ; son exemple est exécuté
 par le banc (scénario P). Session du 7 novembre 2026
 sur la branche `claude/exciting-dijkstra-ks25vr`, imposée par la session.
 
+**Décision de l'utilisateur, 7 novembre 2026 : « on laisse tomber » les zones
+Gexbot.** Il ne garde que la heatmap z-score et le VWAP, dans un seul script
+autonome : `pine/alp0-zscore-vwap.pine` (268 lignes, `Z+VWAP v5` dans la
+légende), extrait tel quel des groupes ① à ④ et des sections A et B
+d'`alp0-zones.pine`. Banc : `tools/zones-pinets/zscore-vwap.mjs`
+(17 contrôles). Page : https://claude.ai/artifact/7rxojTDt5ut2jV7XfADyFM.
+`alp0-zones.pine` reste dans le dépôt, en sommeil.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
