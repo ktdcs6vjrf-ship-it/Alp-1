@@ -189,6 +189,36 @@ d'`alp0-zones.pine`. Banc : `tools/zones-pinets/zscore-vwap.mjs`
 (17 contrôles). Page : https://claude.ai/artifact/7rxojTDt5ut2jV7XfADyFM.
 `alp0-zones.pine` reste dans le dépôt, en sommeil.
 
+## Demande en attente — graphique option animé du challenge (7 novembre 2026)
+
+**À faire en premier dans la session suivante.** L'utilisateur : « fais un
+graphique option animé où la prime est le prix de mon challenge prop firm,
+avec un plafond max de 4 000 $, et je peux retirer seulement 50 % et 2 000 $
+au plus ». Référence visuelle : le *Strategy builder* des options TradingView
+(payoff rouge puis vert, cloche orange en tirets, courbe bleue en tirets,
+point mort marqué). Rien n'est commencé : la session a atteint 81 % de
+contexte.
+
+- `prop/palier10.html` (application « Palier ») a déjà une vue « Challenge =
+  option » : prime = prix du challenge, barrière haute = objectif, barrière
+  basse = drawdown, Monte Carlo µ / σ. Son exemple : compte 50 k, objectif
+  3 000, drawdown 2 000 EOD, prix 150 $, σ 450 $/j. **Le prix réel du
+  challenge n'a pas été donné** : champ modifiable, 150 $ marqué « exemple ».
+- Payoff au retrait, y = profit du compte : `retrait(y) = min(0,5 ×
+  clip(y, 0, 4 000), 2 000)`, net = retrait − F. Perte max −F, gain max
+  2 000 − F, point mort à y = 2F : un call spread de ratio 0,5.
+- Valeur avant le retrait : brownien (µ, σ par jour) tué à b = −D. Densité
+  `p(y) = [φ((y−x−µτ)/s) − e^{2µ(b−x)/σ²} φ((y−2b+x−µτ)/s)] / s`, s = σ√τ ;
+  survie `Φ((x−b+µτ)/s) − e^{2µ(b−x)/σ²} Φ((b−x+µτ)/s)` ; valeur =
+  ∫ retrait·p dy − F, intégrée sur x + µτ ± 8s (pas plus large : la
+  précision s'effondre près de l'échéance).
+- Plan : page autonome `prop/challenge-option.html`, sombre, SVG dimensionné
+  au pixel du conteneur (texte lisible à 390 px), animation du jour 0 au jour
+  du retrait (courbe bleue qui converge vers le payoff, densité orange, point
+  qui suit une trajectoire tirée et graine), statistiques (garder le compte,
+  toucher le plafond, prime équitable = E[retrait] contre F), contrôle Node
+  (formules fermées contre intégrale et Monte Carlo), nouveau lien.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
@@ -228,6 +258,12 @@ Pièges (titres seulement ; le corps est dans `pieges.md`) :
 Parties détaillées dans `parties-xiv-a-xxx.md` : XIV à XXX (une par module `<nom>.py` + `fig<abrégé>.py`).
 
 ## Suivi du contexte — règle de session
+
+**Piège (7 novembre 2026)** : `context_usage` a renvoyé 0 pendant presque
+toute la session ; les pourcentages annoncés à l'utilisateur étaient des
+estimations, et fausses (« ≈ 45 % » quand le vrai chiffre approchait 80 %).
+Ne jamais annoncer un pourcentage sans un `used_tokens` non nul ; sinon dire
+qu'il est inconnu.
 
 À chaque réponse, indiquer le pourcentage de contexte utilisé (outil `get_session`, champ `context_usage`). **À 60 %** : prévenir et proposer `/compact`. **À 80 %** : dire « critique », commiter et pousser le travail en cours, mettre à jour ce fichier si un fait nouveau est établi, puis demander à l'utilisateur de lancer `/clear` et de relire ce fichier. Ne pas lancer la suite complète de tests (≈85 min) : seulement le test du module touché.
 
