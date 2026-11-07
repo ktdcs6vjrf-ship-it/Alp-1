@@ -25,7 +25,7 @@ node scenarios.mjs # ~15 s, 117 contrôles
   (séance close, niveaux gelés, profil à droite, tableau qui dit où regarder).
 
 Ce que le banc ne prouve pas : PineTS n'est pas le compilateur de TradingView
-(qualificatifs *simple* / *series*, avertissements de l'éditeur). Trois écarts
+(qualificatifs *simple* / *series*, avertissements de l'éditeur). Quatre écarts
 connus de PineTS, sans effet pour TradingView :
 
 1. une fonction d'une seule expression qui lit un tableau global
@@ -35,5 +35,12 @@ connus de PineTS, sans effet pour TradingView :
    bascule à minuit UTC ; sur NQ1!, TradingView bascule à l'ouverture CME.
    Le scénario K ancre donc le VWAP (mode AVWAP) pour un calcul exact, et
    vérifie la remise à zéro « Day » là où PineTS la place.
+
+4. PineTS traite une bougie **postérieure à l'horloge du système** comme du
+   temps réel non confirmé : `barstate.isconfirmed` y est faux, et toute la
+   logique de l'indicateur (qui ne tourne que sur bougie confirmée) s'arrête,
+   sans erreur. Les scénarios sont donc datés dans le passé ; un exemple daté
+   d'après le jour où l'on lance le banc ne trace rien. Sur TradingView, une
+   bougie n'est jamais dans le futur.
 
 Il ne participe pas à `python main.py --tests`.

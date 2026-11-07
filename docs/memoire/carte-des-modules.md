@@ -509,9 +509,21 @@ Hors du noyau Python
   dépôt.** PineTS (runtime Pine v6 libre de LuxAlgo, `pinets@0.13.1`)
   transpile le vrai fichier et l'exécute sur des bougies synthétiques ; le
   banc lit lignes, étiquettes, boîtes, cellules de tableau et couleurs de
-  `plotcandle`. 117 contrôles, dont l'exemple fictif lu dans la doc, le
+  `plotcandle`. 121 contrôles, dont l'exemple fictif lu dans la doc, le
   z-score contre une référence indépendante, et la situation exacte du
-  premier retour de l'utilisateur (exemple collé, NQ1!, vu le week-end). PineTS écrit une couleur tantôt
+  premier retour de l'utilisateur (exemple collé, NQ1!, vu le week-end).
+  **Piège du banc** : PineTS traite une bougie postérieure à l'horloge du
+  système comme du temps réel non confirmé — `barstate.isconfirmed` faux,
+  toute la logique de l'indicateur muette, sans erreur. Un exemple daté du
+  lendemain du jour où l'on lance le banc ne trace donc rien : dater les
+  scénarios dans le passé.
+- `docs/consigne-lou-alpz.md` — la consigne à donner au bot de relevés
+  (« Lou », « grok bot » pour l'utilisateur) : ce qu'on lui envoie à chaque
+  relevé, le format, la correspondance des noms Gexbot (Call Wall = Major
+  Positive Gamma → CW, Put Wall = Major Negative Gamma → PS, Zero Gamma →
+  GF), `/flip` d'abord parce que c'est un tableau chiffré, un seul bloc R par
+  échéance et par créneau (sinon la règle du doublon d'échéance en écarte
+  un). Son exemple est le scénario P du banc. PineTS écrit une couleur tantôt
   `rgb(r, g, b)`, tantôt `#RRGGBB` : lire les deux. Trois écarts de PineTS sont
   contournés dans le code sans effet pour TradingView (voir son README). Ce
   n'est pas le compilateur TradingView : la vérification finale reste

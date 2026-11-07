@@ -471,5 +471,21 @@ console.log('O. Exemple vu le week-end (séance du vendredi close)');
   verifie('O le tableau dit où regarder', cell(r, '06/11 ·').includes('gelé à 22:00 : niveaux à gauche de la dernière bougie'), cell(r, '06/11'));
 }
 
+// ── P. L'exemple de la consigne du bot, lu dans docs/consigne-lou-alpz.md ──
+console.log('P. Exemple de la consigne du bot');
+{
+  const doc = fs.readFileSync(new URL('../../docs/consigne-lou-alpz.md', import.meta.url), 'utf8');
+  const ex = doc.split('<!-- EXEMPLE CONSIGNE : début -->')[1].split('<!-- EXEMPLE CONSIGNE : fin -->')[0]
+    .replace(/^\s*```\s*\n/, '').replace(/\n```\s*$/, '');
+  const b = seance('2026-11-04', '00:00', '03:00', [['00:00', 29340], ['03:00', 29360]]).filter((_, i) => i % 5 === 0);
+  const r = await lancer(ex, b);
+  verifie('P lu sans aucun avertissement', !r.cellules.some(c => c.startsWith('Avertissements')), msgs(r).split('\n').filter(c => c.includes('—')).join(' | '));
+  verifie('P « Lecture » : 3 relevés, 10 niveaux', cell(r, 'A ').includes('3 relevés · 10 niveaux · 0 strikes'), cell(r, 'A '));
+  const ys = r.lignes.filter(l => l.xloc === 'bt').map(l => l.y1).sort((a, c) => a - c);
+  verifie('P prix convertis (NDX + 117.75) et prix VP tels quels', JSON.stringify(ys) === JSON.stringify([29097.75, 29117.75, 29150, 29297.75, 29310, 29317.75, 29380, 29420, 29517.75, 29587.75]), JSON.stringify(ys));
+  const noms = r.etiquettes.filter(e => e.style === 'style_label_left' && !e.text.startsWith('-')).map(e => e.text.split('  ◦')[0]);
+  verifie('P confluence « MaxPain 0D · POC »', noms.includes('FICTIF · MaxPain 0D · POC'), JSON.stringify(noms));
+}
+
 console.log(`\n${ok} contrôle(s) réussi(s), ${ko} échec(s)`);
 if (ko) { console.log('Échecs : ' + echecs.join(' | ')); process.exitCode = 1; }
