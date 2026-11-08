@@ -277,6 +277,32 @@ Sortino… tout pour simuler les conditions réelles ».
   **une figure hors écran n'est pas dessinée** (économie voulue) : son en-tête ne bouge
   plus, le banc doit lire le curseur, pas l'en-tête.
 
+**v3 — l'application** (8 novembre 2026) : `prop/challenge-option3.html`,
+https://claude.ai/artifact/5iAXcZHEHGpikWuM87XPes. Demande : « énormément de texte, rends
+l'app ergonomique, simple d'utilisation, organisée, avec une police propre ». **Même bloc
+MODELE que la v2, recopié à l'identique** (les 130 contrôles passent sur la v3) ; seule
+l'interface change :
+
+- Cinq onglets routés par le hash (`#resultat`, `#reglages`, `#option`, `#quant`, `#carte`),
+  barre en bas sur téléphone, en haut au-delà de 900 px. Résultat = gros chiffre, quatre
+  indicateurs, comparaison en barres (ta stratégie / autre politique de retrait / sans
+  avantage), issues, un graphique à bascule (trésorerie / comptes / gains). Réglages =
+  curseurs pour les cinq leviers, trois bascules de règles, le reste replié dans
+  « Réglages avancés ». Le modèle, les formules, les définitions et les sources sont dans
+  une fenêtre (`<dialog>`) ouverte par le bouton « i ». Plus aucune légende longue.
+- Police **Geist** (Google Fonts, chargée par `next/font/google` chez Vercel, donc servie
+  par Google) et Geist Mono pour les graduations ; repli système propre.
+- `rendu.mjs` lit désormais les familles demandées par la page, les récupère par npm
+  (`@fontsource/geist-sans`, `geist-mono`…) et balaie **chaque onglet** à six largeurs.
+- **Pièges v3** : une règle d'auteur `.view{display:flex}` l'emporte sur l'attribut
+  `hidden` — les cinq vues restaient empilées dans l'aperçu (le gabarit des artefacts
+  ajoute `[hidden]{display:none!important}`, l'aperçu local non) : la règle est posée dans
+  la page ; l'espace fine insécable (U+202F) des milliers est presque invisible en Geist
+  (« +1401 $ ») : remplacée par U+00A0 ; l'outil d'écriture transforme `\u202f` en
+  caractère littéral, un remplacement Python doit viser le caractère ; une figure d'un
+  onglet caché se construit à 0 px de large : on ne construit que la vue affichée, à
+  l'ouverture de l'onglet.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
