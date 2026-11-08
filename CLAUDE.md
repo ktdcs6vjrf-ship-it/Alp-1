@@ -303,6 +303,20 @@ l'interface change :
   onglet caché se construit à 0 px de large : on ne construit que la vue affichée, à
   l'ouverture de l'onglet.
 
+**v4 — leviers** (8 novembre 2026, « carte blanche pour tout améliorer ») :
+`prop/challenge-option4.html`, https://claude.ai/artifact/EsTvvxGHHeDZcYtTsoAPwr. **Dernière
+version : c'est elle qu'on améliore** (copie sous un nouveau nom à chaque livraison).
+L'onglet Carte devient **Leviers** : taille optimale (gain net et part payée selon le nombre
+de contrats, échelle log, 2 000 challenges par point sur les mêmes tirages), tornade de
+sensibilité (taux de gain ±2,5 pts, ratio ±0,25 R, contrats ±1, trades/jour ±1, glissement
+0 / +2 ticks, autre politique de retrait), puis la carte et son relief. Réglages : bandeau de
+résultat collant qui suit les curseurs. Barre de progression sous l'en-tête. Rappel quand
+les chiffres viennent de l'exemple. Gain par jour de bourse (`tMoy` ajouté au modèle :
+durée moyenne d'un challenge). Kelly et risque par trade traduits en dollars sur le
+drawdown. À l'exemple : la taille optimale est 4 MNQ (+782 $) ; à 6 MNQ, +727 $ mais 28 %
+de challenges payés au lieu de 44 %, et la loi nulle monte à +91 $ (le payoff borné
+récompense la variance). Calcul complet ≈ 1,8 s.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
