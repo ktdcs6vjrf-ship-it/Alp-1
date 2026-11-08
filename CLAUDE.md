@@ -542,7 +542,7 @@ tombait dans le flux, en haut à gauche, sur l'intitulé. Tout enfant ajouté au
 cette règle.
 
 **v18** (8 novembre 2026, « enlève la surface de décision ; le texte des graphiques n'est pas
-beau, mets-le sur un encadré ») : `prop/challenge-option18.html`, **dernière version, c'est elle
+beau, mets-le sur un encadré ») : `prop/challenge-option18.html`, https://claude.ai/artifact/EaK49KsccHvmZvgfmnGAii, **dernière version, c'est elle
 qu'on améliore**. Carte « Où est-on payé ? » retirée (`draw18` reste, inerte sans `#c18`).
 `boxLabels(svg)` pose un encadré sombre arrondi (`rect.labbox`) sous chaque `text.lab`, deux
 images après la construction (`clearSvg` le programme) ; sautés : les textes qui changent à chaque
