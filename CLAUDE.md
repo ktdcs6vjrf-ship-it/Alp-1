@@ -495,7 +495,7 @@ style des figures changent.
 
 **v14 — plus calme, façon 2026** (8 novembre 2026, « rends l'app plus clean avec une UX type
 2026 ») : `prop/challenge-option14.html`, https://claude.ai/artifact/RUpU9ZjbLC8fgsXRNrWvo4.
-**Dernière version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9 ; une couche CSS
+Bloc MODELE identique à la v9 ; une couche CSS
 « v14 » en fin de feuille, et deux retouches : `gOn` replie toutes les explications par défaut
 (`data-def="1"` pour en ouvrir une), le paragraphe d'introduction des Leviers est retiré.
 - Barre d'onglets du téléphone **flottante** : capsule de verre détachée des bords (12 px,
@@ -504,6 +504,18 @@ style des figures changent.
   boutons en pilule ; indicateurs sans bordure.
 - `panneau.mjs` vérifie désormais que « ? » bascule l'explication et la remet comme avant,
   quel que soit son état de départ.
+
+**v15 — Monte Carlo instantané dans le payoff** (8 novembre 2026, « simuler 100, 1 000,
+10 000 fois au lieu d'attendre en live ») : `prop/challenge-option15.html`,
+https://claude.ai/artifact/7dWezqGp8N7a6A33ZT7fph. **Dernière version : c'est elle qu'on
+améliore.** Bloc MODELE identique à la v9. Sous le payoff : « Simuler d'un coup » 100 / 1 000 /
+10 000 et Lancer (`runMC1`) — n comptes financés, plancher fixe, pas journaliers et pont
+brownien comme la formule, graine fixe ; la lecture se met en pause au jour 0, l'histogramme
+du profit au jour N (roses sous le point mort, sarcelle au-dessus) se pose sous la cloche
+orange avec la même normalisation (`σ√N·√(2π)`), 80 trajectoires dans la bande ; le texte
+compare éteints, au-dessus du point mort et retrait moyen ± 2 erreurs types à la formule.
+Relancer la lecture ou changer un réglage efface la simulation. `panneau.mjs` : un contrôle de
+plus (46 barres, 80 trajectoires pour 10 000 comptes).
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

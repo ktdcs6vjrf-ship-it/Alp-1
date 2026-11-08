@@ -85,6 +85,14 @@ if (await p.evaluate(() => !!document.querySelector("#lims"))) {
   const b = await p.evaluate(() => ({ ds: document.querySelector("#f-dStop").value, cur: (document.querySelector("#lims .lim.cur .t") || {}).textContent }));
   ok(Number(b.ds.replace(/\s/g, "")) > 0 && /1 perte/.test(b.cur || ""), `Appliquer pose la limite (stop journalier ${b.ds} $, ligne « ${b.cur} » marquée actuelle)`);
 }
+// v15 et suivantes : le Monte Carlo instantané de la vue option
+if (await p.evaluate(() => !!document.querySelector("#b-mc"))) {
+  await p.goto("file://" + join(dos, "apercu.html") + "#option"); await p.waitForTimeout(2500);
+  await p.click('#sg-mcn [data-v="10000"]'); await p.click("#b-mc"); await p.waitForTimeout(1200);
+  const m = await p.evaluate(() => ({ t: document.querySelector("#mc-res").textContent, b: document.querySelectorAll("#s1 .mch").length, c: document.querySelectorAll("#s1 .mcpath").length }));
+  ok(/10\s000/.test(m.t) && m.b > 10 && m.c === 80, `10 000 comptes simulés d'un coup : ${m.b} barres, ${m.c} trajectoires`);
+  await (await p.$("#p1")).screenshot({ path: join(dos, `mc-option-${W}.png`) });
+}
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
 await b.close();
 console.log(`\n${ko ? ko + " défaut(s)" : "tout est bon"} ; captures : ${dos}`);
