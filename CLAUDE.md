@@ -586,7 +586,7 @@ https://claude.ai/artifact/SGxPRqRNs9vR6fWfpXuycc. Bloc MODELE identique à la v
   — mêmes chiffres sur quatre onglets avec et sans workers, puis temps et pire image après le chargement.
 
 **v21 — le compte réel au centre** (même nuit) : `prop/challenge-option21.html`,
-https://claude.ai/artifact/WBwgrdumowgNZ6RTCiALqX, **dernière version, c'est elle qu'on améliore**. Blocs MODELE et
+https://claude.ai/artifact/WBwgrdumowgNZ6RTCiALqX. Blocs MODELE et
 TRAVAIL identiques à la v20.
 - **Ma journée** : date de séance (`f-jd`, `seanceISO` : avant 6 h → veille, samedi / dimanche → vendredi ; après une
   date passée, la suivante avance d'un jour ouvré, `nextDate`), trades et gagnants facultatifs (`h.n`, `h.w`, validés par
@@ -601,6 +601,22 @@ TRAVAIL identiques à la v20.
 - **Pièges v21** : le calendrier restait sur le premier mois saisi (`CAL.ym` doit suivre la dernière séance) ; « oct. »
   + point final donnait « oct.. » ; le 31 octobre 2026 est un samedi (compté avec le vendredi 30) ; une attente de banc
   sur « 50 % » doit accepter l'espace insécable (`\s`).
+
+**v22 — le cycle du compte** (même nuit) : `prop/challenge-option22.html`,
+https://claude.ai/artifact/JUcw8gYW2nnVgYMryYKDWx, **dernière version, c'est elle qu'on améliore**. Blocs MODELE et
+TRAVAIL identiques à la v20.
+- Événements `EVH` (`alp-option-challenge-ev-v22`, dans la sauvegarde sous `ev`) : `pass` (« J'ai réussi
+  l'évaluation », proposé quand l'objectif effectif est atteint : compte financé à zéro) et `pay` (« J'ai demandé un
+  retrait », montant proposé = demande possible ; profit − demande, jours qualifiants à 0, `P.ec0` = profit d'après,
+  plancher bloqué si `lockPay`). Chaque événement garde l'état d'avant (`s`) et le nombre de journées (`hn`) : annulation
+  exacte, repère sur la courbe.
+- `P.ec0` nourrit `e0.c0` : les 3 000 suites de l'onglet Compte respectent la règle du cycle en hausse, et « Retrait
+  possible » l'exige (avant : `c0` toujours 0).
+- Carte « Mes retraits » : part retirée, net contre le prix, liste datée. Courbe réelle : le plus haut repart au changement
+  de phase, le plancher bloqué est lu dans chaque journée (`s.elk`), le point d'aujourd'hui suit le profit après retrait.
+- `placer(fr)` : placeur d'étiquettes partagé (places candidates, cadre, chevauchements, étiquette facultative).
+- **Pièges v22** : une étiquette ancrée à `x ± 6` au bord du cadre a son encadré sur le bord et n'est jamais « libre »
+  (prendre ± 9) ; un champ formaté affiche « 1 500 » : un banc compare après avoir retiré les espaces.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

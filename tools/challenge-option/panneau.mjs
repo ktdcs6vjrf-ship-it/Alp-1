@@ -178,6 +178,40 @@ if (await p.evaluate(() => !!document.querySelector("#et-cal"))) {
   ok(await largeur(), "aucun défilement horizontal");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
+// v22 et suivantes : le cycle du compte (évaluation réussie, retrait demandé, annulation)
+if (await p.evaluate(() => !!document.querySelector("#et-pay"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => document.querySelector(x).textContent, s), val = s => p.evaluate(x => document.querySelector(x).value, s);
+  await p.goto(U + "#compte"); await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await p.waitForTimeout(2500);
+  ok(await p.evaluate(() => document.querySelector("#et-act").hidden && document.querySelector("#et-pay").hidden), "compte neuf : aucune action de cycle, aucun retrait");
+  for (const [f, v] of [["#f-ex", "3100"], ["#f-eM", "3100"], ["#f-end", "12"], ["#f-eb", "600"]]) await p.fill(f, v);
+  await p.waitForTimeout(600);
+  ok(/réussi l’évaluation/.test(await lire("#et-act")), "objectif atteint : le bouton « J’ai réussi l’évaluation » apparaît");
+  await p.click('[data-ev="pass"]'); await p.waitForTimeout(600);
+  const f0 = await p.evaluate(() => ({ ph: document.querySelector('#sg-ph [data-v="fund"]').getAttribute("aria-pressed"), ex: document.querySelector("#f-ex").value, eq: document.querySelector("#f-eq").value, ev: document.querySelector("#evl").textContent }));
+  ok(f0.ph === "true" && f0.ex === "0" && f0.eq === "0" && /Évaluation réussie/.test(f0.ev), "réussite notée : compte financé à zéro, événement listé");
+  for (const v of ["300", "300", "300", "300", "300"]) { await p.fill("#f-jr", v); await p.press("#f-jr", "Enter"); await p.waitForTimeout(150); }
+  await p.waitForTimeout(500);
+  const a1 = await lire("#et-act");
+  ok(/Tu peux demander 750/.test(a1.replace(/\s/g, " ")), `cinq jours qualifiants à 300 $ : 750 $ demandables (« ${a1.slice(0, 60)}… »)`);
+  await p.click('[data-ev="pay-open"]'); await p.waitForTimeout(300);
+  ok((await val("#f-pay")) === "750", "le montant proposé est la demande possible (750 $)");
+  await p.fill("#f-pay", "5000"); await p.click('[data-ev="pay"]'); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => document.querySelector("#w-pay").getAttribute("aria-invalid") === "true"), "plus que le profit : refusé");
+  await p.fill("#f-pay", "750"); await p.click('[data-ev="pay"]'); await p.waitForTimeout(700);
+  const f1 = await p.evaluate(() => ({ ex: document.querySelector("#f-ex").value, eq: document.querySelector("#f-eq").value, lk: document.querySelector('#sg-elk [data-v="1"]').getAttribute("aria-pressed"), ans: document.querySelector("#pay-ans").textContent }));
+  ok(f1.ex === "750" && f1.eq === "0" && f1.lk === "true", `retrait noté : profit 750 $, jours qualifiants à 0, plancher bloqué (lu ${f1.ex}, ${f1.eq}, ${f1.lk})`);
+  ok(/675/.test(f1.ans.replace(/\s/g, "")) && /\+597/.test(f1.ans.replace(/\s/g, "")), `ta part 675 $, net +597 $ après le prix (« ${f1.ans.slice(0, 70)}… »)`);
+  ok(/cycle doit finir au-dessus/.test(await lire("#et-kpis")) || /pas encore/.test(await lire("#et-kpis")), "après le retrait, le cycle repart : pas de nouveau retrait possible");
+  await p.waitForTimeout(400); ok(await p.evaluate(() => document.querySelectorAll("#s17 > .mkf").length === 2), "la courbe porte deux repères : financé et retrait");
+  await (await p.$("#et-pay")).screenshot({ path: join(dos, `retraits-${W}.png`) });
+  await (await p.$("#et-jr")).screenshot({ path: join(dos, `cycle-courbe-${W}.png`) });
+  await p.click("#b-ev-undo"); await p.waitForTimeout(500);
+  ok((await val("#f-ex")).replace(/\s/g, "") === "1500" && (await val("#f-eq")) === "5", "annuler le retrait rend 1 500 $ et 5 jours qualifiants");
+  await p.click("#b-ev-undo"); await p.waitForTimeout(500);
+  ok(await p.evaluate(() => document.querySelector('#sg-ph [data-v="eval"]').getAttribute("aria-pressed") === "true" && document.querySelector("#f-ex").value.replace(/\s/g, "") === "3100" && document.querySelector("#et-pay").hidden), "annuler la réussite rend l’évaluation à 3 100 $");
+  ok(await largeur(), "aucun défilement horizontal");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
 await b.close();
 console.log(`\n${ko ? ko + " défaut(s)" : "tout est bon"} ; captures : ${dos}`);
