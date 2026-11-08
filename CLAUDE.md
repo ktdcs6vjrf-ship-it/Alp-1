@@ -415,7 +415,6 @@ https://claude.ai/artifact/VgWxRVU9Vj9J72TUCC84Gs. Bloc MODELE identique à la v
 
 **v9 — le temps et le calendrier** (8 novembre 2026, « améliore tout et s'il faut ajouter
 ajoute ») : `prop/challenge-option9.html`, https://claude.ai/artifact/GjneqAbWMrGthpCrnYHXJK.
-**Dernière version : c'est elle qu'on améliore.**
 - **Le moteur garde le calendrier de chaque challenge** : `tP` (jour de réussite), `t1`
   (1er retrait), `tKo` (extinction), −1 pour jamais ; rien d'autre ne change. Six contrôles de
   plus dans `controle-lucid.mjs` (53) : J15 / J20 / jamais à +200 $ par jour, J7 à −300 $,
@@ -430,6 +429,21 @@ ajoute ») : `prop/challenge-option9.html`, https://claude.ai/artifact/GjneqAbWM
   un jour, l'objectif monte — dit sous « Reste à gagner ».
 - **Bien démarrer** : carte en trois étapes en tête du résultat (paramètres, résultat, compte),
   fermée une fois pour toutes (`UI.intro`) ; le rappel « chiffres d'exemple » ne vient qu'après.
+
+**v10 — le journal du soir, et chaque onglet répond** (8 novembre 2026, « améliore tout, carte
+blanche ») : `prop/challenge-option10.html`, https://claude.ai/artifact/878witkZZ6yLD7w33eRm43.
+**Dernière version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
+- **Ma journée** (Compte) : on tape le P&L du soir, `addDay` met à jour profit, plus haut de
+  clôture, jours, meilleur jour et jours qualifiants (≥ `qmin`, en financé) ; chaque journée
+  garde l'état d'avant, d'où une annulation exacte (`undoDay`) ; effacement en deux touchers ;
+  courbe réelle avec plancher qui suit (recalculé dans les états gardés), objectif ou retrait
+  minimal, points verts / rouges. Historique à part (`alp-option-challenge-hist-v10`) :
+  « revenir à l'exemple » ne l'efface pas.
+- **Option et Quant** prennent la forme des Leviers : une question pour titre, la réponse
+  calculée (`#ao1`, `#aq1` à `#aq3`), une explication derrière « ? ». Les explications marquées
+  `data-def="0"` sont fermées à la première visite (cartes d'indicateurs), les autres ouvertes.
+- **Banc** : `panneau.mjs` ajoute 8 contrôles (trois journées → 250 / 300 / 3 / 300, annulation
+  → 100 / 2 jours, effacement à confirmer, réponses d'Option et de Quant), soit 26.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

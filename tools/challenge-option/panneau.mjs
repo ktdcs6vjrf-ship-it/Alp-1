@@ -53,6 +53,25 @@ await p.click('[data-col="rg"]');
 await p.goto("file://" + join(dos, "apercu.html") + "#compte"); await p.waitForTimeout(2500);
 await p.click('[data-col="et"]'); await p.waitForTimeout(300); ok(!(await vu("#b-et")) && /Évaluation/.test(await p.evaluate(() => document.querySelector("#sum-et").textContent)), "l'état du compte se replie en une ligne");
 await p.click('[data-col="et"]');
+// v10 et suivantes : « Ma journée » met le compte à jour, s'annule, s'efface ; Option et Quant répondent
+if (await p.evaluate(() => !!document.querySelector("#f-jr"))) {
+  await p.goto("file://" + join(dos, "apercu.html") + "#compte"); await p.waitForTimeout(2500);
+  for (const v of ["300", "−200", "150"]) { await p.fill("#f-jr", v); await p.press("#f-jr", "Enter"); await p.waitForTimeout(250); }
+  const champs = () => p.evaluate(() => ["#f-ex", "#f-eM", "#f-end", "#f-eb"].map(s => document.querySelector(s).value));
+  const c1 = await champs();
+  ok(JSON.stringify(c1) === JSON.stringify(["250", "300", "3", "300"]), `trois journées : profit 250, plus haut 300, 3 jours, meilleur 300 (lu ${c1})`);
+  await p.waitForTimeout(800); ok(await vu("#s17"), "la courbe du compte réel se dessine");
+  await p.screenshot({ path: join(dos, `journee-${W}.png`), fullPage: false });
+  await (await p.$("#et-jr")).screenshot({ path: join(dos, `journee-carte-${W}.png`) });
+  await p.click("#b-jr-undo"); await p.waitForTimeout(300);
+  const c2 = await champs(); ok(JSON.stringify(c2) === JSON.stringify(["100", "300", "2", "300"]), `annuler la dernière : profit 100, 2 jours (lu ${c2})`);
+  await p.click("#b-jr-clr"); await p.waitForTimeout(200); ok(await vu("#s17"), "un premier toucher sur Effacer ne fait que demander confirmation");
+  await p.click("#b-jr-clr"); await p.waitForTimeout(300); ok(!(await vu("#s17")), "le second efface l'historique");
+  await p.goto("file://" + join(dos, "apercu.html") + "#option"); await p.waitForTimeout(2000);
+  ok(/vaut/.test(await p.evaluate(() => document.querySelector("#ao1").textContent)), "l'onglet Option répond à sa question");
+  await p.goto("file://" + join(dos, "apercu.html") + "#quant"); await p.waitForTimeout(5000);
+  ok(await p.evaluate(() => ["#aq1", "#aq2", "#aq3"].every(s => document.querySelector(s).textContent.length > 30)), "l'onglet Quant répond à ses trois questions");
+}
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
 await b.close();
 console.log(`\n${ko ? ko + " défaut(s)" : "tout est bon"} ; captures : ${dos}`);
