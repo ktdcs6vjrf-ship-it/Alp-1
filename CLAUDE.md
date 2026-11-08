@@ -518,8 +518,8 @@ plus (46 barres, 80 trajectoires pour 10 000 comptes).
 
 **v16 — Monte Carlo animé, reliefs pleins, surface de décision** (8 novembre 2026, trois
 captures : carte satellite à réticules, classifieur k-NN, surface 3D « Marius ») :
-`prop/challenge-option16.html`, https://claude.ai/artifact/1y45h71sQ8RTAaP6tFxzpP. **Dernière
-version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
+`prop/challenge-option16.html`, https://claude.ai/artifact/1y45h71sQ8RTAaP6tFxzpP. Bloc MODELE
+identique à la v9.
 - Monte Carlo du payoff : trajectoires tracées à la chaîne (`pathLength=1`, retard 14 ms
   chacune), barres qui montent (`scaleY`, retard 12 ms).
 - **Reliefs pleins** (`Surf3D`) : facettes peintes du fond vers l'avant, teinte `turbo` selon la
@@ -533,6 +533,14 @@ version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
 - Relevés cartographiques discrets (`data-hud`, mono 9 px, majuscules sans lettre grecque) sur
   le payoff, les reliefs, la carte, la surface de décision et les vues Monte Carlo ; trame de
   croix sur le résultat, les reliefs et la surface de décision.
+
+**v17 — retouches** (8 novembre 2026, « pas d'étoile, juste un point ; un texte gêne en arrière-plan ») :
+`prop/challenge-option17.html`, https://claude.ai/artifact/3Jod1oZ1TDsju7j1qHgGCL. **Dernière
+version : c'est elle qu'on améliore.** Point blanc cerclé au lieu de l'étoile dans la surface de
+décision ; relevé du résultat (`#hero-hud`) retiré. **Piège** : la règle
+`.hero>*:not(canvas){position:relative}` l'emportait sur `.hud3{position:absolute}` — le relevé
+tombait dans le flux, en haut à gauche, sur l'intitulé. Tout enfant ajouté au héros hérite de
+cette règle.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
