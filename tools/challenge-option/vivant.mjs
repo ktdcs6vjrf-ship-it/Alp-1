@@ -25,6 +25,8 @@ const compteur = await p.evaluate(() => document.querySelector("#pv-t").textCont
 await p.evaluate(() => { location.hash = "leviers"; }); await p.waitForTimeout(800);
 await p.evaluate(() => document.querySelector("#p8").scrollIntoView({ block: "center" })); await p.waitForTimeout(1500);
 await (await p.$("#p8")).screenshot({ path: join(dos, `vivant-carte-${W}.png`) });
+// v8 et suivantes : le relief est replié derrière un bouton
+if (await p.evaluate(() => { const r = document.querySelector("#relief"); return !!r && r.hidden; })) { await p.click("#b-relief"); await p.waitForTimeout(400); }
 await p.evaluate(() => document.querySelector("#p9").scrollIntoView({ block: "center" })); await p.waitForTimeout(2500);
 await (await p.$("#p9")).screenshot({ path: join(dos, `vivant-relief-${W}.png`) });
 const fps = await p.evaluate(() => new Promise(r => { let n = 0; const t0 = performance.now();

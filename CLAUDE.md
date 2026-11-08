@@ -366,8 +366,7 @@ graduations à 11 px (marges gauches 50 / 60 px, `CH = 11 × 0,6`), étiquettes 
 rangées dans leur barre quand elles sortiraient, fond du résultat déjà peuplé (`ambStep` ×80).
 
 **v7 — nouveautés** (même jour, « ajoute des nouveautés utiles ») : `prop/challenge-option7.html`,
-https://claude.ai/artifact/CGhKxvJrT8YQjihU2D9i21. **Dernière version : c'est elle qu'on
-améliore.** Sixième onglet **Compte** (`#compte`) : l'état réel du jour (profit, plus haut de
+https://claude.ai/artifact/CGhKxvJrT8YQjihU2D9i21. Sixième onglet **Compte** (`#compte`) : l'état réel du jour (profit, plus haut de
 clôture, jours tradés, meilleur jour ; en financé : jours qualifiants, plancher bloqué) donne le
 plancher, la marge, les pertes d'avance, l'objectif porté par la règle du meilleur jour
 (max(objectif, meilleur jour / 50 %)), une jauge animée plancher → objectif, 3 000 suites
@@ -385,6 +384,34 @@ rappeler. **Copier le résumé** (presse-papiers dans le clic, sinon texte séle
 - **Piège** : `console.log` lit « %s » dans une chaîne affichée (« 85 %sans avantage ») comme un
   format et y injecte l'argument suivant — un banc qui imprime du texte de page doit le passer
   en second argument.
+
+**v8 — leviers compréhensibles, paramètres qu'on cache et qu'on rouvre** (8 novembre 2026,
+« je comprends pas les graphiques dans levier ; pouvoir cacher les paramètres et les revoir
+grâce au bouton » puis « améliore la qualité surtout de l'app ») : `prop/challenge-option8.html`,
+https://claude.ai/artifact/VgWxRVU9Vj9J72TUCC84Gs. **Dernière version : c'est elle qu'on
+améliore.** Bloc MODELE identique à la v7 (`diff`), 137 contrôles verts.
+- **Leviers** : chaque graphique est une question (« Combien de contrats ? », « Quel réglage
+  pèse le plus ? », « Quel taux de gain pour quel ratio ? ») avec **la réponse calculée écrite
+  au-dessus** (`#lv-ans`, `#tor-ans`, `#ca-ans` ; `seuilCarte(rr)` interpole la frontière du
+  challenge au ratio de l'utilisateur) et une explication que le bouton « ? » cache ou rend.
+  Contrats : colonnes alignées sur deux étages (gain net, part payée), taille actuelle cerclée,
+  meilleure en vert plein — plus d'échelle log. Tornade : **écarts au réglage actuel**, une
+  barre par sens, la valeur au bout, le cran de l'autre côté ; étiquettes au-dessus des barres
+  sous 560 px. Carte : « rentable », « perdant », « seuil du challenge », « toi +775 $ » posés
+  sur la figure. Relief replié derrière « Afficher ».
+- **Un seul « toi »** : les leviers (2 000 challenges, mêmes tirages) sont ancrés sur le
+  résultat principal (`adjE`, `adjP` : niveau du Monte Carlo à 5 000, écart des leviers) — la v7
+  affichait +782 $ dans Leviers et +775 $ partout ailleurs pour le même réglage.
+- **Bouton Paramètres** dans l'en-tête : panneau (`#sheet`, en bas sur téléphone, à droite
+  au-delà de 900 px) avec instrument, cinq curseurs (`q-*`, tenus avec `r-*` par
+  `syncSliders`), politique de retrait et résultat en direct ; croix, « Masquer », Échap.
+  Fermé, il porte `hidden` (sinon, translaté hors écran, le balayage le compterait hors cadre).
+- **Cartes repliables** (Ta stratégie, Règles du compte, Mon compte aujourd'hui) : flèche,
+  résumé d'une ligne qui rouvre au toucher, état gardé (`alp-option-challenge-ui-v8`).
+- **Banc** : `node tools/challenge-option/panneau.mjs <dossier de rendu.mjs> [largeur]` —
+  18 contrôles dans le vrai navigateur (« ? », relief dessiné, réponses écrites, panneau qui
+  recalcule les leviers depuis l'onglet Leviers, curseurs jumeaux, Échap, cartes repliées
+  gardées après rechargement), verts à 390 et 1 280 px ; `vivant.mjs` déplie le relief.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

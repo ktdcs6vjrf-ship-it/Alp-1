@@ -308,6 +308,7 @@ svg text.tv.in{fill:var(--bg);font-weight:500}
 textarea.ta.cp{min-height:120px;margin-top:10px;font-size:12.5px}
 .inp.bud{min-height:38px;width:132px;flex:none}.inp.bud input{min-height:36px;font-size:15px}
 .kpis.k3f{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:520px){.kpis.k3f .kpi{padding:10px}.kpis.k3f .kpi .v{font-size:16.5px}}
 .kpi .v.pos{color:var(--gain)}.kpi .v.neg{color:var(--loss)}.kpi .v.warn{color:var(--warn)}
 .chip.warn{border-color:var(--warn);color:var(--warn)}.chip.warn i{background:var(--warn)}
 .chip.plus{background:var(--gain);border-color:var(--gain);color:var(--bg)}
@@ -588,7 +589,10 @@ body.sheet-on{padding-bottom:calc(min(64vh,600px) + 24px)}
       <li>Un trade touche son objectif avec ton taux de gain, sinon son stop plus le glissement. La commission se paie à chaque trade. Un gagnant recule d’abord d’une part tirée au hasard de son stop.</li>
       <li>En mode journal, les journées sont tirées parmi les tiennes ; le creux de séance vient d’un pont brownien.</li>
       <li>L’onglet Option est une vue idéalisée : plancher fixe, P&amp;L gaussien, un seul retrait.</li>
-      <li>Les leviers rejouent 2 000 challenges par réglage, sur les mêmes tirages : seule la différence entre réglages compte.</li>
+      <li>Les leviers rejouent 2 000 challenges par réglage, sur les mêmes tirages : seule la différence entre réglages compte. Elle est ajoutée au résultat principal, pour qu’un seul chiffre te désigne partout.</li>
+      <li>L’onglet Compte repart de l’état réel de ton compte (profit, plus haut de clôture, jours, meilleur jour) et simule 3 000 suites à partir d’aujourd’hui ; le prix, déjà payé, n’y compte plus.</li>
+      <li>Le budget traite chaque challenge comme un tirage indépendant : au moins un payé sur <i>n</i> vaut 1 − (1 − <i>p</i>)<sup><i>n</i></sup>.</li>
+      <li>Le bouton Paramètres, en haut, ouvre les réglages principaux depuis n’importe quel onglet ; les flèches replient les cartes de réglages en une ligne.</li>
     </ul>
     <h3>Règles LucidFlex 50K</h3>
     <p id="rules-full"></p>
