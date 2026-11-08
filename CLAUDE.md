@@ -459,8 +459,8 @@ style change, plus deux fonctions d'affichage (`ring`, `kpiRC`).
   peint par-dessus le dégradé : le halo du grand chiffre passe par `filter: drop-shadow`.
 
 **v12 — des leviers qui disent quoi faire** (8 novembre 2026, « améliore l'espace levier ») :
-`prop/challenge-option12.html`, https://claude.ai/artifact/N9soyjwz1i95z2uSXnUKC5. **Dernière
-version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
+`prop/challenge-option12.html`, https://claude.ai/artifact/N9soyjwz1i95z2uSXnUKC5. Bloc MODELE
+identique à la v9.
 - **« Que changer dès demain ? »** en tête des Leviers : les leviers que l'utilisateur
   contrôle (meilleure taille, autre moment de retrait, ±1 trade par jour, meilleure limite
   journalière), écarts sur les mêmes 2 000 challenges, rangés par gain (au moins 5 $), trois
@@ -476,6 +476,22 @@ version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
 - `panneau.mjs` : trois contrôles de plus (réponse des gestes, règles comparées, Appliquer
   pose la limite et marque la ligne actuelle). Ses captures gardent les réglages laissés par
   ses propres essais (taux de gain à 50 %) : pour une capture « exemple », vider le stockage.
+
+**v13 — les graphiques au style du Strategy builder** (8 novembre 2026, capture du tutoriel
+Options de TradingView, « améliore les graphiques dans ce style, pas le graphique en lui-même ») :
+`prop/challenge-option13.html`, https://claude.ai/artifact/4GSqY8p8iXDXAGfD143CnY. **Dernière
+version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9 ; seuls les couleurs et le
+style des figures changent.
+- **Palette TradingView** : sarcelle `#22c39b` (gain), rose `#f0476b` (perte), orange
+  `#f7a35c` (alerte et densité), bleu `#6f7cff` (valeur) — remplacées partout, y compris dans
+  les motifs, dégradés et `rgba` écrits dans le script.
+- **Panneau par graphique** : `data-pill="…"` sur les quinze `.plot` (pastille en haut à
+  gauche par `::before`, `padding-top: 48px` — seulement vertical, pour que `clientWidth`
+  reste la largeur du dessin) ; fond `--panel`, lueurs rose / sarcelle / orange dans le payoff,
+  le temps et les cartes ; `.bgp` transparent ; grille fine pleine ; graduations en Geist ;
+  courbes à 2,7–3 px ; valeur en pointillés bleus, densité en tirets orange ; curseur en
+  tirets ; marqueurs cerclés du fond du panneau. Les explications qui nommaient « tirets » et
+  « pointillés » ont suivi l'échange des deux.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
