@@ -93,6 +93,56 @@ if (await p.evaluate(() => !!document.querySelector("#b-mc"))) {
   ok(/10\s000/.test(m.t) && m.b > 10 && m.c === 80, `10 000 comptes simulés d'un coup : ${m.b} barres, ${m.c} trajectoires`);
   await (await p.$("#p1")).screenshot({ path: join(dos, `mc-option-${W}.png`) });
 }
+// v19 et suivantes : la preuve d'un taux de gain, la sauvegarde qui passe d'une version à l'autre, les journées réelles rejouées
+if (await p.evaluate(() => !!document.querySelector("#pf-card"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => document.querySelector(x).textContent, s);
+  await p.goto(U + "#quant"); await p.waitForTimeout(2500);
+  const a = await p.evaluate(() => ({ ans: document.querySelector("#aq6").textContent, l: document.querySelectorAll("#s19 .pf-l").length, d: document.querySelectorAll("#s19 .pf-d").length }));
+  ok(/\d trades/.test(a.ans) && a.l === 1 && a.d >= 1, `la preuve répond et trace sa courbe (« ${a.ans.slice(0, 70)}… »)`);
+  await p.fill("#f-vt", "120"); await p.fill("#f-vw", "58"); await p.waitForTimeout(500);
+  const r1 = await lire("#pf-res");
+  ok(/120/.test(r1) && /58/.test(r1) && /Pas encore prouvé/.test(r1), `58 gagnants sur 120 : pas encore prouvé (« ${r1.slice(0, 80)}… »)`);
+  ok(await p.evaluate(() => document.querySelectorAll("#s19 > .pf-u").length === 1), "le bilan se marque sur la courbe (hors figure sortante du fondu)");
+  await p.evaluate(() => document.querySelector("#pf-card").scrollIntoView({ block: "start" })); await p.waitForTimeout(1300);
+  await (await p.$("#pf-card")).screenshot({ path: join(dos, `preuve-${W}.png`) });
+  await p.fill("#f-vt", "1000"); await p.fill("#f-vw", "470"); await p.waitForTimeout(400);
+  ok(/Prouvé à 95/.test(await lire("#pf-res")), "470 gagnants sur 1 000 contre un seuil de 41 % : prouvé");
+  await p.fill("#f-vw", "1200"); await p.waitForTimeout(200);
+  ok(/invalid/.test(await p.evaluate(() => document.querySelector("#w-vw").getAttribute("aria-invalid") ? "invalid" : "")) || /plus de gagnants/.test(await lire("#pf-res")), "plus de gagnants que de trades : refusé");
+  // sauvegarde : 6 contrats et deux journées, copiés, stockage vidé, puis recollés
+  await p.goto(U + "#compte"); await p.waitForTimeout(1500);
+  for (const v of ["300", "−120"]) { await p.fill("#f-jr", v); await p.press("#f-jr", "Enter"); await p.waitForTimeout(200); }
+  const exAvant = await p.evaluate(() => document.querySelector("#f-ex").value);
+  await p.goto(U + "#reglages"); await p.waitForTimeout(1500);
+  await p.evaluate(() => { const r = document.querySelector("#r-c"); r.value = "6"; r.dispatchEvent(new Event("input", { bubbles: true })); });
+  await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" }));
+  await p.click("#b-exp"); await p.waitForTimeout(500);
+  let code = await p.evaluate(() => { const t = document.querySelector("#exp-ta"); return t.hidden ? "" : t.value; });
+  if (!code) code = await p.evaluate(() => navigator.clipboard.readText().catch(() => ""));
+  ok(/^ALPOPT1:[A-Za-z0-9+/=]+$/.test(code), `la sauvegarde se copie (${code.length} caractères)`);
+  await (await p.$("#data-card")).screenshot({ path: join(dos, `donnees-${W}.png`) });
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await p.waitForTimeout(2000);
+  ok(await p.evaluate(() => document.querySelector("#r-c").value) === "4", "stockage vidé : retour à l'exemple (4 contrats)");
+  await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" }));
+  await p.fill("#f-imp", "texte quelconque"); await p.click("#b-imp"); await p.waitForTimeout(200);
+  ok(/pas une sauvegarde/.test(await lire("#imp-msg")) && await p.evaluate(() => document.querySelector("#r-c").value) === "4", "un texte quelconque est refusé, rien ne change");
+  await p.fill("#f-imp", code.slice(0, 40) + "\n" + code.slice(40)); await p.click("#b-imp"); await p.waitForTimeout(600);
+  const back = await p.evaluate(() => ({ c: document.querySelector("#r-c").value, msg: document.querySelector("#imp-msg").textContent, n: document.querySelector("#data-n").textContent }));
+  ok(back.c === "6" && /2 journées/.test(back.msg) && /2 journées/.test(back.n), `la sauvegarde recollée (coupée en deux lignes) rend 6 contrats et 2 journées (${back.msg})`);
+  await p.goto(U + "#compte"); await p.waitForTimeout(1500);
+  const exApres = await p.evaluate(() => document.querySelector("#f-ex").value);
+  ok(exApres === exAvant && exAvant !== "0", `le profit du compte revient avec les journées (${exAvant} $ avant, ${exApres} $ après)`);
+  // journées réelles → simulation
+  for (const v of ["150", "−80", "220", "40", "−60", "310", "90", "−140"]) { await p.fill("#f-jr", v); await p.press("#f-jr", "Enter"); await p.waitForTimeout(120); }
+  ok(/Simuler avec mes journées/.test(await lire("#jr-sim")), "dès 10 journées, la simulation propose de rejouer les tiennes");
+  await p.click('#jr-sim [data-js="journal"]'); await p.waitForTimeout(7000);
+  const j = await p.evaluate(() => ({ mode: document.querySelector('#sg-mode [data-v="journal"]').getAttribute("aria-pressed"), jr: document.querySelector("#f-journal").value.split(/\s+/).length, sub: document.querySelector("#r-sub").textContent, sim: document.querySelector("#jr-sim").textContent }));
+  ok(j.mode === "true" && j.jr === 10 && /ton journal/.test(j.sub) && /rejoue/.test(j.sim), `le mode journal rejoue les 10 journées (${j.sub.slice(0, 50)}…)`);
+  await p.click('#jr-sim [data-js="trades"]'); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => document.querySelector('#sg-mode [data-v="trades"]').getAttribute("aria-pressed")) === "true", "un toucher ramène aux réglages de trades");
+  ok(await largeur(), "aucun défilement horizontal après ces essais");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
 await b.close();
 console.log(`\n${ko ? ko + " défaut(s)" : "tout est bon"} ; captures : ${dos}`);
