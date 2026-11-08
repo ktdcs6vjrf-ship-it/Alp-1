@@ -111,5 +111,30 @@ for (const seance of [true, false]) { const A = un(R({ seance }), fixe(-300));
   ok(L.sortino > L.sharpe, "Sortino au-dessus du Sharpe pour une perte bornée");
   console.log(`  compte libre : Sharpe ${L.sharpe.toFixed(2)}, Sortino ${L.sortino.toFixed(2)}, recul médian ${L.ddMed.toFixed(0)} $, MinTRL ${L.minTRL.toFixed(0)} jours`); }
 
+// 13. Repartir d'un compte en cours (e0, v7 et suivantes). Sauté sur les pages plus anciennes, dont le moteur l'ignore.
+if (/simCompte\(R,day,seed,i0,i1,acc,keep,e0\)/.test(html)) {
+  const un0 = (Rr, day, e0) => M.simCompte(Rr, day, 1, 0, 1, null, 1, e0);
+  // a. l'état du jour de l'achat redonne le moteur sans état, prix mis à part
+  { const S = { pv: 2, tick: 0.25, c: 4, stop: 20, rr: 1.5, p: 0.45, n: 2, comm: 1, slip: 1, dStop: 0, dTgt: 0 }, day = (g, o) => M.journee(S, g, o);
+    const A = M.simCompte(R({}), day, 7, 0, 1500, null, 0), B = M.simCompte(R({}), day, 7, 0, 1500, null, 0, { phase: "eval", x: 0, M: 0, nd: 0, best: 0 });
+    ok(A.passe === B.passe && A.koEval === B.koEval && A.tPass.every((t, i) => t === B.tPass[i]), "état de départ : mêmes évaluations que sans état");
+    ok(A.cash.every((x, i) => Math.abs(x + 78.4 - B.cash[i]) < 1e-9), "état de départ : même trésorerie, prix déjà payé"); }
+  // b. 2 800 $ de profit, +200 $ par jour : réussite le lendemain
+  { const A = un0(R({}), fixe(200), { phase: "eval", x: 2800, M: 2800, nd: 14, best: 200 });
+    ok(A.passe === 1 && A.tPass[0] === 1, `2 800 $ + 200 $ : réussite au jour 1 (lu ${A.tPass[0]})`); }
+  // c. règle du meilleur jour : 1 600 $ en un jour impose 3 200 $ de profit
+  { const A = un0(R({}), fixe(200), { phase: "eval", x: 2900, M: 2900, nd: 10, best: 1600 });
+    ok(A.passe === 1 && A.tPass[0] === 2, `meilleur jour 1 600 $ : réussite à 3 300 $, au jour 2 (lu ${A.tPass[0]})`); }
+  // d. compte financé neuf : les retraits du contrôle 1, décalés de la durée de l'évaluation
+  { const A = un0(R({}), fixe(200), { phase: "fund", x: 0, M: 0, q: 0, c0: 0, lock: false }), ev = A.events[0], jours = [];
+    for (let i = 0; i < ev.length; i += 2) jours.push(ev[i]);
+    ok(JSON.stringify(jours) === JSON.stringify([5, 10, 15, 20, 25]), `financé neuf : retraits aux jours 5…25 (lu ${jours})`);
+    close(A.cash[0], 3628.125, 1e-9, "financé neuf : trésorerie sans le prix"); }
+  // e. plancher bloqué à +100 contre plancher qui suit le plus haut, à −300 $ par jour depuis 1 500 $
+  { const Al = un0(R({}), fixe(-300), { phase: "fund", x: 1500, M: 1500, q: 0, c0: 0, lock: true });
+    const An = un0(R({}), fixe(-300), { phase: "fund", x: 1500, M: 1500, q: 0, c0: 0, lock: false });
+    ok(Al.samples[0].ko === 5 && An.samples[0].ko === 7, `bloqué à +100 : éteint au jour 5 ; plancher à −500 : au jour 7 (lu ${Al.samples[0].ko}, ${An.samples[0].ko})`); }
+}
+
 console.log(`\n${nOk} contrôles passés, ${nKo} échecs`);
 process.exit(nKo ? 1 : 0);

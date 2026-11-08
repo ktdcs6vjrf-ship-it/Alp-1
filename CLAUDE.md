@@ -318,8 +318,7 @@ récompense la variance). Calcul complet ≈ 1,8 s.
 
 **v5 — noir, blanc, gris, animée en continu** (8 novembre 2026, « améliore à fond l'ux design
 de l'app noir blanc gris avec animation constante et fluide ») : `prop/challenge-option5.html`,
-https://claude.ai/artifact/R9m5xQUxyvNS2DSWeEPVBK. **Dernière version : c'est elle qu'on
-améliore** (copie sous un nouveau nom à chaque livraison). **Bloc MODELE identique à la v4**
+https://claude.ai/artifact/R9m5xQUxyvNS2DSWeEPVBK. **Bloc MODELE identique à la v4**
 (vérifié par `diff`, 130 contrôles passés) ; seuls le style et le mouvement changent.
 
 - **Monochrome strict, la forme porte le sens** : gain = blanc plein, perte = gris hachuré
@@ -354,6 +353,38 @@ améliore** (copie sous un nouveau nom à chaque livraison). **Bloc MODELE ident
   (« J25 ») y est normale ; une case de carte faiblement positive (blanc à 12 %) se lisait plus
   sombre qu'une case négative grise — d'où les hachures pour les pertes ; un intitulé « en
   direct » trop long passait sur deux lignes à 390 px.
+
+**v6 — couleurs de sens, graphiques fluides** (8 novembre 2026, « pour des data qui nécessitent
+une couleur tu peux ajouter vert rouge ou orange ; améliore les graphiques ») :
+`prop/challenge-option6.html`, https://claude.ai/artifact/Ftr4oSF9pCxmXwX2u2BqYu. Vert = gain,
+rouge = perte ou extinction (toujours doublé de hachures, pour qui confond rouge et vert),
+orange = alerte (seuil de drawdown, plancher à moins d'un quart du drawdown) ; tout le reste
+reste noir, blanc, gris. Réticule lissé par la boucle (`HOV`, cible et position), fondu
+enchaîné quand les données changent (`clearSvg` : l'ancienne figure passe au-dessus dans un
+`g.old` qui s'efface ; une figure vide se déroule ; rien au redimensionnement, drapeau `NOFADE`),
+graduations à 11 px (marges gauches 50 / 60 px, `CH = 11 × 0,6`), étiquettes de la tornade
+rangées dans leur barre quand elles sortiraient, fond du résultat déjà peuplé (`ambStep` ×80).
+
+**v7 — nouveautés** (même jour, « ajoute des nouveautés utiles ») : `prop/challenge-option7.html`,
+https://claude.ai/artifact/CGhKxvJrT8YQjihU2D9i21. **Dernière version : c'est elle qu'on
+améliore.** Sixième onglet **Compte** (`#compte`) : l'état réel du jour (profit, plus haut de
+clôture, jours tradés, meilleur jour ; en financé : jours qualifiants, plancher bloqué) donne le
+plancher, la marge, les pertes d'avance, l'objectif porté par la règle du meilleur jour
+(max(objectif, meilleur jour / 50 %)), une jauge animée plancher → objectif, 3 000 suites
+simulées depuis aujourd'hui, et les contrats max pour garder k pertes d'avance. Carte **Mon
+budget** (résultat) : n = budget / prix, au moins un payé = 1 − (1 − p)^n, total par 2 000 sommes
+tirées dans le Monte Carlo, courbe et seuil de 90 %. **Épingler** un réglage (localStorage
+`alp-option-challenge-pin-v7`) : écart dans le bandeau et dans Comparer, bouton pour le
+rappeler. **Copier le résumé** (presse-papiers dans le clic, sinon texte sélectionné).
+- **Le bloc MODELE change pour la première fois depuis la v2** : `simCompte(…, e0)` repart d'un
+  état ; sans `e0` le moteur est inchangé (90 + 40 contrôles toujours verts). Sept contrôles
+  ajoutés à `controle-lucid.mjs` (sautés sur les pages plus anciennes) : l'état de départ
+  redonne le moteur sans état, prix mis à part ; réussite au jour 1 depuis 2 800 $ ; règle du
+  meilleur jour (1 600 $ impose 3 200 $) ; financé neuf = retraits du contrôle 1 décalés de
+  quinze jours ; plancher bloqué à +100 contre plancher à −500.
+- **Piège** : `console.log` lit « %s » dans une chaîne affichée (« 85 %sans avantage ») comme un
+  format et y injecte l'argument suivant — un banc qui imprime du texte de page doit le passer
+  en second argument.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
