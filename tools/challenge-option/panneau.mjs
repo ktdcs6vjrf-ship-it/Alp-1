@@ -72,6 +72,18 @@ if (await p.evaluate(() => !!document.querySelector("#f-jr"))) {
   await p.goto("file://" + join(dos, "apercu.html") + "#quant"); await p.waitForTimeout(5000);
   ok(await p.evaluate(() => ["#aq1", "#aq2", "#aq3"].every(s => document.querySelector(s).textContent.length > 30)), "l'onglet Quant répond à ses trois questions");
 }
+// v12 et suivantes : « Que changer dès demain ? » et la limite journalière, avec Appliquer
+if (await p.evaluate(() => !!document.querySelector("#lims"))) {
+  await p.goto("file://" + join(dos, "apercu.html") + "#leviers"); await p.waitForTimeout(7000);
+  const a = await p.evaluate(() => ({ acts: document.querySelectorAll("#acts .act").length, ans: document.querySelector("#act-ans").textContent, lims: document.querySelectorAll("#lims .lim").length, la: document.querySelector("#lim-ans").textContent }));
+  ok(a.ans.length > 30 && !/Calcul/.test(a.ans), `la carte des gestes répond (${a.acts} geste(s))`);
+  ok(a.lims >= 4 && a.la.length > 30, `la limite journalière compare ${a.lims} règles`);
+  await (await p.$(".act-card")).screenshot({ path: join(dos, `gestes-${W}.png`) });
+  await (await p.$("#lims")).screenshot({ path: join(dos, `limites-${W}.png`) });
+  await p.click('#lims [data-lim="1"]'); await p.waitForTimeout(7000);
+  const b = await p.evaluate(() => ({ ds: document.querySelector("#f-dStop").value, cur: (document.querySelector("#lims .lim.cur .t") || {}).textContent }));
+  ok(Number(b.ds.replace(/\s/g, "")) > 0 && /1 perte/.test(b.cur || ""), `Appliquer pose la limite (stop journalier ${b.ds} $, ligne « ${b.cur} » marquée actuelle)`);
+}
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
 await b.close();
 console.log(`\n${ko ? ko + " défaut(s)" : "tout est bon"} ; captures : ${dos}`);

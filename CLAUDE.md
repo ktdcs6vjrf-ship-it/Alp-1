@@ -445,8 +445,7 @@ blanche ») : `prop/challenge-option10.html`, https://claude.ai/artifact/878witk
   → 100 / 2 jours, effacement à confirmer, réponses d'Option et de Quant), soit 26.
 
 **v11 — la matière et la lumière** (8 novembre 2026, « améliore encore surtout le visuel à
-fond ») : `prop/challenge-option11.html`, https://claude.ai/artifact/EDk2d1ZvTAVeZ7UNr4EbVS.
-**Dernière version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9 ; seul le
+fond ») : `prop/challenge-option11.html`, https://claude.ai/artifact/EDk2d1ZvTAVeZ7UNr4EbVS. Bloc MODELE identique à la v9 ; seul le
 style change, plus deux fonctions d'affichage (`ring`, `kpiRC`).
 - Fond à halos (blanc en haut, vert en bas à gauche) et trame de points fixe ; trait de
   lumière sous l'en-tête ; cartes à liseré dégradé (`padding-box` / `border-box`, sauf
@@ -458,6 +457,25 @@ style change, plus deux fonctions d'affichage (`ring`, `kpiRC`).
   horizontale (hauteur nulle) — la médiane de trésorerie l'est souvent. `#glow` est en
   `filterUnits="userSpaceOnUse"`. Et `text-shadow` sur un texte en `background-clip:text` se
   peint par-dessus le dégradé : le halo du grand chiffre passe par `filter: drop-shadow`.
+
+**v12 — des leviers qui disent quoi faire** (8 novembre 2026, « améliore l'espace levier ») :
+`prop/challenge-option12.html`, https://claude.ai/artifact/N9soyjwz1i95z2uSXnUKC5. **Dernière
+version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
+- **« Que changer dès demain ? »** en tête des Leviers : les leviers que l'utilisateur
+  contrôle (meilleure taille, autre moment de retrait, ±1 trade par jour, meilleure limite
+  journalière), écarts sur les mêmes 2 000 challenges, rangés par gain (au moins 5 $), trois
+  au plus, chacun avec **Appliquer** (change le réglage, relance tout). Le ratio et le taux
+  de gain n'y figurent pas : le modèle tient le taux fixe quand le ratio bouge, ce qui serait
+  un conseil faux.
+- **« Faut-il une limite journalière ? »** : `limVariants(S)` — aucune, arrêt après 1 perte,
+  après 1 gain, après 1 perte ou 1 gain (et 2 pertes / 2 gains dès 3 trades par jour) ;
+  `dStop = Lo`, `dTgt = W` de `tradeStats`, que `journee` lit déjà ; 2 000 challenges par
+  règle dans `MC.lev.lim` ; ligne actuelle marquée, Appliquer sur les autres. **Piège** :
+  arrondir la limite au centime vers le haut l'empêche de se déclencher pile à une perte
+  (−166,125 > −166,13) : `applyLim` arrondit vers le bas.
+- `panneau.mjs` : trois contrôles de plus (réponse des gestes, règles comparées, Appliquer
+  pose la limite et marque la ligne actuelle). Ses captures gardent les réglages laissés par
+  ses propres essais (taux de gain à 50 %) : pour une capture « exemple », vider le stockage.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
