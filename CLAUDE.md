@@ -507,8 +507,7 @@ Bloc MODELE identique à la v9 ; une couche CSS
 
 **v15 — Monte Carlo instantané dans le payoff** (8 novembre 2026, « simuler 100, 1 000,
 10 000 fois au lieu d'attendre en live ») : `prop/challenge-option15.html`,
-https://claude.ai/artifact/7dWezqGp8N7a6A33ZT7fph. **Dernière version : c'est elle qu'on
-améliore.** Bloc MODELE identique à la v9. Sous le payoff : « Simuler d'un coup » 100 / 1 000 /
+https://claude.ai/artifact/7dWezqGp8N7a6A33ZT7fph. Bloc MODELE identique à la v9. Sous le payoff : « Simuler d'un coup » 100 / 1 000 /
 10 000 et Lancer (`runMC1`) — n comptes financés, plancher fixe, pas journaliers et pont
 brownien comme la formule, graine fixe ; la lecture se met en pause au jour 0, l'histogramme
 du profit au jour N (roses sous le point mort, sarcelle au-dessus) se pose sous la cloche
@@ -516,6 +515,24 @@ orange avec la même normalisation (`σ√N·√(2π)`), 80 trajectoires dans la
 compare éteints, au-dessus du point mort et retrait moyen ± 2 erreurs types à la formule.
 Relancer la lecture ou changer un réglage efface la simulation. `panneau.mjs` : un contrôle de
 plus (46 barres, 80 trajectoires pour 10 000 comptes).
+
+**v16 — Monte Carlo animé, reliefs pleins, surface de décision** (8 novembre 2026, trois
+captures : carte satellite à réticules, classifieur k-NN, surface 3D « Marius ») :
+`prop/challenge-option16.html`, https://claude.ai/artifact/1y45h71sQ8RTAaP6tFxzpP. **Dernière
+version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
+- Monte Carlo du payoff : trajectoires tracées à la chaîne (`pathLength=1`, retard 14 ms
+  chacune), barres qui montent (`scaleY`, retard 12 ms).
+- **Reliefs pleins** (`Surf3D`) : facettes peintes du fond vers l'avant, teinte `turbo` selon la
+  hauteur, sept courbes de niveau projetées au sol (marching squares), échelle de couleur à
+  droite ; la coupe du jour passe en blanc. Les surfaces de ce fichier ne sont plus des nuages
+  de points — la règle contraire vaut pour ALP nº 3, pas pour l'app.
+- **« Où est-on payé ? »** (Leviers, `draw18`) : fond = probabilité d'être payé interpolée
+  (rose → sombre → sarcelle), **points = vrais challenges simulés** de chaque case (36 sur 250,
+  `paid` lu dans `t1`, position tirée dans la case), frontière de rentabilité en tirets,
+  étoile « toi » et P(payé), explication derrière « ? ».
+- Relevés cartographiques discrets (`data-hud`, mono 9 px, majuscules sans lettre grecque) sur
+  le payoff, les reliefs, la carte, la surface de décision et les vues Monte Carlo ; trame de
+  croix sur le résultat, les reliefs et la surface de décision.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
