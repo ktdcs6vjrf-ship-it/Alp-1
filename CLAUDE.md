@@ -388,8 +388,8 @@ rappeler. **Copier le résumé** (presse-papiers dans le clic, sinon texte séle
 **v8 — leviers compréhensibles, paramètres qu'on cache et qu'on rouvre** (8 novembre 2026,
 « je comprends pas les graphiques dans levier ; pouvoir cacher les paramètres et les revoir
 grâce au bouton » puis « améliore la qualité surtout de l'app ») : `prop/challenge-option8.html`,
-https://claude.ai/artifact/VgWxRVU9Vj9J72TUCC84Gs. **Dernière version : c'est elle qu'on
-améliore.** Bloc MODELE identique à la v7 (`diff`), 137 contrôles verts.
+https://claude.ai/artifact/VgWxRVU9Vj9J72TUCC84Gs. Bloc MODELE identique à la v7 (`diff`),
+137 contrôles verts.
 - **Leviers** : chaque graphique est une question (« Combien de contrats ? », « Quel réglage
   pèse le plus ? », « Quel taux de gain pour quel ratio ? ») avec **la réponse calculée écrite
   au-dessus** (`#lv-ans`, `#tor-ans`, `#ca-ans` ; `seuilCarte(rr)` interpole la frontière du
@@ -412,6 +412,24 @@ améliore.** Bloc MODELE identique à la v7 (`diff`), 137 contrôles verts.
   18 contrôles dans le vrai navigateur (« ? », relief dessiné, réponses écrites, panneau qui
   recalcule les leviers depuis l'onglet Leviers, curseurs jumeaux, Échap, cartes repliées
   gardées après rechargement), verts à 390 et 1 280 px ; `vivant.mjs` déplie le relief.
+
+**v9 — le temps et le calendrier** (8 novembre 2026, « améliore tout et s'il faut ajouter
+ajoute ») : `prop/challenge-option9.html`, https://claude.ai/artifact/GjneqAbWMrGthpCrnYHXJK.
+**Dernière version : c'est elle qu'on améliore.**
+- **Le moteur garde le calendrier de chaque challenge** : `tP` (jour de réussite), `t1`
+  (1er retrait), `tKo` (extinction), −1 pour jamais ; rien d'autre ne change. Six contrôles de
+  plus dans `controle-lucid.mjs` (53) : J15 / J20 / jamais à +200 $ par jour, J7 à −300 $,
+  financé bloqué éteint J5, comptes cohérents sur 2 000 challenges.
+- **« Dans le temps »**, première vue de la simulation du résultat, et **« Jour après jour »**
+  dans Compte (depuis l'état du jour) : quatre états empilés, payé (vert), financé sans retrait
+  (vert pâle), en évaluation (gris), perdu (rouge hachuré) ; `timeline(r, H)` s'arrête quand
+  97 % des challenges sont tranchés ; réponse écrite au jour 20 (Compte) ou 60 (résultat).
+- **Dates** : `dateTxt(n)` compte n jours ouvrés (samedi et dimanche sautés, fériés non) à
+  partir d'aujourd'hui — réussite et 1er retrait médians datés dans Compte, info-bulles datées.
+- **Plafond du jour** (règle du meilleur jour) : au-delà de 50 % × objectif effectif gagnés en
+  un jour, l'objectif monte — dit sous « Reste à gagner ».
+- **Bien démarrer** : carte en trois étapes en tête du résultat (paramètres, résultat, compte),
+  fermée une fois pour toutes (`UI.intro`) ; le rappel « chiffres d'exemple » ne vient qu'après.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

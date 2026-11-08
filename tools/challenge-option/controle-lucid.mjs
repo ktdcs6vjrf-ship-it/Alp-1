@@ -136,5 +136,20 @@ if (/simCompte\(R,day,seed,i0,i1,acc,keep,e0\)/.test(html)) {
     ok(Al.samples[0].ko === 5 && An.samples[0].ko === 7, `bloqué à +100 : éteint au jour 5 ; plancher à −500 : au jour 7 (lu ${Al.samples[0].ko}, ${An.samples[0].ko})`); }
 }
 
+// 14. Calendrier de chaque challenge (v9 et suivantes) : jour de réussite, du 1er retrait, de l'extinction, −1 pour jamais.
+if (/acc\.tP\.push\(tP\)/.test(html)) {
+  { const A = un(R({}), fixe(200));
+    ok(A.tP[0] === 15 && A.t1[0] === 20 && A.tKo[0] === -1, `+200 $ par jour : réussite J15, 1er retrait J20, jamais éteint (lu ${A.tP[0]}, ${A.t1[0]}, ${A.tKo[0]})`); }
+  { const A = un(R({}), fixe(-300));
+    ok(A.tP[0] === -1 && A.t1[0] === -1 && A.tKo[0] === 7, `−300 $ par jour : éteint J7 sans réussite (lu ${A.tP[0]}, ${A.t1[0]}, ${A.tKo[0]})`); }
+  { const A = M.simCompte(R({}), fixe(-300), 1, 0, 1, null, 1, { phase: "fund", x: 1500, M: 1500, q: 0, c0: 0, lock: true });
+    ok(A.tP[0] === 0 && A.tKo[0] === 5, `financé bloqué : réussite comptée au jour 0, éteint J5 (lu ${A.tP[0]}, ${A.tKo[0]})`); }
+  { const S = { pv: 2, tick: 0.25, c: 4, stop: 20, rr: 1.5, p: 0.45, n: 2, comm: 1, slip: 1, dStop: 0, dTgt: 0 }, A = M.simCompte(R({}), (g, o) => M.journee(S, g, o), 3, 0, 2000, null, 0);
+    const nP = A.tP.filter(t => t >= 0).length, n1 = A.t1.filter(t => t >= 0).length, nK = A.tKo.filter(t => t >= 0).length;
+    ok(A.tP.length === 2000 && nP === A.passe, `autant de jours de réussite que de réussites (${nP} / ${A.passe})`);
+    ok(n1 === A.tPay1.length && A.t1.every((t, i) => t < 0 || t > A.tP[i]), "le 1er retrait suit toujours la réussite");
+    ok(nK === A.koEval + A.ko0 + A.payKo.reduce((a, b) => a + b, 0), `extinctions comptées une fois (${nK})`); }
+}
+
 console.log(`\n${nOk} contrôles passés, ${nKo} échecs`);
 process.exit(nKo ? 1 : 0);
