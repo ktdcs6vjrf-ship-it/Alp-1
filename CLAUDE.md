@@ -542,11 +542,33 @@ tombait dans le flux, en haut à gauche, sur l'intitulé. Tout enfant ajouté au
 cette règle.
 
 **v18** (8 novembre 2026, « enlève la surface de décision ; le texte des graphiques n'est pas
-beau, mets-le sur un encadré ») : `prop/challenge-option18.html`, https://claude.ai/artifact/EaK49KsccHvmZvgfmnGAii, **dernière version, c'est elle
-qu'on améliore**. Carte « Où est-on payé ? » retirée (`draw18` reste, inerte sans `#c18`).
+beau, mets-le sur un encadré ») : `prop/challenge-option18.html`, https://claude.ai/artifact/EaK49KsccHvmZvgfmnGAii. Carte « Où est-on payé ? » retirée (`draw18` reste, inerte sans `#c18`).
 `boxLabels(svg)` pose un encadré sombre arrondi (`rect.labbox`) sous chaque `text.lab`, deux
 images après la construction (`clearSvg` le programme) ; sautés : les textes qui changent à chaque
 image (`F1.ko`, `F1.lt`, `F3.lx`, tirages `.smk`).
+
+**v19 — tes données, ton avantage** (8 novembre 2026, nuit, « carte blanche, améliore tout, ajoute ou supprime ») :
+`prop/challenge-option19.html`, https://claude.ai/artifact/WRCYGVYgp56khBSvX42nBY. Le bloc MODELE gagne neuf
+fonctions pures (rien d'autre ne change : 90 + 53 contrôles toujours verts).
+- **Tes données** (Réglages) : chaque lien a son stockage local, vide — la v18 ne peut donc rien transmettre. Sauvegarde
+  `ALPOPT1:` + JSON en base 64 (réglages, journées, épingle, préférences), copiée (repli : texte sélectionné), recollée
+  dans la version suivante ; tout ce qui est lu passe par `sanitizeP` / `okH` (clés connues, bon type).
+- **Ma journée → simulation** : dès 10 journées, « Simuler avec mes journées » met le mode Mon journal sur les journées
+  réelles (`histDays`) ; bouton « Reprendre mes journées » dans Mon journal. Chaque journée garde sa date (`t`).
+- **« Combien de trades pour le prouver ? »** (Quant) : test binomial exact à 95 % contre le seuil sans avantage `pBE`
+  (déclaré, jamais tiré du bilan jugé). Courbe = puissance du test **randomisé sur sa frontière** (taille exactement 5 %,
+  sinon dents de scie de ±2 points) ; ligne grise = loi nulle ; bilan saisi (`vt`, `vw`) jugé par la p-valeur exacte,
+  a posteriori bêta uniforme. À l'exemple : seuil 41,29 %, une chance sur deux à 481 trades, quatre sur cinq à 1 103.
+  Banc : `node tools/challenge-option/controle-preuve.mjs [page]` (33 contrôles : lgamma, queues contre sommes directes,
+  frontière et taille, Monte Carlo à 470 et 1 100 trades, a posteriori contre intégrale).
+- **Étiquettes vivantes** (`dynLab` / `setDyn`) : KO, trajectoire, trésorerie rejouée et tirages ont leur encadré, mesuré
+  au canevas (`textW`) ; `boxLabels` recense les encadrés fixes (`svg._boxes`) et l'étiquette d'un tirage prend la
+  première ligne libre — en v18 « une mesure » couvrait « vrai +1,66 » et « une année » couvrait « drawdown ».
+- Code mort retiré : `draw18`, `#ds-ans`, `paid` des cases de la carte.
+- **Pièges v19** : `num(v, s, 3)` n'existait pas (`NF` s'arrêtait à 2 décimales) — la p-valeur cassait le rendu sans
+  bruit visible hors console ; un banc qui compte des éléments d'une figure doit viser `svg > …` : le fondu enchaîné garde
+  l'ancienne figure 0,5 s dans `g.old` ; `panneau.mjs` hérite de l'état laissé par ses propres essais (profit 100 $ après
+  l'annulation) — comparer avant / après plutôt qu'à une valeur écrite.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
