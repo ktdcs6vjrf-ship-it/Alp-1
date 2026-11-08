@@ -535,12 +535,18 @@ identique à la v9.
   croix sur le résultat, les reliefs et la surface de décision.
 
 **v17 — retouches** (8 novembre 2026, « pas d'étoile, juste un point ; un texte gêne en arrière-plan ») :
-`prop/challenge-option17.html`, https://claude.ai/artifact/3Jod1oZ1TDsju7j1qHgGCL. **Dernière
-version : c'est elle qu'on améliore.** Point blanc cerclé au lieu de l'étoile dans la surface de
+`prop/challenge-option17.html`, https://claude.ai/artifact/3Jod1oZ1TDsju7j1qHgGCL. Point blanc cerclé au lieu de l'étoile dans la surface de
 décision ; relevé du résultat (`#hero-hud`) retiré. **Piège** : la règle
 `.hero>*:not(canvas){position:relative}` l'emportait sur `.hud3{position:absolute}` — le relevé
 tombait dans le flux, en haut à gauche, sur l'intitulé. Tout enfant ajouté au héros hérite de
 cette règle.
+
+**v18** (8 novembre 2026, « enlève la surface de décision ; le texte des graphiques n'est pas
+beau, mets-le sur un encadré ») : `prop/challenge-option18.html`, **dernière version, c'est elle
+qu'on améliore**. Carte « Où est-on payé ? » retirée (`draw18` reste, inerte sans `#c18`).
+`boxLabels(svg)` pose un encadré sombre arrondi (`rect.labbox`) sous chaque `text.lab`, deux
+images après la construction (`clearSvg` le programme) ; sautés : les textes qui changent à chaque
+image (`F1.ko`, `F1.lt`, `F3.lx`, tirages `.smk`).
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
