@@ -143,6 +143,41 @@ if (await p.evaluate(() => !!document.querySelector("#pf-card"))) {
   ok(await largeur(), "aucun défilement horizontal après ces essais");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
+// v21 et suivantes : séances datées avec leurs trades, calendrier, journées contre réglages, rappel du compte, reprise des trades
+if (await p.evaluate(() => !!document.querySelector("#et-cal"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => document.querySelector(x).textContent, s);
+  await p.goto(U + "#compte"); await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await p.waitForTimeout(2500);
+  ok(await p.evaluate(() => document.querySelector("#acs").hidden && document.querySelector("#et-cal").hidden), "compte neuf : ni rappel du compte ni calendrier");
+  const seances = [["2026-10-27", "240", "3", "2"], ["2026-10-28", "−180", "2", "0"], ["2026-10-29", "95", "2", "1"], ["2026-10-30", "410", "3", "3"], ["2026-10-31", "−60", "", ""],
+    ["2026-11-03", "120", "2", "1"], ["2026-11-04", "−320", "2", "0"], ["2026-11-05", "60", "2", "1"]];
+  for (const [d, v, n, w] of seances) { await p.fill("#f-jd", d); await p.fill("#f-jr", v); await p.fill("#f-jn", n); await p.fill("#f-jw", w); await p.press("#f-jr", "Enter"); await p.waitForTimeout(150); }
+  ok(/8 journées/.test(await lire("#jr-n")), "huit séances datées ajoutées");
+  ok(/16 trades comptés/.test(await lire("#jr-h")) && /50\s%/.test(await lire("#jr-h")), `trades comptés : 16, dont la moitié gagnants (${(await lire("#jr-h")).slice(-40)})`);
+  const cal = await p.evaluate(() => ({ t: document.querySelector("#cal-t").textContent, pos: document.querySelectorAll("#cal .d.pos:not(.out)").length, neg: document.querySelectorAll("#cal .d.neg:not(.out)").length, ans: document.querySelector("#cal-ans").textContent }));
+  ok(/Novembre 2026/.test(cal.t) && cal.pos === 2 && cal.neg === 1 && /−140/.test(cal.ans), `calendrier de novembre : 2 séances gagnantes, 1 perdante, total −140 $ (${cal.ans.slice(0, 50)}…)`);
+  await p.click("#b-cal-p"); await p.waitForTimeout(200);
+  const oct = await p.evaluate(() => ({ t: document.querySelector("#cal-t").textContent, n: document.querySelectorAll("#cal .d.pos:not(.out),#cal .d.neg:not(.out)").length, ans: document.querySelector("#cal-ans").textContent }));
+  ok(/Octobre 2026/.test(oct.t) && oct.n === 4 && /\+505/.test(oct.ans), `le mois précédent : octobre, 4 séances (le samedi 31 compte avec le vendredi), +505 $ (${oct.ans.slice(0, 40)}…)`);
+  await (await p.$("#et-cal")).screenshot({ path: join(dos, `calendrier-${W}.png`) });
+  const chk = await lire("#jr-chk");
+  ok(/8 journées/.test(chk) && /(marge du hasard|trop optimiste|trop prudente)/.test(chk), `journées contre réglages : « ${chk.slice(0, 90)}… »`);
+  await (await p.$("#et-jr")).screenshot({ path: join(dos, `journee21-${W}.png`) });
+  await p.fill("#f-jn", "2"); await p.fill("#f-jw", "5"); await p.fill("#f-jr", "50"); await p.press("#f-jr", "Enter"); await p.waitForTimeout(200);
+  ok(/8 journées/.test(await lire("#jr-n")) && /gagnants vont de 0/.test(await lire("#jr-msg")), "5 gagnants sur 2 trades : refusé, rien n'est ajouté");
+  await p.fill("#f-jn", ""); await p.fill("#f-jw", ""); await p.fill("#f-jr", "");
+  await p.goto(U + "#resultat"); await p.waitForTimeout(2500);
+  const acs = await p.evaluate(() => { const e = document.querySelector("#acs"); return { vu: !e.hidden && e.getClientRects().length > 0, t: e.textContent }; });
+  ok(acs.vu && /Ton compte/.test(acs.t) && /\+365/.test(acs.t), `le Résultat rappelle le compte réel (« ${acs.t.slice(0, 80)} »)`);
+  await p.click("#acs"); await p.waitForTimeout(800);
+  ok(await p.evaluate(() => location.hash === "#compte" && !document.querySelector("#v-compte").hidden), "un toucher sur le rappel ouvre l'onglet Compte");
+  await p.goto(U + "#quant"); await p.waitForTimeout(2000);
+  ok(/16 trades, 8 gagnants/.test(await lire("#pf-take")), "la preuve propose de reprendre les trades des journées");
+  await p.click("#b-pf-take"); await p.waitForTimeout(400);
+  const pf = await p.evaluate(() => ({ vt: document.querySelector("#f-vt").value, vw: document.querySelector("#f-vw").value, res: document.querySelector("#pf-res").textContent, take: document.querySelector("#pf-take").hidden }));
+  ok(pf.vt === "16" && pf.vw === "8" && /Sur 16 trades/.test(pf.res) && pf.take, `reprise : 16 trades, 8 gagnants jugés (${pf.res.slice(0, 60)}…)`);
+  ok(await largeur(), "aucun défilement horizontal");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
 await b.close();
 console.log(`\n${ko ? ko + " défaut(s)" : "tout est bon"} ; captures : ${dos}`);

@@ -585,6 +585,23 @@ https://claude.ai/artifact/SGxPRqRNs9vR6fWfpXuycc. Bloc MODELE identique à la v
   2,0 s → 1,6 s (chargement compris). Banc : `node tools/challenge-option/parallele.mjs <dossier de rendu.mjs> [÷cpu]`
   — mêmes chiffres sur quatre onglets avec et sans workers, puis temps et pire image après le chargement.
 
+**v21 — le compte réel au centre** (même nuit) : `prop/challenge-option21.html`,
+https://claude.ai/artifact/WBwgrdumowgNZ6RTCiALqX, **dernière version, c'est elle qu'on améliore**. Blocs MODELE et
+TRAVAIL identiques à la v20.
+- **Ma journée** : date de séance (`f-jd`, `seanceISO` : avant 6 h → veille, samedi / dimanche → vendredi ; après une
+  date passée, la suivante avance d'un jour ouvré, `nextDate`), trades et gagnants facultatifs (`h.n`, `h.w`, validés par
+  `cleanH`, gardés dans la sauvegarde).
+- **Mon calendrier** (`#et-cal`, `renderCal`) : mois de la dernière séance saisie, L–V + total de la semaine, teinte selon
+  |P&L| du mois (perte hachurée), séance d'un week-end comptée avec le vendredi.
+- **Tes journées contre tes réglages** (`renderChk`, dès 5 journées, mode trades seulement) : K moyennes de n journées
+  tirées avec `ST.dayF` (K = 4 000, moins au-delà de 100 journées), bande 5–95 % ; hors bande → « trop optimiste » ou
+  « trop prudente ». Mémoïsé par (n, moyenne, réglage, graine).
+- **Rappel du compte** en tête du Résultat (`#acs`, lien `#compte`), même pastille que l'onglet Compte.
+- Preuve du taux de gain : « Reprendre mes journées » remplit le bilan avec les trades comptés.
+- **Pièges v21** : le calendrier restait sur le premier mois saisi (`CAL.ym` doit suivre la dernière séance) ; « oct. »
+  + point final donnait « oct.. » ; le 31 octobre 2026 est un samedi (compté avec le vendredi 30) ; une attente de banc
+  sur « 50 % » doit accepter l'espace insécable (`\s`).
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
