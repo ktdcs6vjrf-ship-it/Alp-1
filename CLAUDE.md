@@ -479,8 +479,8 @@ identique à la v9.
 
 **v13 — les graphiques au style du Strategy builder** (8 novembre 2026, capture du tutoriel
 Options de TradingView, « améliore les graphiques dans ce style, pas le graphique en lui-même ») :
-`prop/challenge-option13.html`, https://claude.ai/artifact/4GSqY8p8iXDXAGfD143CnY. **Dernière
-version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9 ; seuls les couleurs et le
+`prop/challenge-option13.html`, https://claude.ai/artifact/4GSqY8p8iXDXAGfD143CnY. Bloc MODELE
+identique à la v9 ; seuls les couleurs et le
 style des figures changent.
 - **Palette TradingView** : sarcelle `#22c39b` (gain), rose `#f0476b` (perte), orange
   `#f7a35c` (alerte et densité), bleu `#6f7cff` (valeur) — remplacées partout, y compris dans
@@ -492,6 +492,18 @@ style des figures changent.
   courbes à 2,7–3 px ; valeur en pointillés bleus, densité en tirets orange ; curseur en
   tirets ; marqueurs cerclés du fond du panneau. Les explications qui nommaient « tirets » et
   « pointillés » ont suivi l'échange des deux.
+
+**v14 — plus calme, façon 2026** (8 novembre 2026, « rends l'app plus clean avec une UX type
+2026 ») : `prop/challenge-option14.html`, https://claude.ai/artifact/RUpU9ZjbLC8fgsXRNrWvo4.
+**Dernière version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9 ; une couche CSS
+« v14 » en fin de feuille, et deux retouches : `gOn` replie toutes les explications par défaut
+(`data-def="1"` pour en ouvrir une), le paragraphe d'introduction des Leviers est retiré.
+- Barre d'onglets du téléphone **flottante** : capsule de verre détachée des bords (12 px,
+  10 px + zone sûre), indicateur en pilule ; fond sans trame, un seul halo ; en-tête en verre
+  sans trait de lumière ; cartes plates à liseré de 6 % ; commandes, bascules, champs et
+  boutons en pilule ; indicateurs sans bordure.
+- `panneau.mjs` vérifie désormais que « ? » bascule l'explication et la remet comme avant,
+  quel que soit son état de départ.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

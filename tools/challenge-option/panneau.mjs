@@ -16,9 +16,10 @@ const largeur = () => p.evaluate(() => document.documentElement.scrollWidth <= d
 await p.goto("file://" + join(dos, "apercu.html") + "#leviers"); await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 await p.goto("file://" + join(dos, "apercu.html") + "#leviers"); await p.waitForTimeout(6000);
 // explications : visibles d'abord, cachées puis rendues par « ? »
-ok(await vu("#g11"), "l'explication du premier graphique est visible au départ");
-await p.click('[data-guide="g11"]'); await p.waitForTimeout(200); ok(!(await vu("#g11")), "« ? » cache l'explication");
-await p.click('[data-guide="g11"]'); await p.waitForTimeout(200); ok(await vu("#g11"), "« ? » la rend");
+// v14 : les explications sont repliées au départ ; avant, ouvertes. Le banc vérifie l'aller-retour dans les deux cas.
+const g0 = await vu("#g11");
+await p.click('[data-guide="g11"]'); await p.waitForTimeout(200); ok((await vu("#g11")) === !g0, "« ? » bascule l'explication");
+await p.click('[data-guide="g11"]'); await p.waitForTimeout(200); ok((await vu("#g11")) === g0, "« ? » la remet comme avant");
 // relief : caché d'abord, affiché par son bouton, dessiné
 ok(!(await vu("#c9")), "le relief est replié au départ");
 await p.click("#b-relief"); await p.waitForTimeout(400); await p.evaluate(() => document.querySelector("#p9").scrollIntoView({ block: "center" })); await p.waitForTimeout(1200);
