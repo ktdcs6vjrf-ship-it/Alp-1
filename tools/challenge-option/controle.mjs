@@ -1,12 +1,13 @@
 // Contrôle du modèle de prop/challenge-option.html.
 // Le bloc MODELE de la page est extrait tel quel et exécuté ici : on vérifie le code livré, pas une copie.
-// Usage : node tools/challenge-option/controle.mjs   (code de sortie 1 si un contrôle échoue)
+// Usage : node tools/challenge-option/controle.mjs [page]   (code de sortie 1 si un contrôle échoue)
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 const ici = dirname(fileURLToPath(import.meta.url));
-const html = readFileSync(join(ici, "../../prop/challenge-option.html"), "utf8");
+const page = process.argv[2] ? resolve(process.argv[2]) : join(ici, "../../prop/challenge-option.html");
+const html = readFileSync(page, "utf8");
 const a = html.indexOf("/* MODELE:DEBUT"), b = html.indexOf("/* MODELE:FIN */");
 if (a < 0 || b < 0) { console.error("bloc MODELE introuvable"); process.exit(1); }
 const M = new Function(html.slice(a, b) + `

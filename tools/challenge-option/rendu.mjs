@@ -1,6 +1,6 @@
 // Banc de rendu de prop/challenge-option.html, avec les vraies fontes.
 // Sans elles la relecture se fait dans une police de repli (piège du mandat NQ, docs/mandat/README.md).
-// Usage : node tools/challenge-option/rendu.mjs [dossier]   (par défaut un dossier temporaire)
+// Usage : node tools/challenge-option/rendu.mjs [dossier] [page]   (dossier temporaire et dernière page par défaut)
 //  1. récupère Archivo et JetBrains Mono par npm et les injecte dans un aperçu local ;
 //  2. charge l'aperçu dans Chromium à six largeurs : erreurs de script, défilement horizontal,
 //     éléments hors cadre, animation qui avance, Monte Carlo rendu ;
@@ -32,7 +32,8 @@ const A = w => join(fontes, "archivo/package/files", `archivo-latin-${w}-normal.
 const J = w => join(fontes, "jetbrains/package/files", `jetbrains-mono-latin-${w}-normal.woff2`);
 const faces = [400, 500, 600, 800].map(w => `@font-face{font-family:'Archivo';font-weight:${w};src:url('file://${A(w)}') format('woff2');font-display:block}`)
   .concat([400, 500, 600].map(w => `@font-face{font-family:'JetBrains Mono';font-weight:${w};src:url('file://${J(w)}') format('woff2');font-display:block}`));
-let src = readFileSync(join(ici, "../../prop/challenge-option.html"), "utf8");
+const pagePath = process.argv[3] ? process.argv[3] : join(ici, "../../prop/challenge-option2.html");
+let src = readFileSync(pagePath, "utf8");
 src = src.replace(/<link rel="(?:preconnect|stylesheet)"[^>]*fonts\.(?:googleapis|gstatic)\.com[^>]*>\n?/g, "");
 src = src.replace("<style>", "<style>\n" + faces.join("\n") + "\n");
 const apercu = join(dos, "apercu.html");
@@ -46,7 +47,7 @@ for (const W of [360, 390, 430, 768, 1100, 1280]) {
   p.on("pageerror", e => errs.push(e.message));
   p.on("console", m => { if (m.type() === "error") errs.push(m.text()); });
   await p.goto("file://" + apercu);
-  await p.waitForTimeout(2600);
+  await p.waitForTimeout(4500);
   const r = await p.evaluate(() => {
     const hors = [];
     document.querySelectorAll("body *").forEach(el => {
@@ -58,7 +59,7 @@ for (const W of [360, 390, 430, 768, 1100, 1280]) {
       }
     });
     return { doc: document.documentElement.scrollWidth, vue: document.documentElement.clientWidth, hors,
-      jour: document.querySelector("#h-jour").textContent, mc: !document.querySelector("#tbp .pending") };
+      jour: "J " + document.querySelector("#o-jour").textContent, mc: document.querySelectorAll("main .pending, main .stale").length === 0 };
   });
   const ok = !errs.length && r.doc <= r.vue && !r.hors.length && r.jour !== "J 0,0" && r.mc;
   if (!ok) defauts++;

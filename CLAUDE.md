@@ -239,6 +239,44 @@ Page : https://claude.ai/artifact/Rh9t6JoxvBy1jspmZECW1z (v1). Un nouveau lien
   `createRequire`. Un script à `${…}` écrit par heredoc déclenche le garde-fou
   de suppression : l'écrire avec l'outil d'écriture.
 
+**v2 — simulateur LucidFlex 50K** (8 novembre 2026) : `prop/challenge-option2.html`,
+https://claude.ai/artifact/4W27dgJoKnkYwnW7MQRLwA. **Le compte de l'utilisateur est une
+LucidFlex 50K payée 70 €** (taux € → $ réglable, 1,12 par défaut : dernière cote datée
+trouvée, 11 octobre 2026). Demande : « les meilleurs outils quant, Monte Carlo, Sharpe,
+Sortino… tout pour simuler les conditions réelles ».
+
+- **Règles relevées sur des sites tiers** (le site de Lucid ne se résout pas depuis le
+  conteneur : WebFetch échoue, WebSearch passe) : objectif 3 000, meilleur jour ≤ 50 % du
+  profit à la réussite, drawdown 2 000 sous le plus haut de **clôture**, bloqué à +100 dès
+  un plus haut de 2 100 ou dès la 1re demande ; financé : 5 jours ≥ 150 $ par cycle, profit
+  du cycle > 0, demande = 50 % du profit, 500 à 2 000 $, partage 90/10 ; commissions 1 $
+  (MNQ) / 3,50 $ (NQ) A/R ; 4 NQ / 40 MNQ. **Deux points divergent entre sources** et sont
+  réglables : plancher touché en séance ou à la clôture, blocage à la 1re demande.
+- **Moteur** (`simCompte`, bloc MODELE) : jour par jour, trade par trade (taux de gain, R:R,
+  stop, contrats, commission, glissement sur stop, recul uniforme d'un gagnant avant son
+  objectif, stop / objectif journaliers) ou journal collé rééchantillonné (creux de séance
+  par pont brownien). Loi nulle = même stratégie au taux sans avantage (frais compris), ou
+  journal recentré, **sur les mêmes tirages**. Politique de retrait : dès que possible / au
+  plafond. Vue option conservée : payoff avec la **marche** de la demande minimale
+  (L = 500 / r = 1 000), partage 90 %, valeur fermée généralisée.
+- **Résultats à l'exemple** (MNQ ×4, stop 20, 1,5 R, 45 %, 2 trades/j, µ ≈ +30 $/j) :
+  +775 $ net par challenge, 44 % de challenges payés ; **attendre 2 000 $ avant chaque
+  demande : +1 401 $** (un retrait précoce bloque le plancher à +100 avec ~400 $ de marge) ;
+  plancher à la clôture plutôt qu'en séance : +1 000 $ ; loi nulle : +56 $ (perte bornée au
+  prix). Sharpe vrai 1,66 mais 245 jours (MinTRL) pour l'affirmer à 95 % ; recul ≥ 2 000 $
+  dans 86 % des années sans blocage.
+- **Contrôles** : `node tools/challenge-option/controle-lucid.mjs` (40 contrôles : chemins
+  déterministes calculés à la main — réussite au jour 15, retraits aux jours 20…40 et leurs
+  montants, extinctions, trailing, blocage, cohérence, séance / clôture —, moments de la
+  stratégie, PSR calibré sous la loi nulle à 5,2 % ± 0,6) ; `controle.mjs
+  prop/challenge-option2.html` (les 90 de la v1, toujours valides) ; `rendu.mjs` vise
+  désormais la v2 et lit le curseur du jour.
+- **Pièges v2** : deux fonctions `frame` (figures et boucle) — la seconde écrasait la
+  première ; `Intl.NumberFormat` écrit « -0 » pour −0 (graduations à 0 : `+0`) ; la barre
+  « aucun retrait » d'un histogramme à intervalle de centre positif se peignait en vert ;
+  **une figure hors écran n'est pas dessinée** (économie voulue) : son en-tête ne bouge
+  plus, le banc doit lire le curseur, pas l'en-tête.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
