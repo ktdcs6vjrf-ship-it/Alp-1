@@ -304,8 +304,7 @@ l'interface change :
   l'ouverture de l'onglet.
 
 **v4 — leviers** (8 novembre 2026, « carte blanche pour tout améliorer ») :
-`prop/challenge-option4.html`, https://claude.ai/artifact/EsTvvxGHHeDZcYtTsoAPwr. **Dernière
-version : c'est elle qu'on améliore** (copie sous un nouveau nom à chaque livraison).
+`prop/challenge-option4.html`, https://claude.ai/artifact/EsTvvxGHHeDZcYtTsoAPwr.
 L'onglet Carte devient **Leviers** : taille optimale (gain net et part payée selon le nombre
 de contrats, échelle log, 2 000 challenges par point sur les mêmes tirages), tornade de
 sensibilité (taux de gain ±2,5 pts, ratio ±0,25 R, contrats ±1, trades/jour ±1, glissement
@@ -316,6 +315,45 @@ durée moyenne d'un challenge). Kelly et risque par trade traduits en dollars su
 drawdown. À l'exemple : la taille optimale est 4 MNQ (+782 $) ; à 6 MNQ, +727 $ mais 28 %
 de challenges payés au lieu de 44 %, et la loi nulle monte à +91 $ (le payoff borné
 récompense la variance). Calcul complet ≈ 1,8 s.
+
+**v5 — noir, blanc, gris, animée en continu** (8 novembre 2026, « améliore à fond l'ux design
+de l'app noir blanc gris avec animation constante et fluide ») : `prop/challenge-option5.html`,
+https://claude.ai/artifact/R9m5xQUxyvNS2DSWeEPVBK. **Dernière version : c'est elle qu'on
+améliore** (copie sous un nouveau nom à chaque livraison). **Bloc MODELE identique à la v4**
+(vérifié par `diff`, 130 contrôles passés) ; seuls le style et le mouvement changent.
+
+- **Monochrome strict, la forme porte le sens** : gain = blanc plein, perte = gris hachuré
+  (motif `#hx` d'un SVG caché en tête de `<main>`, partagé par toutes les figures), valeur =
+  tirets clairs, densité = pointillés (`#dt`), loi nulle = gris sombre. Reliefs 3D : carrés
+  pleins si positif, vides si négatif. Carte : blanc de plus en plus plein / hachures de plus
+  en plus nettes. Issues : pertes hachurées, retraits du gris clair au blanc.
+- **Une seule boucle `requestAnimationFrame`** pilote tout, et ne fait avancer que ce que
+  l'`IntersectionObserver` voit : fond du résultat (évaluations jouées en direct, `Walker` /
+  `stepW`, mêmes journées `ST.dayF` et même plancher que `simCompte`, masquées à gauche pour
+  laisser lire le chiffre), aperçu en direct dans les réglages (un compte, son plancher en
+  escalier, l'objectif, compteur réussies / tentées), trésorerie qui rejoue un challenge tiré,
+  comptes qui passent au premier plan à tour de rôle, un « tirage » qui glisse sur les trois
+  histogrammes (`mkSampler`), reliefs en balancement continu (amplitude 0,33 rad : à 0,45 les
+  étiquettes d'axe se chevauchaient). **Ces animations illustrent ; tous les chiffres viennent
+  du Monte Carlo.**
+- Chiffres qui glissent (`tween`), barres de comparaison et segments d'issue qui changent de
+  longueur au lieu d'être reconstruits, indicateurs glissants sous les onglets et dans chaque
+  bascule (`placeInd`, `<i class="ind">` injecté en tête de chaque `.seg`), entrée en cascade
+  des cartes, tracés déroulés de gauche à droite (`reveal`, clip-path 1,1 s) à l'ouverture
+  d'un onglet et à l'arrivée de nouveaux résultats — pas au redimensionnement.
+- `prefers-reduced-motion` : tout s'arrête, le fond et l'aperçu sont pré-calculés en une image
+  fixe déjà remplie.
+- **Contrôles** : `controle.mjs` et `controle-lucid.mjs` sur la v5 ; `rendu.mjs` vise la v5 par
+  défaut ; **nouveau `node tools/challenge-option/vivant.mjs <dossier de rendu.mjs> [largeur]`** :
+  captures après 9 s d'animation, images/s pendant la rotation (61 mesurées), aperçu qui
+  compte, puis chaque onglet en mouvement réduit (aucune erreur, fond déjà dessiné).
+- **Pièges v5** : un marqueur créé hors écran n'est jamais avancé (la boucle ne travaille que
+  sur le visible) et restait en (0, 0) — chaque figure place son marqueur à la construction
+  (`tick3(0)`, `tickSamp(sp, 0)`) ; les captures de `rendu.mjs` tombent 700 ms après le
+  changement d'onglet, pendant le déroulé de 1,1 s : une graduation de droite tronquée
+  (« J25 ») y est normale ; une case de carte faiblement positive (blanc à 12 %) se lisait plus
+  sombre qu'une case négative grise — d'où les hachures pour les pertes ; un intitulé « en
+  direct » trop long passait sur deux lignes à 390 px.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

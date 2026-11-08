@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const ici = dirname(fileURLToPath(import.meta.url));
 const dos = process.argv[2] || mkdtempSync(join(tmpdir(), "option-"));
-const pagePath = process.argv[3] || join(ici, "../../prop/challenge-option3.html");
+const pagePath = process.argv[3] || join(ici, "../../prop/challenge-option5.html");
 mkdirSync(dos, { recursive: true });
 let src = readFileSync(pagePath, "utf8");
 
