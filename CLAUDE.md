@@ -431,8 +431,7 @@ ajoute ») : `prop/challenge-option9.html`, https://claude.ai/artifact/GjneqAbWM
   fermée une fois pour toutes (`UI.intro`) ; le rappel « chiffres d'exemple » ne vient qu'après.
 
 **v10 — le journal du soir, et chaque onglet répond** (8 novembre 2026, « améliore tout, carte
-blanche ») : `prop/challenge-option10.html`, https://claude.ai/artifact/878witkZZ6yLD7w33eRm43.
-**Dernière version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9.
+blanche ») : `prop/challenge-option10.html`, https://claude.ai/artifact/878witkZZ6yLD7w33eRm43. Bloc MODELE identique à la v9.
 - **Ma journée** (Compte) : on tape le P&L du soir, `addDay` met à jour profit, plus haut de
   clôture, jours, meilleur jour et jours qualifiants (≥ `qmin`, en financé) ; chaque journée
   garde l'état d'avant, d'où une annulation exacte (`undoDay`) ; effacement en deux touchers ;
@@ -444,6 +443,21 @@ blanche ») : `prop/challenge-option10.html`, https://claude.ai/artifact/878witk
   `data-def="0"` sont fermées à la première visite (cartes d'indicateurs), les autres ouvertes.
 - **Banc** : `panneau.mjs` ajoute 8 contrôles (trois journées → 250 / 300 / 3 / 300, annulation
   → 100 / 2 jours, effacement à confirmer, réponses d'Option et de Quant), soit 26.
+
+**v11 — la matière et la lumière** (8 novembre 2026, « améliore encore surtout le visuel à
+fond ») : `prop/challenge-option11.html`, https://claude.ai/artifact/EDk2d1ZvTAVeZ7UNr4EbVS.
+**Dernière version : c'est elle qu'on améliore.** Bloc MODELE identique à la v9 ; seul le
+style change, plus deux fonctions d'affichage (`ring`, `kpiRC`).
+- Fond à halos (blanc en haut, vert en bas à gauche) et trame de points fixe ; trait de
+  lumière sous l'en-tête ; cartes à liseré dégradé (`padding-box` / `border-box`, sauf
+  `.banner` et `.intro` qui gardent leur fond) ; grand chiffre en dégradé avec halo de son
+  signe (`--hg`, vert ou rouge, posé par `renderHero`) ; anneaux de progression sur les
+  pourcentages (payés, évaluation, réussite, au moins un retrait, budget) ; lueur `#glow` sur
+  les courbes principales ; grilles pointillées ; info-bulles en verre dépoli.
+- **Piège** : un filtre SVG en unités de boîte englobante efface une ligne parfaitement
+  horizontale (hauteur nulle) — la médiane de trésorerie l'est souvent. `#glow` est en
+  `filterUnits="userSpaceOnUse"`. Et `text-shadow` sur un texte en `background-clip:text` se
+  peint par-dessus le dégradé : le halo du grand chiffre passe par `filter: drop-shadow`.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
