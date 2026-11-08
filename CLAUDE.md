@@ -570,6 +570,21 @@ fonctions pures (rien d'autre ne change : 90 + 53 contrôles toujours verts).
   l'ancienne figure 0,5 s dans `g.old` ; `panneau.mjs` hérite de l'état laissé par ses propres essais (profit 100 $ après
   l'annulation) — comparer avant / après plutôt qu'à une valeur écrite.
 
+**v20 — le calcul en parallèle** (même nuit) : `prop/challenge-option20.html`,
+https://claude.ai/artifact/SGxPRqRNs9vR6fWfpXuycc. Bloc MODELE identique à la v19.
+- **Bloc `TRAVAIL`** (après MODELE:FIN) : `dayOf` (journée décrite par une donnée `{k:"t",S}` / `{k:"j",J}`, jamais par
+  une fonction), `runJob` (travaux `compte`, `libre`, `ev`, `cell`), `mergeCompte`, `mergeLibre`. Les workers sont faits
+  d'un Blob = texte des blocs MODELE + TRAVAIL lus dans `document.currentScript` (`SRC`) : même code qu'en fil principal.
+- File unique (`exec`) : workers (jusqu'à 4, `hardwareConcurrency − 1`) ou repli `mainRun` par tranches de 8 ms si
+  `Worker` manque ou échoue (`poolFail` relance ici ce qui était en cours). Groupe + génération par travail : `cancelOld`
+  retire de la file une génération dépassée. Découpage **fixe** (250 challenges, 100 comptes libres, 500 pour les
+  leviers), fusion dans l'ordre : chiffres identiques avec et sans workers, sur toute machine.
+- `canvasFit` lit la taille d'un `ResizeObserver` : `getBoundingClientRect` à chaque image forçait une mise en page
+  (½ s cumulée pendant le calcul au CPU ÷4). Le résultat se rend en trois tâches (`renderResultat`, `RRT`).
+- Mesures (CPU ÷4, 4 cœurs) : calcul complet 9,8 s → 3,6 s, pire image 283 ms (v19) → 83 ms ; à pleine vitesse
+  2,0 s → 1,6 s (chargement compris). Banc : `node tools/challenge-option/parallele.mjs <dossier de rendu.mjs> [÷cpu]`
+  — mêmes chiffres sur quatre onglets avec et sans workers, puis temps et pire image après le chargement.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
