@@ -635,14 +635,38 @@ TRAVAIL identiques à la v20 ; nouveau bloc pur **IMPORT** (`lireCSV`, `lireMont
   colonnes ont été prises. Si sa plateforme diffère, demander une ligne d'en-tête et l'ajouter à `CSVCOL`.
 - **Piège v23** : `display:flex` sur un `li` qui mêle `<b>` et texte nu fait deux éléments flex — envelopper le texte.
 
-**v24 — finition** (même nuit) : `prop/challenge-option24.html`, https://claude.ai/artifact/8EqQThhxydaC5f6YWUSh7N,
-**dernière version, c'est elle qu'on améliore**. Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
+**v24 — finition** (même nuit) : `prop/challenge-option24.html`, https://claude.ai/artifact/8EqQThhxydaC5f6YWUSh7N.
+Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
 - « Avant ta séance » (`#plan`, `renderPlan`, appelé en fin de `renderEtat`) en tête de Compte : taille max (k pertes
   d'avance), perte max du jour, plafond du jour (`cons × objectif effectif`) et reste à gagner en évaluation, jour
   qualifiant et retrait en financé ; alerte « plancher proche » sous un quart du drawdown. Prochaine séance : aujourd'hui
   en semaine, lundi le week-end.
 - « Copier le résumé » ajoute le compte réel (phase, profit, plancher, marge, chance) et les retraits notés.
 - `--dim` passe de #6c6c72 à #7d7d84 : 4,7:1 sur la carte au lieu de 3,9:1 pour tous les textes secondaires.
+
+**v25 — ergonomie et graphiques des captures Marius** (9 novembre 2026, « corrige les erreurs ux ; voici des graphiques,
+ajoute-les mais dans la DA de l'app ») : `prop/challenge-option25.html`, https://claude.ai/artifact/2yaHHBf5WJVaFqoTPrQbJZ,
+**dernière version, c'est elle qu'on améliore**. Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
+- **Défauts d'ergonomie corrigés** (relevés sur captures pleine page, compte rempli de 12 séances) : deux grandes cartes
+  d'accueil repoussaient le chiffre principal à 1 100 px → une seule carte compacte (`.steps2`, ligne « Nouveau »)
+  *après* le héros, bandeau « exemple » juste sous le héros, carte `#news` supprimée ; Compte réordonné (Avant ta séance
+  avec le curseur des pertes d'avance → Ma journée → Où tu en es → Tes séances → calendrier → retraits → projections →
+  « État du compte » en dernier) ; carte « Taille pour aujourd'hui » supprimée (doublon) ; « Objectif » au lieu du
+  « Reste à gagner » en double ; calendrier sans semaines futures ; effacer l'historique vide aussi le calendrier (il
+  restait affiché) ; `.qb`, `.ib.sm` 34 px, `.seg.sm` 34 px ; pastille « En évaluation » lisible.
+- **Tes séances face à tes réglages** (`#et-ana`, `renderAna`, `anaSim`) : 400 échantillons de n séances tirés avec
+  `ST.dayF` (graine fixe, mémoïsés) → éventail P5–P95 / P25–P75 / médiane sous la courbe réelle (ancré à la dernière
+  remise à zéro : changement de phase ou retrait, `anaAnchor`), drawdown réel (`#p20`) face au recul médian des réglages
+  et au drawdown du challenge, P&L moyen par jour de semaine (`#p21`), tableau réel / réglages (9 lignes + taux de gain
+  si les trades sont comptés, point = hors de la bande des 9 sur 10). Rien en mode journal (comparaison circulaire).
+- **Quant** : « Combien sur une année ? » (`#p22`, deux panneaux sur le même axe : histogramme des 2 000 années avec
+  centiles 5/25/50/75/95, et chance de faire au moins x) ; « Une année, trajectoire par trajectoire » (`P.tj` 2d / 3d) :
+  600 années (`trajData`), nuage en mélange additif sur canevas (`drawCloud`) ou relief `Surf3D` en mode traits
+  (`D.nobar`, `over24` : rangées de la pire, rose, à la meilleure, verte ; centiles en blanc).
+- **Pièges v25** : le placeur jugeait l'encadré (texte + 6 px) contre le cadre — une étiquette ancrée à `x1 − 4`
+  n'était jamais libre, et les étiquettes facultatives disparaissaient sans bruit (il juge maintenant le texte) ; une
+  étiquette d'axe 3D à gauche ou à droite sortait du canevas (« meilleure ») : `Surf3D` la recale ; `renderJournal`
+  sortait avant `renderCal` quand l'historique était vide.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

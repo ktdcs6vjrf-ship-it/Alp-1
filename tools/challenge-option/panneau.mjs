@@ -217,10 +217,11 @@ if (await p.evaluate(() => !!document.querySelector("#et-pay"))) {
 if (await p.evaluate(() => !!document.querySelector("#csv-prev"))) {
   const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => document.querySelector(x).textContent, s);
   await p.goto(U + "#resultat"); await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await p.waitForTimeout(2000);
-  ok(await vu("#news"), "première visite de la version : la carte des nouveautés s'affiche");
-  await (await p.$("#news")).screenshot({ path: join(dos, `nouveautes-${W}.png`) });
-  await p.click("#b-news-x"); await p.reload(); await p.waitForTimeout(1500);
-  ok(!(await vu("#news")), "fermée, elle ne revient pas");
+  const nv = (await p.evaluate(() => !!document.querySelector("#news"))) ? "#news" : "#intro";   // v25 : les nouveautés vivent dans l'accueil
+  ok(await vu(nv) && (nv === "#news" || /Nouveau/.test(await lire("#intro"))), "première visite de la version : l'accueil dit ce qui est nouveau");
+  await (await p.$(nv)).screenshot({ path: join(dos, `nouveautes-${W}.png`) });
+  await p.click(nv === "#news" ? "#b-news-x" : "#b-intro-x"); await p.reload(); await p.waitForTimeout(1500);
+  ok(!(await vu(nv)), "fermé, il ne revient pas");
   const csv = `symbol,_priceFormat,_priceFormatType,_tickSize,buyFillId,sellFillId,qty,buyPrice,sellPrice,pnl,boughtTimestamp,soldTimestamp,duration
 MNQZ6,-2,0,0.25,1,2,4,21000.00,21010.00,$80.00,11/03/2026 09:31:05,11/03/2026 09:35:10,4min
 MNQZ6,-2,0,0.25,3,4,4,21020.00,21000.00,$(160.00),11/03/2026 10:01:00,11/03/2026 10:02:00,1min
@@ -263,6 +264,43 @@ if (await p.evaluate(() => !!document.querySelector("#plan"))) {
   let txt = await p.evaluate(() => { const t = document.querySelector("#copy-ta"); return t.hidden ? "" : t.value; });
   if (!txt) txt = await p.evaluate(() => navigator.clipboard.readText().catch(() => ""));
   ok(/Compte réel \(évaluation\) : profit \+200/.test(txt), `le résumé copié porte le compte réel (« ${(txt.split("\n").find(l => /Compte réel/.test(l)) || "").slice(0, 70)} »)`);
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v25 et suivantes : l'accueil après le chiffre, Compte réordonné, tes séances face à tes réglages, une année en distribution, nuage et relief
+if (await p.evaluate(() => !!document.querySelector("#et-ana"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => document.querySelector(x).textContent, s);
+  await p.goto(U + "#resultat"); await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await p.waitForTimeout(2500);
+  const ord = await p.evaluate(() => { const h = document.querySelector(".hero").getBoundingClientRect().top, i = document.querySelector("#intro").getBoundingClientRect().top; return { h, i, vh: innerHeight }; });
+  ok(ord.h < ord.i && ord.h < ord.vh * 0.5, `le chiffre principal vient avant l'accueil, dans la moitié haute de l'écran (héros à ${Math.round(ord.h)} px)`);
+  await p.goto(U + "#compte"); await p.waitForTimeout(1500);
+  const top = await p.evaluate(() => ({ plan: document.querySelector("#plan").getBoundingClientRect().top, jr: document.querySelector("#et-jr").getBoundingClientRect().top, etat: document.querySelector("#g-etat").getBoundingClientRect().top, ek: !!document.querySelector("#plan #r-ek"), size: !!document.querySelector("#et-size") }));
+  ok(top.plan < top.jr && top.jr < top.etat && top.ek && !top.size, "Compte : avant ta séance (avec son curseur), puis la saisie du soir, l'état du compte plus bas, plus de carte Taille en double");
+  const S = [["2026-10-20","240","3","2"],["2026-10-21","-180","2","0"],["2026-10-22","95","2","1"],["2026-10-23","410","3","3"],["2026-10-26","-60","2","1"],["2026-10-27","130","2","1"],["2026-10-28","-220","2","0"],["2026-10-29","310","3","2"]];
+  for (const [d, v, n, w] of S) { await p.fill("#f-jd", d); await p.fill("#f-jr", v); await p.fill("#f-jn", n); await p.fill("#f-jw", w); await p.press("#f-jr", "Enter"); await p.waitForTimeout(120); }
+  await p.waitForTimeout(800);
+  const an = await p.evaluate(() => ({ vu: !document.querySelector("#et-ana").hidden, ans: document.querySelector("#ana-ans").textContent, fan: document.querySelectorAll("#s17 > .fanv1").length, rows: document.querySelectorAll("#mt .l").length, dd: document.querySelectorAll("#s20 > .ploss").length, wk: document.querySelectorAll("#s21 > .lb-g,#s21 > .lb-l").length }));
+  ok(an.vu && /cumul de \+725/.test(an.ans.replace(/\s/g, " ")) && /bande/.test(an.ans), `tes séances : cumul +725 $ situé dans la bande des réglages (« ${an.ans.slice(0, 80)}… »)`);
+  ok(an.fan === 1 && an.rows >= 9 && an.dd === 1 && an.wk === 5, `éventail, tableau (${an.rows} lignes), drawdown réel et cinq jours de semaine dessinés`);
+  await p.evaluate(() => document.querySelector("#et-ana").scrollIntoView({ block: "start" })); await p.waitForTimeout(1300);
+  await (await p.$("#et-ana")).screenshot({ path: join(dos, `seances-${W}.png`) });
+  await (await p.$("#et-cal")).screenshot({ path: join(dos, `cal25-${W}.png`) });
+  const cal = await p.evaluate(() => document.querySelectorAll("#cal .w").length);
+  ok(cal <= 6, `le calendrier n'empile pas de semaines vides (${cal} semaines)`);
+  await p.click("#b-jr-clr"); await p.click("#b-jr-clr"); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => document.querySelector("#et-cal").hidden && document.querySelector("#et-ana").hidden), "effacer l'historique cache aussi le calendrier et l'analyse");
+  await p.goto(U + "#quant"); await p.waitForTimeout(6000);
+  const q = await p.evaluate(() => ({ a7: document.querySelector("#aq7").textContent, bars: document.querySelectorAll("#s22 > .bar-g,#s22 > .bar-l").length, a8: document.querySelector("#aq8").textContent }));
+  ok(/9 fois sur 10/.test(q.a7) && q.bars > 15, `une année : distribution (${q.bars} barres) et réponse (« ${q.a7.slice(0, 60)}… »)`);
+  const ink = sel => p.evaluate(x => { const c = document.querySelector(x), d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 16) if (d[i] > 0) n++; return n; }, sel);
+  await p.evaluate(() => document.querySelector("#p23").scrollIntoView({ block: "center" })); await p.waitForTimeout(600);
+  ok(/médiane finit/.test(q.a8) && (await ink("#c23")) > 2000, "nuage de 600 trajectoires dessiné, réponse écrite");
+  await (await p.$("#p23")).screenshot({ path: join(dos, `nuage-${W}.png`) });
+  await p.click('#sg-tj [data-v="3d"]'); await p.waitForTimeout(1500);
+  ok(await vu("#c24") && !(await vu("#c23")) && (await ink("#c24")) > 2000, "le relief remplace le nuage et se dessine");
+  await (await p.$("#p24")).screenshot({ path: join(dos, `relief25-${W}.png`) });
+  await (await p.$("#p22")).screenshot({ path: join(dos, `annee-${W}.png`) });
+  await p.click('#sg-tj [data-v="2d"]');
+  ok(await largeur(), "aucun défilement horizontal");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
