@@ -1,5 +1,5 @@
 // Banc des commandes de la v8 (et suivantes) : panneau Paramètres, cartes repliables, explications « ? », relief ;
-// v26 : plans de challenge, feuille de route, paper.
+// v26 : plans de challenge, feuille de route, paper ; v27 : journal de trades en R et scellement.
 // Usage : node tools/challenge-option/panneau.mjs <dossier de rendu.mjs> [largeur]   (lancer rendu.mjs d'abord : il écrit apercu.html)
 // Vérifie, dans le vrai navigateur, que chaque bouton cache puis rend ce qu'il commande, que le panneau change le résultat
 // depuis l'onglet Leviers, et qu'aucune erreur ni aucun défilement horizontal n'apparaît. Écrit des captures. Code de sortie 1 au premier défaut.
@@ -333,7 +333,8 @@ if (await p.evaluate(() => !!document.querySelector("#plan-card"))) {
   // feuille de route
   await p.goto(U + "#strategie"); await p.waitForTimeout(1500);
   const rt = await p.evaluate(() => ({ prog: document.querySelector("#rt-prog").textContent, open: document.querySelectorAll(".rph.op").length, ph: document.querySelectorAll(".rph").length }));
-  ok(/\/ 21/.test(rt.prog) && rt.ph === 6 && rt.open === 1, `six phases, la phase en cours seule ouverte (${rt.prog.replace(/\s+/g, " ").slice(0, 40)})`);
+  const tot0 = +((rt.prog.match(/\/ (\d+)/) || [])[1] || 0);
+  ok(tot0 >= 21 && rt.ph === 6 && rt.open === 1, `six phases, la phase en cours seule ouverte (${rt.prog.replace(/\s+/g, " ").slice(0, 40)})`);
   await p.click('.rhead[data-ph="d"]'); await p.waitForTimeout(300);
   const man = await p.evaluate(() => { const b = [...document.querySelectorAll('.rph.op .rst:not(.auto) .rck')][0]; return b && b.dataset.ck; });
   await p.click(`[data-ck="${man}"]`); await p.waitForTimeout(300);
@@ -344,7 +345,7 @@ if (await p.evaluate(() => !!document.querySelector("#plan-card"))) {
   await p.click("#b-rt-edit"); await p.waitForTimeout(200); await p.click('[data-add="c"]'); await p.waitForTimeout(200); await p.keyboard.type("Comparer trois plans");
   await p.click("#b-rt-edit"); await p.waitForTimeout(300); await p.reload(); await p.waitForTimeout(1500);
   const apres = await p.evaluate(id => ({ v: document.querySelector(`[data-ck="${id}"]`)?.getAttribute("aria-pressed"), n: document.querySelector("#rt-prog").textContent }), man);
-  ok(apres.v === "true" && /\/ 22/.test(apres.n), "coche et étape ajoutée gardées après rechargement");
+  ok(apres.v === "true" && apres.n.includes("/ " + (tot0 + 1)), "coche et étape ajoutée gardées après rechargement");
   await p.screenshot({ path: join(dos, `route-${W}.png`) });
   // le paper
   await p.click('#sg-sv [data-v="paper"]'); await calc(); await p.waitForTimeout(600);
@@ -368,7 +369,57 @@ if (await p.evaluate(() => !!document.querySelector("#plan-card"))) {
   await p.fill("#f-imp", code); await p.click("#b-imp"); await calc();
   ok(/MFF Pro Plan\*/.test(await chips()) && await p.inputValue("#x-titre") === "Le rebond du VWAP", `la sauvegarde rend plans et paper (${await chips()})`);
   await p.goto(U + "#strategie"); await p.click('#sg-sv [data-v="route"]').catch(() => {}); await p.waitForTimeout(1200);
-  ok(/\/ 22/.test(await lire("#rt-prog")), "et la feuille de route, étape ajoutée comprise");
+  ok((await lire("#rt-prog")).includes("/ " + (tot0 + 1)), "et la feuille de route, étape ajoutée comprise");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v27 : journal de trades en R, scellement, preuve hors échantillon
+if (await p.evaluate(() => !!document.querySelector("#tl-card"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => { const e = document.querySelector(x); return e ? e.textContent.replace(/\s+/g, " ").trim() : ""; }, s);
+  const calc = async () => { await p.waitForTimeout(500); await p.waitForFunction(() => { const g = document.querySelector("#prog"); return g && g.hidden && !document.querySelector("main .stale"); }, null, { timeout: 60000 }); await p.waitForTimeout(300); };
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#strategie"); await p.reload(); await calc();
+  await p.click('#sg-sv [data-v="trades"]'); await p.waitForTimeout(400);
+  ok(/41,3\s%/.test(await lire("#tl-ans")) && /\+1,5\sR/.test(await lire("#tl-win")), `journal vide : la barre à passer est dite (« ${(await lire("#tl-ans")).slice(0, 70)}… »)`);
+  for (const id of ["#tl-win", "#tl-loss", "#tl-loss", "#tl-be"]) await p.click(id);
+  await p.fill("#tl-r", "2,25"); await p.press("#tl-r", "Enter"); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => document.querySelectorAll("#tl-last .tchip").length) === 5 && /5 trades notés/.test(await lire("#tl-ans")), "cinq trades notés d'un toucher, dont une valeur libre");
+  await p.click(".tl-paste summary"); await p.fill("#tl-ta", "+ - - + = 1,5 -1 x"); await p.click("#tl-ta-add"); await p.waitForTimeout(300);
+  ok(/12 trades notés/.test(await lire("#tl-ans")), `une série collée ajoute sept trades, le morceau illisible est écarté (${await lire("#tl-pill")})`);
+  await p.click("#tl-undo"); await p.waitForTimeout(200);
+  ok(/11 trades notés/.test(await lire("#tl-ans")), "annuler retire le dernier trade");
+  ok(await p.evaluate(() => document.querySelectorAll("#tl-fig svg path.pq-f1").length) === 1 && (await p.evaluate(() => document.querySelectorAll("#tl-kpis .kpi").length)) === 6, "statistiques et éventail de la loi nulle dessinés");
+  await p.click("#b-seal"); await p.waitForTimeout(150);
+  ok(/Confirmer/.test(await lire("#b-seal")) && !(await p.evaluate(() => !!document.querySelector(".seal"))), "sceller demande une confirmation");
+  await p.click("#b-seal"); await p.waitForTimeout(600);
+  const sb = await lire("#seal-box");
+  ok(/Scellée le/.test(sb) && /Empreinte [0-9a-f]{4} [0-9a-f]{4} [0-9a-f]{4} [0-9a-f]{4}/.test(sb) && /0 trade depuis/.test(sb), `stratégie scellée avec empreinte (« ${sb.slice(0, 90)}… »)`);
+  ok(/Aucun trade depuis/.test(await lire("#tl-ans")), "après le scellement, le compteur des trades jugés repart de zéro");
+  for (let i = 0; i < 3; i++) await p.click("#tl-win"); await p.click("#tl-loss"); await p.waitForTimeout(300);
+  ok(/4 trades depuis le scellement/.test(await lire("#tl-ans")) && /p-valeur/.test(await lire("#tl-ans")) && await p.evaluate(() => document.querySelectorAll("#tl-last .tchip.oos").length) === 4, "les trades suivants sont jugés seuls, avec leur p-valeur");
+  await p.goto(U + "#reglages"); await calc();
+  await p.evaluate(() => { const r = document.querySelector("#r-stop"); r.value = "25"; r.dispatchEvent(new Event("input", { bubbles: true })); }); await calc();
+  await p.goto(U + "#strategie"); await p.waitForTimeout(1200);
+  ok(/Changé depuis : stop \(20 → 25\)/.test(await lire("#seal-box")), "une règle changée après le scellement se voit");
+  // la feuille de route et le paper suivent le journal
+  await p.click('#sg-sv [data-v="route"]'); await p.waitForTimeout(400);
+  const rt = await p.evaluate(() => ({ n: document.querySelector("#rt-prog").textContent, seal: [...document.querySelectorAll(".rhead")].map(h => h.textContent).join("|") }));
+  ok(/\/ 23/.test(rt.n), `la feuille de route compte les deux étapes nouvelles (${rt.n.replace(/\s+/g, " ").slice(0, 20)})`);
+  await p.click('.rhead[data-ph="s"]').catch(() => {}); await p.waitForTimeout(200);
+  if (!(await p.evaluate(() => !!document.querySelector('.rph.op [data-ck="d4"]')))) await p.click('.rhead[data-ph="s"]');
+  ok(await p.evaluate(() => document.querySelector('[data-ck="d4"]')?.getAttribute("aria-pressed")) === "true", "« Sceller la stratégie » s'est cochée seule");
+  await p.click('#sg-sv [data-v="paper"]'); await calc(); await p.waitForTimeout(500);
+  const pp = await p.evaluate(() => ({ t: document.querySelector("#paper").textContent, fig: document.querySelectorAll("#paper figure svg").length, ann: [...document.querySelectorAll("#paper h2")].some(h => /Annexe A/.test(h.textContent)) }));
+  ok(/notés après le scellement/.test(pp.t) && /scellés le/.test(pp.t) && pp.ann && /ont changé depuis : stop/.test(pp.t), "le paper juge les trades hors échantillon, cite le scellement, son annexe et le changement");
+  // la sauvegarde porte le journal et le scellement
+  await p.goto(U + "#reglages"); await calc(); await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" }));
+  await p.click("#b-exp"); await p.waitForTimeout(500);
+  let code = await p.evaluate(() => { const t = document.querySelector("#exp-ta"); return t.hidden ? "" : t.value; });
+  if (!code) code = await p.evaluate(() => navigator.clipboard.readText().catch(() => ""));
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await calc();
+  await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" })); await p.fill("#f-imp", code); await p.click("#b-imp"); await calc();
+  await p.goto(U + "#strategie"); await p.click('#sg-sv [data-v="trades"]').catch(() => {}); await p.waitForTimeout(800);
+  ok(/4 trades depuis le scellement/.test(await lire("#tl-ans")) && /Scellée le/.test(await lire("#seal-box")), "la sauvegarde rend journal et scellement");
+  await p.screenshot({ path: join(dos, `trades-${W}.png`), fullPage: true });
+  ok(await largeur(), "aucun défilement horizontal dans le journal de trades");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");

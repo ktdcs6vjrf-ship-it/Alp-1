@@ -671,8 +671,7 @@ Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
 **v26 — plans modifiables, feuille de route, paper** (9 novembre 2026, « personnaliser les data option : la prime, le retrait…,
 avec un titre comme MFF Pro Plan qu'on peut modifier ; créer mon paper type SSRN sur ma stratégie ; un espace pour voir le paper
 et mon plan de trading en road map interactive ») : `prop/challenge-option26.html`, https://claude.ai/artifact/MRKCjbJH3TUvutYcVmdGeD,
-**dernière version, c'est elle qu'on améliore**. L'utilisateur développe sa stratégie et donnera ses rendements : le paper les
-attend (champs `TX`, journal, bilan).
+L'utilisateur développe sa stratégie et donnera ses rendements : le paper les attend (champs `TX`, journal, bilan).
 - **Le bloc MODELE change** : `demande(R,x,f,q,c0,dc,bd,np)`, pure, partagée par `simCompte` et l'onglet Compte, ajoute tampon
   (`buf`), séances entre deux demandes (`cad`), profit minimal du cycle (`cyc`), meilleur jour du cycle (`fcons`), premier
   plafond (`wmax1`) et montant visé (`cible`) ; sans eux, l'ancienne règle exactement. Option : `morceaux(p)`, `demY`,
@@ -699,6 +698,28 @@ attend (champs `TX`, journal, bilan).
   glyphe de repli en Geist — `p<sub>0</sub>` dans les tables ; un résumé justifié à 390 px ouvre des trous — justifié au-delà de
   640 px seulement ; « l'avantage de ALP-0 » — élision par `de()` ; un renvoi « table n » doit compter les tables réellement
   présentes avant lui (une section vide n'en a pas).
+
+**v27 — journal de trades en R et scellement** (9 novembre 2026, « je vais dev ma stratégie de 0, continue ») :
+`prop/challenge-option27.html`, https://claude.ai/artifact/DNtwJgRLDJNXFfybMt1Cpj, **dernière version, c'est elle qu'on
+améliore**. L'utilisateur part de zéro et donnera ses rendements plus tard.
+- **Bloc MODELE** : `lireSerie` (série collée : nombres à virgule, « + » gain visé, « - » stop, « = » nul, lettres), `netR`,
+  `statsR` (taux, espérance nette, écart-type, t, facteur de profit, pertes d'affilée, recul en R), `fanR` (loi nulle : K suites
+  au taux sans avantage, gain wR et perte lR nets, p0 = lR / (wR + lR)). Frais en R d'après les réglages : commission sur chaque
+  trade (`cw`), glissement en plus sur un stop (`cl`).
+- **Stratégie → Trades** (`#sv-trades`, `P.sv` route / trades / paper) : un toucher par trade (+R visé, −1 R, 0 R) ou une valeur
+  libre, série collée, annuler, tout effacer en deux touchers ; six indicateurs et le cumul net en R dans l'éventail de 400 suites
+  nulles (depuis le scellement s'il existe). Journal `TL` (`…-trades-v27`, sauvegarde `tl`).
+- **Scellement** : fige les réglages (`SK`) et les règles écrites (`SXK`) avec une empreinte SHA-256 (repli FNV-1a) ; les trades
+  notés ensuite sont hors échantillon et `bilan()` (journal d'abord, puis Quant, puis séances) ne juge qu'eux ; `sealDrift()` dit
+  ce qui a changé depuis ; re-sceller remet le compteur à zéro. Le paper le cite (2.1, 3, 5.1, 7) et ajoute l'annexe A.
+- **Feuille de route** : deux étapes automatiques (`seal`, `bt100`), ajoutées aussi aux feuilles gardées (`rtMigrate`, à leur
+  place dans leur phase) ; 23 étapes.
+- **Contrôles** : `node tools/challenge-option/controle-trades.mjs [page]` (24 : lecture, statistiques à la main, coûts en R =
+  tradeStats, loi nulle calibrée — 10 % des suites nulles hors bande à ± 2 points) ; `panneau.mjs` + 15 (125 en tout, verts à
+  390 et 1 280 px), ses comptes d'étapes ne sont plus écrits en dur.
+- **Pièges v27** : `p.click("summary")` visait « Réglages avancés » — viser `.tl-paste summary` ; `num(v,…,2)` puis `/,?0+$/`
+  transforme « 10 » en « 1 » — `rN()` ne retire que les zéros d'après la virgule ; « nº » sortait « no » en Geist — « n° » ;
+  l'étiquette « scellée » et celle du cumul se chevauchaient en haut — la première passe en bas du trait.
 
 **Comparaison LucidPro 100K / MyFundedFutures Builder 100K** (9 novembre 2026) : règles lues sur les **captures des
 tableaux de bord** envoyées par l'utilisateur (les sites ne se résolvent pas depuis le conteneur). Communes : objectif
