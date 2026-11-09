@@ -1,6 +1,6 @@
 // Banc des commandes de la v8 (et suivantes) : panneau Paramètres, cartes repliables, explications « ? », relief ;
 // v26 : plans de challenge, feuille de route, paper ; v27 : journal de trades en R et scellement ;
-// v28 : la stratégie dans le paper, setups, preuve par l'espérance en R.
+// v28 : la stratégie dans le paper, setups, preuve par l'espérance en R ; v29 : sens de la tendance, défauts non enregistrés.
 // Usage : node tools/challenge-option/panneau.mjs <dossier de rendu.mjs> [largeur]   (lancer rendu.mjs d'abord : il écrit apercu.html)
 // Vérifie, dans le vrai navigateur, que chaque bouton cache puis rend ce qu'il commande, que le panneau change le résultat
 // depuis l'onglet Leviers, et qu'aucune erreur ni aucun défilement horizontal n'apparaît. Écrit des captures. Code de sortie 1 au premier défaut.
@@ -454,6 +454,23 @@ if (await p.evaluate(() => !!document.querySelector("#tl-gs"))) {
   await p.evaluate(() => document.querySelector("#paper .apr")?.scrollIntoView({ block: "start" })); await p.waitForTimeout(300);
   await p.screenshot({ path: join(dos, `paper28-${W}.png`) });
   ok(await largeur(), "aucun défilement horizontal");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v29 : trader uniquement dans le sens de la tendance ; les défauts du paper ne s'enregistrent plus
+if (await p.evaluate(() => document.documentElement.innerHTML.includes("uniquement dans le sens de la tendance"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => { const e = document.querySelector(x); return e ? e.textContent.replace(/\s+/g, " ").trim() : ""; }, s);
+  const calc = async () => { await p.waitForTimeout(500); await p.waitForFunction(() => { const g = document.querySelector("#prog"); return g && g.hidden && !document.querySelector("main .stale"); }, null, { timeout: 60000 }); await p.waitForTimeout(300); };
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#reglages"); await p.reload(); await calc();
+  // une sauvegarde de la v28 portait l'ancienne entrée par défaut : elle cède la place à la nouvelle
+  await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" }));
+  await p.fill("#f-imp", JSON.stringify({ v: 1, app: "option-challenge", P: { sv: "paper" }, tx: { entree: "Prendre position au début de la structure.", nom: "Structure et tendance" } }));
+  await p.click("#b-imp"); await calc();
+  await p.goto(U + "#strategie"); await calc(); await p.waitForTimeout(600);
+  const t = await lire("#paper");
+  ok(/uniquement dans le sens de la tendance/.test(t) && /la tendance nouvelle qui donne ce sens/.test(t) && /Structure et tendance/.test(t), "la règle de tendance passe dans le paper, l'ancienne entrée par défaut est remplacée");
+  ok(await p.evaluate(() => document.querySelectorAll("#paper .apr li").length) === 7, "les sept définitions restent à préciser");
+  const st = await p.evaluate(() => JSON.parse(localStorage.getItem("alp-option-challenge-paper-v26") || "{}"));
+  ok(st.nom === "Structure et tendance" && !("tend" in st) && !("entree" in st), `seuls les champs écrits s'enregistrent (${Object.keys(st).join(", ")})`);
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");

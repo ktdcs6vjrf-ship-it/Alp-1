@@ -722,7 +722,7 @@ ses rendements plus tard.
   l'étiquette « scellée » et celle du cumul se chevauchaient en haut — la première passe en bas du trait.
 
 **v28 — sa stratégie dans le paper** (9 novembre 2026) : `prop/challenge-option28.html`,
-https://claude.ai/artifact/4qwzTqhN6ExVQyRpgKuiWt, **dernière version, c'est elle qu'on améliore**.
+https://claude.ai/artifact/4qwzTqhN6ExVQyRpgKuiWt.
 - **La stratégie de l'utilisateur, en ses mots** (9 novembre 2026) : « identifier la tendance ; identifier les structures ;
   prendre position sur le début de la structure ; viser loin (max pain) si on a eu un changement de structure donc de
   tendance, ou viser fin de structure et faire du trend following ». Elle est le défaut des champs du paper (`TX0`, sous les
@@ -742,6 +742,15 @@ https://claude.ai/artifact/4qwzTqhN6ExVQyRpgKuiWt, **dernière version, c'est el
 - **Pièges v28** : attendre plus de 50 % de puissance à 150 trades pour +0,25 R était faux (≈ 41 % en théorie, 31 % mesuré
   avec l'asymétrie) — l'attente d'un contrôle se calcule, elle ne s'estime pas ; un « ? » précédé d'une espace ordinaire passe
   seul à la ligne — espace insécable.
+
+**v29 — le sens de la tendance** (9 novembre 2026, « trader uniquement dans le sens de la tendance aussi ») :
+`prop/challenge-option29.html`, https://claude.ai/artifact/Twf6njZR43qpXpuDNxkCTs, **dernière version, c'est elle qu'on
+améliore**. Règle ajoutée à la stratégie : **trader uniquement dans le sens de la tendance** ; après un changement de
+structure, c'est la tendance nouvelle qui donne le sens. Elle passe dans l'entrée par défaut (`TX0.entree`), la question de la
+tendance (`DEFQ.tend`) et le paragraphe du paper qui suit les règles. **Piège corrigé** : la v28 enregistrait tout `TX`,
+défauts compris — une sauvegarde gardait l'ancienne formulation par défaut, qui masquait la nouvelle et passait pour une
+définition. Désormais seuls les champs écrits s'enregistrent (`txPropre`, stockage et sauvegarde), et une ancienne
+formulation par défaut connue (`TXV`) est remplacée à la lecture (`txMaj`). `panneau.mjs` + 3 (137, verts à 390 et 1 280 px).
 
 **Comparaison LucidPro 100K / MyFundedFutures Builder 100K** (9 novembre 2026) : règles lues sur les **captures des
 tableaux de bord** envoyées par l'utilisateur (les sites ne se résolvent pas depuis le conteneur). Communes : objectif
