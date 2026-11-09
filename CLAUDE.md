@@ -753,7 +753,7 @@ formulation par défaut connue (`TXV`) est remplacée à la lecture (`txMaj`). `
 
 **v30 — le paper au format SSRN, blanc ou nuit** (9 novembre 2026, « exactement le même style que les papers SSRN avec
 graphique intégré, option mode nuit ou blanc ») : `prop/challenge-option30.html`,
-https://claude.ai/artifact/4UF5H6HCtFCy2xYcAuV3yA, **dernière version, c'est elle qu'on améliore**. Deux pages (`.feuille`) :
+https://claude.ai/artifact/4UF5H6HCtFCy2xYcAuV3yA. Deux pages (`.feuille`) :
 page de titre (petites capitales « Document de travail », titre gras centré, auteur, affiliation, date, « Résumé » centré,
 mots-clés, JEL), puis le corps ; police **STIX Two Text** (Times) ; titres numérotés en gras ; paragraphes justifiés, césurés,
 à retrait d'1,5 em sauf après un titre ; tables à trois filets ; légendes « Table n : » au-dessus, « Figure n : » dessous ;
@@ -764,6 +764,15 @@ fins de structure ; sans données). Bascule **Blanc / Nuit** (`P.ppm`, variables
 pas l'enseigne. **Piège v30** : la classe `.sheet` était déjà celle du panneau Paramètres (`position: fixed`) — les pages du paper
 avaient une hauteur nulle ; elles s'appellent `.feuille`. `panneau.mjs` + 5 (142, verts à 390 et 1 280 px) ; `rendu.mjs` charge
 STIX Two Text 400/600/700 et italique.
+
+**v31 — l'onglet Stratégie retiré** (9 novembre 2026, « finalement supprime la catégorie stratégique ») :
+`prop/challenge-option31.html`, https://claude.ai/artifact/3fB55Z1zSsxEkTLdbCjpji, **dernière version, c'est elle qu'on
+améliore**. **Décision de l'utilisateur** : plus d'onglet Stratégie — feuille de route, journal de trades, scellement et paper
+quittent l'app (section, CSS, JS, clés `sv` / `ppm`, `TX` / `RT` / `TL` de la sauvegarde ; une sauvegarde v26–v30 se recolle,
+ces parties sont ignorées). Six onglets à nouveau ; plans de challenge, vue option (bouton « Modifier le plan », jour du
+retrait), compte et preuve du taux de gain (Quant) restent. Les fonctions pures du journal (`lireSerie`, `statsR`, `fanR`,
+`bootR`, `nR`) restent dans le bloc MODELE, sans usage, toujours contrôlées par `controle-trades.mjs`. Les v26 à v30 gardent
+leurs liens. `panneau.mjs` : les contrôles de l'onglet ne tournent que s'il existe (99 sur la v31, verts à 390 et 1 280 px).
 
 **Exemples de la stratégie** (trois captures TradingView MNQ1! 1 minute, 9 novembre 2026, heure de New York ; **lecture de
 Claude, non encore confirmée par l'utilisateur**) : chute de 27 000 à ~26 760 entre 8 h 30 et 8 h 50, sous l'« IV −1σ »

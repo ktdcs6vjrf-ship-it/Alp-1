@@ -332,7 +332,8 @@ if (await p.evaluate(() => !!document.querySelector("#plan-card"))) {
   ok(await lire("#op-plan") === "MFF Pro Plan", "l'onglet Option nomme le plan et sa prime");
   await p.click('#sg-Nopt [data-v="120"]'); await p.waitForTimeout(700);
   ok(await p.evaluate(() => document.querySelector("#r-jour").max) === "120" && /jour 120/.test(await lire("#ao1")), "l'échéance du retrait se règle depuis l'onglet Option");
-  // feuille de route
+  // feuille de route, paper et leur sauvegarde (v26 à v30 ; l'onglet Stratégie est retiré en v31)
+  if (await p.evaluate(() => !!document.querySelector("#v-strategie"))) {
   await p.goto(U + "#strategie"); await p.waitForTimeout(1500);
   const rt = await p.evaluate(() => ({ prog: document.querySelector("#rt-prog").textContent, open: document.querySelectorAll(".rph.op").length, ph: document.querySelectorAll(".rph").length }));
   const tot0 = +((rt.prog.match(/\/ (\d+)/) || [])[1] || 0);
@@ -372,6 +373,7 @@ if (await p.evaluate(() => !!document.querySelector("#plan-card"))) {
   ok(/MFF Pro Plan\*/.test(await chips()) && await p.inputValue("#x-titre") === "Le rebond du VWAP", `la sauvegarde rend plans et paper (${await chips()})`);
   await p.goto(U + "#strategie"); await p.click('#sg-sv [data-v="route"]').catch(() => {}); await p.waitForTimeout(1200);
   ok((await lire("#rt-prog")).includes("/ " + (tot0 + 1)), "et la feuille de route, étape ajoutée comprise");
+  }
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 // v27 : journal de trades en R, scellement, preuve hors échantillon
@@ -458,7 +460,7 @@ if (await p.evaluate(() => !!document.querySelector("#tl-gs"))) {
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 // v29 : trader uniquement dans le sens de la tendance ; les défauts du paper ne s'enregistrent plus
-if (await p.evaluate(() => document.documentElement.innerHTML.includes("uniquement dans le sens de la tendance"))) {
+if (await p.evaluate(() => !!document.querySelector("#paper") && document.documentElement.innerHTML.includes("uniquement dans le sens de la tendance"))) {
   const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => { const e = document.querySelector(x); return e ? e.textContent.replace(/\s+/g, " ").trim() : ""; }, s);
   const calc = async () => { await p.waitForTimeout(500); await p.waitForFunction(() => { const g = document.querySelector("#prog"); return g && g.hidden && !document.querySelector("main .stale"); }, null, { timeout: 60000 }); await p.waitForTimeout(300); };
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#reglages"); await p.reload(); await calc();
