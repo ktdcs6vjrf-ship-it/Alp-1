@@ -699,6 +699,16 @@ franchi le tampon, 90/10, « 2 000 $ par cycle ». `node tools/challenge-option/
 +2 838 $ (médian 3 132 $, 1er J96) : neutre ; 6 MNQ : attendre 5 000 $ +3 158 $ contre +2 341 $ ; le retrait anticipé de
 60 % coûte −777 $ (marge de 600 à 740 $ sous un plancher bloqué) ; loi nulle +559 $.
 
+**MFFU Pro 100K** (9 novembre 2026, page du plan et centre d'aide lus par la recherche, tableau de bord non vu) : objectif
+6 000 $, 2 jours au moins, meilleur jour ≤ 50 % **en évaluation seulement** ; drawdown 3 000 $ fin de journée, aucune limite
+journalière ; financé : tampon 3 100 $, 1 000 $ au moins, aucun plafond par demande, une demande tous les 14 jours, 80/20,
+100 000 $ au total (au-delà perdu), une transaction au moins tous les 7 jours. **Prix non confirmé** : 172 $ chez une revue,
+329 $/mois ou 829 $ chez une autre, abonnements mensuels peut-être supprimés le 25 août 2026.
+`node tools/challenge-option/comparer-100k-pro.mjs prop/challenge-option25.html` redonne les chiffres de comparer-100k et de
+la LucidFlex 100K, puis : style régulier 6 MNQ, Pro à 172 $ +1 181 $ (tout tous les 14 jours) ou +1 521 $ (attendre 3 000 $
+au-dessus du tampon), contre LucidPro +1 480, LucidFlex au plafond +1 704, Builder +1 117 ; sans avantage −54 $ ; réussite
+55 % en 70 séances (médiane), un challenge sur trois payé ; à 4 MNQ l'ordre s'inverse (attendre +400 $, tous les 14 jours +592 $).
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
