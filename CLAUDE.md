@@ -668,18 +668,17 @@ ajoute-les mais dans la DA de l'app ») : `prop/challenge-option25.html`, https:
   étiquette d'axe 3D à gauche ou à droite sortait du canevas (« meilleure ») : `Surf3D` la recale ; `renderJournal`
   sortait avant `renderCal` quand l'historique était vide.
 
-**Comparaison LucidPro 100K / MyFundedFutures Builder 100K** (9 novembre 2026, question de l'utilisateur) : règles
-relevées par recherche web (les sites des firmes et les blogs ne se résolvent pas depuis le conteneur ; seuls les résumés
-de recherche passent). Communes : objectif 6 000 $, drawdown 3 000 $ fin de journée bloqué à +100 $, pas de consistance
-en évaluation, tampon 3 100 $ avant le 1er retrait, 6 minis / 60 micros. LucidPro : 1 jour minimum, 90/10, cycle ≥ 750 $,
-meilleur jour ≤ 40 % du cycle (35 % avant le 28 novembre 2025), retrait 500 $ à 2 500 $ puis 3 000 $, limite journalière
-1 800 $ facultative, prix 225 à 272 $ selon les sources. MFFU Builder : 2 jours minimum, 80/20, retrait 1 000 $ à 3 000 $
-(aide officielle ; la page commerciale dit 500 à 2 000 $ et un tampon de 2 100 $, sans doute les chiffres du 50K),
-2 jours gagnants et 1 000 $ par cycle, réel après le 5e retrait, prix 282 $ (paiement unique depuis le 25 août 2026).
-`node tools/challenge-option/comparer-100k.mjs prop/challenge-option25.html` (moteur de l'app, 20 000 challenges, mêmes
-tirages, 250 séances, 5 retraits au plus) : style régulier (6 MNQ, 2 trades/j, 45 %, 1,5 R) LucidPro +1 445 $ contre
-MFFU +949 $ par challenge, même réussite (55 %) ; style à grosses journées (1 trade/j, 30 %, 3 R) +1 160 $ contre +766 $ ;
-sans avantage −92 $ contre −166 $. Le partage, le prix et les minimums plus bas l'emportent sur la règle des 40 %.
+**Comparaison LucidPro 100K / MyFundedFutures Builder 100K** (9 novembre 2026) : règles lues sur les **captures des
+tableaux de bord** envoyées par l'utilisateur (les sites ne se résolvent pas depuis le conteneur). Communes : objectif
+6 000 $, drawdown 3 000 $ fin de journée, pas de consistance en évaluation, 6 minis / 60 micros, tampon 3 100 $, éval en
+un jour. LucidPro : 272 $ (190,40 $ avec coupon), cycle ≥ 750 $ et 3 jours, meilleur jour ≤ 40 % du cycle, limites
+journalières 1 800 $ puis 60 % du plus haut de clôture, 90/10 ; retrait 500 $ à 2 500 $ puis 3 000 $ (tiers).
+MFFU Builder : **consistance 50 % en financé**, 2 jours par cycle, retrait 1 000 $ à 3 000 $, 80/20, limite journalière
+1 750 $, inactivité 7 jours ; prix 282 $ (tiers, non vu sur les captures). `node tools/challenge-option/comparer-100k.mjs
+prop/challenge-option25.html` (20 000 challenges, mêmes tirages, 250 séances, 5 retraits au plus) : style régulier
+(6 MNQ, 2 trades/j, 45 %, 1,5 R) Lucid +1 480 $ (coupon) / +1 398 $ (prix plein) contre MFFU +1 117 $ ; grosses journées
+(1 trade/j, 30 %, 3 R) +1 194 / +1 113 contre +897 ; sans avantage −57 / −139 contre −163. Le 80/20 coûte plus que
+l'écart de prix ; le retrait minimum de 500 $ (contre 1 000 $) fait toucher plus de comptes avant leur fin.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
