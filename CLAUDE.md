@@ -752,6 +752,17 @@ défauts compris — une sauvegarde gardait l'ancienne formulation par défaut, 
 définition. Désormais seuls les champs écrits s'enregistrent (`txPropre`, stockage et sauvegarde), et une ancienne
 formulation par défaut connue (`TXV`) est remplacée à la lecture (`txMaj`). `panneau.mjs` + 3 (137, verts à 390 et 1 280 px).
 
+**Exemples de la stratégie** (trois captures TradingView MNQ1! 1 minute, 9 novembre 2026, heure de New York ; **lecture de
+Claude, non encore confirmée par l'utilisateur**) : chute de 27 000 à ~26 760 entre 8 h 30 et 8 h 50, sous l'« IV −1σ »
+(26 826) ; retour en V ; vers 9 h 10 le prix reprend le niveau tracé à ~26 888 (dernier plus haut de la baisse) : **changement
+de structure**. Puis des longs en escalier, chacun **au retest du plus haut de la structure précédente** : 26 894,50 (stop
+26 888,50, 6 pts) → 26 940,50 ; 26 939,50 (stop ~26 931) → ~26 983 ; puis ~27 005, ~27 034, ~27 043, jusqu'aux niveaux
+d'options 1DTE (PS 1DTE ~27 05x, CR 1DTE 27 063), où le prix fait un range de 9 h 45 à 10 h 20. Stops de 6 à 10 points,
+objectifs de 40 à 46 points (4 à 8 R). Aucun max pain n'est marqué sur les captures. Géométrie 6 / 46 pts : sans avantage
+11,5 % de gagnants, seuil frais compris 12,9 % (frais 0,08 R par trade, 0,125 R sur un stop) ; preuve à une chance sur deux en
+71 trades si le vrai taux est 20 %, 131 s'il est 18 % ; à 10 / 40 pts le seuil monte à 21,4 %. Les captures montrent des
+gagnants choisis après coup : des illustrations, pas des données.
+
 **Comparaison LucidPro 100K / MyFundedFutures Builder 100K** (9 novembre 2026) : règles lues sur les **captures des
 tableaux de bord** envoyées par l'utilisateur (les sites ne se résolvent pas depuis le conteneur). Communes : objectif
 6 000 $, drawdown 3 000 $ fin de journée, pas de consistance en évaluation, 6 minis / 60 micros, tampon 3 100 $, éval en
