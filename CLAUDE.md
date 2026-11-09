@@ -680,6 +680,15 @@ prop/challenge-option25.html` (20 000 challenges, mêmes tirages, 250 séances, 
 (1 trade/j, 30 %, 3 R) +1 194 / +1 113 contre +897 ; sans avantage −57 / −139 contre −163. Le 80/20 coûte plus que
 l'écart de prix ; le retrait minimum de 500 $ (contre 1 000 $) fait toucher plus de comptes avant leur fin.
 
+**LucidFlex 100K** (9 novembre 2026, captures du tableau de bord) : éval 215 $ (150,50 $ avec coupon, reset 150 $),
+objectif 6 000 $, drawdown 3 000 $ fin de journée, limite journalière 1 800 $ ou aucune, retraits à la demande oui / non,
+**consistance d'évaluation au choix 40 % ou 50 %**, 6 minis / 60 micros ; financé : drawdown 3 000 $, limite 1 800 $,
+aucune consistance, 5 jours par retrait, plan de montée en taille. Tiers : retrait = 50 % du profit, 500 $ à **2 500 $**,
+jours qualifiants ≥ 200 $ net, 90/10. Moteur de l'app (6 MNQ, 2 trades/j, 45 %, 1,5 R, 20 000 challenges, prix 150,50 $) :
+retirer dès que possible +964 $ par challenge (43 % payés, 1er retrait J95), attendre le plafond de 2 500 $ (profit
+≥ 5 000 $) **+1 704 $** (30 % payés, J132) — le retrait précoce bloque le plancher à +100 $ avec 400 $ de marge ;
+40 % ou 50 % ne change rien pour ce style régulier.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
