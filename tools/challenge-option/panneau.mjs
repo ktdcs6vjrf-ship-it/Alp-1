@@ -4,6 +4,7 @@
 // depuis l'onglet Leviers, et qu'aucune erreur ni aucun défilement horizontal n'apparaît. Écrit des captures. Code de sortie 1 au premier défaut.
 import { createRequire } from "node:module";
 import { join } from "node:path";
+import { writeFileSync } from "node:fs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const dos = process.argv[2], W = +(process.argv[3] || 390);
 if (!dos) { console.error("usage : node panneau.mjs <dossier> [largeur]"); process.exit(1); }
@@ -209,6 +210,41 @@ if (await p.evaluate(() => !!document.querySelector("#et-pay"))) {
   ok((await val("#f-ex")).replace(/\s/g, "") === "1500" && (await val("#f-eq")) === "5", "annuler le retrait rend 1 500 $ et 5 jours qualifiants");
   await p.click("#b-ev-undo"); await p.waitForTimeout(500);
   ok(await p.evaluate(() => document.querySelector('#sg-ph [data-v="eval"]').getAttribute("aria-pressed") === "true" && document.querySelector("#f-ex").value.replace(/\s/g, "") === "3100" && document.querySelector("#et-pay").hidden), "annuler la réussite rend l’évaluation à 3 100 $");
+  ok(await largeur(), "aucun défilement horizontal");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v23 et suivantes : les nouveautés une fois par version, l'import d'un fichier de trades
+if (await p.evaluate(() => !!document.querySelector("#csv-prev"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => document.querySelector(x).textContent, s);
+  await p.goto(U + "#resultat"); await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await p.waitForTimeout(2000);
+  ok(await vu("#news"), "première visite de la version : la carte des nouveautés s'affiche");
+  await (await p.$("#news")).screenshot({ path: join(dos, `nouveautes-${W}.png`) });
+  await p.click("#b-news-x"); await p.reload(); await p.waitForTimeout(1500);
+  ok(!(await vu("#news")), "fermée, elle ne revient pas");
+  const csv = `symbol,_priceFormat,_priceFormatType,_tickSize,buyFillId,sellFillId,qty,buyPrice,sellPrice,pnl,boughtTimestamp,soldTimestamp,duration
+MNQZ6,-2,0,0.25,1,2,4,21000.00,21010.00,$80.00,11/03/2026 09:31:05,11/03/2026 09:35:10,4min
+MNQZ6,-2,0,0.25,3,4,4,21020.00,21000.00,$(160.00),11/03/2026 10:01:00,11/03/2026 10:02:00,1min
+MNQZ6,-2,0,0.25,5,6,2,21000.00,21030.00,$120.00,11/04/2026 09:40:00,11/04/2026 09:50:00,10min
+MNQZ6,-2,0,0.25,7,8,1,20990.00,21000.00,$20.00,11/08/2026 18:30:00,11/08/2026 18:45:00,15min
+`;
+  const fic = join(dos, "trades-essai.csv"); writeFileSync(fic, csv);
+  await p.goto(U + "#compte"); await p.waitForTimeout(1500);
+  await p.setInputFiles("#f-csv", fic); await p.waitForTimeout(500);
+  const pv = await lire("#csv-prev");
+  ok(/4 trades sur 3 séances/.test(pv.replace(/\s+/g, " ")) && /\+49/.test(pv.replace(/\s/g, "")) && /mois \/ jour/.test(pv), `aperçu : 4 trades, 3 séances, +49 $ frais déduits, mois / jour (« ${pv.replace(/\s+/g, " ").slice(0, 90)}… »)`);
+  await (await p.$("#csv-prev")).screenshot({ path: join(dos, `import-${W}.png`) });
+  await p.click('[data-csv="dm"]'); await p.waitForTimeout(200);
+  ok(/jour \/ mois/.test(await lire("#csv-prev")) && /11 mars/.test(await lire("#csv-prev")), "« Lire jour / mois » relit le fichier dans l'autre ordre");
+  await p.click('[data-csv="dm"]'); await p.waitForTimeout(200);
+  await p.click('[data-csv="ok"]'); await p.waitForTimeout(800);
+  const after = await p.evaluate(() => ({ n: document.querySelector("#jr-n").textContent, ex: document.querySelector("#f-ex").value, cal: !document.querySelector("#et-cal").hidden, prev: document.querySelector("#csv-prev").hidden, h: document.querySelector("#jr-h").textContent }));
+  ok(/3 journées/.test(after.n) && after.ex === "49" && after.cal && after.prev && /4 trades comptés/.test(after.h), `historique remplacé : 3 séances, profit 49 $, calendrier, 4 trades comptés (lu ${after.n}, ${after.ex})`);
+  await p.click("#b-csv-paste"); await p.fill("#f-csv-ta", "Date;Résultat\n03/11/2026;120,50\n15/11/2026;-80\n"); await p.click("#b-csv-read"); await p.waitForTimeout(300);
+  const pv2 = await lire("#csv-prev");
+  ok(/2 trades sur 2 séances/.test(pv2.replace(/\s+/g, " ")) && /jour \/ mois/.test(pv2) && /remplacent/.test(pv2), "contenu collé : 2 séances, jour d'abord, remplacement annoncé");
+  await p.fill("#f-csv-ta", "symbol,qty\nMNQ,1\n"); await p.click("#b-csv-read"); await p.waitForTimeout(200);
+  ok(/colonne de résultat/.test(await lire("#csv-prev")), "un fichier sans résultat : message clair, rien ne change");
+  ok(/3 journées/.test(await lire("#jr-n")), "l'historique importé est intact");
   ok(await largeur(), "aucun défilement horizontal");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }

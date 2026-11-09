@@ -603,7 +603,7 @@ TRAVAIL identiques à la v20.
   sur « 50 % » doit accepter l'espace insécable (`\s`).
 
 **v22 — le cycle du compte** (même nuit) : `prop/challenge-option22.html`,
-https://claude.ai/artifact/JUcw8gYW2nnVgYMryYKDWx, **dernière version, c'est elle qu'on améliore**. Blocs MODELE et
+https://claude.ai/artifact/JUcw8gYW2nnVgYMryYKDWx. Blocs MODELE et
 TRAVAIL identiques à la v20.
 - Événements `EVH` (`alp-option-challenge-ev-v22`, dans la sauvegarde sous `ev`) : `pass` (« J'ai réussi
   l'évaluation », proposé quand l'objectif effectif est atteint : compte financé à zéro) et `pay` (« J'ai demandé un
@@ -617,6 +617,23 @@ TRAVAIL identiques à la v20.
 - `placer(fr)` : placeur d'étiquettes partagé (places candidates, cadre, chevauchements, étiquette facultative).
 - **Pièges v22** : une étiquette ancrée à `x ± 6` au bord du cadre a son encadré sur le bord et n'est jamais « libre »
   (prendre ± 9) ; un champ formaté affiche « 1 500 » : un banc compare après avoir retiré les espaces.
+
+**v23 — l'import d'un fichier de trades** (nuit du 8 au 9 novembre) : `prop/challenge-option23.html`,
+https://claude.ai/artifact/QdG2pr6JULmaX1zRRD88Tg, **dernière version, c'est elle qu'on améliore**. Blocs MODELE et
+TRAVAIL identiques à la v20 ; nouveau bloc pur **IMPORT** (`lireCSV`, `lireMontant`, `lireDate`, `ordreJM`, `csvSplit`).
+- Colonnes reconnues à leur nom normalisé (`CSVCOL` : pnl / profit / P&L…, soldTimestamp / exit time / date…, qty,
+  commission) ; séparateur `,` `;` ou tabulation ; montants `$(160.00)`, `1.234,56`, `−5` ; dates ISO, JJ/MM, MM/JJ —
+  ordre déduit d'une valeur > 12, sinon mois d'abord si la colonne est un « …timestamp » (Tradovate), jour d'abord
+  ailleurs ; un dimanche → lundi (Globex ouvre le dimanche soir), un samedi → vendredi. Sans colonne de frais, la
+  commission réglée × quantité est retirée. Aperçu (séances, total, colonnes lues, bouton pour inverser jour / mois),
+  puis « Remplacer mon historique » : HIST et EVH vidés, compte à zéro, chaque séance passe par `pushDay` (addDay sans
+  rendu, sinon le contrôle contre les réglages se recalculait à chaque séance).
+- Carte « Nouveau depuis la v18 » (`#news`, `UI.news` = version) en tête du Résultat, une fois par version.
+- Banc : `node tools/challenge-option/controle-import.mjs [page]` (46 contrôles : guillemets, montants, dates, export
+  Tradovate, fichier français, colonne de frais, erreurs, 20 000 trades) ; `panneau.mjs` : 9 contrôles de plus.
+- **Le format réel de l'export de l'utilisateur n'a jamais été vu** : la lecture est générale, l'aperçu dit quelles
+  colonnes ont été prises. Si sa plateforme diffère, demander une ligne d'en-tête et l'ajouter à `CSVCOL`.
+- **Piège v23** : `display:flex` sur un `li` qui mêle `<b>` et texte nu fait deux éléments flex — envelopper le texte.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
