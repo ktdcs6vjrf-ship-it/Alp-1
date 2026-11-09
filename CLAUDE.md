@@ -700,8 +700,8 @@ L'utilisateur développe sa stratégie et donnera ses rendements : le paper les 
   présentes avant lui (une section vide n'en a pas).
 
 **v27 — journal de trades en R et scellement** (9 novembre 2026, « je vais dev ma stratégie de 0, continue ») :
-`prop/challenge-option27.html`, https://claude.ai/artifact/DNtwJgRLDJNXFfybMt1Cpj, **dernière version, c'est elle qu'on
-améliore**. L'utilisateur part de zéro et donnera ses rendements plus tard.
+`prop/challenge-option27.html`, https://claude.ai/artifact/DNtwJgRLDJNXFfybMt1Cpj. L'utilisateur part de zéro et donnera
+ses rendements plus tard.
 - **Bloc MODELE** : `lireSerie` (série collée : nombres à virgule, « + » gain visé, « - » stop, « = » nul, lettres), `netR`,
   `statsR` (taux, espérance nette, écart-type, t, facteur de profit, pertes d'affilée, recul en R), `fanR` (loi nulle : K suites
   au taux sans avantage, gain wR et perte lR nets, p0 = lR / (wR + lR)). Frais en R d'après les réglages : commission sur chaque
@@ -720,6 +720,28 @@ améliore**. L'utilisateur part de zéro et donnera ses rendements plus tard.
 - **Pièges v27** : `p.click("summary")` visait « Réglages avancés » — viser `.tl-paste summary` ; `num(v,…,2)` puis `/,?0+$/`
   transforme « 10 » en « 1 » — `rN()` ne retire que les zéros d'après la virgule ; « nº » sortait « no » en Geist — « n° » ;
   l'étiquette « scellée » et celle du cumul se chevauchaient en haut — la première passe en bas du trait.
+
+**v28 — sa stratégie dans le paper** (9 novembre 2026) : `prop/challenge-option28.html`,
+https://claude.ai/artifact/4qwzTqhN6ExVQyRpgKuiWt, **dernière version, c'est elle qu'on améliore**.
+- **La stratégie de l'utilisateur, en ses mots** (9 novembre 2026) : « identifier la tendance ; identifier les structures ;
+  prendre position sur le début de la structure ; viser loin (max pain) si on a eu un changement de structure donc de
+  tendance, ou viser fin de structure et faire du trend following ». Elle est le défaut des champs du paper (`TX0`, sous les
+  champs gardés) : tendance (`tend`), structures (`struct`), entrée, invalidation, sortie après changement de structure
+  (`sortieA`, max pain), sortie en continuation (`sortie`). **Rien n'est encore défini** : `aPreciser()` liste les sept
+  questions (`DEFQ`) tant qu'un champ est vide ou resté à ces mots ; le paper les affiche (encadré « À préciser avant de
+  sceller »), le scellement les rappelle, l'étape « regles » de la feuille de route exige les six définitions.
+- **Preuve adaptée aux gains variables** : `bootR` (bloc MODELE, bootstrap recentré de l'espérance nette en R, 4 000 tirages,
+  p unilatérale et intervalle à 90 %) et `nR` (trades pour une puissance donnée, loi normale). `preuveTL()` choisit le test :
+  binomial exact si tous les trades valent +R visé, −1 ou 0, bootstrap sinon ; mémoïsé. Le paper (résumé, 4.2, 5.1, 7, 8,
+  référence Efron 1979) et la feuille de route (edge, n50, sig) suivent ce choix.
+- **Setups** : deux puces d'un toucher (« Retournement · max pain », « Continuation · suivi ») posent l'étiquette du trade ;
+  `parSetup()` donne un tableau par setup (trades, gagnants, espérance, p par bootstrap) dans Trades et en 5.3 du paper.
+- **Contrôles** : `controle-trades.mjs` + 8 (32) : taille du bootstrap ≈ 5 % sous une loi asymétrique d'espérance nulle
+  (25 % à +3 R), couverture de l'intervalle, puissance à 400 trades, déterminisme, `nR` et preuve dans ≈ 50 % des jeux à
+  `nR(…, 0,5)` trades ; `panneau.mjs` + 9 (134 en tout, verts à 390 et 1 280 px).
+- **Pièges v28** : attendre plus de 50 % de puissance à 150 trades pour +0,25 R était faux (≈ 41 % en théorie, 31 % mesuré
+  avec l'asymétrie) — l'attente d'un contrôle se calcule, elle ne s'estime pas ; un « ? » précédé d'une espace ordinaire passe
+  seul à la ligne — espace insécable.
 
 **Comparaison LucidPro 100K / MyFundedFutures Builder 100K** (9 novembre 2026) : règles lues sur les **captures des
 tableaux de bord** envoyées par l'utilisateur (les sites ne se résolvent pas depuis le conteneur). Communes : objectif

@@ -1,5 +1,6 @@
 // Banc des commandes de la v8 (et suivantes) : panneau Paramètres, cartes repliables, explications « ? », relief ;
-// v26 : plans de challenge, feuille de route, paper ; v27 : journal de trades en R et scellement.
+// v26 : plans de challenge, feuille de route, paper ; v27 : journal de trades en R et scellement ;
+// v28 : la stratégie dans le paper, setups, preuve par l'espérance en R.
 // Usage : node tools/challenge-option/panneau.mjs <dossier de rendu.mjs> [largeur]   (lancer rendu.mjs d'abord : il écrit apercu.html)
 // Vérifie, dans le vrai navigateur, que chaque bouton cache puis rend ce qu'il commande, que le panneau change le résultat
 // depuis l'onglet Leviers, et qu'aucune erreur ni aucun défilement horizontal n'apparaît. Écrit des captures. Code de sortie 1 au premier défaut.
@@ -420,6 +421,39 @@ if (await p.evaluate(() => !!document.querySelector("#tl-card"))) {
   ok(/4 trades depuis le scellement/.test(await lire("#tl-ans")) && /Scellée le/.test(await lire("#seal-box")), "la sauvegarde rend journal et scellement");
   await p.screenshot({ path: join(dos, `trades-${W}.png`), fullPage: true });
   ok(await largeur(), "aucun défilement horizontal dans le journal de trades");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v28 : la stratégie de l'utilisateur dans le paper, setups, preuve par l'espérance en R
+if (await p.evaluate(() => !!document.querySelector("#tl-gs"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => { const e = document.querySelector(x); return e ? e.textContent.replace(/\s+/g, " ").trim() : ""; }, s);
+  const calc = async () => { await p.waitForTimeout(500); await p.waitForFunction(() => { const g = document.querySelector("#prog"); return g && g.hidden && !document.querySelector("main .stale"); }, null, { timeout: 60000 }); await p.waitForTimeout(300); };
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#strategie"); await p.reload(); await calc();
+  await p.click('#sg-sv [data-v="paper"]'); await calc(); await p.waitForTimeout(500);
+  const pp = await lire("#paper");
+  ok(/Identifier la tendance/.test(pp) && /début de la structure/.test(pp) && /max pain/.test(pp) && /trend following/.test(pp), "le paper porte la stratégie en quatre temps, avec ses deux sorties");
+  ok(await p.evaluate(() => document.querySelectorAll("#paper .apr li").length) === 7, "sept définitions restent à préciser avant de sceller");
+  await p.fill("#x-stop", "Sous le dernier creux de la structure."); await p.waitForTimeout(500);
+  ok(await p.evaluate(() => document.querySelectorAll("#paper .apr li").length) === 6, "une règle écrite sort de la liste à préciser");
+  await p.click('#sg-sv [data-v="trades"]'); await p.waitForTimeout(400);
+  ok(/à préciser/.test(await lire("#seal-box")), "le scellement rappelle ce qui reste flou");
+  await p.click('#tl-gs [data-g="Retournement"]');
+  ok(await p.inputValue("#tl-g") === "Retournement" && await p.evaluate(() => document.querySelector('#tl-gs [data-g="Retournement"]').getAttribute("aria-pressed")) === "true", "un setup se choisit d'un toucher");
+  for (const v of ["4", "-1", "-1", "3,5", "-1", "6"]) { await p.fill("#tl-r", v); await p.press("#tl-r", "Enter"); }
+  await p.click('#tl-gs [data-g="Continuation"]');
+  for (const v of ["1,2", "-1", "0,8", "1,5", "-1"]) { await p.fill("#tl-r", v); await p.press("#tl-r", "Enter"); }
+  await p.waitForTimeout(500);
+  const rows = await p.evaluate(() => [...document.querySelectorAll("#tl-setups tbody tr")].map(r => r.firstChild.textContent + ":" + r.children[1].textContent));
+  ok(rows.join(" ") === "Retournement:6 Continuation:5", `tableau par setup (${rows.join(", ")})`);
+  await p.click("#b-seal"); await p.click("#b-seal"); await p.waitForTimeout(500);
+  for (const v of ["5", "-1", "-1", "2", "-1", "4,5", "-1", "1,5"]) { await p.fill("#tl-r", v); await p.press("#tl-r", "Enter"); }
+  await p.waitForTimeout(500);
+  ok(/p-valeur par bootstrap/.test(await lire("#tl-ans")), "des gains variables passent au test de l'espérance (bootstrap)");
+  await p.click('#sg-sv [data-v="paper"]'); await calc(); await p.waitForTimeout(600);
+  const pp2 = await p.evaluate(() => ({ t: document.querySelector("#paper").textContent, caps: [...document.querySelectorAll("#paper caption")].map(c => c.textContent).join(" | ") }));
+  ok(/espérance nette en R contre zéro/.test(pp2.caps) && /bootstrap recentré/.test(pp2.t) && /setup par setup/.test(pp2.caps) && /Efron/.test(pp2.t), "le paper juge l'espérance en R, setup par setup, et cite Efron (1979)");
+  await p.evaluate(() => document.querySelector("#paper .apr")?.scrollIntoView({ block: "start" })); await p.waitForTimeout(300);
+  await p.screenshot({ path: join(dos, `paper28-${W}.png`) });
+  ok(await largeur(), "aucun défilement horizontal");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
