@@ -619,7 +619,7 @@ TRAVAIL identiques à la v20.
   (prendre ± 9) ; un champ formaté affiche « 1 500 » : un banc compare après avoir retiré les espaces.
 
 **v23 — l'import d'un fichier de trades** (nuit du 8 au 9 novembre) : `prop/challenge-option23.html`,
-https://claude.ai/artifact/QdG2pr6JULmaX1zRRD88Tg, **dernière version, c'est elle qu'on améliore**. Blocs MODELE et
+https://claude.ai/artifact/QdG2pr6JULmaX1zRRD88Tg. Blocs MODELE et
 TRAVAIL identiques à la v20 ; nouveau bloc pur **IMPORT** (`lireCSV`, `lireMontant`, `lireDate`, `ordreJM`, `csvSplit`).
 - Colonnes reconnues à leur nom normalisé (`CSVCOL` : pnl / profit / P&L…, soldTimestamp / exit time / date…, qty,
   commission) ; séparateur `,` `;` ou tabulation ; montants `$(160.00)`, `1.234,56`, `−5` ; dates ISO, JJ/MM, MM/JJ —
@@ -634,6 +634,15 @@ TRAVAIL identiques à la v20 ; nouveau bloc pur **IMPORT** (`lireCSV`, `lireMont
 - **Le format réel de l'export de l'utilisateur n'a jamais été vu** : la lecture est générale, l'aperçu dit quelles
   colonnes ont été prises. Si sa plateforme diffère, demander une ligne d'en-tête et l'ajouter à `CSVCOL`.
 - **Piège v23** : `display:flex` sur un `li` qui mêle `<b>` et texte nu fait deux éléments flex — envelopper le texte.
+
+**v24 — finition** (même nuit) : `prop/challenge-option24.html`, https://claude.ai/artifact/8EqQThhxydaC5f6YWUSh7N,
+**dernière version, c'est elle qu'on améliore**. Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
+- « Avant ta séance » (`#plan`, `renderPlan`, appelé en fin de `renderEtat`) en tête de Compte : taille max (k pertes
+  d'avance), perte max du jour, plafond du jour (`cons × objectif effectif`) et reste à gagner en évaluation, jour
+  qualifiant et retrait en financé ; alerte « plancher proche » sous un quart du drawdown. Prochaine séance : aujourd'hui
+  en semaine, lundi le week-end.
+- « Copier le résumé » ajoute le compte réel (phase, profit, plancher, marge, chance) et les retraits notés.
+- `--dim` passe de #6c6c72 à #7d7d84 : 4,7:1 sur la carte au lieu de 3,9:1 pour tous les textes secondaires.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

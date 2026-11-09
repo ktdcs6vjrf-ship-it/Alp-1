@@ -248,6 +248,23 @@ MNQZ6,-2,0,0.25,7,8,1,20990.00,21000.00,$20.00,11/08/2026 18:30:00,11/08/2026 18
   ok(await largeur(), "aucun défilement horizontal");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
+// v24 et suivantes : « Avant ta séance », et le compte réel dans le résumé copié
+if (await p.evaluate(() => !!document.querySelector("#plan"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => document.querySelector(x).textContent, s);
+  await p.goto(U + "#compte"); await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await p.waitForTimeout(2500);
+  const pl = await p.evaluate(() => ({ n: document.querySelectorAll("#plan-l .kpi").length, t: document.querySelector("#plan").textContent }));
+  ok(pl.n === 4 && /Taille max/.test(pl.t) && /Plafond du jour/.test(pl.t) && /séance du/.test(pl.t), `avant ta séance : quatre limites et la date (${pl.t.replace(/\s+/g, " ").slice(0, 80)}…)`);
+  await (await p.$("#plan")).screenshot({ path: join(dos, `seance-${W}.png`) });
+  await p.fill("#f-ex", "-1600"); await p.waitForTimeout(500);
+  ok(/Plancher proche/.test(await lire("#plan-h")), "à −1 600 $, la carte prévient : plancher proche");
+  await p.fill("#f-ex", "200"); await p.waitForTimeout(800);
+  await p.goto(U + "#resultat"); await p.waitForTimeout(3000);
+  await p.click("#b-copy"); await p.waitForTimeout(400);
+  let txt = await p.evaluate(() => { const t = document.querySelector("#copy-ta"); return t.hidden ? "" : t.value; });
+  if (!txt) txt = await p.evaluate(() => navigator.clipboard.readText().catch(() => ""));
+  ok(/Compte réel \(évaluation\) : profit \+200/.test(txt), `le résumé copié porte le compte réel (« ${(txt.split("\n").find(l => /Compte réel/.test(l)) || "").slice(0, 70)} »)`);
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");
 await b.close();
 console.log(`\n${ko ? ko + " défaut(s)" : "tout est bon"} ; captures : ${dos}`);
