@@ -689,6 +689,16 @@ retirer dès que possible +964 $ par challenge (43 % payés, 1er retrait J95), a
 ≥ 5 000 $) **+1 704 $** (30 % payés, J132) — le retrait précoce bloque le plancher à +100 $ avec 400 $ de marge ;
 40 % ou 50 % ne change rien pour ce style régulier.
 
+**MFFU Pro 50K** (9 novembre 2026, sites tiers seulement : le centre d'aide ne se résout pas, le tableau de bord n'a pas été
+vu) : drawdown 2 000 $ fin de journée, aucune limite journalière, plancher statique à +100 $ après le 1er retrait, tampon
+2 100 $, minimum 1 000 $, **aucun plafond par demande** (100 000 $ cumulés par utilisateur, puis passage en réel), une demande
+tous les 14 jours calendaires, 80/20, pas de consistance. Contestés entre sources : retrait unique de 60 % avant d'avoir
+franchi le tampon, 90/10, « 2 000 $ par cycle ». `node tools/challenge-option/mffu-pro-50k.mjs prop/challenge-option25.html`
+(20 000 comptes financés neufs, 250 séances ; prix de l'évaluation et solde laissé au bout d'un an non comptés) : 4 MNQ
+(+30 $/j) tout retirer tous les 14 jours +2 828 $ (retrait médian 1 158 $, 1er J51), attendre 3 000 $ au-dessus du tampon
++2 838 $ (médian 3 132 $, 1er J96) : neutre ; 6 MNQ : attendre 5 000 $ +3 158 $ contre +2 341 $ ; le retrait anticipé de
+60 % coûte −777 $ (marge de 600 à 740 $ sous un plancher bloqué) ; loi nulle +559 $.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
