@@ -646,7 +646,7 @@ Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
 
 **v25 — ergonomie et graphiques des captures Marius** (9 novembre 2026, « corrige les erreurs ux ; voici des graphiques,
 ajoute-les mais dans la DA de l'app ») : `prop/challenge-option25.html`, https://claude.ai/artifact/2yaHHBf5WJVaFqoTPrQbJZ,
-**dernière version, c'est elle qu'on améliore**. Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
+Blocs MODELE, TRAVAIL et IMPORT identiques à la v23.
 - **Défauts d'ergonomie corrigés** (relevés sur captures pleine page, compte rempli de 12 séances) : deux grandes cartes
   d'accueil repoussaient le chiffre principal à 1 100 px → une seule carte compacte (`.steps2`, ligne « Nouveau »)
   *après* le héros, bandeau « exemple » juste sous le héros, carte `#news` supprimée ; Compte réordonné (Avant ta séance
@@ -667,6 +667,38 @@ ajoute-les mais dans la DA de l'app ») : `prop/challenge-option25.html`, https:
   n'était jamais libre, et les étiquettes facultatives disparaissaient sans bruit (il juge maintenant le texte) ; une
   étiquette d'axe 3D à gauche ou à droite sortait du canevas (« meilleure ») : `Surf3D` la recale ; `renderJournal`
   sortait avant `renderCal` quand l'historique était vide.
+
+**v26 — plans modifiables, feuille de route, paper** (9 novembre 2026, « personnaliser les data option : la prime, le retrait…,
+avec un titre comme MFF Pro Plan qu'on peut modifier ; créer mon paper type SSRN sur ma stratégie ; un espace pour voir le paper
+et mon plan de trading en road map interactive ») : `prop/challenge-option26.html`, https://claude.ai/artifact/MRKCjbJH3TUvutYcVmdGeD,
+**dernière version, c'est elle qu'on améliore**. L'utilisateur développe sa stratégie et donnera ses rendements : le paper les
+attend (champs `TX`, journal, bilan).
+- **Le bloc MODELE change** : `demande(R,x,f,q,c0,dc,bd,np)`, pure, partagée par `simCompte` et l'onglet Compte, ajoute tampon
+  (`buf`), séances entre deux demandes (`cad`), profit minimal du cycle (`cyc`), meilleur jour du cycle (`fcons`), premier
+  plafond (`wmax1`) et montant visé (`cible`) ; sans eux, l'ancienne règle exactement. Option : `morceaux(p)`, `demY`,
+  `payoffPts` — avec un tampon la demande est linéaire par morceaux et la valeur s'intègre encore segment par segment ; sans
+  tampon, les formules d'origine. « Retrait max » à 0 = sans plafond (le moteur reçoit 10⁹).
+- **Plans** (`PL`, `alp-option-challenge-plans-v26`, sauvegarde `pl`) : nom modifiable (`#f-pname`), modèles `TPL` (LucidFlex
+  50K, LucidFlex 100K, LucidPro 100K, MFFU Builder 100K, MFFU Pro 100K, Vierge), dupliquer, supprimer en deux touchers ;
+  `save()` recopie les règles dans le plan actif. La carte « Mon plan de challenge » remplace « Règles du compte » (ids `b-rg`,
+  `sum-rg` gardés) ; l'onglet Option nomme le plan et sa prime et règle le jour du retrait (`#sg-Nopt`). Le compte réel suit le
+  plan actif ; ses séances et retraits notés donnent cadence et meilleur jour du cycle (`cycleEtat`).
+- **Onglet Stratégie** (`#strategie`, 7e onglet ; barre du téléphone à 9,6 px sous 440 px) : `#sg-sv` route / paper. Feuille de
+  route `RT` (`…-route-v26`, sauvegarde `rt`) : six phases, 21 étapes dont 13 vérifiées par les données (`autoEtat` : champs du
+  paper, réglages, 20 séances, 30 trades, taux > p0, n50, p < 5 %, espérance, gain du plan, réussite, retraits), cochées seules ;
+  la phase en cours seule ouverte (`UI.rop`), mode Modifier (renommer, ajouter, supprimer). Paper (`renderPaper`, `TX`,
+  `…-paper-v26`, sauvegarde `tx`) : résumé, JEL, huit sections, jusqu'à six tables et quatre figures SVG écrites à la largeur
+  réelle, références, lecture plein écran (`body.reading`), impression (feuille `@media print` blanche), copie du texte ; police
+  Source Serif 4.
+- **Contrôles** : `node tools/challenge-option/controle-plans.mjs [page]` (35 : ancienne règle sur 2 000 états, plans modèles
+  contre le banc indépendant au dollar près, cas écrits à la main, option à tampon contre Simpson) ; `panneau.mjs` + 23 contrôles
+  v26 (110 en tout, verts à 390 et 1 280 px) ; `rendu.mjs` lit l'axe italique des fontes ; les 222 autres contrôles et
+  `parallele.mjs` passent.
+- **Pièges v26** : Playwright refuse de cliquer un bouton `aria-disabled` (étape automatique) — `force: true` ; une barre
+  écrasante (70 % de challenges sans retrait) aplatissait l'histogramme du paper — coupée et chiffrée (`clip`) ; « p₀ » sort en
+  glyphe de repli en Geist — `p<sub>0</sub>` dans les tables ; un résumé justifié à 390 px ouvre des trous — justifié au-delà de
+  640 px seulement ; « l'avantage de ALP-0 » — élision par `de()` ; un renvoi « table n » doit compter les tables réellement
+  présentes avant lui (une section vide n'en a pas).
 
 **Comparaison LucidPro 100K / MyFundedFutures Builder 100K** (9 novembre 2026) : règles lues sur les **captures des
 tableaux de bord** envoyées par l'utilisateur (les sites ne se résolvent pas depuis le conteneur). Communes : objectif

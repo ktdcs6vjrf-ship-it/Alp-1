@@ -1,4 +1,5 @@
-// Banc des commandes de la v8 (et suivantes) : panneau Paramètres, cartes repliables, explications « ? », relief.
+// Banc des commandes de la v8 (et suivantes) : panneau Paramètres, cartes repliables, explications « ? », relief ;
+// v26 : plans de challenge, feuille de route, paper.
 // Usage : node tools/challenge-option/panneau.mjs <dossier de rendu.mjs> [largeur]   (lancer rendu.mjs d'abord : il écrit apercu.html)
 // Vérifie, dans le vrai navigateur, que chaque bouton cache puis rend ce qu'il commande, que le panneau change le résultat
 // depuis l'onglet Leviers, et qu'aucune erreur ni aucun défilement horizontal n'apparaît. Écrit des captures. Code de sortie 1 au premier défaut.
@@ -301,6 +302,73 @@ if (await p.evaluate(() => !!document.querySelector("#et-ana"))) {
   await (await p.$("#p22")).screenshot({ path: join(dos, `annee-${W}.png`) });
   await p.click('#sg-tj [data-v="2d"]');
   ok(await largeur(), "aucun défilement horizontal");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v26 : plans de challenge nommés, onglet Stratégie (feuille de route, paper), sauvegarde qui les porte
+if (await p.evaluate(() => !!document.querySelector("#plan-card"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => { const e = document.querySelector(x); return e ? e.textContent.replace(/\s+/g, " ").trim() : ""; }, s);
+  const calc = async () => { await p.waitForTimeout(500); await p.waitForFunction(() => { const g = document.querySelector("#prog"); return g && g.hidden && !document.querySelector("main .stale"); }, null, { timeout: 60000 }); await p.waitForTimeout(300); };
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#reglages"); await p.reload(); await calc();
+  const chips = () => p.evaluate(() => [...document.querySelectorAll("#pl-list .chip")].map(c => c.textContent + (c.getAttribute("aria-pressed") === "true" ? "*" : "")).join(" | "));
+  ok(await chips() === "LucidFlex 50K* | MFFU Pro 100K" && /LucidFlex 50K/.test(await lire("#acct")), `deux plans au départ, LucidFlex 50K actif (${await chips()})`);
+  const heroLF = await lire(".hnum");
+  await p.click('#pl-list [data-i="1"]'); await calc();
+  const rl = await lire("#rules-line"), lab = await lire('#sg-pol [data-v="cap"]'), heroPro = await lire(".hnum");
+  ok(/MFFU Pro 100K/.test(await lire("#acct")) && /tampon de 3 100/.test(rl) && /sans plafond/.test(rl), `MFFU Pro 100K : tampon, sans plafond (« ${rl.slice(0, 90)}… »)`);
+  ok(/3\s000/.test(lab) && heroPro !== heroLF && /\d/.test(heroPro), `sans plafond, « attendre » vise un montant (${lab}) ; résultat recalculé (${heroLF} → ${heroPro})`);
+  await p.fill("#f-pname", "MFF Pro Plan"); await p.waitForTimeout(500);
+  ok(/MFF Pro Plan/.test(await lire("#acct")) && /MFF Pro Plan\*/.test(await chips()), "le titre du plan se modifie, en tête et dans la liste");
+  await p.click('#pl-tpl [data-t="2"]'); await calc();
+  ok((await chips()).split(" | ").length === 3 && /la première fois/.test(await lire("#rules-line")), "un modèle crée un plan (LucidPro 100K, premier retrait plafonné à part)");
+  await p.click("#b-pl-del"); await p.waitForTimeout(200);
+  ok((await chips()).split(" | ").length === 3 && /Confirmer/.test(await lire("#b-pl-del")), "supprimer demande une confirmation");
+  await p.click("#b-pl-del"); await calc();
+  ok((await chips()).split(" | ").length === 2, `le plan est supprimé (${await chips()})`);
+  await p.click('#pl-list [data-i="1"]'); await calc(); await p.reload(); await calc();
+  ok(/MFF Pro Plan\*/.test(await chips()) && await p.inputValue("#f-pname") === "MFF Pro Plan", "plans, nom et plan actif gardés après rechargement");
+  await p.goto(U + "#option"); await calc();
+  ok(await lire("#op-plan") === "MFF Pro Plan", "l'onglet Option nomme le plan et sa prime");
+  await p.click('#sg-Nopt [data-v="120"]'); await p.waitForTimeout(700);
+  ok(await p.evaluate(() => document.querySelector("#r-jour").max) === "120" && /jour 120/.test(await lire("#ao1")), "l'échéance du retrait se règle depuis l'onglet Option");
+  // feuille de route
+  await p.goto(U + "#strategie"); await p.waitForTimeout(1500);
+  const rt = await p.evaluate(() => ({ prog: document.querySelector("#rt-prog").textContent, open: document.querySelectorAll(".rph.op").length, ph: document.querySelectorAll(".rph").length }));
+  ok(/\/ 21/.test(rt.prog) && rt.ph === 6 && rt.open === 1, `six phases, la phase en cours seule ouverte (${rt.prog.replace(/\s+/g, " ").slice(0, 40)})`);
+  await p.click('.rhead[data-ph="d"]'); await p.waitForTimeout(300);
+  const man = await p.evaluate(() => { const b = [...document.querySelectorAll('.rph.op .rst:not(.auto) .rck')][0]; return b && b.dataset.ck; });
+  await p.click(`[data-ck="${man}"]`); await p.waitForTimeout(300);
+  ok(await p.evaluate(id => document.querySelector(`[data-ck="${id}"]`).getAttribute("aria-pressed"), man) === "true", "une étape se valide d'un toucher");
+  const aut = await p.evaluate(() => { const b = document.querySelector(".rst.auto:not(.ok) .rck"); return b && b.dataset.ck; });
+  await p.click(`[data-ck="${aut}"]`, { force: true }); await p.waitForTimeout(300);
+  ok(await p.evaluate(id => document.querySelector(`[data-ck="${id}"]`).getAttribute("aria-pressed"), aut) === "false" && /seule/.test(await lire("#toast")), "une étape vérifiée par les données ne se coche pas à la main");
+  await p.click("#b-rt-edit"); await p.waitForTimeout(200); await p.click('[data-add="c"]'); await p.waitForTimeout(200); await p.keyboard.type("Comparer trois plans");
+  await p.click("#b-rt-edit"); await p.waitForTimeout(300); await p.reload(); await p.waitForTimeout(1500);
+  const apres = await p.evaluate(id => ({ v: document.querySelector(`[data-ck="${id}"]`)?.getAttribute("aria-pressed"), n: document.querySelector("#rt-prog").textContent }), man);
+  ok(apres.v === "true" && /\/ 22/.test(apres.n), "coche et étape ajoutée gardées après rechargement");
+  await p.screenshot({ path: join(dos, `route-${W}.png`) });
+  // le paper
+  await p.click('#sg-sv [data-v="paper"]'); await calc(); await p.waitForTimeout(600);
+  const pp = await p.evaluate(() => ({ h2: document.querySelectorAll("#paper h2").length, ph: document.querySelectorAll("#paper .ph").length, fig: document.querySelectorAll("#paper figure svg").length, tab: document.querySelectorAll("#paper table").length }));
+  ok(pp.h2 === 10 && pp.ph > 0 && pp.fig >= 2 && pp.tab >= 3, `paper : résumé, huit sections, références ; ${pp.tab} tables, ${pp.fig} figures, ${pp.ph} emplacements à remplir`);
+  await p.fill("#x-titre", "Le rebond du VWAP"); await p.fill("#x-nom", "ALP-0"); await p.waitForTimeout(500);
+  ok(await lire("#paper h1") === "Le rebond du VWAP" && /l’avantage d’ALP-0/.test(await lire("#paper .pabs")), "le titre et le nom passent dans le paper (élision comprise)");
+  await p.click("#b-pp-read"); await p.waitForTimeout(400);
+  const rd = await p.evaluate(() => ({ h: getComputedStyle(document.querySelector("header.top")).display, x: getComputedStyle(document.querySelector("#b-pp-x")).display }));
+  await p.keyboard.press("Escape"); await p.waitForTimeout(300);
+  ok(rd.h === "none" && rd.x !== "none" && !(await p.evaluate(() => document.body.classList.contains("reading"))), "lecture plein écran : l'app s'efface, Échap la rend");
+  ok(await largeur(), "aucun défilement horizontal dans l'onglet Stratégie");
+  // la sauvegarde porte plans, paper et feuille de route
+  await p.goto(U + "#reglages"); await calc(); await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" }));
+  await p.click("#b-exp"); await p.waitForTimeout(500);
+  let code = await p.evaluate(() => { const t = document.querySelector("#exp-ta"); return t.hidden ? "" : t.value; });
+  if (!code) code = await p.evaluate(() => navigator.clipboard.readText().catch(() => ""));
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await calc();
+  ok(await chips() === "LucidFlex 50K* | MFFU Pro 100K", "stockage vidé : plans d'origine");
+  await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" }));
+  await p.fill("#f-imp", code); await p.click("#b-imp"); await calc();
+  ok(/MFF Pro Plan\*/.test(await chips()) && await p.inputValue("#x-titre") === "Le rebond du VWAP", `la sauvegarde rend plans et paper (${await chips()})`);
+  await p.goto(U + "#strategie"); await p.click('#sg-sv [data-v="route"]').catch(() => {}); await p.waitForTimeout(1200);
+  ok(/\/ 22/.test(await lire("#rt-prog")), "et la feuille de route, étape ajoutée comprise");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");

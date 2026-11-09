@@ -23,8 +23,10 @@ let src = readFileSync(pagePath, "utf8");
 
 // familles demandées : family=Geist:wght@400;500&family=Geist+Mono:wght@400 …
 const lien = (src.match(/fonts\.googleapis\.com\/css2\?([^"]+)"/) || [])[1] || "";
-const familles = [...lien.matchAll(/family=([^:&]+)(?::wght@([\d;]+))?/g)].map(m => ({
-  nom: decodeURIComponent(m[1].replace(/\+/g, " ")), poids: (m[2] || "400").split(";").map(Number) }));
+// … et l'axe italique : family=Source+Serif+4:ital,wght@0,400;0,600;1,400
+const familles = [...lien.matchAll(/family=([^:&]+)(?::(ital,)?wght@([\d;,]+))?/g)].map(m => ({
+  nom: decodeURIComponent(m[1].replace(/\+/g, " ")),
+  poids: (m[3] || "400").split(";").map(t => m[2] ? { w: +t.split(",")[1], it: t.split(",")[0] === "1" } : { w: +t, it: false }) }));
 const paquet = nom => ({ "Geist": "geist-sans", "Geist Mono": "geist-mono" }[nom] || nom.toLowerCase().replace(/\s+/g, "-"));
 const fontes = join(dos, "fontes");
 mkdirSync(fontes, { recursive: true });
@@ -37,17 +39,17 @@ for (const f of familles) {
     const tgz = readdirSync(d).find(x => x.endsWith(".tgz"));
     execSync(`tar -xzf "${join(d, tgz)}" -C "${d}"`);
   }
-  for (const w of f.poids) {
-    const fichier = join(d, "package/files", `${slug}-latin-${w}-normal.woff2`);
-    if (existsSync(fichier)) faces.push(`@font-face{font-family:'${f.nom}';font-weight:${w};src:url('file://${fichier}') format('woff2');font-display:block}`);
-    else console.log(`fonte absente : ${f.nom} ${w}`);
+  for (const { w, it } of f.poids) {
+    const fichier = join(d, "package/files", `${slug}-latin-${w}-${it ? "italic" : "normal"}.woff2`);
+    if (existsSync(fichier)) faces.push(`@font-face{font-family:'${f.nom}';font-weight:${w};font-style:${it ? "italic" : "normal"};src:url('file://${fichier}') format('woff2');font-display:block}`);
+    else console.log(`fonte absente : ${f.nom} ${w}${it ? " italique" : ""}`);
   }
 }
 src = src.replace(/<link rel="(?:preconnect|stylesheet)"[^>]*fonts\.(?:googleapis|gstatic)\.com[^>]*>\n?/g, "");
 src = src.replace("<style>", "<style>\n" + faces.join("\n") + "\n");
 const apercu = join(dos, "apercu.html");
 writeFileSync(apercu, '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' + src);
-console.log(`fontes : ${familles.map(f => f.nom + " " + f.poids.join("/")).join(", ")}`);
+console.log(`fontes : ${familles.map(f => f.nom + " " + f.poids.map(q => q.w + (q.it ? "i" : "")).join("/")).join(", ")}`);
 
 const mesure = () => {
   const hors = [];
