@@ -1,6 +1,7 @@
 // Banc des commandes de la v8 (et suivantes) : panneau Paramètres, cartes repliables, explications « ? », relief ;
 // v26 : plans de challenge, feuille de route, paper ; v27 : journal de trades en R et scellement ;
-// v28 : la stratégie dans le paper, setups, preuve par l'espérance en R ; v29 : sens de la tendance, défauts non enregistrés.
+// v28 : la stratégie dans le paper, setups, preuve par l'espérance en R ; v29 : sens de la tendance, défauts non enregistrés ;
+// v30 : paper au format SSRN, blanc ou nuit.
 // Usage : node tools/challenge-option/panneau.mjs <dossier de rendu.mjs> [largeur]   (lancer rendu.mjs d'abord : il écrit apercu.html)
 // Vérifie, dans le vrai navigateur, que chaque bouton cache puis rend ce qu'il commande, que le panneau change le résultat
 // depuis l'onglet Leviers, et qu'aucune erreur ni aucun défilement horizontal n'apparaît. Écrit des captures. Code de sortie 1 au premier défaut.
@@ -471,6 +472,24 @@ if (await p.evaluate(() => document.documentElement.innerHTML.includes("uniqueme
   ok(await p.evaluate(() => document.querySelectorAll("#paper .apr li").length) === 7, "les sept définitions restent à préciser");
   const st = await p.evaluate(() => JSON.parse(localStorage.getItem("alp-option-challenge-paper-v26") || "{}"));
   ok(st.nom === "Structure et tendance" && !("tend" in st) && !("entree" in st), `seuls les champs écrits s'enregistrent (${Object.keys(st).join(", ")})`);
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v30 : le paper au format SSRN, pages, figures encadrées, blanc ou nuit
+if (await p.evaluate(() => !!document.querySelector("#sg-ppm"))) {
+  const U = "file://" + join(dos, "apercu.html");
+  const calc = async () => { await p.waitForTimeout(500); await p.waitForFunction(() => { const g = document.querySelector("#prog"); return g && g.hidden && !document.querySelector("main .stale"); }, null, { timeout: 60000 }); await p.waitForTimeout(300); };
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#strategie"); await p.reload(); await calc();
+  await p.click('#sg-sv [data-v="paper"]'); await calc(); await p.waitForTimeout(500);
+  const a = await p.evaluate(() => { const f = [...document.querySelectorAll("#paper .feuille")]; return { n: f.length, h: f.map(x => Math.round(x.getBoundingClientRect().height)), bg: f.length ? getComputedStyle(f[0]).backgroundColor : "", cls: document.querySelector("#paper").className, cadres: document.querySelectorAll("#paper svg rect.pq-frame").length, figs: document.querySelectorAll("#paper figure").length, schema: /schéma/.test(document.querySelector("#paper figcaption")?.textContent || ""), eq: document.querySelectorAll("#paper .eqno").length }; });
+  ok(a.n === 2 && a.h.every(x => x > 200) && a.cls === "paper blanc" && a.bg === "rgb(255, 255, 255)", `deux pages blanches, page de titre puis corps (${a.h.join(" / ")} px)`);
+  ok(a.cadres >= a.figs && a.figs >= 2 && a.schema && a.eq === 2, `figures encadrées (${a.cadres} cadres), schéma de la stratégie en figure 1, équations numérotées`);
+  await p.click('#sg-ppm [data-v="nuit"]'); await p.waitForTimeout(400);
+  const b2 = await p.evaluate(() => ({ cls: document.querySelector("#paper").className, bg: getComputedStyle(document.querySelector("#paper .feuille")).backgroundColor, tx: getComputedStyle(document.querySelector("#paper .feuille p")).color }));
+  const lum = c => (c.match(/\d+/g) || []).slice(0, 3).map(Number);
+  ok(b2.cls === "paper nuit" && lum(b2.bg).every(v => v < 60) && lum(b2.tx).every(v => v > 150), `mode nuit : page sombre, texte clair (${b2.bg}, ${b2.tx})`);
+  await p.reload(); await calc(); await p.waitForTimeout(600);
+  ok(await p.evaluate(() => document.querySelector("#paper").className) === "paper nuit", "le mode choisi est gardé après rechargement");
+  ok(await largeur(), "aucun défilement horizontal");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");

@@ -744,13 +744,26 @@ https://claude.ai/artifact/4qwzTqhN6ExVQyRpgKuiWt.
   seul à la ligne — espace insécable.
 
 **v29 — le sens de la tendance** (9 novembre 2026, « trader uniquement dans le sens de la tendance aussi ») :
-`prop/challenge-option29.html`, https://claude.ai/artifact/Twf6njZR43qpXpuDNxkCTs, **dernière version, c'est elle qu'on
-améliore**. Règle ajoutée à la stratégie : **trader uniquement dans le sens de la tendance** ; après un changement de
+`prop/challenge-option29.html`, https://claude.ai/artifact/Twf6njZR43qpXpuDNxkCTs. Règle ajoutée à la stratégie : **trader uniquement dans le sens de la tendance** ; après un changement de
 structure, c'est la tendance nouvelle qui donne le sens. Elle passe dans l'entrée par défaut (`TX0.entree`), la question de la
 tendance (`DEFQ.tend`) et le paragraphe du paper qui suit les règles. **Piège corrigé** : la v28 enregistrait tout `TX`,
 défauts compris — une sauvegarde gardait l'ancienne formulation par défaut, qui masquait la nouvelle et passait pour une
 définition. Désormais seuls les champs écrits s'enregistrent (`txPropre`, stockage et sauvegarde), et une ancienne
 formulation par défaut connue (`TXV`) est remplacée à la lecture (`txMaj`). `panneau.mjs` + 3 (137, verts à 390 et 1 280 px).
+
+**v30 — le paper au format SSRN, blanc ou nuit** (9 novembre 2026, « exactement le même style que les papers SSRN avec
+graphique intégré, option mode nuit ou blanc ») : `prop/challenge-option30.html`,
+https://claude.ai/artifact/4UF5H6HCtFCy2xYcAuV3yA, **dernière version, c'est elle qu'on améliore**. Deux pages (`.feuille`) :
+page de titre (petites capitales « Document de travail », titre gras centré, auteur, affiliation, date, « Résumé » centré,
+mots-clés, JEL), puis le corps ; police **STIX Two Text** (Times) ; titres numérotés en gras ; paragraphes justifiés, césurés,
+à retrait d'1,5 em sauf après un titre ; tables à trois filets ; légendes « Table n : » au-dessus, « Figure n : » dessous ;
+équations numérotées (1) et (2) ; figures en noir et gris, encadrées, graduations rentrantes et titres d'axes (`ppGrid(…, at)`) ;
+Figure 1 = **schéma de la stratégie** (`figSchema` : baisse, changement de structure, retests en escalier, stops, max pain,
+fins de structure ; sans données). Bascule **Blanc / Nuit** (`P.ppm`, variables `--pk`, `--ps`… sur `.paper.blanc` /
+`.paper.nuit`) ; l'impression reste blanche, page de titre seule. Pas de marque SSRN (ni logo ni « ssrn.com ») : le format,
+pas l'enseigne. **Piège v30** : la classe `.sheet` était déjà celle du panneau Paramètres (`position: fixed`) — les pages du paper
+avaient une hauteur nulle ; elles s'appellent `.feuille`. `panneau.mjs` + 5 (142, verts à 390 et 1 280 px) ; `rendu.mjs` charge
+STIX Two Text 400/600/700 et italique.
 
 **Exemples de la stratégie** (trois captures TradingView MNQ1! 1 minute, 9 novembre 2026, heure de New York ; **lecture de
 Claude, non encore confirmée par l'utilisateur**) : chute de 27 000 à ~26 760 entre 8 h 30 et 8 h 50, sous l'« IV −1σ »
