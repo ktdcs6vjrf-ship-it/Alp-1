@@ -72,5 +72,37 @@ ok(/vide/.test(M.lireCSV("").err || ""), "fichier vide : message clair");
   close(r.days.reduce((x, d) => x + d.v, 0), tot, "somme des séances = somme des trades");
   ok(r.n === 20000 && ms < 1000, `20 000 trades lus en ${ms} ms`); }
 
+// 9. v32 : chaque trade garde son heure d'entrée, son sens et sa durée (pages antérieures : sauté)
+if (M.lireCSV("pnl,date\n1,2026-11-02\n2,2026-11-03\n", {}).trades) {
+  const H = new Function(html.slice(a, b) + "\nreturn {lireHeure,jourBrut,lireSens};")();
+  for (const [x, v] of [["11/03/2026 09:31:05", 9 * 3600 + 31 * 60 + 5], ["2026-11-03T15:04:00Z", 15 * 3600 + 240], ["3:05 PM", 15 * 3600 + 300], ["12:10 AM", 600], ["12:00 pm", 43200], ["09:41", 9 * 3600 + 41 * 60], ["2026-11-03 07:00:01.250", 7 * 3600 + 1]])
+    ok(H.lireHeure(x) === v, `heure de « ${x} » : ${H.lireHeure(x)} contre ${v}`);
+  for (const x of ["2026-11-03", "03/11/2026", "", "25:00", "abc"]) ok(H.lireHeure(x) === null, `« ${x} » ne porte pas d'heure`);
+  ok(H.jourBrut("11/08/2026 18:30:00", false) === Date.UTC(2026, 10, 8) / 864e5 && H.jourBrut("08/11/2026", true) === Date.UTC(2026, 10, 8) / 864e5, "jourBrut garde le dimanche 8 novembre (pas de report au lundi)");
+  ok(H.jourBrut("31/02/2026", true) === null, "le 31 février n'existe pas");
+  ok(H.lireSens("Long") === 1 && H.lireSens("SHORT") === -1 && H.lireSens("Buy") === 1 && H.lireSens("Sell") === -1 && H.lireSens("") === 0 && H.lireSens("flat") === 0, "sens : long, short, buy, sell");
+  // export Tradovate : l'ordre des deux horodatages dit le sens ; l'heure est celle de l'entrée ; un trade du dimanche soir ouvre la séance du lundi
+  const csv = `symbol,qty,buyPrice,sellPrice,pnl,boughtTimestamp,soldTimestamp,duration
+MNQZ6,4,21000.00,21010.00,$80.00,11/03/2026 09:31:05,11/03/2026 09:35:10,4min
+MNQZ6,4,21020.00,21000.00,$(160.00),11/03/2026 10:02:00,11/03/2026 10:01:00,1min
+MNQZ6,2,21000.00,21030.00,$120.00,11/04/2026 09:40:00,11/04/2026 09:50:00,10min
+MNQZ6,1,20990.00,21000.00,$20.00,11/08/2026 18:30:00,11/08/2026 18:45:00,15min
+MNQZ6,1,21000.00,21004.00,$8.00,11/09/2026 09:35:00,11/09/2026 09:36:30,1min
+`;
+  const r = M.lireCSV(csv, { comm: 1 }), T = r.trades;
+  eq(T.map(q => [q.t, q.v, q.q, q.h, q.s, q.d]), [["2026-11-03", 76, 4, 9 * 3600 + 31 * 60 + 5, 1, 245], ["2026-11-03", -164, 4, 10 * 3600 + 60, -1, 60], ["2026-11-04", 118, 2, 9 * 3600 + 40 * 60, 1, 600],
+    ["2026-11-09", 19, 1, 18 * 3600 + 30 * 60, 1, 900], ["2026-11-09", 7, 1, 9 * 3600 + 35 * 60, 1, 90]], "Tradovate : séance, net, contrats, heure d'entrée, sens, durée ; le dimanche soir passe avant le lundi matin");
+  eq(r.a, { h: 5, s: 5, d: 5 }, "cinq trades avec heure, sens et durée");
+  close(T.reduce((x, q) => x + q.v, 0), r.days.reduce((x, d) => x + d.v, 0), "somme des trades = somme des séances");
+  // export à colonnes entrée / sortie et colonne de sens, ordre du fichier inversé (le plus récent d'abord)
+  const nt = M.lireCSV("Market pos.;Entry time;Exit time;Profit;Qty\nShort;04/11/2026 15:10:00;04/11/2026 15:25:30;-45,5;1\nLong;03/11/2026 09:45:00;03/11/2026 10:15:00;210;2\n", { comm: 0 });
+  eq(nt.trades.map(q => [q.t, q.v, q.h, q.s, q.d]), [["2026-11-03", 210, 9 * 3600 + 45 * 60, 1, 1800], ["2026-11-04", -45.5, 15 * 3600 + 600, -1, 930]], "entrée / sortie et sens lus, trades remis dans l'ordre du temps");
+  // sans heure : l'ordre du fichier est gardé dans la séance, heure et durée absentes
+  const sh = M.lireCSV("date,pnl\n2026-11-03,10\n2026-11-03,-5\n2026-11-02,7\n", {});
+  eq(sh.trades.map(q => [q.t, q.v, q.h, q.s, q.d]), [["2026-11-02", 7, null, 0, null], ["2026-11-03", 10, null, 0, null], ["2026-11-03", -5, null, 0, null]], "dates seules : ni heure ni sens ni durée, ordre du fichier dans la séance");
+  // le gros fichier garde ses 20 000 trades
+  { let s2 = "qty,pnl,date\n"; for (let i = 0; i < 20000; i++) s2 += `1,${(i * 37) % 200 - 90},2026-10-${String(1 + (i % 28)).padStart(2, "0")}\n`; const t0 = Date.now(), g = M.lireCSV(s2, {}); ok(g.trades.length === 20000 && Date.now() - t0 < 1500, `20 000 trades gardés un à un en ${Date.now() - t0} ms`); }
+}
+
 console.log(`\n${nOk} contrôles passés, ${nKo} échecs`);
 process.exit(nKo ? 1 : 0);

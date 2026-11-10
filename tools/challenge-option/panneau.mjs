@@ -1,7 +1,8 @@
 // Banc des commandes de la v8 (et suivantes) : panneau Paramètres, cartes repliables, explications « ? », relief ;
 // v26 : plans de challenge, feuille de route, paper ; v27 : journal de trades en R et scellement ;
 // v28 : la stratégie dans le paper, setups, preuve par l'espérance en R ; v29 : sens de la tendance, défauts non enregistrés ;
-// v30 : paper au format SSRN, blanc ou nuit.
+// v30 : paper au format SSRN, blanc ou nuit ; v32 : l'essentiel, sommaire d'onglet, taille adaptative, comparateur de plans,
+// séries de pertes, où est ton avantage.
 // Usage : node tools/challenge-option/panneau.mjs <dossier de rendu.mjs> [largeur]   (lancer rendu.mjs d'abord : il écrit apercu.html)
 // Vérifie, dans le vrai navigateur, que chaque bouton cache puis rend ce qu'il commande, que le panneau change le résultat
 // depuis l'onglet Leviers, et qu'aucune erreur ni aucun défilement horizontal n'apparaît. Écrit des captures. Code de sortie 1 au premier défaut.
@@ -492,6 +493,86 @@ if (await p.evaluate(() => !!document.querySelector("#sg-ppm"))) {
   await p.reload(); await calc(); await p.waitForTimeout(600);
   ok(await p.evaluate(() => document.querySelector("#paper").className) === "paper nuit", "le mode choisi est gardé après rechargement");
   ok(await largeur(), "aucun défilement horizontal");
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+}
+// v32 : l'essentiel, le sommaire d'onglet, la taille adaptative, le comparateur de plans, les séries de pertes, où est ton avantage
+if (await p.evaluate(() => !!document.querySelector("#ess"))) {
+  const U = "file://" + join(dos, "apercu.html"), lire = s => p.evaluate(x => { const e = document.querySelector(x); return e ? e.textContent.replace(/\s+/g, " ").trim() : ""; }, s);
+  const calc = async () => { await p.waitForTimeout(500); await p.waitForFunction(() => { const g = document.querySelector("#prog"); return g && g.hidden && !document.querySelector("main .stale"); }, null, { timeout: 60000 }); await p.waitForTimeout(400); };
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#resultat"); await p.reload(); await calc();
+  // l'essentiel : la cascade et les constats
+  const es = await p.evaluate(() => ({ bars: document.querySelectorAll("#s25 > .wfb").length, ins: [...document.querySelectorAll("#ins li")].map(l => l.textContent.replace(/\s+/g, " ")), cmp: document.querySelector("#cmp-hint").textContent.replace(/\s+/g, " ") }));
+  ok(es.bars >= 5 && es.ins.length >= 3 && /Appliquer/.test(es.ins[0]) && /prouvé/.test(es.ins.join(" ")), `l'essentiel : cascade de ${es.bars} colonnes, ${es.ins.length} constats, le premier s'applique (« ${es.ins[0].slice(0, 60)}… »)`);
+  const m1 = (es.ins[0].match(/\+[\d\s ]+\$/) || [""])[0].replace(/\s/g, ""), m2 = (es.cmp.match(/rapporte (\+[\d\s ]+\$)/) || ["", ""])[1].replace(/\s/g, "");
+  ok(!!m1 && m1 === m2, `un seul chiffre pour « attendre le plafond » : ${m1} dans l'essentiel, ${m2} dans Comparer`);
+  await (await p.$("#ess")).screenshot({ path: join(dos, `essentiel-${W}.png`) });
+  // sommaire d'onglet : une pastille par carte, celle qu'on lit est marquée, un toucher y mène
+  await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(700);   // la capture ci-dessus a fait défiler la page
+  const nav = await p.evaluate(() => ({ n: document.querySelectorAll("#subnav button").length, cur: [...document.querySelectorAll("#subnav button")].findIndex(b => b.getAttribute("aria-current") === "true"), vu: !document.querySelector("#subnav").hidden }));
+  ok(nav.vu && nav.n >= 4 && nav.cur === 0, `sommaire d'onglet : ${nav.n} pastilles, la première marquée en haut de page`);
+  await p.evaluate(() => [...document.querySelectorAll("#subnav button")].find(b => b.textContent === "Budget").click()); await p.waitForTimeout(1800);
+  const nav2 = await p.evaluate(() => ({ y: scrollY, cur: (document.querySelector('#subnav button[aria-current="true"]') || {}).textContent, top: document.querySelector('[data-nav="Budget"]').getBoundingClientRect().top, hh: document.querySelector("header.top").getBoundingClientRect().height }));
+  ok(nav2.y > 400 && nav2.cur === "Budget" && nav2.top >= nav2.hh - 2 && nav2.top < nav2.hh + 40, `la pastille « Budget » y mène, juste sous l'en-tête (carte à ${Math.round(nav2.top)} px, en-tête ${Math.round(nav2.hh)} px)`);
+  await p.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await p.waitForTimeout(700);
+  ok(await p.evaluate(() => (document.querySelector('#subnav button[aria-current="true"]') || {}).textContent) === "Simulation", "en bas de page, la dernière pastille est marquée");
+  // le premier constat s'applique : la politique de retrait passe au plafond
+  await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(300); const h0 = await lire(".hnum");
+  await p.click('#ins [data-ins="0"]'); await calc();
+  ok(await p.evaluate(() => document.querySelector('#sg-pol [data-v="cap"]').getAttribute("aria-pressed")) === "true" && (await lire(".hnum")) !== h0, `« Appliquer » change le réglage et relance le calcul (${h0} → ${await lire(".hnum")})`);
+  // taille adaptative : comparée dans Leviers, appliquée, reprise par Réglages et par la séance du jour
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#leviers"); await p.reload(); await calc();
+  const dy = await p.evaluate(() => ({ n: document.querySelectorAll("#dyns .lim").length, ans: document.querySelector("#dy-ans").textContent.replace(/\s+/g, " "), best: (document.querySelector("#dyns .lim.best [data-dyn]") || {}).dataset }));
+  ok(dy.n >= 6 && /pertes d’avance/.test(dy.ans) && dy.best && +dy.best.dyn > 0, `taille adaptative : ${dy.n} règles comparées, la meilleure garde ${dy.best ? dy.best.dyn : "?"} pertes d'avance (« ${dy.ans.slice(0, 70)}… »)`);
+  await (await p.$("#dy-card")).screenshot({ path: join(dos, `taille-${W}.png`) });
+  const hA = await lire("#lv-ans"); await p.click(`#dyns [data-dyn="${dy.best.dyn}"]`); await calc();
+  const st = await p.evaluate(() => ({ seg: document.querySelector('#sg-dyn [data-v="1"]').getAttribute("aria-pressed"), ek: document.querySelector("#r-ek2").value, sl: !document.querySelector("#dyn-sl").hidden, cur: (document.querySelector("#dyns .lim.cur .t") || {}).textContent, sum: document.querySelector("#sum-st").textContent }));
+  ok(st.seg === "true" && st.ek === dy.best.dyn && st.sl && /pertes d’avance/.test(st.cur || "") && /taille adaptative/.test(st.sum) && (await lire("#lv-ans")) !== hA, `Appliquer : Réglages passe en « Adaptative », curseur à ${st.ek}, la ligne devient l'actuelle`);
+  await p.goto(U + "#compte"); await p.waitForTimeout(1500);
+  ok(/Taille du jour/.test(await lire("#plan")) && await p.evaluate(() => document.querySelector("#r-ek").value) === dy.best.dyn, "la séance du jour donne la « Taille du jour » avec la même règle");
+  await p.fill("#f-ex", "-1700"); await p.waitForTimeout(500);
+  ok(/réduite/.test(await lire("#plan")) && /1\sMNQ/.test(await lire("#plan-l .kpi")), `à −1 700 $, la taille du jour est réduite (${(await lire("#plan-l .kpi")).slice(0, 40)}…)`);
+  // comparateur de plans : à la demande, rangé, « Choisir » active le plan avec son réglage
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#leviers"); await p.reload(); await calc();
+  ok(/plans à départager/.test(await lire("#pc-ans")) && (await p.evaluate(() => document.querySelectorAll("#pcs .lim").length)) === 0, "comparateur de plans : rien n'est calculé avant qu'on le demande");
+  await p.evaluate(() => document.querySelector("#pc-card").scrollIntoView({ block: "center" })); await p.click("#b-pc");
+  await p.waitForFunction(() => document.querySelectorAll("#pcs .lim").length >= 5 && !document.querySelector("#b-pc").hidden, null, { timeout: 120000 }); await p.waitForTimeout(400);
+  const pc = await p.evaluate(() => ({ ans: document.querySelector("#pc-ans").textContent.replace(/\s+/g, " "), rows: [...document.querySelectorAll("#pcs .lim")].map(r => ({ n: r.querySelector(".t b").textContent, v: +r.querySelector(".v").firstChild.textContent.replace(/[^\d−-]/g, "").replace("−", "-"), sub: r.querySelector(".t small").textContent })) }));
+  ok(pc.rows.length >= 5 && pc.rows.every((r, i) => !i || r.v <= pc.rows[i - 1].v) && /(rapporte le plus|est le meilleur)/.test(pc.ans), `${pc.rows.length} plans rangés du meilleur au moins bon (${pc.rows.map(r => r.n + " " + r.v).join(" ; ")})`);
+  await (await p.$("#pc-card")).screenshot({ path: join(dos, `plans-${W}.png`) });
+  const cible = pc.rows[0], cBest = (cible.sub.match(/· (\d+)\sMNQ/) || [])[1];
+  if (await p.evaluate(() => !!document.querySelector('#pcs [data-pc="0"]'))) { await p.click('#pcs [data-pc="0"]'); await calc();
+    ok((await lire("#acct")).includes(cible.n) && await p.evaluate(() => document.querySelector("#r-c").value) === cBest, `« Choisir » active ${cible.n} à ${cBest} contrats (en-tête : ${(await lire("#acct")).slice(0, 40)})`); }
+  // séries de pertes : la loi exacte, l'horizon se choisit
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.goto(U + "#quant"); await p.reload(); await calc();
+  const se = await p.evaluate(() => ({ ans: document.querySelector("#aq9").textContent.replace(/\s+/g, " "), bars: document.querySelectorAll("#s26 > .bar-v, #s26 > .bar-l").length }));
+  ok(/100 trades/.test(se.ans) && /13 pour épuiser/.test(se.ans) && se.bars > 8, `séries de pertes : 13 d'affilée épuisent un compte neuf à 4 contrats, ${se.bars} barres (« ${se.ans.slice(0, 80)}… »)`);
+  await p.evaluate(() => document.querySelector("#se-card").scrollIntoView({ block: "start" })); await p.click('#sg-sn [data-v="500"]'); await p.waitForTimeout(900);
+  ok(/500 trades/.test(await lire("#aq9")), "l'horizon passe à 500 trades");
+  await (await p.$("#se-card")).screenshot({ path: join(dos, `series-${W}.png`) });
+  // où est ton avantage : vide, exemple, puis de vrais trades importés, qui voyagent dans la sauvegarde
+  await p.goto(U + "#compte"); await p.waitForTimeout(1500);
+  ok(/30 trades importés/.test(await lire("#eg-ans")) && await p.evaluate(() => document.querySelectorAll("#eg-b [data-eg]").length) === 2 && !(await vu("#p27")), "où est ton avantage : sans données, la carte dit ce qu'il faut et propose un exemple");
+  await p.evaluate(() => document.querySelector("#eg-card").scrollIntoView({ block: "start" })); await p.click('[data-eg="demo"]');
+  await p.waitForFunction(() => document.querySelectorAll("#s27 > circle.eg-d").length > 8, null, { timeout: 30000 }); await p.waitForTimeout(600);
+  const eg = await p.evaluate(() => ({ ans: document.querySelector("#eg-ans").textContent.replace(/\s+/g, " "), sig: document.querySelectorAll("#s27 > circle.eg-d.sig").length, all: document.querySelectorAll("#s27 > circle.eg-d").length, chip: !document.querySelector("#eg-demo").hidden }));
+  ok(/Exemple inventé/.test(eg.ans) && /entrées de 11 h/.test(eg.ans) && eg.sig >= 1 && eg.sig < eg.all && eg.chip, `exemple : l'effet planté à 11 h est retrouvé, ${eg.sig} case(s) retenue(s) sur ${eg.all}, marqué « Exemple »`);
+  await p.waitForTimeout(900); await (await p.$("#eg-card")).screenshot({ path: join(dos, `avantage-${W}.png`) });
+  await p.click('[data-eg="out"]'); await p.waitForTimeout(500); ok(/30 trades importés/.test(await lire("#eg-ans")) && !(await vu("#p27")), "quitter l'exemple rend la carte vide");
+  let csv = "qty,pnl,boughtTimestamp,soldTimestamp\n"; { let d = Date.UTC(2026, 8, 1), n = 0, x = 7;
+    while (n < 64) { const dt = new Date(d); if (dt.getUTCDay() % 6) { const j = String(dt.getUTCMonth() + 1).padStart(2, "0") + "/" + String(dt.getUTCDate()).padStart(2, "0") + "/2026";
+      for (let k = 0; k < 2; k++, n++) { x = (x * 73 + 11) % 101; const long = x % 2 === 0, a = `${j} ${String(9 + k).padStart(2, "0")}:35:00`, z = `${j} ${String(9 + k).padStart(2, "0")}:48:00`; csv += `2,${x < 30 ? 220 : -62},${long ? a : z},${long ? z : a}\n`; } } d += 864e5; } }
+  await p.evaluate(t => { document.querySelector("#b-csv-paste").click(); document.querySelector("#f-csv-ta").value = t; document.querySelector("#b-csv-read").click(); }, csv); await p.waitForTimeout(500);
+  await p.evaluate(() => document.querySelector('[data-csv="ok"]').click());
+  await p.waitForFunction(() => /64 trades/.test(document.querySelector("#eg-ans").textContent), null, { timeout: 30000 }); await p.waitForTimeout(500);
+  const tr = await p.evaluate(() => ({ ans: document.querySelector("#eg-ans").textContent.replace(/\s+/g, " "), dims: [...document.querySelectorAll("#s27 > text.eg-h")].map(t => t.textContent).join(" | "), n: document.querySelector("#jr-n").textContent }));
+  ok(/64 trades \(32 séances\)/.test(tr.ans) && /HEURE/.test(tr.dims) && /SENS/.test(tr.dims) && /32 journées/.test(tr.n), `fichier importé : 64 trades fouillés par jour, heure, sens et rang (${tr.dims})`);
+  await p.goto(U + "#reglages"); await p.waitForTimeout(1200); await p.evaluate(() => document.querySelector("#data-card").scrollIntoView({ block: "center" })); await p.click("#b-exp"); await p.waitForTimeout(500);
+  let code = await p.evaluate(() => { const t = document.querySelector("#exp-ta"); return t.hidden ? "" : t.value; }); if (!code) code = await p.evaluate(() => navigator.clipboard.readText().catch(() => ""));
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload(); await calc();
+  await p.evaluate(c => { document.querySelector("#f-imp").value = c; document.querySelector("#b-imp").click(); }, code); await calc(); await p.goto(U + "#compte");
+  await p.waitForFunction(() => /64 trades/.test(document.querySelector("#eg-ans").textContent), null, { timeout: 30000 });
+  ok(true, "la sauvegarde recollée rend les trades : la recherche repart sur les 64");
+  ok(await largeur(), "aucun défilement horizontal après les essais de la v32");
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 }
 ok(!errs.length, errs.length ? "erreurs : " + errs.join(" | ") : "aucune erreur de script");

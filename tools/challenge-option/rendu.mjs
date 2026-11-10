@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 const { chromium } = createRequire(import.meta.url)("playwright");
 const ici = dirname(fileURLToPath(import.meta.url));
 const dos = process.argv[2] || mkdtempSync(join(tmpdir(), "option-"));
-const pagePath = process.argv[3] || join(ici, "../../prop/challenge-option5.html");
+const pagePath = process.argv[3] || join(ici, "../../prop/challenge-option32.html");
 mkdirSync(dos, { recursive: true });
 let src = readFileSync(pagePath, "utf8");
 
@@ -55,6 +55,7 @@ const mesure = () => {
   const hors = [];
   document.querySelectorAll("body *").forEach(el => {
     const rc = el.getBoundingClientRect();
+    if (el.closest(".aura")) return;   // v32 : aurore de fond, fixe et rognée par son conteneur, plus grande que l'écran par construction
     if (rc.width > 0 && (rc.right > document.documentElement.clientWidth + 1 || rc.left < -1)) {
       let q = el.parentElement, defile = false;
       while (q) { const st = getComputedStyle(q); if (st.overflowX === "auto" || st.overflowX === "scroll") { defile = true; break; } q = q.parentElement; }
@@ -65,7 +66,7 @@ const mesure = () => {
 };
 const b = await chromium.launch();
 let defauts = 0;
-for (const W of [360, 390, 430, 768, 1100, 1280]) {
+for (const W of [360, 390, 430, 768, 1100, 1280, 1440]) {
   const p = await b.newPage({ viewport: { width: W, height: 900 } });
   const errs = [];
   p.on("pageerror", e => errs.push(e.message));
@@ -80,7 +81,7 @@ for (const W of [360, 390, 430, 768, 1100, 1280]) {
     const r = await p.evaluate(mesure);
     const bon = r.doc <= r.vue && !r.hors.length;
     if (!bon) { ok = false; lignes.push(`${v || "page"} : doc ${r.doc}/${r.vue}, hors cadre ${r.hors.slice(0, 5).join(" ")}`); }
-    if (W === 390 || W === 1280) {
+    if (W === 390 || W === 1280 || W === 1440) {
       const cible = v ? await p.$("#v-" + v) : await p.$("main > section");
       if (cible) await cible.screenshot({ path: join(dos, `${v ? "vue-" + v : "figure1"}-${W}.png`) });
     }
