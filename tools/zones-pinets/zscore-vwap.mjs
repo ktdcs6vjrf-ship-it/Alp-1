@@ -80,5 +80,31 @@ console.log('VWAP');
   verifie('aucune ligne ni boîte : seulement des tracés et des étiquettes', rd.lignes.length === 0 && rd.boites.length === 0);
 }
 
+console.log('Donchian');
+{
+  const b = seance(J, '00:00', '02:00', [['00:00', 29200], ['00:30', 29260], ['01:00', 29180], ['01:30', 29240], ['02:00', 29210]]);
+  const vals = (r, n) => r.ctx.plots[n].data.map(x => x.value);
+  const ref = (i, n, dec) => { const j = i - dec; if (j < n - 1) return [NaN, NaN]; const w = b.slice(j - n + 1, j + 1); return [Math.max(...w.map(x => x.high)), Math.min(...w.map(x => x.low))]; };
+  const r = await executer(F, b);
+  const hi = vals(r, 'Donchian haut'), lo = vals(r, 'Donchian bas'), md = vals(r, 'Donchian milieu');
+  const idx = b.map((_, i) => i).filter(i => i >= 19);
+  verifie('haut et bas = plus haut et plus bas des 20 bougies', idx.every(i => Math.abs(hi[i] - ref(i, 20, 0)[0]) < 1e-9 && Math.abs(lo[i] - ref(i, 20, 0)[1]) < 1e-9));
+  verifie('milieu = (haut + bas) / 2', idx.every(i => Math.abs(md[i] - (hi[i] + lo[i]) / 2) < 1e-9));
+  verifie('préchauffage : na sur les 19 premières bougies', hi.slice(0, 19).every(vide));
+  verifie('le prix reste dans le canal', idx.every(i => b[i].high <= hi[i] + 1e-9 && b[i].low >= lo[i] - 1e-9));
+  const rp = await executer(F, b, { 'Exclure la bougie en cours': true, 'Longueur (bougies)': 10 });
+  const hp = vals(rp, 'Donchian haut'), lp = vals(rp, 'Donchian bas');
+  const idp = b.map((_, i) => i).filter(i => i >= 10);
+  verifie('« Exclure la bougie en cours », 10 : les 10 bougies d\'avant', idp.every(i => Math.abs(hp[i] - ref(i, 10, 1)[0]) < 1e-9 && Math.abs(lp[i] - ref(i, 10, 1)[1]) < 1e-9));
+  const rb = await executer(F, b, { 'Marquer les cassures': true });
+  const up = vals(rb, 'Cassure haute'), dn = vals(rb, 'Cassure basse');
+  const attH = idx.slice(1).filter(i => b[i].close > ref(i, 20, 1)[0]), attB = idx.slice(1).filter(i => b[i].close < ref(i, 20, 1)[1]);
+  const vrai = v => v === true || v === 1;
+  verifie('cassures hautes marquées sur les bonnes bougies', attH.length > 0 && b.map((_, i) => i).filter(i => vrai(up[i])).join() === attH.join(), `${attH.length}`);
+  verifie('cassures basses marquées sur les bonnes bougies', attB.length > 0 && b.map((_, i) => i).filter(i => vrai(dn[i])).join() === attB.join(), `${attB.length}`);
+  const ro = await executer(F, b, { 'Afficher le canal': false });
+  verifie('canal masqué : rien de tracé', vals(ro, 'Donchian haut').every(vide) && vals(ro, 'Donchian milieu').every(vide));
+}
+
 console.log(`\n${ok} contrôle(s) réussi(s), ${ko} échec(s)`);
 if (ko) { console.log('Échecs : ' + echecs.join(' | ')); process.exitCode = 1; }

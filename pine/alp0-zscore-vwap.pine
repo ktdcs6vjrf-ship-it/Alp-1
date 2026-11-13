@@ -1,16 +1,18 @@
 //@version=6
-indicator("Alp-0 Z-Score + VWAP", "Z+VWAP v5", overlay = true, max_labels_count = 50)
+indicator("Alp-0 Z-Score + VWAP + Donchian", "Z+VWAP+DC v6", overlay = true, max_labels_count = 60)
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  Alp-0 Z-Score + VWAP — v5
+//  Alp-0 Z-Score + VWAP + Donchian — v6
 //
-//  Deux choses, et rien d'autre :
+//  Trois choses, et rien d'autre :
 //    ①–③ la heatmap z-score des bougies — l'ancien « Z + Single Prints
 //       (OPEX) », corrigé (voir la section A) ;
 //    ④ le VWAP de séance, ses six bandes σ pondérées par le volume et le
 //       VWAP de la période précédente ±1 / ±2 : les réglages de « The
 //       Strategists - Aggregated VWAP » tels qu'ils sont saisis sur le
-//       graphique (agrégation désactivée — sans objet sur un future CME).
+//       graphique (agrégation désactivée — sans objet sur un future CME) ;
+//    ⑤ le canal de Donchian : plus haut et plus bas des N dernières
+//       bougies, et leur milieu (v6, section C).
 //
 //  Il remplace les deux indicateurs d'origine : les garder en plus
 //  superpose deux jeux de bougies colorées et deux VWAP.
@@ -73,6 +75,22 @@ vwLab    = input.bool(true, "Show Labels", group = gL, inline = "lb")
 vwPLab   = input.bool(false, "Show Previous Labels", group = gL, inline = "lb")
 vwLabCol = input.color(color.white, "Label Color", group = gL)
 vwLabOff = input.int(1, "Label offset", minval = 0, maxval = 300, group = gL)
+
+
+// ─── ⑤ Canal de Donchian ───────────────────────────────────────────────────
+gD = "⑤ DONCHIAN"
+dcOn    = input.bool(true, "Afficher le canal", group = gD)
+dcLen   = input.int(20, "Longueur (bougies)", minval = 1, group = gD,
+     tooltip = "Haut = plus haut des N dernières bougies, bas = plus bas des N dernières bougies, milieu = leur moyenne.")
+dcPrev  = input.bool(false, "Exclure la bougie en cours", group = gD,
+     tooltip = "Calcule le canal sur les N bougies d'avant. Le canal ne bouge plus pendant que la bougie se forme, et une clôture au-dessus du haut (ou sous le bas) devient une vraie cassure.")
+dcMid   = input.bool(true, "Ligne du milieu", group = gD, inline = "dm")
+dcFillOn = input.bool(true, "Remplir", group = gD, inline = "dm")
+dcColUp = input.color(color.rgb(34, 195, 155), "Haut", group = gD, inline = "dc")
+dcColDn = input.color(color.rgb(240, 71, 107), "Bas", group = gD, inline = "dc")
+dcColMd = input.color(color.rgb(247, 163, 92), "Milieu", group = gD, inline = "dc")
+dcBrk   = input.bool(false, "Marquer les cassures", group = gD,
+     tooltip = "Un triangle sous la bougie qui clôture au-dessus du haut du canal précédent, au-dessus de celle qui clôture sous le bas. Calculé sur la bougie close.")
 
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -265,3 +283,31 @@ if barstate.islast
         vwPose(pl1, "--------- pSD -1")
         vwPose(pu2, "--------- pSD +2")
         vwPose(pl2, "--------- pSD -2")
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  C. Canal de Donchian
+//     haut = plus haut des N bougies, bas = plus bas des N bougies,
+//     milieu = (haut + bas) / 2. « Exclure la bougie en cours » décale le
+//     calcul d'une bougie : les N bougies d'avant, sans celle qui se forme.
+//     Les cassures se lisent toujours contre le canal des N bougies d'avant
+//     (une clôture ne peut pas dépasser un haut qui l'inclut déjà).
+// ═══════════════════════════════════════════════════════════════════════════
+
+dcHi0 = ta.highest(high, dcLen)
+dcLo0 = ta.lowest(low, dcLen)
+dcHi  = dcPrev ? dcHi0[1] : dcHi0
+dcLo  = dcPrev ? dcLo0[1] : dcLo0
+dcMd  = math.avg(dcHi, dcLo)
+
+pDH = plot(dcOn ? dcHi : na, "Donchian haut", color = dcColUp, linewidth = 1)
+pDL = plot(dcOn ? dcLo : na, "Donchian bas", color = dcColDn, linewidth = 1)
+plot(dcOn and dcMid ? dcMd : na, "Donchian milieu", color = dcColMd, linewidth = 1, style = plot.style_linebr)
+fill(pDH, pDL, color = dcOn and dcFillOn ? color.new(#2962FF, 94) : na, title = "Donchian remplissage")
+
+dcUpBrk = dcBrk and dcOn and barstate.isconfirmed and close > dcHi0[1]
+dcDnBrk = dcBrk and dcOn and barstate.isconfirmed and close < dcLo0[1]
+plotshape(dcUpBrk, "Cassure haute", shape.triangleup, location.belowbar, dcColUp, size = size.tiny)
+plotshape(dcDnBrk, "Cassure basse", shape.triangledown, location.abovebar, dcColDn, size = size.tiny)
+alertcondition(close > dcHi0[1], "Donchian : cassure haute", "Clôture au-dessus du haut du canal de Donchian")
+alertcondition(close < dcLo0[1], "Donchian : cassure basse", "Clôture sous le bas du canal de Donchian")
