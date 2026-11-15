@@ -294,3 +294,11 @@ explicite.
    chiffres publiés **et une centaine de phrases écrites devant eux** — c'est
    le piège de la légende décrite plus bas, à l'échelle d'une partie entière.
    Décision non tranchée.
+
+## Skills et hooks de session (`.claude/`)
+
+- `skills/ponytail*` (DietrichGebert/ponytail 5.3.3, skills seuls) et `skills/graphify` (graphifyy).
+- `hooks/ponytail-start.py` (SessionStart) injecte les règles Ponytail : actif à chaque session.
+- `hooks/graphify-nudge.py` (UserPromptSubmit) : au 15ᵉ message d'une session (`GRAPHIFY_NUDGE_AFTER`),
+  Claude propose Graphify par Oui/Non ; sur Oui, `/graphify .` puis `graphify-out/graph.html` envoyé dans
+  la conversation. Une fois par session. `graphify-out/` est ignoré par git.

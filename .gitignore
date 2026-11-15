@@ -12,3 +12,6 @@ data/*
 # ALP Desk — sorties de construction
 desk/dist/
 desk/shots/
+
+# Graphify — graphe régénérable
+graphify-out/
