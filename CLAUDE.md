@@ -297,6 +297,7 @@ explicite.
 
 ## Skills et hooks de session (`.claude/`)
 
+- `skills/ofm` : agent de gestion d'agence OFM (débutant, étapes 0 à 5, références chiffrées).
 - `skills/ponytail*` (DietrichGebert/ponytail 5.3.3, skills seuls) et `skills/graphify` (graphifyy).
 - `hooks/ponytail-start.py` (SessionStart) injecte les règles Ponytail : actif à chaque session.
 - `hooks/graphify-nudge.py` (UserPromptSubmit) : au 15ᵉ message d'une session (`GRAPHIFY_NUDGE_AFTER`),
