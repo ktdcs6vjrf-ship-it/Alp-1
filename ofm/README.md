@@ -12,15 +12,29 @@ phrase* : cinquante-neuf hypothèses sur l'humain qui paie, déclarées d'avance
 testées sur six marchés voisins d'OnlyFans. 16 sections en cinq parties, 23
 figures (10 reliefs 3D), 14 tables, deux annexes.
 
+**Version mobile** — `docs/ofm/la-personne-mobile.html` (gabarit
+`docs/ofm/la-personne-mobile.template.html`, `python -m ofm.mobile`). Même
+source que la version longue — valeurs, verdicts, tables et références viennent
+des mêmes modules, les deux versions ne peuvent pas diverger sur un chiffre —
+mais une interface de téléphone dans la **direction artistique de l'app Lueur**
+(`lueur-ofm/app/globals.css`, couches v16 et v20) : noir `#09090b` et cartes
+`#111113`, Inter, un seul bleu électrique `#2e8bff` réservé aux données, tuiles
+de stats à grand nombre bleu, encadré « En clair » blanc, barre d'app, puces de
+sections, dock du bas, sombre par défaut et clair au bouton. Graphiques dans
+`ofm/figmobile.py` : boîte de 340 unités (une unité ≈ un pixel sur téléphone),
+la 3D en **blocs isométriques** comme `components/formation/iso.tsx`, une valeur
+au toucher sur chaque marque (`data-tip`).
+
 ## Commandes
 
 ```
 python -m ofm.papier            # reconstruit docs/ofm/la-personne.html (≈ 15 s)
+python -m ofm.mobile            # reconstruit docs/ofm/la-personne-mobile.html (≈ 15 s)
 python -m ofm.synthese          # les 59 verdicts, q et budgets, en clair
 python -m ofm.<famille>         # demander, offrir, persuader, negocier, choisir,
                                 # revenir, calendrier, mesurer : chiffres bruts
 python -m ofm.donnees           # rejoue l'extraction (clones bruts requis)
-python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 26 tests, ≈ 15 s
+python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 34 tests, ≈ 16 s
 ```
 
 ## Chaîne
@@ -76,13 +90,34 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
 - **Le champ « heure locale » de RAOP** ne porte que trois décalages (0, +1,
   +8 h) : c'est la machine de collecte. Les heures se lisent à New York.
 
+- **Un verdict contraire recopiait le pari réfuté.** La carte de R02 (et la
+  colonne « en agence » du classement de la version longue) affichait « le fidèle
+  qui se tait est plus perdu » sous le verdict qui établit l'inverse. La phrase
+  d'agence passe maintenant par `synthese.en_agence`, qui la retourne en « le pari
+  disait… les données disent l'inverse » ; un test le verrouille.
+- **L'aperçu mobile sans balise viewport ment.** L'hébergeur d'artefacts ajoute
+  `width=device-width` au publish ; un aperçu local qui l'oublie rend une page de
+  980 px réduite, et tous les balayages mesurent la mauvaise page. L'injecter.
+- **Une étiquette de bloc 3D ne se met pas à l'échelle.** `Scene.rendre` réduit
+  l'échelle des blocs jusqu'à ce que blocs *et* étiquettes tiennent, éclaircit les
+  étiquettes d'arête selon leur écart à l'écran, et rend la hauteur utile pour que
+  la planche ne garde pas de vide sous le relief.
+- **La passe typographique courberait le JavaScript.** `mobile._typo` sort chaque
+  `<script>` avant `typographie` ; un test compile le script avec `node --check`.
+  Les valeurs au toucher vivent dans un attribut : l'apostrophe courbe s'y met à la
+  main (`figmobile._bulle`).
+
 ## Vérifier le rendu
 
 Les trois balayages (débordement, chevauchement, occupation) se rejouent en
 Playwright sur le document construit, **avec les vraies polices** (récupérées
 par `npm install @fontsource/source-serif-4 @fontsource/ibm-plex-mono` et
 injectées dans une copie locale) à 360, 390, 768 et 1280 px. État : zéro
-partout, aucun défilement horizontal. Puis regarder chaque planche : un
+partout, aucun défilement horizontal. La version mobile se balaie avec Inter
+(`@fontsource/inter`) à 360, 390, 430 et 768 px, téléphone émulé et balise
+viewport injectée : aucun texte SVG hors cadre ni chevauché, aucun texte de
+graphique rendu sous 10,4 px, aucun texte HTML sous 12 px, toutes les cibles
+tactiles à 44 px ou plus. État : zéro partout. Puis regarder chaque planche : un
 balayage propre ne dit pas qu'une figure montre ce que sa légende affirme.
 
 ## Publications

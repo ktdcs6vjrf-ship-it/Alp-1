@@ -409,7 +409,7 @@ def tables() -> dict[str, Table]:
     for i, z, n in cl:
         sem = "—" if n is None else d1(n / synthese.ENVOIS_SEMAINE)
         env = "—" if n is None else n0(n)
-        rows.append([i, reg[i].ofm, synthese.verdict(i), d1(abs(z)), env, sem])
+        rows.append([i, synthese.en_agence(i), synthese.verdict(i), d1(abs(z)), env, sem])
     out["classement"] = Table("classement", "Les effets qui survivent, classés par ce qu'il "
                               "faudrait d'envois pour les revérifier chez soi.",
                               ["", "Ce que cela donne en agence", "Verdict", "|z|",

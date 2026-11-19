@@ -155,3 +155,76 @@ class TestDocument(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@lru_cache(maxsize=1)
+def mobile() -> str:
+    from ofm import mobile as m
+    return m.build()
+
+
+class TestMobile(unittest.TestCase):
+    """La version mobile : même source, autre mise en page, mêmes garde-fous."""
+
+    def test_aucune_couleur_en_dur(self):
+        from ofm import figmobile
+        src = Path(figmobile.__file__).read_text(encoding="utf-8")
+        self.assertIsNone(re.search(r"#[0-9a-fA-F]{6}\b", src))
+        self.assertNotIn("&#", src)
+
+    def test_libelles_aria_sans_apostrophe(self):
+        from ofm import figmobile
+        for k, svg in figmobile.rendre().items():
+            aria = re.search(r'aria-label="([^"]*)"', svg).group(1)
+            self.assertNotIn("'", aria, k)
+            self.assertNotIn("’", aria, k)
+
+    def test_valeurs_au_toucher_typographiees(self):
+        for tip in re.findall(r'data-tip="([^"]*)"', mobile()):
+            self.assertNotIn("'", tip)
+
+    def test_aucune_balise_restante(self):
+        self.assertIsNone(re.search(r"\{\{|\}\}", mobile()))
+
+    def test_puces_et_sections(self):
+        html = mobile()
+        nav = html[html.index('<nav class="chips"'):]
+        nav = nav[:nav.index("</nav>")]
+        puces = re.findall(r'href="#([a-z]+)"', nav)
+        sections = re.findall(r'<section id="([a-z]+)">', html)
+        self.assertEqual(puces, sections)
+        for groupe in re.findall(r'data-s="([a-z ]+)"', html):
+            for s in groupe.split():
+                self.assertIn(s, sections)
+        for cible in re.findall(r'href="#([a-z0-9-]+)"', html):
+            self.assertIn(f'id="{cible}"', html, cible)
+
+    def test_texte_sans_apostrophe_droite_hors_script(self):
+        html = re.sub(r"<script>.*?</script>|<style>.*?</style>", " ", mobile(), flags=re.S)
+        texte = re.sub(r"<[^>]+>", " ", html)
+        self.assertNotIn("'", texte)
+
+    def test_le_script_reste_du_javascript(self):
+        # La passe typographique courberait les apostrophes des chaînes JS :
+        # le script doit sortir intact et se compiler.
+        import shutil
+        import subprocess
+        import tempfile
+        script = re.search(r"<script>(.*?)</script>", mobile(), flags=re.S).group(1)
+        self.assertIn("localStorage.getItem('ofm-cahier-theme')", script)
+        node = shutil.which("node")
+        if node is None:
+            self.skipTest("node absent")
+        with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as f:
+            f.write(script)
+        r = subprocess.run([node, "--check", f.name], capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+
+    def test_un_verdict_contraire_ne_publie_pas_le_pari(self):
+        # La carte de R02 a affirmé « le fidèle qui se tait est plus perdu »
+        # sous le verdict qui établit l'inverse.
+        self.assertIn("Les données disent l", synthese.en_agence("R02"))
+        html = mobile()
+        carte = html[html.index('<span class="res-id">R02</span>'):]
+        carte = carte[:carte.index("</article>")]
+        self.assertIn("Les données disent l", carte)

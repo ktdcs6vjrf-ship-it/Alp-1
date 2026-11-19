@@ -174,7 +174,12 @@ verdict contraire). Stdlib seule ; emprunte `alp1.figterm/figdisc/figcss/pieds`
 sans les modifier. 26 tests en 15 s (`python -m unittest ofm.tests.test_stats
 ofm.tests.test_ofm`). Extraits de données versionnés dans `ofm/donnees/` avec
 SHA-256 ; clones bruts hors dépôt. **Lire `ofm/README.md` avant d'y toucher.**
-Dernier artefact : https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1).
+**Version mobile** dans la DA de l'app Lueur (`python -m ofm.mobile`,
+`docs/ofm/la-personne-mobile.html`, graphiques `ofm/figmobile.py` en blocs
+isométriques) : même source, aucun chiffre ne peut diverger. 34 tests.
+Derniers artefacts : mobile https://claude.ai/artifact/AJcZGbdLDnYfG4aCD2VAoy (v2) ;
+version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de
+classement recopiait le pari réfuté de R02 ; corrigé dans le dépôt, non republié).
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

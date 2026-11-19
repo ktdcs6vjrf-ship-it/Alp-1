@@ -67,6 +67,20 @@ def verdict(i: str) -> str:
     return "contraire"
 
 
+def en_agence(i: str) -> str:
+    """La traduction en agence d'une hypothèse, **corrigée par son verdict**.
+
+    Le registre écrit la conséquence du pari. Quand les données le
+    contredisent, recopier cette phrase publierait l'inverse du résultat — la
+    carte de R02 a ainsi affirmé « le fidèle qui se tait est plus perdu » sous
+    le verdict qui établit le contraire.
+    """
+    h = registre.par_id()[i]
+    if verdict(i) == "contraire":
+        return f"Le pari disait : « {h.ofm.rstrip('.')} ». Les données disent l'inverse."
+    return h.ofm
+
+
 def z_oriente(i: str) -> float:
     """z signé dans le sens annoncé (positif = va dans le sens du pari)."""
     h = registre.par_id()[i]
