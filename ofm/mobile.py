@@ -25,7 +25,7 @@ from pathlib import Path
 from alp1.discpaper import typographie
 from alp1.figterm import _num
 
-from . import donnees, papier, registre, synthese
+from . import clair, donnees, papier, registre, revenir, synthese
 from .figmobile import rendre
 from .figures import COURT
 
@@ -38,7 +38,10 @@ PILULE = {"tient": ("pill-ok", "tient"), "contraire": ("pill-ko", "contraire"),
 
 
 def _e(t: str) -> str:
-    return H.escape(t, quote=True)
+    """Échappe un **nœud de texte**. Les guillemets n'y ont rien à craindre ; les
+    échapper changeait l'apostrophe en `&#x27;`, que la passe typographique ne
+    reconnaît pas — et qui s'affichait droite dans toutes les cartes."""
+    return H.escape(t, quote=False)
 
 
 def _effet(r) -> str:
@@ -68,8 +71,18 @@ def _mini(r, lo: float, hi: float, cls: str) -> str:
             f'<circle class="mini-pt {cls}" cx="{x(r.effet):.1f}" cy="11" r="5"/></svg>')
 
 
+def _trois(simple: str, enfant: str, exemple: str, titre_simple: str = "") -> str:
+    """Les trois façons de dire la même chose : normalement, à un enfant, par un exemple."""
+    tete = f'<p class="bloc-label">{titre_simple}</p>' if titre_simple else ""
+    return (f'<p class="res-clair">{tete}{_e(simple)}</p>'
+            f'<div class="kid5"><b>Comme si tu avais 5 ans</b><p>{_e(enfant)}</p></div>'
+            f'<div class="ex"><b>Exemple</b><p>{_e(exemple)}</p></div>')
+
+
 def cartes(lettre: str) -> str:
-    """Cartes pleines pour ce qui tient ou contredit, lignes compactes pour le reste."""
+    """Ce qui tient : cartes ouvertes, l'explication d'abord, les chiffres repliés.
+    Ce qui ne tient pas : une ligne par étude, sa phrase « 5 ans » visible, le
+    reste au toucher. Chaque étude porte ses trois explications (`clair.CARTES`)."""
     R, reg = synthese.tous(), registre.par_id()
     ids = [i for i in R if i.startswith(lettre)]
     lo = min(min(R[i].ic[0], 0.0) for i in ids)
@@ -79,11 +92,18 @@ def cartes(lettre: str) -> str:
     pleines, nulles = [], []
     for i in ids:
         r, h, v = R[i], reg[i], synthese.verdict(i)
+        simple, enfant, exemple = clair.CARTES[i]
         pcls, ptxt = PILULE[v]
         val, unite = _effet(r)
+        u = (" " + unite) if unite else ""
         if v == "non établi":
-            nulles.append(f'<li><span class="nul-id">{i}</span><span class="nul-nom">{_e(COURT[i])}</span>'
-                          f'<b>{val}{(" " + unite) if unite else ""}</b></li>')
+            nulles.append(
+                f'<details class="nul-card"><summary><span class="nul-ligne">'
+                f'<span class="nul-id">{i}</span><span class="nul-nom">{_e(COURT[i])}</span>'
+                f'<b>{val}{u}</b></span><span class="nul-5">{_e(enfant)}</span></summary>'
+                f'<div class="nul-corps"><p class="res-clair">{_e(simple)}</p>'
+                f'<div class="ex"><b>Exemple</b><p>{_e(exemple)}</p></div>'
+                f'<p class="res-read">{_e(h.enonce)} — {_e(r.lecture)}</p></div></details>')
             continue
         mcls = "ok" if v == "tient" else "ko"
         pleines.append(
@@ -92,15 +112,33 @@ def cartes(lettre: str) -> str:
             f'<span class="res-court">{_e(COURT[i])}</span>'
             f'<span class="pill {pcls}">{ptxt}</span></div>'
             f'<h3>{_e(h.enonce)}</h3>'
-            f'<p class="res-num">{val}<small>{(" " + unite) if unite else ""}</small></p>'
-            f'<p class="res-read">{_e(r.lecture)}</p>'
-            f'{_mini(r, lo, hi, mcls)}'
-            f'<p class="res-ofm">{_e(synthese.en_agence(i))}</p></article>')
+            f'<p class="res-num">{val}<small>{u}</small></p>'
+            f'{_trois(simple, enfant, exemple)}'
+            f'<details class="chiffres"><summary>Les chiffres</summary>'
+            f'<p class="res-read">{_e(r.lecture)}</p>{_mini(r, lo, hi, mcls)}'
+            f'<p class="res-ofm">{_e(synthese.en_agence(i))}</p></details></article>')
     out = '<div class="res-list">' + "".join(pleines) + "</div>"
     if nulles:
-        out += (f'<p class="nuls-titre">Non établi après correction · {len(nulles)}</p>'
-                f'<ul class="nuls">' + "".join(nulles) + "</ul>")
+        out += (f'<p class="nuls-titre">Ce que les données ne montrent pas · {len(nulles)}</p>'
+                f'<p class="nuls-aide">Touche une ligne pour l’explication et un exemple.</p>'
+                f'<div class="nuls">' + "".join(nulles) + "</div>")
     return out
+
+
+def etude(cle: str) -> str:
+    quoi, enfant, exemple = clair.ETUDES[cle]
+    return ('<div class="comprendre">'
+            f'<div class="cq"><p class="bloc-label">C’est quoi cette étude&nbsp;?</p><p>{quoi}</p></div>'
+            f'<div class="kid5 grand"><b>Comme si tu avais 5 ans</b><p>{enfant}</p></div>'
+            f'<div class="ex"><b>Exemple</b><p>{exemple}</p></div></div>')
+
+
+def outil(cle: str) -> str:
+    simple, enfant, exemple = clair.OUTILS[cle]
+    return ('<div class="comprendre petit">'
+            f'<div class="cq"><p class="bloc-label">En clair</p><p>{_e(simple)}</p></div>'
+            f'<div class="kid5"><b>Comme si tu avais 5 ans</b><p>{_e(enfant)}</p></div>'
+            f'<div class="ex"><b>Exemple</b><p>{_e(exemple)}</p></div></div>')
 
 
 def registre_html() -> str:
@@ -137,7 +175,9 @@ def liste(cle: str) -> str:
         # de cible ici, où les sections ne sont pas numérotées pareil.
         reste = [re.sub(r"\s*\(section \d+\)", "", c) for c in reste]
         corps = "".join(f'<p class="lit-{k}">{_e(c)}</p>' for k, c in enumerate(reste))
-        out.append(f'<article class="lit"><h3>{_e(titre)}</h3>{corps}</article>')
+        cinq = clair.LISTES[titre]
+        out.append(f'<article class="lit"><h3>{_e(titre)}</h3>{corps}'
+                   f'<div class="kid5"><b>Comme si tu avais 5 ans</b><p>{_e(cinq)}</p></div></article>')
     return '<div class="lits">' + "".join(out) + "</div>"
 
 
@@ -179,7 +219,16 @@ def _typo(html: str) -> str:
 
 def build() -> str:
     text = TEMPLATE.read_text(encoding="utf-8")
+    # Les explications d'étude portent elles-mêmes des balises de valeur :
+    # elles se déplient avant la substitution des valeurs.
+    text = re.sub(r"\{\{ETUDE:([a-z]+)\}\}", lambda m: etude(m.group(1)), text)
+    text = re.sub(r"\{\{OUTIL:([a-z]+)\}\}", lambda m: outil(m.group(1)), text)
     vals = dict(papier.values())
+    ex = revenir.exemple_silencieux()
+    vals.update({"ex_cd_client": str(ex["client"]), "ex_cd_achats": str(ex["achats"]),
+                 "ex_cd_mois1": ex["mois1"], "ex_cd_mois2": ex["mois2"],
+                 "ex_cd_silence": _num(ex["silence"], 0), "ex_cd_pv": _num(ex["p_vivant"] * 100, 0),
+                 "ex_cd_hold": str(ex["hold"]), "ex_cd_prevu": _num(ex["prevu"], 2)})
     refs = sources()
     vals["n_refs"] = str(refs.count("<li>"))
     vals["n_figs"] = str(len(rendre()))

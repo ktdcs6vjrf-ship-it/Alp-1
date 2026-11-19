@@ -243,6 +243,28 @@ def paradoxe(maxi: int = 6) -> list[tuple[int, float, float, int]]:
     return out
 
 
+MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+        "septembre", "octobre", "novembre", "décembre")
+
+
+@lru_cache(maxsize=1)
+def exemple_silencieux() -> dict:
+    """Le premier client, dans l'ordre des numéros, qui illustre R02 : au moins
+    quatre rachats, au moins vingt-six semaines de silence à la fin de la
+    calibration, et deux achats ou plus ensuite. Choisi par règle, pas à la main."""
+    from datetime import timedelta
+    p = ajuster()
+    for c, prevu, _ in sorted(predictions(), key=lambda t: t[0]["client"]):
+        if c["x"] >= 4 and c["T"] - c["tx"] >= SILENCE and c["hold"] >= 2:
+            d1 = DEBUT + timedelta(days=round(c["naissance"] * 7))
+            d2 = DEBUT + timedelta(days=round((c["naissance"] + c["tx"]) * 7))
+            return {"client": c["client"], "achats": c["x"] + 1,
+                    "mois1": f"{MOIS[d1.month - 1]} {d1.year}", "mois2": f"{MOIS[d2.month - 1]} {d2.year}",
+                    "silence": c["T"] - c["tx"], "p_vivant": p_vivant(p, c["x"], c["tx"], c["T"]),
+                    "prevu": prevu, "hold": c["hold"]}
+    raise LookupError("aucun client ne remplit la règle")
+
+
 def surface_vivant(T: float = 39.0, nx: int = 8, nt: int = 8) -> tuple[list[list[float]], list[int], list[float]]:
     """P(vivant) sur une grille fréquence × date du dernier achat (semaines)."""
     p = ajuster()

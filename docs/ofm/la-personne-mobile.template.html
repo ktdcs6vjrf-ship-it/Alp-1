@@ -17,7 +17,7 @@
     --blue: #2e8bff; --blue-rgb: 46 139 255; --blue-fill: #1670f0; --on-blue: #ffffff;
     --sky: #8cc2ff; --pale: #cfe4ff; --deepblue: #0b4fc4; --gray: #6b6b72; --red: #ff5a5f;
     --shadow: #000000; --iso-edge: rgb(0 0 0 / 0.35);
-    --kid-bg: #fafafa; --kid-ink: #09090b;
+    --kid-bg: #fafafa; --kid-ink: #09090b; --kid-accent: #0b4fc4;
     --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     color-scheme: dark;
@@ -30,7 +30,7 @@
     --blue: #0f62e6; --blue-rgb: 15 98 230; --blue-fill: #0f62e6;
     --sky: #5a9cf5; --pale: #b9d4fb; --deepblue: #0a3fa0; --gray: #a1a1aa; --red: #e5484d;
     --iso-edge: rgb(255 255 255 / 0.45);
-    --kid-bg: #09090b; --kid-ink: #fafafa;
+    --kid-bg: #09090b; --kid-ink: #fafafa; --kid-accent: #8cc2ff;
     color-scheme: light;
   }
 
@@ -153,7 +153,7 @@
   .mini-ic.ok { stroke: rgb(var(--blue-rgb) / .45); } .mini-ic.ko { stroke: color-mix(in oklab, var(--red) 45%, transparent); }
   .mini-pt { stroke: var(--card); stroke-width: 2; } .mini-pt.ok { fill: var(--blue); } .mini-pt.ko { fill: var(--red); }
   .nuls-titre { margin: 6px 0 -8px; color: var(--faint); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-  .nuls { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .nuls { margin: 0; padding: 0; border-top: 1px solid var(--line); }
   .nuls li { display: flex; align-items: baseline; gap: 10px; min-height: 44px; padding: 11px 2px; border-bottom: 1px solid var(--line); font-size: 14.5px; }
   .nul-id { flex: none; font-family: var(--mono); font-size: 12px; color: var(--faint); }
   .nul-nom { min-width: 0; color: var(--body); }
@@ -287,6 +287,43 @@
   .dock a svg { width: 20px; height: 20px; }
   .dock a.on { background: rgb(var(--hi-rgb) / .09); color: var(--ink); }
   @media (hover: none) { .dock a:active, .chips a:active, .filtres button:active { opacity: .6; } }
+  /* ---------- les trois explications ---------- */
+  .comprendre { display: grid; gap: 10px; }
+  .cq, .mode { padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+  .cq p, .mode p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--body); }
+  .bloc-label { margin: 0 0 6px !important; color: var(--blue) !important; font-size: 12px !important; font-weight: 850;
+                letter-spacing: .14em; text-transform: uppercase; line-height: 1.3 !important; }
+  .ex { padding: 12px 14px; border-radius: 14px; border: 1px dashed rgb(var(--blue-rgb) / .55);
+        background: rgb(var(--blue-rgb) / .06); }
+  .ex b, .kid5 b { display: block; font-size: 12px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
+  .ex b { color: var(--blue); }
+  .ex p { margin: 4px 0 0; font-size: 15.5px; line-height: 1.55; color: var(--body); }
+  .kid5 { padding: 12px 14px; border-radius: 12px; background: var(--kid-bg); color: var(--kid-ink); }
+  .kid5 b { color: var(--kid-accent); }
+  .kid5 p { margin: 4px 0 0; font-size: 15.5px; line-height: 1.5; font-weight: 650; }
+  .kid5.grand p { font-size: 16.5px; }
+  .res-clair { margin: 2px 0 0; font-size: 15.5px; line-height: 1.55; color: var(--body); }
+  .legende-v { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14px; color: var(--body); }
+  .legende-v .pill { margin: 0 8px 0 0; }
+  details.chiffres { border-top: 1px solid var(--line); margin-top: 2px; }
+  details.chiffres summary, details.curieux summary { list-style: none; display: flex; align-items: center; gap: 8px;
+         min-height: 44px; cursor: pointer; color: var(--muted); font-size: 14px; font-weight: 650; }
+  details.chiffres summary::-webkit-details-marker, details.curieux summary::-webkit-details-marker,
+  details.nul-card summary::-webkit-details-marker { display: none; }
+  details.chiffres summary::after, details.curieux summary::after { content: "+"; margin-left: auto; font-size: 18px; color: var(--faint); }
+  details.chiffres[open] summary::after, details.curieux[open] summary::after { content: "−"; }
+  details.chiffres > *:not(summary) { margin-top: 6px; }
+  details.curieux { padding: 0 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); }
+  details.curieux[open] { padding-bottom: 14px; }
+  details.curieux .p { font-size: 15.5px; }
+  .nuls-aide { margin: -10px 0 0; color: var(--faint); font-size: 13px; }
+  details.nul-card { border-bottom: 1px solid var(--line); }
+  details.nul-card summary { list-style: none; display: grid; gap: 4px; min-height: 52px; padding: 11px 2px; cursor: pointer; }
+  .nul-ligne { display: flex; align-items: baseline; gap: 10px; font-size: 14.5px; }
+  .nul-5 { color: var(--muted); font-size: 14px; line-height: 1.45; }
+  details.nul-card[open] .nul-5 { color: var(--body); }
+  .nul-corps { display: grid; gap: 8px; padding: 0 2px 14px; }
+  .lit .kid5 { margin-top: 6px; }
 </style>
 
 <header class="appbar">
@@ -331,8 +368,14 @@
     </div>
 
     <div class="kid">
-      <p class="kid-tag">En clair</p>
+      <p class="kid-tag">Comme si tu avais 5 ans</p>
       <p class="kid-text">On a écrit {{n_hyp}} idées <strong>avant</strong> de regarder les chiffres, puis on les a vérifiées sur de vrais gens qui donnent, achètent ou marchandent. La plupart des «&nbsp;astuces&nbsp;» ne marchent pas. Ce qui marche&nbsp;: bien choisir <strong>à qui</strong> on parle, et ne pas oublier les anciens fidèles qui se sont tus.</p>
+    </div>
+
+    <div class="mode">
+      <p class="bloc-label">Comment lire cette page</p>
+      <p>Chaque étude est expliquée trois fois&nbsp;: <b>en clair</b>, <b>comme si tu avais 5 ans</b>, et avec <b>un exemple</b>. Les chiffres détaillés sont rangés sous «&nbsp;Les chiffres&nbsp;»&nbsp;: tu peux les ignorer.</p>
+      <ul class="legende-v"><li><span class="pill pill-ok">tient</span> c'est prouvé ici</li><li><span class="pill pill-ko">contraire</span> c'est l'inverse qui est vrai</li><li><span class="pill pill-nul">non établi</span> on ne voit rien de sûr</li></ul>
     </div>
 
     <div class="facts">
@@ -352,11 +395,8 @@
     <p class="eyebrow">01 · La méthode</p>
     <h2>Écrire avant de regarder</h2>
     <p class="lead">Tester {{n_hyp}} idées et ne garder que celles qui «&nbsp;marchent&nbsp;», c'est publier le bruit.</p>
-    <p class="p">Au seuil habituel de 5&nbsp;%, le hasard seul ferait passer {{n_bruit}}&nbsp;idées sur {{n_hyp}}. Chaque hypothèse a donc été écrite dans un registre <strong>avant le premier calcul</strong>, avec son sens et sa mesure, puis le seuil a été corrigé pour leur nombre (Benjamini-Hochberg)&nbsp;: il faut |z|&nbsp;&gt;&nbsp;{{z_bh}} au lieu de 1,96. Le verdict est calculé, jamais écrit à la main.</p>
-    <div class="kid">
-      <p class="kid-tag">En clair</p>
-      <p class="kid-text">Si tu lances une pièce vingt fois, tu finiras par avoir l'air d'avoir un «&nbsp;don&nbsp;». Écrire ses idées d'abord, et être plus sévère quand on en teste beaucoup, c'est ce qui empêche de se raconter des histoires.</p>
-    </div>
+    {{ETUDE:methode}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Au seuil habituel de 5&nbsp;%, le hasard seul ferait passer {{n_bruit}}&nbsp;idées sur {{n_hyp}}. Chaque hypothèse a donc été écrite dans un registre <strong>avant le premier calcul</strong>, avec son sens et sa mesure, puis le seuil a été corrigé pour leur nombre (Benjamini-Hochberg)&nbsp;: il faut |z|&nbsp;&gt;&nbsp;{{z_bh}} au lieu de 1,96. Le verdict est calculé, jamais écrit à la main.</p></details>
     {{FIG:chasse|2D|Chaque point est une idée, placée dans le sens de son pari. La bande claire est la zone du hasard (|z|&nbsp;&lt;&nbsp;1,96), les pointillés le seuil corrigé. Touche un point pour lire son nom.}}
     {{FIG:chasse3d|3D|Par famille, ce qui tient (bleu), ce qui contredit le pari (rouge) et ce qui reste indistinguable du bruit (fantôme gris).}}
     {{FIG:pvaleurs|2D|Sous le seul hasard, les valeurs p sont uniformes. L'excès de la première case est le signal que les données portent&nbsp;; {{n_nominal}} tests passent le seuil naïf, {{n_survivent}} la correction.}}
@@ -366,11 +406,8 @@
     <p class="eyebrow">02 · Demander</p>
     <h2>Demander à un inconnu</h2>
     <p class="lead">Sur Reddit, être déjà membre du lieu et montrer une preuve valent plus que la meilleure phrase.</p>
-    <p class="p">Sur le forum <em>Random Acts of Pizza</em>, des inconnus demandent qu'on leur offre une pizza, et d'autres inconnus paient — ou non. {{raop_n}}&nbsp;demandes, {{raop_base}}&nbsp;% servies. C'est le geste du pourboire&nbsp;: un texte, un profil, et la décision de payer quelqu'un qu'on ne connaît que par écrit.</p>
-    <div class="kid">
-      <p class="kid-tag">En clair</p>
-      <p class="kid-text">On donne plus volontiers à quelqu'un qui fait déjà partie du groupe et qui prouve ce qu'il dit. Pour le trafic Reddit&nbsp;: <strong>participer avant de publier</strong>, et faire la vérification.</p>
-    </div>
+    {{ETUDE:demander}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Sur le forum <em>Random Acts of Pizza</em>, des inconnus demandent qu'on leur offre une pizza, et d'autres inconnus paient — ou non. {{raop_n}}&nbsp;demandes, {{raop_base}}&nbsp;% servies. C'est le geste du pourboire&nbsp;: un texte, un profil, et la décision de payer quelqu'un qu'on ne connaît que par écrit.</p></details>
     {{CARTES:D}}
     {{FIG:raop_iso|3D|Part des demandes servies selon le karma du compte (lignes) et la longueur du texte (colonnes). Le statut et l'effort se cumulent. Touche un bloc pour sa valeur.}}
     {{FIG:raop_heures|2D|Heure par heure, la bande grise est ce que donnerait le hasard. Les demandes de nuit (en clair, 0&nbsp;h à 6&nbsp;h) sont servies à {{nuit_a}}&nbsp;% contre {{nuit_b}}&nbsp;% — un constat que le registre n'avait pas parié, donc une piste et non un résultat.}}
@@ -380,11 +417,8 @@
     <p class="eyebrow">03 · Offrir</p>
     <h2>Une offre tirée au sort</h2>
     <p class="lead">Un bonus fait entrer, sa taille ne compte pas — et à qui on écrit compte bien plus que le bonus.</p>
-    <p class="p">En 2005, une association a envoyé à {{karlan_n}} anciens donateurs une lettre <strong>tirée au sort</strong>&nbsp;: sans bonus, ou avec un mécène qui ajoutait 1, 2 ou 3&nbsp;dollars par dollar donné (Karlan et List, 2007). C'est le seul marché du cahier où l'effet est causal par construction. Un mécène qui double, c'est «&nbsp;un contenu offert pour un acheté&nbsp;».</p>
-    <div class="kid">
-      <p class="kid-tag">En clair</p>
-      <p class="kid-text">Un petit bonus suffit, un gros ne fait pas mieux. Et la même lettre rapporte {{o05_fois}}&nbsp;fois plus envoyée à quelqu'un qui a donné <strong>récemment</strong>.</p>
-    </div>
+    {{ETUDE:offrir}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">En 2005, une association a envoyé à {{karlan_n}} anciens donateurs une lettre <strong>tirée au sort</strong>&nbsp;: sans bonus, ou avec un mécène qui ajoutait 1, 2 ou 3&nbsp;dollars par dollar donné (Karlan et List, 2007). C'est le seul marché du cahier où l'effet est causal par construction. Un mécène qui double, c'est «&nbsp;un contenu offert pour un acheté&nbsp;».</p></details>
     {{CARTES:O}}
     {{FIG:karlan_bras|2D|Taux de don par bras&nbsp;: {{o01_b}}&nbsp;% sans bonus, {{o01_a}}&nbsp;% avec. Les trois bonus se valent.}}
     {{FIG:karlan_iso|3D|Taux de don selon les mois écoulés depuis le dernier don (lignes) et le bras de la lettre (colonnes). Le relief tombe d'abord le long de la récence.}}
@@ -395,7 +429,8 @@
     <p class="eyebrow">04 · Persuader</p>
     <h2>Persuader par écrit</h2>
     <p class="lead">Les journaux de conversation mentent sur les tactiques&nbsp;: ils mesurent l'état du fan, pas l'effet de la phrase.</p>
-    <p class="p">Dans <em>Persuasion for Good</em>, deux inconnus échangent par écrit et l'un doit convaincre l'autre de donner. {{p4g_n}}&nbsp;conversations, {{p4g_base}}&nbsp;% des persuadés donnent. Une seule chose tient&nbsp;: la personne agréable donne davantage ({{p06_e}}&nbsp;pt). «&nbsp;Merci&nbsp;» va avec {{p12_e}}&nbsp;pt de dons, «&nbsp;vous êtes libre&nbsp;» avec {{p04_e}} — parce qu'on remercie qui vient d'accepter et qu'on rassure qui hésite.</p>
+    {{ETUDE:persuader}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Dans <em>Persuasion for Good</em>, deux inconnus échangent par écrit et l'un doit convaincre l'autre de donner. {{p4g_n}}&nbsp;conversations, {{p4g_base}}&nbsp;% des persuadés donnent. Une seule chose tient&nbsp;: la personne agréable donne davantage ({{p06_e}}&nbsp;pt). «&nbsp;Merci&nbsp;» va avec {{p12_e}}&nbsp;pt de dons, «&nbsp;vous êtes libre&nbsp;» avec {{p04_e}} — parce qu'on remercie qui vient d'accepter et qu'on rassure qui hésite.</p></details>
     {{CARTES:P}}
     {{FIG:p4g_diag|2D|«&nbsp;Vous êtes libre&nbsp;» suit une hésitation dans {{libre_apres}}&nbsp;% des cas, contre {{libre_base}}&nbsp;% pour l'ensemble des messages&nbsp;; «&nbsp;merci&nbsp;» suit un accord dans {{merci_apres}}&nbsp;% des cas, contre {{merci_base}}&nbsp;%.}}
     {{FIG:p4g_iso|3D|Les mêmes quatre parts en colonnes&nbsp;: gris pour l'ensemble des messages, bleu juste avant la tactique.}}
@@ -406,11 +441,8 @@
     <p class="eyebrow">05 · Négocier</p>
     <h2>Quand le fan marchande</h2>
     <p class="lead">La première offre de l'acheteur fait le prix, et une contre-offre précise le tient.</p>
-    <p class="p"><em>CraigslistBargain</em> réunit {{barg_n}}&nbsp;négociations écrites autour de vraies annonces&nbsp;; {{barg_acc}} se concluent. Chaque point de première offre de l'acheteur déplace le prix final de {{n03_pente}}&nbsp;point. Répondre par un montant précis (37 plutôt que 40) laisse le prix à {{n05_a}}&nbsp;% de l'annonce, contre {{n05_s}}&nbsp;% après une contre-offre ronde. Chiffrer le premier coûte des accords&nbsp;: {{n08_a}}&nbsp;% de ventes contre {{n08_s}}&nbsp;%.</p>
-    <div class="kid">
-      <p class="kid-tag">En clair</p>
-      <p class="kid-text">Si un fan propose bas, ne coupe pas la poire en deux&nbsp;: réponds par un <strong>prix précis</strong>. Un nombre précis a l'air calculé, on ose moins le discuter.</p>
-    </div>
+    {{ETUDE:negocier}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p"><em>CraigslistBargain</em> réunit {{barg_n}}&nbsp;négociations écrites autour de vraies annonces&nbsp;; {{barg_acc}} se concluent. Chaque point de première offre de l'acheteur déplace le prix final de {{n03_pente}}&nbsp;point. Répondre par un montant précis (37 plutôt que 40) laisse le prix à {{n05_a}}&nbsp;% de l'annonce, contre {{n05_s}}&nbsp;% après une contre-offre ronde. Chiffrer le premier coûte des accords&nbsp;: {{n08_a}}&nbsp;% de ventes contre {{n08_s}}&nbsp;%.</p></details>
     {{CARTES:N}}
     {{FIG:barg_ancre|2D|Prix final selon la première offre de l'acheteur, par décile, tous deux rapportés au prix affiché.}}
     {{FIG:barg_iso|3D|La même ancre à tous les niveaux de prix&nbsp;: première offre (lignes) et prix affiché (colonnes).}}
@@ -420,7 +452,8 @@
     <p class="eyebrow">06 · Choisir</p>
     <h2>Dire oui</h2>
     <p class="lead">On dit oui à qui l'on croit plaire.</p>
-    <p class="p">Le speed dating de Columbia&nbsp;: des rencontres de quatre minutes, chacune suivie d'un oui ou d'un non écrit. {{speed_dec}}&nbsp;décisions de {{speed_h}}&nbsp;hommes. À attrait égal, chaque point de probabilité perçue d'un oui en retour vaut {{s06_e}}&nbsp;points de oui, et le goût se rend&nbsp;: un point de goût relatif donné appelle {{s04_pente}}&nbsp;point rendu. La «&nbsp;niche clivante&nbsp;», elle, ne se vérifie pas&nbsp;: la dispersion des goûts coûte partout ({{s05_pbas}}&nbsp;pt en bas, {{s05_phaut}}&nbsp;pt en haut).</p>
+    {{ETUDE:choisir}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Le speed dating de Columbia&nbsp;: des rencontres de quatre minutes, chacune suivie d'un oui ou d'un non écrit. {{speed_dec}}&nbsp;décisions de {{speed_h}}&nbsp;hommes. À attrait égal, chaque point de probabilité perçue d'un oui en retour vaut {{s06_e}}&nbsp;points de oui, et le goût se rend&nbsp;: un point de goût relatif donné appelle {{s04_pente}}&nbsp;point rendu. La «&nbsp;niche clivante&nbsp;», elle, ne se vérifie pas&nbsp;: la dispersion des goûts coûte partout ({{s05_pbas}}&nbsp;pt en bas, {{s05_phaut}}&nbsp;pt en haut).</p></details>
     <div class="warn"><b>La règle de la maison</b><p>Le sentiment d'être remarqué ne se produit honnêtement que par une attention <strong>réelle</strong> de la créatrice&nbsp;: un vocal qu'elle enregistre, une réponse qu'elle signe. Un chatteur qui jure être elle produit le même effet par une fiction — c'est exclu.</p></div>
     {{CARTES:S}}
     {{FIG:speed_prob|2D|Part de oui des hommes selon la probabilité qu'ils prêtaient à un oui en retour.}}
@@ -431,11 +464,8 @@
     <p class="eyebrow">07 · Revenir</p>
     <h2>Le silence n'est pas un départ</h2>
     <p class="lead">Le fidèle qui se tait revient davantage que l'occasionnel qui se tait — à rebours du modèle de référence.</p>
-    <p class="p">Le modèle BG/NBD, reproduit ici au troisième chiffre (r&nbsp;=&nbsp;{{val_r}}, α&nbsp;=&nbsp;{{val_alpha}}, a&nbsp;=&nbsp;{{val_a}}, b&nbsp;=&nbsp;{{val_b}}), tient qu'un client fréquent qui se tait est plus sûrement perdu. Calibré sur {{calib}}&nbsp;semaines de {{cd_n}}&nbsp;clients CDNOW et jugé sur les {{calib}}&nbsp;suivantes, il prédit {{par_x1_prev}}&nbsp;achat futur pour l'ancien acheteur d'une fois et {{par_xm_prev}} pour celui de {{par_xm}}&nbsp;fois et plus. La réalité&nbsp;: {{par_x1_reel}} et {{par_xm_reel}}. Chaque achat passé vaut {{r02_e}}&nbsp;achat futur chez les silencieux.</p>
-    <div class="kid">
-      <p class="kid-tag">En clair</p>
-      <p class="kid-text">Un fan qui achetait souvent et qui s'est tu n'est pas parti&nbsp;: il dort. C'est lui qu'il faut <strong>relancer en premier</strong>, avant l'occasionnel qui s'est tu.</p>
-    </div>
+    {{ETUDE:revenir}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Le modèle BG/NBD, reproduit ici au troisième chiffre (r&nbsp;=&nbsp;{{val_r}}, α&nbsp;=&nbsp;{{val_alpha}}, a&nbsp;=&nbsp;{{val_a}}, b&nbsp;=&nbsp;{{val_b}}), tient qu'un client fréquent qui se tait est plus sûrement perdu. Calibré sur {{calib}}&nbsp;semaines de {{cd_n}}&nbsp;clients CDNOW et jugé sur les {{calib}}&nbsp;suivantes, il prédit {{par_x1_prev}}&nbsp;achat futur pour l'ancien acheteur d'une fois et {{par_xm_prev}} pour celui de {{par_xm}}&nbsp;fois et plus. La réalité&nbsp;: {{par_x1_reel}} et {{par_xm_reel}}. Chaque achat passé vaut {{r02_e}}&nbsp;achat futur chez les silencieux.</p></details>
     {{CARTES:R}}
     {{FIG:cd_paradoxe|2D|Silencieux depuis {{silence}}&nbsp;semaines&nbsp;: achats futurs réalisés (bleu) et prédits par le modèle (gris), selon les achats passés avant le silence.}}
     {{FIG:cd_iso|3D|Les mêmes paires en colonnes&nbsp;: le bleu monte avec la fidélité passée, le fantôme gris du modèle descend.}}
@@ -447,37 +477,46 @@
     <p class="eyebrow">08 · Mesurer chez soi</p>
     <h2>Revérifier sans se mentir</h2>
     <p class="lead">Avant de croire une heure, un jour de paie ou une variante gagnante, il faut savoir ce que coûte la preuve.</p>
-    <p class="p">La méthode de calendrier voit d'abord un effet connu&nbsp;: les naissances programmées évitent le 13 ({{t01_e}}&nbsp;% contre le 6 et le 20, {{t01_ven}}&nbsp;% un vendredi 13). Appliquée aux demandes de Reddit, elle ne trouve ni jour du mois, ni week-end, ni soir.</p>
+    {{ETUDE:mesurer}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">La méthode de calendrier voit d'abord un effet connu&nbsp;: les naissances programmées évitent le 13 ({{t01_e}}&nbsp;% contre le 6 et le 20, {{t01_ven}}&nbsp;% un vendredi 13). Appliquée aux demandes de Reddit, elle ne trouve ni jour du mois, ni week-end, ni soir.</p></details>
     {{CARTES:T}}
     {{FIG:naissances|2D|Chaque date comparée au même jour de la semaine une semaine avant et après&nbsp;: le 13, en rouge, tombe seul sous zéro.}}
     <p class="p">Le jour de paie d'un fan se lit, mais tard&nbsp;: s'il dépense <strong>six fois plus</strong> dans les {{fenetre}}&nbsp;jours qui suivent sa paie, on le détecte dans {{paie_5_16}}&nbsp;% des cas à 16&nbsp;achats et {{paie_5_32}}&nbsp;% à 32. S'il dépense deux fois plus, seulement {{paie_1_32}}&nbsp;% même à 32. Son heure est plus facile&nbsp;: vingt messages nets la situent à {{horl_1_20_min}}&nbsp;minutes près.</p>
     {{FIG:paie_iso|3D|Part des jours de paie détectés selon l'intensité de dépense après la paie (lignes) et les achats observés en six mois (colonnes), à moins de 5&nbsp;% de fausses alertes.}}
+    {{OUTIL:paie}}
     {{FIG:horloge|2D|Erreur médiane sur l'heure d'un fan selon le nombre de messages, pour un fan net, moyen ou diffus.}}
+    {{OUTIL:horloge}}
     <p class="p">Un message qui vend à 5&nbsp;% demande {{budget_5_10}}&nbsp;envois par variante pour prouver une hausse de 10&nbsp;%, et {{budget_5_50}} pour une hausse de 50&nbsp;%. Tenir compte de la dépense passée de chaque fan retire {{r04_var}}&nbsp;% de la variance d'un test sur la dépense.</p>
     {{FIG:budget_iso|3D|Envois par variante, à 5&nbsp;% de risque et 80&nbsp;% de puissance, selon le taux d'achat de base (lignes) et la hausse à prouver (colonnes). Hauteur en échelle logarithmique.}}
+    {{OUTIL:budget}}
     {{FIG:regarder|2D|Deux variantes identiques, aucun effet. Arrêté au premier résultat «&nbsp;significatif&nbsp;», le test classique regardé {{reg_sem}}&nbsp;fois donne {{peek_100}}&nbsp;% de fausses victoires&nbsp;; le test toujours valide reste sous {{peek_msprt}}&nbsp;%.}}
+    {{OUTIL:regarder}}
     {{FIG:gagnant|2D|Garder la meilleure de vingt variantes sans aucun effet, à cinq cents envois chacune, affiche +{{gagnant_max}}&nbsp;% de hausse.}}
+    {{OUTIL:gagnant}}
     <div class="warn"><b>Trois façons de se mentir</b><p>Regarder son test chaque jour, garder la meilleure variante sans la rejouer, et compter dix fois le même fan&nbsp;: dix messages corrélés à 0,10 multiplient le budget par {{deff_10}}.</p></div>
   </section>
 
   <section id="ailleurs">
     <p class="eyebrow">09 · Ailleurs</p>
     <h2>Ce que d'autres ont établi</h2>
-    <p class="p">Ces leviers reposent sur des expériences de terrain solides mais ne se rejouent pas sur nos six marchés. Ce sont des idées de tests, pas des résultats&nbsp;: à l'échelle, les effets publiés fondent souvent (1,4&nbsp;point en moyenne dans les unités de «&nbsp;nudge&nbsp;» contre 8,7 dans les revues, selon DellaVigna et Linos, 2022).</p>
+    {{ETUDE:ailleurs}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Ces leviers reposent sur des expériences de terrain solides mais ne se rejouent pas sur nos six marchés. Ce sont des idées de tests, pas des résultats&nbsp;: à l'échelle, les effets publiés fondent souvent (1,4&nbsp;point en moyenne dans les unités de «&nbsp;nudge&nbsp;» contre 8,7 dans les revues, selon DellaVigna et Linos, 2022).</p></details>
     {{LISTE:litterature}}
   </section>
 
   <section id="faux">
     <p class="eyebrow">10 · Ne tient pas</p>
     <h2>Les astuces qui tombent</h2>
-    <p class="p">Une partie de la psychologie vendue aux agences repose sur des effets qui n'ont pas survécu à leur réplication — ou qui tombent ici.</p>
+    {{ETUDE:faux}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Une partie de la psychologie vendue aux agences repose sur des effets qui n'ont pas survécu à leur réplication — ou qui tombent ici.</p></details>
     {{LISTE:faux}}
   </section>
 
   <section id="ecarte">
     <p class="eyebrow">11 · Écarté</p>
     <h2>Même quand ça marche</h2>
-    <p class="p">Ces leviers produisent un effet et restent exclus&nbsp;: interdits, ou trompeurs pour la personne qui paie. Leur gain est immédiat et leur coût différé — remboursements, signalements, comptes fermés.</p>
+    {{ETUDE:ecarte}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Ces leviers produisent un effet et restent exclus&nbsp;: interdits, ou trompeurs pour la personne qui paie. Leur gain est immédiat et leur coût différé — remboursements, signalements, comptes fermés.</p></details>
     {{LISTE:ecarte}}
   </section>
 

@@ -34,7 +34,7 @@ python -m ofm.synthese          # les 59 verdicts, q et budgets, en clair
 python -m ofm.<famille>         # demander, offrir, persuader, negocier, choisir,
                                 # revenir, calendrier, mesurer : chiffres bruts
 python -m ofm.donnees           # rejoue l'extraction (clones bruts requis)
-python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 34 tests, ≈ 16 s
+python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 38 tests, ≈ 16 s
 ```
 
 ## Chaîne
@@ -90,6 +90,16 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
 - **Le champ « heure locale » de RAOP** ne porte que trois décalages (0, +1,
   +8 h) : c'est la machine de collecte. Les heures se lisent à New York.
 
+- **Les mots simples sont écrits devant des verdicts.** `ofm/clair.py` porte,
+  pour chaque hypothèse, étude et outil, une explication normale, une version
+  « 5 ans » et un exemple ; `VERDICTS_ECRITS` fige les verdicts sous lesquels
+  ils ont été écrits, et `TestClair` échoue si l'un change : réécrire le texte,
+  jamais le test. Le seul exemple tiré des données (`revenir.exemple_silencieux`)
+  est choisi par règle, pas à la main.
+- **Une apostrophe peut se cacher sous une entité.** `html.escape(quote=True)`
+  changeait chaque apostrophe des cartes en `&#x27;`, que la passe typographique
+  ne voit pas : elles s'affichaient droites dans la v2 publiée. Un nœud de texte
+  s'échappe sans les guillemets ; le test cherche aussi `&#x27;` et `&#39;`.
 - **Un verdict contraire recopiait le pari réfuté.** La carte de R02 (et la
   colonne « en agence » du classement de la version longue) affichait « le fidèle
   qui se tait est plus perdu » sous le verdict qui établit l'inverse. La phrase

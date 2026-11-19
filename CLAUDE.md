@@ -176,8 +176,12 @@ ofm.tests.test_ofm`). Extraits de données versionnés dans `ofm/donnees/` avec
 SHA-256 ; clones bruts hors dépôt. **Lire `ofm/README.md` avant d'y toucher.**
 **Version mobile** dans la DA de l'app Lueur (`python -m ofm.mobile`,
 `docs/ofm/la-personne-mobile.html`, graphiques `ofm/figmobile.py` en blocs
-isométriques) : même source, aucun chiffre ne peut diverger. 34 tests.
-Derniers artefacts : mobile https://claude.ai/artifact/AJcZGbdLDnYfG4aCD2VAoy (v2) ;
+isométriques) : même source, aucun chiffre ne peut diverger. **Chaque étude y est
+expliquée trois fois** — en clair, comme à un enfant de 5 ans, et par un exemple
+(`ofm/clair.py`, textes figés devant `VERDICTS_ECRITS` : un verdict qui change fait
+échouer un test et impose de réécrire le texte). 38 tests.
+Derniers artefacts : mobile https://claude.ai/artifact/BJmrDwssMA65z6X3XzgxQP (v3,
+en mots simples ; précédent AJcZGbdLDnYfG4aCD2VAoy) ;
 version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de
 classement recopiait le pari réfuté de R02 ; corrigé dans le dépôt, non republié).
 

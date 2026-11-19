@@ -203,6 +203,9 @@ class TestMobile(unittest.TestCase):
         html = re.sub(r"<script>.*?</script>|<style>.*?</style>", " ", mobile(), flags=re.S)
         texte = re.sub(r"<[^>]+>", " ", html)
         self.assertNotIn("'", texte)
+        # L'apostrophe peut aussi se cacher sous une entité.
+        self.assertNotIn("&#x27;", texte)
+        self.assertNotIn("&#39;", texte)
 
     def test_le_script_reste_du_javascript(self):
         # La passe typographique courberait les apostrophes des chaînes JS :
@@ -228,3 +231,38 @@ class TestMobile(unittest.TestCase):
         carte = html[html.index('<span class="res-id">R02</span>'):]
         carte = carte[:carte.index("</article>")]
         self.assertIn("Les données disent l", carte)
+
+
+class TestClair(unittest.TestCase):
+    """La couche en mots simples, écrite devant des verdicts figés."""
+
+    def test_les_verdicts_sont_ceux_sous_lesquels_on_a_ecrit(self):
+        # Si ce test tombe, réécrire le texte de l'hypothèse, pas le test.
+        from ofm import clair
+        for i in synthese.tous():
+            self.assertEqual(synthese.verdict(i), clair.VERDICTS_ECRITS[i], i)
+
+    def test_chaque_etude_a_ses_trois_explications(self):
+        from ofm import clair
+        self.assertEqual(sorted(clair.CARTES), sorted(synthese.tous()))
+        for i, textes in clair.CARTES.items():
+            self.assertEqual(len(textes), 3, i)
+            self.assertTrue(all(t.strip() for t in textes), i)
+
+    def test_chaque_explication_est_publiee(self):
+        from ofm import clair
+        html = mobile()
+        for i, (simple, enfant, exemple) in clair.CARTES.items():
+            for t in (simple, enfant, exemple):
+                t = t.replace("'", "’")
+                self.assertIn(t[:40], html, i)
+        for titre, cinq in clair.LISTES.items():
+            self.assertIn(cinq.replace("'", "’")[:30], html, titre)
+
+    def test_toutes_les_sections_ont_leur_etude(self):
+        from ofm import clair, mobile as m
+        gab = m.TEMPLATE.read_text(encoding="utf-8")
+        self.assertEqual(sorted(re.findall(r"\{\{ETUDE:([a-z]+)\}\}", gab)), sorted(clair.ETUDES))
+        self.assertEqual(sorted(re.findall(r"\{\{OUTIL:([a-z]+)\}\}", gab)), sorted(clair.OUTILS))
+        lignes = [r[0] for k in ("litterature", "faux", "ecarte") for r in papier.tables()[k].rows]
+        self.assertEqual(sorted(lignes), sorted(clair.LISTES))
