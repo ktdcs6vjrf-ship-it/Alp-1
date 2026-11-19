@@ -668,8 +668,10 @@ def m_cd_iso() -> str:
     sc = Scene()
     hi = max(max(h, p) for _, h, p, _ in par)
     pas = 32.0
-    for k, (x, h, p, n) in enumerate(par):
-        lab = f"{x}+" if k == len(par) - 1 else f"{x}"
+    # Les anciens gros acheteurs ont les plus hautes colonnes : ils vont au
+    # fond, sinon ils cachent les rangées de derrière.
+    for k, (x, h, p, n) in enumerate(reversed(par)):
+        lab = f"{x}+" if x == par[-1][0] else f"{x}"
         sc.bloc(0, k * pas, 22, 22, max(2.0, h / hi * 120), "blue",
                 tip=f"{lab} achats passés : {_num(h, 2)} achats futurs réalisés")
         sc.bloc(28, k * pas, 22, 22, max(2.0, p / hi * 120), "gray", ghost=True,

@@ -179,9 +179,11 @@ SHA-256 ; clones bruts hors dépôt. **Lire `ofm/README.md` avant d'y toucher.**
 isométriques) : même source, aucun chiffre ne peut diverger. **Chaque étude y est
 expliquée trois fois** — en clair, comme à un enfant de 5 ans, et par un exemple
 (`ofm/clair.py`, textes figés devant `VERDICTS_ECRITS` : un verdict qui change fait
-échouer un test et impose de réécrire le texte). 38 tests.
-Derniers artefacts : mobile https://claude.ai/artifact/BJmrDwssMA65z6X3XzgxQP (v3,
-en mots simples ; précédent AJcZGbdLDnYfG4aCD2VAoy) ;
+échouer un test et impose de réécrire le texte). Chaque exemple est une situation
+d'agence (relance PPV, custom marchandé, pourboire, post Reddit, fan silencieux) et
+chaque graphique a son encadré « Comment lire ce graphique » (`clair.GRAPHIQUES`).
+39 tests. Derniers artefacts : mobile https://claude.ai/artifact/R1qspQjS9dXdXpwfpVFWP6
+(v4 ; précédents BJmrDwssMA65z6X3XzgxQP, AJcZGbdLDnYfG4aCD2VAoy) ;
 version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de
 classement recopiait le pari réfuté de R02 ; corrigé dans le dépôt, non republié).
 

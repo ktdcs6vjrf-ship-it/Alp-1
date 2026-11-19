@@ -198,12 +198,26 @@ def provenance() -> str:
     return '<ul class="prov">' + "".join(out) + "</ul>"
 
 
-def _figure(m: re.Match, figs: dict) -> str:
+def _figure(m: re.Match, figs: dict, vals: dict) -> str:
+    """Un graphique, sa légende, et l'encadré « Comment lire ce graphique » :
+    ce qu'on y voit, ce que ça montre, ce que l'agence en fait."""
     cle, vue, legende = m.group(1), m.group(2), m.group(3).strip()
     if cle not in figs:
         raise KeyError(f"graphique inconnu : {cle}")
+    voir, montre, agence = clair.GRAPHIQUES[cle]
+
+    def v(t: str) -> str:
+        t = _e(t)
+        for k in sorted(vals, key=len, reverse=True):
+            t = t.replace("{{" + k + "}}", vals[k])
+        return t
+
     return (f'<figure class="viz"><span class="viz-tag">vue {vue}</span>{figs[cle]}'
-            f'<figcaption>{legende}</figcaption></figure>')
+            f'<figcaption>{legende}</figcaption>'
+            f'<div class="lire"><p class="bloc-label">Comment lire ce graphique</p>'
+            f'<p><b>Ce que tu vois.</b> {v(voir)}</p>'
+            f'<p><b>Ce que ça montre.</b> {v(montre)}</p>'
+            f'<p class="lire-agence"><b>Pour ton agence.</b> {v(agence)}</p></div></figure>')
 
 
 def _typo(html: str) -> str:
@@ -236,7 +250,7 @@ def build() -> str:
     for key in sorted(vals, key=len, reverse=True):
         text = text.replace("{{" + key + "}}", vals[key])
     figs = rendre()
-    text = re.sub(r"\{\{FIG:([a-z0-9_]+)\|(2D|3D)\|(.+?)\}\}", lambda m: _figure(m, figs),
+    text = re.sub(r"\{\{FIG:([a-z0-9_]+)\|(2D|3D)\|(.+?)\}\}", lambda m: _figure(m, figs, vals),
                   text, flags=re.S)
     text = re.sub(r"\{\{CARTES:([A-Z])\}\}", lambda m: cartes(m.group(1)), text)
     text = re.sub(r"\{\{LISTE:([a-z]+)\}\}", lambda m: liste(m.group(1)), text)

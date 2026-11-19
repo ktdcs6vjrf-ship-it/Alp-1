@@ -266,3 +266,15 @@ class TestClair(unittest.TestCase):
         self.assertEqual(sorted(re.findall(r"\{\{OUTIL:([a-z]+)\}\}", gab)), sorted(clair.OUTILS))
         lignes = [r[0] for k in ("litterature", "faux", "ecarte") for r in papier.tables()[k].rows]
         self.assertEqual(sorted(lignes), sorted(clair.LISTES))
+
+
+class TestGraphiquesExpliques(unittest.TestCase):
+    def test_chaque_graphique_a_son_mode_de_lecture(self):
+        from ofm import clair, figmobile
+        self.assertEqual(sorted(clair.GRAPHIQUES), sorted(figmobile.FIGURES))
+        html = mobile()
+        self.assertEqual(html.count('class="lire"'), len(figmobile.FIGURES))
+        for cle, textes in clair.GRAPHIQUES.items():
+            self.assertEqual(len(textes), 3, cle)
+            for t in textes:
+                self.assertIn(t.replace("'", "\u2019")[:30], html, cle)

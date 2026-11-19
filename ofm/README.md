@@ -34,7 +34,7 @@ python -m ofm.synthese          # les 59 verdicts, q et budgets, en clair
 python -m ofm.<famille>         # demander, offrir, persuader, negocier, choisir,
                                 # revenir, calendrier, mesurer : chiffres bruts
 python -m ofm.donnees           # rejoue l'extraction (clones bruts requis)
-python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 38 tests, ≈ 16 s
+python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 39 tests, ≈ 16 s
 ```
 
 ## Chaîne
@@ -96,6 +96,12 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
   ils ont été écrits, et `TestClair` échoue si l'un change : réécrire le texte,
   jamais le test. Le seul exemple tiré des données (`revenir.exemple_silencieux`)
   est choisi par règle, pas à la main.
+- **Un graphique s'explique sous lui-même.** `clair.GRAPHIQUES` porte, pour
+  chacun des 24 graphiques mobiles, « ce que tu vois », « ce que ça montre » et
+  « pour ton agence » ; un test exige un encadré par graphique. Ces phrases
+  décrivent la forme du graphique : si un graphique change d'orientation (le
+  relief des fidèles silencieux a été retourné pour mettre le maximum au fond),
+  sa phrase change avec lui.
 - **Une apostrophe peut se cacher sous une entité.** `html.escape(quote=True)`
   changeait chaque apostrophe des cartes en `&#x27;`, que la passe typographique
   ne voit pas : elles s'affichaient droites dans la v2 publiée. Un nœud de texte

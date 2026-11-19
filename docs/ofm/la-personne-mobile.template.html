@@ -324,6 +324,13 @@
   details.nul-card[open] .nul-5 { color: var(--body); }
   .nul-corps { display: grid; gap: 8px; padding: 0 2px 14px; }
   .lit .kid5 { margin-top: 6px; }
+  /* ---------- lire un graphique ---------- */
+  .lire { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); display: grid; gap: 8px; }
+  .lire p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--body); }
+  .lire b { color: var(--ink); }
+  .lire .lire-agence { padding-top: 8px; border-top: 1px solid var(--line); }
+  .lire .lire-agence b { color: var(--blue); }
+  .mode-graph { margin-top: 10px !important; font-size: 15px !important; }
 </style>
 
 <header class="appbar">
@@ -375,6 +382,7 @@
     <div class="mode">
       <p class="bloc-label">Comment lire cette page</p>
       <p>Chaque étude est expliquée trois fois&nbsp;: <b>en clair</b>, <b>comme si tu avais 5 ans</b>, et avec <b>un exemple</b>. Les chiffres détaillés sont rangés sous «&nbsp;Les chiffres&nbsp;»&nbsp;: tu peux les ignorer.</p>
+      <p class="mode-graph"><b>Les graphiques&nbsp;:</b> les barres et les courbes sont en 2D&nbsp;; les blocs en 3D se lisent comme des immeubles, plus un bloc est haut, plus la valeur est grande. Sous chaque graphique, un encadré dit ce que tu vois, ce que ça montre et ce que tu en fais. Touche un point ou un bloc pour lire sa valeur exacte.</p>
       <ul class="legende-v"><li><span class="pill pill-ok">tient</span> c'est prouvé ici</li><li><span class="pill pill-ko">contraire</span> c'est l'inverse qui est vrai</li><li><span class="pill pill-nul">non établi</span> on ne voit rien de sûr</li></ul>
     </div>
 
