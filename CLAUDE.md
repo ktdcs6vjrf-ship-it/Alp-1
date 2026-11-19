@@ -158,6 +158,24 @@ français. Un nouveau lien à chaque amélioration, comme pour le reste. Dernier
 artefact : https://claude.ai/artifact/LMuRjnu65akSE8LeEggTvN (précédents RUirhupXYNSPHSMGp9BTDH, 1772yYTUpYmuAkEJ7DQWm2, DgoivKfGJjD8mrJ4UFzGwD). Lire
 `desk/README.md` avant d'y toucher.
 
+## Hors du corpus — la série OFM
+
+`ofm/` porte une recherche pour l'agence OFM de l'utilisateur : **« La personne,
+et non la phrase »** (`docs/ofm/la-personne.html`, gabarit
+`docs/ofm/la-personne.template.html`, `python -m ofm.papier`). Cinquante-neuf
+hypothèses sur l'humain qui paie, écrites dans `ofm/registre.py` **avant** tout
+calcul, testées sur six jeux publics voisins d'OnlyFans (Random Acts of Pizza,
+Karlan-List, Persuasion for Good, CraigslistBargain, speed dating, CDNOW), BH sur
+la famille, verdicts calculés. 23 figures (10 reliefs), 14 tables. Résultat
+central : ce qui fait payer est un fait sur la personne (récence ×2,8, membre
+avant de demander +15,6 pt, preuve +14,3 pt), presque jamais une formule ; et les
+**fidèles silencieux reviennent davantage**, contre le modèle BG/NBD (R02, seul
+verdict contraire). Stdlib seule ; emprunte `alp1.figterm/figdisc/figcss/pieds`
+sans les modifier. 26 tests en 15 s (`python -m unittest ofm.tests.test_stats
+ofm.tests.test_ofm`). Extraits de données versionnés dans `ofm/donnees/` avec
+SHA-256 ; clones bruts hors dépôt. **Lire `ofm/README.md` avant d'y toucher.**
+Dernier artefact : https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1).
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
