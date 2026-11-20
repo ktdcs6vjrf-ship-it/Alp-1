@@ -188,6 +188,9 @@ chaque graphique a son encadré « Comment lire ce graphique » (`clair.GRAPHIQU
 lecture et sujets cochés ; l'adresse suit la vue (`#demander`). Vérifier par
 `docs/ofm/parcours-mobile.cjs` et `balayage-mobile.cjs` (vue par vue : un
 balayage global ne voit plus que l'espace).
+**Dans l'app Lueur** (v30, espace `/etudes`) : la page construite ici y entre par
+`node scripts/etudes/sync.mjs` (dépôt lueur-ofm) — reconstruire ici, puis synchroniser là-bas.
+Adresses : `#sujets`, `#<sujet>`, `#chercher`, `#reprendre` (dernier sujet, à l'endroit exact).
 41 tests. Derniers artefacts : mobile https://claude.ai/artifact/RTG7owJsSMe1vUwFTSRnwN
 (v5 ; précédents R1qspQjS9dXdXpwfpVFWP6, BJmrDwssMA65z6X3XzgxQP, AJcZGbdLDnYfG4aCD2VAoy) ;
 version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de

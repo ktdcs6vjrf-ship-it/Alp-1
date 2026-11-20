@@ -36,8 +36,10 @@ pied précédent / suivant (`mobile.pied`). Dock : Sujets, Chercher, Suivant (ou
 Commencer / Reprendre sur l'espace). La recherche couvre sujets, idées,
 graphiques, outils et fiches, sans tenir compte des accents. Ce qui est lu et le
 point de reprise restent sur le téléphone (`localStorage`, clés `ofm-cahier-*`).
-L'adresse suit la vue (`#demander`, `#chercher`) ; sans JavaScript, la page
-redevient le long document précédé de son sommaire.
+L'adresse suit la vue (`#demander`, `#chercher`, et `#reprendre` pour le dernier
+sujet à l'endroit exact) ; sans JavaScript, la page redevient le long document
+précédé de son sommaire. Le titre de l'espace se lit dans la page : l'app Lueur
+(`/etudes`, `scripts/etudes/sync.mjs`) sert la même page avec « ‹ Études ».
 
 ## Commandes
 
