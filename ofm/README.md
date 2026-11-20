@@ -25,6 +25,20 @@ sections, dock du bas, sombre par défaut et clair au bouton. Graphiques dans
 la 3D en **blocs isométriques** comme `components/formation/iso.tsx`, une valeur
 au toucher sur chaque marque (`data-tip`).
 
+**L'espace « Tous les sujets » (v5).** La page s'ouvre sur un sommaire en tuiles
+(`{{SUJETS}}`, construit par `mobile.espace` depuis `GROUPES` et `SUJETS`) et
+n'affiche **qu'un sujet à la fois** : 15 sujets de 1 000 à 8 800 px au lieu
+d'une page de 59 000 px. Chaque tuile porte la question à laquelle le sujet
+répond, sa durée de lecture (mots lus / `MOTS_MINUTE`) et, pour les six marchés,
+la barre de ses verdicts — tout calculé. Dans un sujet : retour « Sujets »,
+repères qui sautent à l'étude, aux résultats ou à un graphique, barre de lecture,
+pied précédent / suivant (`mobile.pied`). Dock : Sujets, Chercher, Suivant (ou
+Commencer / Reprendre sur l'espace). La recherche couvre sujets, idées,
+graphiques, outils et fiches, sans tenir compte des accents. Ce qui est lu et le
+point de reprise restent sur le téléphone (`localStorage`, clés `ofm-cahier-*`).
+L'adresse suit la vue (`#demander`, `#chercher`) ; sans JavaScript, la page
+redevient le long document précédé de son sommaire.
+
 ## Commandes
 
 ```
@@ -34,7 +48,9 @@ python -m ofm.synthese          # les 59 verdicts, q et budgets, en clair
 python -m ofm.<famille>         # demander, offrir, persuader, negocier, choisir,
                                 # revenir, calendrier, mesurer : chiffres bruts
 python -m ofm.donnees           # rejoue l'extraction (clones bruts requis)
-python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 39 tests, ≈ 16 s
+python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 41 tests, ≈ 16 s
+node docs/ofm/parcours-mobile.cjs docs/ofm/la-personne-mobile.html   # 23 gestes vérifiés
+INTER=<woff2 Inter> node docs/ofm/balayage-mobile.cjs docs/ofm/la-personne-mobile.html <sortie> 390 360 430 768
 ```
 
 ## Chaîne
@@ -122,6 +138,23 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
   `<script>` avant `typographie` ; un test compile le script avec `node --check`.
   Les valeurs au toucher vivent dans un attribut : l'apostrophe courbe s'y met à la
   main (`figmobile._bulle`).
+- **Un balayage de la page entière ne voit plus que l'espace.** Depuis la v5, un
+  sujet fermé est en `display: none` : il n'a plus de boîte, et un balayage global
+  rend « zéro défaut » sans avoir rien mesuré. `balayage-mobile.cjs` ouvre chaque
+  vue l'une après l'autre.
+- **Un attribut lu par le script n'est pas typographié.** Nom et question des
+  tuiles (`data-nom`, `data-q`) passent par `mobile._attr` ; sinon la barre du haut
+  et la recherche afficheraient l'apostrophe droite et « inconnu? ».
+- **`textContent` colle les blocs.** « hasard. » et « Exemple » donnaient
+  « hasard.Exemple » dans les extraits de recherche ; le script joint les nœuds de
+  texte par un espace (`texte()`).
+- **Seul un `#nom` passe entre le lien de l'artefact et la page.** `pushState` ne
+  prévient pas l'hébergeur (pas de `hashchange`) : la navigation change
+  `location.hash` et ne réagit qu'à `hashchange`. La recherche prend `#chercher`,
+  pour que le geste retour la ferme. Dans un test, un `goto` vers la même page avec
+  un autre `#` ne recharge pas : passer par `about:blank` pour tester une arrivée.
+- **Un défilement doux de 5 000 px dure plus d'une seconde.** Au-delà de deux
+  écrans et demi, les repères et la recherche sautent sans animation.
 
 ## Vérifier le rendu
 
@@ -133,8 +166,12 @@ partout, aucun défilement horizontal. La version mobile se balaie avec Inter
 (`@fontsource/inter`) à 360, 390, 430 et 768 px, téléphone émulé et balise
 viewport injectée : aucun texte SVG hors cadre ni chevauché, aucun texte de
 graphique rendu sous 10,4 px, aucun texte HTML sous 12 px, toutes les cibles
-tactiles à 44 px ou plus. État : zéro partout. Puis regarder chaque planche : un
-balayage propre ne dit pas qu'une figure montre ce que sa légende affirme.
+tactiles à 44 px ou plus — **vue par vue** (`docs/ofm/balayage-mobile.cjs`,
+16 vues × 4 largeurs). État : zéro partout. Puis le parcours au doigt
+(`docs/ofm/parcours-mobile.cjs`, 23 contrôles : tuile, repère, pied, retour,
+recherche, reprise, lien direct, page sans JavaScript). Puis regarder chaque
+planche : un balayage propre ne dit pas qu'une figure montre ce que sa légende
+affirme.
 
 ## Publications
 

@@ -171,7 +171,7 @@ central : ce qui fait payer est un fait sur la personne (récence ×2,8, membre
 avant de demander +15,6 pt, preuve +14,3 pt), presque jamais une formule ; et les
 **fidèles silencieux reviennent davantage**, contre le modèle BG/NBD (R02, seul
 verdict contraire). Stdlib seule ; emprunte `alp1.figterm/figdisc/figcss/pieds`
-sans les modifier. 26 tests en 15 s (`python -m unittest ofm.tests.test_stats
+sans les modifier. 41 tests en 12 s (`python -m unittest ofm.tests.test_stats
 ofm.tests.test_ofm`). Extraits de données versionnés dans `ofm/donnees/` avec
 SHA-256 ; clones bruts hors dépôt. **Lire `ofm/README.md` avant d'y toucher.**
 **Version mobile** dans la DA de l'app Lueur (`python -m ofm.mobile`,
@@ -182,8 +182,14 @@ expliquée trois fois** — en clair, comme à un enfant de 5 ans, et par un exe
 échouer un test et impose de réécrire le texte). Chaque exemple est une situation
 d'agence (relance PPV, custom marchandé, pourboire, post Reddit, fan silencieux) et
 chaque graphique a son encadré « Comment lire ce graphique » (`clair.GRAPHIQUES`).
-39 tests. Derniers artefacts : mobile https://claude.ai/artifact/R1qspQjS9dXdXpwfpVFWP6
-(v4 ; précédents BJmrDwssMA65z6X3XzgxQP, AJcZGbdLDnYfG4aCD2VAoy) ;
+**v5 : l'espace « Tous les sujets »** — la page s'ouvre sur un sommaire en tuiles
+(question, durée, barre des verdicts calculés) et n'affiche qu'un sujet à la fois
+(59 000 px empilés → 15 vues), avec repères, recherche sans accents, reprise de
+lecture et sujets cochés ; l'adresse suit la vue (`#demander`). Vérifier par
+`docs/ofm/parcours-mobile.cjs` et `balayage-mobile.cjs` (vue par vue : un
+balayage global ne voit plus que l'espace).
+41 tests. Derniers artefacts : mobile https://claude.ai/artifact/RTG7owJsSMe1vUwFTSRnwN
+(v5 ; précédents R1qspQjS9dXdXpwfpVFWP6, BJmrDwssMA65z6X3XzgxQP, AJcZGbdLDnYfG4aCD2VAoy) ;
 version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de
 classement recopiait le pari réfuté de R02 ; corrigé dans le dépôt, non republié).
 

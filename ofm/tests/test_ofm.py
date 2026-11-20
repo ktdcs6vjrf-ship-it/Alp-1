@@ -186,18 +186,47 @@ class TestMobile(unittest.TestCase):
     def test_aucune_balise_restante(self):
         self.assertIsNone(re.search(r"\{\{|\}\}", mobile()))
 
-    def test_puces_et_sections(self):
+    def test_l_espace_mene_a_chaque_section(self):
+        # L'espace « Tous les sujets » est le sommaire : une tuile par section,
+        # dans l'ordre du document, et chaque section a son pied de navigation.
+        from ofm import mobile as m
         html = mobile()
-        nav = html[html.index('<nav class="chips"'):]
+        nav = html[html.index('<nav class="sujets"'):]
         nav = nav[:nav.index("</nav>")]
-        puces = re.findall(r'href="#([a-z]+)"', nav)
+        tuiles = re.findall(r'<a class="tuile" href="#([a-z]+)"', nav)
         sections = re.findall(r'<section id="([a-z]+)">', html)
-        self.assertEqual(puces, sections)
-        for groupe in re.findall(r'data-s="([a-z ]+)"', html):
-            for s in groupe.split():
-                self.assertIn(s, sections)
+        self.assertEqual(tuiles, sections)
+        self.assertEqual([i for _, ids in m.GROUPES for i in ids], sections)
+        self.assertEqual(sorted(m.SUJETS), sorted(sections))
+        for s in sections:
+            corps = html[html.index(f'<section id="{s}">'):]
+            corps = corps[:corps.index("</section>")]
+            self.assertEqual(corps.count('<nav class="fin"'), 1, s)
         for cible in re.findall(r'href="#([a-z0-9-]+)"', html):
             self.assertIn(f'id="{cible}"', html, cible)
+
+    def test_les_tuiles_comptent_comme_le_registre(self):
+        # Les verdicts d'une tuile sont ceux du registre, jamais écrits à la main.
+        html = mobile()
+        vus = 0
+        for tuile in re.findall(r'<a class="tuile".*?</a>', html, flags=re.S):
+            m = re.search(r'<span class="t-v" data-ok="(\d+)" data-ko="(\d+)" data-nul="(\d+)"', tuile)
+            if not m:
+                continue
+            s = re.search(r'href="#([a-z]+)"', tuile).group(1)
+            ok, ko, nul = m.groups()
+            corps = html[html.index(f'<section id="{s}">'):]
+            corps = corps[:corps.index("</section>")]
+            lettre = re.search(r'<span class="res-id">([A-Z])\d', corps).group(1)
+            v = [synthese.verdict(i) for i in synthese.tous() if i.startswith(lettre)]
+            self.assertEqual((int(ok), int(ko), int(nul)),
+                             (v.count("tient"), v.count("contraire"), v.count("non établi")), s)
+            vus += 1
+        self.assertEqual(vus, 6)
+
+    def test_les_outils_ont_un_nom(self):
+        from ofm import clair, mobile as m
+        self.assertEqual(sorted(m.OUTILS_NOMS), sorted(clair.OUTILS))
 
     def test_texte_sans_apostrophe_droite_hors_script(self):
         html = re.sub(r"<script>.*?</script>|<style>.*?</style>", " ", mobile(), flags=re.S)
@@ -210,18 +239,23 @@ class TestMobile(unittest.TestCase):
     def test_le_script_reste_du_javascript(self):
         # La passe typographique courberait les apostrophes des chaînes JS :
         # le script doit sortir intact et se compiler.
+        # Deux scripts : le thème et la vue posés avant le premier affichage,
+        # puis la navigation. Tous doivent sortir intacts.
         import shutil
         import subprocess
         import tempfile
-        script = re.search(r"<script>(.*?)</script>", mobile(), flags=re.S).group(1)
-        self.assertIn("localStorage.getItem('ofm-cahier-theme')", script)
+        scripts = re.findall(r"<script>(.*?)</script>", mobile(), flags=re.S)
+        self.assertEqual(len(scripts), 2)
+        self.assertIn("localStorage.getItem('ofm-cahier-theme')", scripts[0])
+        self.assertIn("localStorage.setItem('ofm-cahier-theme'", scripts[1])
         node = shutil.which("node")
         if node is None:
             self.skipTest("node absent")
-        with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as f:
-            f.write(script)
-        r = subprocess.run([node, "--check", f.name], capture_output=True, text=True)
-        self.assertEqual(r.returncode, 0, r.stderr)
+        for script in scripts:
+            with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as f:
+                f.write(script)
+            r = subprocess.run([node, "--check", f.name], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr)
 
     def test_un_verdict_contraire_ne_publie_pas_le_pari(self):
         # La carte de R02 a affirmé « le fidèle qui se tait est plus perdu »
