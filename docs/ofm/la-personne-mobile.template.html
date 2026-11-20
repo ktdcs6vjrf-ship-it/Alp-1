@@ -794,6 +794,8 @@
   const titreDe = (id) => { const t = tuiles.get(id); return t && t.dataset.num ? t.dataset.num + ' · ' + t.dataset.nom : nom(id); };
   const basBarre = () => appbar.getBoundingClientRect().bottom;
   const TITRE = document.title;
+  // Le titre de l'espace se lit dans la page : une version hôte (l'app Lueur) peut le changer sans toucher au script.
+  const TITRE_ESPACE = $('#titre').textContent, SOUS_ESPACE = $('#soustitre').textContent;
 
   // ---------- Thème : sombre par défaut, comme l'app ; le choix reste sur ce téléphone.
   const bouton = $('#theme');
@@ -1003,9 +1005,9 @@
     const surEspace = id === 'sujets';
     sections.forEach((s) => s.classList.toggle('on', s.id === id));
     const el = surEspace ? hub : parId.get(id);
-    $('#titre').textContent = surEspace ? 'Recherche' : titreDe(id);
+    $('#titre').textContent = surEspace ? TITRE_ESPACE : titreDe(id);
     const duree = tuiles.has(id) ? ' · ≈\u00a0' + tuiles.get(id).dataset.min + '\u00a0min' : '';
-    $('#soustitre').textContent = surEspace ? 'Cahier OFM nº 1' : 'Sujet ' + (ORDRE.indexOf(id) + 1) + ' sur ' + ORDRE.length + duree;
+    $('#soustitre').textContent = surEspace ? SOUS_ESPACE : 'Sujet ' + (ORDRE.indexOf(id) + 1) + ' sur ' + ORDRE.length + duree;
     document.title = surEspace ? TITRE : nom(id) + ' · ' + TITRE;
     bulle.hidden = true;
     reperes(id);
