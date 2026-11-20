@@ -110,16 +110,16 @@ const verifier = (cond, quoi, detail) => {
 
   await p.reload();
   await p.waitForTimeout(250);
-  const rep = await p.evaluate(() => [document.querySelector('#reprendre').hidden, document.querySelector('#rep-nom').textContent]);
+  const rep = await p.evaluate(() => [document.querySelector('#rep-carte').hidden, document.querySelector('#rep-nom').textContent]);
   await p.tap('#d-sujets');
   await p.waitForTimeout(150);
-  const rep2 = await p.evaluate(() => [document.querySelector('#reprendre').hidden, document.querySelector('#rep-nom').textContent]);
+  const rep2 = await p.evaluate(() => [document.querySelector('#rep-carte').hidden, document.querySelector('#rep-nom').textContent]);
   verifier(!rep2[0] && rep2[1].includes('Négocier'), 'l’espace propose de reprendre le dernier sujet ouvert', { rep, rep2 });
 
   await p.evaluate(() => document.querySelector('#raz').scrollIntoView());
   await p.tap('#raz');
   await p.waitForTimeout(100);
-  const raz = await p.evaluate(() => [document.querySelector('#reprendre').hidden, localStorage.getItem('ofm-cahier-lus'), document.querySelector('#d-suiv span').textContent]);
+  const raz = await p.evaluate(() => [document.querySelector('#rep-carte').hidden, localStorage.getItem('ofm-cahier-lus'), document.querySelector('#d-suiv span').textContent]);
   verifier(raz[0] && raz[1] === null && raz[2] === 'Commencer', 'la remise à zéro efface lecture et reprise', raz);
 
   await p.goto('about:blank');
@@ -127,6 +127,18 @@ const verifier = (cond, quoi, detail) => {
   await p.waitForTimeout(200);
   e = await etat();
   verifier(e.vue === 'mesurer' && e.sections.join() === 'mesurer', 'un lien direct ouvre son sujet', e);
+  await p.goto('about:blank');
+  await p.goto('file://' + tmp);
+  await p.tap('.tuile[data-id="offrir"]');
+  await p.waitForTimeout(150);
+  await p.evaluate(() => window.scrollTo(0, 1500));
+  await p.waitForTimeout(700);
+  await p.goto('about:blank');
+  await p.goto('file://' + tmp + '#reprendre');
+  await p.waitForTimeout(250);
+  e = await etat();
+  verifier(e.vue === 'offrir' && Math.abs(e.y - 1500) < 40 && await p.evaluate(() => location.hash) === '#offrir', '#reprendre rouvre le dernier sujet à l’endroit exact', e);
+
   await p.goto('about:blank');
   await p.goto('file://' + tmp + '#chercher');
   await p.waitForTimeout(200);

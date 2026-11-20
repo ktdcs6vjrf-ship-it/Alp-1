@@ -103,7 +103,7 @@
   /* ---------- une vue à la fois : l'espace des sujets, ou un seul sujet ----------
      Sans script, rien de ceci ne s'applique : la page reste un long document,
      précédé de son sommaire. */
-  .js main > section { display: none; }
+  .js main > section { display: none; scroll-margin-top: 100vh; }
   .js main > section.on { display: grid; }
   .js:not([data-vue="sujets"]) .hub { display: none; }
   .entre { animation: entre .22s ease-out both; }
@@ -515,7 +515,7 @@
       <p class="hub-une">Ce qui fait payer est presque toujours un fait sur la personne, presque jamais une formule.</p>
     </div>
     <button class="cherche-ouvrir" id="ouvrir" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Chercher un mot&nbsp;: relance, prix, bonus…</span></button>
-    <a class="reprendre" id="reprendre" href="#resume" hidden>
+    <a class="reprendre" id="rep-carte" href="#resume" hidden>
       <span class="rep-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>
       <span class="rep-t"><small id="rep-k">Reprendre</small><b id="rep-nom">L'essentiel</b><span id="rep-ou">là où tu en étais</span></span>
       <svg class="rep-fl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -851,7 +851,7 @@
       : n + ' sujet' + (n > 1 ? 's' : '') + ' lu' + (n > 1 ? 's' : '') + ' sur ' + ORDRE.length;
     [...segs.children].forEach((s, k) => s.classList.toggle('lu', lus.has(ORDRE[k])));
     const r = reprise();
-    const rep = $('#reprendre');
+    const rep = $('#rep-carte');
     rep.hidden = !r;
     if (r) {
       rep.setAttribute('href', '#' + r.id);
@@ -1258,14 +1258,16 @@
     if (!ouverte) return;
     if (parNous) { history.back(); return; }
     fermer(true);
+    const y = window.scrollY;
     location.replace('#' + vue);
+    window.scrollTo(0, y);
   };
   // Un résultat : son sujet s'ouvre à l'endroit trouvé, et l'adresse #chercher cède la place.
   const choisir = (it) => {
     const cible = it.el;
     if (it.sec === vue && parNous) { apres = cible; history.back(); return; }
     fermer(false);
-    if (it.sec === vue) { allerA(cible); location.replace('#' + vue); return; }
+    if (it.sec === vue) { location.replace('#' + vue); allerA(cible); return; }
     enAttente = { cible, focus: !cible, de: vue };
     location.replace('#' + it.sec);
   };
@@ -1292,8 +1294,18 @@
     if (e.key === '/') { e.preventDefault(); ouvrir(true); }
   });
 
+  // #reprendre : le dernier sujet ouvert, là où on l'a laissé (ou le suivant s'il est fini).
   const h0 = lireHash();
-  montrer(vueDe(h0), {});
+  const r0 = h0 === 'reprendre' ? reprise() : null;
+  // Pendant le chargement, le navigateur garde une ancre en attente et la réapplique dès que la
+  // section apparaît : l'adresse ne change donc qu'une fois la page chargée, puis la lecture est replacée.
+  if (r0) {
+    montrer(r0.id, { y: r0.y });
+    const poser = () => { location.replace('#' + r0.id); window.scrollTo(0, r0.y); };
+    if (document.readyState === 'complete') poser();
+    else window.addEventListener('load', () => requestAnimationFrame(poser), { once: true });
+  }
+  else montrer(vueDe(h0), {});
   if (h0 === 'chercher') ouvrir(false);
 })();
 </script>
