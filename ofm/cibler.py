@@ -203,7 +203,9 @@ def _ecart(rid: str, jeu: str, a: str, b: str, phrase: str) -> Resultat:
                  f"{nom[b]} {tb * 100:+.2f} pt ({phrase}, {entier(T['n'])} clients jamais vus par le modèle)"
                  ).replace(".", ","),
         methode="effets mesurés par tirage au sort dans chaque tiers, hors échantillon ; fonction d'influence",
-        base=tb if tb > 0 else None, relatif=(d / tb) if tb > 0 else None,
+        # Pas de budget : la formule de `synthese2.budget` compare deux taux, et un
+        # écart entre deux effets en demande bien davantage.
+        base=None, relatif=None,
         extra={"ta": ta, "tb": tb, "commun": T["commun"], "k": T["k"]},
     )
 

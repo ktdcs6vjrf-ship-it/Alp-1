@@ -129,10 +129,18 @@ def histogramme(lo: float = 0.5, hi: float = 1.5, pas: float = 0.02) -> list[tup
     n = int(round((hi - lo) / pas))
     c = [0] * n
     for x in campagnes():
-        k = int((x["ratio"] - lo) / pas)
+        # Une campagne à 100 % pile donne (1 − 0,5) / 0,02 = 24,999… : sans la
+        # marge, elle tombait dans la tranche d'en dessous de l'objectif.
+        k = int(math.floor((x["ratio"] - lo) / pas + 1e-9))
         if 0 <= k < n and lo <= x["ratio"] < hi:
             c[k] += 1
     return [(lo + i * pas, v) for i, v in enumerate(c)]
+
+
+def pile() -> tuple[int, int]:
+    """Campagnes finies exactement à leur objectif (au centime), sur celles de [1 ; 1,05)."""
+    a = sum(1 for c in campagnes() if abs(c["ratio"] - 1.0) < 1e-9)
+    return a, _compte(1.00, 1.05)
 
 
 def reussite_duree_objectif() -> tuple[list[list[float]], list[str], list[str]]:

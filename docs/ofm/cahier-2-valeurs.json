@@ -1,0 +1,376 @@
+{
+"cahier": "ofm2",
+"hypotheses": {
+"B01": {
+"court": "Juste au-dessus du but",
+"enonce": "Les promesses s'entassent juste au-dessus de l'objectif",
+"jeu": "kickstarter",
+"lecture": "34 808 campagnes finissent entre 100 et 105 % de leur objectif contre 69 entre 95 et 100 % ; la pente voisine en attendait un rapport de 2,96"
+},
+"B02": {
+"court": "Campagne longue",
+"enonce": "Une campagne plus longue réussit moins",
+"jeu": "kickstarter",
+"lecture": "chaque dizaine de jours de campagne en plus change la réussite de -3,64 pt (base 40,4 %)"
+},
+"B03": {
+"court": "Objectif haut",
+"enonce": "Un objectif plus haut réussit moins",
+"jeu": "kickstarter",
+"lecture": "un objectif dix fois plus haut change la réussite de -14,14 pt"
+},
+"B04": {
+"court": "Objectif rond",
+"enonce": "Un objectif rond change la réussite",
+"jeu": "kickstarter",
+"lecture": "un objectif rond (multiple de 1 000) change la réussite de -2,06 pt à objectif égal"
+},
+"B05": {
+"court": "Lancement le week-end",
+"enonce": "Un lancement le week-end change la réussite",
+"jeu": "kickstarter",
+"lecture": "un lancement le week-end change la réussite de -3,32 pt à objectif égal"
+},
+"C01": {
+"court": "Effet contre risque (courriel)",
+"enonce": "Le tiers choisi par effet estimé répond plus que le tiers choisi par risque",
+"jeu": "hillstrom",
+"lecture": "le tiers choisi par effet gagne +7,93 pt de visites avec le message, le tiers le plus à risque +5,71 pt (effet réel, tiers contre tiers, 31 959 clients jamais vus par le modèle)"
+},
+"C02": {
+"court": "Risque contre moyenne (courriel)",
+"enonce": "Le tiers le plus à risque répond moins que la moyenne",
+"jeu": "hillstrom",
+"lecture": "le tiers le plus à risque gagne +5,71 pt de visites avec le message, tous les clients +6,57 pt (effet réel, tiers contre moyenne, 31 959 clients jamais vus par le modèle)"
+},
+"C03": {
+"court": "Effet contre moyenne (courriel)",
+"enonce": "Le tiers choisi par effet estimé répond plus que la moyenne",
+"jeu": "hillstrom",
+"lecture": "le tiers choisi par effet gagne +7,93 pt de visites avec le message, tous les clients +6,57 pt (effet réel, tiers contre moyenne, 31 959 clients jamais vus par le modèle)"
+},
+"C04": {
+"court": "Effet contre risque (Lenta)",
+"enonce": "Le tiers choisi par effet estimé répond plus que le tiers choisi par risque",
+"jeu": "lenta",
+"lecture": "le tiers choisi par effet gagne +2,13 pt de visites avec le message, le tiers le plus à risque +0,24 pt (effet réel, tiers contre tiers, 343 598 clients jamais vus par le modèle)"
+},
+"C05": {
+"court": "Risque contre moyenne (Lenta)",
+"enonce": "Le tiers le plus à risque répond moins que la moyenne",
+"jeu": "lenta",
+"lecture": "le tiers le plus à risque gagne +0,24 pt de visites avec le message, tous les clients +0,69 pt (effet réel, tiers contre moyenne, 343 598 clients jamais vus par le modèle)"
+},
+"C06": {
+"court": "Effet contre moyenne (Lenta)",
+"enonce": "Le tiers choisi par effet estimé répond plus que la moyenne",
+"jeu": "lenta",
+"lecture": "le tiers choisi par effet gagne +2,13 pt de visites avec le message, tous les clients +0,69 pt (effet réel, tiers contre moyenne, 343 598 clients jamais vus par le modèle)"
+},
+"C07": {
+"court": "Effet contre risque (X5)",
+"enonce": "Le tiers choisi par effet estimé répond plus que le tiers choisi par risque",
+"jeu": "x5",
+"lecture": "le tiers choisi par effet gagne +6,05 pt de achats avec le message, le tiers le plus à risque +4,94 pt (effet réel, tiers contre tiers, 100 004 clients jamais vus par le modèle)"
+},
+"C08": {
+"court": "Risque contre moyenne (X5)",
+"enonce": "Le tiers le plus à risque répond moins que la moyenne",
+"jeu": "x5",
+"lecture": "le tiers le plus à risque gagne +4,94 pt de achats avec le message, tous les clients +3,66 pt (effet réel, tiers contre moyenne, 100 004 clients jamais vus par le modèle)"
+},
+"C09": {
+"court": "Effet contre moyenne (X5)",
+"enonce": "Le tiers choisi par effet estimé répond plus que la moyenne",
+"jeu": "x5",
+"lecture": "le tiers choisi par effet gagne +6,05 pt de achats avec le message, tous les clients +3,66 pt (effet réel, tiers contre moyenne, 100 004 clients jamais vus par le modèle)"
+},
+"E01": {
+"court": "Courriel → achat",
+"enonce": "Un courriel de relance fait acheter",
+"jeu": "hillstrom",
+"lecture": "1,07 % contre 0,57 % (courriel contre aucun)"
+},
+"E02": {
+"court": "Courriel → dépense",
+"enonce": "Un courriel de relance fait dépenser",
+"jeu": "hillstrom",
+"lecture": "1,25 $ contre 0,65 $ dépensés par client en deux semaines"
+},
+"E03": {
+"court": "Courriel → visite",
+"enonce": "Un courriel de relance fait venir",
+"jeu": "hillstrom",
+"lecture": "16,70 % contre 10,62 % (courriel contre aucun)"
+},
+"E04": {
+"court": "Courriel assorti",
+"enonce": "Le courriel assorti aux achats passés fait davantage venir",
+"jeu": "hillstrom",
+"lecture": "clients « hommes » : 16,90 % de visites avec le courriel hommes, 11,09 % avec l'autre ; clients « femmes » : 16,98 % contre 16,64 %"
+},
+"E05": {
+"court": "Récence (courriel)",
+"enonce": "L'effet du courriel change avec la récence du client",
+"jeu": "hillstrom",
+"lecture": "effet du message +6,20 pt chez les clients récents (dernier achat à 6 mois ou moins) (36 585 clients), +5,95 pt chez les plus anciens (27 415)"
+},
+"E06": {
+"court": "Gros clients (courriel)",
+"enonce": "L'effet du courriel change avec la valeur du client",
+"jeu": "hillstrom",
+"lecture": "effet du message +6,38 pt chez les plus gros clients (31 999 clients), +5,76 pt chez les autres (32 001)"
+},
+"E07": {
+"court": "Nouveaux (courriel)",
+"enonce": "L'effet du courriel change chez le nouveau client",
+"jeu": "hillstrom",
+"lecture": "effet du message +6,28 pt chez les clients arrivés dans l'année (32 144 clients), +5,90 pt chez les plus anciens (31 856)"
+},
+"E08": {
+"court": "SMS → visite",
+"enonce": "Un SMS de relance fait venir",
+"jeu": "lenta",
+"lecture": "11,01 % contre 10,26 % (SMS contre témoin)"
+},
+"E09": {
+"court": "Déjà répondu",
+"enonce": "Le SMS agit davantage sur qui a déjà répondu à un SMS",
+"jeu": "lenta",
+"lecture": "effet du message +0,69 pt chez qui a déjà répondu à un SMS (567 168 clients), -0,12 pt chez qui n'a jamais répondu (111 280)"
+},
+"E10": {
+"court": "Fréquents (SMS)",
+"enonce": "L'effet du SMS change chez le client fréquent",
+"jeu": "lenta",
+"lecture": "effet du message +0,87 pt chez les clients fréquents (336 003 clients), +0,46 pt chez les autres (256 962)"
+},
+"E11": {
+"court": "Chasseurs de promos",
+"enonce": "L'effet du SMS change chez le chasseur de promotions",
+"jeu": "lenta",
+"lecture": "effet du message +0,87 pt chez les chasseurs de promotions (317 920 clients), +0,43 pt chez les autres (369 109)"
+},
+"E12": {
+"court": "Hommes (SMS)",
+"enonce": "Le SMS fait aussi venir les hommes",
+"jeu": "lenta",
+"lecture": "11,52 % contre 10,70 % (hommes, SMS contre témoin)"
+},
+"E13": {
+"court": "SMS → achat",
+"enonce": "Un SMS de relance fait acheter",
+"jeu": "x5",
+"lecture": "63,65 % contre 60,33 % (SMS contre témoin)"
+},
+"E14": {
+"court": "Récence (SMS)",
+"enonce": "L'effet du SMS change avec la récence du client",
+"jeu": "x5",
+"lecture": "effet du message +2,54 pt chez les clients récents (dernier passage à 4 jours ou moins) (107 914 clients), +4,28 pt chez les autres (92 125)"
+},
+"E15": {
+"court": "Fréquents (SMS achat)",
+"enonce": "L'effet du SMS change chez le client fréquent",
+"jeu": "x5",
+"lecture": "effet du message +2,13 pt chez les clients fréquents (15 passages ou plus) (104 288 clients), +4,46 pt chez les autres (95 751)"
+},
+"E16": {
+"court": "Clients des promos",
+"enonce": "L'effet du SMS change chez le client des promotions",
+"jeu": "x5",
+"lecture": "effet du message +6,28 pt chez les clients des promotions (36 241 clients), +2,67 pt chez les autres (163 798)"
+},
+"G01": {
+"court": "BG/NBD contre rythme",
+"enonce": "Le modèle BG/NBD prédit mieux que le rythme passé",
+"jeu": "retail",
+"lecture": "erreur absolue moyenne 2,610 jour d'achat par client contre 2,586 pour le rythme passé"
+},
+"G02": {
+"court": "Fidèle silencieux",
+"enonce": "Après un long silence, l'ancien acheteur fréquent revient davantage",
+"jeu": "retail",
+"lecture": "parmi 172 clients silencieux depuis au moins 26 semaines, chaque achat passé de plus change les achats de l'année suivante de +0,005"
+},
+"G03": {
+"court": "Faille du modèle",
+"enonce": "Le modèle sous-estime d'autant plus le silencieux qu'il était fréquent",
+"jeu": "retail",
+"lecture": "chez les mêmes silencieux, l'écart entre achats réalisés et prédits grandit de -0,448 par achat passé"
+},
+"G04": {
+"court": "Décile de tête",
+"enonce": "Le classement BG/NBD capte davantage les achats futurs",
+"jeu": "retail",
+"lecture": "le décile de tête BG/NBD capte 42,7 % des achats de l'année suivante, le décile des plus gros dépensiers 37,1 %"
+},
+"G05": {
+"court": "Première commande",
+"enonce": "Une grosse première commande annonce un client qui revient",
+"jeu": "retail",
+"lecture": "5,37 jours d'achat l'année suivante après une première commande de plus de 306 £, contre 3,18 en dessous"
+},
+"M01": {
+"court": "Passé → dépense (courriel)",
+"enonce": "L'historique d'avant prédit la dépense après le courriel",
+"jeu": "hillstrom",
+"lecture": "corrélation 0,027 hors échantillon : ajuster sur le passé retire 0,1 % de la variance, soit autant d'envois en moins"
+},
+"M02": {
+"court": "Passé → visite (Lenta)",
+"enonce": "L'historique d'avant prédit la visite après le SMS",
+"jeu": "lenta",
+"lecture": "corrélation 0,324 hors échantillon : ajuster sur le passé retire 10,5 % de la variance, soit autant d'envois en moins"
+},
+"M03": {
+"court": "Passé → achat (X5)",
+"enonce": "L'historique d'avant prédit l'achat après le SMS",
+"jeu": "x5",
+"lecture": "corrélation 0,448 hors échantillon : ajuster sur le passé retire 20,1 % de la variance, soit autant d'envois en moins"
+}
+},
+"valeurs": {
+"b01_attendu": "2,96",
+"b01_bas": "69",
+"b01_haut": "34 808",
+"b02_e": "−3,6",
+"b03_e": "−14,1",
+"b04_e": "−2,1",
+"b05_e": "−3,3",
+"c_hs_eff": "+7,93",
+"c_hs_feff": "1,2",
+"c_hs_fris": "0,87",
+"c_hs_moy": "+6,57",
+"c_hs_n": "31 959",
+"c_hs_ris": "+5,71",
+"c_le_eff": "+2,13",
+"c_le_feff": "3,1",
+"c_le_fris": "0,35",
+"c_le_moy": "+0,69",
+"c_le_n": "343 598",
+"c_le_ris": "+0,24",
+"c_x5_eff": "+6,05",
+"c_x5_feff": "1,7",
+"c_x5_fris": "1,35",
+"c_x5_moy": "+3,66",
+"c_x5_n": "100 004",
+"c_x5_ris": "+4,94",
+"e04_e": "+3,1",
+"e04_f_autre": "16,6",
+"e04_f_bon": "17,0",
+"e04_h_autre": "11,1",
+"e04_h_bon": "16,9",
+"e08_e": "+0,75",
+"e09_non": "−0,12",
+"e09_oui": "+0,69",
+"e10_non": "+0,46",
+"e10_oui": "+0,87",
+"e11_non": "+0,43",
+"e11_oui": "+0,87",
+"e12_e": "+0,81",
+"e13_e": "+3,3",
+"e14_non": "+4,28",
+"e14_oui": "+2,54",
+"e15_non": "+4,46",
+"e15_oui": "+2,13",
+"e16_non": "+2,67",
+"e16_oui": "+6,28",
+"envois_semaine": "3 000",
+"g04_bg": "42,7",
+"g04_dep": "37,1",
+"g05_bas": "3,2",
+"g05_haut": "5,4",
+"g05_med": "306",
+"hs_ach_a": "1,07",
+"hs_ach_b": "0,57",
+"hs_ach_fois": "1,9",
+"hs_dep_a": "1,25",
+"hs_dep_b": "0,65",
+"hs_fois_depense": "2,0",
+"hs_n": "64 000",
+"hs_n_achat": "17 690",
+"hs_n_depense": "35 796",
+"hs_vis_a": "16,7",
+"hs_vis_b": "10,6",
+"ks_30_grand": "9",
+"ks_base": "40,4",
+"ks_court_petit": "63",
+"ks_long_petit": "47",
+"ks_n": "331 675",
+"ks_pile": "4 059",
+"le_a": "11,01",
+"le_b": "10,26",
+"le_gain_max": "0,86",
+"le_gain_tous": "0,69",
+"le_jamais": "16",
+"le_n": "687 029",
+"le_part_max": "70",
+"m01_r2": "0,1",
+"m02_r2": "10,5",
+"m03_r2": "20,1",
+"n_bruit": "2",
+"n_contraire": "2",
+"n_hyp": "38",
+"n_marches": "5",
+"n_moins_mois": "4",
+"n_nominal": "32",
+"n_non": "7",
+"n_obs": "1 284 455",
+"n_survivent": "31",
+"n_tient": "29",
+"p_agence": "5",
+"rt_mae_b": "2,61",
+"rt_mae_n": "2,59",
+"rt_n": "1 712",
+"rt_sil": "172",
+"rt_x1_prev": "1,76",
+"rt_x1_reel": "0,98",
+"rt_x4_prev": "3,45",
+"rt_x4_reel": "0,58",
+"x5_a": "63,7",
+"x5_b": "60,3",
+"x5_n": "200 039",
+"z_bh": "2,24"
+},
+"verdicts": {
+"B01": "tient",
+"B02": "tient",
+"B03": "tient",
+"B04": "tient",
+"B05": "tient",
+"C01": "tient",
+"C02": "non établi",
+"C03": "tient",
+"C04": "tient",
+"C05": "tient",
+"C06": "tient",
+"C07": "non établi",
+"C08": "contraire",
+"C09": "tient",
+"E01": "tient",
+"E02": "tient",
+"E03": "tient",
+"E04": "tient",
+"E05": "non établi",
+"E06": "non établi",
+"E07": "non établi",
+"E08": "tient",
+"E09": "tient",
+"E10": "tient",
+"E11": "tient",
+"E12": "tient",
+"E13": "tient",
+"E14": "tient",
+"E15": "tient",
+"E16": "tient",
+"G01": "non établi",
+"G02": "non établi",
+"G03": "contraire",
+"G04": "tient",
+"G05": "tient",
+"M01": "tient",
+"M02": "tient",
+"M03": "tient"
+}
+}

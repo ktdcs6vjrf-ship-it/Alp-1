@@ -177,6 +177,19 @@ def par_frequence(seuil_max: int = 6) -> list[tuple[str, float, float, int]]:
     return out
 
 
+def grille_premiere() -> tuple[list[list[float]], list[str], list[str]]:
+    """Jours d'achat de l'année suivante, par première commande (lignes) et fréquence (colonnes)."""
+    cs = clients()
+    q = [stats.quantile([c["dep_1"] for c in cs], k / 3) for k in (1, 2)]
+    lignes = [(-1, q[0], "petite"), (q[0], q[1], "moyenne"), (q[1], 1e12, "grosse")]
+    cols = [(0, 0, "1 achat"), (1, 2, "2–3"), (3, 6, "4–7"), (7, 10 ** 6, "8 et +")]
+    z = []
+    for a, b, _ in lignes:
+        z.append([stats.moyenne([c["hold"] for c in cs if a < c["dep_1"] <= b and lo <= c["x"] <= hi] or [0.0])
+                  for lo, hi, _ in cols])
+    return z, [x[2] for x in lignes], [x[2] for x in cols]
+
+
 def main() -> None:
     from .registre2 import par_id
     reg = par_id()

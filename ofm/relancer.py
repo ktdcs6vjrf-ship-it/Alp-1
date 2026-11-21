@@ -122,7 +122,8 @@ def resultats() -> dict[str, Resultat]:
     out["E02"] = Resultat(
         id="E02", effet=e.diff, ic=(lo, hi), p=e.p, n=len(a) + len(b), unite="$",
         lecture=f"{_dol(e.a)} contre {_dol(e.b)} dépensés par client en deux semaines",
-        methode="écart de moyennes (Welch), tirage au sort", base=e.b, relatif=e.relatif,
+        # Pas de budget « taux » : une dépense se budgète sur sa variance (`budgets_hillstrom`).
+        methode="écart de moyennes (Welch), tirage au sort", base=None, relatif=None,
         extra={"a": e.a, "b": e.b, "sd_a": math.sqrt(stats.variance(a)), "sd_b": math.sqrt(stats.variance(b))},
     )
     out["E03"] = prop("E03", [r["visite"] for r in t1], [r["visite"] for r in t0], "courriel contre aucun")
@@ -204,6 +205,62 @@ def grille_hillstrom(y: str = "visite") -> tuple[list[list[float]], list[str], l
             ligne.append((sum(t1) / len(t1) - sum(t0) / len(t0)) * 100)
         z.append(ligne)
     return z, [x[2] for x in rec], [x[2] for x in hist]
+
+
+def budgets_hillstrom() -> tuple[float, float]:
+    """Envois par version pour revérifier, sur le même courriel, la hausse d'achats
+    et la hausse de dépense, chacune planifiée à la moitié de sa taille.
+
+    L'achat se budgète comme deux taux (à sa propre base) ; la dépense sur sa
+    variance réelle, presque toute faite de zéros et de rares gros paniers.
+    C'est l'argument de Lewis et Rao (2015), chiffré sur ce marché."""
+    from .synthese import TRANSPOSITION
+    R = resultats()
+    a = R["E01"].extra
+    n_achat = stats.n_par_bras(a["b"], (a["a"] / a["b"] - 1) * TRANSPOSITION)
+    e = R["E02"].extra
+    za, zb = stats.Phi_inv(0.975), stats.Phi_inv(0.80)
+    delta = (e["a"] - e["b"]) * TRANSPOSITION
+    n_dep = (za + zb) ** 2 * (e["sd_a"] ** 2 + e["sd_b"] ** 2) / delta ** 2
+    return n_achat, n_dep
+
+
+def _effet(sub) -> tuple[float, float, int]:
+    a = [r["y"] for r in sub if r["t"] == 1]
+    b = [r["y"] for r in sub if r["t"] == 0]
+    e = stats.deux_proportions(sum(a), len(a), sum(b), len(b))
+    return e.diff * 100, 1.96 * e.se * 100, len(sub)
+
+
+def lenta_par_reponse() -> list[tuple[str, float, float, int]]:
+    """Effet du SMS (pt de visites) selon la part de réponses aux SMS passés."""
+    bornes = [(None, None, "jamais"), (0.0, 0.25, "≤ 25 %"), (0.25, 0.5, "25–50 %"),
+              (0.5, 0.75, "50–75 %"), (0.75, 1.01, "> 75 %")]
+    out = []
+    le = [r for r in donnees2.lenta() if r["rep_sms"] is not None]
+    for lo, hi, nom in bornes:
+        if lo is None:
+            sub = [r for r in le if r["rep_sms"] == 0]
+        else:
+            sub = [r for r in le if lo < r["rep_sms"] <= hi] if lo > 0 else \
+                  [r for r in le if 0 < r["rep_sms"] <= hi]
+        e, h, n = _effet(sub)
+        out.append((nom, e, h, n))
+    return out
+
+
+def grille_x5() -> tuple[list[list[float]], list[str], list[str]]:
+    """Effet du SMS (pt d'achats) par récence (lignes) et passages en caisse (colonnes)."""
+    x5 = [r for r in donnees2.x5() if r["recence_j"] is not None]
+    qr = [stats.quantile([r["recence_j"] for r in x5], k / 3) for k in (1, 2)]
+    qp = [stats.quantile([r["passages"] for r in x5], k / 3) for k in (1, 2)]
+    rec = [(-1, qr[0], "récents"), (qr[0], qr[1], "entre deux"), (qr[1], 1e9, "endormis")]
+    pas = [(-1, qp[0], "rares"), (qp[0], qp[1], "moyens"), (qp[1], 1e9, "fréquents")]
+    z = []
+    for a, b, _ in rec:
+        z.append([_effet([r for r in x5 if a < r["recence_j"] <= b and c < r["passages"] <= d])[0]
+                  for c, d, _ in pas])
+    return z, [x[2] for x in rec], [x[2] for x in pas]
 
 
 def main() -> None:

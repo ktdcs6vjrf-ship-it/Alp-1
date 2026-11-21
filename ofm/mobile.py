@@ -455,7 +455,11 @@ def build() -> str:
 
 def main() -> None:
     OUTPUT.write_text(build(), encoding="utf-8")
-    VALEURS.write_text(json.dumps(dict(papier.values()), ensure_ascii=False, sort_keys=True, indent=0) + "\n", encoding="utf-8")
+    sortie = dict(papier.values())
+    # Les verdicts calculés, hypothèse par hypothèse : le registre des études de
+    # Lueur en tire le statut de chaque étude testée ici, sans les recopier.
+    sortie["verdicts"] = {i: synthese.verdict(i) for i in synthese.tous()}
+    VALEURS.write_text(json.dumps(sortie, ensure_ascii=False, sort_keys=True, indent=0) + "\n", encoding="utf-8")
     print(f"écrit : {OUTPUT.relative_to(ROOT)} ({OUTPUT.stat().st_size:,} octets) et {VALEURS.name}")
 
 
