@@ -198,6 +198,9 @@ de Lueur (`/plan`, cahier LR-2026-07) les cite par `scripts/etudes/sync.mjs`, sa
 version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de
 classement recopiait le pari réfuté de R02 ; corrigé dans le dépôt, non republié).
 
+**Demande en attente (21 nov.)** : de nouvelles hypothèses OFM à tester ici sur de nouveaux jeux publics, pour le
+registre d'études de Lueur — cahier des charges dans `lueur-ofm/docs/demande-etudes-alpha.md`.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
