@@ -27,6 +27,7 @@ de son sommaire.
 from __future__ import annotations
 
 import html as H
+import json
 import re
 from pathlib import Path
 
@@ -40,6 +41,8 @@ from .figures import COURT
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = ROOT / "docs" / "ofm" / "la-personne-mobile.template.html"
 OUTPUT = ROOT / "docs" / "ofm" / "la-personne-mobile.html"
+# Les valeurs calculées, pour qu'une autre page (le plan de match de l'app Lueur) les cite sans les recopier.
+VALEURS = ROOT / "docs" / "ofm" / "la-personne-valeurs.json"
 
 PILULE = {"tient": ("pill-ok", "tient"), "contraire": ("pill-ko", "contraire"),
           "non établi": ("pill-nul", "non établi")}
@@ -452,7 +455,8 @@ def build() -> str:
 
 def main() -> None:
     OUTPUT.write_text(build(), encoding="utf-8")
-    print(f"écrit : {OUTPUT.relative_to(ROOT)} ({OUTPUT.stat().st_size:,} octets)")
+    VALEURS.write_text(json.dumps(dict(papier.values()), ensure_ascii=False, sort_keys=True, indent=0) + "\n", encoding="utf-8")
+    print(f"écrit : {OUTPUT.relative_to(ROOT)} ({OUTPUT.stat().st_size:,} octets) et {VALEURS.name}")
 
 
 if __name__ == "__main__":
