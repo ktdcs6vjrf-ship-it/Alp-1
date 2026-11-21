@@ -41,6 +41,24 @@ sujet à l'endroit exact) ; sans JavaScript, la page redevient le long document
 précédé de son sommaire. Le titre de l'espace se lit dans la page : l'app Lueur
 (`/etudes`, `scripts/etudes/sync.mjs`) sert la même page avec « ‹ Études ».
 
+**Cahier nº 2** — `docs/ofm/cahier-2-mobile.html` (gabarit
+`docs/ofm/cahier-2-mobile.template.html`, `python -m ofm.mobile2`), *L'effet,
+et non le risque* : 38 hypothèses sur la relance, le ciblage, la fidélité, les
+objectifs et la mesure, écrites dans `registre2.py` et **commitées avant le
+premier calcul** (l'historique git date la pré-inscription), testées sur cinq
+jeux publics (`donnees2.py`, `PROVENANCE2.json`) : Hillstrom (courriel tiré au
+sort), Lenta et X5 (SMS tirés au sort), Online Retail II, Kickstarter.
+**Sa propre famille BH** (`synthese2.py`) : ajouter ses tests au registre du
+nº 1 aurait changé après coup des verdicts publiés. Modules : `relancer`,
+`cibler` (Ascarza 2018, hors échantillon), `garder` (BG/NBD revérifié sur un
+second marché), `objectif`, puis `figmobile2` (15 graphiques), `clair2`
+(textes figés devant `VERDICTS_ECRITS`), `litterature2` (sources et
+« Ailleurs »). La page reprend **la feuille, le dock et le script du gabarit
+du nº 1** à la construction (`mobile2.commun`), lecture rangée sous
+`ofm-cahier2-*`. `cahier-2-valeurs.json` (valeurs, verdicts, hypothèses) et le
+champ `verdicts` de `la-personne-valeurs.json` nourrissent le registre des
+études de Lueur (`lib/etudes/registre.ts`).
+
 ## Commandes
 
 ```
@@ -51,6 +69,11 @@ python -m ofm.<famille>         # demander, offrir, persuader, negocier, choisir
                                 # revenir, calendrier, mesurer : chiffres bruts
 python -m ofm.donnees           # rejoue l'extraction (clones bruts requis)
 python -m unittest ofm.tests.test_stats ofm.tests.test_ofm   # 41 tests, ≈ 16 s
+python -m ofm.mobile2           # cahier nº 2 et cahier-2-valeurs.json (≈ 75 s : Lenta en bibliothèque standard)
+python -m ofm.synthese2         # les 38 verdicts du nº 2
+python -m ofm.donnees2 [jeux]   # rejoue l'extraction du nº 2 (bruts dans OFM_BRUT2)
+python -m unittest ofm.tests.test_ofm2                         # 27 tests, ≈ 1 min 40
+node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-2-mobile.html # même parcours, profil du nº 2
 node docs/ofm/parcours-mobile.cjs docs/ofm/la-personne-mobile.html   # 23 gestes vérifiés
 INTER=<woff2 Inter> node docs/ofm/balayage-mobile.cjs docs/ofm/la-personne-mobile.html <sortie> 390 360 430 768
 ```
@@ -157,6 +180,28 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
   un autre `#` ne recharge pas : passer par `about:blank` pour tester une arrivée.
 - **Un défilement doux de 5 000 px dure plus d'une seconde.** Au-delà de deux
   écrans et demi, les repères et la recherche sautent sans animation.
+
+- **Une famille par cahier.** Le BH porte sur un registre déclaré. Ajouter des
+  hypothèses à un registre publié change ses valeurs q, donc ses verdicts :
+  un nouveau cahier a son registre et sa synthèse.
+- **Une campagne à 100 % pile tombait sous l'objectif.** `int((1 − 0,5) /
+  0,02)` vaut 24 : le mur de Kickstarter s'affichait dans la tranche 98–100 %.
+  Toute tranche se calcule avec une marge (`floor(x + 1e-9)`) et un test le
+  vérifie sur des comptes exacts.
+- **Un budget « taux » ne s'applique qu'à un taux.** La formule de
+  `n_par_bras` compare deux proportions : appliquée à un écart entre deux
+  effets (le ciblage) ou à une dépense, elle donnait 0,1 semaine pour
+  revérifier ce qui en demande cent fois plus. Ces résultats n'ont plus de
+  budget ; la dépense se budgète sur sa variance (`budgets_hillstrom`).
+- **Un mur écrase le vide qu'il montre.** 19 082 campagnes contre 26 : en
+  échelle linéaire, les tranches sous l'objectif disparaissaient. Échelle
+  logarithmique, dite dans la légende et l'encadré.
+- **Une étiquette sur un trait barrait une barre** (« aucun : 10,0 % » dans
+  le graphique du courriel assorti) : les balayages ne la voient pas ; la
+  valeur passe sous l'axe.
+- **Un résultat contraire ne devient pas une règle sur un seul marché.** Le
+  fidèle silencieux du nº 1 (R02) ne se retrouve pas sur Online Retail II
+  (G02 non établi, G03 contraire : le modèle y surestime les silencieux).
 
 ## Vérifier le rendu
 

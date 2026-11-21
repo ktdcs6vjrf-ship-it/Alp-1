@@ -198,8 +198,13 @@ de Lueur (`/plan`, cahier LR-2026-07) les cite par `scripts/etudes/sync.mjs`, sa
 version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de
 classement recopiait le pari réfuté de R02 ; corrigé dans le dépôt, non republié).
 
-**Demande en attente (21 nov.)** : de nouvelles hypothèses OFM à tester ici sur de nouveaux jeux publics, pour le
-registre d'études de Lueur — cahier des charges dans `lueur-ofm/docs/demande-etudes-alpha.md`.
+**Cahier nº 2 « L'effet, et non le risque »** (21 nov.) : `python -m ofm.mobile2` → `docs/ofm/cahier-2-mobile.html`,
+38 hypothèses commitées avant le calcul (`ofm/registre2.py`, sa propre famille BH), cinq jeux (Hillstrom, Lenta, X5 tirés
+au sort ; Online Retail II ; Kickstarter). 29 tiennent, 2 contraires, 7 non établies ; **le fidèle silencieux du nº 1 ne se
+retrouve pas** sur un second marché. 27 tests (`python -m unittest ofm.tests.test_ofm2`). Ses valeurs et verdicts
+(`cahier-2-valeurs.json`, et `verdicts` dans `la-personne-valeurs.json`) alimentent le **registre des études de Lueur**
+(`lib/etudes/registre.ts`, v33), qui range seul chaque étude dans le plan de match. Criteo, KKBox et Upworthy sont
+injoignables d'ici. Artefact : https://claude.ai/artifact/SCeJ86pzDTGfMxNCTWCZbo (v1). Lire `ofm/README.md` avant d'y toucher.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
