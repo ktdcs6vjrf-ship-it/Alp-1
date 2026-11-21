@@ -23,11 +23,16 @@ forme des fichiers et jamais un résultat :
   écarts d'effet et le ciblage, sur la visite.
 - **Kickstarter** : l'échantillon est celui des campagnes terminées, réussies ou
   échouées ; les campagnes annulées, suspendues, en cours ou sans état sont
-  écartées.
+  écartées, comme celles dont la durée sort de 1 à 92 jours (le fichier porte
+  des lancements datés de 1970). L'année est celle du lancement.
 - **Online Retail II** : un achat est un jour d'achat (les factures d'un même
   jour s'additionnent, comme dans CDNOW), hors annulations et montants nuls ;
   la calibration couvre du 1ᵉʳ décembre 2009 au 30 novembre 2010, la
-  validation les douze mois suivants.
+  validation les douze mois suivants. Comme dans CDNOW, la cohorte est celle
+  des clients dont le premier achat observé tombe dans les treize premières
+  semaines (jusqu'au 28 février 2010) : chacun a au moins 39 semaines pour
+  montrer son rythme, et le rythme passé d'un client vu une seule semaine
+  n'aurait pas de sens. Le silence de G02 et G03 est d'au moins 26 semaines.
 - **Le ciblage (famille C)** suit une seule coupe tirée au sort par jeu : le
   modèle s'estime sur une moitié, le tiers choisi se lit sur l'autre. Les
   variables des modèles sont listées ci-dessous (`VARIABLES`), fixées avant le
