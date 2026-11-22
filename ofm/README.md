@@ -41,6 +41,17 @@ sujet à l'endroit exact) ; sans JavaScript, la page redevient le long document
 précédé de son sommaire. Le titre de l'espace se lit dans la page : l'app Lueur
 (`/etudes`, `scripts/etudes/sync.mjs`) sert la même page avec « ‹ Études ».
 
+**Sur ordinateur (v6, 22 nov.)** — au-delà de 1100 px, la colonne de téléphone
+(720 px au centre) laissait deux bandes vides. Le sommaire des sujets passe à
+gauche, fixe (`<nav class="rail">`, **construit par le script depuis les tuiles
+de l'espace** : il vaut pour les deux cahiers sans rien dupliquer en Python), la
+lecture prend le reste de l'écran (sections jusqu'à 1 320 px). Le texte garde sa
+mesure (62 caractères), les graphiques vont deux par deux, un graphique seul (ou
+le troisième d'une suite) pose sa lecture à droite du dessin (sélecteurs `:has`),
+les tuiles vont par trois au plus et une rangée incomplète s'élargit au lieu de
+laisser un trou, le dock disparaît (le sommaire porte « Tous les sujets » et
+« Chercher », touche `/`). Téléphone et page sans script : inchangés.
+
 **Cahier nº 2** — `docs/ofm/cahier-2-mobile.html` (gabarit
 `docs/ofm/cahier-2-mobile.template.html`, `python -m ofm.mobile2`), *L'effet,
 et non le risque* : 38 hypothèses sur la relance, le ciblage, la fidélité, les
@@ -178,6 +189,12 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
   `location.hash` et ne réagit qu'à `hashchange`. La recherche prend `#chercher`,
   pour que le geste retour la ferme. Dans un test, un `goto` vers la même page avec
   un autre `#` ne recharge pas : passer par `about:blank` pour tester une arrivée.
+- **`scrollIntoView` fait aussi défiler la page.** Pour garder le sujet ouvert
+  visible dans le sommaire fixe, on règle `rail.scrollTop` à la main ; sinon la
+  page sautait à chaque vue.
+- **Le saut natif vers `#sujets` cachait le titre de l'espace** sous la barre,
+  sur ordinateur (`scrollY` 83 au lieu de 0, depuis la v5). Même parade que pour
+  les sujets : `scroll-margin-top: 100vh` sur l'espace.
 - **Un défilement doux de 5 000 px dure plus d'une seconde.** Au-delà de deux
   écrans et demi, les repères et la recherche sautent sans animation.
 

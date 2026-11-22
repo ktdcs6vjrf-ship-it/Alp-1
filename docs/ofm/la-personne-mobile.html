@@ -104,6 +104,8 @@
      Sans script, rien de ceci ne s'applique : la page reste un long document,
      précédé de son sommaire. */
   .js main > section { display: none; scroll-margin-top: 100vh; }
+  /* Le saut natif vers #sujets cachait le titre de l'espace sous la barre (ordinateur) : même parade que les sujets. */
+  .js .hub { scroll-margin-top: 100vh; }
   .js main > section.on { display: grid; }
   .js:not([data-vue="sujets"]) .hub { display: none; }
   .entre { animation: entre .22s ease-out both; }
@@ -487,6 +489,70 @@
   .lire .lire-agence { padding-top: 8px; border-top: 1px solid var(--line); }
   .lire .lire-agence b { color: var(--blue); }
   .mode-graph { margin-top: 10px !important; font-size: 15px !important; }
+
+  /* ---------- ordinateur : l'écran entier (v6) ----------
+     Au-delà de 1100 px, la colonne de téléphone (720 px au centre) laissait deux bandes vides. Le sommaire
+     des sujets passe à gauche, toujours visible ; la lecture prend le reste de l'écran : le texte garde sa
+     mesure (62 caractères), les graphiques vont deux par deux, un graphique seul pose sa lecture à côté de
+     lui. Sans script, ou sur téléphone, rien ne change. */
+  .rail { display: none; }
+  @media (min-width: 1100px) {
+    :root { --rail: 292px; --marge: clamp(28px, 3.6vw, 64px); }
+    .js .rail { position: fixed; z-index: 20; left: 0; bottom: 0; top: var(--rail-top, 60px); width: var(--rail);
+                display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overscroll-behavior: contain;
+                padding: 16px 12px 28px max(14px, env(safe-area-inset-left, 0px)); border-right: 1px solid var(--line);
+                background: var(--lo); scrollbar-width: thin; }
+    .js .rail[hidden] { display: none; }
+    .rail a, .rail button { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 7px 10px;
+                            border-radius: 12px; border: 0; background: transparent; color: var(--muted);
+                            font: 600 14px/1.3 var(--sans); text-align: left; text-decoration: none; cursor: pointer; }
+    .rail svg { flex: none; width: 18px; height: 18px; }
+    .rail .rail-tous, .rail .rail-cherche { color: var(--ink); }
+    .rail .rail-cherche { margin-bottom: 6px; border: 1px solid var(--line2); background: var(--card); }
+    .rail-cherche kbd { margin-left: auto; padding: 1px 7px; border-radius: 6px; border: 1px solid var(--line2);
+                        color: var(--faint); font: 600 12px var(--sans); }
+    .rail-g { margin: 14px 10px 4px; color: var(--faint); font-size: 12px; font-weight: 850; letter-spacing: .14em;
+              text-transform: uppercase; }
+    .rail-n { flex: none; min-width: 22px; color: var(--faint); font-size: 12px; font-weight: 800; }
+    .rail-nom { flex: 1; min-width: 0; }
+    .rail-lu { flex: none; display: none; color: var(--blue); }
+    .rail-lu svg { width: 15px; height: 15px; }
+    .rail .est-lu .rail-lu { display: inline-flex; }
+    .rail .on { background: rgb(var(--hi-rgb) / .09); color: var(--ink); }
+    .rail .on .rail-n { color: var(--blue); }
+    @media (hover: hover) { .rail a:hover, .rail button:hover { background: rgb(var(--hi-rgb) / .06); color: var(--ink); } }
+
+    .js .appbar-in { max-width: none; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: var(--marge); }
+    .js .chips { max-width: none; margin-left: var(--rail); padding-left: var(--marge); padding-right: var(--marge); }
+    .js main { max-width: none; margin: 0 0 0 var(--rail); padding-left: var(--marge); padding-right: var(--marge); padding-bottom: 72px; }
+    .js main > section, .js .hub { width: 100%; max-width: 1320px; }
+    .js .dock { display: none; }
+
+    .js .tuiles { grid-template-columns: repeat(auto-fit, minmax(max(240px, calc((100% - 20px) / 3)), 1fr)); }
+    .js .tuiles:has(> .tuile:nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .js .tuiles:has(> .tuile:nth-child(3n + 1):last-child) > .tuile:last-child { grid-column: 1 / -1; }
+    .nuls { columns: 2; column-gap: 36px; }
+    .nuls li { break-inside: avoid; }
+    .js .hub .cherche-ouvrir, .js .reprendre, .js .avance { max-width: 560px; }
+    .lead { max-width: 46ch; }
+    .js .comprendre { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+    .js .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .js .fin { max-width: 760px; }
+
+    /* Graphiques : deux par deux. Un graphique seul (ou le troisième d'une suite) prend la largeur,
+       le dessin à gauche, ce qu'il faut y lire à droite. */
+    .js main > section.on { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 18px; }
+    .js main > section.on > * { grid-column: 1 / -1; }
+    .js main > section.on > .viz { grid-column: auto; }
+    .js main > section.on > .viz:not(.viz + .viz):not(:has(+ .viz)),
+    .js main > section.on > .viz:not(.viz + .viz) + .viz + .viz:not(:has(+ .viz)) {
+      grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+      column-gap: 32px; align-items: center; padding: 34px 22px 18px; }
+    .js main > section.on > .viz:not(.viz + .viz):not(:has(+ .viz)) > .mv,
+    .js main > section.on > .viz:not(.viz + .viz) + .viz + .viz:not(:has(+ .viz)) > .mv { grid-column: 1; grid-row: 1 / span 2; }
+    .js main > section.on > .viz:not(.viz + .viz):not(:has(+ .viz)) > :not(.mv):not(.viz-tag),
+    .js main > section.on > .viz:not(.viz + .viz) + .viz + .viz:not(:has(+ .viz)) > :not(.mv):not(.viz-tag) { grid-column: 2; }
+  }
 </style>
 
 <script>(function () { var r = document.documentElement; r.classList.add('js'); try { var t = localStorage.getItem('ofm-cahier-theme'); if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); } catch (e) {} r.setAttribute('data-vue', location.hash.slice(1) || 'sujets'); })();</script>
@@ -505,6 +571,8 @@
   <nav class="chips" id="chips" aria-label="Dans ce sujet" hidden></nav>
   <div class="lecture" aria-hidden="true"><i id="lecture"></i></div>
 </header>
+
+<nav class="rail" id="rail" aria-label="Sujets du cahier" hidden></nav>
 
 <main id="haut">
 
@@ -793,6 +861,40 @@
   const nom = (id) => (tuiles.has(id) ? tuiles.get(id).dataset.nom : id);
   const titreDe = (id) => { const t = tuiles.get(id); return t && t.dataset.num ? t.dataset.num + ' · ' + t.dataset.nom : nom(id); };
   const basBarre = () => appbar.getBoundingClientRect().bottom;
+
+  // ---------- Le sommaire, à gauche sur ordinateur : construit depuis les tuiles de l'espace (mêmes noms, même ordre).
+  const rail = $('#rail');
+  const svgDe = (sel) => { const el = $(sel); return el ? el.outerHTML : ''; };
+  if (rail) {
+    const coche = svgDe('.tuile .t-lu svg');
+    rail.innerHTML = '<a class="rail-tous" href="#sujets" data-id="sujets">' + svgDe('#d-sujets svg') + '<span>Tous les sujets</span></a>'
+      + '<button class="rail-cherche" id="rail-cherche" type="button" aria-haspopup="dialog">' + svgDe('#d-cherche svg') + '<span>Chercher</span><kbd aria-hidden="true">/</kbd></button>'
+      + $$('.groupe', hub).map((g) => '<p class="rail-g">' + esc(texte($('.groupe-t', g))) + '</p>'
+        + $$('.tuile', g).map((t) => '<a class="rail-s" href="#' + t.dataset.id + '" data-id="' + t.dataset.id + '">'
+          + '<span class="rail-n" aria-hidden="true">' + esc(t.dataset.num || '') + '</span>'
+          + '<span class="rail-nom">' + esc(t.dataset.nom) + '</span>'
+          + '<span class="rail-lu"><span class="sr-only">, lu</span>' + coche + '</span></a>').join('')).join('');
+    rail.hidden = false;
+    // Le sommaire commence sous la barre d'app, dont la hauteur change avec les repères du sujet.
+    const caler = () => document.documentElement.style.setProperty('--rail-top', Math.round(appbar.getBoundingClientRect().height) + 'px');
+    caler();
+    if ('ResizeObserver' in window) new ResizeObserver(caler).observe(appbar);
+  }
+  const majRail = () => {
+    if (!rail) return;
+    $$('a', rail).forEach((a) => {
+      const on = a.dataset.id === vue;
+      a.classList.toggle('on', on);
+      if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      if (a.classList.contains('rail-s')) a.classList.toggle('est-lu', lus.has(a.dataset.id));
+    });
+    const actifRail = $('a.on', rail);
+    if (actifRail && rail.offsetParent) {
+      const haut = actifRail.offsetTop - 8, bas = actifRail.offsetTop + actifRail.offsetHeight + 8;
+      if (haut < rail.scrollTop) rail.scrollTop = haut;
+      else if (bas > rail.scrollTop + rail.clientHeight) rail.scrollTop = bas - rail.clientHeight;
+    }
+  };
   const TITRE = document.title;
   // Le titre de l'espace se lit dans la page : une version hôte (l'app Lueur) peut le changer sans toucher au script.
   const TITRE_ESPACE = $('#titre').textContent, SOUS_ESPACE = $('#soustitre').textContent;
@@ -830,6 +932,7 @@
     if (lus.has(id)) return;
     lus.add(id);
     garder('ofm-cahier-lus', [...lus]);
+    majRail();
   };
   // Reprendre un sujet commencé ; sinon continuer par le premier sujet non lu qui suit.
   const reprise = () => {
@@ -871,6 +974,7 @@
   // ---------- Le dock : l'espace, la recherche, et la suite de la lecture.
   const dSujets = $('#d-sujets'), dSuiv = $('#d-suiv');
   const majDock = () => {
+    majRail();
     const surEspace = vue === 'sujets';
     dSujets.classList.toggle('on', surEspace);
     if (surEspace) dSujets.setAttribute('aria-current', 'page'); else dSujets.removeAttribute('aria-current');
@@ -1273,6 +1377,15 @@
   };
   $('#ouvrir').addEventListener('click', () => ouvrir(true));
   $('#d-cherche').addEventListener('click', () => ouvrir(true));
+  if ($('#rail-cherche')) $('#rail-cherche').addEventListener('click', () => ouvrir(true));
+  // « / » ouvre la recherche au clavier, comme dans l'app (jamais pendant une saisie).
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey || document.documentElement.hasAttribute('data-cherche')) return;
+    const t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    e.preventDefault();
+    ouvrir(true);
+  });
   $('#fermer').addEventListener('click', quitter);
   champ.addEventListener('input', rendre);
   champ.addEventListener('keydown', (e) => {
