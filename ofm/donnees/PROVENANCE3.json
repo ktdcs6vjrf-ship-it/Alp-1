@@ -1,0 +1,74 @@
+{
+ "cai": {
+  "chemin": "csv/causaldata/social_insure.csv",
+  "commit": "1dcc2bf5f955cc1224a3e1307256e1fe86b68dae",
+  "depot": "https://github.com/vincentarelbundock/Rdatasets",
+  "extrait": "cai.csv.gz",
+  "sha256_brut": [
+   "bc7cc83701baa8067d3ef3ebd89e3ed3cc5332eda0dabc50d3a16ef635928c92"
+  ],
+  "sha256_extrait": "54892d860db055314c4d45fb11a2eeba19c149b12bf1d22d6d550bbbf90bde82",
+  "titre": "Choix par défaut et explication détaillée (Cai, de Janvry et Sadoulet, 2015 ; Chine)",
+  "unite": "foyer de riziculteurs : format de séance tiré au sort, assurance souscrite ou non"
+ },
+ "gueguen": {
+  "chemin": "csv/Stat2Data/TipJoke.csv",
+  "commit": "1dcc2bf5f955cc1224a3e1307256e1fe86b68dae",
+  "depot": "https://github.com/vincentarelbundock/Rdatasets",
+  "extrait": "gueguen.csv.gz",
+  "sha256_brut": [
+   "42e85460b2a19630cbc6d4f3ac7df47f6bdd8ec91d80b55204ffe9019d403655"
+  ],
+  "sha256_extrait": "df66c67a01cbb3629a2c3e50bbd4222285927007aa53655dd5ec443cdb8fee58",
+  "titre": "Une blague avec l'addition (Guéguen, 2002 ; café de station balnéaire)",
+  "unite": "client d'un café : carte tirée au sort avec l'addition, pourboire ou non"
+ },
+ "lynn": {
+  "chemin": "csv/experimentr/lynn.csv",
+  "commit": "1dcc2bf5f955cc1224a3e1307256e1fe86b68dae",
+  "depot": "https://github.com/vincentarelbundock/Rdatasets",
+  "extrait": "lynn.csv.gz",
+  "sha256_brut": [
+   "68ced957e12a0971407f42dedb767b9d9091c2a634574a40b59fe3e20b8c3aa1"
+  ],
+  "sha256_extrait": "43f7a58b111d197bd88ce7e2c17edfef0badc538e8d7abedd85644c4701f65e6",
+  "titre": "Le serveur à hauteur des yeux (Lynn et Mynier, 1993 ; restaurant)",
+  "unite": "table d'un restaurant : posture tirée au sort, addition et pourboire"
+ },
+ "rondeau": {
+  "chemin": "csv/experimentr/rondeau.csv",
+  "commit": "1dcc2bf5f955cc1224a3e1307256e1fe86b68dae",
+  "depot": "https://github.com/vincentarelbundock/Rdatasets",
+  "extrait": "rondeau.csv.gz",
+  "sha256_brut": [
+   "622c9b7bb704119726396dea7b267dc6a1f680972e7eece7a4107d8797480e51"
+  ],
+  "sha256_extrait": "cd3a25840996be7c876ce00372b556f18823506768c1085674a35ac56c3307be",
+  "titre": "Premier don annoncé contre doublement promis (Rondeau et List, 2008)",
+  "unite": "lettre de collecte : version tirée au sort, don reçu"
+ },
+ "thornton": {
+  "chemin": "csv/causaldata/thornton_hiv.csv",
+  "commit": "1dcc2bf5f955cc1224a3e1307256e1fe86b68dae",
+  "depot": "https://github.com/vincentarelbundock/Rdatasets",
+  "extrait": "thornton.csv.gz",
+  "sha256_brut": [
+   "02f6ddae15abbd80aa9f56872a922cca4bcbba4ea0af1eac5fcce062df079522"
+  ],
+  "sha256_extrait": "c928d9903f0cd37fe9b879f4163ae7cbf57fca516c8dbb2bc219ca0db3d2d679",
+  "titre": "Bonus pour aller chercher son résultat (Thornton, 2008 ; Malawi)",
+  "unite": "personne testée : bonus tiré au sort, distance au centre, résultat retiré ou non"
+ },
+ "x5_achats": {
+  "chemin": "purchases.csv.gz",
+  "commit": "ETag b28f96e6fc52c03e223f18ee855e67ed-39 (copie de scikit-uplift 0.5.1)",
+  "depot": "https://sklift.s3.eu-west-2.amazonaws.com/",
+  "extrait": "x5_achats.csv.gz",
+  "sha256_brut": [
+   "3d57519fa92b553fd1e947c120add475cc42e0c64c323a52cef5aebe8645c8e2"
+  ],
+  "sha256_extrait": "d929503d559c91fc80c62a5440e53d133923e7dbed18d27196f7604aa495a20c",
+  "titre": "Achats de X5 RetailHero (2019), un client sur vingt-cinq environ",
+  "unite": "passage en caisse d'un client de l'échantillon : date, montant, lignes de produit"
+ }
+}
