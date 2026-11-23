@@ -64,6 +64,11 @@ des expériences, jamais une issue :
 `sens` vaut +1 ou −1 quand une direction est annoncée, 0 pour une question
 ouverte. Changer une définition après un résultat imposerait un nouvel
 identifiant, et le registre garderait les deux.
+
+Note ajoutée après le calcul (aucune définition ne change) : les identifiants
+S01 à S07 existent aussi dans le registre nº 1 (le speed dating). Un
+identifiant se lit donc toujours avec son cahier — c'est déjà la règle dans
+Lueur, qui range chaque verdict sous `ofm1`, `ofm2` ou `ofm3`.
 """
 
 from __future__ import annotations

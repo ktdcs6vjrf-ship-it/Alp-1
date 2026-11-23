@@ -1,6 +1,7 @@
 // Parcours au doigt de la version mobile, avec assertions : sort en erreur si un geste ne mène pas où il doit.
 // Usage : node docs/ofm/parcours-mobile.cjs docs/ofm/la-personne-mobile.html
 //         node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-2-mobile.html   (profil du cahier nº 2)
+//         node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-3-mobile.html   (profil du cahier nº 3)
 // Couvre : espace → tuile → repère → pied (sujet lu) → retour à l'espace (même place) → recherche
 // (geste retour, résultat ailleurs, résultat dans le sujet ouvert) → dock Suivant → reprise après
 // rechargement → remise à zéro → lien direct vers un sujet → page sans JavaScript.
@@ -18,8 +19,11 @@ const PROFILS = {
   2: { cle: 'ofm-cahier2', tuile: 'courriel', titre: 'Le courriel', mot: 'fidele', ou: '05 · Garder', vueMot: 'garder',
        tuile2: 'cibler', mot2: 'risque', ou2: '04 · Cibler', suivant: 'garder', repNom: 'Garder',
        direct: 'mesurer', reprise: 'sms' },
+  3: { cle: 'ofm-cahier3', tuile: 'signaux', titre: 'Les signaux', mot: 'distance', ou: '04 · Le petit cadeau', vueMot: 'bonus',
+       tuile2: 'backtest', mot2: 'devin', ou2: '03 · Le backtest', suivant: 'bonus', repNom: 'Le petit cadeau',
+       direct: 'defaut', reprise: 'sourire' },
 };
-const P = PROFILS[/cahier-2/.test(doc) ? 2 : 1];
+const P = PROFILS[/cahier-3/.test(doc) ? 3 : /cahier-2/.test(doc) ? 2 : 1];
 let echecs = 0;
 const verifier = (cond, quoi, detail) => {
   console.log((cond ? 'ok   ' : 'ÉCHEC') + ' ' + quoi + (cond ? '' : ' — ' + JSON.stringify(detail)));

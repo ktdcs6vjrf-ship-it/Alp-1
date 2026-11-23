@@ -206,6 +206,19 @@ retrouve pas** sur un second marché. 27 tests (`python -m unittest ofm.tests.te
 (`lib/etudes/registre.ts`, v33), qui range seul chaque étude dans le plan de match. Criteo, KKBox et Upworthy sont
 injoignables d'ici. Artefact : https://claude.ai/artifact/SCeJ86pzDTGfMxNCTWCZbo (v1). Lire `ofm/README.md` avant d'y toucher.
 
+**Cahier nº 3 « Le rythme, et non le total »** (23 nov., demande v37 de Lueur : « les data qui ont un potentiel edge
+que le marché n'a pas encore arbitré, backtestées, en paper SSRN, comme à 5 ans ») : `python -m ofm.mobile3` →
+`docs/ofm/cahier-3-mobile.html`, 31 hypothèses commitées avant le calcul (`ofm/registre3.py`, `219ced2`, sa propre famille
+BH). **Signaux** (`signaux.py`) : IC partiel des rangs **au-delà de RFM** (27 termes retirés), loi nulle par mélange des
+restes dans les cases RFM, **centrée sur son propre centre** (piège : elle ne l'est pas sur zéro), étalonnée sur vérité
+connue ; backtest du dixième de tête sur une moitié jamais vue. **Leviers** (`leviers.py`) : Thornton, Rondeau et List, Cai
+et al. (permuté par hameau), Guéguen, Lynn et Mynier (Rdatasets, commit figé). 15 tiennent, 2 contraires (les grappes de
+Zhang et al. se retournent), 14 non établies ; l'**accélération** tient sur les trois marchés et RFM n'en contient que 1 à
+5 % ; le backtest ne bat pas RFM de façon sûre. 32 tests (`python -m unittest ofm.tests.test_ofm3`, ≈ 2 min). Les ids
+S01–S07 existent aussi au nº 1 : un id se lit avec son cahier. **Piège corrigé dans la feuille commune** : `.hub` en
+`minmax(0, 1fr)` (le bouton « Chercher » élargissait l'espace, le dock sortait de l'écran ; les trois cahiers
+reconstruits). Artefact : https://claude.ai/artifact/ToCxEkyw8EHWwC4JHD12NG (v1).
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas

@@ -70,6 +70,42 @@ du nº 1** à la construction (`mobile2.commun`), lecture rangée sous
 champ `verdicts` de `la-personne-valeurs.json` nourrissent le registre des
 études de Lueur (`lib/etudes/registre.ts`).
 
+**Cahier nº 3** — `docs/ofm/cahier-3-mobile.html` (gabarit
+`docs/ofm/cahier-3-mobile.template.html`, `python -m ofm.mobile3`), *Le rythme,
+et non le total* : la question « quelles données portent un avantage que le
+marché n'a pas encore pris ? ». 31 hypothèses écrites dans `registre3.py` et
+**commitées avant le premier calcul** (`219ced2`), sa propre famille BH
+(`synthese3.py`). Deux parties :
+
+- **Les signaux** (`signaux.py`, famille S) : cinq lectures du rythme d'achat
+  (grappes de Zhang et al. 2015, élan, accélération, pic, variété) sur trois
+  marchés d'achats répétés (CDNOW, Online Retail II, achats de X5, un client
+  sur vingt-cinq par empreinte). La mesure est un **IC partiel au-delà de
+  RFM** : 27 termes de récence, fréquence, montant et ancienneté retirés du
+  signal et de la dépense à venir, puis corrélation des rangs des restes ; loi
+  nulle par mélange des restes dans les cases RFM, 999 fois, **centrée sur son
+  propre centre**. Étalonnée sur vérité connue avant tout calcul réel (2 faux
+  positifs sur 100 ; 14 sur 200 dans un cas de non-linéarité brutale, dit dans
+  la page). Puis un **backtest** : deux classements appris sur une moitié des
+  clients, jugés sur l'autre (part de la dépense à venir tenue par le dixième
+  de tête, 999 rééchantillonnages appariés). Résultat : **l'accélération** tient
+  sur les trois marchés et RFM n'en contient que 1 à 5 % ; les grappes publiées
+  disent l'inverse du pari sur deux marchés ; le gros achat isolé annonce moins ;
+  le backtest ne bat pas RFM de façon sûre (signal réel mais petit).
+- **Les leviers** (`leviers.py`, famille L) : cinq expériences tirées au sort,
+  copiées de Rdatasets à un commit figé (`donnees3.py`, `PROVENANCE3.json`) :
+  Thornton (bonus et distance), Rondeau et List (premier don annoncé,
+  doublement), Cai et al. (choix coché d'avance, permuté **par hameau**),
+  Guéguen (blague), Lynn et Mynier (posture). Les permutations respectent
+  chaque tirage.
+
+15 tiennent, 2 contraires, 14 non établies ; 17 graphiques (6 en 3D) dans
+`figmobile3.py`, textes clairs figés devant `VERDICTS_ECRITS` dans `clair3.py`,
+sources vérifiées le 23 nov. dans `litterature3.py`. Lecture rangée sous
+`ofm-cahier3-*` ; `cahier-3-valeurs.json` pour Lueur. Les identifiants S01 à
+S07 existent aussi au nº 1 (speed dating) : un identifiant se lit toujours
+avec son cahier.
+
 ## Commandes
 
 ```
@@ -84,6 +120,12 @@ python -m ofm.mobile2           # cahier nº 2 et cahier-2-valeurs.json (≈ 75 
 python -m ofm.synthese2         # les 38 verdicts du nº 2
 python -m ofm.donnees2 [jeux]   # rejoue l'extraction du nº 2 (bruts dans OFM_BRUT2)
 python -m unittest ofm.tests.test_ofm2                         # 27 tests, ≈ 1 min 40
+python -m ofm.mobile3           # cahier nº 3 et cahier-3-valeurs.json (≈ 1 min 45)
+python -m ofm.synthese3         # les 31 verdicts du nº 3
+python -m ofm.signaux           # les 17 signaux, chiffres bruts ; python -m ofm.leviers : les 14 leviers
+python -m ofm.donnees3 [jeux]   # rejoue l'extraction du nº 3 (bruts dans OFM_BRUT3 et OFM_BRUT2)
+python -m unittest ofm.tests.test_ofm3                         # 32 tests, ≈ 2 min
+node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-3-mobile.html # profil du nº 3
 node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-2-mobile.html # même parcours, profil du nº 2
 node docs/ofm/parcours-mobile.cjs docs/ofm/la-personne-mobile.html   # 23 gestes vérifiés
 INTER=<woff2 Inter> node docs/ofm/balayage-mobile.cjs docs/ofm/la-personne-mobile.html <sortie> 390 360 430 768
@@ -216,6 +258,19 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
 - **Une étiquette sur un trait barrait une barre** (« aucun : 10,0 % » dans
   le graphique du courriel assorti) : les balayages ne la voient pas ; la
   valeur passe sous l'axe.
+- **Une loi nulle par permutation n'est pas toujours centrée sur zéro.** En
+  mélangeant les restes d'un signal dans les cases RFM, on garde le lien que
+  les cases portent entre les restes (ce que 27 termes lisses n'ont pas rendu) :
+  la loi nulle se centre ailleurs qu'en zéro. Comparer |IC| à |loi nulle|
+  autour de zéro donnait un test faux ; l'effet et le test se lisent depuis le
+  centre de la loi nulle (`signaux.ic_partiel`). Les verdicts n'ont pas bougé.
+- **Un signal publié peut se retourner.** Le groupement (Zhang et al., 2015)
+  devait ajouter de la valeur à RFM ; sur deux marchés sur trois, il en retire.
+- **La grille de l'espace prenait la largeur du bouton « Chercher ».** `.hub`
+  était une grille à une piste `auto` : la largeur minimale du libellé du
+  bouton (texte sur une ligne) l'élargissait, la page débordait de 10 px (nº 2)
+  à 30 px (nº 3) et le dock sortait de l'écran. Corrigé dans la feuille commune
+  (`grid-template-columns: minmax(0, 1fr)`), les trois cahiers reconstruits.
 - **Un résultat contraire ne devient pas une règle sur un seul marché.** Le
   fidèle silencieux du nº 1 (R02) ne se retrouve pas sur Online Retail II
   (G02 non établi, G03 contraire : le modèle y surestime les silencieux).
