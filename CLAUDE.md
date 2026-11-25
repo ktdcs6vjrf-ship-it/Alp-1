@@ -219,6 +219,10 @@ S01–S07 existent aussi au nº 1 : un id se lit avec son cahier. **Piège corri
 `minmax(0, 1fr)` (le bouton « Chercher » élargissait l'espace, le dock sortait de l'écran ; les trois cahiers
 reconstruits). Artefact : https://claude.ai/artifact/ToCxEkyw8EHWwC4JHD12NG (v1).
 
+**Cahier nº 4 (en cours, 25 nov.)** : « étudie le marché, trouve un edge que la concurrence n'a pas pris, en
+tenant compte de ceux qui ont pensé comme toi (et de ceux qui l'ont prévu), vérifié par tous les stress tests ; plan +
+formation en fichier ». **Lire `docs/ofm/demande-cahier-4.md` (section AVANCEMENT) avant d'y toucher.**
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas
