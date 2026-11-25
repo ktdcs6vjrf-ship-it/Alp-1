@@ -42,8 +42,8 @@ finit toujours par « comment le vérifier chez soi » (groupe témoin).
 
 ## AVANCEMENT
 - [x] Demande écrite (ce fichier).
-- [ ] Études et chiffres du marché vérifiés (`ofm/litterature4.py`).
-- [ ] Registre nº 4 écrit et commité **avant** tout calcul (`ofm/registre4.py`).
+- [x] Études et chiffres du marché vérifiés (recherches du 25 nov. ; module `ofm/litterature4.py` à écrire).
+- [x] Registre nº 4 écrit et commité **avant** tout calcul (`ofm/registre4.py`, 25 tests + 4 affirmations de l'arène).
 - [ ] Batterie de stress (`ofm/stress.py`) étalonnée sur vérité connue.
 - [ ] Outils recoupés avec les références (`ofm/donnees/RECOUPEMENT4.json`).
 - [ ] Avances testées sur données réelles (`ofm/avances.py`, nouveau jeu : Open Bandit Dataset, échantillon GitHub).
