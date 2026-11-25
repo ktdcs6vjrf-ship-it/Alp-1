@@ -230,6 +230,12 @@ change). **Piège trouvé : le jeu Lenta n'est pas équilibré** (z = 68 sur la 
 nº 2 à revoir. 30 tests (`python -m unittest ofm.tests.test_ofm4`). Livré en fichier dans la conversation (demande de
 l'utilisateur), pas encore publié en artefact ni intégré à Lueur. Lire `ofm/README.md` avant d'y toucher.
 
+**Questions en attente (25 nov., session close à 84 % de contexte)** : (1) « ceux qui ont vu venir les grosses
+opportunités, comment, et laquelle arrive » : répondu en bref ; sources vérifiées et opportunité proposée dans
+`docs/ofm/demande-opportunites.md` (cahier illustré à faire si demandé). (2) « Comment font les meilleures modèles, qui ont
+forcément un manager, pour chiffrer autant ? » : réponse courte donnée ; **à reprendre en premier** avec une recherche
+vérifiée (trafic, prix, messagerie, chat, baleines, IA), en séparant le prouvé (cahiers 1 à 4) du folklore d'agence.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas

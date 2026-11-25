@@ -46,3 +46,11 @@ OnlyFans n'accepte que l'IA qui ressemble à la créatrice vérifiée). Luo et a
 achats. Deux façons d'en profiter : (a) l'agence « humaine vérifiée, IA annoncée, résultats prouvés par témoin » ;
 (b) vendre les pelles : Lueur comme outil de conformité et de mesure pour les autres agences. Risque principal : la même
 vague peut viser les agences (proposition du Sénat du 10 fév. 2026 contre le proxénétisme en ligne).
+
+## Question suivante, en attente (25 nov.)
+> Comment font les meilleurs modèles qui ont forcément un manager pour chiffrer autant
+
+Réponse courte donnée à 84 % de contexte, sans nouvelle recherche. À faire : chercher et vérifier ce que font les
+meilleures créatrices et leurs agences (d'où vient le trafic, prix d'abonnement et PPV, messagerie, équipes de chat,
+gros fans, IA), dire pour chaque pratique si elle est prouvée (cahiers 1 à 4, études) ou seulement racontée par les
+agences, et la confronter aux garde-fous (pas de chatteur qui se fait passer pour la créatrice).
