@@ -1,0 +1,51 @@
+{
+ "a_heterogene": {
+  "conclut": 1.0,
+  "couverture": 0.9433333333333334,
+  "essais": 300,
+  "heterogene": true
+ },
+ "a_nul": {
+  "conclut": 0.016666666666666666,
+  "couverture": 0.9666666666666667,
+  "essais": 300,
+  "heterogene": false
+ },
+ "cscv_avance": {
+  "avance": 1.0,
+  "essais": 60,
+  "pbo": 0.06647112147112147,
+  "perte": 0.05762885262885263
+ },
+ "cscv_nul": {
+  "avance": 0.0,
+  "essais": 60,
+  "pbo": 0.5491051541051541,
+  "perte": 0.5547604247604248
+ },
+ "dsr": {
+  "N": 10,
+  "T": 52,
+  "dsr": 0.001,
+  "essais": 2000,
+  "sans_correction": 0.396
+ },
+ "holm": {
+  "essais": 2000,
+  "holm": 0.048,
+  "m": 25,
+  "sans_correction": 0.714
+ },
+ "spa_avance": {
+  "effet": 3.0,
+  "essais": 100,
+  "rc": 0.63,
+  "spa": 0.63
+ },
+ "spa_nul": {
+  "effet": 0.0,
+  "essais": 400,
+  "rc": 0.045,
+  "spa": 0.045
+ }
+}

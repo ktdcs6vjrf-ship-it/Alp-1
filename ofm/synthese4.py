@@ -127,7 +127,7 @@ def test(i: str, t: str) -> dict:
         e, p = b["placebo"]
         return res(p >= 0.05, p, f"placebo {e:+.3f}, p = {p:.2f}")
     if t == "temps":
-        serie = b["temps"]
+        serie = b["temps"] if "temps" in b else b["par_jour"]
         part = stress.part_meme_sens(serie, s)
         return res(part >= R4.SEUIL_TEMPS, part, f"{round(part * len(serie))} périodes sur {len(serie)}")
     if t == "dsr":

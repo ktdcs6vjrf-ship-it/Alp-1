@@ -1,0 +1,803 @@
+{
+"arene": {
+"Z01": 0.7475,
+"Z02": 0.8225,
+"Z03": 0.96,
+"Z04": 0.655
+},
+"batterie": {
+"A01": {
+"arene": "echoue",
+"bh": "echoue",
+"coupes": "passe",
+"cscv": "echoue",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "passe",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "echoue",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "sans objet"
+},
+"A02": {
+"arene": "echoue",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "passe",
+"nul": "passe",
+"placebo": "echoue",
+"spa": "passe",
+"spec": "echoue",
+"t3": "passe",
+"temps": "sans objet"
+},
+"A03": {
+"arene": "echoue",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "passe",
+"t3": "passe",
+"temps": "sans objet"
+},
+"A04": {
+"arene": "echoue",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "passe",
+"t3": "echoue",
+"temps": "sans objet"
+},
+"A05": {
+"arene": "echoue",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "passe",
+"t3": "passe",
+"temps": "sans objet"
+},
+"A06": {
+"arene": "echoue",
+"bh": "echoue",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "passe",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "passe",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "sans objet"
+},
+"A07": {
+"arene": "echoue",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "sans objet"
+},
+"A08": {
+"arene": "echoue",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "passe",
+"nul": "passe",
+"placebo": "echoue",
+"spa": "passe",
+"spec": "echoue",
+"t3": "passe",
+"temps": "sans objet"
+},
+"A09": {
+"arene": "echoue",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "passe",
+"t3": "passe",
+"temps": "sans objet"
+},
+"A10": {
+"arene": "sans objet",
+"bh": "echoue",
+"coupes": "passe",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "sans objet"
+},
+"A11": {
+"arene": "sans objet",
+"bh": "echoue",
+"coupes": "passe",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "sans objet"
+},
+"A12": {
+"arene": "sans objet",
+"bh": "passe",
+"coupes": "passe",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "echoue",
+"nul": "passe",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "passe",
+"t3": "passe",
+"temps": "sans objet"
+},
+"B01": {
+"arene": "echoue",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "echoue",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"B02": {
+"arene": "echoue",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "passe",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "passe",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"B03": {
+"arene": "echoue",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "echoue",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"B04": {
+"arene": "echoue",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "echoue",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"K01": {
+"arene": "sans objet",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "sans objet",
+"nul": "echoue",
+"placebo": "passe",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"K02": {
+"arene": "sans objet",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "sans objet",
+"nul": "echoue",
+"placebo": "sans objet",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"K03": {
+"arene": "sans objet",
+"bh": "passe",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "sans objet",
+"nul": "passe",
+"placebo": "echoue",
+"spa": "sans objet",
+"spec": "passe",
+"t3": "passe",
+"temps": "passe"
+},
+"R01": {
+"arene": "sans objet",
+"bh": "passe",
+"coupes": "sans objet",
+"cscv": "passe",
+"dsr": "echoue",
+"holm": "passe",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "passe",
+"t3": "passe",
+"temps": "passe"
+},
+"R02": {
+"arene": "sans objet",
+"bh": "passe",
+"coupes": "sans objet",
+"cscv": "passe",
+"dsr": "echoue",
+"holm": "echoue",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "passe",
+"t3": "echoue",
+"temps": "passe"
+},
+"R03": {
+"arene": "sans objet",
+"bh": "passe",
+"coupes": "sans objet",
+"cscv": "passe",
+"dsr": "sans objet",
+"holm": "passe",
+"marches": "passe",
+"nul": "passe",
+"placebo": "passe",
+"spa": "passe",
+"spec": "passe",
+"t3": "passe",
+"temps": "sans objet"
+},
+"W01": {
+"arene": "sans objet",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "sans objet",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"W02": {
+"arene": "sans objet",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "sans objet",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "echoue"
+},
+"W03": {
+"arene": "sans objet",
+"bh": "echoue",
+"coupes": "sans objet",
+"cscv": "sans objet",
+"dsr": "sans objet",
+"holm": "echoue",
+"marches": "echoue",
+"nul": "echoue",
+"placebo": "sans objet",
+"spa": "sans objet",
+"spec": "echoue",
+"t3": "echoue",
+"temps": "sans objet"
+}
+},
+"cahier": "ofm4",
+"formation": [
+{
+"lecons": [
+"Où va l'argent",
+"Ce qu'on ne sait pas"
+],
+"module": "Comprendre le marché"
+},
+{
+"lecons": [
+"Les niveaux",
+"Un truc publié s'use",
+"Le premier n'est pas le gagnant"
+],
+"module": "Penser à un coup d'avance"
+},
+{
+"lecons": [
+"Le groupe témoin",
+"Le placebo",
+"Beaucoup de tests, un seuil plus haut",
+"Le meilleur réglage n'est pas une preuve"
+],
+"module": "Prouver avant d'agir"
+},
+{
+"lecons": [
+"Écrire à qui le message change",
+"Les fans qui accélèrent",
+"Apprendre en gagnant"
+],
+"module": "Les avances qui tiennent"
+},
+{
+"lecons": [
+"Quand les autres copient",
+"La part ou le profit"
+],
+"module": "Ce que l'arène enseigne"
+},
+{
+"lecons": [
+"L'IA doit se présenter",
+"Ne jamais se faire passer pour elle"
+],
+"module": "Les règles"
+}
+],
+"hypotheses": {
+"A01": {
+"court": "Contre les gros dépensiers · Hillstrom",
+"enonce": "Apprendre chez soi bat l'envoi aux gros dépensiers",
+"jeu": "hillstrom",
+"lecture": "la politique apprise gagne +2,40 visites pour 100 clients, les plus gros dépensiers +2,05 (un tiers de la base écrit, 32 079 clients jamais vus par l'apprentissage)"
+},
+"A02": {
+"court": "Contre les gros dépensiers · Lenta",
+"enonce": "Apprendre chez soi bat l'envoi aux gros dépensiers",
+"jeu": "lenta",
+"lecture": "la politique apprise gagne +0,57 visites pour 100 clients, les plus gros dépensiers +0,26 (un tiers de la base écrit, 343 947 clients jamais vus par l'apprentissage)"
+},
+"A03": {
+"court": "Contre les gros dépensiers · X5",
+"enonce": "Apprendre chez soi bat l'envoi aux gros dépensiers",
+"jeu": "x5",
+"lecture": "la politique apprise gagne +2,12 achats pour 100 clients, les plus gros dépensiers +0,32 (un tiers de la base écrit, 100 216 clients jamais vus par l'apprentissage)"
+},
+"A04": {
+"court": "Contre les plus à risque · Hillstrom",
+"enonce": "Apprendre chez soi bat la relance des plus à risque",
+"jeu": "hillstrom",
+"lecture": "la politique apprise gagne +2,40 visites pour 100 clients, les plus à risque +1,71 (un tiers de la base écrit, 32 079 clients jamais vus par l'apprentissage)"
+},
+"A05": {
+"court": "Contre les plus à risque · Lenta",
+"enonce": "Apprendre chez soi bat la relance des plus à risque",
+"jeu": "lenta",
+"lecture": "la politique apprise gagne +0,57 visites pour 100 clients, les plus à risque +0,05 (un tiers de la base écrit, 343 947 clients jamais vus par l'apprentissage)"
+},
+"A06": {
+"court": "Contre les plus à risque · X5",
+"enonce": "Apprendre chez soi bat la relance des plus à risque",
+"jeu": "x5",
+"lecture": "la politique apprise gagne +2,12 achats pour 100 clients, les plus à risque +1,78 (un tiers de la base écrit, 100 216 clients jamais vus par l'apprentissage)"
+},
+"A07": {
+"court": "Contre le hasard · Hillstrom",
+"enonce": "Apprendre chez soi bat l'envoi au hasard",
+"jeu": "hillstrom",
+"lecture": "la politique apprise gagne +2,40 visites pour 100 clients, le hasard +1,73 (un tiers de la base écrit, 32 079 clients jamais vus par l'apprentissage)"
+},
+"A08": {
+"court": "Contre le hasard · Lenta",
+"enonce": "Apprendre chez soi bat l'envoi au hasard",
+"jeu": "lenta",
+"lecture": "la politique apprise gagne +0,57 visites pour 100 clients, le hasard +0,18 (un tiers de la base écrit, 343 947 clients jamais vus par l'apprentissage)"
+},
+"A09": {
+"court": "Contre le hasard · X5",
+"enonce": "Apprendre chez soi bat l'envoi au hasard",
+"jeu": "x5",
+"lecture": "la politique apprise gagne +2,12 achats pour 100 clients, le hasard +1,21 (un tiers de la base écrit, 100 216 clients jamais vus par l'apprentissage)"
+},
+"A10": {
+"court": "La mode contre le hasard · Hillstrom",
+"enonce": "La règle des gros dépensiers fait autrement que le hasard",
+"jeu": "hillstrom",
+"lecture": "les gros dépensiers gagne +2,05 visites pour 100 clients, le hasard +1,73 (un tiers de la base écrit, 32 079 clients jamais vus par l'apprentissage)"
+},
+"A11": {
+"court": "La mode contre le hasard · Lenta",
+"enonce": "La règle des gros dépensiers fait autrement que le hasard",
+"jeu": "lenta",
+"lecture": "les gros dépensiers gagne +0,26 visites pour 100 clients, le hasard +0,18 (un tiers de la base écrit, 343 947 clients jamais vus par l'apprentissage)"
+},
+"A12": {
+"court": "La mode contre le hasard · X5",
+"enonce": "La règle des gros dépensiers fait autrement que le hasard",
+"jeu": "x5",
+"lecture": "les gros dépensiers gagne +0,32 achats pour 100 clients, le hasard +1,21 (un tiers de la base écrit, 100 216 clients jamais vus par l'apprentissage)"
+},
+"B01": {
+"court": "Thompson · tous les articles",
+"enonce": "Apprendre en continu rapporte plus de clics que le hasard",
+"jeu": "obp_all",
+"lecture": "tous les articles : 0,42 % de clics avec Thompson, 0,38 % au hasard (20 000 impressions)"
+},
+"B02": {
+"court": "Thompson · hommes",
+"enonce": "Apprendre en continu rapporte plus de clics que le hasard",
+"jeu": "obp_men",
+"lecture": "rayon hommes : 0,69 % de clics avec Thompson, 0,46 % au hasard (20 000 impressions)"
+},
+"B03": {
+"court": "Thompson · femmes",
+"enonce": "Apprendre en continu rapporte plus de clics que le hasard",
+"jeu": "obp_women",
+"lecture": "rayon femmes : 0,46 % de clics avec Thompson, 0,46 % au hasard (20 000 impressions)"
+},
+"B04": {
+"court": "Thompson · trois rayons",
+"enonce": "Apprendre en continu rapporte plus de clics que le hasard, les trois campagnes ensemble",
+"jeu": "obp",
+"lecture": "les trois campagnes ensemble : +0,090 point de clic pour Thompson (60 000 impressions)"
+},
+"K01": {
+"court": "La foule de la catégorie",
+"enonce": "Lancer quand la catégorie est encombrée fait moins réussir",
+"jeu": "kickstarter",
+"lecture": "-0,79 point de réussite par unité de log de la foule de la catégorie, soit -0,54 point quand elle double (331 657 campagnes)"
+},
+"K02": {
+"court": "Sa catégorie ou tout le site",
+"enonce": "La foule de sa propre catégorie pèse plus que celle des autres",
+"jeu": "kickstarter",
+"lecture": "foule de la catégorie -1,28, foule des autres +1,25 point par unité de log (453 semaines rééchantillonnées)"
+},
+"K03": {
+"court": "Les pionniers d’un pays",
+"enonce": "Les premières campagnes d'un pays qui ouvre réussissent autrement que les suivantes",
+"jeu": "kickstarter",
+"lecture": "pionniers moins suivants, témoin américain retiré : -4,4 points de réussite (17 pays, 4 130 campagnes pionnières)"
+},
+"R01": {
+"court": "Accélération · CDNOW",
+"enonce": "L'accélération annonce la dépense, au-delà de RFM",
+"jeu": "cdnow",
+"lecture": "CDNOW : IC partiel +0,048 au-delà de RFM (5 008 clients ; mesure de S07 du nº 3)"
+},
+"R02": {
+"court": "Accélération · Retail",
+"enonce": "L'accélération annonce la dépense, au-delà de RFM",
+"jeu": "retail",
+"lecture": "Online Retail II : IC partiel +0,069 au-delà de RFM (1 910 clients ; mesure de S08 du nº 3)"
+},
+"R03": {
+"court": "Accélération · X5",
+"enonce": "L'accélération annonce la dépense, au-delà de RFM",
+"jeu": "x5",
+"lecture": "X5 : IC partiel +0,075 au-delà de RFM (13 809 clients ; mesure de S09 du nº 3)"
+},
+"W01": {
+"court": "Baleines · CDNOW",
+"enonce": "Plus de la moitié des baleines de demain ne sont pas celles d'aujourd'hui",
+"jeu": "cdnow",
+"lecture": "CDNOW : 24 des 71 baleines de la validation n'en étaient pas avant (34 %) ; le 1 % de tête tient 14 % de la dépense"
+},
+"W02": {
+"court": "Baleines · Retail",
+"enonce": "Plus de la moitié des baleines de demain ne sont pas celles d'aujourd'hui",
+"jeu": "retail",
+"lecture": "Online Retail II : 16 des 43 baleines de la validation n'en étaient pas avant (37 %) ; le 1 % de tête tient 31 % de la dépense"
+},
+"W03": {
+"court": "Baleines · X5",
+"enonce": "Plus de la moitié des baleines de demain ne sont pas celles d'aujourd'hui",
+"jeu": "x5",
+"lecture": "X5 : 88 des 162 baleines de la validation n'en étaient pas avant (54 %) ; le 1 % de tête tient 7 % de la dépense"
+}
+},
+"plan": [
+{
+"id": "regles",
+"phrase": "Une agence qui triche gagne vite et perd tout d'un coup : on commence par ce qui ne se négocie pas.",
+"preuves": [],
+"refs": [
+"ue2024ai",
+"nzfenix2024",
+"mastercard2021",
+"luo2019",
+"senat2026"
+],
+"titre": "Les règles du jeu, avant le jeu"
+},
+{
+"id": "mesurer",
+"phrase": "Chaque campagne garde un groupe témoin tiré au sort ; on vérifie qu'il ressemble au groupe écrit.",
+"preuves": [
+"A02",
+"A08"
+],
+"refs": [
+"koning2022"
+],
+"titre": "Mesurer avant de croire"
+},
+{
+"id": "cibler",
+"phrase": "Pas aux plus gros dépensiers d'office : à ceux que tes propres témoins montrent sensibles au message.",
+"preuves": [
+"A03",
+"A09",
+"A12",
+"A04"
+],
+"refs": [
+"ascarza2018"
+],
+"titre": "Écrire à ceux que le message change"
+},
+{
+"id": "accelerer",
+"phrase": "Le fan dont les achats se rapprochent vaut plus que ce que disent ses chiffres : c'est l'avance qui passe toute la batterie.",
+"preuves": [
+"R03",
+"R01",
+"R02"
+],
+"refs": [
+"fader2005"
+],
+"titre": "Repérer ceux qui accélèrent"
+},
+{
+"id": "bandit",
+"phrase": "Proposer plus souvent le contenu qui vend, tout en laissant une petite place aux autres.",
+"preuves": [
+"B04"
+],
+"refs": [
+"saito2021",
+"schwartz2017"
+],
+"titre": "Pousser ce qui marche sans arrêter d'essayer"
+},
+{
+"id": "garder",
+"phrase": "La taille fait le premier centile ; les créatrices font la taille.",
+"preuves": [],
+"refs": [
+"raff1987"
+],
+"titre": "Garder les créatrices"
+},
+{
+"id": "foule",
+"phrase": "Être premier ou être là où personne n'est ne suffit pas : ce qui gagne, c'est être bon assez tôt.",
+"preuves": [
+"K01",
+"K03"
+],
+"refs": [
+"golder1993",
+"mclean2016"
+],
+"titre": "Ne pas courir après la foule ni après le premier rang"
+},
+{
+"id": "grandir",
+"phrase": "Chaque mois : ce qui a été prouvé, ce qui a été abandonné, ce qui reste à tester.",
+"preuves": [],
+"refs": [
+"koning2022"
+],
+"titre": "Grandir, mois après mois"
+}
+],
+"survie": {
+"A01": false,
+"A02": false,
+"A03": false,
+"A04": false,
+"A05": false,
+"A06": false,
+"A07": false,
+"A08": false,
+"A09": false,
+"A10": false,
+"A11": false,
+"A12": false,
+"B01": false,
+"B02": false,
+"B03": false,
+"B04": false,
+"K01": false,
+"K02": false,
+"K03": false,
+"R01": false,
+"R02": false,
+"R03": true,
+"W01": false,
+"W02": false,
+"W03": false
+},
+"valeurs": {
+"a12_effet": "−0,89",
+"arene_20": "82 %",
+"arene_21": "75 %",
+"arene_23": "96 %",
+"arene_z04": "66 %",
+"b04_d": "+0,090",
+"b04_effet": "+0,090",
+"brut": "7,22 milliards de dollars",
+"copie_10": "75 %",
+"copie_50": "74 %",
+"copie_90": "74 %",
+"croiss_brut": "9 %",
+"croiss_crea": "13 %",
+"divulgation": "79,7 %",
+"etal_a_nul": "1,7",
+"etal_couv": "94",
+"etal_dsr": "0,1 %",
+"etal_holm": "4,8 %",
+"etal_holm_brut": "71 %",
+"etal_spa": "4,5 %",
+"fans_par": "81",
+"hi_appris": "+2,40",
+"hi_hasard": "+1,73",
+"hi_risque": "+1,71",
+"hi_valeur": "+2,05",
+"k03_d": "−4,4",
+"k03_placebo": "−3,0",
+"le_appris": "+0,57",
+"le_hasard": "+0,18",
+"le_risque": "+0,05",
+"le_valeur": "+0,26",
+"lenta_z_rep": "68",
+"lenta_z_sexe": "9",
+"n_agences": "200",
+"n_arenes": "400",
+"n_contraire": "1",
+"n_hyp": "25",
+"n_lecons": "16",
+"n_non": "12",
+"n_refs": "37",
+"n_survivent": "1",
+"n_tests": "13",
+"n_tient": "12",
+"obp_ha": "0,35 %",
+"obp_th": "0,50 %",
+"par_creatrice": "1 558 $",
+"r01_ic": "+0,048",
+"r02_ic": "+0,069",
+"r03_app": "9",
+"r03_ic": "+0,075",
+"r03_passes": "9",
+"rang_med_0": "48 %",
+"rang_med_1": "46 %",
+"rang_med_2": "58 %",
+"rang_med_3": "41 %",
+"rho_appris": "2,11",
+"rho_valeur": "0,97",
+"tau": "1,5",
+"top1_max": "0 %",
+"w01_deja": "66 %",
+"x5_appris": "+2,12",
+"x5_hasard": "+1,21",
+"x5_risque": "+1,78",
+"x5_valeur": "+0,32"
+},
+"verdicts": {
+"A01": "non établi",
+"A02": "tient",
+"A03": "tient",
+"A04": "tient",
+"A05": "tient",
+"A06": "non établi",
+"A07": "tient",
+"A08": "tient",
+"A09": "tient",
+"A10": "non établi",
+"A11": "non établi",
+"A12": "tient",
+"B01": "non établi",
+"B02": "non établi",
+"B03": "non établi",
+"B04": "non établi",
+"K01": "non établi",
+"K02": "non établi",
+"K03": "tient",
+"R01": "tient",
+"R02": "tient",
+"R03": "tient",
+"W01": "contraire",
+"W02": "non établi",
+"W03": "non établi"
+}
+}
