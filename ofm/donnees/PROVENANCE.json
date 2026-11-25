@@ -1,0 +1,115 @@
+{
+ "bargain": {
+  "chemin": "data/train.jsonl + data/test.jsonl",
+  "commit": "ddcdec1a4694af7d5f855a342a583f7c23958bb2",
+  "depot": "https://github.com/tranthai189765/AAAI_env",
+  "extrait": "bargain.jsonl.gz",
+  "sha256_brut": [
+   "e9fd64b4ae265c51984191ffa93b16cd771afa112affcd1e239e43214886e230",
+   "d2b5d97f2240b98b865bff4b262bc352b1ad0dc0fc6ebd5835cdc5abd5711ef7"
+  ],
+  "sha256_extrait": "607f088ff82029de71cf365243d37ded7a1d0702bd76a9bb48fa65e941eeae23",
+  "titre": "CraigslistBargain (He, Chen, Balakrishnan et Liang, 2018)",
+  "unite": "négociation écrite d'un objet d'annonce entre acheteur et vendeur"
+ },
+ "cdnow": {
+  "chemin": "lifetimes/datasets/CDNOW_master.txt",
+  "commit": "Lifetimes-0.11.3-py3-none-any.whl",
+  "depot": "https://pypi.org/project/Lifetimes/0.11.3/",
+  "extrait": "cdnow.csv.gz",
+  "sha256_brut": [
+   "eff6889ed364c5199d6eacbbeb7a6d559971df4406ac876f322c373f00a072ef"
+  ],
+  "sha256_extrait": "bcc1abefda0b557d496d2feee6e590799628c218b2a39185b0e06f3ee3a4f02f",
+  "titre": "Cohorte CDNOW (Fader, Hardie et Lee, 2005)",
+  "unite": "achat d'un client recruté au premier trimestre 1997"
+ },
+ "cdnow_echantillon": {
+  "chemin": "lifetimes/datasets/cdnow_customers_summary.csv",
+  "commit": "Lifetimes-0.11.3-py3-none-any.whl",
+  "depot": "https://pypi.org/project/Lifetimes/0.11.3/",
+  "extrait": "cdnow_echantillon.csv.gz",
+  "sha256_brut": [
+   "09d92ca80daaabe8be0f997d4c539f9c9606106baa5b199081fe01cbce5fa9f6"
+  ],
+  "sha256_extrait": "e4b24000c557bc3b5d1ee90b51e6476f9b408100fdbba8939ebd7763d4901a67",
+  "titre": "Échantillon CDNOW publié avec le modèle BG/NBD (2 357 clients)",
+  "unite": "résumé fréquence, récence, ancienneté d'un client"
+ },
+ "dons": {
+  "chemin": "lifetimes/datasets/donations.csv",
+  "commit": "Lifetimes-0.11.3-py3-none-any.whl",
+  "depot": "https://pypi.org/project/Lifetimes/0.11.3/",
+  "extrait": "dons.csv.gz",
+  "sha256_brut": [
+   "82c25f26a201ff047e1cd5fe3d7967a45db92a025ecedee72ff8940e50104544"
+  ],
+  "sha256_extrait": "26c96593afc1f96c759ca68f71e1f3615e7c0bc86a3c596bf25be926f1e1f5ae",
+  "titre": "Donateurs répétés d'une association (Fader, Hardie et Shang, 2010)",
+  "unite": "historique de dons sur six occasions annuelles"
+ },
+ "karlan": {
+  "chemin": "statadata.csv",
+  "commit": "c0e2e8211a57d18239c7017dd57f7f57ef73becd",
+  "depot": "https://github.com/rsm-kvootla/ABTest-DonationStrategy-KarlanList",
+  "extrait": "karlan.csv.gz",
+  "sha256_brut": [
+   "9cfcee8260889663456b8bdec122b737d16fc746dc05a54a9b46d1821c32d18d"
+  ],
+  "sha256_extrait": "9dc17a664d344d9249e460a3954314f1af949f2d02c694a97e6208e4d6951a2c",
+  "titre": "Expérience de dons de Karlan et List (2007)",
+  "unite": "lettre de sollicitation tirée au sort, donateur antérieur"
+ },
+ "naissances": {
+  "chemin": "births/US_births_2000-2014_SSA.csv",
+  "commit": "4c1ff5e3aef1816ae04af63218015066e186c147",
+  "depot": "https://github.com/fivethirtyeight/data",
+  "extrait": "naissances.csv.gz",
+  "sha256_brut": [
+   "67ed396cecc999664a737ee75f287cf3472e24c3257fcca795b672579f0ed910"
+  ],
+  "sha256_extrait": "57d905bfcdc7edef913703049c88e6c29d2f8239e9fa8bf57c2e1fcdf0267a99",
+  "titre": "Naissances américaines par jour, 2000–2014 (SSA, via FiveThirtyEight)",
+  "unite": "naissances d'un jour civil"
+ },
+ "p4g": {
+  "chemin": "data/FullData/full_info.csv + full_dialog.csv",
+  "commit": "3fbc0df7bd2a081413cad6e6092e7c712efc26c4",
+  "depot": "https://github.com/ohyj1002/persuasionforgood",
+  "extrait": "p4g_info.csv.gz + p4g_dialog.csv.gz",
+  "sha256_brut": [
+   "93be6f62d41f4925e8be21534c23cd75444e1a5d5384abe13b15eda2b37838b4",
+   "3ecaa3e9f0577170b91c3306d2439c910150cf010b76e7637ef3bab724075a9f"
+  ],
+  "sha256_extrait": [
+   "6065bbed443b55907f5a345e8b347397fbe0aff00b9bf914cede6a724da38f6c",
+   "6336189891e0d8b7e8179a9469ec5871e03763040858c3693b9e87bc690e8a5a"
+  ],
+  "titre": "Persuasion for Good (Wang et al., 2019)",
+  "unite": "conversation écrite où l'un persuade l'autre de donner"
+ },
+ "raop": {
+  "chemin": "train.json",
+  "commit": "e84a8762788a20c23336383d13a92593c403ed02",
+  "depot": "https://github.com/aseastman/random_acts_of_pizza",
+  "extrait": "raop.jsonl.gz",
+  "sha256_brut": [
+   "5ee0abf71457c158999695f3bab8928453751f2ddd41c98a027a457cb86edbcd"
+  ],
+  "sha256_extrait": "f90a939328601ece075be1309ef415b2dd2c59f6a2243a09ebab538bc9ae3b00",
+  "titre": "Random Acts of Pizza (Althoff, Danescu-Niculescu-Mizil et Jurafsky, 2014)",
+  "unite": "demande d'une pizza offerte par un inconnu, Reddit 2011–2013"
+ },
+ "speed": {
+  "chemin": "Speed Dating Data.csv",
+  "commit": "ca87bb1a31710e74865c01adb9a88d60b667db3d",
+  "depot": "https://github.com/syedm101/speeddating",
+  "extrait": "speed.csv.gz",
+  "sha256_brut": [
+   "fda9a924b18880fabe6c7a71961cff20aa3c7cc2a5aa8d6e823c2fc41893814c"
+  ],
+  "sha256_extrait": "c5d0115f72b224ed5f7ca7bdaae60ff32fb25e5dfca4525fd8916e8c40c34884",
+  "titre": "Speed dating de Columbia (Fisman, Iyengar, Kamenica et Simonson, 2006)",
+  "unite": "rencontre de quatre minutes, décision oui ou non de chaque côté"
+ }
+}

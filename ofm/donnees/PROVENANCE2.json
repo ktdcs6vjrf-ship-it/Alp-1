@@ -1,0 +1,64 @@
+{
+ "hillstrom": {
+  "chemin": "hillstorm_no_indices.csv.gz",
+  "commit": "ETag a68a81291f53a14f4e29002629803ba3 (copie de scikit-uplift 0.5.1)",
+  "depot": "https://hillstorm1.s3.us-east-2.amazonaws.com/hillstorm_no_indices.csv.gz",
+  "extrait": "hillstrom.csv.gz",
+  "sha256_brut": [
+   "bab6578f60db5d792f1c2372c502f029152a5249cf5ea84390f3b7f885d7234f"
+  ],
+  "sha256_extrait": "380a82967e3a5e787bd7355994e26d8c80f5891ca93e8ad3da852bcff974bdfa",
+  "titre": "Courriels tirés au sort de Hillstrom (MineThatData, 2008)",
+  "unite": "client d'un vendeur en ligne, courriel tiré au sort, deux semaines suivies"
+ },
+ "kickstarter": {
+  "chemin": "data/raw/ks-projects-201801.csv",
+  "commit": "Git LFS oid sha256:4846177ce8cfacd06a6acf06cba663b9aa5f5f77e7d0debecf5bdc861a87e3cb",
+  "depot": "https://github.com/SohanChatterjee24/startup-sales-predictor",
+  "extrait": "kickstarter.csv.gz",
+  "sha256_brut": [
+   "4846177ce8cfacd06a6acf06cba663b9aa5f5f77e7d0debecf5bdc861a87e3cb"
+  ],
+  "sha256_extrait": "e50e6a5a11ac967d197086e031eeaf815b65647c9d81ab378c2606d5030894dc",
+  "titre": "Campagnes Kickstarter, 2009–2018 (Mouillé, 2018)",
+  "unite": "campagne de financement participatif, objectif et date de fin affichés"
+ },
+ "lenta": {
+  "chemin": "lenta_dataset.csv.gz",
+  "commit": "ETag 8d1e9ceb092cf1cabd933880ef8a7e99-9 (copie de scikit-uplift 0.5.1)",
+  "depot": "https://sklift.s3.eu-west-2.amazonaws.com/lenta_dataset.csv.gz",
+  "extrait": "lenta.csv.gz",
+  "sha256_brut": [
+   "b531544f6c072d22f232d91e20ffcaca265acf224e02687502a40e6d56135682"
+  ],
+  "sha256_extrait": "847f2d6ccc344c14e7cf4508fc567255978b71887a4c97569aa7244ead520d0d",
+  "titre": "SMS tirés au sort de Lenta (BigTarget Hackathon, 2020)",
+  "unite": "client d'une enseigne, SMS tiré au sort, visite en magasin ensuite"
+ },
+ "retail": {
+  "chemin": "data/cos781/online_retail_II.csv.zip",
+  "commit": "Git LFS oid sha256:cd8933885509825c8e78db04d697c58e62909ded854c4084e094bd31f7e417cc",
+  "depot": "https://github.com/dsfsi/dsfsi-datasets",
+  "extrait": "retail.csv.gz",
+  "sha256_brut": [
+   "cd8933885509825c8e78db04d697c58e62909ded854c4084e094bd31f7e417cc"
+  ],
+  "sha256_extrait": "63a4068ca2db7b729e8860bb9a44f13669c9ff3b5241818cea628fa5d1ceaa9b",
+  "titre": "Online Retail II (Chen, 2019 ; grossiste en ligne britannique, 2009–2011)",
+  "unite": "facture d'un client identifié"
+ },
+ "x5": {
+  "chemin": "uplift_train.csv.gz + clients.csv.gz + purchases.csv.gz",
+  "commit": "ETags 2720bbb659daa9e0989b2777b6a42d19, b9cdeb2806b732771de03e819b3354c5, b28f96e6fc52c03e223f18ee855e67ed-39 (copie de scikit-uplift 0.5.1)",
+  "depot": "https://sklift.s3.eu-west-2.amazonaws.com/",
+  "extrait": "x5.csv.gz",
+  "sha256_brut": [
+   "0a218e864a1ec1dfe26e980a082b81d5f46d199c4a6ae32abbaa95265af1c2c7",
+   "bfca1719b862735ae9816ed9bbba6924931c6a4dff761c481efe9addff458429",
+   "3d57519fa92b553fd1e947c120add475cc42e0c64c323a52cef5aebe8645c8e2"
+  ],
+  "sha256_extrait": "2323e056058b18920c94fd37fbfd109b0ddb904a127fa2dd32b07baa3d83cf29",
+  "titre": "SMS tirés au sort de X5 RetailHero (2019)",
+  "unite": "client d'une enseigne, SMS tiré au sort, achat ensuite ; historique d'avant"
+ }
+}

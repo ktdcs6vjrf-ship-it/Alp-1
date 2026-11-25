@@ -1,0 +1,321 @@
+{
+"cahier": "ofm3",
+"hypotheses": {
+"L01": {
+"court": "Un bonus",
+"enonce": "Un bonus, même petit, fait agir",
+"jeu": "thornton",
+"lecture": "78,9 % vont chercher leur résultat avec un bonus, 33,9 % sans"
+},
+"L02": {
+"court": "Un bonus plus gros",
+"enonce": "Un bonus plus gros fait agir davantage",
+"jeu": "thornton",
+"lecture": "+8,4 points par dollar de bonus en plus, chez 2 211 personnes qui en ont reçu un"
+},
+"L03": {
+"court": "Le premier pas",
+"enonce": "Le premier pas du bonus fait plus que tout le reste",
+"jeu": "thornton",
+"lecture": "sans bonus 33,9 %, petit bonus (≤ 0,50 $) 67,3 %, grand (> 1,50 $) 86,3 % : le premier pas fait 33,5 pt, tout le reste 18,9 pt"
+},
+"L04": {
+"court": "La distance",
+"enonce": "Chaque kilomètre de plus fait moins agir",
+"jeu": "thornton",
+"lecture": "−2,5 points par kilomètre entre la maison et le centre, 2 834 personnes"
+},
+"L05": {
+"court": "Premier don annoncé",
+"enonce": "Annoncer un premier don fait donner plus de monde",
+"jeu": "rondeau",
+"lecture": "4,9 % contre 4,0 % (premier don annoncé contre même objectif sans annonce)"
+},
+"L06": {
+"court": "Annonce → argent",
+"enonce": "Annoncer un premier don fait rapporter plus par lettre",
+"jeu": "rondeau",
+"lecture": "2,16 $ par lettre avec l'annonce, 1,84 $ sans"
+},
+"L07": {
+"court": "Doublement promis",
+"enonce": "Promettre de doubler chaque don fait donner plus de monde",
+"jeu": "rondeau",
+"lecture": "4,8 % contre 4,0 % (doublement promis contre même objectif sans promesse)"
+},
+"L08": {
+"court": "Annonce contre doublement",
+"enonce": "Annoncer un premier don fait mieux que promettre de doubler",
+"jeu": "rondeau",
+"lecture": "4,9 % contre 4,8 % (premier don annoncé contre doublement promis)"
+},
+"L09": {
+"court": "Objectif plus bas",
+"enonce": "Un objectif affiché plus bas change le nombre de donneurs",
+"jeu": "rondeau",
+"lecture": "4,6 % contre 4,0 % (objectif de 2 500 $ contre 5 000 $)"
+},
+"L10": {
+"court": "Case cochée d’avance",
+"enonce": "Le choix coché d'avance fait souscrire davantage",
+"jeu": "cai",
+"lecture": "51,8 % souscrivent quand « oui » est coché d'avance, 41,3 % quand c'est « non »"
+},
+"L11": {
+"court": "Séance détaillée",
+"enonce": "Une explication détaillée fait souscrire davantage",
+"jeu": "cai",
+"lecture": "46,5 % souscrivent après la séance détaillée, 46,3 % après la séance simple"
+},
+"L12": {
+"court": "Blague contre rien",
+"enonce": "Une blague avec l'addition fait laisser un pourboire",
+"jeu": "gueguen",
+"lecture": "41,7 % contre 24,6 % (blague contre aucune carte)"
+},
+"L13": {
+"court": "Blague contre publicité",
+"enonce": "La blague compte, pas seulement la carte",
+"jeu": "gueguen",
+"lecture": "41,7 % contre 18,9 % (blague contre carte publicitaire)"
+},
+"L14": {
+"court": "À hauteur des yeux",
+"enonce": "Se mettre à hauteur des yeux fait laisser plus",
+"jeu": "lynn",
+"lecture": "15,0 % de l'addition en pourboire quand le serveur s'accroupit, 11,9 % debout"
+},
+"S01": {
+"court": "Achats en grappes (CDNOW)",
+"enonce": "Le fan qui achète par grappes dépense plus ensuite",
+"jeu": "cdnow",
+"lecture": "IC partiel −0,039 au-delà de RFM, sur 9 449 clients de CDNOW ; RFM explique déjà 74 % du signal ; 95 % du hasard tient entre −0,018 et +0,018"
+},
+"S02": {
+"court": "Achats en grappes (Retail)",
+"enonce": "Le fan qui achète par grappes dépense plus ensuite",
+"jeu": "retail",
+"lecture": "IC partiel −0,051 au-delà de RFM, sur 2 758 clients de Online Retail II ; RFM explique déjà 39 % du signal ; 95 % du hasard tient entre −0,037 et +0,036"
+},
+"S03": {
+"court": "Achats en grappes (X5)",
+"enonce": "Le fan qui achète par grappes dépense plus ensuite",
+"jeu": "x5",
+"lecture": "IC partiel −0,006 au-delà de RFM, sur 14 577 clients de X5 ; RFM explique déjà 33 % du signal ; 95 % du hasard tient entre −0,017 et +0,015"
+},
+"S04": {
+"court": "Élan (CDNOW)",
+"enonce": "Le fan dont la dépense se concentre sur la fin dépense plus ensuite",
+"jeu": "cdnow",
+"lecture": "IC partiel +0,012 au-delà de RFM, sur 9 449 clients de CDNOW ; RFM explique déjà 82 % du signal ; 95 % du hasard tient entre −0,018 et +0,017"
+},
+"S05": {
+"court": "Élan (Retail)",
+"enonce": "Le fan dont la dépense se concentre sur la fin dépense plus ensuite",
+"jeu": "retail",
+"lecture": "IC partiel +0,057 au-delà de RFM, sur 2 758 clients de Online Retail II ; RFM explique déjà 56 % du signal ; 95 % du hasard tient entre −0,036 et +0,036"
+},
+"S06": {
+"court": "Élan (X5)",
+"enonce": "Le fan dont la dépense se concentre sur la fin dépense plus ensuite",
+"jeu": "x5",
+"lecture": "IC partiel +0,104 au-delà de RFM, sur 14 577 clients de X5 ; RFM explique déjà 33 % du signal ; 95 % du hasard tient entre −0,016 et +0,017"
+},
+"S07": {
+"court": "Accélération (CDNOW)",
+"enonce": "Le fan dont les écarts entre achats raccourcissent dépense plus ensuite",
+"jeu": "cdnow",
+"lecture": "IC partiel +0,048 au-delà de RFM, sur 5 008 clients de CDNOW ; RFM explique déjà 1 % du signal ; 95 % du hasard tient entre −0,027 et +0,026"
+},
+"S08": {
+"court": "Accélération (Retail)",
+"enonce": "Le fan dont les écarts entre achats raccourcissent dépense plus ensuite",
+"jeu": "retail",
+"lecture": "IC partiel +0,069 au-delà de RFM, sur 1 910 clients de Online Retail II ; RFM explique déjà 5 % du signal ; 95 % du hasard tient entre −0,041 et +0,042"
+},
+"S09": {
+"court": "Accélération (X5)",
+"enonce": "Le fan dont les écarts entre achats raccourcissent dépense plus ensuite",
+"jeu": "x5",
+"lecture": "IC partiel +0,075 au-delà de RFM, sur 13 809 clients de X5 ; RFM explique déjà 2 % du signal ; 95 % du hasard tient entre −0,016 et +0,017"
+},
+"S10": {
+"court": "Gros achat isolé (CDNOW)",
+"enonce": "Un gros achat isolé change ce que le fan dépensera",
+"jeu": "cdnow",
+"lecture": "IC partiel −0,006 au-delà de RFM, sur 9 449 clients de CDNOW ; RFM explique déjà 42 % du signal ; 95 % du hasard tient entre −0,021 et +0,021"
+},
+"S11": {
+"court": "Gros achat isolé (Retail)",
+"enonce": "Un gros achat isolé change ce que le fan dépensera",
+"jeu": "retail",
+"lecture": "IC partiel −0,058 au-delà de RFM, sur 2 758 clients de Online Retail II ; RFM explique déjà 41 % du signal ; 95 % du hasard tient entre −0,037 et +0,036"
+},
+"S12": {
+"court": "Gros achat isolé (X5)",
+"enonce": "Un gros achat isolé change ce que le fan dépensera",
+"jeu": "x5",
+"lecture": "IC partiel −0,048 au-delà de RFM, sur 14 577 clients de X5 ; RFM explique déjà 46 % du signal ; 95 % du hasard tient entre −0,016 et +0,016"
+},
+"S13": {
+"court": "Variété (Retail)",
+"enonce": "Le fan qui achète des choses variées dépense plus ensuite",
+"jeu": "retail",
+"lecture": "IC partiel +0,013 au-delà de RFM, sur 2 758 clients de Online Retail II ; RFM explique déjà 22 % du signal ; 95 % du hasard tient entre −0,037 et +0,037"
+},
+"S14": {
+"court": "Variété (X5)",
+"enonce": "Le fan qui achète des choses variées dépense plus ensuite",
+"jeu": "x5",
+"lecture": "IC partiel +0,034 au-delà de RFM, sur 14 577 clients de X5 ; RFM explique déjà 75 % du signal ; 95 % du hasard tient entre −0,017 et +0,016"
+},
+"S15": {
+"court": "Dixième de tête (CDNOW)",
+"enonce": "Les signaux font mieux choisir le dixième de tête que RFM seul",
+"jeu": "cdnow",
+"lecture": "le dixième de tête tient 43,5 % de la dépense à venir avec les signaux, 42,8 % avec RFM seul (40,0 % pour la liste des gros dépensiers, 61,8 % pour un devin), 4 729 clients jugés"
+},
+"S16": {
+"court": "Dixième de tête (Retail)",
+"enonce": "Les signaux font mieux choisir le dixième de tête que RFM seul",
+"jeu": "retail",
+"lecture": "le dixième de tête tient 51,5 % de la dépense à venir avec les signaux, 51,5 % avec RFM seul (60,3 % pour la liste des gros dépensiers, 67,9 % pour un devin), 1 361 clients jugés"
+},
+"S17": {
+"court": "Dixième de tête (X5)",
+"enonce": "Les signaux font mieux choisir le dixième de tête que RFM seul",
+"jeu": "x5",
+"lecture": "le dixième de tête tient 26,3 % de la dépense à venir avec les signaux, 25,9 % avec RFM seul (26,2 % pour la liste des gros dépensiers, 33,5 % pour un devin), 7 279 clients jugés"
+}
+},
+"valeurs": {
+"acc_c": "+0,048",
+"acc_r": "+0,069",
+"acc_r2_c": "1",
+"acc_r2_max": "5",
+"acc_r2_r": "5",
+"acc_r2_x": "2",
+"acc_rap": "1,18",
+"acc_x": "+0,075",
+"b_l01": "0,3",
+"b_l10": "6,4",
+"b_l13": "0,4",
+"bt_c_devin": "61,8",
+"bt_c_gros": "40,0",
+"bt_c_rfm": "42,8",
+"bt_c_sig": "43,5",
+"bt_r_devin": "67,9",
+"bt_r_gros": "60,3",
+"bt_r_rfm": "51,5",
+"bt_r_sig": "51,5",
+"bt_x_devin": "33,5",
+"bt_x_gros": "26,2",
+"bt_x_rfm": "25,9",
+"bt_x_sig": "26,3",
+"cai_det": "46,5",
+"cai_hameaux": "166",
+"cai_n": "1 410",
+"cai_non": "41,3",
+"cai_oui": "51,8",
+"cai_simple": "46,3",
+"elan_r": "+0,057",
+"elan_x": "+0,104",
+"envois_semaine": "3 000",
+"etal_dur": "14",
+"etal_dur_essais": "200",
+"etal_essais": "100",
+"etal_fp": "2",
+"etal_p15": "10",
+"etal_p30": "26",
+"etal_pn": "40",
+"gl_acc_c": "6",
+"gl_acc_r": "4",
+"gl_grp_c": "7",
+"gl_grp_r": "7",
+"grp_c": "−0,039",
+"grp_r": "−0,051",
+"grp_r2_c": "74",
+"grp_rap": "0,72",
+"grp_x": "−0,006",
+"gu_aucune": "24,6",
+"gu_blague": "41,7",
+"gu_n": "211",
+"gu_pub": "18,9",
+"ly_acc": "15,0",
+"ly_debout": "11,9",
+"ly_n": "148",
+"n_bruit": "2",
+"n_contraire": "2",
+"n_hyp": "31",
+"n_marches": "8",
+"n_moins_mois": "2",
+"n_nominal": "18",
+"n_non": "14",
+"n_obs": "34 381",
+"n_sig": "14",
+"n_sig_tient": "8",
+"n_survivent": "17",
+"n_tient": "15",
+"p_agence": "5",
+"pic_r": "−0,058",
+"pic_x": "−0,048",
+"ro_annonce": "4,9",
+"ro_bas": "4,6",
+"ro_budget": "23 440",
+"ro_double": "4,8",
+"ro_haut": "4,0",
+"ro_lettres": "2 994",
+"ro_max": "4,9",
+"ro_min": "4,0",
+"th_avec": "78,9",
+"th_d0_avec": "83,2",
+"th_d0_sans": "43,0",
+"th_d3_avec": "74,5",
+"th_d3_sans": "28,7",
+"th_dollar": "8,4",
+"th_km": "−2,5",
+"th_n": "2 834",
+"th_p0": "33,9",
+"th_p1": "67,3",
+"th_p2": "86,3",
+"th_pas1": "33,5",
+"th_reste": "18,9",
+"th_sans": "33,9",
+"var_r2_x": "75",
+"var_x": "+0,034",
+"z_bh": "2,65"
+},
+"verdicts": {
+"L01": "tient",
+"L02": "tient",
+"L03": "tient",
+"L04": "tient",
+"L05": "non établi",
+"L06": "non établi",
+"L07": "non établi",
+"L08": "non établi",
+"L09": "non établi",
+"L10": "tient",
+"L11": "non établi",
+"L12": "non établi",
+"L13": "tient",
+"L14": "tient",
+"S01": "contraire",
+"S02": "contraire",
+"S03": "non établi",
+"S04": "non établi",
+"S05": "tient",
+"S06": "tient",
+"S07": "tient",
+"S08": "tient",
+"S09": "tient",
+"S10": "non établi",
+"S11": "tient",
+"S12": "tient",
+"S13": "non établi",
+"S14": "tient",
+"S15": "non établi",
+"S16": "non établi",
+"S17": "non établi"
+}
+}

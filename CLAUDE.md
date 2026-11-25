@@ -158,6 +158,84 @@ français. Un nouveau lien à chaque amélioration, comme pour le reste. Dernier
 artefact : https://claude.ai/artifact/LMuRjnu65akSE8LeEggTvN (précédents RUirhupXYNSPHSMGp9BTDH, 1772yYTUpYmuAkEJ7DQWm2, DgoivKfGJjD8mrJ4UFzGwD). Lire
 `desk/README.md` avant d'y toucher.
 
+## Hors du corpus — la série OFM
+
+`ofm/` porte une recherche pour l'agence OFM de l'utilisateur : **« La personne,
+et non la phrase »** (`docs/ofm/la-personne.html`, gabarit
+`docs/ofm/la-personne.template.html`, `python -m ofm.papier`). Cinquante-neuf
+hypothèses sur l'humain qui paie, écrites dans `ofm/registre.py` **avant** tout
+calcul, testées sur six jeux publics voisins d'OnlyFans (Random Acts of Pizza,
+Karlan-List, Persuasion for Good, CraigslistBargain, speed dating, CDNOW), BH sur
+la famille, verdicts calculés. 23 figures (10 reliefs), 14 tables. Résultat
+central : ce qui fait payer est un fait sur la personne (récence ×2,8, membre
+avant de demander +15,6 pt, preuve +14,3 pt), presque jamais une formule ; et les
+**fidèles silencieux reviennent davantage**, contre le modèle BG/NBD (R02, seul
+verdict contraire). Stdlib seule ; emprunte `alp1.figterm/figdisc/figcss/pieds`
+sans les modifier. 41 tests en 12 s (`python -m unittest ofm.tests.test_stats
+ofm.tests.test_ofm`). Extraits de données versionnés dans `ofm/donnees/` avec
+SHA-256 ; clones bruts hors dépôt. **Lire `ofm/README.md` avant d'y toucher.**
+**Version mobile** dans la DA de l'app Lueur (`python -m ofm.mobile`,
+`docs/ofm/la-personne-mobile.html`, graphiques `ofm/figmobile.py` en blocs
+isométriques) : même source, aucun chiffre ne peut diverger. **Chaque étude y est
+expliquée trois fois** — en clair, comme à un enfant de 5 ans, et par un exemple
+(`ofm/clair.py`, textes figés devant `VERDICTS_ECRITS` : un verdict qui change fait
+échouer un test et impose de réécrire le texte). Chaque exemple est une situation
+d'agence (relance PPV, custom marchandé, pourboire, post Reddit, fan silencieux) et
+chaque graphique a son encadré « Comment lire ce graphique » (`clair.GRAPHIQUES`).
+**v5 : l'espace « Tous les sujets »** — la page s'ouvre sur un sommaire en tuiles
+(question, durée, barre des verdicts calculés) et n'affiche qu'un sujet à la fois
+(59 000 px empilés → 15 vues), avec repères, recherche sans accents, reprise de
+lecture et sujets cochés ; l'adresse suit la vue (`#demander`). Vérifier par
+`docs/ofm/parcours-mobile.cjs` et `balayage-mobile.cjs` (vue par vue : un
+balayage global ne voit plus que l'espace).
+**Dans l'app Lueur** (v30, espace `/etudes`) : la page construite ici y entre par
+`node scripts/etudes/sync.mjs` (dépôt lueur-ofm) — reconstruire ici, puis synchroniser là-bas.
+Adresses : `#sujets`, `#<sujet>`, `#chercher`, `#reprendre` (dernier sujet, à l'endroit exact).
+Les valeurs calculées sortent aussi dans `docs/ofm/la-personne-valeurs.json` (même commande) : le **plan de match**
+de Lueur (`/plan`, cahier LR-2026-07) les cite par `scripts/etudes/sync.mjs`, sans en recopier une.
+41 tests. Derniers artefacts : mobile https://claude.ai/artifact/RTG7owJsSMe1vUwFTSRnwN
+(v5 ; précédents R1qspQjS9dXdXpwfpVFWP6, BJmrDwssMA65z6X3XzgxQP, AJcZGbdLDnYfG4aCD2VAoy) ;
+version longue https://claude.ai/artifact/LZ9ZBKC9G8PUftYNWvySnf (v1 — sa table de
+classement recopiait le pari réfuté de R02 ; corrigé dans le dépôt, non republié).
+
+**Cahier nº 2 « L'effet, et non le risque »** (21 nov.) : `python -m ofm.mobile2` → `docs/ofm/cahier-2-mobile.html`,
+38 hypothèses commitées avant le calcul (`ofm/registre2.py`, sa propre famille BH), cinq jeux (Hillstrom, Lenta, X5 tirés
+au sort ; Online Retail II ; Kickstarter). 29 tiennent, 2 contraires, 7 non établies ; **le fidèle silencieux du nº 1 ne se
+retrouve pas** sur un second marché. 27 tests (`python -m unittest ofm.tests.test_ofm2`). Ses valeurs et verdicts
+(`cahier-2-valeurs.json`, et `verdicts` dans `la-personne-valeurs.json`) alimentent le **registre des études de Lueur**
+(`lib/etudes/registre.ts`, v33), qui range seul chaque étude dans le plan de match. Criteo, KKBox et Upworthy sont
+injoignables d'ici. Artefact : https://claude.ai/artifact/SCeJ86pzDTGfMxNCTWCZbo (v1). Lire `ofm/README.md` avant d'y toucher.
+
+**Cahier nº 3 « Le rythme, et non le total »** (23 nov., demande v37 de Lueur : « les data qui ont un potentiel edge
+que le marché n'a pas encore arbitré, backtestées, en paper SSRN, comme à 5 ans ») : `python -m ofm.mobile3` →
+`docs/ofm/cahier-3-mobile.html`, 31 hypothèses commitées avant le calcul (`ofm/registre3.py`, `219ced2`, sa propre famille
+BH). **Signaux** (`signaux.py`) : IC partiel des rangs **au-delà de RFM** (27 termes retirés), loi nulle par mélange des
+restes dans les cases RFM, **centrée sur son propre centre** (piège : elle ne l'est pas sur zéro), étalonnée sur vérité
+connue ; backtest du dixième de tête sur une moitié jamais vue. **Leviers** (`leviers.py`) : Thornton, Rondeau et List, Cai
+et al. (permuté par hameau), Guéguen, Lynn et Mynier (Rdatasets, commit figé). 15 tiennent, 2 contraires (les grappes de
+Zhang et al. se retournent), 14 non établies ; l'**accélération** tient sur les trois marchés et RFM n'en contient que 1 à
+5 % ; le backtest ne bat pas RFM de façon sûre. 32 tests (`python -m unittest ofm.tests.test_ofm3`, ≈ 2 min). Les ids
+S01–S07 existent aussi au nº 1 : un id se lit avec son cahier. **Piège corrigé dans la feuille commune** : `.hub` en
+`minmax(0, 1fr)` (le bouton « Chercher » élargissait l'espace, le dock sortait de l'écran ; les trois cahiers
+reconstruits). Artefact : https://claude.ai/artifact/ToCxEkyw8EHWwC4JHD12NG (v1).
+
+**Cahier nº 4 « La méthode, et non l'astuce »** (25 nov., demande : `docs/ofm/demande-cahier-4.md`) : `python -m
+ofm.mobile4` → `docs/ofm/cahier-4-mobile.html`, 25 hypothèses commitées avant le calcul (`registre4.py`, `8f69441`), une
+batterie de 13 tests de quants (`stress.py`, étalonnée sur vérité connue et recoupée avec statsmodels, scipy, numpy et
+arch), une arène de 200 agences en niveaux (`arene.py`). **Une seule idée survit à toute la batterie : l'accélération
+sur X5 (R03).** Apprendre chez soi (A03, A05, A09) ne rate que l'arène, par son coût (74 % des tirages), pas par l'usure ;
+la règle des gros dépensiers fait pire que le hasard sur X5 (A12). Plan en 8 étapes + formation en 16 leçons
+(`formation4.py`). Calculs rangés avec empreinte dans `ofm/donnees/CALCUL4.json` (`calcul4.py`, ≈ 17 min si l'empreinte
+change). **Piège trouvé : le jeu Lenta n'est pas équilibré** (z = 68 sur la réponse passée aux SMS) : verdicts Lenta du
+nº 2 à revoir. 30 tests (`python -m unittest ofm.tests.test_ofm4`). Livré en fichier dans la conversation (demande de
+l'utilisateur), pas encore publié en artefact ni intégré à Lueur. Lire `ofm/README.md` avant d'y toucher.
+
+**Questions en attente (25 nov., session close à 84 % de contexte)** : (1) « ceux qui ont vu venir les grosses
+opportunités, comment, et laquelle arrive » : répondu en bref ; sources vérifiées et opportunité proposée dans
+`docs/ofm/demande-opportunites.md` (cahier illustré à faire si demandé). (2) « Comment font les meilleures modèles, qui ont
+forcément un manager, pour chiffrer autant ? » : réponse courte donnée ; **à reprendre en premier** avec une recherche
+vérifiée (trafic, prix, messagerie, chat, baleines, IA), en séparant le prouvé (cahiers 1 à 4) du folklore d'agence.
+
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 
 Le détail a été déplacé dans `docs/memoire/` pour que chaque session ne paie pas

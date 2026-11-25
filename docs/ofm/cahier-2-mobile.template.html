@@ -1,0 +1,227 @@
+<title>L'effet, et non le risque</title>
+{{TETE}}
+
+<script>(function () { var r = document.documentElement; r.classList.add('js'); try { var t = localStorage.getItem('ofm-cahier-theme'); if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); } catch (e) {} r.setAttribute('data-vue', location.hash.slice(1) || 'sujets'); })();</script>
+
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="retour" id="retour" href="#sujets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Sujets</span></a>
+    <span class="mark" aria-hidden="true">L</span>
+    <div class="appbar-t"><b id="titre">Recherche</b><small id="soustitre">Cahier OFM nº 2</small></div>
+    <button class="theme" id="theme" type="button" aria-label="Mode sombre, toucher pour changer">
+      <svg class="soleil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="lune" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      <span>Sombre</span>
+    </button>
+  </div>
+  <nav class="chips" id="chips" aria-label="Dans ce sujet" hidden></nav>
+  <div class="lecture" aria-hidden="true"><i id="lecture"></i></div>
+</header>
+
+<nav class="rail" id="rail" aria-label="Sujets du cahier" hidden></nav>
+
+<main id="haut">
+
+  <div class="hub" id="sujets">
+    <div class="hub-tete">
+      <p class="phase">Cahier de recherche · OFM nº 2</p>
+      <h1 id="hub-titre">L'effet, et non le risque</h1>
+      <p class="hub-une">Un message rapporte quand on l'envoie à ceux qu'il fait bouger&nbsp;; le risque de départ, lui, ne dit pas qui répondra.</p>
+    </div>
+    <button class="cherche-ouvrir" id="ouvrir" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Chercher un mot&nbsp;: relance, ciblage, objectif…</span></button>
+    <a class="reprendre" id="rep-carte" href="#resume" hidden>
+      <span class="rep-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>
+      <span class="rep-t"><small id="rep-k">Reprendre</small><b id="rep-nom">L'essentiel</b><span id="rep-ou">là où tu en étais</span></span>
+      <svg class="rep-fl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+    <div class="avance" id="avance" hidden>
+      <p id="avance-txt">Aucun sujet lu</p>
+      <span class="segs" id="segs" aria-hidden="true"></span>
+    </div>
+    {{SUJETS}}
+    <button class="raz" id="raz" type="button" hidden>Remettre la lecture à zéro</button>
+  </div>
+
+  <section id="resume">
+    <p class="eyebrow">L'essentiel</p>
+    <h2>Ce qu'il faut retenir</h2>
+    <p class="lead">Qui relancer, avec quoi, et comment le savoir&nbsp;: {{n_hyp}} idées écrites d'avance, vérifiées sur {{n_obs}} clients et campagnes de {{n_marches}} marchés publics, dont trois expériences tirées au sort.</p>
+    <ul class="meta">
+      <li>{{n_hyp}} hypothèses</li><li>{{n_marches}} marchés publics</li><li>{{n_survivent}} survivent</li><li>{{n_figs}} graphiques 2D et 3D</li>
+    </ul>
+    <p class="goal"><b>En une phrase</b>Un message rapporte quand on l'envoie à ceux qu'il fait bouger&nbsp;; le risque de départ, lui, ne dit pas qui répondra.</p>
+
+    <div class="kid">
+      <p class="kid-tag">Comme si tu avais 5 ans</p>
+      <p class="kid-text">On a envoyé des messages à des gens choisis <strong>au hasard</strong>, et on a regardé qui revenait. Les messages marchent, mais pas sur tout le monde&nbsp;: ceux qui n'ont jamais répondu ne répondent pas plus. Il vaut mieux écrire à ceux que les messages font bouger qu'à ceux qui s'en vont. Et une chose qu'on croyait vraie dans le premier cahier ne s'est pas retrouvée ailleurs.</p>
+    </div>
+
+    <div class="mode">
+      <p class="bloc-label">Comment lire cette page</p>
+      <p>Chaque idée est expliquée trois fois&nbsp;: <b>en clair</b>, <b>comme si tu avais 5 ans</b>, et avec <b>un exemple</b> d'agence. Les chiffres détaillés sont rangés sous «&nbsp;Les chiffres&nbsp;»&nbsp;: tu peux les ignorer.</p>
+      <p class="mode-graph"><b>Les graphiques&nbsp;:</b> les barres et les courbes sont en 2D&nbsp;; les blocs en 3D se lisent comme des immeubles, plus un bloc est haut, plus la valeur est grande. Sous chaque graphique, un encadré dit ce que tu vois, ce que ça montre et ce que tu en fais. Touche un point ou un bloc pour lire sa valeur exacte.</p>
+      <ul class="legende-v"><li><span class="pill pill-ok">tient</span> c'est prouvé ici</li><li><span class="pill pill-ko">contraire</span> c'est l'inverse qui est vrai</li><li><span class="pill pill-nul">non établi</span> on ne voit rien de sûr</li></ul>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><span class="ff-title">Idées écrites avant le calcul</span><span class="ff-sub">commitées avant le premier résultat</span><span class="ff-value">{{n_hyp}}</span></div>
+      <div class="fact"><span class="ff-title">Survivent à la correction</span><span class="ff-sub">{{n_nominal}} passaient le seuil naïf, le hasard en donnait {{n_bruit}}</span><span class="ff-value">{{n_survivent}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></div>
+      <div class="fact"><span class="ff-title">Choisir à qui écrire par l'effet</span><span class="ff-sub">l'effet moyen du SMS, sur des clients jamais vus</span><span class="ff-value">×{{c_le_feff}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span></div>
+      <div class="fact"><span class="ff-title">Jamais répondu à un SMS</span><span class="ff-sub">effet du SMS, contre {{e09_oui}}&nbsp;pt chez les autres</span><span class="ff-value is-red">{{e09_non}}&nbsp;pt</span></div>
+      <div class="fact"><span class="ff-title">Juste au-dessus de l'objectif</span><span class="ff-sub">campagnes de 100 à 105&nbsp;%, contre {{b01_bas}} de 95 à 100&nbsp;%</span><span class="ff-value">{{b01_haut}}</span></div>
+      <div class="fact"><span class="ff-title">Le passé de chaque client</span><span class="ff-sub">d'envois en moins pour le même test A/B</span><span class="ff-value">{{m03_r2}}&nbsp;%<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></div>
+    </div>
+
+    <p class="p">Le premier cahier montrait que <em>ce qui fait payer est un fait sur la personne</em>. Celui-ci prend la décision suivante, celle qu'une agence répète chaque semaine&nbsp;: à qui écrire. Trois enseignes et un vendeur en ligne ont tiré au sort qui recevait un message&nbsp;; c'est la seule façon de savoir ce que le message <strong>fait</strong>, et pas seulement qui l'aurait fait de toute façon.</p>
+    <p class="p">Ce cahier dit aussi ce qui ne tient plus. Le «&nbsp;fidèle silencieux qui revient&nbsp;», résultat phare du nº&nbsp;1, ne se retrouve pas sur un second marché&nbsp;: c'est une piste à tester chez soi, plus une règle. Et rien ne transpose d'office ces marchés à une page de créatrice&nbsp;: chaque résultat vient avec le nombre de semaines qu'il faudrait pour le revérifier.</p>
+  </section>
+
+  <section id="methode">
+    <p class="eyebrow">01 · La méthode</p>
+    <h2>Écrire avant de regarder</h2>
+    <p class="lead">Les {{n_hyp}} idées ont été commitées avant le premier calcul&nbsp;: l'historique du dépôt le date.</p>
+    {{ETUDE:methode}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Au seuil habituel de 5&nbsp;%, le hasard seul ferait passer {{n_bruit}}&nbsp;idées sur {{n_hyp}}. Le seuil est donc corrigé pour leur nombre (Benjamini-Hochberg)&nbsp;: il faut |z|&nbsp;&gt;&nbsp;{{z_bh}}. Ce cahier a sa propre famille de tests&nbsp;: ajouter ses idées à celles du nº&nbsp;1 aurait changé, après coup, les verdicts déjà publiés. Trois jeux visés n'ont pas pu entrer&nbsp;: Criteo (copie retirée), KKBox et l'archive des titres d'Upworthy (hébergeurs injoignables). Le renouvellement d'abonnement reste donc <strong>non testé</strong>.</p></details>
+    {{FIG:chasse2|2D|Chaque point est une idée, placée dans le sens de son pari. La bande claire est la zone du hasard (|z|&nbsp;&lt;&nbsp;1,96), les pointillés le seuil corrigé. Touche un point pour lire son nom.}}
+    {{FIG:chasse2d|3D|Par famille, ce qui tient (bleu), ce qui contredit le pari (rouge) et ce qui reste indistinguable du bruit (fantôme gris).}}
+  </section>
+
+  <section id="courriel">
+    <p class="eyebrow">02 · Le courriel</p>
+    <h2>Un message groupé tiré au sort</h2>
+    <p class="lead">Le courriel fait acheter, et il fait davantage venir quand il parle de ce que le client achète déjà.</p>
+    {{ETUDE:courriel}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Kevin Hillstrom a publié en 2008 ce jeu de {{hs_n}}&nbsp;clients d'un vendeur en ligne, tous acheteurs dans l'année. Le courriel fait passer les achats de {{hs_ach_b}}&nbsp;% à {{hs_ach_a}}&nbsp;% (×{{hs_ach_fois}}) et la dépense par client de {{hs_dep_b}} à {{hs_dep_a}}&nbsp;$ en deux semaines. Les écarts d'effet entre clients se lisent sur la visite&nbsp;: l'achat est trop rare pour les départager.</p></details>
+    {{CARTES:E01-E07}}
+    {{FIG:courriel_bras|2D|Visites par bras du courriel, tiré au sort&nbsp;: {{hs_vis_b}}&nbsp;% sans courriel, {{hs_vis_a}}&nbsp;% avec. Touche une barre pour les achats et la dépense.}}
+    {{FIG:assorti|2D|Le courriel de sa catégorie contre l'autre, chez les clients d'une seule catégorie&nbsp;; le pointillé marque ceux qui n'ont rien reçu.}}
+    {{FIG:courriel_iso|3D|Effet du courriel sur les visites selon les mois depuis le dernier achat (lignes) et la dépense de l'année (colonnes).}}
+    <div class="do"><b>À faire cette semaine</b><p>Garder chaque fois un petit groupe de fans tirés au sort qui ne reçoit pas le message groupé&nbsp;: c'est le seul moyen de savoir ce qu'il rapporte. Et envoyer à chacun l'annonce qui correspond à ce qu'il a déjà acheté.</p></div>
+  </section>
+
+  <section id="sms">
+    <p class="eyebrow">03 · Le SMS</p>
+    <h2>Sur qui le message agit</h2>
+    <p class="lead">Le SMS fait venir et acheter, mais il ne fait rien chez qui n'a jamais répondu à un message.</p>
+    {{ETUDE:sms}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Chez Lenta, le SMS fait passer les visites de {{le_b}}&nbsp;% à {{le_a}}&nbsp;% ({{e08_e}}&nbsp;pt)&nbsp;; {{le_jamais}}&nbsp;% des clients n'avaient jamais répondu à un SMS, et chez eux l'effet est de {{e09_non}}&nbsp;pt contre {{e09_oui}}&nbsp;pt chez les autres. Chez X5, il fait passer les achats de {{x5_b}}&nbsp;% à {{x5_a}}&nbsp;% ({{e13_e}}&nbsp;pt), surtout chez les clients rares et peu récents. Les deux enseignes se contredisent sur les habitués&nbsp;: ce n'est donc pas une règle.</p></details>
+    {{CARTES:E08-E16}}
+    {{FIG:sms_reponse|2D|Effet du SMS selon la part des SMS passés auxquels le client a répondu, avec la marge du hasard.}}
+    {{FIG:sms_iso|3D|Effet du SMS sur les achats chez X5, selon la récence du dernier passage (lignes) et la fréquence des passages (colonnes).}}
+    <div class="do"><b>À faire cette semaine</b><p>Marquer les fans qui ont déjà acheté après un message groupé. C'est sur eux que le prochain agit&nbsp;; ceux qui n'ont jamais réagi méritent une vraie conversation, pas un message de plus.</p></div>
+  </section>
+
+  <section id="cibler">
+    <p class="eyebrow">04 · Cibler</p>
+    <h2>Écrire à ceux qui bougent</h2>
+    <p class="lead">Dans les trois expériences, le tiers choisi par l'effet attendu répond plus que la moyenne&nbsp;; le tiers «&nbsp;le plus à risque&nbsp;», lui, change de sens selon le marché.</p>
+    {{ETUDE:cibler}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Une coupe tirée au sort partage chaque jeu en deux. Sur la première moitié, deux modèles linéaires (un par bras) prédisent l'issue avec et sans message&nbsp;; sur la seconde, jamais vue, on mesure l'effet réel du message dans le tiers de plus fort effet estimé et dans le tiers de plus fort risque. Lenta&nbsp;: {{c_le_eff}}&nbsp;pt dans le tiers choisi par effet, {{c_le_ris}}&nbsp;pt dans le tiers à risque, {{c_le_moy}}&nbsp;pt en moyenne ({{c_le_n}}&nbsp;clients). Courriel&nbsp;: {{c_hs_eff}}, {{c_hs_ris}} et {{c_hs_moy}}&nbsp;pt. X5&nbsp;: {{c_x5_eff}}, {{c_x5_ris}} et {{c_x5_moy}}&nbsp;pt.</p></details>
+    {{CARTES:C01-C09}}
+    {{FIG:ciblage|2D|Chez Lenta, visites gagnées pour 100 clients selon la part écrite, rangée par effet estimé (bleu), par risque (rouge) ou au hasard (pointillés).}}
+    {{FIG:ciblage_iso|3D|Effet du message rapporté à l'effet moyen&nbsp;: tiers choisi par risque, tous, tiers choisi par effet, dans les trois expériences.}}
+    <div class="do"><b>À faire cette semaine</b><p>Construire la liste de relance sur <strong>la réaction passée aux messages</strong>, pas sur le risque de départ. Chez Lenta, écrire aux {{le_part_max}}&nbsp;% du haut de cette liste rapporte {{le_gain_max}} visite pour 100 clients, plus qu'écrire à tous ({{le_gain_tous}}).</p></div>
+  </section>
+
+  <section id="garder">
+    <p class="eyebrow">05 · Garder</p>
+    <h2>Le fidèle silencieux, revérifié</h2>
+    <p class="lead">Sur un second marché, le fidèle silencieux ne revient pas plus que les autres&nbsp;: le résultat du nº&nbsp;1 devient une piste.</p>
+    {{ETUDE:garder}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Cohorte des {{rt_n}}&nbsp;clients vus pour la première fois les treize premières semaines, calibration sur douze mois, validation sur les douze suivants. Le modèle BG/NBD ne bat pas le rythme passé (erreur moyenne {{rt_mae_b}} contre {{rt_mae_n}}&nbsp;jour d'achat). Chez les {{rt_sil}}&nbsp;silencieux depuis six mois, il prévoit {{rt_x1_prev}}&nbsp;jour d'achat pour un seul achat passé et en voit {{rt_x1_reel}}&nbsp;; pour quatre achats passés et plus, {{rt_x4_prev}} prévus, {{rt_x4_reel}} réalisés. Deux résultats tiennent sur les deux marchés&nbsp;: le classement par probabilité d'activité ({{g04_bg}}&nbsp;% des achats futurs dans le décile de tête, contre {{g04_dep}}&nbsp;% par la dépense), et la première commande.</p></details>
+    {{CARTES:G01-G05}}
+    {{FIG:garder_silence|2D|Silencieux depuis six mois&nbsp;: jours d'achat réalisés l'année suivante (bleu) et prévus par le modèle (gris), selon les achats répétés avant le silence.}}
+    {{FIG:garder_iso|3D|Jours d'achat l'année suivante selon la première commande (lignes) et les achats répétés de la première année (colonnes).}}
+    <div class="do"><b>À faire cette semaine</b><p>Repérer dès le premier achat les fans à grosse première commande&nbsp;: au-dessus de {{g05_med}}&nbsp;£ ici, ils sont revenus {{g05_haut}}&nbsp;jours contre {{g05_bas}}. Relancer les silencieux, oui, mais en tirant au sort la moitié pour mesurer.</p></div>
+  </section>
+
+  <section id="objectif">
+    <p class="eyebrow">06 · L'objectif</p>
+    <h2>Le palier attire les derniers</h2>
+    <p class="lead">Presque aucune campagne ne finit juste sous son objectif&nbsp;; des dizaines de milliers finissent juste au-dessus.</p>
+    {{ETUDE:objectif}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Sur {{ks_n}}&nbsp;campagnes terminées ({{ks_base}}&nbsp;% réussies), {{b01_haut}} finissent entre 100 et 105&nbsp;% de leur objectif, dont {{ks_pile}} pile à l'objectif, contre {{b01_bas}} entre 95 et 100&nbsp;% — quand la pente voisine n'en attendait qu'un rapport de {{b01_attendu}}. Kuppuswamy et Bayus (2017) l'expliquent par l'impact perçu&nbsp;: près du but, chaque contribution compte, et l'on accélère en approchant d'une récompense (Kivetz et al., 2006). Comme Mollick (2014), on trouve qu'une campagne plus longue et un objectif plus haut réussissent moins. Rien n'est tiré au sort ici&nbsp;: les comparaisons se font à catégorie et année fixées.</p></details>
+    {{CARTES:B01-B05}}
+    {{FIG:objectif_histo|2D|Campagnes selon la part de leur objectif atteinte, de 80 à 120&nbsp;%, hauteur en échelle logarithmique&nbsp;: un vide juste avant l'objectif, un mur juste après.}}
+    {{FIG:objectif_iso|3D|Taux de réussite selon la durée de la campagne (lignes) et son objectif (colonnes).}}
+    <div class="do"><b>À faire cette semaine</b><p>Pour le prochain live, afficher un palier de pourboires modeste et ce qu'il débloque, puis un second palier une fois le premier atteint. Une offre de lancement de quelques jours, avec une vraie date de fin, plutôt qu'une promotion qui traîne.</p></div>
+  </section>
+
+  <section id="mesurer">
+    <p class="eyebrow">07 · Mesurer chez soi</p>
+    <h2>Tester avec moins d'envois</h2>
+    <p class="lead">Le passé de chaque fan rend un test moins cher, à condition qu'il prédise ce qu'on mesure.</p>
+    {{ETUDE:mesurer}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Chez Bing, ajuster sur la même mesure avant l'expérience a réduit la variance d'environ moitié (Deng et al., 2013). Ici, une prédiction par le passé, estimée sur une moitié des clients et jugée sur l'autre, retire {{m01_r2}}&nbsp;% de la variance d'un test sur la dépense de deux semaines, {{m02_r2}}&nbsp;% sur une visite et {{m03_r2}}&nbsp;% sur un achat. Sur le même courriel, prouver la hausse de dépense demanderait {{hs_n_depense}}&nbsp;envois par version, contre {{hs_n_achat}} pour la hausse d'achats, chacune planifiée à la moitié de sa taille&nbsp;: {{hs_fois_depense}}&nbsp;fois plus, parce que la dépense est faite de zéros et de rares gros paniers. Dans les marchés plus bruités de Lewis et Rao (2015), l'écart devient énorme.</p></details>
+    {{CARTES:M01-M03}}
+    {{FIG:cuped|2D|Part des envois économisés en ajustant le test sur le passé de chaque client, dans les trois expériences.}}
+    {{FIG:budget2|2D|Semaines de test pour revérifier chez soi chaque effet établi qui se mesure comme un taux, si un message vend à {{p_agence}}&nbsp;% et si l'effet ne survit qu'à moitié au transfert. Un écart entre deux effets (le ciblage) en demande bien plus.}}
+    <div class="warn"><b>Mesurer un taux, pas une dépense</b><p>Un test jugé sur l'argent dépensé en deux semaines ne gagne presque rien à connaître le passé du fan&nbsp;: mesurer d'abord le taux d'achat, et garder la dépense pour les tests longs.</p></div>
+  </section>
+
+  <section id="agir">
+    <p class="eyebrow">08 · Par où commencer</p>
+    <h2>Les gestes de la semaine</h2>
+    {{ETUDE:agir}}
+    <p class="lead">{{n_moins_mois}} effets de ce cahier se revérifient en moins d'un mois dans une agence qui envoie {{envois_semaine}}&nbsp;messages par version et par semaine.</p>
+    <ol class="steps">
+      <li><div><b>Garder un groupe témoin</b><p>Chaque message groupé laisse de côté un petit groupe de fans tirés au sort&nbsp;: sans lui, on ne sait pas ce que le message rapporte.</p></div></li>
+      <li><div><b>Trier par réaction passée</b><p>Écrire d'abord aux fans qui ont déjà acheté après un message, pas à ceux qui décrochent.</p></div></li>
+      <li><div><b>Parler de ce qu'il achète</b><p>L'annonce qui correspond aux achats passés du fan, pas la même pour tous.</p></div></li>
+      <li><div><b>Des paliers atteignables</b><p>Une cagnotte de live modeste, puis la suivante&nbsp;; une offre courte avec une vraie date de fin.</p></div></li>
+      <li><div><b>Mesurer l'achat avec le passé</b><p>Un test A/B jugé au taux d'achat et ajusté sur l'historique de chaque fan coûte moins d'envois.</p></div></li>
+    </ol>
+  </section>
+
+  <section id="ailleurs">
+    <p class="eyebrow">09 · Ailleurs</p>
+    <h2>Ce que d'autres ont établi</h2>
+    {{ETUDE:ailleurs}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Ces études ne se rejouent pas sur nos cinq marchés. Ce sont des idées de tests, pas des résultats&nbsp;: à l'échelle, les effets publiés fondent souvent, et un effet se planifie chez soi à la moitié de sa taille.</p></details>
+    {{AILLEURS}}
+  </section>
+
+  <section id="faux">
+    <p class="eyebrow">10 · Ne tient pas</p>
+    <h2>Ce que les données ne montrent pas</h2>
+    {{ETUDE:faux}}
+    {{FAUX}}
+  </section>
+
+  <section id="registre">
+    <p class="eyebrow">Annexe · Le registre</p>
+    <h2>Les {{n_hyp}} hypothèses</h2>
+    <p class="p">Toutes, dans l'ordre du registre, avec la mesure déclarée avant calcul. Touche une ligne pour ses chiffres.</p>
+    <div class="filtres" role="group" aria-label="Filtrer par verdict">
+      <button type="button" data-fv="tous" aria-pressed="true">Toutes</button>
+      <button type="button" data-fv="ok" aria-pressed="false">Tient</button>
+      <button type="button" data-fv="ko" aria-pressed="false">Contraire</button>
+      <button type="button" data-fv="nul" aria-pressed="false">Non établi</button>
+    </div>
+    <div class="filtres" role="group" aria-label="Filtrer par famille">
+      <button type="button" data-ff="tous" aria-pressed="true">Toutes familles</button>
+      <button type="button" data-ff="E" aria-pressed="false">Relancer</button>
+      <button type="button" data-ff="C" aria-pressed="false">Cibler</button>
+      <button type="button" data-ff="G" aria-pressed="false">Garder</button>
+      <button type="button" data-ff="B" aria-pressed="false">Objectif</button>
+      <button type="button" data-ff="M" aria-pressed="false">Mesurer</button>
+    </div>
+    <p class="compte" id="compte" aria-live="polite">{{n_hyp}} hypothèses affichées</p>
+    <div class="regs" id="regs">{{REGISTRE}}</div>
+  </section>
+
+  <section id="sources">
+    <p class="eyebrow">Annexe · Sources</p>
+    <h2>D'où viennent les chiffres</h2>
+    <p class="p"><strong>Limites.</strong> Aucun des cinq marchés n'est une page de créatrice&nbsp;; seuls le courriel et les deux SMS sont tirés au sort, le reste montre des liens ajustés&nbsp;; les jeux datent de 2008 à 2020. C'est pourquoi le cahier s'arrête au budget d'un test et ne promet aucun gain.</p>
+    <details class="fold"><summary>Références ({{n_refs}})</summary>{{SOURCES}}</details>
+    <details class="fold"><summary>Provenance des données</summary>{{PROVENANCE}}</details>
+    <div class="colophon">
+      <p>Aucun nombre calculé de cette page n'est écrit à la main&nbsp;: tous sortent des modules du dossier <code>ofm/</code> du dépôt ALP (<code>registre2</code>, <code>relancer</code>, <code>cibler</code>, <code>garder</code>, <code>objectif</code>, <code>synthese2</code>). Les nombres de la partie «&nbsp;Ailleurs&nbsp;» sont ceux des études citées.</p>
+      <p>Ce cahier n'est ni un avis juridique, ni une promesse de résultat.</p>
+    </div>
+  </section>
+
+</main>
+
+{{COMMUN}}

@@ -1,0 +1,226 @@
+<title>Le rythme, et non le total</title>
+{{TETE}}
+
+<script>(function () { var r = document.documentElement; r.classList.add('js'); try { var t = localStorage.getItem('ofm-cahier-theme'); if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); } catch (e) {} r.setAttribute('data-vue', location.hash.slice(1) || 'sujets'); })();</script>
+
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="retour" id="retour" href="#sujets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Sujets</span></a>
+    <span class="mark" aria-hidden="true">L</span>
+    <div class="appbar-t"><b id="titre">Recherche</b><small id="soustitre">Cahier OFM nº 3</small></div>
+    <button class="theme" id="theme" type="button" aria-label="Mode sombre, toucher pour changer">
+      <svg class="soleil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="lune" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      <span>Sombre</span>
+    </button>
+  </div>
+  <nav class="chips" id="chips" aria-label="Dans ce sujet" hidden></nav>
+  <div class="lecture" aria-hidden="true"><i id="lecture"></i></div>
+</header>
+
+<nav class="rail" id="rail" aria-label="Sujets du cahier" hidden></nav>
+
+<main id="haut">
+
+  <div class="hub" id="sujets">
+    <div class="hub-tete">
+      <p class="phase">Cahier de recherche · OFM nº 3</p>
+      <h1 id="hub-titre">Le rythme, et non le total</h1>
+      <p class="hub-une">L'avantage que RFM ne voit pas est dans le rythme&nbsp;: le fan qui revient de plus en plus vite. Et les gestes qui font agir sont petits.</p>
+    </div>
+    <button class="cherche-ouvrir" id="ouvrir" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><span>Chercher un mot&nbsp;: signal, bonus, case cochée…</span></button>
+    <a class="reprendre" id="rep-carte" href="#resume" hidden>
+      <span class="rep-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>
+      <span class="rep-t"><small id="rep-k">Reprendre</small><b id="rep-nom">L'essentiel</b><span id="rep-ou">là où tu en étais</span></span>
+      <svg class="rep-fl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+    <div class="avance" id="avance" hidden>
+      <p id="avance-txt">Aucun sujet lu</p>
+      <span class="segs" id="segs" aria-hidden="true"></span>
+    </div>
+    {{SUJETS}}
+    <button class="raz" id="raz" type="button" hidden>Remettre la lecture à zéro</button>
+  </div>
+
+  <section id="resume">
+    <p class="eyebrow">L'essentiel</p>
+    <h2>Ce qu'il faut retenir</h2>
+    <p class="lead">Où se cache un avantage que les autres agences n'ont pas encore pris&nbsp;: {{n_hyp}} idées écrites d'avance, vérifiées sur {{n_obs}} clients, personnes, lettres et tables de {{n_marches}} marchés publics, dont cinq expériences tirées au sort.</p>
+    <ul class="meta">
+      <li>{{n_hyp}} hypothèses</li><li>{{n_marches}} marchés publics</li><li>{{n_survivent}} survivent</li><li>{{n_figs}} graphiques 2D et 3D</li>
+    </ul>
+    <p class="goal"><b>En une phrase</b>L'avantage que RFM ne voit pas est dans le rythme&nbsp;: le fan qui revient de plus en plus vite. Et les gestes qui font agir sont petits&nbsp;: un premier cadeau, une étape de moins, une case cochée pour ce qui ne coûte rien, un sourire.</p>
+
+    <div class="kid">
+      <p class="kid-tag">Comme si tu avais 5 ans</p>
+      <p class="kid-text">Tout le monde sait que l'ami qui vient souvent, et qui est venu hier, reviendra. Ce n'est donc plus un secret. On a cherché un indice <strong>en plus</strong>&nbsp;: c'est l'ami qui revient de plus en plus vite. Lui, presque personne ne le regarde. On a aussi appris qu'un tout petit cadeau fait presque autant qu'un gros, qu'un chemin plus court fait venir plus de monde, et qu'une blague fait donner plus qu'une publicité.</p>
+    </div>
+
+    <div class="mode">
+      <p class="bloc-label">Comment lire cette page</p>
+      <p>Chaque idée est expliquée trois fois&nbsp;: <b>en clair</b>, <b>comme si tu avais 5 ans</b>, et avec <b>un exemple</b> d'agence. Les chiffres détaillés sont rangés sous «&nbsp;Les chiffres&nbsp;»&nbsp;: tu peux les ignorer.</p>
+      <p class="mode-graph"><b>Les graphiques&nbsp;:</b> les barres et les courbes sont en 2D&nbsp;; les blocs en 3D se lisent comme des immeubles, plus un bloc est haut, plus la valeur est grande. Sous chaque graphique, un encadré dit ce que tu vois, ce que ça montre et ce que tu en fais. Touche un point ou un bloc pour lire sa valeur exacte.</p>
+      <ul class="legende-v"><li><span class="pill pill-ok">tient</span> c'est prouvé ici</li><li><span class="pill pill-ko">contraire</span> c'est l'inverse qui est vrai</li><li><span class="pill pill-nul">non établi</span> on ne voit rien de sûr</li></ul>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><span class="ff-title">Idées écrites avant le calcul</span><span class="ff-sub">commitées avant le premier résultat</span><span class="ff-value">{{n_hyp}}</span></div>
+      <div class="fact"><span class="ff-title">Survivent à la correction</span><span class="ff-sub">{{n_nominal}} passaient le seuil naïf, le hasard en donnait {{n_bruit}}</span><span class="ff-value">{{n_survivent}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></div>
+      <div class="fact"><span class="ff-title">L'accélération, déjà dans RFM</span><span class="ff-sub">le seul signal qui tient sur les trois marchés</span><span class="ff-value">≤&nbsp;{{acc_r2_max}}&nbsp;%</span></div>
+      <div class="fact"><span class="ff-title">Le premier pas d'un bonus</span><span class="ff-sub">de {{th_p0}}&nbsp;% à {{th_p1}}&nbsp;% qui agissent, contre {{th_reste}}&nbsp;pt pour tout le reste</span><span class="ff-value">+{{th_pas1}}&nbsp;pt<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span></div>
+      <div class="fact"><span class="ff-title">Le gros achat isolé</span><span class="ff-sub">annonce moins de dépense ensuite, à RFM égal (X5)</span><span class="ff-value is-red">{{pic_x}}</span></div>
+      <div class="fact"><span class="ff-title">Le dixième de tête, avec les signaux</span><span class="ff-sub">de la dépense à venir, contre {{bt_x_rfm}}&nbsp;% avec RFM seul (X5)</span><span class="ff-value">{{bt_x_sig}}&nbsp;%</span></div>
+    </div>
+
+    <p class="p">En finance, un avantage qui dure est un signal qui prédit <em>au-delà de ce que tout le monde regarde</em>&nbsp;: ce qui est connu de tous est déjà «&nbsp;dans le prix&nbsp;». Pour une agence, ce que tout le monde regarde, c'est RFM&nbsp;: la récence, la fréquence et le montant des achats d'un fan. Ce cahier retire d'abord tout ce que RFM sait, puis cherche ce qui reste. Sur trois marchés, un seul signal tient partout&nbsp;: <strong>l'accélération</strong>, quand les écarts entre achats raccourcissent. Le signal publié le plus connu, les achats «&nbsp;en grappes&nbsp;», dit l'inverse de ce qu'on croyait sur deux marchés.</p>
+    <p class="p">Ce cahier dit aussi la limite&nbsp;: rejoués sur des clients jamais vus, les signaux n'améliorent pas de façon sûre la liste des dix pour cent du haut. Ils sont réels mais petits&nbsp;: ils servent à repérer dans le milieu de la liste les fans qui montent, pas à jeter la liste RFM. Les cinq expériences, elles, donnent des gestes simples, et chacun vient avec le nombre de semaines qu'il faudrait pour le revérifier chez soi.</p>
+  </section>
+
+  <section id="methode">
+    <p class="eyebrow">01 · La méthode</p>
+    <h2>Écrire avant de regarder</h2>
+    <p class="lead">Les {{n_hyp}} idées ont été commitées avant le premier calcul&nbsp;: l'historique du dépôt le date.</p>
+    {{ETUDE:methode}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Au seuil habituel de 5&nbsp;%, le hasard seul ferait passer {{n_bruit}}&nbsp;idées sur {{n_hyp}}. Le seuil est donc corrigé pour leur nombre (Benjamini-Hochberg)&nbsp;: il faut |z|&nbsp;&gt;&nbsp;{{z_bh}}. Ce cahier a sa propre famille de tests. La mesure des signaux a été essayée avant tout calcul réel sur des clients inventés dont le signal ne dit rien de plus que RFM&nbsp;: elle s'est trompée {{etal_fp}} fois sur {{etal_essais}}, pour 5 attendues. Dans un cas volontairement difficile (un signal qui dépend brutalement de la récence), {{etal_dur}} fois sur {{etal_dur_essais}}&nbsp;: un peu plus que 5&nbsp;%, ce qui est dit ici plutôt que caché. Quand le signal vaut vraiment quelque chose, elle le trouve {{etal_p15}} fois sur {{etal_pn}} pour un petit effet et {{etal_p30}} fois sur {{etal_pn}} pour un effet double.</p></details>
+    {{FIG:chasse3|2D|Chaque point est une idée, placée dans le sens de son pari. La bande claire est la zone du hasard (|z|&nbsp;&lt;&nbsp;1,96), les pointillés le seuil corrigé. Touche un point pour lire son nom.}}
+    {{FIG:chasse3d|3D|Par marché des signaux, et pour les leviers&nbsp;: ce qui tient (bleu), ce qui contredit le pari (rouge) et ce qui reste indistinguable du bruit (fantôme gris).}}
+  </section>
+
+  <section id="signaux">
+    <p class="eyebrow">02 · Les signaux</p>
+    <h2>Ce que RFM ne voit pas</h2>
+    <p class="lead">Le fan dont les écarts entre achats raccourcissent dépense plus ensuite, sur les trois marchés, et RFM ne contient presque rien de ce signal.</p>
+    {{ETUDE:signaux}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Cinq signaux, lus chez les clients d'au moins deux jours d'achat&nbsp;: <b>les grappes</b> (le groupement des achats de Zhang, Bradlow et Small, 2015), <b>l'élan</b> (la part de la dépense tombée dans le dernier tiers de la fenêtre du client), <b>l'accélération</b> (l'écart moyen de la première moitié des écarts rapporté à celui de la seconde), <b>le pic</b> (le plus gros jour d'achat rapporté au jour moyen) et <b>la variété</b> (les lignes de produit par jour d'achat). Ce que RFM sait&nbsp;: 27 termes de récence, fréquence, montant et ancienneté. La mesure est la corrélation des rangs entre ce qui reste du signal et ce qui reste de la dépense à venir&nbsp;; la loi nulle mélange ces restes dans les cases RFM, 999 fois. Cette loi n'est pas centrée sur zéro (les cases gardent un petit lien)&nbsp;: l'effet se mesure à partir de son centre. L'accélération vaut {{acc_c}} chez le disquaire, {{acc_r}} chez le grossiste et {{acc_x}} chez X5&nbsp;; RFM n'en explique que {{acc_r2_c}}, {{acc_r2_r}} et {{acc_r2_x}}&nbsp;%. Les grappes valent {{grp_c}} et {{grp_r}}, à l'inverse du pari, alors que RFM en contient {{grp_r2_c}}&nbsp;% chez le disquaire.</p></details>
+    {{CARTES:S01-S14}}
+    {{FIG:carte|2D|La carte des signaux&nbsp;: à gauche ce que RFM ne contient pas, en haut ce qui prédit au-delà de RFM. Touche un point pour son nom.}}
+    {{FIG:ic_signaux|2D|Ce que chaque signal prédit en plus de RFM, sur chaque marché, avec sa marge d'erreur et la bande grise du hasard.}}
+    {{FIG:relief_acc|3D|Chez X5, la dépense à venir rapportée à la moyenne de chaque niveau RFM (lignes), selon la part de l'accélération que RFM ne contient pas (colonnes).}}
+    {{FIG:relief_grp|3D|Chez le disquaire, la dépense à venir rapportée à la moyenne de chaque niveau RFM (lignes), selon la part du groupement que RFM ne contient pas (colonnes).}}
+    {{FIG:glissant|2D|Le même calcul à sept dates de coupe&nbsp;: l'accélération (bleu) et les grappes (tirets rouges) sur fond de hasard (gris).}}
+    <div class="do"><b>À faire cette semaine</b><p>Pour chaque fan qui a acheté au moins trois fois, comparer ses derniers écarts entre achats aux premiers. Ceux dont les écarts raccourcissent passent en tête de la liste de la semaine&nbsp;; une rafale d'achats suivie de rien, ou un gros achat isolé, ne suffit pas à y entrer.</p></div>
+  </section>
+
+  <section id="backtest">
+    <p class="eyebrow">03 · Le backtest</p>
+    <h2>La liste des meilleurs fans, rejouée</h2>
+    <p class="lead">Rejoués sur des clients jamais vus, les signaux ne font pas tenir de façon sûre plus de dépense au dixième de tête&nbsp;: ils affinent RFM, ils ne le remplacent pas.</p>
+    {{ETUDE:backtest}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Une moitié des clients, tirée par empreinte, apprend deux classements&nbsp;; l'autre moitié juge. Le dixième de tête tient, chez le disquaire, {{bt_c_sig}}&nbsp;% de la dépense à venir avec les signaux contre {{bt_c_rfm}}&nbsp;% avec RFM seul&nbsp;; chez le grossiste {{bt_r_sig}} contre {{bt_r_rfm}}&nbsp;%, quand la liste des gros dépensiers en tient {{bt_r_gros}}&nbsp;%&nbsp;; chez X5 {{bt_x_sig}} contre {{bt_x_rfm}}&nbsp;%. Un devin, qui connaîtrait l'avenir, en tiendrait {{bt_c_devin}}, {{bt_r_devin}} et {{bt_x_devin}}&nbsp;%&nbsp;: c'est l'avantage qui reste à trouver. Les intervalles viennent de 999 rééchantillonnages appariés des clients jugés. La «&nbsp;loi fondamentale&nbsp;» de Grinold (1989) dit pourquoi un signal réel mais faible compte quand même&nbsp;: il paie s'il guide beaucoup de petites décisions, pas une seule grande liste.</p></details>
+    {{CARTES:S15-S17}}
+    {{FIG:capture|2D|Chez le disquaire, la part de la dépense à venir tenue par les fans du haut de quatre classements, selon la part des fans contactés.}}
+    {{FIG:capture_iso|3D|Le dixième de tête de quatre classements sur les trois marchés&nbsp;: gros dépensiers, RFM seul, RFM avec les signaux, et un devin.}}
+    <div class="warn"><b>Un signal réel n'est pas un gain garanti</b><p>Un signal peut être prouvé et ne presque rien changer à la liste du haut. Avant de changer de méthode, rejouer la nouvelle liste sur ses propres mois passés, sur des fans qu'elle n'a pas servi à construire&nbsp;: c'est le backtest, et Lueur a les données pour le faire.</p></div>
+  </section>
+
+  <section id="bonus">
+    <p class="eyebrow">04 · Le petit cadeau</p>
+    <h2>Le premier pas fait presque tout</h2>
+    <p class="lead">Un bonus tiré au sort, même minuscule, a fait agir bien plus de gens&nbsp;; et chaque kilomètre de plus en a perdu.</p>
+    {{ETUDE:bonus}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Avec un bonus, {{th_avec}}&nbsp;% vont chercher leur résultat, contre {{th_sans}}&nbsp;% sans. Chez qui en a reçu un, chaque dollar de plus ajoute {{th_dollar}}&nbsp;points. Le petit bonus (au plus 0,50&nbsp;$) fait passer de {{th_p0}}&nbsp;% à {{th_p1}}&nbsp;%, le grand (plus de 1,50&nbsp;$) n'ajoute ensuite que de quoi atteindre {{th_p2}}&nbsp;%. Chaque kilomètre entre la maison et le centre coûte {{th_km}}&nbsp;points. Les permutations se font dans le village, là où le tirage a été fait. Ailleurs, un paiement trop petit a parfois fait moins bien que rien (Gneezy et Rustichini, 2000)&nbsp;: un cadeau se donne, il ne se négocie pas.</p></details>
+    {{CARTES:L01-L04}}
+    {{FIG:bonus_dose|2D|La part qui va chercher son résultat, par montant de bonus tiré au sort, avec la marge du hasard.}}
+    {{FIG:distance|2D|La même part selon la distance au centre, avec bonus (bleu) et sans (tirets gris).}}
+    {{FIG:bonus_iso|3D|La part qui va chercher son résultat selon le bonus (lignes) et la distance (colonnes)&nbsp;; la rangée grise est celle sans bonus.}}
+    <div class="do"><b>À faire cette semaine</b><p>Pour relancer les fans endormis, joindre un petit cadeau réel (un aperçu, une photo offerte) plutôt qu'une grosse remise. Et compter les étapes entre le message et l'achat&nbsp;: chaque lien, chaque question en trop, chaque attente en enlève une.</p></div>
+  </section>
+
+  <section id="preuve">
+    <p class="eyebrow">05 · Le premier don annoncé</p>
+    <h2>Dire que d'autres ont donné</h2>
+    <p class="lead">Ni l'annonce d'un premier don, ni la promesse de doubler, ni un objectif plus bas ne se détachent de façon sûre sur quelques centaines de lettres.</p>
+    {{ETUDE:preuve}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Les dons suivent {{ro_haut}}&nbsp;% des lettres à objectif de 5&nbsp;000&nbsp;$, {{ro_bas}}&nbsp;% à 2&nbsp;500&nbsp;$, {{ro_annonce}}&nbsp;% avec un premier don annoncé et {{ro_double}}&nbsp;% avec le doublement promis. Les écarts vont dans le sens des paris mais restent dans la marge du hasard&nbsp;: il faudrait {{ro_budget}}&nbsp;lettres par version pour trancher l'annonce, si son effet ne survivait qu'à moitié. Le cahier nº&nbsp;1 avait trouvé, sur Karlan et List, que le doublement fait répondre davantage&nbsp;: ce test, plus petit, ne le contredit pas, il ne peut pas le voir.</p></details>
+    {{CARTES:L05-L09}}
+    {{FIG:rondeau|2D|La part des lettres suivies d'un don pour chaque version tirée au sort, avec la marge du hasard&nbsp;; en gris, les deux lettres sans annonce ni promesse.}}
+    <div class="warn"><b>Une preuve sociale n'est jamais inventée</b><p>«&nbsp;Douze fans ont déjà débloqué cette vidéo&nbsp;» ne s'écrit que si c'est vrai. Un chiffre inventé se découvre, et le fan ne croit plus rien de ce qu'on lui dit.</p></div>
+  </section>
+
+  <section id="defaut">
+    <p class="eyebrow">06 · La case cochée</p>
+    <h2>Ce qui est coché d'avance</h2>
+    <p class="lead">Quand «&nbsp;oui&nbsp;» était coché d'avance, bien plus de foyers ont souscrit&nbsp;; une explication plus longue, elle, n'a rien changé.</p>
+    {{ETUDE:defaut}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">{{cai_oui}}&nbsp;% souscrivent quand «&nbsp;oui&nbsp;» est coché, {{cai_non}}&nbsp;% quand c'est «&nbsp;non&nbsp;». Le format a été tiré au sort par hameau entier ({{cai_hameaux}}&nbsp;hameaux)&nbsp;: la loi nulle mélange donc les hameaux, pas les foyers, sinon elle serait trop étroite. La séance détaillée fait {{cai_det}}&nbsp;% contre {{cai_simple}}&nbsp;% pour la séance simple. Ailleurs, le choix par défaut a fait bouger le don d'organes (Johnson et Goldstein, 2003) et l'épargne retraite (Madrian et Shea, 2001).</p></details>
+    {{CARTES:L10-L11}}
+    {{FIG:defaut|2D|La part des foyers qui souscrivent selon ce qui est coché d'avance (à gauche) et selon la séance (à droite), avec la marge du hasard.}}
+    <div class="warn"><b>Jamais pour un paiement</b><p>En Europe, un paiement supplémentaire exige l'accord exprès du client&nbsp;: une case cochée d'avance ne vaut pas accord, et le fan peut se faire rembourser (directive 2011/83/UE, article&nbsp;22). Le choix par défaut sert pour ce qui ne coûte rien&nbsp;: être prévenu d'un live, recevoir les nouveautés.</p></div>
+  </section>
+
+  <section id="sourire">
+    <p class="eyebrow">07 · Le sourire</p>
+    <h2>Une blague, et parler à hauteur des yeux</h2>
+    <p class="lead">Une blague avec l'addition a fait laisser bien plus de pourboires qu'une publicité&nbsp;; un serveur accroupi a reçu plus qu'un serveur debout.</p>
+    {{ETUDE:sourire}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Avec la carte à blague, {{gu_blague}}&nbsp;% des clients laissent un pourboire, contre {{gu_pub}}&nbsp;% avec la carte publicitaire et {{gu_aucune}}&nbsp;% sans carte. L'écart avec «&nbsp;pas de carte&nbsp;» passe le seuil naïf mais pas le seuil corrigé&nbsp;: {{gu_n}}&nbsp;clients, c'est peu. Accroupi, le serveur reçoit {{ly_acc}}&nbsp;% de l'addition, debout {{ly_debout}}&nbsp;% ({{ly_n}}&nbsp;tables, permutations dans le service). Ce sont deux petites expériences, dans deux restaurants&nbsp;: des pistes solides, pas des lois.</p></details>
+    {{CARTES:L12-L14}}
+    {{FIG:blague|2D|La part des clients qui laissent un pourboire selon la carte qui accompagne l'addition, avec la marge du hasard.}}
+    {{FIG:posture|2D|Le pourboire de chaque table, serveur debout (gris) ou accroupi (bleu)&nbsp;; le trait marque la moyenne du groupe.}}
+    <div class="do"><b>À faire cette semaine</b><p>Pour demander un pourboire en live ou en message, une phrase drôle et propre à la créatrice plutôt qu'un message promotionnel&nbsp;; et parler au fan d'égal à égal, avec son prénom et ce qu'il aime. Le chatteur ne se fait jamais passer pour elle.</p></div>
+  </section>
+
+  <section id="agir">
+    <p class="eyebrow">08 · Par où commencer</p>
+    <h2>Les gestes de la semaine</h2>
+    {{ETUDE:agir}}
+    <p class="lead">{{n_moins_mois}} leviers de ce cahier se revérifient en moins d'un mois dans une agence qui envoie {{envois_semaine}}&nbsp;messages par version et par semaine.</p>
+    <ol class="steps">
+      <li><div><b>Lire le rythme de chaque fan</b><p>Chaque semaine, la liste des fans dont les écarts entre achats raccourcissent&nbsp;: ce sont eux qu'un chatteur soigne en premier.</p></div></li>
+      <li><div><b>Garder RFM comme base</b><p>Les signaux affinent la liste habituelle&nbsp;; ils ne la remplacent pas. Une rafale ou un gros achat isolé ne suffit pas à monter en tête.</p></div></li>
+      <li><div><b>Un petit cadeau réel</b><p>Pour réveiller un fan, un petit plus offert plutôt qu'une grosse remise&nbsp;: le premier pas fait presque tout.</p></div></li>
+      <li><div><b>Une étape de moins</b><p>Compter les clics et les attentes entre le message et l'achat, et en retirer un.</p></div></li>
+      <li><div><b>Le bon défaut, le bon ton</b><p>Cocher d'avance ce qui ne coûte rien (être prévenu d'un live), jamais un paiement&nbsp;; demander avec le sourire, d'égal à égal.</p></div></li>
+    </ol>
+    {{FIG:budget3|2D|Semaines de test pour revérifier chez soi chaque levier établi qui se mesure comme un taux, si un message vend à {{p_agence}}&nbsp;% et si l'effet ne survit qu'à moitié au transfert.}}
+  </section>
+
+  <section id="ailleurs">
+    <p class="eyebrow">09 · Ailleurs</p>
+    <h2>Ce que d'autres ont établi</h2>
+    {{ETUDE:ailleurs}}
+    <details class="curieux"><summary>Pour les curieux : les détails de l'étude</summary><p class="p">Ces études ne se rejouent pas sur nos {{n_marches}} marchés. La finance a appris à ses dépens qu'un signal publié s'use et que la plupart ne tiennent pas quand on les refait&nbsp;: c'est la raison des lois nulles, des seuils corrigés et du backtest de ce cahier.</p></details>
+    {{AILLEURS}}
+  </section>
+
+  <section id="faux">
+    <p class="eyebrow">10 · Ne tient pas</p>
+    <h2>Ce que les données ne montrent pas</h2>
+    {{ETUDE:faux}}
+    {{FAUX}}
+  </section>
+
+  <section id="registre">
+    <p class="eyebrow">Annexe · Le registre</p>
+    <h2>Les {{n_hyp}} hypothèses</h2>
+    <p class="p">Toutes, dans l'ordre du registre, avec la mesure déclarée avant calcul. Touche une ligne pour ses chiffres.</p>
+    <div class="filtres" role="group" aria-label="Filtrer par verdict">
+      <button type="button" data-fv="tous" aria-pressed="true">Toutes</button>
+      <button type="button" data-fv="ok" aria-pressed="false">Tient</button>
+      <button type="button" data-fv="ko" aria-pressed="false">Contraire</button>
+      <button type="button" data-fv="nul" aria-pressed="false">Non établi</button>
+    </div>
+    <div class="filtres" role="group" aria-label="Filtrer par famille">
+      <button type="button" data-ff="tous" aria-pressed="true">Toutes familles</button>
+      <button type="button" data-ff="S" aria-pressed="false">Signaux</button>
+      <button type="button" data-ff="L" aria-pressed="false">Leviers</button>
+    </div>
+    <p class="compte" id="compte" aria-live="polite">{{n_hyp}} hypothèses affichées</p>
+    <div class="regs" id="regs">{{REGISTRE}}</div>
+  </section>
+
+  <section id="sources">
+    <p class="eyebrow">Annexe · Sources</p>
+    <h2>D'où viennent les chiffres</h2>
+    <p class="p"><strong>Limites.</strong> Aucun des {{n_marches}} marchés n'est une page de créatrice&nbsp;: un disquaire, un grossiste, une enseigne, et cinq expériences menées loin de l'OFM, de 1993 à 2019. Les signaux montrent des liens, pas des causes&nbsp;; seules les cinq expériences sont tirées au sort. C'est pourquoi le cahier s'arrête au budget d'un test et ne promet aucun gain.</p>
+    <details class="fold"><summary>Références ({{n_refs}})</summary>{{SOURCES}}</details>
+    <details class="fold"><summary>Provenance des données</summary>{{PROVENANCE}}</details>
+    <div class="colophon">
+      <p>Aucun nombre calculé de cette page n'est écrit à la main&nbsp;: tous sortent des modules du dossier <code>ofm/</code> du dépôt ALP (<code>registre3</code>, <code>signaux</code>, <code>leviers</code>, <code>synthese3</code>). Les nombres de la partie «&nbsp;Ailleurs&nbsp;» sont ceux des études citées.</p>
+      <p>Ce cahier n'est ni un avis juridique, ni un conseil financier, ni une promesse de résultat.</p>
+    </div>
+  </section>
+
+</main>
+
+{{COMMUN}}

@@ -1,0 +1,19 @@
+{
+ "obp": {
+  "chemin": "obd/",
+  "commit": "8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4",
+  "depot": "https://github.com/st-tech/zr-obp",
+  "extrait": "obp.csv.gz",
+  "sha256_brut": [
+   "7168295b6e0a9eabcf3392320a5dd434e542b68e705d5cd9491499af589812f1",
+   "ede6d08c6877f99cd3770f7d09e26c738e6aa6de4445ccccfb1356ba5d06b1eb",
+   "e65f3bd3beb17664fa69cc129bf7bf852a775f8ffa630506e505fc905315bb34",
+   "0ad874e4dbf6902f0845dd478ad8dde5ef6903583d3ffaace78411bdad064106",
+   "db6d1f7ed2d591ba521533e45286d4c1fba7fe57a8ad2e80342210335f43c527",
+   "e5d1b49a39b608585a2f3014a3f54970430cd37a495c1b73fceb85cdf428a5b8"
+  ],
+  "sha256_extrait": "cc085cbed202668af150964d6e86e49e65584eb3aaf87265805be3cc95aff232",
+  "titre": "Open Bandit Dataset, échantillon public (Saito et al. ; ZOZOTOWN, 24–30 nov. 2019)",
+  "unite": "impression : politique tirée au sort (Thompson ou hasard), article montré, clic"
+ }
+}
