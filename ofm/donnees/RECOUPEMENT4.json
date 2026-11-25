@@ -1,0 +1,79 @@
+{
+ "bandit": {
+  "cas": [
+   {
+    "campagne": "all",
+    "fisher": 0.7370453055237607,
+    "nous": 0.735
+   },
+   {
+    "campagne": "men",
+    "fisher": 0.039183888725511845,
+    "nous": 0.043
+   },
+   {
+    "campagne": "women",
+    "fisher": 1.0,
+    "nous": 1.0
+   }
+  ],
+  "ecart_max": 0.0038161112744881515,
+  "reference": "scipy.stats.fisher_exact (bilatéral)"
+ },
+ "bh": {
+  "cas": 2000,
+  "ecart_max": 2.220446049250313e-16,
+  "reference": "statsmodels.multipletests(fdr_bh)"
+ },
+ "binomial": {
+  "cas": 38,
+  "ecart_max": 1.7574830479816228e-13,
+  "reference": "scipy.stats.binomtest(two-sided)"
+ },
+ "cscv": {
+  "cas": 12,
+  "ecart_pbo_max": 0.0,
+  "ecart_perte_max": 0.0,
+  "reference": "seconde écriture vectorisée (numpy) de Bailey et al. (2017)"
+ },
+ "dsr": {
+  "cas": 300,
+  "ecart_max": 9.992007221626409e-16,
+  "reference": "seconde écriture avec scipy (skew, kurtosis, norm)"
+ },
+ "holm": {
+  "cas": 2000,
+  "ecart_max": 0.0,
+  "reference": "statsmodels.multipletests(holm)"
+ },
+ "khi2": {
+  "cas": 125,
+  "ecart_max": 0.004203936515758122,
+  "reference": "scipy.stats.chi2.sf"
+ },
+ "mco": {
+  "coefficients": 10,
+  "ecart_max": 8.916478666520788e-16,
+  "reference": "numpy.linalg.lstsq"
+ },
+ "normale": {
+  "Phi_ecart_max": 2.220446049250313e-16,
+  "Phi_inv_ecart_max": 7.363532006365858e-09,
+  "reference": "scipy.stats.norm"
+ },
+ "spa": {
+  "accord_5pct": 1.0,
+  "cas": 60,
+  "correlation": 0.9988126464533978,
+  "ecart_max": 0.07407407407407407,
+  "ecart_moyen": 0.01032087087087087,
+  "reference": "arch.bootstrap.SPA (consistent, stationnaire, blocs de 1)"
+ },
+ "versions": {
+  "arch": "9.0.0",
+  "numpy": "2.5.5",
+  "python": "3.13.18",
+  "scipy": "1.18.1",
+  "statsmodels": "0.15.0"
+ }
+}
