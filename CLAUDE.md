@@ -219,9 +219,16 @@ S01–S07 existent aussi au nº 1 : un id se lit avec son cahier. **Piège corri
 `minmax(0, 1fr)` (le bouton « Chercher » élargissait l'espace, le dock sortait de l'écran ; les trois cahiers
 reconstruits). Artefact : https://claude.ai/artifact/ToCxEkyw8EHWwC4JHD12NG (v1).
 
-**Cahier nº 4 (en cours, 25 nov.)** : « étudie le marché, trouve un edge que la concurrence n'a pas pris, en
-tenant compte de ceux qui ont pensé comme toi (et de ceux qui l'ont prévu), vérifié par tous les stress tests ; plan +
-formation en fichier ». **Lire `docs/ofm/demande-cahier-4.md` (section AVANCEMENT) avant d'y toucher.**
+**Cahier nº 4 « La méthode, et non l'astuce »** (25 nov., demande : `docs/ofm/demande-cahier-4.md`) : `python -m
+ofm.mobile4` → `docs/ofm/cahier-4-mobile.html`, 25 hypothèses commitées avant le calcul (`registre4.py`, `8f69441`), une
+batterie de 13 tests de quants (`stress.py`, étalonnée sur vérité connue et recoupée avec statsmodels, scipy, numpy et
+arch), une arène de 200 agences en niveaux (`arene.py`). **Une seule idée survit à toute la batterie : l'accélération
+sur X5 (R03).** Apprendre chez soi (A03, A05, A09) ne rate que l'arène, par son coût (74 % des tirages), pas par l'usure ;
+la règle des gros dépensiers fait pire que le hasard sur X5 (A12). Plan en 8 étapes + formation en 16 leçons
+(`formation4.py`). Calculs rangés avec empreinte dans `ofm/donnees/CALCUL4.json` (`calcul4.py`, ≈ 17 min si l'empreinte
+change). **Piège trouvé : le jeu Lenta n'est pas équilibré** (z = 68 sur la réponse passée aux SMS) : verdicts Lenta du
+nº 2 à revoir. 30 tests (`python -m unittest ofm.tests.test_ofm4`). Livré en fichier dans la conversation (demande de
+l'utilisateur), pas encore publié en artefact ni intégré à Lueur. Lire `ofm/README.md` avant d'y toucher.
 
 ## Mémoire détaillée — à lire À LA DEMANDE, pas en bloc
 

@@ -42,13 +42,21 @@ finit toujours par « comment le vérifier chez soi » (groupe témoin).
 
 ## AVANCEMENT
 - [x] Demande écrite (ce fichier).
-- [x] Études et chiffres du marché vérifiés (recherches du 25 nov. ; module `ofm/litterature4.py` à écrire).
+- [x] Études et chiffres du marché vérifiés (`ofm/litterature4.py`, recherches du 25 nov.).
 - [x] Registre nº 4 écrit et commité **avant** tout calcul (`ofm/registre4.py`, 25 tests + 4 affirmations de l'arène).
-- [ ] Batterie de stress (`ofm/stress.py`) étalonnée sur vérité connue.
-- [ ] Outils recoupés avec les références (`ofm/donnees/RECOUPEMENT4.json`).
-- [ ] Avances testées sur données réelles (`ofm/avances.py`, nouveau jeu : Open Bandit Dataset, échantillon GitHub).
-- [ ] Arène (`ofm/arene.py`).
-- [ ] Synthèse et verdicts (`ofm/synthese4.py`).
-- [ ] Plan et formation (`ofm/formation4.py`, `ofm/clair4.py`).
-- [ ] Page, graphiques, tests (`ofm/figmobile4.py`, `ofm/mobile4.py`, `ofm/tests/test_ofm4.py`).
-- [ ] Fichier livré, mémoire à jour, poussé.
+- [x] Batterie de stress (`ofm/stress.py`) étalonnée sur vérité connue.
+- [x] Outils recoupés avec les références (`ofm/donnees/RECOUPEMENT4.json`).
+- [x] Avances testées sur données réelles (`ofm/avances.py`, nouveau jeu : Open Bandit Dataset, échantillon GitHub).
+- [x] Arène (`ofm/arene.py`).
+- [x] Synthèse et verdicts (`ofm/synthese4.py`).
+- [x] Plan et formation (`ofm/formation4.py`, `ofm/clair4.py`).
+- [x] Page, graphiques, tests (`ofm/figmobile4.py`, `ofm/mobile4.py`, `ofm/tests/test_ofm4.py`).
+- [x] Fichier livré, mémoire à jour, poussé.
+
+## RÉSULTAT (25 nov.)
+12 tiennent, 1 contraire, 12 non établies ; **une seule idée survit à toute la batterie : l'accélération sur X5 (R03)**.
+Trois ne ratent qu'un test (A03, A05, A09 : l'arène ; R01 : le Sharpe dégonflé ; A12 : les autres marchés). L'arène :
+un coup d'avance bat la mode dans 74,75 % des tirages (seuil 90 %), sans usure quand les autres copient ; aucune
+stratégie ne mène une agence moyenne au premier centile en 36 mois. Le placebo a trouvé que Lenta n'est pas équilibré.
+Suite possible (non demandée) : intégrer la page à Lueur (`/etudes`, `scripts/etudes/sync.mjs`) ; revoir les verdicts
+Lenta du nº 2.

@@ -106,6 +106,29 @@ sources vérifiées le 23 nov. dans `litterature3.py`. Lecture rangée sous
 S07 existent aussi au nº 1 (speed dating) : un identifiant se lit toujours
 avec son cahier.
 
+**Cahier nº 4** — `docs/ofm/cahier-4-mobile.html` (gabarit `docs/ofm/cahier-4-mobile.template.html`,
+`python -m ofm.mobile4`), *La méthode, et non l'astuce* : la demande « une avance que la concurrence n'a pas prise, en
+tenant compte de ceux qui ont pensé comme toi et de ceux qui l'ont prévu, vérifiée par tous les stress tests, plan et
+formation » (`docs/ofm/demande-cahier-4.md`). 25 hypothèses dans `registre4.py`, **commitées avant tout calcul**
+(`8f69441`), sa propre famille BH ; puis une **batterie de 13 tests** (`stress.py` : loi nulle, BH, Holm, t ≥ 3, autres
+coupes, autres marchés, courbe de spécification, CSCV/PBO, SPA de Hansen, placebo, temps, Sharpe dégonflé, arène) ; une
+idée **survit** si elle tient et passe chaque test qui s'applique (un test sans objet n'est jamais compté réussi).
+Familles : A apprendre chez soi (`avances.py`, Hillstrom, Lenta, X5 : politique apprise sur un pilote contre les règles de
+la foule), B le bandit (`bandit.py`, Open Bandit Dataset, nouveau jeu `donnees4.py`), K la foule et les pionniers
+(`foule.py`, Kickstarter), W les baleines (`baleines.py`), R l'accélération revérifiée (`revisite.py`). L'**arène**
+(`arene.py`) : 200 agences de niveaux tirés selon Camerer et al., imitation, créatrices, AI Act ; 18 paramètres en
+hypercube latin, 400 tirages × 4 stratégies, ρ calés sur la famille A. Résultat : 12 tiennent, 1 contraire, 12 non
+établies, **une seule survit (R03, l'accélération sur X5)** ; A03, A05, A09 ne ratent que l'arène (coût, pas usure :
+74 % des tirages devant la mode, que 10 % ou 90 % des rivaux copient), R01 ne rate que le Sharpe dégonflé, A12 (la mode
+pire que le hasard sur X5) que les autres marchés. Plan en 8 étapes et formation en 16 leçons (`formation4.py`), textes
+figés devant `VERDICTS_ECRITS` et `SURVIE_ECRITE` (`clair4.py`). 21 graphiques (6 en 3D, `figmobile4.py`).
+
+- **Les calculs sont rangés** dans `ofm/donnees/CALCUL4.json` avec l'empreinte SHA-256 des modules et des extraits
+  (`calcul4.py`) : un octet changé, tout se recalcule (≈ 17 min). L'étalonnage sur vérité connue est dans
+  `ETALONNAGE4.json` (`python -m ofm.etalonnage4`, ≈ 10 min), le recoupement avec statsmodels, scipy, numpy et arch dans
+  `RECOUPEMENT4.json` (`docs/ofm/recouper4.py`, à lancer dans un environnement à part : le dépôt reste en bibliothèque
+  standard).
+
 ## Commandes
 
 ```
@@ -126,6 +149,11 @@ python -m ofm.signaux           # les 17 signaux, chiffres bruts ; python -m ofm
 python -m ofm.donnees3 [jeux]   # rejoue l'extraction du nº 3 (bruts dans OFM_BRUT3 et OFM_BRUT2)
 python -m unittest ofm.tests.test_ofm3                         # 32 tests, ≈ 2 min
 node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-3-mobile.html # profil du nº 3
+python -m ofm.calcul4            # cahier nº 4 : tous les calculs, si l'empreinte a changé (--force : tout)
+python -m ofm.synthese4          # les 25 verdicts du nº 4 et la batterie test par test
+python -m ofm.mobile4            # cahier nº 4 et cahier-4-valeurs.json (≈ 15 s avec CALCUL4.json à jour)
+python -m unittest ofm.tests.test_ofm4                         # 30 tests, ≈ 15 s
+node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-4-mobile.html # profil du nº 4
 node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-2-mobile.html # même parcours, profil du nº 2
 node docs/ofm/parcours-mobile.cjs docs/ofm/la-personne-mobile.html   # 23 gestes vérifiés
 INTER=<woff2 Inter> node docs/ofm/balayage-mobile.cjs docs/ofm/la-personne-mobile.html <sortie> 390 360 430 768
@@ -274,6 +302,13 @@ CraigslistBargain, `choisir` speed dating, `revenir` CDNOW + BG/NBD/BG/BB,
 - **Un résultat contraire ne devient pas une règle sur un seul marché.** Le
   fidèle silencieux du nº 1 (R02) ne se retrouve pas sur Online Retail II
   (G02 non établi, G03 contraire : le modèle y surestime les silencieux).
+
+- **Lenta n'est pas tiré au sort comme on le croyait.** Le placebo du nº 4 (A02, A08) a fait « changer » le sexe des
+  clients par le SMS : les deux groupes diffèrent avant l'envoi (z = 9 sur le sexe, z = 68 sur la réponse passée aux
+  SMS, `equilibre4.py`), alors que Hillstrom et X5 sont équilibrés. Les verdicts du nº 2 tirés de Lenta (E08 à E12, C04
+  à C06, M02) sont à revoir.
+- **Une légende de graphique qui cite une valeur coupait sa balise.** `{{FIG:…|…{{tau}}…}}` : la fin « }} » de la
+  valeur fermait la balise. `mobile4.build` remplace les valeurs avant les graphiques.
 
 ## Vérifier le rendu
 

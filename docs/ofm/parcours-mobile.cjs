@@ -2,6 +2,7 @@
 // Usage : node docs/ofm/parcours-mobile.cjs docs/ofm/la-personne-mobile.html
 //         node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-2-mobile.html   (profil du cahier nº 2)
 //         node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-3-mobile.html   (profil du cahier nº 3)
+//         node docs/ofm/parcours-mobile.cjs docs/ofm/cahier-4-mobile.html   (profil du cahier nº 4)
 // Couvre : espace → tuile → repère → pied (sujet lu) → retour à l'espace (même place) → recherche
 // (geste retour, résultat ailleurs, résultat dans le sujet ouvert) → dock Suivant → reprise après
 // rechargement → remise à zéro → lien direct vers un sujet → page sans JavaScript.
@@ -22,8 +23,11 @@ const PROFILS = {
   3: { cle: 'ofm-cahier3', tuile: 'signaux', titre: 'Les signaux', mot: 'distance', ou: '04 · Le petit cadeau', vueMot: 'bonus',
        tuile2: 'backtest', mot2: 'devin', ou2: '03 · Le backtest', suivant: 'bonus', repNom: 'Le petit cadeau',
        direct: 'defaut', reprise: 'sourire' },
+  4: { cle: 'ofm-cahier4', tuile: 'apprendre', titre: 'Apprendre chez soi', mot: 'pionniers', ou: '06 · La foule', vueMot: 'foule',
+       tuile2: 'bandit', mot2: 'thompson', ou2: '05 · Le bandit', suivant: 'foule', repNom: 'La foule',
+       direct: 'arene', reprise: 'plan' },
 };
-const P = PROFILS[/cahier-3/.test(doc) ? 3 : /cahier-2/.test(doc) ? 2 : 1];
+const P = PROFILS[/cahier-4/.test(doc) ? 4 : /cahier-3/.test(doc) ? 3 : /cahier-2/.test(doc) ? 2 : 1];
 let echecs = 0;
 const verifier = (cond, quoi, detail) => {
   console.log((cond ? 'ok   ' : 'ÉCHEC') + ' ' + quoi + (cond ? '' : ' — ' + JSON.stringify(detail)));

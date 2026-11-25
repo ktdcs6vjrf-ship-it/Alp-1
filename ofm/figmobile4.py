@@ -119,7 +119,7 @@ def m_niveaux() -> str:
         f.text(ax.sx(k), ax.sy(v) - 6, _pct(v), "t-val", "middle")
     for k, nom in enumerate(noms):
         f.text(ax.sx(k), ax.y + ax.h + 15, f"niveau {k}" + ("+" if k == 3 else ""), "t-ax", "middle")
-        f.text(ax.sx(k), ax.y + ax.h + 30, nom.replace("Un coup", "1 coup"), "t-sub", "middle")
+        f.text(ax.sx(k), ax.y + ax.h + 30, ("le guide", "la mode", "1 coup", "trop")[k], "t-sub", "middle")
     return f.render()
 
 
@@ -161,7 +161,7 @@ def m_a_spec3d() -> str:
     cols = [f"{_num(bu * 100, 0)} %" for bu in R4.BUDGETS]
     sc, lo, hi = _grille_iso(z, rows, cols, lambda v: _pt(v), "pour 100 clients")
     f = Fig(300, "Blocs isometriques de l ecart entre la politique apprise et le hasard selon le pilote et la part ecrite")
-    bas = sc.rendre(f, 0, 0, W, 270)
+    bas = sc.rendre(f, 0, 0, W - 14, 270)
     f.text(0, bas + 20, f"de {_pt(lo)} à {_pt(hi)} pour 100 clients · X5", "t-sub")
     f.h = bas + 28
     return f.render()
@@ -186,8 +186,8 @@ def m_a_spec() -> str:
             cls = "m-dot-b" if (p < 0.05 and d > 0) else ("m-dot-r" if (p < 0.05 and d < 0) else "m-dot-g")
             ax.dot(k, d, cls, tip=f"{MARCHE[R4.par_id()[i].jeu]} : réglage {k + 1}, {_pt(d)} pour 100 clients", r=2.8)
         y += haut + 34
-    _legende(f, y, [("m-ok", "significatif, dans le sens"), ("m-nul", "dans le bruit"), ("m-ko", "significatif, à l’envers")])
-    f.h = y + 12
+    _legende(f, y, [("m-ok", "net, bon sens"), ("m-nul", "dans le bruit"), ("m-ko", "net, à l’envers")])
+    f.h = y + 30
     return f.render()
 
 
@@ -236,11 +236,19 @@ def m_batterie3d() -> str:
                 sc.bloc(0, k * pas, taille, taille, nb * unite, tone, z=z0, ghost=ghost, tip=f"{R4.FAMILLES[fa]} : {nb} {etat}")
                 z0 += nb * unite
         surv = sum(1 for i in ids if synthese4.bilan(i)["survit"])
-        sc.texte(taille, k * pas + taille / 2, 0, f"{R4.FAMILLES[fa]} · {surv}/{len(ids)}", "t-lab", "start", dx=10, dy=6)
-    f = Fig(330, "Colonnes isometriques des tests passes et echoues par famille")
-    bas = sc.rendre(f, 0, 0, W, 296)
-    _legende(f, bas + 22, [("m-ok", "passe"), ("m-ko", "échoue"), ("m-nul", "sans objet")])
-    f.h = bas + 32
+        sc.texte(taille, k * pas + taille / 2, 0, fa, "t-lab", "start", dx=10, dy=6)
+    f = Fig(360, "Colonnes isometriques des tests passes et echoues par famille")
+    bas = sc.rendre(f, 0, 0, W - 12, 280)
+    cles = []
+    for fa in fams:
+        ids = [i for i in synthese4.tous() if i.startswith(fa)]
+        surv = sum(1 for i in ids if synthese4.bilan(i)["survit"])
+        court = {"A": "Apprendre", "B": "Bandit", "K": "Foule", "W": "Baleines", "R": "Accélération"}[fa]
+        cles.append(f"{fa} {court} {surv}/{len(ids)}")
+    f.text(0, bas + 18, " · ".join(cles[:3]), "t-sub")
+    f.text(0, bas + 34, " · ".join(cles[3:]) + " survivent", "t-sub")
+    _legende(f, bas + 56, [("m-ok", "passe"), ("m-ko", "échoue"), ("m-nul", "sans objet")])
+    f.h = bas + 66
     return f.render()
 
 
@@ -295,17 +303,21 @@ def m_k_pionniers() -> str:
     vals.sort()
     lo = min(v for v, *_ in vals) * 1.1
     hi = max(v for v, *_ in vals) * 1.1
-    f = Fig(250, "Ecart pionniers moins suivants par pays avec le vrai jour d ouverture et un faux jour un an plus tard")
+    f = Fig(262, "Ecart pionniers moins suivants par pays avec le vrai jour d ouverture et un faux jour un an plus tard")
     ax = Axes(f, 40, 22, W - 50, 170, -0.5, len(vals) - 0.5, lo, hi)
     ax.grid_y(_graduations(lo, hi, 3), lambda t: _num(t, 0), "points de réussite, témoin américain retiré")
     ax.hline(0, "m-axis")
     for k, (v, pays, n) in enumerate(vals):
         ax.dot(k, v, "m-dot-g", tip=f"{pays} : {_pt(v, 1)} point ({n} pionnières)", r=3.2)
-        f.text(ax.sx(k), ax.y + ax.h + 13, pays, "t-ax", "middle")
+        f.text(ax.sx(k), ax.y + ax.h + (13 if k % 2 == 0 else 26), pays, "t-ax", "middle")
     ax.hline(c["d"], "m-line-b")
     ax.hline(pl["d"], "m-line-r")
-    f.text(ax.x + 2, ax.sy(c["d"]) - 5, f"vraie ouverture {_pt(c['d'], 1)}", "t-sub")
-    f.text(ax.x + ax.w, ax.sy(pl["d"]) + 13, f"fausse ouverture {_pt(pl['d'], 1)}", "t-sub", "end")
+    # Chaque étiquette se pose du côté où aucune autre ligne ne passe.
+    haut, bas = (pl, c) if pl["d"] > c["d"] else (c, pl)
+    f.text(ax.x + ax.w, ax.sy(haut["d"]) - 5,
+           ("fausse" if haut is pl else "vraie") + f" ouverture {_pt(haut['d'], 1)}", "t-sub", "end")
+    f.text(ax.x + 2, ax.sy(bas["d"]) + 13,
+           ("fausse" if bas is pl else "vraie") + f" ouverture {_pt(bas['d'], 1)}", "t-sub")
     return f.render()
 
 
@@ -313,8 +325,8 @@ def m_k_pionniers() -> str:
 def m_w_baleines() -> str:
     jeux = ("cdnow", "retail", "x5")
     B = calcul4.charger()["baleines"]
-    f = Fig(150, "Part des baleines de demain qui etaient deja baleines sur trois marches")
-    ax = Axes(f, 70, 10, W - 82, 3 * 32, 0, 1, -0.5, 2.5)
+    f = Fig(170, "Part des baleines de demain qui etaient deja baleines sur trois marches")
+    ax = Axes(f, 70, 10, W - 92, 3 * 32, 0, 1, -0.5, 2.5)
     for k, jeu in enumerate(jeux):
         m = B[jeu][str(R4.BALEINE)]
         y = 2 - k
@@ -325,8 +337,8 @@ def m_w_baleines() -> str:
         f.text(ax.sx(deja) - 6, ax.sy(y) + 4, _pct(deja), "t-val", "end")
     ax.vline(0.5, "m-seuil")
     ax.ticks_x([0, 0.25, 0.5, 0.75, 1], lambda t: _pct(t), "part des baleines de la validation")
-    _legende(f, 146, [("m-bar", "déjà baleines"), ("m-bar2", "nouvelles")])
-    f.h = 158
+    _legende(f, 162, [("m-bar", "déjà baleines"), ("m-bar2", "nouvelles")])
+    f.h = 172
     return f.render()
 
 
@@ -338,7 +350,7 @@ def m_w3d() -> str:
     sc, lo, hi = _grille_iso(z, [MARCHE[j] for j in jeux], [f"tête {_num(q * 100, 1)} %" for q in R4.W_PARTS],
                              lambda v: _pct(v), "déjà baleines")
     f = Fig(290, "Blocs isometriques de la part des baleines qui l etaient deja selon le marche et la taille de la tete")
-    bas = sc.rendre(f, 0, 0, W, 262)
+    bas = sc.rendre(f, 0, 0, W - 14, 262)
     f.text(0, bas + 20, f"de {_pct(lo)} à {_pct(hi)} déjà baleines", "t-sub")
     f.h = bas + 28
     return f.render()
@@ -378,7 +390,7 @@ def m_r3d() -> str:
     sc, lo, hi = _grille_iso(z, [MARCHE[j] for j in jeux], [noms[d] for d in R4.R_DEFINITIONS],
                              lambda v: _pt(v, 3), "d’IC partiel")
     f = Fig(280, "Blocs isometriques de l effet de l acceleration selon le marche et sa definition")
-    bas = sc.rendre(f, 0, 0, W, 252)
+    bas = sc.rendre(f, 0, 0, W - 14, 252)
     f.text(0, bas + 20, f"de {_pt(lo, 3)} à {_pt(hi, 3)} d’IC partiel, toujours positif", "t-sub")
     f.h = bas + 28
     return f.render()
@@ -392,7 +404,7 @@ def m_r3d() -> str:
 def m_arene_rangs() -> str:
     j = calcul4.charger()["arene"]["jouer"]
     f = Fig(200, "Rang final de l agence selon sa strategie sur quatre cents tirages de l arene")
-    ax = Axes(f, 120, 10, W - 132, 4 * 34, 0, 1, -0.5, 3.5)
+    ax = Axes(f, 120, 10, W - 142, 4 * 34, 0, 1, -0.5, 3.5)
     for k, (s, nom) in enumerate(R4.STRATEGIES.items()):
         r = sorted(t[s]["rang"] for t in j)
         q1, q2, q3 = r[len(r) // 4], r[len(r) // 2], r[3 * len(r) // 4]
@@ -427,8 +439,8 @@ NOM_PARAM = {
 @_fig("arene_tornade")
 def m_arene_tornade() -> str:
     top = _influents()[:8]
-    f = Fig(len(top) * 26 + 56, "Part des tirages ou un coup d avance bat la mode quand chaque parametre est bas ou haut")
-    ax = Axes(f, 150, 10, W - 160, len(top) * 26, 0, 1, -0.5, len(top) - 0.5)
+    f = Fig(len(top) * 26 + 76, "Part des tirages ou un coup d avance bat la mode quand chaque parametre est bas ou haut")
+    ax = Axes(f, 150, 10, W - 170, len(top) * 26, 0, 1, -0.5, len(top) - 0.5)
     for k, (p, bas, haut) in enumerate(top):
         y = len(top) - 1 - k
         _seg(ax, bas, y, haut, y, "m-ci")
@@ -437,8 +449,8 @@ def m_arene_tornade() -> str:
         f.text(ax.x - 8, ax.sy(y) + 4, NOM_PARAM[p], "t-ax", "end")
     ax.vline(R4.SEUIL_ARENE, "m-seuil")
     ax.ticks_x([0, 0.25, 0.5, 0.75, 1], lambda t: _pct(t), "tirages où le niveau 2 bat la mode")
-    _legende(f, len(top) * 26 + 50, [("m-nul", "paramètre bas"), ("m-ok", "paramètre haut")])
-    f.h = len(top) * 26 + 60
+    _legende(f, len(top) * 26 + 70, [("m-nul", "paramètre bas"), ("m-ok", "paramètre haut")])
+    f.h = len(top) * 26 + 80
     return f.render()
 
 
@@ -457,13 +469,14 @@ def m_arene3d() -> str:
         n[a][b] += 1
         z[a][b] += t[2]["rang"] > t[1]["rang"]
     z = [[max(z[a][b] / n[a][b], 0.02) if n[a][b] else 0.02 for b in range(k)] for a in range(k)]
-    rows = [f"{NOM_PARAM[p1]} {q + 1}/5" if q in (0, k - 1) else "" for q in range(k)]
+    rows = [f"{q + 1}/5" for q in range(k)]
     cols = [f"{q + 1}/5" for q in range(k)]
-    sc, lo, hi = _grille_iso(z, rows, cols, lambda v: _pct(v), "des tirages")
-    f = Fig(300, "Blocs isometriques de la part des tirages ou le niveau deux bat la mode selon les deux parametres les plus influents")
-    bas = sc.rendre(f, 0, 0, W, 262)
-    f.text(0, bas + 18, f"colonnes : {NOM_PARAM[p2]}, du plus bas (1/5) au plus haut (5/5)", "t-sub")
-    f.h = bas + 26
+    sc, lo, hi = _grille_iso(z, rows, cols, lambda v: _pct(v), "des tirages", hmax=150.0)
+    f = Fig(330, "Blocs isometriques de la part des tirages ou le niveau deux bat la mode selon les deux parametres les plus influents")
+    bas = sc.rendre(f, 0, 0, W - 14, 280)
+    f.text(0, bas + 18, f"à droite : {NOM_PARAM[p1]}, de 1/5 (bas) à 5/5 (haut)", "t-sub")
+    f.text(0, bas + 34, f"à gauche : {NOM_PARAM[p2]}, de 1/5 à 5/5", "t-sub")
+    f.h = bas + 42
     return f.render()
 
 
@@ -476,12 +489,17 @@ def m_arene_part() -> str:
         rangs = sorted(t[s]["rang"] for t in j)
         pts.append((parts[len(parts) // 2], rangs[len(rangs) // 2], nom, s))
     hx = max(p for p, *_ in pts) * 1.3
-    f = Fig(230, "Part des creatrices captee et rang de profit median pour chaque strategie")
-    ax = Axes(f, 44, 16, W - 60, 160, 0, hx, 0.3, 0.7)
-    ax.grid_y([0.3, 0.4, 0.5, 0.6, 0.7], lambda t: _pct(t), "rang de profit médian")
+    f = Fig(244, "Part des creatrices captee et rang de profit median pour chaque strategie")
+    ax = Axes(f, 44, 30, W - 60, 160, 0, hx, 0.3, 0.7)
+    ax.grid_y([0.4, 0.5, 0.6, 0.7], lambda t: _pct(t), "rang de profit médian")
     for p, r, nom, s in pts:
         ax.dot(p, r, "m-dot-b" if s == 2 else "m-dot", tip=f"{nom} : {_pct(p, 2)} des créatrices, rang {_pct(r)}", r=5)
-        f.text(ax.sx(p) + 8, ax.sy(r) + 4, nom, "t-lab")
+        # Le guide et la mode tombent l'un près de l'autre : le guide se lit au-dessus, la mode à gauche.
+        dy = {0: -9}.get(s, 4)
+        if s == 1 or ax.sx(p) + 8 + 6.9 * len(nom) > W - 4:
+            f.text(ax.sx(p) - 8, ax.sy(r) + dy, nom, "t-lab", "end")
+        else:
+            f.text(ax.sx(p) + 8, ax.sy(r) + dy, nom, "t-lab")
     ax.ticks_x(_graduations(0, hx, 3), lambda t: _pct(t, 2), "part des créatrices à 36 mois (médiane)")
     return f.render()
 
@@ -493,20 +511,21 @@ def m_arene_part() -> str:
 @_fig("etalonnage")
 def m_etalonnage() -> str:
     e = etalonnage()
-    rows = [("Holm, 25 tests nuls", e["holm"]["holm"], e["holm"]["sans_correction"]),
-            ("Sharpe dégonflé, 10 essais", e["dsr"]["dsr"], e["dsr"]["sans_correction"]),
-            ("SPA, 12 réglages nuls", e["spa_nul"]["spa"], None),
-            ("Politique apprise, effet partout égal", e["a_nul"]["conclut"], None)]
+    rows = [("Holm (25 tests)", e["holm"]["holm"], e["holm"]["sans_correction"]),
+            ("Sharpe dégonflé", e["dsr"]["dsr"], e["dsr"]["sans_correction"]),
+            ("SPA (12 réglages)", e["spa_nul"]["spa"], None),
+            ("Politique apprise", e["a_nul"]["conclut"], None)]
     f = Fig(len(rows) * 34 + 60, "Taux de fausses alertes de chaque outil sur des donnees sans aucun avantage")
-    hi = max(max(a, b or 0) for _, a, b in rows) * 1.1
-    ax = Axes(f, 150, 10, W - 160, len(rows) * 34, 0, hi, -0.5, len(rows) - 0.5)
+    hi = max(max(a, b or 0) for _, a, b in rows) * 1.25
+    ax = Axes(f, 112, 10, W - 140, len(rows) * 34, 0, hi, -0.5, len(rows) - 0.5)
     for k, (nom, a, b) in enumerate(rows):
         y = len(rows) - 1 - k
         if b is not None:
             ax.hbar(y, 0, b, 14, "m-bar-pale", tip=f"{nom}, sans correction : {_pct(b)} de fausses alertes")
         ax.hbar(y, 0, max(a, 0.002), 8, "m-bar", tip=f"{nom} : {_pct(a, 1)} de fausses alertes")
         f.text(ax.x - 8, ax.sy(y) + 4, nom, "t-ax", "end")
-        f.text(ax.sx(max(a, b or 0)) + 6, ax.sy(y) + 4, _pct(a, 1), "t-val")
+        x_val = ax.sx(max(a, b or 0)) + 6
+        f.text(min(x_val, W - 4), ax.sy(y) + 4, _pct(a, 1), "t-val", "start" if x_val < W - 40 else "end")
     ax.vline(0.05, "m-seuil")
     ax.ticks_x(_graduations(0, hi, 3), lambda t: _pct(t), "fausses alertes (seuil 5 %)")
     _legende(f, len(rows) * 34 + 54, [("m-bar", "avec l’outil"), ("m-bar-pale", "sans correction")])
